@@ -1,0 +1,40 @@
+{% extends "base_content.html" %}
+
+{% block extra_css %}
+<style>
+  {% if is_owner_viewing %}
+  form[name=hw-create] {
+    margin: 3em;
+  }
+  {% end %}
+</style>
+{% end %}
+
+{% block content %}
+  {% if is_owner_viewing %}
+    {% module Create(content, individual_content=False) %}
+  {% end %}
+
+  <article id="hw-content" class="hw-presentation">
+    {% module ContentView(collection) %}
+
+    <div id="hw-presentation-controls">
+      <span class="hw-slideshow-nav hw-slideshow-control" onclick="hw.slideshowControl(event, -1)">&nbsp;&larr;&nbsp;</span>
+      <select class="hw-slideshow-nav" onclick="hw.stopPropagation(event)" onchange="hw.slideshowControl(event, null, this.value)">
+        {% for index, item in enumerate(collection) %}
+          <option value="{{ index }}">{{ item.title }}</option>
+        {% end %}
+      </select>
+      <span class="hw-slideshow-nav hw-slideshow-control" onclick="hw.slideshowControl(event, 1)">&nbsp;&rarr;&nbsp;</span><br>
+      <span id="hw-slideshow-pause" class="hw-slideshow-control" data-play="{{ _('play') }}" data-pause="{{ _('pause') }}" onclick="hw.slideshowPause(event)"> {{ _('pause') }} </span>
+      <span class="hw-slideshow-control">|</span>
+      <span class="hw-slideshow-control" onclick="hw.slideshowTogglePlain(event)"> {{ _('toggle slideshow') }} </span>
+    </div>
+  </article>
+{% end %}
+
+{% block extra_js_end %}
+<script>
+  hw.slideshowSetup();
+</script>
+{% end %}

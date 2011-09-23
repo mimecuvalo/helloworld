@@ -1,0 +1,16 @@
+<div class="hw-remote-actions" data-username="{{ item.username }}" data-local-id="{{ item.id }}" data-is-remote="{{ item.is_remote }}"
+    {% if item.is_remote %}
+    data-user="{{ item.from_user }}" data-post-id="{{ item.post_id }}"
+    {% end %}
+    data-is-favorited="{{ item.favorited }}" data-favorite="{{ _('favorite') }}" data-unfavorite="{{ _('unfavorite') }}"
+    data-is-spam="{{ item.is_spam }}" data-spam="{{ _('spam') }}" data-not-spam="{{ _('not spam') }}"
+    data-is-deleted="{{ item.deleted }}" data-delete="{{ _('delete') }}" data-undelete="{{ _('undelete') }}"
+    data-error="{{ _('error! try again...') }}">
+  <a href="#favorite" onclick="hw.favorite(event, this)">{% if item.favorited %}{{ _('unfavorite') }}{% else %}{{ _('favorite') }}{% end %}</a>
+  <a href="#reply" onclick="hw.reply(event, this)">{{ _('reply') }}</a>
+  <a href="#spam" onclick="hw.spam(event, this)">{% if item.is_spam %}{{ _('not spam') }}{% else %}{{ _('spam') }}{% end %}</a>
+  {% if not item.is_remote or item.type == 'post' or item.type == 'comment' %}
+  <a href="#delete" onclick="hw.deletePost(event, this)">{% if item.deleted %}{{ _('undelete') }}{% else %}{{ _('delete') }}{% end %}</a>
+  {% end %}
+</div>
+<div class="clear"></div>

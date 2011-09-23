@@ -1,0 +1,59 @@
+ErrorDocument 400 $HTTP_PREFIX/static/html/error.html
+ErrorDocument 401 $HTTP_PREFIX/static/html/error.html
+ErrorDocument 403 $HTTP_PREFIX/static/html/error.html
+ErrorDocument 404 $HTTP_PREFIX/static/html/error.html
+ErrorDocument 500 $HTTP_PREFIX/static/html/error.html
+
+Options All -Indexes
+Options +FollowSymLinks
+
+AddHandler fastcgi-script .fcgi
+
+RewriteEngine on
+RewriteBase /
+
+RewriteCond %{SERVER_PORT}s ^(443(s)|[0-9]+s)$
+RewriteRule ^(.+)$ - [env=protocol:%2]
+
+RewriteCond %{DOCUMENT_ROOT}$HTTP_PREFIX/static/cache/%{REQUEST_URI}.htmgz -f
+RewriteCond %{HTTP:Accept-Encoding} gzip
+RewriteCond %{HTTP:X-Requested-With} !^XMLHttpRequest$
+RewriteCond %{HTTP_COOKIE} !^.*user.*$
+RewriteRule ^(.*)$ $HTTP_PREFIX/static/cache$HTTP_PREFIX/$1.htmgz [L]
+
+RewriteCond %{HTTPS} !=on
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} static/.*
+RewriteRule ^static/resource/(.*)$ $HTTP_PREFIX/private/$1 [QSA,L]
+
+RewriteCond %{HTTPS} =on
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} static/.*
+RewriteRule ^static/resource/(.*)$ $HTTPS_PREFIX/private/$1 [QSA,L]
+
+RewriteCond %{HTTPS} !=on
+RewriteCond %{REQUEST_URI} !(helloworld.fcgi)
+RewriteCond %{REQUEST_URI} !(/static/.*)
+RewriteRule ^(.*)$ $HTTP_PREFIX/helloworld.fcgi/$1 [QSA,L]
+
+RewriteCond %{HTTPS} =on
+RewriteCond %{REQUEST_URI} !(helloworld.fcgi)
+RewriteCond %{REQUEST_URI} !(/static/.*)
+RewriteRule ^(.*)$ $HTTPS_PREFIX/helloworld.fcgi/$1 [QSA,L]
+
+AddType video/ogg .ogv
+AddType video/mp4 .mp4
+AddType video/webm .webm
+
+AddType "text/html;charset=UTF-8" .htmgz
+AddEncoding gzip .htmgz
+
+<FilesMatch "\.(htmgz)$">
+FileETag None
+<IfModule mod_headers.c>
+Header unset ETag
+Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+Header set Pragma "no-cache"
+Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+</IfModule>
+</FilesMatch>

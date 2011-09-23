@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {{ _("Search") }}
+{% end %}
+
+{% block content %}
+  <article id="hw-content">
+    <header>
+      <h1>{{ _("search results.") }}</h1>
+    </header>
+    <ol id="hw-results">
+      {% for item in results %}
+      <li>
+        {% if item.thumb %}
+          <a href="{{ content_url(item) }}"><img src="{{ item.thumb }}"></a>
+        {% end %}
+        <a href="{{ content_url(item) }}" class="hw-results-title">{{ item.title }}</a>
+      </li>
+      {% end %}
+    </ol>
+    {% if len(results) == 0 %}
+      {{ _('no results found.') }}
+    {% end %}
+  </article>
+
+  {% module SiteMap(content_owner=content_owner, query=query) %}
+{% end %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link id="hw-stylesheet-create" rel="stylesheet" type="text/css" href="{{ static_url('css/create.css') }}">
+<style>
+  form[name=hw-create] {
+    padding: 1em;
+  }
+</style>
+{% end %}
+
+{% block extra_js %}
+  <script src="{{ static_url('js/create.js') }}"></script>
+  <script>
+    hw.mediaEmbedded = {% if embedded %}true{% else %}false{% end %};
+    hw.mediaStandalone = {% if standalone %}true{% else %}false{% end %};
+    {% if uploaded_file %}
+      var mediaSelect = function() {
+        hw.mediaSelect(null, null, '{{ uploaded_file }}');
+      }
+      {% if standalone %}
+        mediaSelect();
+      {% else %}
+        Event.observe(window, 'load', mediaSelect, false);
+      {% end %}
+    {% end %}
+  </script>
+{% end %}
+
+{% block content %}
+  <form name="hw-create" method="post" enctype="multipart/form-data" class="hw-media-library-standalone">
+    {% raw xsrf_form_html() %}
+    {% include 'media.html' %}
+  </div>
+{% end %}
+
+{% block nav %}
+{% end %}

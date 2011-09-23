@@ -1,0 +1,82 @@
+.clear {
+  clear: both;
+}
+
+.hw-shown {
+  opacity: 1;
+  height: auto;
+  display: block;
+}
+
+.hw-hidden {
+  opacity: 0;
+}
+
+.hw-hidden-transition {
+  transition: opacity 0.3s ease-out;
+  -moz-transition: opacity 0.3s ease-out;
+  -webkit-transition: opacity 0.3s ease-out;
+}
+
+.hw-open {
+  height: auto;
+}
+
+.hw-closed,
+.hw-hidden {
+  height: 0 !important;
+  width: 0 !important;
+  border: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden;
+}
+
+.hw-slide-transition {
+  transition: height 0.3s ease-out;
+  -moz-transition: height 0.3s ease-out;
+  -webkit-transition: height 0.3s ease-out;
+}
+
+.hw-all-transition {
+  transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -webkit-transition: all 0.3s ease-out;
+}
+
+.hw-invisible {
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+  zoom: 1;
+}
+
+.hw-invisible-transition {
+  transition: opacity 0.3s ease-in-out;
+  -moz-transition: opacity 0.3s ease-in-out;
+  -webkit-transition: opacity 0.3s ease-in-out;
+}
+
+.hw-invisible-slow-transition {
+  transition: opacity 1s ease-in-out;
+  -moz-transition: opacity 1s ease-in-out;
+  -webkit-transition: opacity 1s ease-in-out;
+}
+
+.hw-invisible-reverse-transition {
+  transition: opacity 0.2s ease-in-out 5s;
+  -moz-transition: opacity 0.2s ease-in-out 5s;
+  -webkit-transition: opacity 0.2s ease-in-out 5s;
+}
+
+#hw-preloaded-content {
+  position: absolute;
+  top: -10000px;
+  left: -10000px;
+  width: 5000px;
+  overflow: hidden;
+}
+
+.hw-placeholder {
+  color: gray;
+}

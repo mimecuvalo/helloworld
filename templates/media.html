@@ -1,0 +1,34 @@
+<header>
+  <h1>{{ _('media library') }}</h1>
+</header>
+
+<div name="hw-file-list">
+  <h2>{{ _('files:') }}</h2>
+  <input name="hw-media-directory" type="hidden" value="">
+  {% for index, file in enumerate(files) %}
+    <select multiple name="hw-files-{{ resource_url(filename=file[0]).replace('/', '-') }}" size="11" class="{% if (not initial_section and index != 0) or (initial_section is not None and initial_section != basename(file[0])) %}hw-closed"{% elif (not initial_section or initial_section == basename(file[0])) %}hw-open{% end %}" ondblclick="hw.mediaSelect(null, this)" onchange="hw.mediaPreview(this)">
+      {% if index != 0 %}
+        <option value="{{ resource_url(filename=dirname(file[0])) }}" data-directory title="{{ basename(dirname(file[0])) }}">&uarr; {{ basename(dirname(file[0])) }}</option>
+      {% end %}
+      {% for dir in file[1] %}
+        <option value="{{ resource_url(filename=join(file[0], dir)) }}" data-directory title="{{ dir }}">&rarr; {{ dir }}</option>
+      {% end %}
+      {% for f in file[2] %}
+        <option value="{{ resource_url(filename=join(file[0], f)) }}" title="{{ f }}">{{ f }}</option>
+      {% end %}
+    </select>
+  {% end %}
+</div>
+
+<div name="hw-preview-wrapper">
+  <h2>{{ _('preview:') }}</h2>
+  <div name="hw-preview"></div>
+</div>
+
+<div class="clear"></div>
+<br>
+<button onclick="hw.mediaSelect(event)">{{ _('select') }}</button>
+
+{% if standalone or embedded %}
+<input name="hw-media-uploaded-file" type="file" value="{{ _("Upload file") }}" onchange="this.form.submit()"> 
+{% end %}

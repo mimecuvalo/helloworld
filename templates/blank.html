@@ -1,0 +1,19 @@
+{% extends "base_content.html" %}
+
+{% block even_more_css %}
+<style>
+  {% if is_owner_viewing %}
+  form[name=hw-create] {
+    margin: 3em;
+  }
+  {% end %}
+</style>
+{% end %}
+
+{% block content %}
+  {% if is_owner_viewing %}
+    {% module Create(content) %}
+  {% else %}
+    {% raw content.view %}
+  {% end %}
+{% end %}

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>Hello, world.</ShortName>
+  <Description>Hello, world.</Description>
+  <Image height="16" width="16" type="image/x-icon">http://www.trht.net/images/favicons/favicon.ico</Image>
+  <Url type="text/html" method="get" template="http://www.trht.net/search/{searchTerms}"/>
+</OpenSearchDescription>

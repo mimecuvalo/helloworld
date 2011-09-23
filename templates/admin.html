@@ -1,0 +1,63 @@
+{% extends "base_backend.html" %}
+
+{% block even_more_css %}
+  <style>
+    #sidebar {
+      display: none;
+    }
+  </style>
+{% end %}
+
+{% block extra_js %}
+  <script src="{{ static_url('js/admin.js') }}"></script>
+  <script>
+    hw.setMsg('confirm-delete', "{% raw js_escape(_('ya sure there, buddy?')) %}");
+    hw.setMsg('delete-failed', "{% raw js_escape(_("no good, mate.")) %}");
+    var currentUserId = {{ userid }};
+  </script>
+{% end %}
+
+{% block title %}
+  {{ _('Admin') }}
+{% end %}
+
+{% block backend_content %}
+  <div id="admin">
+    <h1>{{ _('User Administration') }}</h1>
+    <form method="post" action="{{ nav_url(section='admin') }}" onsubmit="return false">
+      {% raw xsrf_form_html() %}
+      <table>
+        <tr>
+          <th>{{ _('id') }}</th>
+          <th>{{ _('username') }}</th>
+          <th>{{ _('name') }}</th>
+          <th>{{ _('oauth') }}</th>
+          <th>{{ _('author') }}</th>
+          <th>{{ _('superuser') }}</th>
+          <th></th>
+        </tr>
+        {% for one_user in users %}
+          <tr>
+            <td>{{ one_user.id }}<input name="id" type="hidden" value="{{ one_user.id }}"></td>
+            <td>{{ one_user.username }}<input name="username" type="hidden" value="{{ one_user.username }}"></td>
+            <td><input name="name" type="text" value="{{ one_user.name }}" onblur="hw.saveUser(event, this)"></td>
+            <td><input name="oauth" type="email" value="{{ one_user.oauth }}" onblur="hw.saveUser(event, this)"></td>
+            <td><input name="author" type="checkbox" {% if one_user.author %}checked="checked"{% end %} onclick="hw.saveUser(event, this)"></td>
+            <td><input name="superuser" type="checkbox" {% if one_user.superuser %}checked="checked"{% end %} onclick="hw.saveUser(event, this)"></td>
+            <td><input data-delete="{{ _("delete") }}" data-deleting="{{ _("deleting") }}" type="button" value="{{ _("delete") }}" onclick="hw.deleteUser(this)"></td>
+          </tr>
+        {% end %}
+          <tr>
+            <td>{{ _('new') }}</td>
+            <td><input name="username" pattern="\w+" maxlength="255" type="text" placeholder="{{ _('username') }}" required></td>
+            <td><input name="name" maxlength="255" type="text" placeholder="name"></td>
+            <td><input name="oauth" type="email" placeholder="oauth" required></td>
+            <td><input name="author" type="checkbox"></td>
+            <td><input name="superuser" type="checkbox"></td>
+            <td><input data-save="{{ _("save") }}" data-saving="{{ _("saving") }}" type="button" value="{{ _("save") }}" onclick="hw.saveUser(event, this)"></td>
+          </tr>
+      </table>
+    </form>
+  </div>
+{% end %}
+

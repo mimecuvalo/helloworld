@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+  <link id="hw-stylesheet-create" rel="stylesheet" type="text/css" href="{{ static_url('css/all_dashboard.css', ['css/codemirror.css', 'css/codemirror_default.css', 'css/create.css', 'css/dashboard.css']) }}">
+  {% block even_more_css %}{% end %}
+{% end %}
+
+{% block favicon %}
+  {% if user.favicon %}
+    <link rel="shortcut icon" href="{{ user.favicon }}">
+  {% else %}
+    <link rel="shortcut icon" href="{{ static_url('favicon.ico') }}">
+  {% end %}
+{% end %}
+
+{% block content %}
+  <aside id="hw-sidebar">
+    <h1>&nbsp;</h1>
+    <div id="hw-navigation">
+      <h2>{{ _('navigation') }}</h2><br>
+      <ul>
+        <li><strong><a href="{{ nav_url(username=username) }}">{{ _('view site') }}</a></strong></li>
+        {% if is_superuser %}
+          <li><a href="{{ nav_url(section='admin') }}">{{ _('user admin') }}</a></li>
+        {% end %}
+        <li><a href="{{ nav_url(section='logout', next=nav_url(username=username)) }}">{{ _('logout') }}</a></li>
+      </ul>
+    </div>
+    <div id="hw-tools">
+      <h2>{{ _('tools') }}</h2><br>
+      <ul>
+        <li><a href="{{ nav_url(section='check_broken_links') }}">{{ _('check broken links') }}</a></li>
+        <li><a href="{{ nav_url(section='data_liberation') }}">{{ _('data liberation') }}</a></li>
+        <li><a href="javascript:window.location.href='{{ nav_url(host=True, section='api') }}?op=follow&amp;user='+encodeURIComponent(window.location.href)">{{ _('follow bookmarklet') }}</a> <span class="hw-tooltip"><span class="hw-tooltip-link">[?]</span><span class="hw-tooltip-text">{{ _('drag this link to your bookmarks and then use it on websites you want to follow!') }}</span></span></li>
+        <li><a href="javascript:window.location.href='{{ nav_url(host=True, section='dashboard') }}?reblog='+encodeURIComponent(window.location.href)">{{ _('reblog bookmarklet') }}</a> <span class="hw-tooltip"><span class="hw-tooltip-link">[?]</span><span class="hw-tooltip-text">{{ _('drag this link to your bookmarks and then use it on websites you want to reblog!') }}</span></span></li>
+      </ul>
+    </div>
+    {% block more_sidebar %}{% end %}
+  </aside>
+
+  {% block backend_content %}{% end %}
+{% end %}

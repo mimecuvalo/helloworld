@@ -1,0 +1,24 @@
+{% extends "base_content.html" %}
+
+{% block user_content %}
+  <ul class="hw-album">
+    {% for index, item in enumerate(collection) %}
+      <li id="hw-collection|{{ item.name }}" class="hw-content-item" {% if is_owner_viewing %}draggable="true" ondragstart="hw.dragStart(event, this)" ondragover="hw.dragOver(event, this)" ondragenter="hw.dragOver(event, this)" ondragleave="hw.dragLeave(event, this)" ondrop="hw.dragDrop(event, this)" data-is-album="{% if item.album == 'main' %}true{% else %}false{% end %}"{% end %}>
+        <a href="{{ content_url(item) }}" title="{{ item.title }}" data-contentname="{{ item.name }}" {% if is_owner_viewing %}onclick="hw.editContent(event, this)"{% end %}><img src="{{ static_url('img/pixel.gif') }}" onload="hw.thumbnailDelayLoad.transition(this)" class="hw-invisible hw-invisible-slow-transition" data-thumb="{{ item.thumb }}"/></a>
+        <a class="hw-content-title {% if is_owner_viewing and item.hidden %}hw-content-hidden{% end %}" href="{{ content_url(item) }}" title="{{ item.title }}" data-contentname="{{ item.name }}" {% if is_owner_viewing %}onclick="hw.editContent(event, this)"{% end %}>{{ item.title }}</a>
+        {% if item.album != 'main' and template == 'store' %}
+          {% module StoreButton(item, content_owner) %}
+        {% end %}
+      </li>
+    {% end %}
+  </ul>
+
+  <script>
+    {% comment  delay loading of thumbs for quicker page loads %}
+    if (document.documentElement["getBoundingClientRect"]) {
+      Event.observe(window, 'scroll', hw.thumbnailDelayLoad.loadImages, false);
+      Event.observe(window, 'resize', hw.thumbnailDelayLoad.loadImages, false);
+    }
+    hw.thumbnailDelayLoad.loadImages();
+  </script>  
+{% end %}

@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block extra_meta %}
+  <link rel="alternate" type="application/atom+xml" title="{{ content_owner.title }}" href="{{ nav_url(username=content.username, section='feed') }}" />
+  {% if main_section_title and main_section_name != 'home' %}
+  <link rel="alternate" type="application/atom+xml" title="{{ content_owner.title }} - {{ main_section_title }}" href="{{ nav_url(username=content.username, section='feed', category=main_section_name) }}" />
+  {% end %}
+  {% if main_album_title %}
+  <link rel="alternate" type="application/atom+xml" title="{{ content_owner.title }} - {{ main_album_title }}" href="{{ nav_url(username=content.username, section='feed', category=main_section_name, album=main_album_name) }}" />
+  {% end %}
+  <link rel="author" href="{{ nav_url(username=content.username, section='about') }}">
+  <link rel="search" href="{{ nav_url(username=content.username, section='opensearch') }}" type="application/opensearchdescription+xml" title="{{ content_owner.title }}">
+{% end %}
+
+{% block favicon %}
+  {% if content_owner.favicon %}
+    <link rel="shortcut icon" href="{{ content_owner.favicon }}">
+  {% else %}
+    <link rel="shortcut icon" href="{{ static_url('favicon.ico') }}">
+  {% end %}
+{% end %}
+
+{% block extra_css %}
+  {% if is_owner_viewing %}
+    <link id="hw-stylesheet-create" rel="stylesheet" type="text/css" href="{{ static_url('css/all_create.css', ['css/codemirror.css', 'css/codemirror_default.css', 'css/create.css']) }}">
+  {% end %}
+
+  {% if content_owner.theme and content_owner.theme != 'default.css' %}
+    <link rel="stylesheet" type="text/css" href="{{ static_url('css/themes/' + content_owner.theme.replace('..', '')) }}">
+  {% end %}
+
+  {% if content_owner.background %}
+    <style>
+      body {
+        background: url({{ content_owner.background }}) repeat fixed 0 0 transparent;
+      }
+    </style>
+  {% end %}
+
+  {% raw section_style %}
+  {% raw album_style %}
+  {% raw content.style.replace("<style", '<style id="hw-content-style"', 1) %}
+  {% block even_more_css %}{% end %}
+{% end %}
+
+{% block extra_js %}
+  {% if is_owner_viewing %}
+    <script src="{{ static_url('js/all_create.js', ['js/create.js', 'js/codemirror-compressed.js', 'js/pixastic.custom.js']) }}"></script>
+  {% end %}
+
+  {% raw section_code %}
+  {% raw album_code %}
+  {% raw content.code %}
+{% end %}
+
+{% block title %}
+  {% if content_owner.title %}
+  {{ content_owner.title }}
+  {% end %}
+  {% if content_owner.title and content.title %}
+  -
+  {% end %}
+  {{ content.title }}
+{% end %}
+
+{% block content %}
+  {% module SiteMap(content_owner=content_owner, content=content) %}
+
+  <article id="hw-content" class="hw-invisible-transition">
+    {% block create %}
+      {% if is_owner_viewing %}
+        {% module Create(content, individual_content=False) %}
+      {% end %}
+    {% end %}
+    {% block user_content %}{% end %}
+  </article>
+{% end %}
+
+{% block end_content %}
+  {% if content_owner.google_analytics %}
+    <script>
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', '{{ content_owner.google_analytics }}']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  {% end %}
+
+  {% if is_store %}
+    {% module StoreCheckout(content, content_owner) %}
+    <script>
+      hw.updateCartCount();
+    </script>
+  {% end %}
+{% end %}

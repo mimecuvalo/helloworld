@@ -1,0 +1,175 @@
+#hw-container {
+  width: 970px;
+  margin: 0 auto;
+}
+
+#hw-sidebar {
+  float: right;
+  width: 200px;
+}
+
+#hw-create,
+#hw-sidebar,
+#admin,
+#customize {
+  margin-top: 50px;
+}
+
+#admin,
+#hw-absorb,
+#hw-tools,
+#customize,
+#hw-followers,
+#hw-following {
+  margin: 25px 0;
+}
+
+#hw-create,
+#hw-absorb,
+#admin,
+#customize {
+  float: left;
+  width: 740px;
+}
+
+#hw-feed,
+#hw-navigation,
+#hw-tools,
+#hw-followers,
+#hw-following {
+  border: 3px double black;
+  padding: 5px;
+}
+
+#hw-followers li,
+#hw-following li {
+  display: inline-block;
+}
+
+#hw-following.hw-edit-mode li {
+  display: block;
+}
+#hw-following .hw-unfollow {
+  display: none;
+}
+#hw-following.hw-edit-mode .hw-unfollow {
+  display: inline;
+}
+
+.hw-remote-actions {
+  float: right;
+  font-size: 0.7692em;
+}
+.hw-remote-actions a {
+  display: inline-block;
+  margin: 0 5px;
+}
+
+#hw-following-new {
+  width: 115px;
+  margin: 5px 0;
+}
+
+#hw-feed {
+  padding-bottom: 0;
+}
+
+h1 {
+  text-transform: uppercase;
+  font-size: 1.2em;
+}
+
+#hw-absorb > h1 {
+  text-align: right;
+}
+
+#hw-feed h1 {
+  text-align: left;
+  text-transform: none;
+  margin-bottom: 0.5em;
+}
+
+section {
+  border-bottom: 1px solid gray;
+  margin-bottom: 5px;
+  padding: 5px 5px 10px 5px;
+}
+
+
+#admin td, th {
+  padding: 10px;
+  border: 1px solid black;
+}
+
+#admin tr {
+  transition: background-color 0.2s ease-out;
+  -moz-transition: background-color 0.2s ease-out;
+  -webkit-transition: background-color 0.2s ease-out;
+}
+
+#admin .good {
+  background-color: #0c9;
+}
+
+#admin .bad {
+  background-color: #f33;
+}
+
+#admin .normal {
+  transition: background-color 0.2s ease-out 2s;
+  -moz-transition: background-color 0.2s ease-out 2s;
+  -webkit-transition: background-color 0.2s ease-out 2s;
+}
+
+
+#customize form,
+#setup form {
+  background-color: #eee;
+  border: 1px solid #ddd;
+  padding: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+
+#customize label,
+#setup label {
+  margin-right: 5px;
+  margin-top: 3px;
+  vertical-align: top;
+  display: inline-block;
+}
+
+#customize textarea {
+  width: 400px;
+}
+
+#customize input,
+#setup input {
+  margin: 3px;
+}
+
+#customize #hw-customize-save,
+#setup #hw-setup-save {
+  float: right;
+}
+
+#customize #licenses {
+  width: 200px;
+}
+
+#customize dt {
+  display: inline-block;
+  width: 175px;
+}
+
+#customize dd {
+  display: inline-block;
+  width: 375px;
+}
+
+#hw-delete-account {
+  font-size: 0.7692em;
+  float: right;
+  margin-top: 1em;
+}

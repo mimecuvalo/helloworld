@@ -1,0 +1,153 @@
+{% if individual_content and content.section != 'main' %}
+  <nav name="hw-neighbors">
+    {% comment NOTE whitespace is important here %}
+    <a name="hw-start" rel="start" href="{{ content_url(start) }}">{{ _("oldest") }}</a><a
+
+       name="hw-previous" rel="prev"
+        {% if previous %}
+          href="{{ content_url(previous) }}"
+          title="{% if content_owner.title %}{{ content_owner.title }} - {% end %}{{ previous.title }}"
+          {% if content.style or content.code or previous.style or previous.code %}
+            data-disallow-magic="1"
+          {% else %}
+            {% set title = previous.title %}
+            {% if content_owner.title %}
+              {% set title = content_owner.title + '-' + title %}
+            {% end %}
+            onclick='hw.navigate(event, "{{ content_url(previous) }}", "{% raw js_in_html_escape(previous.title) %}")'
+          {% end %}
+        {% else %}
+          class="hw-disabled"
+        {% end %}>{{ _("older") }}</a><a
+
+        name="hw-top" rel="up" href="{{ top_url }}">{% if content.album %}{{ content.album }}{% else %}{{ content.section }}{% end %}</a><a 
+
+        name="hw-next" rel="next"
+        {% if next %}
+          href="{{ content_url(next) }}"
+          title="{% if content_owner.title %}{{ content_owner.title }} - {% end %}{{ next.title }}"
+          {% if content.style or content.code or next.style or next.code %}
+            data-disallow-magic="1"
+          {% else %}
+            {% set title = next.title %}
+            {% if content_owner.title %}
+              {% set title = content_owner.title + '-' + title %}
+            {% end %}
+            onclick='hw.navigate(event, "{{ content_url(next) }}", "{% raw js_in_html_escape(next.title) %}")'
+          {% end %}
+        {% else %}
+          class="hw-disabled"
+        {% end %}>{{ _("newer") }}</a><a
+        
+        name="hw-last" rel="last" href="{{ content_url(last) }}">{{ _("newest") }}</a>
+  </nav>
+{% end %}
+
+{% if individual_content %}
+  {% set content_list = [content] %}
+{% else %}
+  {% set content_list = feed %}
+{% end %}
+
+{% if 'content' in display and content and content.template == 'events' %}
+  <a href="{{ content_url(content, past=1) }}" style="float: right;">show past events</a><br>
+{% end %}
+
+{% for item in content_list %}
+<section {% if individual_content %}class="hw-individual-content"{% end %}>
+  {% if not item.restricted %}
+    <header>
+      <h1 name="hw-content-title">
+        {% if item.is_remote %}
+        <a href="{{ item.link }}">{% if item.is_spam %}<strong>[{{ _('spam') }}]</strong>{% end %}{% if item.type != 'post' %}<strong>{{ item.type }}</strong>{% end %} {{ item.username }}: {% if item.title %}{{ item.title }}{% else %}{{ _('(untitled)') }}{% end %}</a>
+        {% else %}
+        <a href="{{ content_url(item) }}" {% if is_owner_viewing and item.hidden %}class="hw-content-hidden"{% end %} data-contentname="{{ item.name }}" {% if is_owner_viewing %}onclick="hw.editContent(event, this)"{% end %}>{% if item.title %}{{ item.title }}{% else %}{{ _('(untitled)') }}{% end %}</a>
+        {% end %}
+        {% if individual_content and is_store %}
+          {% module StoreButton(item, content_owner) %}
+        {% end %}
+        {% if not item.is_remote and item.date_start and item.date_end %}
+          <br>
+          {{ _('Starts:') }} {{ item.date_start }}<br>
+          {% if item.date_repeats %}
+            {{ _('Repeats every day', 'Repeats every %(repeats)s day', len(item.date_repeats)) % { "repeats": item.date_repeats } }}<br>
+          {% end %}
+          {{ _('Ends:') }} {{ item.date_end }}<br>
+        {% end %}
+      </h1>
+      {% if referrer %}
+        <h2 class="hw-warning">
+          {{ _('You were redirected here from: ') }} <a href="{{ referrer }}">{{ referrer }}</a>
+        </h2>
+      {% end %}
+    </header>
+
+    {% if individual_content and is_owner_viewing %}
+      {% module Create(content) %}
+    {% else %}
+      <div name="hw-view" {% raw bidi(item.view) %}>
+        {% raw item.view %}
+      </div>
+    {% end %}
+
+    <footer class="hw-info">
+      {% if single_user_site %}
+        {{ item.username }}
+      {% end %}
+      {{ _("posted") }} <time pubdate>{{ locale.format_date(item.date_created) }}</time>
+      {% if not item.is_remote and item.date_updated != item.date_created %}
+        ({{ _("updated") }} <time>{{ locale.format_date(item.date_updated) }}</time>)
+      {% end %}
+      {% if not item.is_remote %}
+      • {{ _("%(count)s view", "%(count)s views", item.count) % { "count": locale.friendly_number(item.count) } }}
+      {% end %}
+      {% if not item.is_remote and not is_owner_viewing and username != item.username %}
+        <img src="{{ nav_url(section='stats', url=content_url(item)) }}">
+      {% end %}
+
+      {% if individual_content and not item.is_remote %}
+        {% if current_user and current_user["email"] %}
+        <form name="hw-comment-form" method="post" action="/api" onsubmit="return false" data-error="{{ _('error submitting your comment. please try again.') }}">
+          {% raw xsrf_form_html() %}
+          <textarea name="hw-comment-input" type="text" placeholder="{{ _('what\'s your take?') }}" data-local-id="{{ content.id }}"></textarea> <button onclick="hw.commentSubmit()">{{ _('submit') }}</button>
+        </form>
+        {% else %}
+          <h2 class="hw-comment-header">{{ _('you need to be logged in to leave a comment.') }} <a href="{{ nav_url(section='login', next=handler.request.uri) }}" data-logging-in="logging in..." data-failed="{{ _('login failed. try again.') }}" onclick="hw.login(event, this)">{{ _('login') }}</a></h2>
+        {% end %}
+      {% end %}
+
+      <ul>
+      {% for comment in comments %}
+        {% if comment.is_remote %}
+          <li data-post-id="{{ comment.post_id }}">
+            {% raw _('%(profile_url)s said: ') % { "profile_url": ('<a href="' + comment.from_user + '">' + comment.username + '</a>' if comment.from_user.startswith('http://') else comment.from_user.split('@')[0]) } %}
+            {% raw comment.view %}
+            {% if is_owner_viewing %}
+              {% module Moderate(comment) %}
+            {% end %}
+          </li>
+        {% else %}
+          <li data-post-id="{{ comment.id }}">
+            {% raw _('<a href="%(profile_url)s">%(name)s</a> said: ') % { "profile_url": nav_url(username=comment.username), "name": comment.username } %}
+            {% raw comment.view %}
+            {% if is_owner_viewing %}
+              {% module Moderate(comment) %}
+            {% end %}
+          </li>
+        {% end %}
+      {% end %}
+      {% set phrases = ['<a href="%(profile_url)s">%(name)s</a> thinks this is the bee\'s knees.', 'this rocks <a href="%(profile_url)s">%(name)s</a>\'s socks off.', '<a href="%(profile_url)s">%(name)s</a> crapped their pants when they saw this.', '<a href="%(profile_url)s">%(name)s</a> wants to name their baby after this page.'] %}
+      {% for fave in favorites %}
+        {% set phrase = phrases[random.randint(0, len(phrases) - 1)] %}
+
+        <li>{% raw _(phrase) % { "profile_url": fave.from_user, "name": fave.username } %}</li>
+      {% end %}
+      </ul>
+
+      {% if item.is_remote %}
+        {% module Moderate(item) %}
+      {% end %}
+    </footer>
+  {% end %}
+</section>
+{% end %}

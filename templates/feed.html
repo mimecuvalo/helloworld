@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<{% if type(feed) is list %}feed{% else %}entry{% end %} xml:base="{{ base_uri }}" xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom" xmlns:activity="http://activitystrea.ms/spec/1.0/" xmlns:poco="http://portablecontacts.net/spec/1.0" xmlns:media="http://purl.org/syndication/atommedia">
+  {% if type(feed) is list %}
+  <generator uri="http://www.helloworldprogram.com" version="0.82beta">Hello, world.</generator>
+  <id>{{ nav_url(host=True, username=user.username, section='feed') }}</id>
+  <title type="html">{{ user.title }}</title>
+  <subtitle>{{ _('a hello world site.') }}</subtitle>
+  <link rel="self" href="{{ nav_url(host=True, username=user.username, section='feed', category=section, album=album) }}" />
+  <link rel="alternate" type="text/html" href="{{ nav_url(host=True, username=user.username) }}" />
+  <link rel="hub" href="{{ push_hub }}" />
+  <link rel="http://api.friendfeed.com/2008/03#sup" href="http://friendfeed.com/api/public-sup.json#{{ sup_id }}" type="application/json" />
+  <link rel="salmon" href="{{ nav_url(host=True, section='salmon/', q='acct:' + user.username + '@' + handler.request.host) }}" />
+  <link rel="http://salmon-protocol.org/ns/salmon-replies" href="{{ nav_url(host=True, section='salmon/', q='acct:' + user.username + '@' + handler.request.host) }}" />
+  <link rel="http://salmon-protocol.org/ns/salmon-mention" href="{{ nav_url(host=True, section='salmon/', q='acct:' + user.username + '@' + handler.request.host) }}" />
+  {% if user.license %}
+    <link rel="license" href="{{ user.license }}"/>
+    {% if user.license == 'http://purl.org/atompub/license#unspecified' %}
+      <rights>{{ _("Copyright %(date)s by %(name)s") % { "date": current_datetime.year, 'name': user.name } }}</rights>
+    {% else %}
+      <rights>{{ licenses[user.license]["name"] }}: {{ user.license }}</rights>
+    {% end %}
+  {% end %}
+  <updated>{% if type(feed) is list and len(feed) %}{{ feed[0].date_created.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}{% end %}</updated>
+  {% end %}
+  <author>
+    <id>{{ nav_url(host=True, username=user.username) }}</id>
+    <activity:object-type>http://activitystrea.ms/schema/1.0/person</activity:object-type>
+    <name type="html">{{ user.name }}</name>
+    <uri>{{ nav_url(host=True, username=user.username) }}</uri>
+    <email>{{ user.oauth }}</email>
+    {% if user.logo %}
+    <link rel="avatar" type="image/jpg" media:width="73" media:height="73" href="{{ nav_url(host=True, section=user.logo) }}" />
+    {% end %}
+    <poco:preferredUsername>{{ user.username }}</poco:preferredUsername>
+    <poco:displayName>{{ user.name }}</poco:displayName>
+    <poco:emails>
+      <poco:value>{{ user.oauth }}</poco:value>
+      <poco:type>home</poco:type>
+      <poco:primary>true</poco:primary>
+    </poco:emails>
+    <poco:urls>
+      <poco:value>{{ nav_url(host=True, username=user.username) }}</poco:value>
+      <poco:type>profile</poco:type>
+      <poco:primary>true</poco:primary>
+    </poco:urls>
+  </author>
+  <logo>{{ static_url('favicon_large.jpg', include_host=True) }}</logo>
+  <icon>{{ static_url('favicon.ico', include_host=True) }}</icon>
+  {% if type(feed) is list %}
+    {% for item in feed %}
+      {% if not item.restricted %}
+      <entry>
+        <title>{{ item.title }}</title>
+        <link href="{{ content_url(item, host=True) }}" />
+        <id>tag:{{ handler.request.host }}:{{ content_url(item) }}</id>
+        <content type="html">
+          {{ add_base_uris(item.view) }}
+          {{ '<img src="' + nav_url(host=True, section='stats', url=content_url(item)) + '">' }}
+        </content>
+        <activity:verb>http://activitystrea.ms/schema/1.0/post</activity:verb>
+        <activity:object-type>http://activitystrea.ms/schema/1.0/article</activity:object-type>
+      </entry>
+      {% end %}
+    {% end %}
+  {% else %}
+    <title type="html">{{ title }}</title>
+    <id>tag:{{ handler.request.host }}:{{ title }}:{{ id }}</id>
+    <content type="html">{{ atom_content }}</content>
+    <updated>{{ utcnow.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}</updated>
+    <published>{{ utcnow.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}</published>
+    <activity:verb>{{ verb }}</activity:verb>
+    {% if activity_object %}
+      <activity:object>{% raw activity_object %}</activity:object>
+    {% end %}
+    {% if activity_extra %}
+      {% raw activity_extra %}
+    {% end %}
+  {% end %}
+</{% if type(feed) is list %}feed{% else %}entry{% end %}>

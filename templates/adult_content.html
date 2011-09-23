@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {{ _('Adult Content') }}
+{% end %}
+
+{% block content %}
+  <h1>{{ _('Content Warning') }}</h1>
+  {{ _('The blog that you are about to view may contain content only suitable for adults.') }}<br><br>
+  <a href="http://thebestpictureontheinternet.com/">Get me out of here!</a>
+| <a href="{{ handler.request.uri }}" onclick="hw.setCookie('adult_content', '1')">Continue</a>
+{% end %}

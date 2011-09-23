@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- XXX Status.net is case-sensitive :-/ -->
+<XRD xmlns='http://docs.oasis-open.org/ns/xri/xrd-1.0'>
+	<Subject>acct:{{ user.username }}@{{ handler.request.host }}</Subject>
+	<Alias>{{ nav_url(host=True, username=user.username) }}</Alias>
+
+  <!--<Link rel="http://webfinger.net/rel/profile-page" type="text/html" href="http://localhost/statusnet2/index.php/cuv"></Link>
+<Link rel="http://microformats.org/profile/hcard" type="text/html" href="http://identi.ca/cuv/hcard" />
+<Link rel="http://gmpg.org/xfn/11" type="text/html" href="http://identi.ca/cuv"></Link>
+<Link rel="http://apinamespace.org/atom" type="application/atomsvc+xml" href="http://identi.ca/api/statusnet/app/service/cuv.xml"><Property type="http://apinamespace.org/atom/username">cuv</Property></Link>
+<Link rel="http://portablecontacts.net/spec/1.0" href="http://www-opensocial.googleusercontent.com/api/people/" />
+<Link rel="http://portablecontacts.net/spec/1.0#me" href="http://www-opensocial.googleusercontent.com/api/people/111062888259659218284/" />
+<Link rel="http://ostatus.org/schema/1.0/subscribe" template="http://freelish.us/main/ostatussub?profile={uri}"></Link>-->
+
+  <Link rel="describedby" type="application/rdf+xml" href="{{ nav_url(host=True, username=user.username, section='foaf') }}"></Link>
+  <Link rel="salmon" href="{{ nav_url(host=True, section='salmon/', q='acct:' + user.username + '@' + handler.request.host) }}" />
+  <Link rel="http://salmon-protocol.org/ns/salmon-replies" href="{{ nav_url(host=True, section='salmon/', q='acct:' + user.username + '@' + handler.request.host) }}" />
+  <Link rel="http://salmon-protocol.org/ns/salmon-mention" href="{{ nav_url(host=True, section='salmon/', q='acct:' + user.username + '@' + handler.request.host) }}" />
+  <Link rel="magic-public-key" href="data:application/magic-public-key,{{ user.magic_key }}" />
+
+	<Link rel="http://webfinger.net/rel/profile-page" href="{{ nav_url(host=True, username=user.username, section='about') }}" type="text/html" />
+	<Link rel="describedby" href="{{ nav_url(host=True, section='webfinger/', q='acct:' + user.username + '@' + handler.request.host) }}" type="application/rdf+xml" />
+	<Link rel="http://schemas.google.com/g/2010#updates-from" href="{{ nav_url(host=True, username=user.username, section='feed') }}" type="application/atom+xml" />
+</XRD>

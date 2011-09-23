@@ -1,0 +1,586 @@
+form[name=hw-create].hw-new,
+#hw-container.hw-editing > #hw-content > section > form[name=hw-create] {
+  margin-top: 5px;
+}
+#hw-container.hw-editing > #hw-content > section > form[name=hw-create] {
+  height: 136px;
+}
+#hw-container.hw-editing > #hw-content > section > form[name=hw-create].hw-options,
+#hw-container.hw-editing > #hw-content > section > form[name=hw-create].hw-media-library,
+#hw-container.hw-editing > #hw-content > section > form[name=hw-create].hw-html,
+#hw-container.hw-editing > #hw-content > section > form[name=hw-create].hw-media {
+  height: auto;
+}
+
+span[name=hw-response] {
+  margin: 3px 0;
+  margin-left: 5px;
+}
+
+span[name=hw-response].hw-bad {
+  color: white;
+  background-color: #f33;
+}
+
+input[name=hw-save] {
+  background-color: #0cf;
+  border: 1px solid gray;
+}
+
+#hw-delete {
+  color: #f33;
+}
+
+div[name=hw-more-options] {
+  float: right;
+  clear: right;
+}
+ul[name=hw-html-tabs] .hw-selected,
+div[name=hw-more-options].hw-selected {
+  font-weight: bold;
+}
+
+div[name=hw-options] {
+  height: 205px;
+  background-color: #eee;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+div[name=hw-options].hw-open {
+  border: 1px solid #ddd;
+  margin: 5px 0;
+  padding: 10px;
+}
+
+div[name=hw-options] dl {
+  width: 440px;
+}
+
+div[name=hw-options] dt {
+  padding: 3px;
+  width: 150px;
+  display: inline-block;
+  zoom: 1; /* workaround ie7 */
+  *display: inline; /* workaround ie7 */
+}
+.hw-new div[name=hw-options] dd,
+div[name=hw-options] dd {
+  width: 275px;
+  display: inline-block;
+  zoom: 1; /* workaround ie7 */
+  *display: inline; /* workaround ie7 */
+}
+
+.hw-thumb-preview-wrapper {
+  float: right;
+}
+img[name=hw-thumb-preview] {
+  max-width: 175px;
+  max-height: 190px;
+}
+
+select[name=hw-section-album] option[data-hidden=true] {
+  font-style: italic;
+}
+
+div[name=hw-playground].hw-template-links  {
+  display: none;
+}
+
+div[name=hw-wysiwyg] {
+  outline: 0;
+}
+
+div[name=hw-wysiwyg].hw-new,
+div[name=hw-wysiwyg].hw-template-links {
+  min-height: 200px;
+  -moz-box-shadow: 3px 3px 6px #ddd;
+  -webkit-box-shadow: 3px 3px 6px #ddd;
+  box-shadow: 3px 3px 6px #ddd;
+}
+div[name=hw-wysiwyg].hw-template-links {
+  margin-top: 1em;
+  min-height: 40px;
+  border: 1px inset black;
+  padding: 0.5em;
+  font-size: 1.5384em;
+  overflow-x: scroll;
+}
+
+input[name=hw-price],
+div[name=hw-events] {
+  display: none;
+}
+
+form[name=hw-create].hw-template-store input[name=hw-price] {
+  display: inline;
+  width: 100px;
+}
+div[name=hw-events] input {
+  width: 230px;
+}
+form[name=hw-create].hw-template-events div[name=hw-events] {
+  display: block;
+  margin: 5px 0;
+}
+
+#hw-container.hw-editing > #hw-content > section.hw-individual-content > header {
+  display: none;
+}
+
+#hw-container.hw-editing .hw-read-more {
+  display: block;
+}
+
+form[name=hw-create] label {
+  font-size: 1.230em;
+  color: black;
+}
+form[name=hw-create] .hw-explanation {
+  font-size: 0.7692em;
+  color: #666;
+}
+
+div[name=hw-html-wrapper] {
+  height: 220px;
+}
+div[name=hw-html-wrapper].hw-open {
+  margin: 5px;
+}
+div[name=hw-html-wrapper] .hw-hidden {
+  display: none;
+}
+
+textarea[name=hw-style],
+textarea[name=hw-code],
+textarea[name=hw-html] {
+  height: 195px;
+  width: 98.6%;
+}
+ul[name=hw-html-tabs] {
+  list-style: none;
+}
+ul[name=hw-html-tabs] li {
+  list-style: none;
+  padding: 0 0.5384em;
+  font-size: 13px;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+  display: inline-block;
+  zoom: 1; /* workaround ie7 */
+  *display: inline; /* workaround ie7 */
+  cursor: hand;
+  cursor: pointer;
+  background-color: white;
+  color: black;
+}
+
+.hw-new div[name=hw-wysiwyg-controls].hw-fixed,
+.hw-editing div[name=hw-wysiwyg-controls].hw-fixed {
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  width: 648px;
+}
+
+.hw-new div[name=hw-wysiwyg-controls].hw-fixed {
+  width: 739px;
+}
+
+div[name=hw-wysiwyg-controls] {
+  margin-bottom: -29px;
+}
+
+.hw-editing div[name=hw-wysiwyg] {
+  margin-top: 29px;
+}
+
+.hw-fixed.hw-editing span[name=hw-save-wrapper] {
+  position: fixed;
+  z-index: 1;
+  display: block;
+  background-color: white;
+  top: 0;
+  left: 830px;
+  height: 24px;
+  padding: 7px 0 0 7px;
+  width: 230px;
+}
+.hw-fixed .hw-new span[name=hw-save-wrapper] {
+  left: 825px;
+}
+
+.hw-separate div[name=hw-view],
+.hw-separate div[name=hw-html-wrapper],
+.hw-separate iframe[name=hw-media-wrapper],
+.hw-separate div[name=hw-wysiwyg-controls],
+.hw-separate input[name=hw-title],
+div.hw-created[name="hw-media-creator"] > input[name=hw-media-title] {
+  display: none;
+}
+div.hw-created.hw-separate[name="hw-media-creator"] > input[name=hw-media-title] {
+  display: inline-block;
+  zoom: 1; /* workaround ie7 */
+  *display: inline; /* workaround ie7 */
+}
+
+div[name=hw-wysiwyg-controls] {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  height: 29px;
+  background-color: #eee;
+  border: 1px solid #ddd;
+  -moz-border-radius-topright: 5px;
+  -webkit-border-top-right-radius: 5px;
+  border-top-right-radius: 5px;
+  -moz-border-radius-topleft: 5px;
+  -webkit-border-top-left-radius: 5px;
+  border-top-left-radius: 5px;
+  /*-moz-box-shadow: 0 3px 6px #ddd;
+  -webkit-box-shadow: 0 3px 6px #ddd;
+  box-shadow: 0 3px 6px #ddd;*/
+}
+
+div[name=hw-wysiwyg-controls] > span {
+  display: inline-block;
+  zoom: 1; /* workaround ie7 */
+  *display: inline; /* workaround ie7 */
+  padding: 5px 7px;
+  margin: 1px;
+  cursor: hand;
+  cursor: pointer;
+  border: 1px solid #eee;
+  color: black;
+  font-size: 13px;
+}
+
+div[name=hw-wysiwyg-controls] > span:hover,
+div[name=hw-wysiwyg-controls] > span.hw-selected {
+  border: 1px solid black;
+}
+
+span[name=hw-bold] {
+  font-weight: bold;
+}
+
+span[name=hw-italic] {
+  font-style: italic;
+}
+
+span[name=hw-strikeThrough] {
+  text-decoration: line-through;
+}
+
+div[name=hw-media-list-template] {
+  display: none;
+}
+
+div[name=hw-media-creator],
+form.hw-media-library-standalone {
+  background-color: #eee;
+  margin: 0;
+  padding: 10px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+iframe[name=hw-media-creator] {
+  margin-top: 5px;
+}
+
+iframe[name=hw-media-creator].hw-hidden {
+  width: auto !important;
+}
+
+iframe[name=hw-media-wrapper] {
+  margin-bottom: 16px;
+  height: 282px;
+}
+iframe[name=hw-media-wrapper].hw-closed {
+  display: none;
+}
+
+div[name=hw-media-creator].hw-drag {
+  border: 1px solid #000;
+}
+
+input[name=hw-media-title],
+input[name=hw-media-caption],
+input[name=hw-media-source],
+input[name=hw-media-tags] {
+  border: 0;
+  border-bottom: 1px solid black;
+  background-color: #eee;
+  width: 115px;
+}
+
+a[name=hw-media-preview-wrapper] {
+  margin-top: -31px;
+  margin-right: 1em;
+  float: right;
+  text-align: center;
+  text-decoration: none;
+  width: 100px;
+  height: 60px;
+  cursor: default;
+}
+.hw-file a[name=hw-media-preview-wrapper] {
+  cursor: hand;
+  cursor: pointer;
+}
+a[name=hw-media-preview-wrapper] span {
+  display: none;
+  position: absolute;
+  top: 33%;
+  right: 20%;
+  cursor: hand;
+  cursor: pointer;
+  color: #03c;
+  padding: 0 1em;
+  background-color: white;
+  font-weight: bold;
+}
+.hw-file a[name=hw-media-preview-wrapper]:hover {
+  position: relative;
+  text-decoration: none;
+}
+.hw-file a[name=hw-media-preview-wrapper]:hover span {
+  display: block;
+}
+.hw-file a[name=hw-media-preview-wrapper]:hover img {
+  opacity: .7;
+}
+
+img[name=hw-media-preview] {
+  max-height: 60px;
+  max-width: 100px;
+  overflow: hidden;
+}
+
+span[name=hw-media-cancel] {
+  cursor: hand;
+  cursor: pointer;
+  float: right;
+  font-size: 1.230em;
+  margin-top: 0.6em;
+}
+
+input[name=hw-media-remote],
+input[name=hw-media-local] {
+  width: 150px;
+  height: 23px;
+  vertical-align: top;
+}
+input[name=hw-media-local] {
+  width: 275px;
+}
+span.hw-media-or {
+  margin-top: 3px;
+  display: inline-block;
+  zoom: 1; /* workaround ie7 */
+  *display: inline; /* workaround ie7 */
+}
+.hw-created > input[name=hw-media-file],
+.hw-created > input[name=hw-media-remote] {
+  width: 400px;
+}
+
+div[name=hw-media-creator] > .hw-created {
+  display: none;
+}
+div[name=hw-media-creator].hw-created > .hw-created {
+  display: inline-block;
+  zoom: 1; /* workaround ie7 */
+  *display: inline; /* workaround ie7 */
+}
+div[name=hw-media-creator].hw-created > .hw-initial {
+  display: none;
+}
+span[name=hw-media-file-failed] {
+  background-color: #f33;
+  color: #fff;
+  padding: 0 0.5em;
+  margin-left: 0.5em;
+}
+div[name=hw-media-creator].hw-file > input[name=hw-media-local] {
+  display: none;
+}
+
+progress[name=hw-media-file-progress] {
+  width: 100px;
+}
+
+input[name=hw-media-title],
+input[name=hw-media-caption],
+input[name=hw-media-source],
+input[name=hw-media-tags] {
+  margin-top: 3px;
+}
+
+div[name=hw-anchor-editor] {
+  position: absolute;
+  top: -10000px;
+  left: -10000px;
+  z-index: 2;
+  width: 275px;
+  border: 1px solid black;
+  background-color: white;
+  padding: 1em;
+}
+div[name=hw-image-editor] {
+  position: absolute;
+  top: 25px;
+  left: 50%;
+  margin-left: -350px;
+  padding: 10px;
+  width: 720px;
+  height: 480px;
+  background-color: white;
+  z-index: 2;
+  border: 3px double black;
+}
+div[name=hw-image-editor].hw-editing img,
+div[name=hw-image-editor].hw-editing canvas {
+  max-width: 480px;
+  max-height: 480px;
+}
+div[name=hw-image-editor] .hw-image-scratch-wrapper {
+  float: left;
+  width: 480px;
+  height: 480px;
+  overflow: hidden;
+  text-align: center;
+  padding-right: 10px;
+  border-right: 1px dotted gray;
+}
+div[name=hw-image-editor] .hw-image-actions {
+  float: left;
+  clear: right;
+  width: 200px;
+}
+div[name=hw-image-editor] .hw-image-actions li {
+  list-style-type: none;
+}
+div[name=hw-image-editor] .hw-image-close {
+  float: right;
+}
+input[type=range] {
+  background: url("../img/slider-handle.gif") no-repeat scroll 0 2px transparent;
+  border: 0;
+  height: 21px;
+  text-align: center;
+  font-weight: bold;
+  outline: 1px solid black;
+  padding: 4px;
+  cursor: default;
+  -moz-user-select: none;
+}
+
+a[name=hw-anchor-remove] {
+  margin-left: 5px;
+}
+
+a[name=hw-anchor-remove] {
+  vertical-align: middle;
+  font-size: 0.7692em;
+}
+
+div[name=hw-anchor-editor] label {
+  cursor: hand;
+  cursor: pointer;
+  font-size: 0.7692em;
+  vertical-align: middle;
+  padding-top: 3px;
+}
+
+div[name=hw-anchor-editor] input,
+div[name=hw-anchor-editor] a {
+  vertical-align: middle;
+}
+
+input[name=hw-anchor-type] {
+  margin-top: 5px;
+}
+
+div[name=hw-file-list],
+div[name=hw-preview-wrapper] {
+  float: left;
+}
+
+div[name=hw-file-list],
+div[name=hw-file-list] > select {
+  width: 150px;
+}
+
+div[name=hw-file-list] > select.hw-closed {
+  display: none;
+}
+
+div[name=hw-file-list] > select > option[data-directory] {
+  
+}
+
+div[name=hw-preview-wrapper] {
+  margin-left: 1em;
+  width: 150px;
+}
+
+div[name=hw-preview] {
+  width: 450px;
+  height: 170px;
+  overflow: hidden;
+}
+div[name=hw-preview] img {
+  max-height: 169px;
+  max-width: 500px;
+}
+
+#hw-container.hw-editing > #hw-sitemap li[draggable=true] {
+  -moz-user-select: none;
+  cursor: move;
+}
+
+#hw-container.hw-editing > #hw-sitemap li[draggable=true].hw-over,
+#hw-container.hw-editing > #hw-sitemap li[droppable=true].hw-over,
+#hw-container.hw-editing > #hw-sitemap li.hw-over {
+  border-bottom: 1px solid black;
+}
+#hw-container.hw-editing > #hw-sitemap li[draggable=true].hw-over-content,
+#hw-container.hw-editing > #hw-sitemap li[droppable=true].hw-over-content,
+#hw-container.hw-editing > #hw-sitemap ul.hw-over-content {
+  border: 1px solid black;
+}
+#hw-container.hw-editing > #hw-content li[draggable=true].hw-over-content,
+#hw-container.hw-editing > #hw-content li[droppable=true].hw-over-content,
+#hw-container.hw-editing > #hw-content ul.hw-over-content {
+  outline: 1px solid black;
+}
+
+#hw-container.hw-editing > #hw-sitemap li[draggable=true]:hover:after {
+  content: ' ≡';
+}
+
+/*#hw-container.hw-editing > #hw-sitemap a {
+  cursor: text;
+  text-decoration: none;
+}
+#hw-container.hw-editing > #hw-sitemap a:hover {
+  cursor: text;
+  text-decoration: none;
+}*/
+
+#hw-sitemap .hw-renaming a {
+  border: 1px inset black;
+  padding: 0 5px;
+  margin: -1px 0 -1px -6px;
+}
+
+.CodeMirror-scroll {
+  height: 190px;
+  border: 1px solid gray;
+}

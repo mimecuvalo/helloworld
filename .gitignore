@@ -1,0 +1,11 @@
+*.DS_STORE
+*.pyc
+*.svn
+*.swp
+server.log
+.htaccess
+fabfile.py
+hello.pid
+mod_time
+site.cfg
+spam.bayes

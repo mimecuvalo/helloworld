@@ -1,0 +1,56 @@
+{% extends "base_backend.html" %}
+
+{% block extra_js %}
+  <script src="{{ static_url('js/all_dashboard.js', ['js/dashboard.js', 'js/create.js', 'js/codemirror-compressed.js', 'js/pixastic.custom.js']) }}"></script>
+{% end %}
+
+{% block title %}
+  {{ _("Dashboard") }}
+{% end %}
+
+{% block backend_content %}
+  <div id="hw-create">
+    <h1>{{ _("create.") }}</h1>
+    {% module Create(initial_media=initial_media) %}
+  </div>
+
+  <div id="hw-absorb">
+    <h1>{{ _("absorb.") }}</h1>
+    <article id="hw-feed">
+      <a id="hw-feed-page-1"></a>
+      {% module ContentView(combined_feed) %}
+    </article>
+  </div>
+
+  <script>
+    hw.loadMoreObject = new hw.loadMore('{{ nav_url(section='dashboard') }}', {{ offset }}, 'hw-feed');
+    hw.setMsg('loading', "{% raw js_escape(_('loading...')) %}");
+    Event.observe(window, 'scroll', function() { hw.loadMoreObject.onScroll() }, false);
+  </script>
+{% end %}
+
+{% block more_sidebar %}
+  <div id="hw-followers">
+    <h2>{{ _('followers') }}</h2><br>
+    <ul>
+      {% for follower in followers %}
+        <li>
+          <a href="{{ follower.profile_url }}" title="{{ follower.name }}"><img height="16" width="16" src="{{ follower.avatar }}" /></a>
+        </li>
+      {% end %}
+    </ul>
+  </div>
+  <div id="hw-following">
+    {% comment TODO to do unfollow maybe drag to a trash? %}
+    <h2>{{ _('following') }} <a href="#edit" onclick="hw.followingEdit(event)">[{{ _('edit') }}]</a></h2>
+    <input id="hw-following-new" type="text" placeholder="{{ _('follow new user') }}" data-error="{{ _('error subscribing!') }}" data-error-unsub="{{ _('error unsubscribing!') }}" onchange="hw.follow(event)">
+    <ul>
+      {% for follower in following %}
+        <li data-user="{{ follower.profile_url }}">
+          <a href="{{ follower.profile_url }}" title="{{ follower.name }}"><img height="16" width="16" src="{{ follower.avatar }}" /></a>
+          <a href="#unfollow" onclick="hw.unfollow(event, this)" class="hw-unfollow">{{ _('unfollow') }}</a>
+        </li>
+      {% end %}
+    </ul>
+  </div>
+{% end %}
