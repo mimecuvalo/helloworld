@@ -129,7 +129,8 @@ def salmon_reply(handler, user_remote, content, thread=None):
   handler.display['id'] = handler.content_url(content)
   handler.display['title'] = content.title
   handler.display['atom_content'] = content.view
-  handler.display['verb'] = 'http://activitystrea.ms/schema/1.0/post'
+  action = 'comment' if content.section == 'comments' else 'post'
+  handler.display['verb'] = 'http://activitystrea.ms/schema/1.0/' + action
   handler.display['activity_extra'] = """
   <activity:object-type>http://activitystrea.ms/schema/1.0/note</activity:object-type>
   <link href="%(content_url)s" rel="alternate" type="text/html" />
@@ -139,6 +140,7 @@ def salmon_reply(handler, user_remote, content, thread=None):
   thread = thread or content.thread
   if thread:
     handler.display['activity_extra'] += """<thr:in-reply-to href="%(content_url)s" ref="%(thread)s" xmlns:thr="http://purl.org/syndication/thread/1.0" />""" % { 'content_url': handler.content_url(content, host=True), 'thread': thread }
+    handler.display['activity_extra'] += """<link rel="related" href="%(content_url)s"/>""" % { 'content_url': handler.content_url(content, host=True) }
   atom_html = handler.render_string("feed.html", **handler.display)
   salmon_send(handler, user, user_remote.salmon_url, atom_html)
 

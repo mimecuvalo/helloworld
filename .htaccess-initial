@@ -32,11 +32,13 @@ RewriteCond %{REQUEST_URI} static/.*
 RewriteRule ^static/resource/(.*)$ $HTTPS_PREFIX/private/$1 [QSA,L]
 
 RewriteCond %{HTTPS} !=on
+RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_URI} !(helloworld.fcgi)
 RewriteCond %{REQUEST_URI} !(/static/.*)
 RewriteRule ^(.*)$ $HTTP_PREFIX/helloworld.fcgi/$1 [QSA,L]
 
 RewriteCond %{HTTPS} =on
+RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_URI} !(helloworld.fcgi)
 RewriteCond %{REQUEST_URI} !(/static/.*)
 RewriteRule ^(.*)$ $HTTPS_PREFIX/helloworld.fcgi/$1 [QSA,L]
