@@ -56,6 +56,8 @@
           {{ add_base_uris(item.view) }}
           {{ '<img src="' + nav_url(host=True, section='stats', url=content_url(item)) + '">' }}
         </content>
+        <updated>{{ item.date_created.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}</updated>
+        <published>{{ utcnow.date_updated.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}</published>
         <activity:verb>http://activitystrea.ms/schema/1.0/post</activity:verb>
         {% if item.section == 'comments' %}
           <activity:object-type>http://activitystrea.ms/schema/1.0/comment</activity:object-type>
