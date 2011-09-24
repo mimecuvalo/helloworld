@@ -28,6 +28,7 @@ class content(Model):
                 'is_spam': 0,
                 'deleted': 0,
                 'thread': '',
+                'thread_user': '',
                 'view': '',
                 'code': '',}
     validations = {'section': (custom_validators.UnicodeString(1, 255), custom_validators.Id()),

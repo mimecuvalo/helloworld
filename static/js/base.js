@@ -1185,6 +1185,7 @@ hw.commentSubmit = function() {
   var comment = hw.getFirstElementByName('hw-comment-input');
   var localId = comment.getAttribute('data-local-id');
   var thread = comment.hasAttribute('data-thread') ? comment.getAttribute('data-thread') : '';
+  var threadUser = comment.hasAttribute('data-thread-user') ? comment.getAttribute('data-thread-user') : '';
 
   var callback = function(xhr) {
     comment.value = '';
@@ -1197,10 +1198,11 @@ hw.commentSubmit = function() {
 
   new hw.ajax(hw.baseUri() + 'api',
     { method: 'post',
-      postBody: 'op='       + encodeURIComponent('comment')
-             + '&local_id=' + encodeURIComponent(localId)
-             + '&thread='   + encodeURIComponent(thread)
-             + '&comment='  + encodeURIComponent(comment.value),
+      postBody: 'op='         + encodeURIComponent('comment')
+             + '&local_id='   + encodeURIComponent(localId)
+             + '&thread='     + encodeURIComponent(thread)
+             + '&thread_user=' + encodeURIComponent(threadUser)
+             + '&comment='    + encodeURIComponent(comment.value),
       headers: { 'X-Xsrftoken' : form['_xsrf'].value },
       onSuccess: callback,
       onError: badTrip });

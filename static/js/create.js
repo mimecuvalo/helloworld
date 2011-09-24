@@ -1924,6 +1924,7 @@ hw.reply = function(event, el) {
     input.value = str;
     if (el.parentNode.hasAttribute('data-post-id')) {
       input.setAttribute('data-thread', el.parentNode.getAttribute('data-post-id'));
+      input.setAttribute('data-thread-user', el.parentNode.getAttribute('data-post-user'));
     }
     input.focus();
     if (input.setSelectionRange) {

@@ -171,7 +171,8 @@ class ApiHandler(BaseHandler):
     if is_remote and not self.constants['single_user_site'] and content.to_username != self.current_user["username"]:
       raise tornado.web.HTTPError(400, "i call shenanigans")
     if not is_remote:
-      original_url = url_factory.load_basic_parameters(self, url=content.thread)
+      local_url = content.thread.split(':')[2]
+      original_url = url_factory.load_basic_parameters(self, url=local_url)
       original_content = self.models.content.get(username=original_url['profile'], name=original_url['name'])[0]
       if not self.constants['single_user_site'] and original_content.username != self.current_user["username"]:
         raise tornado.web.HTTPError(400, "i call shenanigans")
@@ -242,15 +243,23 @@ class ApiHandler(BaseHandler):
       profile = self.get_author_username()
       commented_content = self.models.content.get(self.get_argument('local_id'))
       comment = self.get_argument('comment')
+
+      is_spam = spam.guess(comment)
+
       content = self.models.content()
       content.username = profile
       content.section  = 'comments'
       content.name     = self.get_unique_name(content, title='comment')
       content.date_created = datetime.datetime.utcnow()
       content.date_updated = datetime.datetime.utcnow()
+      if is_spam:
+        content.is_spam = True
+      else:
+        spam.train_ham(comment)
       content.title = 'comment'
       content.thread = self.content_url(commented_content)
-      content.view = comment
+      content.thread_user = self.get_argument('thread_user', None)
+      content.view = users.sanitize(comment)
       content.save()
 
       commented_content.comments += 1

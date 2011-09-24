@@ -58,7 +58,18 @@
           {{ '<img src="' + nav_url(host=True, section='stats', url=content_url(item)) + '">' }}
         </content>
         <activity:verb>http://activitystrea.ms/schema/1.0/post</activity:verb>
-        <activity:object-type>http://activitystrea.ms/schema/1.0/article</activity:object-type>
+        {% if item.section == 'comments' %}
+          <activity:object-type>http://activitystrea.ms/schema/1.0/comment</activity:object-type>
+          {% if item.thread %}
+            <thr:in-reply-to ref="{{ item.thread }}"></thr:in-reply-to>
+          {% end %}
+          {% if item.thread_user %}
+            <link rel="ostatus:attention" href="{{ item.thread_user }}"/>
+            <link rel="mentioned" href="{{ item.thread_user }}"/>
+          {% end %}
+        {% else %}
+          <activity:object-type>http://activitystrea.ms/schema/1.0/article</activity:object-type>
+        {% end %}
       </entry>
       {% end %}
     {% end %}

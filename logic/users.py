@@ -139,8 +139,8 @@ def salmon_reply(handler, user_remote, content, thread=None):
 """ % { 'content_url': handler.content_url(content, host=True), 'profile_url': user_remote.profile_url }
   thread = thread or content.thread
   if thread:
-    handler.display['activity_extra'] += """<thr:in-reply-to href="%(content_url)s" ref="%(thread)s" xmlns:thr="http://purl.org/syndication/thread/1.0" />""" % { 'content_url': handler.content_url(content, host=True), 'thread': thread }
-    handler.display['activity_extra'] += """<link rel="related" href="%(content_url)s"/>""" % { 'content_url': handler.content_url(content, host=True) }
+    handler.display['activity_extra'] += """<thr:in-reply-to ref="%(thread)s" xmlns:thr="http://purl.org/syndication/thread/1.0" />""" % { 'thread': thread }
+    #handler.display['activity_extra'] += """<link rel="related" href="%(content_url)s"/>""" % { 'content_url': handler.content_url(content, host=True) }
   atom_html = handler.render_string("feed.html", **handler.display)
   salmon_send(handler, user, user_remote.salmon_url, atom_html)
 

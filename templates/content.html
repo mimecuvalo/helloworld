@@ -119,7 +119,7 @@
       <ul>
       {% for comment in comments %}
         {% if comment.is_remote %}
-          <li data-post-id="{{ comment.post_id }}">
+          <li data-post-id="{{ comment.post_id }}" data-post-user="{% if comment.from_user.startswith('http://') %}{{ comment.from_user }}{% end %}">
             {% raw _('%(profile_url)s said: ') % { "profile_url": ('<a href="' + comment.from_user + '">' + comment.username + '</a>' if comment.from_user.startswith('http://') else comment.from_user.split('@')[0]) } %}
             {% raw comment.view %}
             {% if is_owner_viewing %}
@@ -127,7 +127,7 @@
             {% end %}
           </li>
         {% else %}
-          <li data-post-id="{{ comment.id }}">
+          <li data-post-id="tag:{{ handler.request.host }}:{{ content_url(comment) }}" data-post-user="{{ nav_url(username=comment.username) }}">
             {% raw _('<a href="%(profile_url)s">%(name)s</a> said: ') % { "profile_url": nav_url(username=comment.username), "name": comment.username } %}
             {% raw comment.view %}
             {% if is_owner_viewing %}
