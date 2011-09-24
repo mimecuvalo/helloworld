@@ -446,7 +446,7 @@ div[name=hw-cart-item] {
   -webkit-border-radius: 5px;
   border-radius: 5px;
   display: none;
-  z-index: 1000;
+  z-index: 2000;
 }
 .hw-tooltip:hover .hw-tooltip-text {
   display: block;

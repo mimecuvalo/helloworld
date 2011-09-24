@@ -58,7 +58,7 @@ hw.addToFeed = function(html) {
   var div = document.createElement('div');
   div.innerHTML = html;
   docFragment.appendChild(div);
-  hw.$('feed').insertBefore(docFragment, hw.$('feed').firstChild);
+  hw.$('hw-feed').insertBefore(docFragment, hw.$('hw-feed').firstChild);
 };
 
 hw.save = function() {
