@@ -127,29 +127,35 @@ class SalmonHandler(BaseHandler):
       atom_content = salmon_doc.find('atom:content').string
       atom_content = users.sanitize(tornado.escape.xhtml_unescape(atom_content))
 
-      already_posted = self.models.content_remote.get(to_username=self.display["user"].username,
+      existing_content = self.models.content_remote.get(to_username=self.display["user"].username,
                                                       from_user=signer_uri,
-                                                      type='post',
                                                       view=atom_content)[0]
-      if already_posted:
-        return
 
       thread = salmon_doc.find('thr:in-reply-to')
       ref = ''
       if thread:
-        local_url = thread['ref'].split(':')[2]
-        content_url = url_factory.load_basic_parameters(self, url=local_url)
-        content = self.models.content.get(username=self.display["user"].username,
-                                          name=content_url['name'])[0]
-        if not content:
-          raise tornado.web.HTTPError(400)
-        ref = content_url['name']
-        content.comments += 1
-        content.save()
+        try:
+          local_url = thread['ref'].split(':')[2]
+          content_url = url_factory.load_basic_parameters(self, url=local_url)
+          content = self.models.content.get(username=self.display["user"].username,
+                                            name=content_url['name'])[0]
+          if not content:
+            raise tornado.web.HTTPError(400)
+          ref = content_url['name']
+          content.comments += 1
+          content.save()
+        except Exception as ex:
+          import logging
+          logging.error("something wrong with thread")
+          logging.error(ex)
 
       is_spam = spam.guess(atom_content)
 
-      post_remote = self.models.content_remote()
+      if existing_content:
+        # possible that it's picked up via feed, before we get the salmon call
+        post_remote = existing_content
+      else:
+        post_remote = self.models.content_remote()
       post_remote.to_username = self.display["user"].username
       post_remote.from_user = signer_uri
       post_remote.username = user_remote.username

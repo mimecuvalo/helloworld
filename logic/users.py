@@ -225,12 +225,12 @@ def get_remote_user_info(handler, user_url, profile):
     user_remote = handler.models.users_remote()
 
   user_remote.local_username = profile
+  user_remote.avatar = feed_doc.find('logo').string
   if author:
-    user_remote.avatar = author.find('link', rel='avatar')['href']
+    #user_remote.avatar = author.find('link', rel='avatar')['href']
     user_remote.username = author.find(re.compile('.+:preferredusername$')).string
     user_remote.name = author.find(re.compile('.+:displayname$')).string
   elif webfinger_doc:
-    user_remote.avatar = feed_doc.find('logo').string
     user_remote.username = webfinger_doc.find('Property', type="http://apinamespace.org/atom/username").string
   user_remote.profile_url = alias
   user_remote.magic_key = magic_key
