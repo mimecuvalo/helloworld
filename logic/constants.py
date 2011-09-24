@@ -12,8 +12,8 @@ defaults = {
   'port' : 8282,
   'page_size' : 20,
   'single_user_site' : 0,
-  'source' : 'ssh://nightlig@nightlight.ws/home/nightlig/git/helloworld',
-  'source_website' : 'https://www.helloworldprogram.com/source',
+  'source' : 'ssh://git@github.com:mimecuvalo/helloworld.git',
+  'source_website' : 'http://www.helloworldprogram.com',
   'push_hub' : 'http://pubsubhubbub.appspot.com',
 
   # Set to 1 on dedicated servers where you can listen on ports
