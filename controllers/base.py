@@ -49,6 +49,7 @@ class BaseHandler(tornado.web.RequestHandler):
     self.display["content"] = None
     self.display["tag_date"] = "2011-09-25"
     self.display["random"] = random
+    self.display["urllib"] = urllib
     self.display["content_url"] = self.content_url
     self.display["resource_url"] = self.resource_url
     self.display["js_escape"] = self.js_escape

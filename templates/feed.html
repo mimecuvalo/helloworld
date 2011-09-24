@@ -27,9 +27,6 @@
     <name>{{ user.name }}</name>
     <uri>{{ nav_url(host=True, username=user.username) }}</uri>
     <email>{{ user.oauth }}</email>
-    {% if user.logo %}
-    <link rel="avatar" type="image/jpg" media:width="73" media:height="73" href="{{ nav_url(host=True, section=user.logo) }}" />
-    {% end %}
     <poco:preferredUsername>{{ user.username }}</poco:preferredUsername>
     <poco:displayName>{{ user.name }}</poco:displayName>
     <poco:emails>
@@ -43,7 +40,9 @@
       <poco:primary>true</poco:primary>
     </poco:urls>
   </author>
-  <logo>{{ static_url('favicon_large.jpg', include_host=True) }}</logo>
+  {% if user.logo %}
+  <logo>{{ nav_url(host=True, section=user.logo) }}</logo>
+  {% end %}
   <icon>{{ static_url('favicon.ico', include_host=True) }}</icon>
   {% if type(feed) is list %}
     {% for item in feed %}
@@ -51,7 +50,7 @@
       <entry>
         <title>{{ item.title }}</title>
         <link href="{{ content_url(item, host=True) }}" />
-        <id>tag:{{ handler.request.host }},{{ tag_date }}:{{ content_url(item) }}</id>
+        <id>tag:{{ handler.request.host }},{{ tag_date }}:{{ urllib.quote(content_url(item)) }}</id>
         <content type="html">
           {{ add_base_uris(item.view) }}
           {{ '<img src="' + nav_url(host=True, section='stats', url=content_url(item)) + '">' }}
