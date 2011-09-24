@@ -8,10 +8,14 @@ class SearchHandler(BaseHandler):
   def get(self):
     query = self.get_argument('q', "")
 
-    if query:
-      content_owner = self.models.users.get(username=self.breadcrumbs["profile"])[0]
+    content_owner = self.models.users.get(username=self.breadcrumbs["profile"])[0]
 
-      if content_owner and content_owner.adult_content \
+    if not content_owner:
+      content_owner = self.models.users.get(1)
+      self.breadcrumbs["profile"] = content_owner.username
+
+    if query:
+      if content_owner.adult_content \
           and self.get_cookie("adult_content") != "1" and not self.is_owner_viewing(self.breadcrumbs["profile"]):
         self.fill_template("adult_content.html")
         return
@@ -22,7 +26,7 @@ class SearchHandler(BaseHandler):
     else:
       results = []
 
-    self.display["content_owner"] = self.models.users.get(username=self.breadcrumbs["profile"])[0]
+    self.display["content_owner"] = content_owner
     self.display["query"] = query
     self.display["results"] = results
     self.fill_template("search.html")

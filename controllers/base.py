@@ -4,6 +4,7 @@ import httplib
 import logging
 import os
 import os.path
+import random
 import re
 import sys
 import urllib
@@ -46,6 +47,7 @@ class BaseHandler(tornado.web.RequestHandler):
     self.display["display"] = self.display
     self.display["bidi"] = self.bidi
     self.display["content"] = None
+    self.display["random"] = random
     self.display["content_url"] = self.content_url
     self.display["resource_url"] = self.resource_url
     self.display["js_escape"] = self.js_escape
