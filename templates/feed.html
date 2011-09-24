@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<{% if type(feed) is list %}feed{% else %}entry{% end %} xml:base="{{ base_uri }}" xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom" xmlns:activity="http://activitystrea.ms/spec/1.0/" xmlns:poco="http://portablecontacts.net/spec/1.0" xmlns:media="http://purl.org/syndication/atommedia">
+<{% if type(feed) is list %}feed{% else %}entry{% end %} xml:base="{{ base_uri }}" xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom" xmlns:activity="http://activitystrea.ms/spec/1.0/" xmlns:poco="http://portablecontacts.net/spec/1.0" xmlns:media="http://purl.org/syndication/atommedia" xmlns:thr="http://purl.org/syndication/thread/1.0">
   {% if type(feed) is list %}
   <generator uri="http://www.helloworldprogram.com" version="0.82beta">Hello, world.</generator>
   <id>{{ nav_url(host=True, username=user.username, section='feed') }}</id>
@@ -23,9 +23,8 @@
   <updated>{% if type(feed) is list and len(feed) %}{{ feed[0].date_created.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}{% end %}</updated>
   {% end %}
   <author>
-    <id>{{ nav_url(host=True, username=user.username) }}</id>
     <activity:object-type>http://activitystrea.ms/schema/1.0/person</activity:object-type>
-    <name type="html">{{ user.name }}</name>
+    <name>{{ user.name }}</name>
     <uri>{{ nav_url(host=True, username=user.username) }}</uri>
     <email>{{ user.oauth }}</email>
     {% if user.logo %}
@@ -52,7 +51,7 @@
       <entry>
         <title>{{ item.title }}</title>
         <link href="{{ content_url(item, host=True) }}" />
-        <id>tag:{{ handler.request.host }}:{{ content_url(item) }}</id>
+        <id>tag:{{ handler.request.host }},{{ tag_date }}:{{ content_url(item) }}</id>
         <content type="html">
           {{ add_base_uris(item.view) }}
           {{ '<img src="' + nav_url(host=True, section='stats', url=content_url(item)) + '">' }}

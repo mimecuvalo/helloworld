@@ -127,7 +127,7 @@
             {% end %}
           </li>
         {% else %}
-          <li data-post-id="tag:{{ handler.request.host }}:{{ content_url(comment) }}" data-post-user="{{ nav_url(username=comment.username) }}">
+          <li data-post-id="tag:{{ handler.request.host }},{{ tag_date }}:{{ content_url(comment) }}" data-post-user="{{ nav_url(username=comment.username) }}">
             {% raw _('<a href="%(profile_url)s">%(name)s</a> said: ') % { "profile_url": nav_url(username=comment.username), "name": comment.username } %}
             {% raw comment.view %}
             {% if is_owner_viewing %}
