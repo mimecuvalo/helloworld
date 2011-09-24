@@ -50,7 +50,7 @@
       <entry>
         <title>{{ item.title }}</title>
         <link href="{{ content_url(item, host=True) }}" />
-        <id>tag:{{ handler.request.host }},{{ tag_date }}:{{ urllib.quote(content_url(item).encode("utf-8") }}</id>
+        <id>tag:{{ handler.request.host }},{{ tag_date }}:{{ urllib.quote(content_url(item).encode("utf-8")) }}</id>
         <content type="html">
           {{ add_base_uris(item.view) }}
           {{ '<img src="' + nav_url(host=True, section='stats', url=content_url(item)) + '">' }}
