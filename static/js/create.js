@@ -1922,9 +1922,9 @@ hw.reply = function(event, el) {
     var input = hw.getFirstElementByName('hw-comment-input');
     var str = '@' + username + (input.value ? ' ' : '') + input.value + ' ';
     input.value = str;
-    if (el.parentNode.hasAttribute('data-post-id')) {
-      input.setAttribute('data-thread', el.parentNode.getAttribute('data-post-id'));
-      input.setAttribute('data-thread-user', el.parentNode.getAttribute('data-post-user'));
+    if (el.parentNode.parentNode.hasAttribute('data-post-id')) {  // we go to <li> element
+      input.setAttribute('data-thread', el.parentNode.parentNode.getAttribute('data-post-id'));
+      input.setAttribute('data-thread-user', el.parentNode.parentNode.getAttribute('data-post-user'));
     }
     input.focus();
     if (input.setSelectionRange) {

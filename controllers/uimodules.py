@@ -105,8 +105,9 @@ class ContentView(tornado.web.UIModule):
                                                                  deleted=False)[:]
         for comment in remote_comments:
           comment.is_remote = 1
+        thread_url = 'tag:' + self.handler.request.host + ',' self.handler.display["tag_date"] ':' + self.handler.content_url(content)
         local_comments = self.handler.models.content.get(section='comments',
-                                                         thread=self.handler.content_url(content),
+                                                         thread=thread_url,
                                                          is_spam=False,
                                                          deleted=False)[:]
         for comment in local_comments:

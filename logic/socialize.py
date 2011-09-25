@@ -23,11 +23,13 @@ def publish(handler, content):
 
 def reply(handler, content, mentions=None, thread=None):
   profile = handler.get_author_username()
-  thread = thread or content.thread
+  thread = thread or content.thread # XXX this is pretty damn confusing...'thread' used for local comments, content.thread for remote
 
   thread_user_remote = None
   if thread:
     thread_content = handler.models.content_remote.get(to_username=profile, post_id=thread)[0]
+    if not thread_content:
+      return
     thread_user_remote = handler.models.users_remote.get(local_username=profile, profile_url=thread_content.from_user)[0]
 
     if thread_user_remote and thread_user_remote.salmon_url:

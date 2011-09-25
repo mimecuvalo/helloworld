@@ -42,7 +42,7 @@
   <input name="hw-price" type="text" placeholder="{{ _("price") }}"
          {% if content %}value="{{ content.price }}"{% end %}>
 
-  <input name="hw-title" type="text" placeholder="{{ _("title (optional)") }}"
+  <input name="hw-title" type="text" placeholder="{{ _("title (optional)") }}" tabindex="1"
          {% if content %}value="{{ content.title }}"{% end %}>
 
   <span name="hw-save-wrapper">
@@ -222,7 +222,7 @@
 {% end %}
 <div class="clear"></div>
 <div name="hw-view">
-  <div class="{% if not content and individual_content %}hw-new{% end %} {% if section_template %}hw-template-{{ section_template }}{% end %}" name="hw-wysiwyg"
+  <div class="{% if not content and individual_content %}hw-new{% end %} {% if section_template %}hw-template-{{ section_template }}{% end %}" name="hw-wysiwyg" tabindex="2"
     {% if not content or not individual_content %}contenteditable{% end %}
     onmouseup="hw.saveSelection()" onkeyup="hw.saveSelection()" onfocus="hw.restoreSelection()">{% if content and individual_content %}{% raw content.view %}{% end %}</div>
 </div>
