@@ -75,7 +75,7 @@
     {% end %}
   {% else %}
     <title type="html">{{ title }}</title>
-    <id>tag:{{ handler.request.host }}:{{ title }}:{{ id }}</id>
+    <id>tag:{{ handler.request.host }},{{ tag_date }}:{{ urllib.quote(id.encode("utf-8")) }}</id>
     <content type="html">{{ atom_content }}</content>
     <updated>{{ utcnow.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}</updated>
     <published>{{ utcnow.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}</published>

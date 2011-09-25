@@ -129,14 +129,14 @@ def salmon_reply(handler, user_remote, content, thread=None):
   handler.display['id'] = handler.content_url(content)
   handler.display['title'] = content.title
   handler.display['atom_content'] = content.view
-  action = 'comment' if content.section == 'comments' else 'post'
-  handler.display['verb'] = 'http://activitystrea.ms/schema/1.0/' + action
+  object_type = 'comment' if content.section == 'comments' else 'note'
+  handler.display['verb'] = 'http://activitystrea.ms/schema/1.0/post'
   handler.display['activity_extra'] = """
-  <activity:object-type>http://activitystrea.ms/schema/1.0/note</activity:object-type>
+  <activity:object-type>http://activitystrea.ms/schema/1.0/%(object_type)s</activity:object-type>
   <link href="%(content_url)s" rel="alternate" type="text/html" />
   <link href="%(profile_url)s" rel="ostatus:attention" />
   <link href="%(profile_url)s" rel="mentioned" />
-""" % { 'content_url': handler.content_url(content, host=True), 'profile_url': user_remote.profile_url }
+""" % { 'object_type': object_type, 'content_url': handler.content_url(content, host=True), 'profile_url': user_remote.profile_url }
   thread = thread or content.thread
   if thread:
     handler.display['activity_extra'] += """<thr:in-reply-to ref="%(thread)s" xmlns:thr="http://purl.org/syndication/thread/1.0" />""" % { 'thread': thread }
