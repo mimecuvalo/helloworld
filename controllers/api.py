@@ -257,7 +257,7 @@ class ApiHandler(BaseHandler):
       else:
         spam.train_ham(comment)
       content.title = 'comment'
-      thread_url = 'tag:' + self.request.host + ',' self.display["tag_date"] ':' + self.content_url(commented_content)
+      thread_url = 'tag:' + self.request.host + ',' + self.display["tag_date"] + ':' + self.content_url(commented_content)
       content.thread = thread_url
       content.thread_user = self.get_argument('thread_user', None)
       content.view = users.sanitize(comment)
