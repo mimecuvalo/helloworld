@@ -423,33 +423,33 @@ div[name=hw-cart-item] {
   border-bottom: 1px solid black;
 }
 
-.hw-tooltip {
+span[data-tooltip]:hover {
   position: relative;
-}
-.hw-tooltip-link {
-  color: #03c;
   cursor: hand;
   cursor: pointer;
 }
-.hw-tooltip:hover .hw-tooltip-link {
-  text-decoration: underline;
-}
-.hw-tooltip-text {
-  position: absolute;
-  bottom: 25px;
-  right: 5px;
+
+span[data-tooltip]:hover:after {
+  content: attr(data-tooltip);
+  padding: 4px 8px;
+  color: #333;
   width: 200px;
-  padding: 5px;
-  border: 1px solid black;
-  background-color: white;
+  position: absolute;
+  right: 0;
+  bottom: 25px;
+  z-index: 2000;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
-  display: none;
-  z-index: 2000;
-}
-.hw-tooltip:hover .hw-tooltip-text {
-  display: block;
+  -moz-box-shadow: 0px 0px 4px #222;
+  -webkit-box-shadow: 0px 0px 4px #222;
+  box-shadow: 0px 0px 4px #222;
+  background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #eeeeee),color-stop(1, #cccccc));
+  background-image: -webkit-linear-gradient(top, #eeeeee, #cccccc);
+  background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);
+  background-image: -ms-linear-gradient(top, #eeeeee, #cccccc);
+  background-image: -o-linear-gradient(top, #eeeeee, #cccccc);
 }
 
 .hw-comment-header {
@@ -476,5 +476,9 @@ textarea[name=hw-comment-input] {
   #hw-content {
     position: static;
     padding-left: 1em;
+  }
+
+  #hw-content a[href]:after {
+    content: " (" attr(href) ") ";
   }
 }

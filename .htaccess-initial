@@ -7,7 +7,7 @@ ErrorDocument 500 $HTTP_PREFIX/static/html/error.html
 Options All -Indexes
 Options +FollowSymLinks
 
-AddHandler fastcgi-script .fcgi
+AddHandler fcgid-script .fcgi
 
 RewriteEngine on
 RewriteBase /
