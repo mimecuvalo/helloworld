@@ -485,6 +485,7 @@ hw.supportsLocalStorage = function() {
   return 'localStorage' in window && window['localStorage'] !== null;
 };
 
+hw.addedFirstUrlToHistory = false;
 hw.navigate = function(event, url, title) {
   if (!hw.supportsHistory()) {
     return;  // allow regular links to continue
@@ -493,6 +494,12 @@ hw.navigate = function(event, url, title) {
   if (event) {
     hw.preventDefault(event);  // stop regular links from continuing
   }
+
+  if (!hw.addedFirstUrlToHistory) {
+    history.replaceState({ 'title': document.title }, document.title, window.location.href);
+    hw.addedFirstUrlToHistory = true;
+  }
+  hw.startUrl = null; // XXX chrome, ugh, see below in popstate
 
   history.pushState({ 'title': title }, title, url);
   document.title = title;
@@ -559,7 +566,7 @@ hw.preloadNextContent = function() {
 Event.observe(window, 'load', hw.preloadNextContent, false);
 hw.startUrl = window.location.href;
 Event.observe(window, 'popstate', function(e) {
-  if (hw.startUrl == window.location.href) { // chrome sends a popstate event onload too
+  if (hw.startUrl == window.location.href) { // XXX chrome sends a popstate event onload too
     hw.startUrl = null;
     return;
   }

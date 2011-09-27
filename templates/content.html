@@ -1,7 +1,7 @@
 {% if individual_content and content.section != 'main' %}
   <nav name="hw-neighbors">
     {% comment NOTE whitespace is important here %}
-    <a name="hw-start" rel="start" href="{{ content_url(start) }}">{{ _("oldest") }}</a><a
+    <a name="hw-start" rel="start" href="{{ content_url(start, host=True) }}">{{ _("oldest") }}</a><a
 
        name="hw-previous" rel="prev"
         {% if previous %}
@@ -14,7 +14,7 @@
             {% if content_owner.title %}
               {% set title = content_owner.title + '-' + title %}
             {% end %}
-            onclick='hw.navigate(event, "{{ content_url(previous) }}", "{% raw js_in_html_escape(previous.title) %}")'
+            onclick='hw.navigate(event, "{{ content_url(previous, host=True) }}", "{% raw js_in_html_escape(previous.title) %}")'
           {% end %}
         {% else %}
           class="hw-disabled"
@@ -33,13 +33,13 @@
             {% if content_owner.title %}
               {% set title = content_owner.title + '-' + title %}
             {% end %}
-            onclick='hw.navigate(event, "{{ content_url(next) }}", "{% raw js_in_html_escape(next.title) %}")'
+            onclick='hw.navigate(event, "{{ content_url(next, host=True) }}", "{% raw js_in_html_escape(next.title) %}")'
           {% end %}
         {% else %}
           class="hw-disabled"
         {% end %}>{{ _("newer") }}</a><a
         
-        name="hw-last" rel="last" href="{{ content_url(last) }}">{{ _("newest") }}</a>
+        name="hw-last" rel="last" href="{{ content_url(last, host=True) }}">{{ _("newest") }}</a>
   </nav>
 {% end %}
 
