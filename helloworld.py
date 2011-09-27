@@ -56,8 +56,11 @@ else:
 define("port", default=constants['port'], type=int, help="Port to listen on.")
 define("debug", default=constants['debug'], type=int, help="Run in debug mode.")
 
-logging_level = logging.DEBUG if constants['debug'] else logging.INFO
-logging.basicConfig(level=logging_level, format='%(asctime)s %(levelname)s %(message)s', filename=(os.path.normpath(os.path.realpath(__file__) + '/../server.log')))
+if constants['debug']:
+  logging_level = logging.DEBUG
+else:
+  logging_level = logging.INFO
+logging.basicConfig(level=logging_level, format='%(asctime)s %(levelname)s %(message)s', filename=(os.path.join(os.path.dirname(os.path.realpath(__file__)), "server.log")))
 
 tornado.options.parse_command_line()
 tornado.locale.load_translations(os.path.join(os.path.dirname(__file__), "translations"))
@@ -77,14 +80,14 @@ settings = {
   "debug": (options.debug == 1),
   "ui_modules": controllers.uimodules,
   "cookie_secret": constants['xsrf_secret'],
-  "template_loader": tornado.template.Loader(os.path.normpath(os.path.realpath(__file__) + '/../templates')),
+  "template_loader": tornado.template.Loader(os.path.join(os.path.dirname(os.path.realpath(__file__)), "templates")),
 }
 
 prefix = r"(?:" + tornado.escape.url_escape(constants['https_prefix']).replace('%2F', '/') + r")?"
 prefix += r"(?:" + tornado.escape.url_escape(constants['http_prefix']).replace('%2F', '/') + r")?"
 
-if not constants['ioloop']:
-  prefix += r"/helloworld.fcgi"
+if not constants['ioloop'] and not constants['use_mod_rails']:
+  prefix += r"/helloworld.py"
 
 if setup:
   handlers = [
@@ -140,5 +143,6 @@ if constants['ioloop']:
   tornado.ioloop.IOLoop.instance().start()
 else:
   application = tornado.wsgi.WSGIApplication(handlers, **settings)
-  from tools import fastcgi
-  fastcgi.runfastcgi(application, method="threaded", pidfile="hello.pid", daemonize="false")
+  if not constants['use_mod_rails']:
+    from tools import fastcgi
+    fastcgi.runfastcgi(application, method="threaded", pidfile="hello.pid", daemonize="false")

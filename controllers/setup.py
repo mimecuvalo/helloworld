@@ -18,7 +18,8 @@ class SetupHandler(BaseHandler):
     self.constants['debug'] = True
 
     if self.get_argument('kill', ''):
-      os.system('kill `cat hello.pid`')
+      os.system('kill `cat hello.pid`') # for fcgi
+      os.system('touch ../tmp/restart.txt') # for passenger
       self.set_status(204)
       return
 

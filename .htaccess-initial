@@ -7,7 +7,11 @@ ErrorDocument 500 $HTTP_PREFIX/static/html/error.html
 Options All -Indexes
 Options +FollowSymLinks
 
-AddHandler fcgid-script .fcgi
+# comment these Passenger lines out if you want to use fcgid instead, also see below
+PassengerEnabled On
+PassengerAppRoot $FULL_PATH_TO_SITE
+
+AddHandler fcgid-script .py
 
 RewriteEngine on
 RewriteBase /
@@ -31,17 +35,19 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_URI} static/.*
 RewriteRule ^static/resource/(.*)$ $HTTPS_PREFIX/private/$1 [QSA,L]
 
-RewriteCond %{HTTPS} !=on
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_URI} !(helloworld.fcgi)
-RewriteCond %{REQUEST_URI} !(/static/.*)
-RewriteRule ^(.*)$ $HTTP_PREFIX/helloworld.fcgi/$1 [QSA,L]
+# uncomment these lines out if you want to use fcgid instead
 
-RewriteCond %{HTTPS} =on
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_URI} !(helloworld.fcgi)
-RewriteCond %{REQUEST_URI} !(/static/.*)
-RewriteRule ^(.*)$ $HTTPS_PREFIX/helloworld.fcgi/$1 [QSA,L]
+#RewriteCond %{HTTPS} !=on
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_URI} !(helloworld.py)
+#RewriteCond %{REQUEST_URI} !(/static/.*)
+#RewriteRule ^(.*)$ $HTTP_PREFIX/helloworld.py/$1 [QSA,L]
+
+#RewriteCond %{HTTPS} =on
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_URI} !(helloworld.py)
+#RewriteCond %{REQUEST_URI} !(/static/.*)
+#RewriteRule ^(.*)$ $HTTPS_PREFIX/helloworld.py/$1 [QSA,L]
 
 AddType video/ogg .ogv
 AddType video/mp4 .mp4

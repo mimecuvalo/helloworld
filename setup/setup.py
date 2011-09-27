@@ -21,6 +21,7 @@ htaccess_initial = htaccess_initial_file.read()
 htaccess_initial_file.close()
 
 htaccess = htaccess_initial.replace('$' + protocol.upper() + '_PREFIX', prefix)
+htaccess = htaccess.replace('$FULL_PATH_TO_SITE', os.path.normpath(os.path.realpath(__file__) + '/../../'))
 htaccess_path = os.path.normpath(os.path.realpath(__file__) + '/../../.htaccess')
 htaccess_file = open(htaccess_path, 'w')
 htaccess_file.write(htaccess)

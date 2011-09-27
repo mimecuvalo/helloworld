@@ -732,7 +732,7 @@ hw.htmlPreview = function(force, codeMirror) {
 
   if (document.activeElement == html || document.activeElement == htmlCMTextarea) {
     wysiwyg.innerHTML = html.value;
-  } else {
+  } else if (document.activeElement != styleCMTextarea && document.activeElement != codeCMTextarea) {
     if (!hw.isHidden(htmlWrapper)) {
       html.value = wysiwyg.innerHTML;
       if (hw.cm) {
