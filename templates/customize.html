@@ -25,6 +25,8 @@
         <dd><input id="hw-oauth" name="oauth" maxlength="255" type="text" data-default="{{ user.oauth }}" placeholder="{{ _('email') }}" value="{{ user.oauth }}" onchange="if (!confirm('{{ js_escape(_('double check your address - you won\'t be able to login again if it\'s wrong. is this correct? ')) }}' + this.value)) this.value=this.getAttribute('data-default')"></dd>
         <dt><label for="hw-title">{{ _('title:') }}</label></dt>
         <dd><input id="hw-title" name="title" maxlength="255" type="text" placeholder="{{ _('title') }}" value="{{ user.title }}"></dd>
+        <dt><label for="hw-description">{{ _('description:') }}</label></dt>
+        <dd><input id="hw-description" name="description" maxlength="255" type="text" placeholder="{{ _('description') }}" value="{{ user.description }}"></dd>
         <dt><label for="hw-customize-logo">{{ _('logo:') }}</label></dt>
         <dd><input id="hw-customize-logo" name="logo" type="text" placeholder="{{ _('logo') }}" value="{{ user.logo }}"> <button onclick="hw.preventDefault(event);hw.selectFile(hw.$('hw-customize-logo'))">{{ _('select image') }}</button></dd>
         <dt><label for="hw-favicon">{{ _('favicon:') }}</label></dt>

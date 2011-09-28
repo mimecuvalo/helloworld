@@ -583,6 +583,10 @@ div[name=hw-preview] img {
   margin: -1px 0 -1px -6px;
 }
 
+.CodeMirror {
+  background-color: white;
+  color: black;
+}
 .CodeMirror-scroll {
   height: 190px;
   border: 1px solid gray;

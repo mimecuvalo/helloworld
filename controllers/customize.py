@@ -23,6 +23,7 @@ class CustomizeHandler(BaseHandler):
     user = self.get_author_user()
 
     user.title = self.get_argument('title', '')
+    user.description = self.get_argument('description', '')
     user.oauth = self.get_argument('oauth')
     user.name = self.get_argument('name', '')
     user.favicon = self.get_argument('favicon', '')

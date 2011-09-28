@@ -90,6 +90,7 @@ class resource_access(Model):
 class users(Model):
   class Meta:
     defaults = {'title': '',
+                'description': '',
                 'name': '',
                 'google_analytics': '',
                 'license': '',

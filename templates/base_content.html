@@ -10,6 +10,9 @@
   {% end %}
   <link rel="author" href="{{ nav_url(username=content.username, section='about') }}">
   <link rel="search" href="{{ nav_url(username=content.username, section='opensearch') }}" type="application/opensearchdescription+xml" title="{{ content_owner.title }}">
+  {% if content_owner.description %}
+    <meta name="description" content="{{ content_owner.description }}" />
+  {% end %}
 {% end %}
 
 {% block favicon %}
