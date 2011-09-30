@@ -1,0 +1,12 @@
+/* humanstxt.org */
+
+/* TEAM */
+Creator: mime čuvalo
+Contact: mimecuvalo@gmail.com
+Site: http://www.nightlight.ws
+Location: teh interwebs
+
+/* THANKS */
+
+/* SITE */
+Components: helloworld

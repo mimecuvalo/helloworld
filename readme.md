@@ -33,6 +33,8 @@ federated social web tumblr/blog/wordpress-like app to be used on shared servers
 - be a good, easy-to-use alternative to what's out there!
 
 ## todo
+- autocomplete username if typing '@'
+- fb/twitter mirroring?
 - privacy
 - possibly: forum/wiki
 - possibly: js "templating" - be able to add microformatting, creativeworks/recipes/person, schema.org
