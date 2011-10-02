@@ -112,7 +112,7 @@
           <textarea name="hw-comment-input" class="hw-box-black" type="text" placeholder="{{ _('what\'s your take?') }}" data-local-id="{{ content.id }}"></textarea> <button class="hw-button hw-button-blue" onclick="hw.commentSubmit()">{{ _('submit') }}</button>
         </form>
         {% else %}
-          <h2 class="hw-comment-header">{{ _('you need to be logged in to leave a comment.') }} <a href="{{ nav_url(section='login', next=handler.request.uri) }}" data-logging-in="logging in..." data-failed="{{ _('login failed. try again.') }}" onclick="hw.login(event, this)">{{ _('login') }}</a></h2>
+          <h2 class="hw-comment-header">{{ _('you need to be logged in to leave a comment.') }} <a class="hw-button hw-button-green" href="{{ nav_url(section='login', next=handler.request.uri) }}" data-logging-in="logging in..." data-failed="{{ _('login failed. try again.') }}" onclick="hw.login(event, this)">{{ _('login') }}</a></h2>
         {% end %}
       {% end %}
 
@@ -147,6 +147,8 @@
       {% if item.is_remote %}
         {% module Moderate(item) %}
       {% end %}
+
+      <div class="clear"></div>
     </footer>
   {% end %}
 </section>

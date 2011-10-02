@@ -194,7 +194,6 @@ strong {
 #hw-content nav[name=hw-neighbors] {
   text-align: center;
   padding: 1px 0;
-  background-color: white;
   float: right;
   width: 335px;
 }
@@ -208,6 +207,7 @@ strong {
   margin-bottom: 6px;
   padding: 0 6px;
   width: 290px;
+  background-color: white;
   border: 1px solid #fa0;
   -moz-box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
   -webkit-box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
@@ -328,7 +328,6 @@ div[name=hw-view] {
   z-index: 1;
   top: 6px;
   right: 6px;
-  background-color: white;
 }
 
 #hw-user > .hw-selected {
@@ -420,7 +419,7 @@ form#hw-login-form {
   font-size: 0.8461em;
   margin: 6px 6px 24px 0;
   border-top: 1px solid #0bf;
-  padding: 3px 6px;
+  padding: 3px 6px 6px 3px;
 }
 
 #hw-content header h1,
@@ -501,7 +500,7 @@ a.hw-read-more {
   max-width: 154px;
 }
 .hw-album > li:hover {
-  box-shadow: 3px 3px 6px #666;
+  box-shadow: 2px 2px 6px #666;
 }
 .hw-album > li > a:first-child {
   min-height: 119px;
@@ -604,6 +603,7 @@ span[data-tooltip]:hover:after {
 }
 
 .hw-comment-header {
+  float: left;
   font-size: 1.23em;
   margin: 1em 0;
 }

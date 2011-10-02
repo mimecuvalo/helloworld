@@ -63,7 +63,7 @@ div[name=hw-options].hw-open {
 }
 
 div[name=hw-options] dl {
-  width: 440px;
+  width: 447px;
 }
 
 div[name=hw-options] dl label {
@@ -80,7 +80,7 @@ div[name=hw-options] dt {
 }
 .hw-new div[name=hw-options] dd,
 div[name=hw-options] dd {
-  width: 275px;
+  width: 290px;
   display: inline-block;
   zoom: 1; /* workaround ie7 */
   *display: inline; /* workaround ie7 */
