@@ -10,6 +10,7 @@ from BeautifulSoup import BeautifulSoup
 import Image
 
 import tornado.escape
+import tornado.web
 from base import BaseHandler
 from logic import media
 
@@ -48,8 +49,11 @@ class UploadHandler(BaseHandler):
     tags = self.get_argument('hw-media-tags', '')
 
     parent_directory = self.resource_directory(self.get_argument('hw-media-section'), self.get_argument('hw-media-album', ''))
-    leafname = filename[filename.rfind('/') + 1:]  if is_remote else filename
+    leafname = os.path.basename(filename)
     full_path = os.path.join(parent_directory, leafname).replace('..', '')
+
+    if leafname in ('crossdomain.xml', 'clientaccesspolicy.xml', '.htaccess', '.htpasswd'):
+      raise tornado.web.HTTPError(400, "i call shenanigans")
 
     if not os.path.isdir(parent_directory):
       os.makedirs(parent_directory)

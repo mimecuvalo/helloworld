@@ -38,6 +38,10 @@ class MediaHandler(BaseHandler):
     uploaded_file = self.request.files['hw-media-uploaded-file'][0]
     full_path = os.path.join(parent_directory, uploaded_file['filename'])
 
+    leafname = os.path.basename(full_path)
+    if leafname in ('crossdomain.xml', 'clientaccesspolicy.xml', '.htaccess', '.htpasswd'):
+      raise tornado.web.HTTPError(400, "i call shenanigans")
+
     if not os.path.isdir(parent_directory):
       os.makedirs(parent_directory)
 
