@@ -1167,7 +1167,7 @@ hw.createMediaIframe = function(callback) {
   iframe.src = 'about:blank';
   iframe.setAttribute('name', 'hw-media-creator');
   iframe.setAttribute('width', '100%');
-  iframe.setAttribute('height', '78');
+  iframe.setAttribute('height', '88');
   iframe.setAttribute('class', 'hw-slide-transition');
 
   var fn = function() {

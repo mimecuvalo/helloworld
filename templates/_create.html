@@ -19,41 +19,41 @@
   <input name="hw-thread" type="hidden" value="">
 
   {% set section_template = '' %}
-  {% if individual_content %}
-  <select name="hw-section-album" onclick="" onchange="hw.sectionChange(this)">
-    <option value="_new_">{{ _('new section/album...') }}</option>
-    <option value="" {% if len(sections) == 0 or not content %}selected{% end %}>------------</option>
-    <option value="main" {% if content and content.section == 'main' %}selected{% end %} data-hidden="false">{{ _('main (top-level page)') }}</option>
-    {% for section in sections %}
-      <option value="{{ section['name'] }}||{{ section['template'] }}|" {% if content and content.section == section['name'] and not content.album %}selected{% end %} data-hidden="{% if section['hidden'] %}true{% else %}false{% end %}">{{ section['title'] }}</option>
-      {% if content and content.section == section['name'] %}
-        {% set section_template = section['template'] %}
-      {% end %}
-      {% for album in section['albums'] %}
-        <option value="{{ section['name'] }}|{{ album['name'] }}|{{ section['template'] }}|{{ album['template'] }}" {% if content and content.section == section['name'] and content.album == album['name'] %}selected{% end %} data-hidden="{% if section['hidden'] or album['hidden'] %}true{% else %}false{% end %}"> - {{ album['title'] }}</option>
-        {% if content and content.section == section['name'] and content.album == album['name'] and album['template'] %}
-          {% set section_template = album['template'] %}
+  <div class="hw-create-section-wrapper">
+    {% if individual_content %}
+      <select name="hw-section-album" onclick="" onchange="hw.sectionChange(this)">
+        <option value="_new_">{{ _('new section/album...') }}</option>
+        <option value="" {% if len(sections) == 0 or not content %}selected{% end %}>------------</option>
+        <option value="main" {% if content and content.section == 'main' %}selected{% end %} data-hidden="false">{{ _('main (top-level page)') }}</option>
+        {% for section in sections %}
+          <option value="{{ section['name'] }}||{{ section['template'] }}|" {% if content and content.section == section['name'] and not content.album %}selected{% end %} data-hidden="{% if section['hidden'] %}true{% else %}false{% end %}">{{ section['title'] }}</option>
+          {% if content and content.section == section['name'] %}
+            {% set section_template = section['template'] %}
+          {% end %}
+          {% for album in section['albums'] %}
+            <option value="{{ section['name'] }}|{{ album['name'] }}|{{ section['template'] }}|{{ album['template'] }}" {% if content and content.section == section['name'] and content.album == album['name'] %}selected{% end %} data-hidden="{% if section['hidden'] or album['hidden'] %}true{% else %}false{% end %}"> - {{ album['title'] }}</option>
+            {% if content and content.section == section['name'] and content.album == album['name'] and album['template'] %}
+              {% set section_template = album['template'] %}
+            {% end %}
+          {% end %}
         {% end %}
-      {% end %}
+      </select>
     {% end %}
-  </select>
-  {% end %}
 
-  <input name="hw-price" type="text" placeholder="{{ _("price") }}"
-         {% if content %}value="{{ content.price }}"{% end %}>
+    <input name="hw-price" type="text" placeholder="{{ _("price") }}"
+           {% if content %}value="{{ content.price }}"{% end %}>
 
-  <input name="hw-title" type="text" placeholder="{{ _("title (optional)") }}" tabindex="1"
-         {% if content %}value="{{ content.title }}"{% end %}>
+    <input name="hw-title" type="text" placeholder="{{ _("title (optional)") }}" tabindex="1"
+           {% if content %}value="{{ content.title }}"{% end %}>
+  </div>
 
   <span name="hw-save-wrapper">
-    <input name="hw-save" type="button" data-save="{{ _("save") }}" data-saving="{{ _("saving") }}" value="{{ _("save") }}" onclick="hw.save()">
+    <input name="hw-save" type="button" class="hw-button hw-button-blue" data-save="{{ _("save") }}" data-saving="{{ _("saving") }}" value="{{ _("save") }}" onclick="hw.save()">
     <span name="hw-response" class="hw-invisible-transition hw-invisible" data-saved="{{ _("saved.") }}"
           data-bad="{{ _("no good, mate.") }}" data-duplicate="{{ _("duplicate id.") }}">&nbsp;</span>
   </span>
 
-  <div name="hw-more-options">
-    <a href="#options" onclick="hw.optionsClick(event)">{{ _('options') }}</a>
-  </div>
+  <a href="#options" name="hw-more-options" class="hw-button hw-button-green" onclick="hw.optionsClick(event)">{{ _('options') }}</a>
 
   <div name="hw-events">
     <input name="hw-date-start" type="datetime" placeholder="{{ _("start, e.g. 2011/05/23 20:30") }}"
@@ -64,7 +64,7 @@
            {% if content %}value="{{ content.date_repeats }}"{% end %}>
   </div>
 
-  <div name="hw-options" class="hw-slide-transition hw-closed">
+  <div name="hw-options" class="hw-slide-transition hw-closed hw-box-green">
     {% if individual_content %}
     <div class="hw-thumb-preview-wrapper">
       <label>{{ _('thumbnail preview:') }}</label><br>
@@ -83,7 +83,7 @@
       {% end %}
       <dt><label>{{ _("name:") }}</label></dt><dd><input name="hw-name" maxlength="255" type="text" placeholder="{{ _("name") }}" {% if content %}value="{{ content.name }}"{% end %}></dd>
       {% if individual_content %}
-      <dt><label>{{ _("thumbnail:") }}</label></dt><dd><input name="hw-thumb" type="text" placeholder="{{ _("thumb") }}" {% if content %}value="{{ content.thumb }}"{% end %} onchange="hw.changeThumbPreview()"> <button onclick="hw.selectFile(hw.getFirstElementByName('hw-thumb'), hw.changeThumbPreview)">{{ _('select image') }}</button></dd>
+      <dt><label>{{ _("thumbnail:") }}</label></dt><dd><input name="hw-thumb" type="text" placeholder="{{ _("thumb") }}" {% if content %}value="{{ content.thumb }}"{% end %} onchange="hw.changeThumbPreview()"> <button class="hw-button hw-button-orange" onclick="hw.selectFile(hw.getFirstElementByName('hw-thumb'), hw.changeThumbPreview)">{{ _('select image') }}</button></dd>
       {% end %}
       <dt><label>{{ _("template:") }}</label></dt>
         <dd>
@@ -106,7 +106,7 @@
   <div name="hw-playground" class="{% if section_template %}hw-template-{{ section_template }}{% end %}">
     {% if individual_content %}
     <div name="hw-media-creator-template" class="hw-hidden">
-      <div name="hw-media-creator">
+      <div name="hw-media-creator" class="hw-box-orange">
         <span class="hw-created" name="hw-media-cancel" onclick="parent.hw.cancelMedia(this)">[x]</span>
         <label class="hw-initial">{{ _("media upload") }}</label>
         <span class="hw-initial hw-explanation">{{ _("(images, videos, audio, links)") }}</span>

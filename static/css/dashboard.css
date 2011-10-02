@@ -37,7 +37,6 @@
 #hw-tools,
 #hw-followers,
 #hw-following {
-  border: 3px double black;
   padding: 5px;
 }
 
@@ -97,7 +96,7 @@ section {
 
 
 #admin td, th {
-  padding: 10px;
+  padding: 1px;
   border: 1px solid black;
 }
 
@@ -124,12 +123,10 @@ section {
 
 #customize form,
 #setup form {
-  background-color: #eee;
-  border: 1px solid #ddd;
   padding: 5px;
-  -moz-border-radius: 5px;
+  /*-moz-border-radius: 5px;
   -webkit-border-radius: 5px;
-  border-radius: 5px;
+  border-radius: 5px;*/
 }
 
 #customize label,
@@ -146,7 +143,7 @@ section {
 
 #customize input,
 #setup input {
-  margin: 3px;
+  
 }
 
 #customize #hw-customize-save,
@@ -163,9 +160,22 @@ section {
   width: 175px;
 }
 
+#customize dt label {
+  display: block;
+  float: left;
+  font-size: 1.23em;
+}
+
 #customize dd {
   display: inline-block;
-  width: 375px;
+  width: 525px;
+}
+
+#customize dd input,
+#customize dd label,
+#customize dd select {
+  display: block;
+  float: left;
 }
 
 #hw-delete-account {

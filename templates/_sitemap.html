@@ -1,4 +1,4 @@
-<nav id="hw-sitemap">
+<nav id="hw-sitemap" class="hw-box-blue">
   <ul>
     <li id="hw-sitemap|home" {% if is_owner_viewing %}droppable="true" ondragover="hw.dragOver(event, this)" ondragenter="hw.dragOver(event, this)" ondragleave="hw.dragLeave(event, this)" ondrop="hw.dragDrop(event, this)"{% end %}>{% if content_owner.logo %}<a id="hw-logo" href="{{ nav_url(username=content_owner.username)}}"><img src="{{ content_owner.logo }}" title="{{ content_owner.title }}" alt="{{ _('logo') }}"></a>{% end %}<a id="hw-sitemap|home" href="{{ nav_url(username=content_owner.username)}}" class="{% if content and content.name == 'home' %}hw-selected{% end %}">{{ _('home') }}</a></li>
     {% for section in sitemap %}

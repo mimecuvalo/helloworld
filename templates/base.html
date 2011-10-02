@@ -23,13 +23,13 @@
     {% block nav %}
     <nav id="hw-user">
       {% if not is_author and not is_owner_viewing and content %}
-        <a href="{{ nav_url(username=content.username, section='feed') }}">{{ _('follow') }}</a> |
+        <a id="hw-follow" class="hw-button hw-button-blue" href="{{ nav_url(username=content.username, section='feed') }}">{{ _('follow') }}</a>
       {% end %}
       {% if not username %}
         {% if current_user and current_user["email"] %}
-          <a href="{{ nav_url(section='logout', next=handler.request.uri) }}">{{ _('logout') }}</a>
+          <a id="hw-logout" class="hw-button hw-button-red" href="{{ nav_url(section='logout', next=handler.request.uri) }}">{{ _('logout') }}</a>
         {% else %}
-          <a id="hw-login" href="{{ nav_url(section='login', next=handler.request.uri) }}" data-logging-in="logging in..." data-failed="{{ _('login failed. try again.') }}" onclick="hw.login(event)">{{ _('login') }}</a>
+          <a id="hw-login" class="hw-button hw-button-green" href="{{ nav_url(section='login', next=handler.request.uri) }}" data-logging-in="logging in..." data-failed="{{ _('login failed. try again.') }}" onclick="hw.login(event)">{{ _('login') }}</a>
           <form id="hw-login-form">
             {% raw xsrf_form_html() %}
           </form>
@@ -37,14 +37,14 @@
       {% else %}
         {% if is_author %}
           {% if is_owner_viewing %}
-            <a id="hw-edit" href="#edit" onclick="hw.edit(event)">{{ _('edit') }}</a> |
+            <a id="hw-edit" class="hw-button hw-button-green" href="#edit" onclick="hw.edit(event)">{{ _('edit') }}</a>
             {% if content and content.name != 'home' and content.name != 'main' %}
-            <a id="hw-delete" href="#delete" onclick="hw.deleteContent(event)">{{ _('delete') }}</a> |
+            <a id="hw-delete" class="hw-button hw-button-red" href="#delete" onclick="hw.deleteContent(event)">{{ _('delete') }}</a>
             {% end %}
           {% else %}
-            <a href="{{ nav_url(section='customize') }}" {% if handler.request.uri == nav_url(section='customize') %}class="hw-selected"{% end %}>{{ _('customize') }}</a> |
+            <a id="hw-customize" href="{{ nav_url(section='customize') }}" class="hw-button hw-button-green{% if handler.request.uri == nav_url(section='customize') %} hw-selected {% end %}">{{ _('customize') }}</a>
           {% end %}
-          <a href="{{ nav_url(section='dashboard') }}" {% if handler.request.uri == nav_url(section='dashboard') %}class="hw-selected"{% end %}>{{ _('dashboard') }}</a>
+          <a id="hw-dashboard" href="{{ nav_url(section='dashboard') }}" class="hw-button hw-button-blue{% if handler.request.uri == nav_url(section='dashboard') %} hw-selected{% end %}">{{ _('dashboard') }}</a>
         {% end %}
       {% end %}
     </nav>

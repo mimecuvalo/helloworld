@@ -1,9 +1,9 @@
 {% if individual_content and content.section != 'main' %}
   <nav name="hw-neighbors">
     {% comment NOTE whitespace is important here %}
-    <a name="hw-start" rel="start" href="{{ content_url(start, host=True) }}">{{ _("oldest") }}</a><a
+    <a name="hw-start" rel="start" class="hw-button hw-button-blue" href="{{ content_url(start, host=True) }}">{{ _("oldest") }}</a><a
 
-       name="hw-previous" rel="prev"
+       name="hw-previous" rel="prev" class="hw-button hw-button-orange"
         {% if previous %}
           href="{{ content_url(previous) }}"
           title="{% if content_owner.title %}{{ content_owner.title }} - {% end %}{{ previous.title }}"
@@ -20,9 +20,9 @@
           class="hw-disabled"
         {% end %}>{{ _("older") }}</a><a
 
-        name="hw-top" rel="up" href="{{ top_url }}">{% if content.album %}{{ content.album }}{% else %}{{ content.section }}{% end %}</a><a 
+       name="hw-top" rel="up" class="hw-button hw-button-green" href="{{ top_url }}">{% if content.album %}{{ content.album }}{% else %}{{ content.section }}{% end %}</a><a 
 
-        name="hw-next" rel="next"
+       name="hw-next" rel="next" class="hw-button hw-button-red"
         {% if next %}
           href="{{ content_url(next) }}"
           title="{% if content_owner.title %}{{ content_owner.title }} - {% end %}{{ next.title }}"
@@ -39,7 +39,7 @@
           class="hw-disabled"
         {% end %}>{{ _("newer") }}</a><a
         
-        name="hw-last" rel="last" href="{{ content_url(last, host=True) }}">{{ _("newest") }}</a>
+       name="hw-last" rel="last" class="hw-button hw-button-purple" href="{{ content_url(last, host=True) }}">{{ _("newest") }}</a>
   </nav>
 {% end %}
 
@@ -109,7 +109,7 @@
         {% if current_user and current_user["email"] %}
         <form name="hw-comment-form" method="post" action="/api" onsubmit="return false" data-error="{{ _('error submitting your comment. please try again.') }}">
           {% raw xsrf_form_html() %}
-          <textarea name="hw-comment-input" type="text" placeholder="{{ _('what\'s your take?') }}" data-local-id="{{ content.id }}"></textarea> <button onclick="hw.commentSubmit()">{{ _('submit') }}</button>
+          <textarea name="hw-comment-input" class="hw-box-black" type="text" placeholder="{{ _('what\'s your take?') }}" data-local-id="{{ content.id }}"></textarea> <button class="hw-button hw-button-blue" onclick="hw.commentSubmit()">{{ _('submit') }}</button>
         </form>
         {% else %}
           <h2 class="hw-comment-header">{{ _('you need to be logged in to leave a comment.') }} <a href="{{ nav_url(section='login', next=handler.request.uri) }}" data-logging-in="logging in..." data-failed="{{ _('login failed. try again.') }}" onclick="hw.login(event, this)">{{ _('login') }}</a></h2>

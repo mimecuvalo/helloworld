@@ -1,4 +1,5 @@
 body,
+button,
 input,
 select,
 option {
@@ -35,12 +36,146 @@ strong {
   text-decoration: none;
 }
 
-nav[name=hw-neighbors] a {
-  border-left: 1px solid black;
+.hw-button {
   padding: 0 7px;
+  margin: 0 3px 6px 3px;
+  display: block;
+  float: left;
+  -moz-transition: all 0.05s linear;
+  -webkit-transition: all 0.05s linear;
+  transition: all 0.05s linear;
+  cursor: hand;
+  cursor: pointer;
 }
-nav[name=hw-neighbors] a:first-child {
-  border-left: 0;
+.hw-button:hover {
+  text-decoration: none;
+}
+.hw-button-blue,
+.hw-button-blue:visited {
+  background-color: #eff;
+  border: 1px solid #0cf;
+  color: #06f;
+  -moz-box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -webkit-box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+}
+.hw-button-blue:hover {
+  border: 1px solid #09f;
+  -moz-box-shadow: 1px 1px #09f, 2px 2px #09f, 3px 3px #09f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -webkit-box-shadow: 1px 1px #09f, 2px 2px #09f, 3px 3px #09f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  box-shadow: 1px 1px #09f, 2px 2px #09f, 3px 3px #09f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+}
+.hw-button-orange,
+.hw-button-orange:visited {
+  background-color: #ffe;
+  border: 1px solid #f90;
+  color: #f30;
+  -moz-box-shadow: 1px 1px #f90, 2px 2px #f90, 3px 3px #f90, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -webkit-box-shadow: 1px 1px #f90, 2px 2px #f90, 3px 3px #f90, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  box-shadow: 1px 1px #f90, 2px 2px #f90, 3px 3px #f90, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+}
+.hw-button-orange:hover {
+  border: 1px solid #f60;
+  -moz-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -webkit-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+}
+.hw-button-green,
+.hw-button-green:visited {
+  background-color: #eff;
+  border: 1px solid #0c0;
+  color: #060;
+  -moz-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -webkit-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+}
+.hw-button-green:hover {
+  border: 1px solid #090;
+  -moz-box-shadow: 1px 1px #090, 2px 2px #090, 3px 3px #090, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -webkit-box-shadow: 1px 1px #090, 2px 2px #090, 3px 3px #090, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  box-shadow: 1px 1px #090, 2px 2px #090, 3px 3px #090, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+}
+.hw-button-red,
+.hw-button-red:visited {
+  background-color: #fcfcfc;
+  border: 1px solid #f60;
+  color: #f30;
+  -moz-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -webkit-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+}
+.hw-button-red:hover {
+  border: 1px solid #f30;
+  -moz-box-shadow: 1px 1px #f30, 2px 2px #f30, 3px 3px #f30, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -webkit-box-shadow: 1px 1px #f30, 2px 2px #f30, 3px 3px #f30, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  box-shadow: 1px 1px #f30, 2px 2px #f30, 3px 3px #f30, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+}
+.hw-button-purple,
+.hw-button-purple:visited {
+  background-color: #fef;
+  border: 1px solid #c0f;
+  color: #90f;
+  -moz-box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -webkit-box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+}
+.hw-button-purple:hover {
+  border: 1px solid #90f;
+  -moz-box-shadow: 1px 1px #90f, 2px 2px #90f, 3px 3px #90f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -webkit-box-shadow: 1px 1px #90f, 2px 2px #90f, 3px 3px #90f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  box-shadow: 1px 1px #90f, 2px 2px #90f, 3px 3px #90f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+}
+.hw-button.hw-selected,
+.hw-button:active {
+  -moz-box-shadow: 1px 1px #333, 1px 0px #333, 0px 1px #333 !important;
+  -webkit-box-shadow: 1px 1px #333, 1px 0px #333, 0px 1px #333 !important;
+  box-shadow: 1px 1px #333, 1px 0px #333, 0px 1px #333 !important;
+  margin-top: 3px;
+  margin-left: 6px;
+  margin-right: 0;
+  margin-bottom: 3px;
+}
+
+.hw-box-blue {
+  border: 1px solid #0cf;
+  -moz-box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf;
+  -webkit-box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf;
+  box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf;
+}
+
+.hw-box-orange {
+  border: 1px solid #fa0;
+  -moz-box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
+  -webkit-box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
+  box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
+}
+
+.hw-box-green {
+  border: 1px solid #0c0;
+  -moz-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
+  -webkit-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
+  box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
+}
+
+.hw-box-red {
+  border: 1px solid #f60;
+  -moz-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60;
+  -webkit-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60;
+  box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60;
+}
+
+.hw-box-purple {
+  border: 1px solid #c0f;
+  -moz-box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f;
+  -webkit-box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f;
+  box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f;
+}
+
+.hw-box-black {
+  border: 1px solid #000;
+  -moz-box-shadow: 1px 1px 0 #000, 2px 2px 0 #000, 3px 3px 0 #000;
+  -webkit-box-shadow: 1px 1px 0 #000, 2px 2px 0 #000, 3px 3px 0 #000;
+  box-shadow: 1px 1px 0 #000, 2px 2px 0 #000, 3px 3px 0 #000;
 }
 
 #hw-container {
@@ -50,9 +185,9 @@ nav[name=hw-neighbors] a:first-child {
 #hw-content {
   width: 650px;
   position: absolute;
-  top: 5px;
-  padding: 5px;
-  left: 175px;
+  top: 6px;
+  padding: 0 3px 3px 3px;
+  left: 182px;
   padding-bottom: 10px;
 }
 
@@ -60,6 +195,23 @@ nav[name=hw-neighbors] a:first-child {
   text-align: center;
   padding: 1px 0;
   background-color: white;
+  float: right;
+  width: 335px;
+}
+.hw-editing #hw-content nav[name=hw-neighbors] {
+  display: none;
+}
+
+#hw-content > header,
+#hw-content > section > header {
+  float: left;
+  margin-bottom: 6px;
+  padding: 0 6px;
+  width: 290px;
+  border: 1px solid #fa0;
+  -moz-box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
+  -webkit-box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
+  box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
 }
 
 #hw-content.hw-presentation {
@@ -164,6 +316,7 @@ nav[name=hw-neighbors] a:first-child {
 
 div[name=hw-view] {
   position: relative;
+  clear: both;
 }
 
 .hw-content-hidden {
@@ -173,9 +326,8 @@ div[name=hw-view] {
 #hw-user {
   position: absolute;
   z-index: 1;
-  top: 5px;
-  right: 5px;
-  padding: 5px;
+  top: 6px;
+  right: 6px;
   background-color: white;
 }
 
@@ -183,12 +335,16 @@ div[name=hw-view] {
   font-weight: bold;
 }
 
+form#hw-login-form {
+  display: none;
+}
+
 #hw-sitemap {
   position: absolute;
-  top: 5px;
-  left: 5px;
+  top: 6px;
+  left: 6px;
   width: 155px;
-  padding: 5px;
+  padding: 6px;
   background-color: white;
 }
 
@@ -262,13 +418,15 @@ div[name=hw-view] {
   background-color: white;
   color: black;
   font-size: 0.8461em;
-  margin: 5px 5px 5px 0;
+  margin: 6px 6px 24px 0;
+  border-top: 1px solid #0bf;
+  padding: 3px 6px;
 }
 
 #hw-content header h1,
 form.hw-media-library-standalone header h1 {
   font-size: 1.230em;
-  margin: 5px 5px 5px 0;
+  margin: 3px 3px 3px 0;
 }
 
 .hw-warning {
@@ -311,14 +469,14 @@ a.hw-read-more {
 #hw-results li {
   float: left;
   clear: left;
-  margin-top: 5px;
+  margin-top: 6px;
 }
 #hw-results li a {
   display: inline-block;
   zoom: 1; /* workaround ie7 */
   *display: inline; /* workaround ie7 */
   vertical-align: top;
-  padding-left: 5px;
+  padding-left: 6px;
 }
 #hw-results .hw-results-title {
   width: 350px;
@@ -326,7 +484,6 @@ a.hw-read-more {
 
 #hw-content > ul.hw-album {
   list-style: none;
-  padding: 3px;
 }
 #hw-content > ul.hw-album > li {
   padding: 0;
@@ -335,18 +492,16 @@ a.hw-read-more {
   zoom: 1; /* workaround ie7 */
   *display: inline; /* workaround ie7 */
   vertical-align: top;
-  padding-bottom: 10px;
+  padding: 3px 3px 10px 3px;
+  margin-bottom: 10px;
 }
 .hw-album > li > a {
   display: block;
-  width: 153px;
-  max-width: 153px;
+  width: 154px;
+  max-width: 154px;
 }
-.hw-album > li > a:first-child {
-  border: 1px solid #fff;
-}
-.hw-album > li > a:first-child:hover {
-  border: 1px solid #03c;
+.hw-album > li:hover {
+  box-shadow: 3px 3px 6px #666;
 }
 .hw-album > li > a:first-child {
   min-height: 119px;
@@ -373,7 +528,7 @@ a.hw-read-more {
 #hw-checkout {
   position: absolute;
   top: 30px;
-  right: 5px;
+  right: 6px;
 }
 
 #hw-cart-wrapper {
@@ -438,18 +593,14 @@ span[data-tooltip]:hover:after {
   right: 0;
   bottom: 25px;
   z-index: 2000;
-  -moz-border-radius: 5px;
+  /*-moz-border-radius: 5px;
   -webkit-border-radius: 5px;
-  border-radius: 5px;
-  -moz-box-shadow: 0px 0px 4px #222;
-  -webkit-box-shadow: 0px 0px 4px #222;
-  box-shadow: 0px 0px 4px #222;
-  background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);
-  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #eeeeee),color-stop(1, #cccccc));
-  background-image: -webkit-linear-gradient(top, #eeeeee, #cccccc);
-  background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);
-  background-image: -ms-linear-gradient(top, #eeeeee, #cccccc);
-  background-image: -o-linear-gradient(top, #eeeeee, #cccccc);
+  border-radius: 5px;*/
+  background-color: white;
+  border: 1px solid #fa0;
+  -moz-box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
+  -webkit-box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
+  box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
 }
 
 .hw-comment-header {
@@ -461,6 +612,7 @@ form[name=hw-comment-form] {
 }
 textarea[name=hw-comment-input] {
   width: 300px;
+  float: left;
 }
 .hw-remote-actions {
   float: right;

@@ -12,9 +12,20 @@ form[name=hw-create].hw-new,
   height: auto;
 }
 
+.hw-create-section-wrapper {
+  float: left;
+  margin-bottom: 5px;
+}
+
+span[name=hw-save-wrapper] {
+  margin-left: 3px;
+  float: left;
+  display: block;
+}
+
 span[name=hw-response] {
-  margin: 3px 0;
-  margin-left: 5px;
+  margin: 4px 0 3px 9px;
+  float: left;
 }
 
 span[name=hw-response].hw-bad {
@@ -22,39 +33,42 @@ span[name=hw-response].hw-bad {
   background-color: #f33;
 }
 
-input[name=hw-save] {
-  background-color: #0cf;
-  border: 1px solid gray;
-}
-
 #hw-delete {
   color: #f33;
 }
 
-div[name=hw-more-options] {
+a[name=hw-more-options] {
+  margin-right: 4px;
   float: right;
   clear: right;
 }
+a[name=hw-more-options].hw-selected {
+  margin-right: 1px;
+}
 ul[name=hw-html-tabs] .hw-selected,
-div[name=hw-more-options].hw-selected {
+a[name=hw-more-options].hw-selected {
   font-weight: bold;
 }
 
 div[name=hw-options] {
-  height: 205px;
-  background-color: #eee;
-  -moz-border-radius: 5px;
+  clear: both;
+  height: 235px;
+  /*-moz-border-radius: 5px;
   -webkit-border-radius: 5px;
-  border-radius: 5px;
+  border-radius: 5px;*/
 }
 div[name=hw-options].hw-open {
-  border: 1px solid #ddd;
-  margin: 5px 0;
+  margin: 5px 3px 5px 0;
   padding: 10px;
 }
 
 div[name=hw-options] dl {
   width: 440px;
+}
+
+div[name=hw-options] dl label {
+  float: left;
+  display: block;
 }
 
 div[name=hw-options] dt {
@@ -70,6 +84,11 @@ div[name=hw-options] dd {
   display: inline-block;
   zoom: 1; /* workaround ie7 */
   *display: inline; /* workaround ie7 */
+}
+.hw-new div[name=hw-options] dd input,
+div[name=hw-options] dd input {
+  display: block;
+  float: left;
 }
 
 .hw-thumb-preview-wrapper {
@@ -95,9 +114,14 @@ div[name=hw-wysiwyg] {
 div[name=hw-wysiwyg].hw-new,
 div[name=hw-wysiwyg].hw-template-links {
   min-height: 200px;
-  -moz-box-shadow: 3px 3px 6px #ddd;
-  -webkit-box-shadow: 3px 3px 6px #ddd;
-  box-shadow: 3px 3px 6px #ddd;
+  border: 1px solid #333;
+  width: 735px;
+  -moz-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
+  -webkit-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
+  box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
+  z-index: 2;
+  position: relative;
+  background-color: white;
 }
 div[name=hw-wysiwyg].hw-template-links {
   margin-top: 1em;
@@ -146,7 +170,7 @@ div[name=hw-html-wrapper] {
   height: 220px;
 }
 div[name=hw-html-wrapper].hw-open {
-  margin: 5px;
+  margin-right: 3px;
 }
 div[name=hw-html-wrapper] .hw-hidden {
   display: none;
@@ -160,6 +184,8 @@ textarea[name=hw-html] {
 }
 ul[name=hw-html-tabs] {
   list-style: none;
+  float: left;
+  margin-left: 9px;
 }
 ul[name=hw-html-tabs] li {
   list-style: none;
@@ -175,6 +201,9 @@ ul[name=hw-html-tabs] li {
   cursor: pointer;
   background-color: white;
   color: black;
+  -moz-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
+  -webkit-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
+  box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
 }
 
 .hw-new div[name=hw-wysiwyg-controls].hw-fixed,
@@ -182,19 +211,22 @@ ul[name=hw-html-tabs] li {
   position: fixed;
   top: 0;
   z-index: 1000;
-  width: 648px;
+  width: 645px;
 }
 
 .hw-new div[name=hw-wysiwyg-controls].hw-fixed {
-  width: 739px;
+  width: 735px;
 }
 
 div[name=hw-wysiwyg-controls] {
-  margin-bottom: -29px;
+  margin-bottom: -26px; /* -height of toolbar + shadow */
+}
+.hw-new div[name=hw-wysiwyg-controls] {
+  margin-bottom: -30px; /* -height of toolbar - border */
 }
 
 .hw-editing div[name=hw-wysiwyg] {
-  margin-top: 29px;
+  margin-top: 29px; /* height of the toolbar */
 }
 
 .hw-fixed.hw-editing span[name=hw-save-wrapper] {
@@ -212,7 +244,7 @@ div[name=hw-wysiwyg-controls] {
   left: auto;
   right: 0;
   text-align: right;
-  padding-right: 150px;
+  padding-left: 150px;
 }
 
 .hw-separate div[name=hw-view],
@@ -234,17 +266,18 @@ div[name=hw-wysiwyg-controls] {
   z-index: 1;
   text-align: center;
   height: 29px;
-  background-color: #eee;
-  border: 1px solid #ddd;
-  -moz-border-radius-topright: 5px;
+  background-color: #eff;
+  border: 1px solid #0bf;
+  /*-moz-border-radius-topright: 5px;
   -webkit-border-top-right-radius: 5px;
   border-top-right-radius: 5px;
   -moz-border-radius-topleft: 5px;
   -webkit-border-top-left-radius: 5px;
-  border-top-left-radius: 5px;
-  /*-moz-box-shadow: 0 3px 6px #ddd;
-  -webkit-box-shadow: 0 3px 6px #ddd;
-  box-shadow: 0 3px 6px #ddd;*/
+  border-top-left-radius: 5px;*/
+  margin-right: 3px;
+  -moz-box-shadow: 1px 1px 0px #0c9, 2px 2px 0px #0c9, 3px 3px 0px #0c9;
+  -webkit-box-shadow: 1px 1px 0px #0c9, 2px 2px 0px #0c9, 3px 3px 0px #0c9;
+  box-shadow: 1px 1px 0px #0c9, 2px 2px 0px #0c9, 3px 3px 0px #0c9;
 }
 
 div[name=hw-wysiwyg-controls] > span {
@@ -255,14 +288,16 @@ div[name=hw-wysiwyg-controls] > span {
   margin: 1px;
   cursor: hand;
   cursor: pointer;
-  border: 1px solid #eee;
+  border: 1px solid transparent;
   color: black;
   font-size: 13px;
 }
 
-div[name=hw-wysiwyg-controls] > span:hover,
+div[name=hw-wysiwyg-controls] > span:hover {
+  border: 1px outset #0bf;
+}
 div[name=hw-wysiwyg-controls] > span.hw-selected {
-  border: 1px solid black;
+  border: 1px inset #0bf;
 }
 
 span[name=hw-bold] {
@@ -281,15 +316,31 @@ div[name=hw-media-list-template] {
   display: none;
 }
 
+/* from fontsquirrel.com
+@font-face {
+  font-family: 'SilkscreenNormal';
+  src: url('../fonts/slkscr-webfont.eot');
+  src: url('../fonts/slkscr-webfont.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/slkscr-webfont.woff') format('woff'),
+       url('../fonts/slkscr-webfont.ttf') format('truetype'),
+       url('../fonts/slkscr-webfont.svg#SilkscreenNormal') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+body {
+  font-family: 'SilkscreenNormal', Courier New;
+}*/
+
+
 div[name=hw-media-creator],
 form.hw-media-library-standalone {
-  background-color: #eee;
+  background-color: #ffe;
   margin: 0;
-  padding: 10px;
-  -moz-border-radius: 5px;
+  padding: 11px 10px 15px;
+  /*-moz-border-radius: 5px;
   -webkit-border-radius: 5px;
-  border-radius: 5px;
-  border: 1px solid #ddd;
+  border-radius: 5px;*/
+  margin: 3px 3px 0 0;
 }
 
 iframe[name=hw-media-creator] {
@@ -318,12 +369,12 @@ input[name=hw-media-source],
 input[name=hw-media-tags] {
   border: 0;
   border-bottom: 1px solid black;
-  background-color: #eee;
   width: 115px;
+  background-color: transparent;
 }
 
 a[name=hw-media-preview-wrapper] {
-  margin-top: -31px;
+  margin-top: -29px;
   margin-right: 1em;
   float: right;
   text-align: center;
@@ -339,7 +390,7 @@ a[name=hw-media-preview-wrapper] {
 a[name=hw-media-preview-wrapper] span {
   display: none;
   position: absolute;
-  top: 33%;
+  top: 35%;
   right: 20%;
   cursor: hand;
   cursor: pointer;
@@ -586,6 +637,9 @@ div[name=hw-preview] img {
 .CodeMirror {
   background-color: white;
   color: black;
+  -moz-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
+  -webkit-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
+  box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
 }
 .CodeMirror-scroll {
   height: 190px;

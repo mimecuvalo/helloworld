@@ -30,7 +30,7 @@
 {% end %}
 
 {% block more_sidebar %}
-  <div id="hw-followers">
+  <div id="hw-followers" class="hw-box-orange">
     <h2>{{ _('followers') }}</h2><br>
     <ul>
       {% for follower in followers %}
@@ -40,7 +40,7 @@
       {% end %}
     </ul>
   </div>
-  <div id="hw-following">
+  <div id="hw-following" class="hw-box-green">
     {% comment TODO to do unfollow maybe drag to a trash? %}
     <h2>{{ _('following') }} <a href="#edit" onclick="hw.followingEdit(event)">[{{ _('edit') }}]</a></h2>
     <input id="hw-following-new" type="text" placeholder="{{ _('follow new user') }}" data-error="{{ _('error subscribing!') }}" data-error-unsub="{{ _('error unsubscribing!') }}" onchange="hw.follow(event)">

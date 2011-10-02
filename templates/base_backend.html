@@ -16,7 +16,7 @@
 {% block content %}
   <aside id="hw-sidebar">
     <h1>&nbsp;</h1>
-    <div id="hw-navigation">
+    <div id="hw-navigation" class="hw-box-purple">
       <h2>{{ _('navigation') }}</h2><br>
       <ul>
         <li><strong><a href="{{ nav_url(username=username) }}">{{ _('view site') }}</a></strong></li>
@@ -26,7 +26,7 @@
         <li><a href="{{ nav_url(section='logout', next=nav_url(username=username)) }}">{{ _('logout') }}</a></li>
       </ul>
     </div>
-    <div id="hw-tools">
+    <div id="hw-tools" class="hw-box-red">
       <h2>{{ _('tools') }}</h2><br>
       <ul>
         <li><a href="{{ nav_url(section='check_broken_links') }}">{{ _('check broken links') }}</a></li>
