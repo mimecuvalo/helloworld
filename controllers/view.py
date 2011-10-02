@@ -166,6 +166,9 @@ class ViewHandler(BaseHandler):
     #  content.count = content.count + 1
     #  content.save()
 
+    if is_owner_viewing:  # otherwise, when restarting browser, it shows old data and freaks you out!
+      self.prevent_caching()
+
     if is_special:
       self.display["individual_content"] = False
       self.display["content"] = content
