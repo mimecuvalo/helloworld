@@ -13,6 +13,8 @@ except ImportError:
 def get_full_filename(handler, url=None):
   if not url:
     url = handler.prefix + handler.breadcrumbs['uri']
+  elif not url.startswith(handler.prefix):
+    url = handler.prefix + url
   filename = url[1:].replace('../', '')  # remove leading /
   # TODO filename = handler.locale.code.replace('_', '-') + '/' + filename
   path = os.path.join(handler.application.settings["cache_path"], filename + '.htmgz')

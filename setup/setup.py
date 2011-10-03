@@ -16,23 +16,27 @@ else:
 url = protocol + '://' + os.environ['SERVER_NAME'] + prefix
 
 htaccess_initial_path = os.path.normpath(os.path.realpath(__file__) + '/../../.htaccess-initial')
-htaccess_initial_file = open(htaccess_initial_path)
-htaccess_initial = htaccess_initial_file.read()
-htaccess_initial_file.close()
-
-htaccess = htaccess_initial.replace('$' + protocol.upper() + '_PREFIX', prefix)
-htaccess = htaccess.replace('$FULL_PATH_TO_SITE', os.path.normpath(os.path.realpath(__file__) + '/../../'))
 htaccess_path = os.path.normpath(os.path.realpath(__file__) + '/../../.htaccess')
-htaccess_file = open(htaccess_path, 'w')
-htaccess_file.write(htaccess)
-htaccess_file.close()
+
+if not os.path.exists(htaccess_path):
+  htaccess_initial_file = open(htaccess_initial_path)
+  htaccess_initial = htaccess_initial_file.read()
+  htaccess_initial_file.close()
+
+  htaccess = htaccess_initial.replace('$' + protocol.upper() + '_PREFIX', prefix)
+  htaccess = htaccess.replace('$FULL_PATH_TO_SITE', os.path.normpath(os.path.realpath(__file__) + '/../../'))
+  htaccess_file = open(htaccess_path, 'w')
+  htaccess_file.write(htaccess)
+  htaccess_file.close()
+
+  url = url + '?prefix=' + urllib.quote_plus(prefix)
 
 print """Content-type: text/html
 
 <html>
   <head>
-    <meta http-equiv="refresh" content="0;url=%s?prefix=%s" />
+    <meta http-equiv="refresh" content="0;url=%s" />
   </head>
   <body>Finished writing .htaccess file...redirecting...</body>
 </html>
-""" % (url, urllib.quote_plus(prefix))
+""" % (url)

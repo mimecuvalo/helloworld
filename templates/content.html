@@ -104,7 +104,7 @@
       {% if not item.is_remote and not is_owner_viewing and username != item.username %}
         <img src="{{ nav_url(section='stats', url=content_url(item)) }}">
       {% end %}
-
+      <div class="clear"></div>
       {% if individual_content and not item.is_remote %}
         {% if current_user and current_user["email"] %}
         <form name="hw-comment-form" method="post" action="/api" onsubmit="return false" data-error="{{ _('error submitting your comment. please try again.') }}">
