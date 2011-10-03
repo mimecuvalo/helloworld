@@ -333,9 +333,20 @@ hw.deleteContent = function(event) {
       onError: badTrip });
 };
 
-hw.edit = function(event) {
+hw.inForcedEditPage = false;
+hw.edit = function(event, opt_dontCreateMediaIframe) {
   if (event) {
     hw.preventDefault(event);
+  }
+
+  if (!hw.inForcedEditPage && hw.pageHasCode) {
+    window.location.href = hw.contentUrl + '?edit=true';
+    return;
+  }
+
+  // convert code back to normal
+  if (hw.createAutoload && hw.inForcedEditPage && hw.pageHasCode) {
+    hw.editScriptWorkaround();
   }
 
   hw.createAutoload = false;
@@ -355,7 +366,9 @@ hw.edit = function(event) {
 
   if (hw.createIndividualContent) {
     if (turnEditingOn) {
-      hw.createMediaIframe();
+      if (!opt_dontCreateMediaIframe) {
+        hw.createMediaIframe();
+      }
       wysiwyg.setAttribute('contenteditable', '');
     } else {
       wysiwyg.removeAttribute('contenteditable');
@@ -366,6 +379,14 @@ hw.edit = function(event) {
   }
 
   return false;
+};
+
+hw.editScriptWorkaround = function() {
+  var wysiwyg = hw.getFirstElementByName('hw-wysiwyg');
+  document.head.innerHTML = document.head.innerHTML.replace('<style name="HWSCRIPTWORKAROUND"', '<script');
+  document.head.innerHTML = document.head.innerHTML.replace('</style><!--HWSCRIPTWORKAROUND-->', '</script>');
+  wysiwyg.innerHTML = wysiwyg.innerHTML.replace('<style name="HWSCRIPTWORKAROUND"', '<script');
+  wysiwyg.innerHTML = wysiwyg.innerHTML.replace('</style><!--HWSCRIPTWORKAROUND-->', '</script>');
 };
 
 // TODO: use ace editor? has wrapping at least...
@@ -759,8 +780,30 @@ hw.htmlPreview = function(force, codeMirror) {
     styleElement.innerHTML = style.value;
   }
 
+  var jsCode = code.value;
+  var jsPattern = "<script[^>]*src=['\"]([^>]*)['\"]></script>";
+  var jsRe = new RegExp(jsPattern, "ig");
+  var jsSingleRe = new RegExp(jsPattern, "i");
+  var jsExternalScripts = jsCode.match(jsRe);
+  jsCode = jsCode.replace(jsRe, '');
+  if (jsExternalScripts) {
+    for (var x = 0; x < jsExternalScripts.length; ++x) {
+      var jsSource = jsExternalScripts[x].match(jsSingleRe)[1];
+      var existingRe = new RegExp("<script[^>]*src=['\"]" + jsSource + "['\"]></script>", "ig");
+      if (document.head.innerHTML.match(existingRe)) {
+        continue;
+      }
+      var scriptElement = document.createElement('script');
+      scriptElement.src = jsSource;
+      document.getElementsByTagName('head')[0].appendChild(scriptElement);
+    }
+  }
+
+  jsCode = jsCode.replace('<script>', '');
+  jsCode = jsCode.replace('</script>', '');
+
   try {
-    eval(code.value);
+    eval(jsCode);
   } catch(ex) {
     return;
   }
@@ -770,7 +813,7 @@ hw.htmlPreview = function(force, codeMirror) {
   }
 
   var scriptElement = document.createElement('script');
-  scriptElement.text = code.value;
+  scriptElement.text = jsCode;
   scriptElement.id = 'hw-preview-script';
   document.getElementsByTagName('head')[0].appendChild(scriptElement);
 };
@@ -1742,15 +1785,14 @@ hw.editSection = function(event, el, album) {
 };
 
 hw.editContent = function(event, el) {
-  // if we're not editing, renaming is not enabled
   if (hw.$('hw-container') && !hw.hasClass('hw-container', 'hw-editing')) {
     return;
   }
 
   hw.preventDefault(event);
 
-  var href = hw.sectionUrl + '/' + el.getAttribute('data-contentname') + '?edit=true';
-  if (event.metaKey) {
+  var href = hw.contentUrl + '/' + el.getAttribute('data-contentname') + '?edit=true';
+  if (event.metaKey || event.ctrlKey) {
     window.open(href);
   } else {
     window.location.href = href;

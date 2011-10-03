@@ -160,6 +160,16 @@ class ViewHandler(BaseHandler):
         self.display["is_store"] = self.display["is_store"] or content_album.template == 'store'
         self.display["is_events"] = self.display["is_events"] or content_album.template == 'events'
       
+    self.display['has_code'] = content.code or re.search(r"<script", content.view, re.I | re.M) \
+                            or (content_section and content_section.code) or (content_album and content_album.code)
+    if self.display["edit"] and self.display['has_code']:
+      content.original_code = content.code
+      content.code = self.code_workaround(content.code)
+      content.view = self.code_workaround(content.view)
+      if content_section:
+        content_section.code = self.code_workaround(content_section.code)
+      if content_album:
+        content_album.code = self.code_workaround(content_album.code)
 
     # increase view count (if it's not the owner looking at it)
     #if not is_owner_viewing:
@@ -395,3 +405,9 @@ class ViewHandler(BaseHandler):
     content.hidden   = int(self.get_argument('hidden', 0))
 
     content.save()
+
+  def code_workaround(self, text):
+    text = text.replace("<script", '<style name="HWSCRIPTWORKAROUND"')
+    text = text.replace("</script>", "</style><!--HWSCRIPTWORKAROUND-->")
+
+    return text

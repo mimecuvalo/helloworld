@@ -66,7 +66,8 @@ div[name=hw-options] dl {
   width: 447px;
 }
 
-div[name=hw-options] dl label {
+div[name=hw-options] dl label,
+div[name=hw-options] dl select {
   float: left;
   display: block;
 }

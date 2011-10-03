@@ -268,8 +268,6 @@ class Latest(tornado.web.UIModule):
 
 class Blank(tornado.web.UIModule):
   def render(self):
-    content = self.handler.models.content.get(username=self.handler.breadcrumbs["profile"], section=self.handler.breadcrumbs["section"], name=self.handler.breadcrumbs["name"])[0]
-    self.handler.display['content'] = content
     self.handler.fill_template("blank.html")
 
 class Redirect(tornado.web.UIModule):

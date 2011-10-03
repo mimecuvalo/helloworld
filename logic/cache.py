@@ -26,6 +26,8 @@ def add(handler, content, rendered_content):
     return
 
   try:
+    rendered_content += '<!-- cached -->'
+
     gzip_value = BytesIO()
     gzip_file = gzip.GzipFile(mode="w", fileobj=gzip_value)
     gzip_file.write(rendered_content)

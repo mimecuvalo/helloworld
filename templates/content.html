@@ -117,7 +117,7 @@
         {% end %}
       {% end %}
 
-      <ul>
+      <ul name="hw-comments">
       {% for comment in comments %}
         {% if comment.is_remote %}
           <li data-post-id="{{ comment.post_id }}" data-post-user="{% if comment.from_user.startswith('http://') %}{{ comment.from_user }}{% end %}">

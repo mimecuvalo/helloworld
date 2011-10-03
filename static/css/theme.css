@@ -617,6 +617,10 @@ span[data-tooltip]:hover:after {
   box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
 }
 
+ul[name=hw-comments] {
+  clear: both;
+}
+
 .hw-comment-header {
   float: left;
   font-size: 1.23em;

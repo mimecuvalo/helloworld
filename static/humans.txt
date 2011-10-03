@@ -1,12 +1,19 @@
 /* humanstxt.org */
 
 /* TEAM */
-Creator: mime čuvalo
+Creator: Mime Čuvalo
 Contact: mimecuvalo@gmail.com
 Site: http://www.nightlight.ws
 Location: teh interwebs
 
 /* THANKS */
+The Tornado team (http://www.tornadoweb.org/)
+Amir Bakhtiar (for reverend)
+Andrew M. Kuchling (for Crypto)
+Jared Kuolt (for autumn)
+John Panzer (for magic signatures/salmon)
+Mark Pilgrim (for feedparser)
+Leonard Richardson (for BeautifulSoup)
 
 /* SITE */
-Components: helloworld
+Components: helloworld, ostatus, Crypto, autumn, reverend, html5

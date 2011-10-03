@@ -5,9 +5,10 @@
   hw.xsrf = '{% raw xsrf_form_html() %}';
   hw.uploadUrl = '{{ nav_url(section='upload') }}';
   {% if content %}
-  hw.sectionUrl = '{{ nav_url(username=content.username, section=content.section) }}';
+  hw.contentUrl = '{{ content_url(content) }}';
   {% end %}
   hw.createIndividualContent = {% if individual_content %}true{% else %}false{% end %};
+  hw.pageHasCode = {% if has_code %}true{% else %}false{% end %};
 </script>
 
 <form name="hw-create" method="post" action="/create" onsubmit="return false" class="{% if content %}hw-edit hw-slide-transition hw-closed{% else %}hw-new{% end %}">
@@ -85,15 +86,12 @@
       {% if individual_content %}
       <dt><label>{{ _("thumbnail:") }}</label></dt><dd><input name="hw-thumb" type="text" placeholder="{{ _("thumb") }}" {% if content %}value="{{ content.thumb }}"{% end %} onchange="hw.changeThumbPreview()"> <button class="hw-button hw-button-orange" onclick="hw.selectFile(hw.getFirstElementByName('hw-thumb'), hw.changeThumbPreview)">{{ _('select image') }}</button></dd>
       {% end %}
-      <dt><label>{{ _("template:") }}</label></dt>
-        <dd>
-          <select name="hw-template" {% if content %}value="{{ content.template }}"{% end %} onchange="hw.templateChange(null, this.value)">
-              <option value="">{{ _('-none-') }}</option>
-            {% for template in templates %}
-              <option value="{{ template }}" {% if content and template == content.template %}selected{% end %}>{{ _(template) }}</option>
-            {% end %}
-          </select>
-        </dd>
+      <dt><label>{{ _("template:") }}</label></dt><dd><select name="hw-template" {% if content %}value="{{ content.template }}"{% end %} onchange="hw.templateChange(null, this.value)">
+          <option value="">{{ _('-none-') }}</option>
+        {% for template in templates %}
+          <option value="{{ template }}" {% if content and template == content.template %}selected{% end %}>{{ _(template) }}</option>
+        {% end %}
+      </select></dd>
       <dt><label>{{ _("hidden:") }}</label></dt><dd><input name="hw-hidden" type="checkbox" {% if content and content.hidden %}checked="checked"{% end %}></dd>
       {% if not content %}
       <dt><label>{{ _("insert uploaded media as separate posts:") }}</label></dt><dd><input name="hw-separate" type="checkbox" onclick="hw.separate(this)"></dd>
@@ -154,7 +152,7 @@
     {% end %}
     <div name="hw-html-wrapper" class="hw-slide-transition {% if individual_content %}hw-closed{% end %}">
       <textarea name="hw-style" {% if individual_content %}class="hw-hidden"{% end %}>{% if content %}{{ content.style }}{% end %}</textarea>
-      <textarea name="hw-code" class="hw-hidden">{% if content %}{{ content.code }}{% end %}</textarea>
+      <textarea name="hw-code" class="hw-hidden">{% if content %}{% if edit and has_code %}{{ content.original_code }}{% else %}{{ content.code }}{% end %}{% end %}</textarea>
       {% if individual_content %}<textarea name="hw-html"></textarea>{% end %}
       <ul name="hw-html-tabs">
         <li name="hw-style-tab" onclick="hw.htmlTab(this)" {% if not individual_content %}class="hw-selected"{% end %}>{{ _('style') }}</li>
@@ -245,10 +243,11 @@
 {% end %}
 
 {% if edit %}
+  hw.inForcedEditPage = true;
   hw.createAutoload = true;
   hw.editLoadFunction = function() {
     if (hw.createAutoload) {
-      hw.edit();
+      hw.edit(null, true);
     }
   }
   Event.observe(document, 'DOMContentLoaded', hw.editLoadFunction, false);
