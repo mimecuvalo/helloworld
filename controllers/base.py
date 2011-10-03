@@ -62,6 +62,7 @@ class BaseHandler(tornado.web.RequestHandler):
     self.display["single_user_site"] = self.constants['single_user_site']
     self.display["base_uri"] = self.base_uri
     self.display["prefix"] = self.prefix
+    self.display["has_code"] = False
     self.display["source_website"] = self.constants['source_website']
     self.display["licenses"] = self.constants['licenses']
     self.display["current_datetime"] = datetime.datetime.utcnow()

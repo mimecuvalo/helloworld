@@ -159,7 +159,7 @@ class ViewHandler(BaseHandler):
           self.display["section_template"] = content_album.template 
         self.display["is_store"] = self.display["is_store"] or content_album.template == 'store'
         self.display["is_events"] = self.display["is_events"] or content_album.template == 'events'
-      
+
     self.display['has_code'] = content.code or re.search(r"<script", content.view, re.I | re.M) \
                             or (content_section and content_section.code) or (content_album and content_album.code)
     if self.display["edit"] and self.display['has_code']:

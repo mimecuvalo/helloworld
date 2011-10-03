@@ -67,7 +67,7 @@ class AuthHandler(BaseHandler, tornado.auth.GoogleMixin):
     self.set_secure_cookie("user", tornado.escape.json_encode(user))
     self.redirect(self.get_argument("next"))
 
-class AuthLogoutHandler(tornado.web.RequestHandler):
+class AuthLogoutHandler(BaseHandler):
   def get(self):
     self.clear_cookie("user")
-    self.redirect(self.get_argument("next"))
+    self.redirect(self.get_argument("next", self.nav_url()))

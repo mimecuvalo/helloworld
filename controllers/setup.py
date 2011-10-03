@@ -84,3 +84,7 @@ class SetupHandler(BaseHandler):
 
     with open(self.application.settings["config_path"], 'w') as configfile:
       config.write(configfile)
+
+    index_html = os.path.normpath(os.path.realpath(__file__) + '/../../index.html')
+    index_html_disabled = os.path.normpath(os.path.realpath(__file__) + '/../../index.html.disabled')
+    os.system('mv ' + index_html + ' ' + index_html_disabled)
