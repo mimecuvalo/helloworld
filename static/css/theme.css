@@ -62,7 +62,11 @@ body {
   cursor: hand;
   cursor: pointer;
 }
-.hw-button:hover {
+a.hw-button {
+  text-decoration: line-through;
+}
+a.hw-button[href],
+a.hw-button[href]:hover {
   text-decoration: none;
 }
 .hw-button-blue,
@@ -208,7 +212,7 @@ body {
 
 #hw-content nav[name=hw-neighbors] {
   text-align: center;
-  padding: 1px 0;
+  padding: 4px 0;
   float: right;
   width: 335px;
 }
