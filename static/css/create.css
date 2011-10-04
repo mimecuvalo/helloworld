@@ -465,7 +465,7 @@ div[name=hw-anchor-editor] {
   position: absolute;
   top: -10000px;
   left: -10000px;
-  z-index: 2;
+  z-index: 1000;
   width: 275px;
   border: 1px solid black;
   background-color: white;
@@ -473,15 +473,14 @@ div[name=hw-anchor-editor] {
 }
 div[name=hw-image-editor] {
   position: absolute;
-  top: 25px;
+  top: 36px;
   left: 50%;
   margin-left: -350px;
   padding: 10px;
   width: 720px;
   height: 480px;
   background-color: white;
-  z-index: 2;
-  border: 3px double black;
+  z-index: 1000;
 }
 div[name=hw-image-editor].hw-editing img,
 div[name=hw-image-editor].hw-editing canvas {
@@ -501,9 +500,11 @@ div[name=hw-image-editor] .hw-image-actions {
   float: left;
   clear: right;
   width: 200px;
+  padding-left: 6px;
 }
 div[name=hw-image-editor] .hw-image-actions li {
   list-style-type: none;
+  clear: both;
 }
 div[name=hw-image-editor] .hw-image-close {
   float: right;

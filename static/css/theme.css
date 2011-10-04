@@ -551,7 +551,7 @@ a.hw-read-more {
 
 #hw-cart-wrapper {
   position: absolute;
-  z-index: 2;
+  z-index: 1000;
   top: 10px;
   left: 50%;
   margin-left: -350px;
