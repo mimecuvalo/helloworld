@@ -12,6 +12,7 @@ class CustomizeHandler(BaseHandler):
 
     self.display['themes'] = os.listdir(os.path.join(self.application.settings["static_path"], 'css/themes'))
     self.display['themes'] += os.listdir(self.resource_directory('themes'))
+    self.display['themes'] = [ theme for theme in self.display['themes'] if not theme.startswith('.') and theme.endswith('.css') ]
     self.display['currencies'] = [ "AUD", "CAD", "CZK", "DKK", "EUR", "HKD", "HUF", "ILS", "JPY", "MXN", "NOK", "NZD", "PLN", "GBP", "SGD", "SEK", "CHF", "THB", "USD", ]
 
     self.fill_template("customize.html")
