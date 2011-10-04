@@ -56,9 +56,9 @@ body {
   margin: 0 3px 6px 3px;
   display: block;
   float: left;
-  -moz-transition: all 0.05s linear;
-  -webkit-transition: all 0.05s linear;
-  transition: all 0.05s linear;
+  -moz-transition: all 0.03s linear;
+  -webkit-transition: all 0.03s linear;
+  transition: all 0.03s linear;
   cursor: hand;
   cursor: pointer;
 }

@@ -497,6 +497,7 @@ hw.navigate = function(event, url, title) {
 
   if (!hw.addedFirstUrlToHistory) {
     history.replaceState({ 'title': document.title }, document.title, window.location.href);
+    hw.loadedContent[window.location.href] = hw.$('hw-content').innerHTML;
     hw.addedFirstUrlToHistory = true;
   }
   hw.startUrl = null; // XXX chrome, ugh, see below in popstate
@@ -514,7 +515,7 @@ hw.swapContent = function(url, title) {
       hw.$('hw-content').innerHTML = preloadedContent || (xhr ? xhr.responseText : '');
       hw.loadedContent[url] = preloadedContent || (xhr ? xhr.responseText : '');
       hw.removeClass(hw.$('hw-content'), 'hw-invisible');
-      hw.preloadNextContent();
+      hw.preloadPreviousContent();
     };
     setTimeout(fn, 100);
   };
@@ -535,13 +536,13 @@ hw.swapContent = function(url, title) {
 
 hw.loadedContent = {};
 
-hw.preloadNextContent = function() {
-  var next = hw.getFirstElementByName('hw-next');
-  if (!hw.supportsHistory() || !next || !next.href || next.getAttribute('data-disallow-magic')) {
+hw.preloadPreviousContent = function() {
+  var prev = hw.getFirstElementByName('hw-previous');
+  if (!hw.supportsHistory() || !prev || !prev.href || prev.getAttribute('data-disallow-magic')) {
     return;
   }
 
-  var url = next.href;
+  var url = prev.href;
 
   if (hw.loadedContent[url]) {
     return;
@@ -563,7 +564,7 @@ hw.preloadNextContent = function() {
           onSuccess: onSuccess });
 };
 
-Event.observe(window, 'load', hw.preloadNextContent, false);
+Event.observe(window, 'load', hw.preloadPreviousContent, false);
 hw.startUrl = window.location.href;
 Event.observe(window, 'popstate', function(e) {
   if (hw.startUrl == window.location.href) { // XXX chrome sends a popstate event onload too
