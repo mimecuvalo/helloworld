@@ -353,6 +353,16 @@ hw.edit = function(event, opt_dontCreateMediaIframe) {
 
   var createForm = hw.getFirstElementByName('hw-create');
   var turnEditingOn = hw.isHidden(createForm);
+
+  // XXX, edge case: if you edit the page, then click 'edit' to close edit mode (without saving),
+  // then, navigate to a neighbor page (which uses html5 history) you don't get
+  // the onbeforeunload call for the page you were editing.
+  // therefore, show force onbeforeunload to show up
+  if (!turnEditingOn && window.onbeforeunload) {
+    window.location.reload();
+    return;
+  }
+
   hw.setClass('hw-edit', 'hw-selected', turnEditingOn);
   if (hw.$('hw-container')) {
     hw.setClass('hw-container', 'hw-editing', turnEditingOn);
