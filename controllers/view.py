@@ -214,6 +214,9 @@ class ViewHandler(BaseHandler):
     content_url = url_factory.load_basic_parameters(self)
     content = self.models.content()
 
+    if not self.constants['single_user_site'] and content_url["profile"] != self.current_user["username"]:
+      raise tornado.web.HTTPError(400, "i call shenanigans")
+
     self.save_content(content, content_url, new=True)
 
     if content.album:
@@ -252,6 +255,9 @@ class ViewHandler(BaseHandler):
 
     if not content:
       raise tornado.web.HTTPError(404)
+
+    if not self.constants['single_user_site'] and content.username != self.current_user["username"]:
+      raise tornado.web.HTTPError(400, "i call shenanigans")
 
     old_section = content.section
     old_album = content.album
@@ -351,7 +357,7 @@ class ViewHandler(BaseHandler):
 
     if template:
       parent_template = template
-    if new:
+    elif new or content.section == 'main':
       parent_template = "feed"
     else:
       parent_template = self.models.content.get(username=content.username,
