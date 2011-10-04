@@ -1791,7 +1791,7 @@ hw.editContent = function(event, el) {
 
   hw.preventDefault(event);
 
-  var href = hw.contentUrl + '/' + el.getAttribute('data-contentname') + '?edit=true';
+  var href = hw.sectionUrl + '/' + el.getAttribute('data-contentname') + '?edit=true';
   if (event.metaKey || event.ctrlKey) {
     window.open(href);
   } else {
