@@ -1,5 +1,5 @@
 defaults = {
-  'use_mod_rails': True,
+  'use_mod_rails': 1,
   'http_prefix' : '',
   'http_hide_prefix': 0,
   'https_prefix' : '',

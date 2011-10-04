@@ -50,7 +50,7 @@ else:
   config = ConfigParser.ConfigParser()
   config.read(config_path)
   constants = dict(constants_module.dictionary.items() + config.items('general'))
-  for constant in ('debug', 'http_hide_prefix', 'port', 'page_size', 'single_user_site', 'ioloop'):
+  for constant in ('debug', 'http_hide_prefix', 'port', 'page_size', 'single_user_site', 'ioloop', 'use_mod_rails'):
     constants[constant] = int(constants[constant])
 
 define("port", default=constants['port'], type=int, help="Port to listen on.")
