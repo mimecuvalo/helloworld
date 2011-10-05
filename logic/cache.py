@@ -45,7 +45,11 @@ def add(handler, content, rendered_content):
 
 def remove(handler, url=None):
   try:
-    os.remove(get_full_filename(handler, url))
+    filename = get_full_filename(handler, url)
+    os.remove(filename)
+
+    if os.path.isdir(filename[:-6]):  # check if filename is associated with a directory (get rid of .htmgz with the -6)
+      invalidate(filename[:-6])
   except:
     pass
 
