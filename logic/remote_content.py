@@ -18,7 +18,7 @@ def parse_feed(models, user, feed_doc):
       new_entry.to_username = user.local_username
       new_entry.from_user = user.profile_url
       new_entry.username = user.username
-      new_entry.date_created = datetime.datetime.strptime(entry.find('published').string[:-6], '%Y-%m-%dT%H:%M:%S')
+      new_entry.date_created = datetime.datetime.strptime(entry.find('updated').string[:-6], '%Y-%m-%dT%H:%M:%S')
       new_entry.type = 'post'
       new_entry.title = users.sanitize(tornado.escape.xhtml_unescape(entry.find('title').string))
       new_entry.post_id = entry.find('id').string

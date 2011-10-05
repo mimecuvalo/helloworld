@@ -71,6 +71,7 @@ settings = {
   "resource_path": os.path.join(os.path.dirname(os.path.realpath(__file__)), "static/resource"),
   "cache_path": os.path.join(os.path.dirname(os.path.realpath(__file__)), "static/cache"),
   "update_feeds_path": os.path.join(os.path.dirname(os.path.realpath(__file__)), "tools/update_feeds.py"),
+  "prune_entries_path": os.path.join(os.path.dirname(os.path.realpath(__file__)), "tools/prune_old_entries.py"),
   "app_path": os.path.realpath(__file__),
   "resource_url": "static/resource",
   "static_path": os.path.join(os.path.dirname(os.path.realpath(__file__)), "static"),
@@ -135,6 +136,11 @@ try:
   update_feed_line = '0 * * * * ' + update_feeds_script
   if (update_feed_line + '\n') not in crontab:
     os.system('(crontab -l ; echo "' + update_feed_line + '") | crontab -')
+
+  prune_feeds_script = 'python ' + settings['prune_entries_path']
+  prune_feed_line = '0 2 * * * ' + prune_feeds_script
+  if (prune_feed_line + '\n') not in crontab:
+    os.system('(crontab -l ; echo "' + prune_feed_line + '") | crontab -')
 except:
   pass
 

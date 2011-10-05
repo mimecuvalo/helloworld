@@ -113,7 +113,7 @@ class SalmonHandler(BaseHandler):
       favorite_record.to_username = self.display["user"].username
       favorite_record.from_user = signer_uri
       favorite_record.username = user_remote.username
-      favorite_record.date_created = datetime.datetime.utcnow()
+      favorite_record.date_created = datetime.datetime.strptime(salmon_doc.find('atom:updated').string[:-6], '%Y-%m-%dT%H:%M:%S')
       favorite_record.type = 'favorite'
       favorite_record.local_content_name = content.name
       favorite_record.save()
@@ -159,7 +159,7 @@ class SalmonHandler(BaseHandler):
       post_remote.to_username = self.display["user"].username
       post_remote.from_user = signer_uri
       post_remote.username = user_remote.username
-      post_remote.date_created = datetime.datetime.utcnow()
+      post_remote.date_created = datetime.datetime.strptime(salmon_doc.find('atom:updated').string[:-6], '%Y-%m-%dT%H:%M:%S')
       if is_spam:
         post_remote.is_spam = True
       else:

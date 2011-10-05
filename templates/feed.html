@@ -20,7 +20,7 @@
       <rights>{{ licenses[user.license]["name"] }}: {{ user.license }}</rights>
     {% end %}
   {% end %}
-  <updated>{% if type(feed) is list and len(feed) %}{{ feed[0].date_created.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}{% end %}</updated>
+  <updated>{% if type(feed) is list and len(feed) %}{{ feed[0].date_updated.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}{% end %}</updated>
   {% end %}
   <author>
     <activity:object-type>http://activitystrea.ms/schema/1.0/person</activity:object-type>
@@ -55,8 +55,8 @@
           {{ add_base_uris(item.view) }}
           {{ '<img src="' + nav_url(host=True, section='stats', url=content_url(item)) + '">' }}
         </content>
-        <updated>{{ item.date_created.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}</updated>
-        <published>{{ item.date_updated.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}</published>
+        <updated>{{ item.date_updated.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}</updated>
+        <published>{{ item.date_created.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}</published>
         <activity:verb>http://activitystrea.ms/schema/1.0/post</activity:verb>
         {% if item.section == 'comments' %}
           <activity:object-type>http://activitystrea.ms/schema/1.0/comment</activity:object-type>
