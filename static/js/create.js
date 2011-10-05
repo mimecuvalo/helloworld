@@ -1062,10 +1062,15 @@ hw.cropMouseUp = function(event) {
     return;
   }
 
+  if (hw.getFirstElementByName('hw-image-width').value > 650) {  // 650 == size of upload resize
+    hw.getFirstElementByName('hw-image-width').value = 650;
+    hw.editImageWidth(hw.getFirstElementByName('hw-image-width'));
+  }
+
   var canvas = hw.editImageCanvas();
   var options = { rect: { top: hw.editImageCropStart.top, left: hw.editImageCropStart.left,
-                          height: event.clientY - hw.editImageCropStart.top - event.target.getBoundingClientRect().top,
-                          width: event.clientX - hw.editImageCropStart.left - event.target.getBoundingClientRect().left } };
+                          height: event.clientY - hw.editImageCropStart.top - canvas.getBoundingClientRect().top,
+                          width: event.clientX - hw.editImageCropStart.left - canvas.getBoundingClientRect().left } };
                           
   hw.removeClass(hw.getFirstElementByName('hw-image-editor'), 'hw-editing');
   Pixastic.process(canvas, "crop", options);

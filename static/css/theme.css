@@ -615,10 +615,10 @@ span[data-tooltip]:hover:after {
   -webkit-border-radius: 5px;
   border-radius: 5px;*/
   background-color: white;
-  border: 1px solid #fa0;
-  -moz-box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
-  -webkit-box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
-  box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
+  border: 1px solid #0c0;
+  -moz-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
+  -webkit-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
+  box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
 }
 
 ul[name=hw-comments] {

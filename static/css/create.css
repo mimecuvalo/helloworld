@@ -170,7 +170,7 @@ form[name=hw-create] .hw-explanation {
 div[name=hw-html-wrapper] {
   height: 220px;
 }
-div[name=hw-html-wrapper].hw-open {
+div[name=hw-html-wrapper] {
   margin-right: 3px;
 }
 div[name=hw-html-wrapper] .hw-hidden {
@@ -406,7 +406,6 @@ span[name=hw-media-cancel] {
   cursor: pointer;
   float: right;
   font-size: 1.230em;
-  margin-top: 0.6em;
 }
 
 input[name=hw-media-remote],
@@ -475,22 +474,22 @@ div[name=hw-image-editor] {
   position: absolute;
   top: 36px;
   left: 50%;
-  margin-left: -350px;
+  margin-left: -450px;
   padding: 10px;
-  width: 720px;
-  height: 480px;
+  width: 900px;
+  height: 525px;
   background-color: white;
   z-index: 1000;
 }
 div[name=hw-image-editor].hw-editing img,
 div[name=hw-image-editor].hw-editing canvas {
-  max-width: 480px;
-  max-height: 480px;
+  max-width: 650px; /* match upload resizing */
+  max-height: 525px;
 }
 div[name=hw-image-editor] .hw-image-scratch-wrapper {
   float: left;
-  width: 480px;
-  height: 480px;
+  width: 650px; /* match upload resizing */
+  height: 525px;
   overflow: hidden;
   text-align: center;
   padding-right: 10px;
