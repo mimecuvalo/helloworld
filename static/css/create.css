@@ -460,7 +460,8 @@ input[name=hw-media-tags] {
   margin-top: 3px;
 }
 
-div[name=hw-anchor-editor] {
+div[name=hw-anchor-editor],
+div[name=hw-image-options] {
   position: absolute;
   top: -10000px;
   left: -10000px;
@@ -529,7 +530,8 @@ a[name=hw-anchor-remove] {
   font-size: 0.7692em;
 }
 
-div[name=hw-anchor-editor] label {
+div[name=hw-anchor-editor] label,
+div[name=hw-image-options] label {
   cursor: hand;
   cursor: pointer;
   font-size: 0.7692em;
@@ -538,6 +540,7 @@ div[name=hw-anchor-editor] label {
 }
 
 div[name=hw-anchor-editor] input,
+div[name=hw-image-options] input,
 div[name=hw-anchor-editor] a {
   vertical-align: middle;
 }

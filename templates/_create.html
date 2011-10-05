@@ -197,6 +197,12 @@
   <input type="radio" name="hw-anchor-type" value="web" onclick="hw.changeAnchorType(this)"><label onclick="hw.changeAnchorType(this.previousSibling)">{{ _('web') }}</label>
   <input type="radio" name="hw-anchor-type" value="email" onclick="hw.changeAnchorType(this)"><label onclick="hw.changeAnchorType(this.previousSibling)">{{ _('email') }}</label>
 </div>
+<div name="hw-image-options">
+  <div>{{ _('change alignment') }}</div>
+  <input type="radio" name="hw-image-align" value="none" onclick="hw.changeImageAlign(this)"><label onclick="hw.changeImageAlign(this.previousSibling)">{{ _('none') }}</label>
+  <input type="radio" name="hw-image-align" value="left" onclick="hw.changeImageAlign(this)"><label onclick="hw.changeImageAlign(this.previousSibling)">{{ _('left') }}</label>
+  <input type="radio" name="hw-image-align" value="right" onclick="hw.changeImageAlign(this)"><label onclick="hw.changeImageAlign(this.previousSibling)">{{ _('right') }}</label>
+</div>
 <div name="hw-image-editor" class="hw-closed hw-box-black">
   <a href="#closeEditor" class="hw-image-close hw-button hw-button-red" onclick="hw.editImageClose(event)">x</a>
   <div class="hw-image-scratch-wrapper">
@@ -228,6 +234,7 @@
   <div class="{% if not content and individual_content %}hw-new{% end %} {% if section_template %}hw-template-{{ section_template }}{% end %}" name="hw-wysiwyg" tabindex="2"
     {% if not content or not individual_content %}contenteditable{% end %}
     onmouseup="hw.saveSelection()" onkeyup="hw.saveSelection()" onfocus="hw.restoreSelection()">{% if content and individual_content %}{% raw content.view %}{% end %}</div>
+  <div class="clear"></div>
 </div>
 
 <script>

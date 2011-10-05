@@ -369,7 +369,7 @@ hw.edit = function(event, opt_dontCreateMediaIframe) {
   }
   hw.display(createForm, turnEditingOn);
   if (!turnEditingOn) {
-    hw.hideAnchorEditor();
+    hw.hideElementOptions();
   }
   createForm['hw-save'].disabled = false;
   var wysiwyg = hw.getFirstElementByName('hw-wysiwyg');
@@ -527,7 +527,7 @@ hw.wysiwyg = function(event, cmd, value, el) {
         fragment.appendChild(startNode.childNodes[x]);
       }
       startNode.parentNode.replaceChild(fragment, startNode);
-      hw.hideAnchorEditor();
+      hw.hideElementOptions();
       return;
     } else {
       if (!hw.selection.toString()) {
@@ -593,6 +593,19 @@ hw.wysiwygDetectState = function() {
   } else {
     hw.hideAnchorEditor();
   }
+
+  var images = hw.getSelectionStartNode().getElementsByTagName('IMG');
+  var isImage = images.length && images[0].parentNode == hw.getSelectionStartNode();  // only look at children, not descendants
+  if (isImage) {
+    hw.showImageOptions();
+  } else {
+    hw.hideImageOptions();
+  }
+};
+
+hw.hideElementOptions = function() {
+  hw.hideAnchorEditor();
+  hw.hideImageOptions();
 };
 
 hw.showAnchorEditor = function(anchor) {
@@ -600,7 +613,7 @@ hw.showAnchorEditor = function(anchor) {
   hw.getFirstElementByName('hw-anchor-link')['anchorTag'] = anchorTag;
   var anchorPosition = anchorTag.getBoundingClientRect();
   var contentPosition = hw.$('hw-content') ? hw.$('hw-content').getBoundingClientRect() : document.body.getBoundingClientRect();
-  hw.getFirstElementByName('hw-anchor-editor').style.top = (window.pageYOffset + anchorPosition.bottom) + 'px';
+  hw.getFirstElementByName('hw-anchor-editor').style.top = (window.pageYOffset + anchorPosition.top) + 'px';
   hw.getFirstElementByName('hw-anchor-editor').style.left = (anchorPosition.left + 5 - contentPosition.left) + 'px';
   hw.getFirstElementByName('hw-anchor-link').value = anchorTag.href;
   hw.getFirstElementByName('hw-anchor-visit').href = anchorTag.href;
@@ -617,6 +630,7 @@ hw.hideAnchorEditor = function() {
 
 hw.changeAnchorType = function(el) {
   var link = hw.getFirstElementByName('hw-anchor-link');
+  el.checked = true;
   if (el.value == 'web' && link.value.indexOf('mailto:') == 0) {
     hw.getFirstElementByName('hw-anchor-link').value = 'http://';
     hw.getFirstElementByName('hw-anchor-visit').href = '';
@@ -634,6 +648,47 @@ hw.changeAnchorLink = function(el) {
   wysiwyg.focus();
   var anchorTag = hw.getFirstElementByName('hw-anchor-link')['anchorTag'];
   anchorTag.href = el.value;
+};
+
+hw.showImageOptions = function(image) {
+  var imageTag;
+  if (image) {
+    imageTag = image;
+  } else {
+    imageTag = hw.getSelectionStartNode().getElementsByTagName('IMG')[0];
+  }
+  hw.getFirstElementByName('hw-image-options')['imageTag'] = imageTag;
+  var imagePosition = imageTag.getBoundingClientRect();
+  var contentPosition = hw.$('hw-content') ? hw.$('hw-content').getBoundingClientRect() : document.body.getBoundingClientRect();
+  hw.getFirstElementByName('hw-image-options').style.top = (window.pageYOffset + imagePosition.top
+      + hw.getFirstElementByName('hw-anchor-editor').getBoundingClientRect().height + 25) + 'px';
+  hw.getFirstElementByName('hw-image-options').style.left = (imagePosition.left + 5 - contentPosition.left) + 'px';
+  hw.getFirstElementByName('hw-image-align').checked = imageTag.style.cssFloat == '' || imageTag.style.float == 'none';
+  hw.getElementsByName('hw-image-align')[1].checked = imageTag.style.cssFloat == 'left';
+  hw.getElementsByName('hw-image-align')[1].checked = imageTag.style.cssFloat == 'right';
+};
+
+hw.hideImageOptions = function() {
+  if (hw.getFirstElementByName('hw-image-options')) {
+    hw.getFirstElementByName('hw-image-options').style.top = '-10000px';
+    hw.getFirstElementByName('hw-image-options').style.left = '-10000px';
+  }
+};
+
+hw.changeImageAlign = function(el) {
+  el.checked = true;
+  var wysiwyg = hw.getFirstElementByName('hw-wysiwyg');
+  wysiwyg.focus();
+  var imageTag = hw.getFirstElementByName('hw-image-options')['imageTag'];
+  imageTag.style.cssFloat = el.value;
+
+  if (imageTag.parentNode.nodeName == 'A') {
+    imageTag.parentNode.style.cssFloat = el.value;
+
+    if (imageTag.parentNode.parentNode.nodeName == 'FIGURE') {
+      imageTag.parentNode.parentNode.style.cssFloat = el.value;
+    }
+  }
 };
 
 hw.selection = 0;
@@ -704,7 +759,7 @@ hw.html = function(event, el, close) {
   var fn = function() { hw.createOnScroll(); }
   setTimeout(fn, 300);
   html.focus();
-  hw.hideAnchorEditor();
+  hw.hideElementOptions();
 
   setTimeout(hw.setupCodeMirror, 0);
 };
@@ -1208,7 +1263,7 @@ hw.generateStylesheetCache = function() {
 hw.createMediaIframe = function(callback) {
   var mediaList = hw.getFirstElementByName('hw-media-list');
 
-  hw.hideAnchorEditor();
+  hw.hideElementOptions();
 
   if (mediaList.childNodes.length
       && hw.getFirstElementByName('hw-media-remote', mediaList.childNodes[mediaList.childNodes.length - 1].contentWindow.document)
@@ -1387,7 +1442,7 @@ hw.mediaLibrary = function(event, el, close) {
   hw.display(mediaWrapper, openMedia);
   var fn = function() { hw.createOnScroll(); }
   setTimeout(fn, 300);
-  hw.hideAnchorEditor();
+  hw.hideElementOptions();
 
   if (mediaWrapper.src == 'about:blank' && !close) {
     mediaWrapper.src = hw.baseUri() + 'media?embedded=true';
@@ -1859,7 +1914,7 @@ hw.cleanName = function(name) {
 hw.createOnScroll = function(event) {
   var text = hw.getFirstElementByName('hw-wysiwyg-controls');
   var makeTextFixed = hw.getFirstElementByName('hw-wysiwyg').getBoundingClientRect().top - text.getBoundingClientRect().height < 0
-               && text.getBoundingClientRect().height < hw.getFirstElementByName('hw-wysiwyg').getBoundingClientRect().bottom;
+               && text.getBoundingClientRect().height < hw.getFirstElementByName('hw-view').getBoundingClientRect().bottom;
   hw.setClass(text, 'hw-fixed', makeTextFixed);
   /*var marginTop = 0;
   if (makeFixed) {
