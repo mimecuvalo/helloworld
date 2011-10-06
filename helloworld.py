@@ -25,6 +25,7 @@ import controllers.data_liberation
 import controllers.feed
 import controllers.foaf
 import controllers.host_meta
+import controllers.humans
 import controllers.media
 import controllers.opensearch
 import controllers.private
@@ -107,7 +108,7 @@ else:
     (prefix + r"/data_liberation\.zip", controllers.data_liberation.DataLiberationDownloadHandler, {"path": "/tmp"}),
     (prefix + r"/?[^/]+/feed", controllers.feed.FeedHandler),
     (prefix + r"/?[^/]+/foaf", controllers.foaf.FoafHandler),
-    (prefix + r"/(humans\.txt)", tornado.web.StaticFileHandler, {"path": settings['static_path']}),
+    (prefix + r"/(humans\.txt)", controllers.humans.HumansTxtHandler, {"path": settings['static_path']}),
     (prefix + r"/login", controllers.auth.AuthHandler),
     (prefix + r"/logout", controllers.auth.AuthLogoutHandler),
     (prefix + r"/media", controllers.media.MediaHandler),

@@ -3,6 +3,8 @@ import hashlib
 import re
 import urllib
 
+from BeautifulSoup import BeautifulSoup
+import tornado.escape
 import tornado.web
 
 from base import BaseHandler
@@ -352,6 +354,14 @@ class ViewHandler(BaseHandler):
     content.style   = self.get_argument('style', "")
     content.code    = self.get_argument('code', "")
     content.view    = self.get_argument('view', "")
+
+    # linkify
+    soup = BeautifulSoup(content.view)
+    for text in soup.findAll(text=True):
+      if text.parent.name != 'a':
+        text.replaceWith(tornado.escape.linkify(text, shorten=True, extra_params='rel="nofollow"'))
+
+    content.view = soup.renderContents()
 
     template = self.get_argument('template', "")
 

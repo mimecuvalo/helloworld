@@ -81,8 +81,15 @@ def sanitize(value):
   soup = BeautifulSoup(value)
 
   for tag in soup.findAll(True):
-      if tag.name not in VALID_TAGS:
-          tag.hidden = True
+    if tag.name not in VALID_TAGS:
+      tag.hidden = True
+    elif tag.name == 'a':
+      tag['rel'] = 'nofollow'
+
+  # linkify
+  for text in soup.findAll(text=True):
+    if text.parent.name != 'a':
+      text.replaceWith(tornado.escape.linkify(text, shorten=True, extra_params='rel="nofollow"'))
 
   return soup.renderContents()
 
