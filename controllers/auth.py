@@ -22,7 +22,7 @@ class AuthHandler(BaseHandler, tornado.auth.GoogleMixin):
       raise tornado.web.HTTPError(500, "BrowserId auth failed")
 
     if response['status'] == 'okay':
-      self.set_secure_cookie("user", tornado.escape.json_encode(response))
+      self.set_secure_cookie("user", tornado.escape.json_encode(response), HttpOnly=True)
     else:
       raise tornado.web.HTTPError(500, "BrowserId auth failed")
 
@@ -64,7 +64,7 @@ class AuthHandler(BaseHandler, tornado.auth.GoogleMixin):
   def _on_auth(self, user):
     if not user:
       raise tornado.web.HTTPError(500, "Google auth failed")
-    self.set_secure_cookie("user", tornado.escape.json_encode(user))
+    self.set_secure_cookie("user", tornado.escape.json_encode(user), HttpOnly=True)
     self.redirect(self.get_argument("next"))
 
 class AuthLogoutHandler(BaseHandler):

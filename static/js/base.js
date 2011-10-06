@@ -19,6 +19,10 @@ hw.baseUri = function() {
   return document.getElementsByTagName('base')[0].href;
 };
 
+hw.basePath = function() {
+  return document.getElementsByTagName('base')[0].getAttribute('data-path');
+};
+
 hw.preventDefault = function(event) {
   if (event.preventDefault) {
     event.preventDefault();
@@ -181,14 +185,16 @@ hw.getCookie = function(name, opt_default) {
   return opt_default;
 };
 
-hw.setCookie = function(name, value, opt_maxAge) {
+hw.setCookie = function(name, value, opt_maxAge, opt_path, opt_domain) {
   var oneYear = 31536000;
   var date = new Date((new Date).getTime() + oneYear * 1000);
   if (opt_maxAge == 0) {
     date = new Date(1970, 1 /*Feb*/, 1);
   }
+  var domainStr = opt_domain ? ';domain=' + opt_domain : '';
+  var pathStr = opt_path ? ';path=' + opt_path : '';
   expiresStr = ';expires=' + date.toUTCString();
-  document.cookie = name + '=' + value + expiresStr;
+  document.cookie = name + '=' + value + domainStr + pathStr + expiresStr;
 };
 
 hw.eraseCookie = function(name) {
@@ -1009,11 +1015,11 @@ hw.saveCart = function(cart) {
 
   var cart_chunks = 0;
   for (var x = 0; x < cart.length; x += 4000) {
-    hw.setCookie('cart_chunk_' + (x / 4000), cart.substring(x, x + 4000));
+    hw.setCookie('cart_chunk_' + (x / 4000), cart.substring(x, x + 4000), -1, hw.basePath());
     ++cart_chunks;
   }
 
-  hw.setCookie('cart_chunks', cart_chunks);
+  hw.setCookie('cart_chunks', cart_chunks, -1, hw.basePath());
 };
 
 hw.viewCart = function() {

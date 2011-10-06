@@ -31,7 +31,8 @@ class BaseHandler(tornado.web.RequestHandler):
     self.author_user = None
     self.request.uri = self.request.uri.replace('/helloworld.py', '')
     self.prefix = self.constants['https_prefix'] if self.request.protocol == 'https' else self.constants['http_prefix']
-    self.base_uri = self.request.protocol + '://' + self.request.host + (self.prefix if not self.constants['http_hide_prefix'] else '') + '/'
+    self.base_path = (self.prefix if not self.constants['http_hide_prefix'] else '') + '/'
+    self.base_uri = self.request.protocol + '://' + self.request.host + self.base_path
     self.request.uri = self.prefix + self.request.uri[len(tornado.escape.url_escape(self.prefix).replace('%2F', '/')):]
     self.breadcrumbs = url_factory.load_basic_parameters(self)
     self.template = None

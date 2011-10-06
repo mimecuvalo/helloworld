@@ -76,7 +76,8 @@ def get_webfinger(lrdd, uri):
   return BeautifulSoup(webfinger_response.read())
 
 def sanitize(value):
-  VALID_TAGS = ['video', 'audio', 'strong', 'em', 'i', 'b', 'u', 'a', 'h1', 'h2', 'h3', 'pre', 'img', 'p', 'ul', 'li', 'br']
+  VALID_TAGS = ['iframe', 'video', 'audio', 'strong', 'em', 'i', 'b', 'u', 'a', 'h1', 'h2', 'h3', 'pre', 'img', 'p', 'ul', 'li', 'br']
+  VALID_ATTRS = ['width', 'height', 'src', 'rel', 'href', 'class', 'title', 'controls', 'type', 'alt', 'frameborder', 'allowfullscreen']
 
   soup = BeautifulSoup(value)
 
@@ -85,6 +86,10 @@ def sanitize(value):
       tag.hidden = True
     elif tag.name == 'a':
       tag['rel'] = 'nofollow'
+
+    for attr, value in tag.attrs:
+      if attr not in VALID_ATTRS:
+        del tag[attr]
 
   # linkify
   for text in soup.findAll(text=True):
