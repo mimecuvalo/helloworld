@@ -62,6 +62,7 @@ class BaseHandler(tornado.web.RequestHandler):
     self.display["is_owner_viewing"] = False
     self.display["single_user_site"] = self.constants['single_user_site']
     self.display["base_uri"] = self.base_uri
+    self.display["base_path"] = self.base_path
     self.display["prefix"] = self.prefix
     self.display["has_code"] = False
     self.display["source_website"] = self.constants['source_website']
