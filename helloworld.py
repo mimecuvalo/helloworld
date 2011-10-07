@@ -30,6 +30,7 @@ import controllers.media
 import controllers.opensearch
 import controllers.private
 import controllers.push
+import controllers.restart
 import controllers.salmon
 import controllers.search
 import controllers.setup
@@ -73,6 +74,7 @@ settings = {
   "cache_path": os.path.join(os.path.dirname(os.path.realpath(__file__)), "static/cache"),
   "update_feeds_path": os.path.join(os.path.dirname(os.path.realpath(__file__)), "tools/update_feeds.py"),
   "prune_entries_path": os.path.join(os.path.dirname(os.path.realpath(__file__)), "tools/prune_old_entries.py"),
+  "restart_path": os.path.join(os.path.dirname(os.path.realpath(__file__)), "tmp/restart.txt"),
   "app_path": os.path.realpath(__file__),
   "resource_url": "static/resource",
   "static_path": os.path.join(os.path.dirname(os.path.realpath(__file__)), "static"),
@@ -115,6 +117,7 @@ else:
     (prefix + r"/?[^/]+/opensearch", controllers.opensearch.OpenSearchHandler),
     (prefix + r"/private/(.*)", controllers.private.PrivateResourceHandler, {"path": settings['private_path']}),
     (prefix + r"/?[^/]+/push", controllers.push.PushHandler),
+    (prefix + r"/restart", controllers.restart.RestartHandler),
     (prefix + r"/(robots\.txt)", tornado.web.StaticFileHandler, {"path": settings['static_path']}),
     (prefix + r"/salmon(?:$|/.*)", controllers.salmon.SalmonHandler),
     (prefix + r"/?[^/]+/search", controllers.search.SearchHandler),

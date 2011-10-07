@@ -21,9 +21,11 @@
       <ul>
         <li><strong><a href="{{ nav_url(username=username) }}">{{ _('view site') }}</a></strong></li>
         {% if is_superuser %}
+          <li><hr></li>
           <li><a href="{{ nav_url(section='admin') }}">{{ _('user admin') }}</a></li>
+          <li><a href="{{ nav_url(section='restart', next=handler.request.uri) }}">{{ _('restart server') }}</a></li>
         {% end %}
-        <hr>
+        <li><hr></li>
         <li><a href="{{ nav_url(section='logout', next=nav_url(username=username)) }}">{{ _('logout') }}</a></li>
       </ul>
     </div>
