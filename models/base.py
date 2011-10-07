@@ -29,6 +29,7 @@ class content(Model):
                 'deleted': 0,
                 'thread': '',
                 'thread_user': '',
+                'avatar': '',
                 'view': '',
                 'code': '',}
     validations = {'section': (custom_validators.UnicodeString(1, 255), custom_validators.Id()),
@@ -59,6 +60,7 @@ class content_remote(Model):
                 'is_spam': 0,
                 'favorited': 0,
                 'deleted': 0,
+                'avatar': '',
                 'link': '',
                 'view': '',}
     validations = {'to_username': (custom_validators.UnicodeString(1, 255), custom_validators.Alphanumeric()),

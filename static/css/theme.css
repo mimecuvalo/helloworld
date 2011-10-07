@@ -630,6 +630,14 @@ ul[name=hw-comments] {
   clear: both;
 }
 
+ul[name=hw-comments] li {
+  list-style-type: none;
+}
+
+ul[name=hw-comments] img {
+  float: left;
+}
+
 .hw-comment-header {
   float: left;
   font-size: 1.23em;

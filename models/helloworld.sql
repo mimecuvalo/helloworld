@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Sep 23, 2011 at 04:26 PM
+-- Generation Time: Oct 07, 2011 at 03:03 PM
 -- Server version: 5.0.92
 -- PHP Version: 5.2.9
 
@@ -51,6 +51,8 @@ CREATE TABLE IF NOT EXISTS `content` (
   `is_spam` tinyint(1) NOT NULL,
   `deleted` tinyint(1) NOT NULL,
   `thread` mediumtext NOT NULL,
+  `thread_user` mediumtext NOT NULL,
+  `avatar` mediumtext NOT NULL,
   `style` longtext NOT NULL,
   `code` longtext NOT NULL,
   `view` longtext NOT NULL,
@@ -88,6 +90,8 @@ CREATE TABLE IF NOT EXISTS `content_remote` (
   `local_content_name` varchar(255) NOT NULL,
   `from_user` mediumtext NOT NULL,
   `username` varchar(255) NOT NULL,
+  `creator` varchar(255) NOT NULL,
+  `avatar` mediumtext NOT NULL,
   `title` mediumtext NOT NULL,
   `post_id` mediumtext NOT NULL,
   `link` mediumtext NOT NULL,
