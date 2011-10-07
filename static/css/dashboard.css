@@ -64,9 +64,13 @@
   margin: 0 5px;
 }
 
-#hw-following-new {
-  width: 115px;
+#hw-following-new-wrapper {
   margin: 5px 0;
+}
+
+#hw-following-new {
+  float: left;
+  width: 75px;
 }
 
 #hw-feed {

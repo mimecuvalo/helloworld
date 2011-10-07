@@ -14,6 +14,12 @@
   {% end %}
   hw.createIndividualContent = {% if individual_content %}true{% else %}false{% end %};
   hw.pageHasCode = {% if has_code %}true{% else %}false{% end %};
+  hw.remoteUsers = [ {% for index, user in enumerate(remote_users) %}
+                        { 'username': '{{ user.username }}',
+                          'profile_url': '{{ user.profile_url }}'
+                        }
+                        {% if index != len(remote_users) - 1 %},{% end %}
+                     {% end %} ];
 </script>
 
 <form name="hw-create" method="post" action="/create" onsubmit="return false" class="{% if content %}hw-edit hw-slide-transition hw-closed{% else %}hw-new{% end %}">
@@ -228,6 +234,7 @@
   </div>
   <div class="clear"></div>
 </div>
+<div name="hw-user-autocomplete"></div>
 {% end %}
 <div class="clear"></div>
 <div name="hw-view">

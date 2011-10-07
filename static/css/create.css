@@ -461,7 +461,8 @@ input[name=hw-media-tags] {
 }
 
 div[name=hw-anchor-editor],
-div[name=hw-image-options] {
+div[name=hw-image-options],
+div[name=hw-user-autocomplete] {
   position: absolute;
   top: -10000px;
   left: -10000px;

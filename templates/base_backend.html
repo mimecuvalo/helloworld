@@ -23,6 +23,7 @@
         {% if is_superuser %}
           <li><a href="{{ nav_url(section='admin') }}">{{ _('user admin') }}</a></li>
         {% end %}
+        <hr>
         <li><a href="{{ nav_url(section='logout', next=nav_url(username=username)) }}">{{ _('logout') }}</a></li>
       </ul>
     </div>

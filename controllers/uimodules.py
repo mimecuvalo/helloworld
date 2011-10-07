@@ -12,6 +12,7 @@ class Create(tornado.web.UIModule):
     self.handler.display["initial_media"] = initial_media
     self.handler.display["edit"] = self.handler.get_argument('edit', False)
     self.handler.display["default_username"] = self.handler.get_author_username()
+    self.handler.display["remote_users"] = self.handler.models.users_remote.get(local_username=self.handler.display["default_username"])[:]
     self.handler.display["sections"] = self.handler.get_sections_with_albums(profile=self.handler.display["default_username"])
     self.handler.display["templates"] = self.handler.constants['templates']
     return self.render_string("_create.html", **self.handler.display)

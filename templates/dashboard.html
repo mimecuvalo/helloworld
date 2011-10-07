@@ -43,7 +43,11 @@
   <div id="hw-following" class="hw-box-green">
     {% comment TODO to do unfollow maybe drag to a trash? %}
     <h2>{{ _('following') }} <a href="#edit" onclick="hw.followingEdit(event)">[{{ _('edit') }}]</a></h2>
-    <input id="hw-following-new" type="text" placeholder="{{ _('follow new user') }}" data-error="{{ _('error subscribing!') }}" data-error-unsub="{{ _('error unsubscribing!') }}" onchange="hw.follow(event)">
+    <div id="hw-following-new-wrapper">
+      <input id="hw-following-new" type="text" data-error="{{ _('error subscribing!') }}" data-error-unsub="{{ _('error unsubscribing!') }}">
+      <button id="hw-following-button" class="hw-button hw-button-green" onclick="hw.follow(event)" data-normal="{{ _('follow') }}" data-following="{{ _('one sec...') }}">{{ _('follow') }}</button>
+      <div class="clear"></div>
+    </div>
     <ul>
       {% for follower in following %}
         <li data-user="{{ follower.profile_url }}">

@@ -496,18 +496,23 @@ hw.testAccelKey = function(event) {
 hw.shortcuts = function(event) {
   var key = event.which ? event.which : event.keyCode;
 
+  //hw.hideUserAutocomplete();
+
   switch (key) {
+    //case 64:    // @-symbol, autocomplete remote_user
+    //  hw.showUserAutocomplete();
+    //  break;
     case 115:   // ctrl-s, save
       if (hw.testAccelKey(event)) {
         hw.preventDefault(event);
         hw.save();
-        break;
+        return;
       }
-      // else
-      //  fall-through
     default:
-      setTimeout(hw.htmlPreview, 0);
+      break;
   }
+
+  setTimeout(hw.htmlPreview, 0);
 };
 
 
@@ -604,6 +609,7 @@ hw.wysiwygDetectState = function() {
 };
 
 hw.hideElementOptions = function() {
+  hw.hideUserAutocomplete();
   hw.hideAnchorEditor();
   hw.hideImageOptions();
 };
@@ -689,6 +695,28 @@ hw.changeImageAlign = function(el) {
       imageTag.parentNode.parentNode.style.cssFloat = el.value;
     }
   }
+};
+
+hw.showUserAutocomplete = function() {
+  if (!hw.remoteUsers) {
+    return;
+  }
+
+  var node = hw.getSelectionStartNode();
+  var users = hw.getFirstElementByName('hw-user-autocomplete');
+
+  var html = "";
+  for (var x = 0; x < hw.remoteUsers.length; ++x) {
+    html += '<div>' + hw.remoteUsers[x].username + '</div>';
+  }
+  users.innerHTML = html;
+
+  var contentPosition = hw.$('hw-content') ? hw.$('hw-content').getBoundingClientRect() : hw.getFirstElementByName('hw-wysiwyg').getBoundingClientRect();
+  users.style.top = (window.pageYOffset + node.getBoundingClientRect().top + contentPosition.top) + 'px';
+  users.style.left = (node.getBoundingClientRect().left + 5) + 'px';
+};
+hw.hideUserAutocomplete = function() {
+  
 };
 
 hw.selection = 0;
@@ -1947,12 +1975,16 @@ hw.follow = function(event, el) {
     return;
   }
 
+  var button = hw.$('hw-following-button');
+  button.innerHTML = button.getAttribute('data-following');
+
   var callback = function(xhr) {
     hw.$('hw-following-new').value = '';
     window.location.reload();
   };
 
   var badTrip = function(xhr) {
+    button.innerHTML = button.getAttribute('data-normal');
     alert(hw.$('hw-following-new').getAttribute('data-error'));
   };
 

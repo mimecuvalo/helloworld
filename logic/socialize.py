@@ -7,7 +7,7 @@ def socialize(handler, content):
   if content.hidden:
     return
 
-  mentions = re.search(r'\W*@(\w*)(?=([^>;]*<*))', content.view, re.M | re.U)
+  mentions = re.search(r'(?=\W*)@(\w*)(?=[^>;]*(<+|$))', content.view, re.M | re.U)
 
   if content.thread or mentions:
     reply(handler, content, mentions)
@@ -26,6 +26,7 @@ def reply(handler, content, mentions=None, thread=None):
   thread = thread or content.thread # XXX this is pretty damn confusing...'thread' used for local comments, content.thread for remote
 
   thread_user_remote = None
+  users = []
   if thread:
     thread_content = handler.models.content_remote.get(to_username=profile, post_id=thread)[0]
     if not thread_content:
@@ -33,7 +34,7 @@ def reply(handler, content, mentions=None, thread=None):
     thread_user_remote = handler.models.users_remote.get(local_username=profile, profile_url=thread_content.from_user)[0]
 
     if thread_user_remote and thread_user_remote.salmon_url:
-      users.salmon_reply(handler, thread_user_remote, content, thread=thread)
+      users.append(thread_user_remote)
 
   if mentions:
     for user in mentions.groups():
@@ -46,4 +47,12 @@ def reply(handler, content, mentions=None, thread=None):
         continue
 
       if user_remote.salmon_url:
-        users.salmon_reply(handler, user_remote, content, thread=thread)
+        users.append(user_remote)
+        content.view = re.compile(r'(?=\W*)(@' + user_remote.username + r')(?=[^>;]*(<+|$))', re.M | re.I | re.U) \
+            .sub('<a href="' + user_remote.profile_url + r'">\1</a>', content.view)
+
+    content.save()
+
+  for user in users:
+    users.salmon_reply(handler, user, content, thread=thread)
+

@@ -1,3 +1,4 @@
+import binascii
 import datetime
 import hashlib
 import httplib
@@ -8,6 +9,7 @@ import random
 import re
 import sys
 import urllib
+import uuid
 
 import tornado.database
 import tornado.escape
@@ -301,6 +303,28 @@ class BaseHandler(tornado.web.RequestHandler):
       return base + static_url_prefix + path + "?v=" + hashes[abs_path][:5]
     else:
       return base + static_url_prefix + path
+
+  @property
+  def xsrf_token(self):
+    """ Modified to add path to cookie"""
+
+    """The XSRF-prevention token for the current user/session.
+
+    To prevent cross-site request forgery, we set an '_xsrf' cookie
+    and include the same '_xsrf' value as an argument with all POST
+    requests. If the two do not match, we reject the form submission
+    as a potential forgery.
+
+    See http://en.wikipedia.org/wiki/Cross-site_request_forgery
+    """
+    if not hasattr(self, "_xsrf_token"):
+      token = self.get_cookie("_xsrf")
+      if not token:
+        token = binascii.b2a_hex(uuid.uuid4().bytes)
+        expires_days = 30 if self.current_user else None
+        self.set_cookie("_xsrf", token, expires_days=expires_days, path=self.base_path)
+      self._xsrf_token = token
+    return self._xsrf_token
 
   def content_url(self, item, host=False, **arguments):
     url = ""
