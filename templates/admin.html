@@ -44,7 +44,7 @@
             <td><input name="oauth" type="email" value="{{ one_user.oauth }}" onblur="hw.saveUser(event, this)"></td>
             <td><input name="author" type="checkbox" {% if one_user.author %}checked="checked"{% end %} onclick="hw.saveUser(event, this)"></td>
             <td><input name="superuser" type="checkbox" {% if one_user.superuser %}checked="checked"{% end %} onclick="hw.saveUser(event, this)"></td>
-            <td><input data-delete="{{ _("delete") }}" data-deleting="{{ _("deleting") }}" type="button" value="{{ _("delete") }}" onclick="hw.deleteUser(this)"></td>
+            <td><input class="hw-button hw-button-red" data-delete="{{ _("delete") }}" data-deleting="{{ _("deleting") }}" type="button" value="{{ _("delete") }}" onclick="hw.deleteUser(this)"></td>
           </tr>
         {% end %}
           <tr>
@@ -54,7 +54,7 @@
             <td><input name="oauth" type="email" placeholder="oauth" required></td>
             <td><input name="author" type="checkbox"></td>
             <td><input name="superuser" type="checkbox"></td>
-            <td><input data-save="{{ _("save") }}" data-saving="{{ _("saving") }}" type="button" value="{{ _("save") }}" onclick="hw.saveUser(event, this)"></td>
+            <td><input class="hw-button hw-button-blue" data-save="{{ _("save") }}" data-saving="{{ _("saving") }}" type="button" value="{{ _("save") }}" onclick="hw.saveUser(event, this)"></td>
           </tr>
       </table>
     </form>

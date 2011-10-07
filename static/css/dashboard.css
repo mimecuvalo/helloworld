@@ -86,10 +86,23 @@ h1 {
   text-align: right;
 }
 
+#hw-absorb div[name=hw-view] {
+  overflow: auto;
+}
+
+#hw-absorb .hw-remote img {
+  float: right;
+}
+#hw-absorb .hw-remote img[align=left] {
+  float: left;
+}
+
+#hw-feed header {
+  margin-bottom: 0.5em;
+}
 #hw-feed h1 {
   text-align: left;
   text-transform: none;
-  margin-bottom: 0.5em;
 }
 
 section {
@@ -102,6 +115,7 @@ section {
 #admin td, th {
   padding: 1px;
   border: 1px solid black;
+  vertical-align: middle;
 }
 
 #admin tr {

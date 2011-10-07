@@ -75,29 +75,6 @@ def get_webfinger(lrdd, uri):
   webfinger_response = urllib2.urlopen(webfinger_url)
   return BeautifulSoup(webfinger_response.read())
 
-def sanitize(value):
-  VALID_TAGS = ['iframe', 'video', 'audio', 'strong', 'em', 'i', 'b', 'u', 'a', 'h1', 'h2', 'h3', 'pre', 'img', 'p', 'ul', 'li', 'br']
-  VALID_ATTRS = ['width', 'height', 'src', 'rel', 'href', 'class', 'title', 'controls', 'type', 'alt', 'frameborder', 'allowfullscreen']
-
-  soup = BeautifulSoup(value)
-
-  for tag in soup.findAll(True):
-    if tag.name not in VALID_TAGS:
-      tag.hidden = True
-    elif tag.name == 'a':
-      tag['rel'] = 'nofollow'
-
-    for attr, value in tag.attrs:
-      if attr not in VALID_ATTRS:
-        del tag[attr]
-
-  # linkify
-  for text in soup.findAll(text=True):
-    if text.parent.name != 'a':
-      text.replaceWith(tornado.escape.linkify(text, shorten=True, extra_params='rel="nofollow"'))
-
-  return soup.renderContents()
-
 def salmon_common(handler):
   user = handler.get_author_user()
   handler.display['feed'] = None
@@ -181,17 +158,22 @@ def salmon_send(handler, user, salmon_url, text):
 
 def get_remote_user_info(handler, user_url, profile):
   # get host-meta first
-  lrdd_link = get_lrdd_link(user_url)
+  lrdd_link = None
+  try:
+    lrdd_link = get_lrdd_link(user_url)
+  except:
+    pass
   salmon_url = ''
   magic_key = ''
   alias = ''
+  webfinger_doc = None
 
   if not lrdd_link:
     user_response = urllib2.urlopen(user_url)
     user_doc = BeautifulSoup(user_response.read())
 
     atom_url = user_doc.find('link', rel='alternate', type='application/atom+xml')
-    rss_url = user_doc.find('link', rel='alternate', type='application/atom+xml')
+    rss_url = user_doc.find('link', rel='alternate', type='application/rss+xml')
 
     feed_url = atom_url or rss_url
   else:
@@ -229,21 +211,33 @@ def get_remote_user_info(handler, user_url, profile):
   feed_doc = BeautifulSoup(feed_response.read())
   author = feed_doc.find('author')
 
-  alias = author.find('uri').string  # alias or user_url
+  if author:
+    uri = author.find('uri')
+    alias = uri.string  # alias or user_url
+  else:
+    alias = feed_doc.find('link').nextSibling # XXX UGH, BeautifulSoup treats <link> as self-closing tag, LAMESAUCE for rss
   user_remote = handler.models.users_remote.get(local_username=profile, profile_url=alias)[0]
-  hub_url = feed_doc.find('link', rel='hub')
+  hub_url = feed_doc.find(re.compile('.+:link$'), rel='hub')
 
   if not user_remote:
     user_remote = handler.models.users_remote()
 
   user_remote.local_username = profile
-  user_remote.avatar = feed_doc.find('logo').string
+  logo = feed_doc.find('logo')
+  if logo:
+    user_remote.avatar = logo.string
+  else:
+    image = feed_doc.find('image')
+    url = image.find('url')
+    user_remote.avatar = url.string
   if author:
     #user_remote.avatar = author.find('link', rel='avatar')['href']
     user_remote.username = author.find(re.compile('.+:preferredusername$')).string
     user_remote.name = author.find(re.compile('.+:displayname$')).string
   elif webfinger_doc:
     user_remote.username = webfinger_doc.find('Property', type="http://apinamespace.org/atom/username").string
+  else:
+    user_remote.username = feed_doc.find('title').string
   user_remote.profile_url = alias
   user_remote.magic_key = magic_key
   user_remote.salmon_url = salmon_url

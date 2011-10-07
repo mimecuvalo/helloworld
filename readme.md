@@ -2,7 +2,7 @@
 
 ## description
 
-federated social web tumblr/blog/wordpress-like app to be used on shared servers.  passes swat0(?) i think i'm missing one last step with comments.
+federated social web tumblr/blog/rss reader/wordpress-like app to be used on shared servers.  passes swat0(?) i think i'm missing one last step with comments.
 
 ## features
 - ostatus stack, PuSH/Salmon/Webfinger
@@ -10,6 +10,7 @@ federated social web tumblr/blog/wordpress-like app to be used on shared servers
 - media manager (get oembed/open graph info from websites)
 - REST-style editing
 - spam control
+- rss reader
 - tagging objects through #catvideo and people @bestfriendforevs
 - feed/events/links/store/slideshow templates
 - pretty css/js/html editing via codemirror
@@ -37,4 +38,3 @@ federated social web tumblr/blog/wordpress-like app to be used on shared servers
 - fb/twitter mirroring?
 - privacy
 - possibly: forum/wiki
-- possibly: js "templating" - be able to add microformatting, creativeworks/recipes/person, schema.org

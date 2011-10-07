@@ -54,7 +54,7 @@
 {% end %}
 
 {% for item in content_list %}
-<section {% if individual_content %}class="hw-individual-content"{% end %}>
+<section class="{% if individual_content %} hw-individual-content {% end %}{% if item.is_remote %} hw-remote {% end %}">
   {% if not item.restricted %}
     <header>
       <h1 name="hw-content-title">
@@ -75,6 +75,9 @@
           {{ _('Ends:') }} {{ item.date_end }}<br>
         {% end %}
       </h1>
+      {% if item.is_remote and item.creator %}
+        <span class="hw-creator">{{ _('by %(creator)s') % { "creator": item.creator } }}</span>
+      {% end %}
       {% if referrer %}
         <h2 class="hw-warning">
           {{ _('You were redirected here from: ') }} <a href="{{ referrer }}">{{ referrer }}</a>
@@ -93,6 +96,10 @@
     <div class="clear"></div>
 
     <footer class="hw-info">
+      {% if item.is_remote %}
+        {% module Moderate(item) %}
+      {% end %}
+
       {% if single_user_site %}
         {{ item.username }}
       {% end %}
@@ -127,6 +134,7 @@
             {% raw comment.view %}
             {% if is_owner_viewing %}
               {% module Moderate(comment) %}
+              <div class="clear"></div>
             {% end %}
           </li>
         {% else %}
@@ -135,6 +143,7 @@
             {% raw comment.view %}
             {% if is_owner_viewing %}
               {% module Moderate(comment) %}
+              <div class="clear"></div>
             {% end %}
           </li>
         {% end %}
@@ -146,10 +155,6 @@
         <li>{% raw _(phrase) % { "profile_url": fave.from_user, "name": fave.username } %}</li>
       {% end %}
       </ul>
-
-      {% if item.is_remote %}
-        {% module Moderate(item) %}
-      {% end %}
 
       <div class="clear"></div>
     </footer>

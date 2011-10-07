@@ -447,6 +447,11 @@ form.hw-media-library-standalone header h1 {
   margin: 3px 3px 3px 0;
 }
 
+.hw-creator {
+  color: #999;
+  font-size: 0.8461em;
+}
+
 .hw-warning {
   background-color: #ffc;
   margin-bottom: 1em;

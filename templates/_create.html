@@ -15,7 +15,7 @@
   hw.createIndividualContent = {% if individual_content %}true{% else %}false{% end %};
   hw.pageHasCode = {% if has_code %}true{% else %}false{% end %};
   hw.remoteUsers = [ {% for index, user in enumerate(remote_users) %}
-                        { 'username': '{{ user.username }}',
+                        { 'username': '{{ js_escape(user.username) }}',
                           'profile_url': '{{ user.profile_url }}'
                         }
                         {% if index != len(remote_users) - 1 %},{% end %}

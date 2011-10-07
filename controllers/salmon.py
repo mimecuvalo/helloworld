@@ -5,6 +5,7 @@ import urllib2
 import urlparse
 
 from base import BaseHandler
+from logic import remote_content
 from logic import spam
 from logic import url_factory
 from logic import users
@@ -125,7 +126,7 @@ class SalmonHandler(BaseHandler):
       pass
     elif (activity_verb == 'http://activitystrea.ms/schema/1.0/post'):
       atom_content = salmon_doc.find('atom:content').string
-      atom_content = users.sanitize(tornado.escape.xhtml_unescape(atom_content))
+      atom_content = remote_content.sanitize(tornado.escape.xhtml_unescape(atom_content))
 
       existing_content = self.models.content_remote.get(to_username=self.display["user"].username,
                                                       from_user=signer_uri,
@@ -165,7 +166,7 @@ class SalmonHandler(BaseHandler):
       else:
         spam.train_ham(atom_content)
       post_remote.type = 'comment' if ref else 'post'
-      post_remote.title = users.sanitize(tornado.escape.xhtml_unescape(salmon_doc.find('atom:title').string))
+      post_remote.title = salmon_doc.find('atom:title').string
       post_remote.post_id = salmon_doc.find('atom:id').string
       post_remote.link = salmon_doc.find('atom:link')['href']
       post_remote.local_content_name = content.name if ref else ''

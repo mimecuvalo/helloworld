@@ -53,6 +53,7 @@ class content_remote(Model):
     defaults = {'type': '',
                 'local_content_name': '',
                 'username': '',
+                'creator': '',
                 'title': '',
                 'post_id': '',
                 'is_spam': 0,
@@ -130,7 +131,6 @@ class users_remote(Model):
                    'username': custom_validators.UnicodeString(0, 255),
                    'name': custom_validators.UnicodeString(0, 255),
                    'profile_url': validators.String(),
-                   'magic_key': validators.String(),
                    'follower': custom_validators.Boolean(),
                    'following': custom_validators.Boolean(),
                   }
