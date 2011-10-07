@@ -638,8 +638,8 @@ ul[name=hw-comments] li {
 ul[name=hw-comments] img {
   float: left;
   margin-right: 5px;
-  width: 80px;
-  height: 80px;
+  width: 42px;
+  height: 42px;
 }
 
 .hw-comment-header {

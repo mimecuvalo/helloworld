@@ -119,6 +119,7 @@
         <form name="hw-comment-form" method="post" action="/api" onsubmit="return false" data-error="{{ _('error submitting your comment. please try again.') }}">
           {% raw xsrf_form_html() %}
           <textarea name="hw-comment-input" class="hw-box-black" type="text" placeholder="{{ _('what\'s your take?') }}" data-local-id="{{ content.id }}"></textarea> <button class="hw-button hw-button-blue" onclick="hw.commentSubmit()">{{ _('submit') }}</button>
+          <div class="clear"></div>
         </form>
         {% else %}
           <h2 class="hw-comment-header">{{ _('you need to be logged in to leave a comment.') }}</h2>
@@ -131,8 +132,8 @@
         {% if comment.is_remote %}
           <li data-post-id="{{ comment.post_id }}" data-post-user="{% if comment.from_user.startswith('http://') %}{{ comment.from_user }}{% end %}">
             <img src="{% if comment.avatar %}{{ comment.avatar }}{% else %}{{ static_url('img/pixel.gif') }}{% end %}" />
-            {% raw _('%(profile_url)s said: ') % { "profile_url": ('<a href="' + comment.from_user + '">' + comment.username + '</a>' if comment.from_user.startswith('http://') else comment.from_user.split('@')[0]) } %}
-            {% raw comment.view %}
+            {% raw _('%(profile_url)s') % { "profile_url": ('<a href="' + comment.from_user + '">' + comment.username + '</a>' if comment.from_user.startswith('http://') else comment.from_user.split('@')[0]) } %}
+            <div class="hw-comment-text">{% raw comment.view %}</div>
             {% if is_owner_viewing %}
               {% module Moderate(comment) %}
             {% end %}
@@ -141,8 +142,8 @@
         {% else %}
           <li data-post-id="tag:{{ handler.request.host }},{{ tag_date }}:{{ content_url(comment) }}" data-post-user="{{ nav_url(username=comment.username) }}">
             <img src="{% if comment.avatar %}{{ comment.avatar }}{% else %}{{ static_url('img/pixel.gif') }}{% end %}" />
-            {% raw _('<a href="%(profile_url)s">%(name)s</a> said: ') % { "profile_url": nav_url(username=comment.username), "name": comment.username } %}
-            {% raw comment.view %}
+            {% raw _('<a href="%(profile_url)s">%(name)s</a>') % { "profile_url": nav_url(username=comment.username), "name": comment.username } %}
+            <div class="hw-comment-text">{% raw comment.view %}</div>
             {% if is_owner_viewing %}
               {% module Moderate(comment) %}
             {% end %}
