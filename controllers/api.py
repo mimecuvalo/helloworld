@@ -1,4 +1,5 @@
 import datetime
+import hashlib
 import re
 import urllib
 import urllib2
@@ -246,14 +247,14 @@ class ApiHandler(BaseHandler):
   def comment(self):
     if self.current_user["user"]:
       # local user
-      profile = self.get_author_username()
+      profile = self.get_author_user()
       commented_content = self.models.content.get(self.get_argument('local_id'))
       comment = self.get_argument('comment')
 
       is_spam = spam.guess(comment)
 
       content = self.models.content()
-      content.username = profile
+      content.username = profile.username
       content.section  = 'comments'
       content.name     = self.get_unique_name(content, title='comment')
       content.date_created = datetime.datetime.utcnow()
@@ -262,6 +263,7 @@ class ApiHandler(BaseHandler):
         content.is_spam = True
       else:
         spam.train_ham(comment)
+      content.avatar = profile.logo
       content.title = 'comment'
       thread_url = 'tag:' + self.request.host + ',' + self.display["tag_date"] + ':' + self.content_url(commented_content)
       content.thread = thread_url
@@ -286,6 +288,7 @@ class ApiHandler(BaseHandler):
       post_remote.to_username = commented_content.username
       post_remote.from_user = self.current_user["email"]
       post_remote.username = self.current_user["email"].split('@')[0]
+      post_remote.avatar = 'http://www.gravatar.com/avatar/' + hashlib.md5(self.current_user["email"].lower()).hexdigest()
       post_remote.date_created = datetime.datetime.utcnow()
       if is_spam:
         post_remote.is_spam = True
