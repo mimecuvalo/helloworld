@@ -15,30 +15,7 @@ import tornado.web
 import tornado.wsgi
 from tornado.options import define, options
 
-import controllers.admin
-import controllers.api
-import controllers.auth
-import controllers.check_broken_links
-import controllers.customize
-import controllers.dashboard
-import controllers.data_liberation
-import controllers.feed
-import controllers.foaf
-import controllers.host_meta
-import controllers.humans
-import controllers.media
-import controllers.opensearch
-import controllers.private
-import controllers.push
-import controllers.restart
-import controllers.salmon
-import controllers.search
-import controllers.setup
-import controllers.stats
 import controllers.uimodules
-import controllers.upload
-import controllers.view
-import controllers.webfinger
 from logic import constants as constants_module
 from logic import cache
 
@@ -95,36 +72,36 @@ if not constants['ioloop'] and not constants['use_mod_rails']:
 
 if setup:
   handlers = [
-    (r".*", controllers.setup.SetupHandler),
+    (r".*", "controllers.setup.SetupHandler"),
   ]
   settings["xsrf_cookies"] = False
 else:
   handlers = [
-    (prefix + r"/\.well-known/host-meta", controllers.host_meta.HostMetaHandler),
-    (prefix + r"/admin(?:$|/.*)", controllers.admin.AdminHandler),
-    (prefix + r"/api", controllers.api.ApiHandler),
-    (prefix + r"/check_broken_links", controllers.check_broken_links.CheckBrokenLinksHandler),
-    (prefix + r"/customize", controllers.customize.CustomizeHandler),
-    (prefix + r"/dashboard(?:$|/.*)", controllers.dashboard.DashboardHandler),
-    (prefix + r"/data_liberation", controllers.data_liberation.DataLiberationHandler),
-    (prefix + r"/data_liberation\.zip", controllers.data_liberation.DataLiberationDownloadHandler, {"path": "/tmp"}),
-    (prefix + r"/?[^/]+/feed", controllers.feed.FeedHandler),
-    (prefix + r"/?[^/]+/foaf", controllers.foaf.FoafHandler),
-    (prefix + r"/(humans\.txt)", controllers.humans.HumansTxtHandler, {"path": settings['static_path']}),
-    (prefix + r"/login", controllers.auth.AuthHandler),
-    (prefix + r"/logout", controllers.auth.AuthLogoutHandler),
-    (prefix + r"/media", controllers.media.MediaHandler),
-    (prefix + r"/?[^/]+/opensearch", controllers.opensearch.OpenSearchHandler),
-    (prefix + r"/private/(.*)", controllers.private.PrivateResourceHandler, {"path": settings['private_path']}),
-    (prefix + r"/?[^/]+/push", controllers.push.PushHandler),
-    (prefix + r"/restart", controllers.restart.RestartHandler),
+    (prefix + r"/\.well-known/host-meta", "controllers.host_meta.HostMetaHandler"),
+    (prefix + r"/admin(?:$|/.*)", "controllers.admin.AdminHandler"),
+    (prefix + r"/api", "controllers.api.ApiHandler"),
+    (prefix + r"/check_broken_links", "controllers.check_broken_links.CheckBrokenLinksHandler"),
+    (prefix + r"/customize", "controllers.customize.CustomizeHandler"),
+    (prefix + r"/dashboard(?:$|/.*)", "controllers.dashboard.DashboardHandler"),
+    (prefix + r"/data_liberation", "controllers.data_liberation.DataLiberationHandler"),
+    (prefix + r"/data_liberation\.zip", "controllers.data_liberation.DataLiberationDownloadHandler", {"path": "/tmp"}),
+    (prefix + r"/?[^/]+/feed", "controllers.feed.FeedHandler"),
+    (prefix + r"/?[^/]+/foaf", "controllers.foaf.FoafHandler"),
+    (prefix + r"/(humans\.txt)", "controllers.humans.HumansTxtHandler", {"path": settings['static_path']}),
+    (prefix + r"/login", "controllers.auth.AuthHandler"),
+    (prefix + r"/logout", "controllers.auth.AuthLogoutHandler"),
+    (prefix + r"/media", "controllers.media.MediaHandler"),
+    (prefix + r"/?[^/]+/opensearch", "controllers.opensearch.OpenSearchHandler"),
+    (prefix + r"/private/(.*)", "controllers.private.PrivateResourceHandler", {"path": settings['private_path']}),
+    (prefix + r"/?[^/]+/push", "controllers.push.PushHandler"),
+    (prefix + r"/restart", "controllers.restart.RestartHandler"),
     (prefix + r"/(robots\.txt)", tornado.web.StaticFileHandler, {"path": settings['static_path']}),
-    (prefix + r"/salmon(?:$|/.*)", controllers.salmon.SalmonHandler),
-    (prefix + r"/?[^/]+/search", controllers.search.SearchHandler),
-    (prefix + r"/stats", controllers.stats.StatsStaticHandler, {"path": "./static"}),
-    (prefix + r"/upload", controllers.upload.UploadHandler),
-    (prefix + r"/webfinger(?:$|/.*)", controllers.webfinger.WebfingerHandler),
-    (r".*", controllers.view.ViewHandler),
+    (prefix + r"/salmon(?:$|/.*)", "controllers.salmon.SalmonHandler"),
+    (prefix + r"/?[^/]+/search", "controllers.search.SearchHandler"),
+    (prefix + r"/stats", "controllers.stats.StatsStaticHandler", {"path": "./static"}),
+    (prefix + r"/upload", "controllers.upload.UploadHandler"),
+    (prefix + r"/webfinger(?:$|/.*)", "controllers.webfinger.WebfingerHandler"),
+    (r".*", "controllers.view.ViewHandler"),
   ]
 
 # add cache_invalidate to crontab

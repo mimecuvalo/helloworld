@@ -10,18 +10,15 @@ class PrivateResourceHandler(tornado.web.StaticFileHandler, BaseHandler):
       if not self.authenticate(private_resource=self.request.uri, auto_login=False):
         # 401, need to login
         self.set_status(401)
-        self.set_extra_headers("401.png")
+        self.prevent_caching()
         tornado.web.StaticFileHandler.get(self, "401.png")
         return
     except tornado.web.HTTPError as ex:
       # 403, forbidden
       self.set_status(403)
-      self.set_extra_headers("403.png")
+      self.prevent_caching()
       tornado.web.StaticFileHandler.get(self, "403.png")
       return
 
     # ok!
     tornado.web.StaticFileHandler.get(self, path)
-
-  def set_extra_headers(self, path):
-    self.set_header("Last-Modified", "Fri, 02 Jan 1970 14:19:41 GMT")

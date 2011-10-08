@@ -8,6 +8,7 @@ import os.path
 import random
 import re
 import sys
+import types
 import urllib
 import uuid
 
@@ -234,22 +235,30 @@ class BaseHandler(tornado.web.RequestHandler):
     else:
       return None
 
-  def get_error_html(self, status_code, **kwargs):
+  def write_error(self, status_code, **kwargs):
     if self.constants['debug']:
+    
       self.display["debug_info"] = ""
-      return "<html><title>%(code)d: %(message)s</title>" \
-               "<body>%(code)d: %(message)s<br>%(exception)s<br><br>%(display)s</body></html>" % {
-            "code": status_code,
-            "message": httplib.responses[status_code],
-            "exception": unicode(kwargs['exception']),
-            "display": tornado.escape.xhtml_escape(repr(self.display)).replace(',', ',<br>'),
-      }
+      self.display["licenses"] = ""
+      self.display["current_datetime"] = ""
+      for key, item in self.display.items():
+        if isinstance(item, types.ModuleType) or isinstance(item, types.MethodType):
+          del self.display[key]
+
+      self.write("%(display)s\n\n" % {
+                    "code": status_code,
+                    "message": httplib.responses[status_code],
+                    "exception": unicode(kwargs['exc_info']),
+                    "display": tornado.escape.xhtml_escape(repr(self.display)).replace(',', ',\n'),
+                  })
+
+      tornado.web.RequestHandler.write_error(self, status_code, **kwargs)
     else:
       self.display["status_code"] = status_code
       self.display["profile"] = self.breadcrumbs["profile"]
       self.display["name"] = self.breadcrumbs["name"]
       self.fill_debug_info()
-      return self.render_string("error.html", **self.display)
+      self.fill_template("error.html")
 
   def static_url(self, path, dependencies=None, include_host=False):
     """Returns a static URL for the given relative static file path.
