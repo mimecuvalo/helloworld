@@ -26,6 +26,15 @@ federated social web tumblr/blog/rss reader/wordpress-like app to be used on sha
 - caching (limited to disk caching for now; shared servers, mang!)
 - other customization extras: newsletter, google analytics, basic ads, adult content age check, license
 
+## Setting up the repository
+
+`Hello, world.` has a dependency on the [tornado](https://github.com/facebook/tornado) library so it's a couple more steps than just cloning.
+
+    git clone git@github.com:mimecuvalo/helloworld.git
+    git submodule init
+    git submodule update
+
+
 ## goals
 - be able to run on shared servers (hence, use of mod\_rails/fcgi instead of ioloop)
 - pass swat0
@@ -33,8 +42,12 @@ federated social web tumblr/blog/rss reader/wordpress-like app to be used on sha
 - easy to install
 - be a good, easy-to-use alternative to what's out there!
 
-## todo
+## todo (hey, intrepid open source developer! check out all this stuff you could help work on! email me: mimecuvalo@gmail.com)
 - autocomplete username if typing '@'
 - fb/twitter mirroring?
 - privacy
 - possibly: forum/wiki
+- possibly: js "templating" - be able to add microformatting, creativeworks/recipes/person, schema.org
+- reduce/cache mysql calls
+- mysql migrator
+- plugins?

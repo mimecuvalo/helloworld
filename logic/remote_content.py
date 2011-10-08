@@ -42,7 +42,7 @@ def parse_feed(models, user, feed_doc):
         new_entry.link = entry.find('link')['href']
       else:
         new_entry.link = entry.find('link').nextSibling # XXX UGH, BeautifulSoup treats <link> as self-closing tag, LAMESAUCE for rss
-      content = ''.join(entry.find(re.compile('^content:?.*')).findAll(text=True))
+      content = entry.find(re.compile('^content:?.*')).text
       new_entry.view = sanitize(tornado.escape.xhtml_unescape(content))
       new_entry.save()
   except:
@@ -58,7 +58,7 @@ def sanitize(value):
                 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'small', 'source', 'span',
                 'strike', 'strong', 'sub', 'summary', 'sup', 'table', 'tbody',
                 'td', 'tfoot', 'th', 'thead', 'time', 'tr', 'u', 'ul', 'var', 'video', 'wbr']
-  VALID_ATTRS = ['allowfullscreen', 'align', 'alt', 'border', 'class', 'clear', 'controls', 'frameborder',
+  VALID_ATTRS = ['allowfullscreen', 'align', 'alt', 'border', 'cite', 'class', 'clear', 'controls', 'datetime', 'frameborder',
                  'height', 'href', 'hspace', 'rel', 'src', 'title', 'type', 'vspace', 'width']
 
   soup = BeautifulSoup(value)

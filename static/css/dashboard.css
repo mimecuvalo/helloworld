@@ -86,12 +86,9 @@ h1 {
   text-align: right;
 }
 
-#hw-absorb div[name=hw-view] {
-  overflow: auto;
-}
-
 #hw-absorb .hw-remote img {
   float: right;
+  max-width: 720px;
 }
 #hw-absorb .hw-remote img[align=left] {
   float: left;
