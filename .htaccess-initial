@@ -11,7 +11,9 @@ Options +FollowSymLinks
 PassengerEnabled On
 PassengerAppRoot $FULL_PATH_TO_SITE
 
-AddHandler fcgid-script .py
+<FilesMatch "^(helloworld\.py)$">
+  SetHandler fcgid-script
+</FilesMatch>
 
 RewriteEngine on
 RewriteBase /

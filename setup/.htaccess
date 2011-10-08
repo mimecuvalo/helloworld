@@ -1,4 +1,6 @@
 Options All -Indexes
 Options +FollowSymLinks
 
-AddHandler cgi-script .py
+<FilesMatch "^(setup\.py)$">
+  SetHandler cgi-script
+</FilesMatch>
