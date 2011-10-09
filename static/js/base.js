@@ -607,12 +607,10 @@ hw.loadMore.prototype = {
     var currentOffset = this.offset;
 
     if (hw.supportsHistory()) {
-      while (hw.$('hw-feed-page-' + (this.offset + 1))
-        && (document.body.parentNode.scrollTop || document.body.scrollTop) > hw.$('hw-feed-page-' + (this.offset + 1)).getBoundingClientRect().top) {
+      while (hw.$('hw-feed-page-' + (this.offset + 1)) && hw.$('hw-feed-page-' + (this.offset + 1)).getBoundingClientRect().top < 0) {
         ++this.offset;
       }
-      while (hw.$('hw-feed-page-' + this.offset)
-        && (document.body.parentNode.scrollTop || document.body.scrollTop) < hw.$('hw-feed-page-' + this.offset).getBoundingClientRect().top) {
+      while (hw.$('hw-feed-page-' + this.offset) && hw.$('hw-feed-page-' + this.offset).getBoundingClientRect().top >= 0) {
         --this.offset;
       }
 
@@ -634,10 +632,10 @@ hw.loadMore.prototype = {
       hw.$('hw-loading').parentNode.removeChild(hw.$('hw-loading'));
       self.feed.innerHTML += '<a id="hw-feed-page-' + self.offset + '"></a>' + xhr.responseText;
 
-      if (hw.supportsHistory()) {
-        var url = self.url + '/page/' + (self.offset);
-        history.replaceState({ 'title': document.title }, document.title, url);
-      }
+      //if (hw.supportsHistory()) {
+      //  var url = self.url + '/page/' + (self.offset);
+      //  history.replaceState({ 'title': document.title }, document.title, url);
+      //}
     };
 
     var badTrip = function(xhr) {
