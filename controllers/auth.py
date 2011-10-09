@@ -84,5 +84,5 @@ class AuthHandler(BaseHandler, tornado.auth.GoogleMixin):
 
 class AuthLogoutHandler(BaseHandler):
   def get(self):
-    self.clear_cookie("user")
+    self.clear_cookie("user", path=self.base_path)
     self.redirect(self.get_argument("next", self.nav_url()))
