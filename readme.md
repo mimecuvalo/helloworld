@@ -26,7 +26,7 @@ federated social web tumblr/blog/rss reader/wordpress-like app to be used on sha
 - caching (limited to disk caching for now; shared servers, mang!)
 - other customization extras: newsletter, google analytics, basic ads, adult content age check, license
 
-## Setting up the repository
+## setting up the repository
 
 `Hello, world.` has a dependency on the [tornado](https://github.com/facebook/tornado) library so it's a couple more steps than just cloning.
 

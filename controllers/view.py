@@ -355,13 +355,16 @@ class ViewHandler(BaseHandler):
     content.code    = self.get_argument('code', "")
     content.view    = self.get_argument('view', "")
 
-    # linkify
-    soup = BeautifulSoup(content.view)
-    for text in soup.findAll(text=True):
-      if text.parent.name != 'a':
-        text.replaceWith(tornado.escape.linkify(text, shorten=True, extra_params='rel="nofollow"'))
+    section_template = self.get_argument('section_template', "")
 
-    content.view = soup.renderContents()
+    # linkify
+    if section_template != 'links':
+      soup = BeautifulSoup(content.view)
+      for text in soup.findAll(text=True):
+        if text.parent.name != 'a':
+          text.replaceWith(tornado.escape.linkify(text, shorten=True, extra_params='rel="nofollow"'))
+
+      content.view = soup.renderContents()
 
     template = self.get_argument('template', "")
 
@@ -394,7 +397,6 @@ class ViewHandler(BaseHandler):
           album_template = original_album.template
       content.album    = self.create_album(content.username, content.section, album, album_template)
 
-    section_template = self.get_argument('section_template', "")
     title = self.get_argument('title', "")
     thumb = self.get_argument('thumb', "")
     if section_template == 'links':
