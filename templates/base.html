@@ -23,7 +23,7 @@
     {% block nav %}
     <nav id="hw-user">
       {% if not is_author and not is_owner_viewing and content %}
-        <a id="hw-follow" class="hw-button hw-button-blue" href="{{ nav_url(username=content.username, section='feed') }}">{{ _('follow') }}</a>
+        <a id="hw-follow" class="hw-button hw-button-blue" href="{% if current_user and current_user.has_key('ostatus_subscribe') %}{{ current_user['ostatus_subscribe'].replace('{uri}', urllib.quote_plus(nav_url(host=True, username=content.username)).encode('utf-8')) }}{% else %}{{ nav_url(username=content.username, section='feed') }}{% end %}">{{ _('follow') }}</a>
       {% end %}
       {% if not username %}
         {% if current_user and current_user["email"] %}
