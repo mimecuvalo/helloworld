@@ -4,7 +4,7 @@
 
 <div name="hw-file-list">
   <h2>{{ _('files:') }}</h2>
-  <input name="hw-media-directory" type="hidden" value="">
+  <input name="hw-media-directory" type="hidden" value="{% if initial_section %}{{ initial_section }}{% end %}">
   {% for index, file in enumerate(files) %}
     <select multiple name="hw-files-{{ resource_url(filename=file[0]).replace('/', '-') }}" size="11" class="{% if (not initial_section and index != 0) or (initial_section is not None and initial_section != basename(file[0])) %}hw-closed"{% elif (not initial_section or initial_section == basename(file[0])) %}hw-open{% end %}" ondblclick="hw.mediaSelect(null, this)" onchange="hw.mediaPreview(this)">
       {% if index != 0 %}

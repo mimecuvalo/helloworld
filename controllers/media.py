@@ -1,5 +1,6 @@
 import os
 import os.path
+import zipfile
 
 from base import BaseHandler
 from logic import media
@@ -56,6 +57,14 @@ class MediaHandler(BaseHandler):
     f = open(full_path, 'w')
     f.write(uploaded_file['body'])
     f.close()
+
+    if os.path.splitext(full_path)[1] == '.zip':
+      z = zipfile.ZipFile(full_path)
+      for f in z.namelist():
+        if f.endswith('/'):
+          os.makedirs(os.path.join(os.path.dirname(full_path), f.replace('..', '')))
+        else:
+          z.extract(f.replace('..', ''), os.path.dirname(full_path))
 
     self.display["uploaded_file"] = self.resource_url(filename=full_path)
     self.get()
