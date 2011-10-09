@@ -2,6 +2,7 @@ import os
 import os.path
 
 from base import BaseHandler
+from logic import url_factory
 
 class CustomizeHandler(BaseHandler):
   def get(self):
@@ -27,11 +28,11 @@ class CustomizeHandler(BaseHandler):
     user.description = self.get_argument('description', '')
     user.oauth = self.get_argument('oauth')
     user.name = self.get_argument('name', '')
-    user.favicon = self.get_argument('favicon', '')
+    user.favicon = url_factory.clean_filename(self.get_argument('favicon', ''))
     user.currency = self.get_argument('currency', '')
-    user.theme = self.get_argument('theme', '')
-    user.background = self.get_argument('background', '')
-    user.logo = self.get_argument('logo', '')
+    user.theme = url_factory.clean_filename(self.get_argument('theme', ''))
+    user.background = url_factory.clean_filename(self.get_argument('background', ''))
+    user.logo = url_factory.clean_filename(self.get_argument('logo', ''))
     user.google_analytics = self.get_argument('google_analytics', '')
     user.adult_content = self.get_argument('adult_content', 0) == 'on'
     user.tipjar = self.get_argument('tipjar', '')

@@ -4,6 +4,7 @@ import zipfile
 
 from base import BaseHandler
 from logic import media
+from logic import url_factory
 
 class MediaHandler(BaseHandler):
   def get(self):
@@ -35,7 +36,7 @@ class MediaHandler(BaseHandler):
       self.fill_template("media.html")  # disabled for now
 
   def post(self):
-    parent_directory = os.path.join(self.resource_directory(), self.get_argument('hw-media-directory', '').replace('..', ''))
+    parent_directory = os.path.join(self.resource_directory(), url_factory.clean_filename(self.get_argument('hw-media-directory', '')))
     uploaded_file = self.request.files['hw-media-uploaded-file'][0]
     full_path = os.path.join(parent_directory, uploaded_file['filename'])
 
@@ -62,9 +63,9 @@ class MediaHandler(BaseHandler):
       z = zipfile.ZipFile(full_path)
       for f in z.namelist():
         if f.endswith('/'):
-          os.makedirs(os.path.join(os.path.dirname(full_path), f.replace('..', '')))
+          os.makedirs(os.path.join(os.path.dirname(full_path), url_factory.clean_filename(f)))
         else:
-          z.extract(f.replace('..', ''), os.path.dirname(full_path))
+          z.extract(url_factory.clean_filename(f), os.path.dirname(full_path))
 
     self.display["uploaded_file"] = self.resource_url(filename=full_path)
     self.get()

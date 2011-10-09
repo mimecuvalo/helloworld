@@ -3,6 +3,8 @@ import os
 import re
 import shutil
 
+from logic import url_factory
+
 try:
     from io import BytesIO  # python 3
 except ImportError:
@@ -15,7 +17,7 @@ def get_full_filename(handler, url=None):
     url = handler.prefix + handler.breadcrumbs['uri']
   elif not url.startswith(handler.prefix):
     url = handler.prefix + url
-  filename = url[1:].replace('../', '')  # remove leading /
+  filename = url_factory.clean_filename(url[1:])  # remove leading /
   # TODO filename = handler.locale.code.replace('_', '-') + '/' + filename
   path = os.path.join(handler.application.settings["cache_path"], filename + '.htmgz')
   parent_directory = os.path.dirname(path)

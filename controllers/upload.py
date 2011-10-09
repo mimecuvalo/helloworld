@@ -13,6 +13,7 @@ import tornado.escape
 import tornado.web
 from base import BaseHandler
 from logic import media
+from logic import url_factory
 
 class UploadHandler(BaseHandler):
   def post(self):
@@ -50,7 +51,7 @@ class UploadHandler(BaseHandler):
 
     parent_directory = self.resource_directory(self.get_argument('hw-media-section'), self.get_argument('hw-media-album', ''))
     leafname = os.path.basename(filename)
-    full_path = os.path.join(parent_directory, leafname).replace('..', '')
+    full_path = url_factory.clean_filename(os.path.join(parent_directory, leafname))
 
     if leafname in ('crossdomain.xml', 'clientaccesspolicy.xml', '.htaccess', '.htpasswd'):
       raise tornado.web.HTTPError(400, "i call shenanigans")

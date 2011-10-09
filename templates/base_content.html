@@ -29,7 +29,7 @@
   {% end %}
 
   {% if content_owner.theme and content_owner.theme != 'default.css' %}
-    <link rel="stylesheet" type="text/css" href="{{ static_url('css/themes/' + content_owner.theme.replace('..', '')) }}">
+    <link rel="stylesheet" type="text/css" href="{{ static_url('css/themes/' + content_owner.theme) }}">
   {% end %}
 
   {% if content_owner.background %}

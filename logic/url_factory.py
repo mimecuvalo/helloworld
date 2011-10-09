@@ -104,6 +104,11 @@ def linkify_tags(handler, content):
 def clean_name(name):
   return re.compile(r'[\W]+', re.M | re.U).sub('', name.replace(" ", "_").replace("-", "_")).replace("_", "-")[:255]
 
+def clean_filename(name):
+  if name == '..' or name == '.':
+    return ''
+  return re.compile(r'[\\\/]\.\.|\.\.[\\\/]', re.M | re.U).sub('', name)
+
 def get_remote_title_and_thumb(url):
   try:
     # XXX youtube doesn't like the scraping, too many captchas
