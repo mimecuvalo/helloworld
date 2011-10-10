@@ -621,8 +621,9 @@ hw.loadMore.prototype = {
     }
 
     var self = this;
+    var nextOffset = this.offset + 1;
     var insertData = function(xhr) {
-      ++self.offset;
+      self.offset = nextOffset;
 
       var fn = function() {
         self.processing = false;
@@ -630,7 +631,7 @@ hw.loadMore.prototype = {
       setTimeout(fn, 3000);
 
       hw.$('hw-loading').parentNode.removeChild(hw.$('hw-loading'));
-      self.feed.innerHTML += '<a id="hw-feed-page-' + self.offset + '"></a>' + xhr.responseText;
+      self.feed.innerHTML += '<a id="hw-feed-page-' + nextOffset + '"></a>' + xhr.responseText;
 
       //if (hw.supportsHistory()) {
       //  var url = self.url + '/page/' + (self.offset);
