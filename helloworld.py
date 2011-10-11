@@ -97,7 +97,7 @@ else:
     (prefix + r"/restart", "controllers.restart.RestartHandler"),
     (prefix + r"/(robots\.txt)", tornado.web.StaticFileHandler, {"path": settings['static_path']}),
     (prefix + r"/salmon(?:$|/.*)", "controllers.salmon.SalmonHandler"),
-    (prefix + r"/?[^/]+/search", "controllers.search.SearchHandler"),
+    (prefix + r"/?[^/]+/search(?:$|/.*)", "controllers.search.SearchHandler"),
     (prefix + r"/stats", "controllers.stats.StatsStaticHandler", {"path": "./static"}),
     (prefix + r"/upload", "controllers.upload.UploadHandler"),
     (prefix + r"/webfinger(?:$|/.*)", "controllers.webfinger.WebfingerHandler"),

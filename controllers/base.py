@@ -72,6 +72,8 @@ class BaseHandler(tornado.web.RequestHandler):
     self.display["base_path"] = self.base_path
     self.display["prefix"] = self.prefix
     self.display["has_code"] = False
+    self.display["strip_html"] = self.strip_html
+    self.display["ellipsize"] = self.ellipsize
     self.display["source_website"] = self.constants['source_website']
     self.display["licenses"] = self.constants['licenses']
     self.display["current_datetime"] = datetime.datetime.utcnow()
@@ -360,7 +362,7 @@ class BaseHandler(tornado.web.RequestHandler):
     return url_factory.href(url + ('/' + item.section if item.section != 'main' else '') \
         + ('/' + item.name if item.name != 'home' else '')) + args
 
-  def nav_url(self, host=False, username="", section="", name="", **arguments):
+  def nav_url(self, host=False, username="", section="", name="", page=None, **arguments):
     url = ""
 
     if host:
@@ -376,6 +378,9 @@ class BaseHandler(tornado.web.RequestHandler):
       url += '/' + section
       if name:
         url += '/' + name
+
+    if page:
+      url += '/page/' + str(page)
 
     args = ""
     if arguments:
@@ -693,3 +698,12 @@ class BaseHandler(tornado.web.RequestHandler):
     self.set_header("Expires", "Fri, 02 Jan 1970 14:19:41 GMT")
     self.set_header("Cache-Control", "no-store, no-cache, must-revalidate, post-check=0, pre-check=0")
     self.set_header("Pragma", "no-cache")
+
+  def strip_html(self, html):
+    text = re.compile(r'<[^<]+?>|&.+?;', re.M | re.U).sub('', html)
+    return re.compile(r'\s+').sub(' ', text)
+
+  def ellipsize(self, text, max_length):
+    if len(text) <= max_length:
+      return text
+    return text[:max_length] + '...'

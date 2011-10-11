@@ -14,6 +14,11 @@ class SearchHandler(BaseHandler):
       content_owner = self.models.users.get(1)
       self.breadcrumbs["profile"] = content_owner.username
 
+    offset = int(self.breadcrumbs["modifier"]) if self.breadcrumbs["modifier"] else 1
+    offset -= 1
+    begin  = self.constants['page_size'] * offset
+    end    = self.constants['page_size'] * offset + self.constants['page_size']
+
     if query:
       if content_owner.adult_content \
           and self.get_cookie("adult_content") != "1" and not self.is_owner_viewing(self.breadcrumbs["profile"]):
@@ -21,11 +26,13 @@ class SearchHandler(BaseHandler):
         return
 
       query = urllib.unquote_plus(query)
-      resultsQuery = db.search(profile=self.breadcrumbs["profile"], query=query)
+      resultsQuery = db.search(profile=self.breadcrumbs["profile"], query=query, begin=begin, end=end)
       results = [self.models.content(**result) for result in resultsQuery]
     else:
       results = []
 
+    self.display["page"] = offset + 1
+    self.display["page_size"] = self.constants['page_size']
     self.display["content_owner"] = content_owner
     self.display["query"] = query
     self.display["results"] = results

@@ -1,13 +1,13 @@
 from autumn.db.query import Query
 
-def search(profile, query):
+def search(profile, query, begin, end):
   return Query.sql("""SELECT * FROM `content`
                         WHERE `username` = %s
                           AND hidden = 0
-                          AND (`title` LIKE %s
-                          OR  `view` LIKE %s)
-                          LIMIT 10""",
-                          (profile, '%' + query + '%', '%' + query + '%'))
+                          AND (`title` REGEXP %s
+                          OR  `view` REGEXP %s)
+                          LIMIT %s,%s""",
+                          (profile, '[[:<:]]' + query + '[[:>:]]', '[[:<:]]' + query + '[[:>:]]',  begin, end))
 
 # this will work for now...
 def dashboard_feed(profile, begin, end):

@@ -490,19 +490,36 @@ a.hw-read-more {
 }
 
 #hw-results li {
+  list-style: none;
   float: left;
   clear: left;
-  margin-top: 6px;
+  width: 625px;
+  margin-bottom: 5px;
+  padding: 5px;
+  border-bottom: 1px solid #ccc;
+  overflow: hidden;
 }
-#hw-results li a {
-  display: inline-block;
-  zoom: 1; /* workaround ie7 */
-  *display: inline; /* workaround ie7 */
-  vertical-align: top;
-  padding-left: 6px;
+#hw-results li .hw-results-image {
+  float: right;
+  max-width: 155px;
+  max-height: 115px;
+  margin-left: 5px;
 }
-#hw-results .hw-results-title {
-  width: 350px;
+#hw-results li .hw-results-info {
+  float: left;
+  width: 460px;
+}
+
+#hw-content #hw-results .hw-results-text {
+  font-size: 0.8461em;
+}
+
+.hw-pager {
+  margin: 10px 0;
+}
+
+.hw-pager .hw-next {
+  float: right;
 }
 
 #hw-content > ul.hw-album {
