@@ -16,10 +16,14 @@
           <a class="hw-results-image" href="{{ content_url(item) }}"><img src="{{ item.thumb }}"></a>
         {% end %}
         <div class="hw-results-info">
-          <a href="{{ content_url(item) }}" class="hw-results-title">{{ item.title }}</a>
-          <div class="hw-results-text">
-            {{ ellipsize(strip_html(item.view), 130) }}
-          </div>
+          {% if item.view.startswith('http://') and item.view.find(' ') == -1 %}
+            <a href="{{ item.view }}" class="hw-results-title">{{ item.title }}</a>
+          {% else %}
+            <a href="{{ content_url(item) }}" class="hw-results-title">{{ item.title }}</a>
+            <div class="hw-results-text">
+              {{ ellipsize(strip_html(item.view), 130) }}
+            </div>
+          {% end %}
         </div>
       </li>
       {% end %}
