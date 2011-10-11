@@ -1533,14 +1533,7 @@ hw.mediaSelect = function(event, selectEl, opt_mediaValue) {
       hw.preventDefault(event);
     }
 
-    var fileList = hw.getFirstElementByName('hw-file-list');
-    var selectElements = fileList.getElementsByTagName('select');
-    for (var x = 0; x < selectElements.length; ++x) {
-      if (!hw.isHidden(selectElements[x])) {
-        selectEl = selectElements[x];
-        break;
-      }
-    }
+    selectEl = hw.mediaGetCurrentSelectElement();
   }
 
   var media = uploadedMedia || selectEl.options[selectEl.selectedIndex];
@@ -1567,6 +1560,16 @@ hw.mediaSelect = function(event, selectEl, opt_mediaValue) {
     }
 
     hw.mediaSelectHelper(allMedia, 0, insertAsSlideshow, slideshowHTML);
+  }
+};
+
+hw.mediaGetCurrentSelectElement = function() {
+  var fileList = hw.getFirstElementByName('hw-file-list');
+  var selectElements = fileList.getElementsByTagName('select');
+  for (var x = 0; x < selectElements.length; ++x) {
+    if (!hw.isHidden(selectElements[x])) {
+      return selectElements[x];
+    }
   }
 };
 
@@ -1621,6 +1624,36 @@ hw.mediaPreview = function(selectEl) {
   };
 
   hw.mediaHTML(media.value, callback);
+};
+
+hw.mediaDelete = function(event) {
+  if (hw.mediaEmbedded && event) {
+    hw.preventDefault(event);
+  }
+
+  if (!window.confirm(hw.getMsg('confirm-delete'))) {
+    return;
+  }
+
+  var selectEl = hw.mediaGetCurrentSelectElement();
+
+  var allMedia = [];
+  for (var x = selectEl.options.length - 1; x >= 0; --x) {
+    if (selectEl.options[x].selected) {
+      allMedia.push(selectEl.options[x].value);
+    }
+  }
+
+  var callback = function(xhr) {
+    window.location.reload();
+  };
+
+  var createForm = hw.getFirstElementByName('hw-create');
+  new hw.ajax(hw.baseUri() + 'media',
+      { method: 'delete',
+        postBody: 'files=' + encodeURIComponent(JSON.stringify(allMedia)),
+        headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
+        onSuccess: callback });
 };
 
 hw.mediaHTML = function(media, callback) {

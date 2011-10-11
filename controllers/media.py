@@ -1,5 +1,7 @@
+import json
 import os
 import os.path
+import shutil
 import zipfile
 
 from base import BaseHandler
@@ -36,6 +38,9 @@ class MediaHandler(BaseHandler):
       self.fill_template("media.html")  # disabled for now
 
   def post(self):
+    if not self.authenticate(author=True):
+      return
+
     parent_directory = os.path.join(self.resource_directory(), url_factory.clean_filename(self.get_argument('hw-media-directory', '')))
     uploaded_file = self.request.files['hw-media-uploaded-file'][0]
     full_path = os.path.join(parent_directory, uploaded_file['filename'])
@@ -70,7 +75,10 @@ class MediaHandler(BaseHandler):
     self.display["uploaded_file"] = self.resource_url(filename=full_path)
     self.get()
 
-  def preview(self):
+  def preview(self):  
+    if not self.authenticate(author=True):
+      return
+
     uri = self.get_argument('preview')
     media_type = media.detect_media_type(uri)
     html = media.generate_html(self, uri)
@@ -83,3 +91,20 @@ class MediaHandler(BaseHandler):
       html += '<a href="' + uri + '" target="_blank">' + uri[uri.rfind('/') + 1:] + '</a>'
 
     self.write(html)
+
+  def delete(self):
+    if not self.authenticate(author=True):
+      return
+
+    files = json.loads(self.get_argument('files'))
+
+    parent_leading_path = self.application.settings["resource_url"] + "/" + self.get_author_username()
+
+    for f in files:
+      f = url_factory.clean_filename(f).replace(parent_leading_path + '/', '')
+      filename = os.path.join(self.resource_directory(), f)
+
+      if os.path.isdir(filename):
+        shutil.rmtree(filename)
+      else:
+        os.remove(filename)

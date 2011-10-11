@@ -27,7 +27,8 @@
 
 <div class="clear"></div>
 <br>
-<button onclick="hw.mediaSelect(event)">{{ _('select') }}</button>
+<button name="hw-media-delete" class="hw-button hw-button-red" onclick="hw.mediaDelete(event)">{{ _('delete') }}</button>
+<button name="hw-media-select" class="hw-button hw-button-blue" onclick="hw.mediaSelect(event)">{{ _('select') }}</button>
 
 {% if standalone or embedded %}
 <input name="hw-media-uploaded-file" type="file" value="{{ _("Upload file") }}" onchange="this.form.submit()"> 

@@ -328,6 +328,14 @@ form.hw-media-library-standalone {
   margin: 3px 3px 0 0;
 }
 
+button[name=hw-media-select] {
+  margin-right: 12px;
+}
+
+button[name=hw-media-delete] {
+  float: right;
+}
+
 iframe[name=hw-media-creator] {
   margin-top: 5px;
 }

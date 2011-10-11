@@ -13,6 +13,7 @@
 {% block extra_js %}
   <script src="{{ static_url('js/create.js') }}"></script>
   <script>
+    hw.setMsg('confirm-delete', "{% raw js_escape(_('ya sure there, buddy?')) %}");
     hw.mediaEmbedded = {% if embedded %}true{% else %}false{% end %};
     hw.mediaStandalone = {% if standalone %}true{% else %}false{% end %};
     {% if uploaded_file %}
