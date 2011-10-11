@@ -27,9 +27,10 @@
 
 <div class="clear"></div>
 <br>
-<button name="hw-media-delete" class="hw-button hw-button-red" onclick="hw.mediaDelete(event)">{{ _('delete') }}</button>
+<button name="hw-media-delete" class="hw-button hw-button-red" onclick="hw.mediaDelete(event, this.form)">{{ _('delete') }}</button>
 <button name="hw-media-select" class="hw-button hw-button-blue" onclick="hw.mediaSelect(event)">{{ _('select') }}</button>
-
 {% if standalone or embedded %}
-<input name="hw-media-uploaded-file" type="file" value="{{ _("Upload file") }}" onchange="this.form.submit()"> 
+<input name="hw-media-uploaded-file" type="file" multiple value="{{ _("Upload file") }}" onchange="hw.mediaUpload(this.form)"> 
 {% end %}
+<progress name="hw-media-file-progress" value="0" max="100" class="hw-hidden">0%</progress>
+<span name="hw-media-file-failed" class="hw-hidden">{{ _('failed!') }}</span>

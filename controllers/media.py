@@ -27,7 +27,7 @@ class MediaHandler(BaseHandler):
     self.display["dirname"] = os.path.dirname
     self.display["join"] = os.path.join
     if not self.display.has_key('uploaded_file'):
-      self.display["uploaded_file"] = None
+      self.display["uploaded_file"] = self.get_argument('uploaded_file', None)
     self.display["embedded"] = self.get_argument('embedded', '')
     self.display["standalone"] = self.get_argument('standalone', '')
     self.display["initial_directory"] = self.get_argument('hw-media-directory', '')
@@ -41,38 +41,43 @@ class MediaHandler(BaseHandler):
     if not self.authenticate(author=True):
       return
 
-    parent_directory = os.path.join(self.resource_directory(), url_factory.clean_filename(self.get_argument('hw-media-directory', '')))
-    uploaded_file = self.request.files['hw-media-uploaded-file'][0]
-    full_path = os.path.join(parent_directory, uploaded_file['filename'])
+    parent_leading_path = self.application.settings["resource_url"] + "/" + self.get_author_username()
+    media_directory = url_factory.clean_filename(self.get_argument('hw-media-directory', '')).replace(parent_leading_path + '/', '')
+    parent_directory = os.path.join(self.resource_directory(), media_directory)
 
-    leafname = os.path.basename(full_path)
-    if leafname in ('crossdomain.xml', 'clientaccesspolicy.xml', '.htaccess', '.htpasswd'):
-      raise tornado.web.HTTPError(400, "i call shenanigans")
+    for uploaded_file in self.request.files['hw-media-uploaded-file']:
+      full_path = os.path.join(parent_directory, uploaded_file['filename'])
 
-    if not os.path.isdir(parent_directory):
-      os.makedirs(parent_directory)
+      leafname = os.path.basename(full_path)
+      if leafname in ('crossdomain.xml', 'clientaccesspolicy.xml', '.htaccess', '.htpasswd'):
+        raise tornado.web.HTTPError(400, "i call shenanigans")
 
-    # check dupe
-    counter = 1
-    original_path = full_path
-    while os.path.exists(full_path):
-      split_path = os.path.splitext(original_path)
-      full_path = split_path[0] + '_' + str(counter) + split_path[1]
-      counter += 1
+      if not os.path.isdir(parent_directory):
+        os.makedirs(parent_directory)
 
-    f = open(full_path, 'w')
-    f.write(uploaded_file['body'])
-    f.close()
+      # check dupe
+      counter = 1
+      original_path = full_path
+      while os.path.exists(full_path):
+        split_path = os.path.splitext(original_path)
+        full_path = split_path[0] + '_' + str(counter) + split_path[1]
+        counter += 1
 
-    if os.path.splitext(full_path)[1] == '.zip':
-      z = zipfile.ZipFile(full_path)
-      for f in z.namelist():
-        if f.endswith('/'):
-          os.makedirs(os.path.join(os.path.dirname(full_path), url_factory.clean_filename(f)))
-        else:
-          z.extract(url_factory.clean_filename(f), os.path.dirname(full_path))
+      f = open(full_path, 'w')
+      f.write(uploaded_file['body'])
+      f.close()
 
-    self.display["uploaded_file"] = self.resource_url(filename=full_path)
+      if os.path.splitext(full_path)[1] == '.zip':
+        z = zipfile.ZipFile(full_path)
+        for f in z.namelist():
+          if f.endswith('/'):
+            os.makedirs(os.path.join(os.path.dirname(full_path), url_factory.clean_filename(f)))
+          else:
+            z.extract(url_factory.clean_filename(f), os.path.dirname(full_path))
+
+      if not self.display.has_key('uploaded_file'):
+        self.display["uploaded_file"] = self.resource_url(filename=full_path)
+
     self.get()
 
   def preview(self):  

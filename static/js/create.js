@@ -1626,7 +1626,43 @@ hw.mediaPreview = function(selectEl) {
   hw.mediaHTML(media.value, callback);
 };
 
-hw.mediaDelete = function(event) {
+hw.mediaUpload = function(form) {
+  var progress = hw.getFirstElementByName('hw-media-file-progress');
+  hw.removeClass(progress, 'hw-hidden');
+  hw.addClass(hw.getFirstElementByName('hw-media-file-failed'), 'hw-hidden');
+
+  var transferProgress = function(e) {
+    if (e.lengthComputable) {
+      var percentage = Math.round((e.loaded * 100) / e.total);
+      progress.setAttribute('value', percentage);
+      progress.innerHTML = percentage + '%';
+    }        
+  };
+
+  var onSuccess = function(xhr) {
+    window.location.href = window.location.href + '&uploaded_file=' + encodeURIComponent(form["hw-media-directory"].value);
+  };
+
+  var transferError = function(e) {
+    hw.removeClass(hw.getFirstElementByName('hw-media-file-failed'), 'hw-hidden');
+    hw.addClass(progress, 'hw-hidden');
+  };
+
+  var formData = new FormData(form);
+
+  var uploadRequest = new hw.ajax(window.location.href,
+    { upload: formData,
+      onProgress: transferProgress,
+      onSuccess: onSuccess,
+      onError: transferError });
+
+  if (!uploadRequest.transport.upload) {
+    progress.setAttribute('max', '');
+    form.submit();
+  }
+};
+
+hw.mediaDelete = function(event, form) {
   if (hw.mediaEmbedded && event) {
     hw.preventDefault(event);
   }
@@ -1644,8 +1680,12 @@ hw.mediaDelete = function(event) {
     }
   }
 
+  if (!allMedia.length) {
+    return;
+  }
+
   var callback = function(xhr) {
-    window.location.reload();
+    window.location.href = window.location.href + '&uploaded_file=' + encodeURIComponent(form["hw-media-directory"].value);
   };
 
   var createForm = hw.getFirstElementByName('hw-create');
