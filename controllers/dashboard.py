@@ -14,10 +14,9 @@ class DashboardHandler(BaseHandler):
     offset = int(self.breadcrumbs["modifier"]) if self.breadcrumbs["modifier"] else 1
     offset -= 1
     begin  = self.constants['page_size'] * offset
-    end    = self.constants['page_size'] * offset + self.constants['page_size']
 
     dashboard_objects = [ self.models.content_remote(**content) if content['post_id'] else self.models.content(**content) \
-          for content in db.dashboard_feed(user.username, begin, end) ]
+          for content in db.dashboard_feed(user.username, begin, self.constants['page_size']) ]
     self.display['combined_feed'] = [ self.ui["modules"].RemoteContent(content) if content.post_id else self.ui["modules"].Content(content) \
           for content in dashboard_objects ]
 

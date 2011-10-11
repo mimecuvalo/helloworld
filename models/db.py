@@ -1,16 +1,16 @@
 from autumn.db.query import Query
 
-def search(profile, query, begin, end):
+def search(profile, query, begin, page_size):
   return Query.sql("""SELECT * FROM `content`
                         WHERE `username` = %s
                           AND hidden = 0
                           AND (`title` REGEXP %s
                           OR  `view` REGEXP %s)
                           LIMIT %s,%s""",
-                          (profile, '[[:<:]]' + query + '[[:>:]]', '[[:<:]]' + query + '[[:>:]]',  begin, end))
+                          (profile, '[[:<:]]' + query + '[[:>:]]', '[[:<:]]' + query + '[[:>:]]',  begin, page_size))
 
 # this will work for now...
-def dashboard_feed(profile, begin, end):
+def dashboard_feed(profile, begin, page_size):
   return Query.sql("""(SELECT `id`, `username`, `title`, `view`, `date_created`, `favorited`, `is_spam`, `deleted`,
                               `count`, `date_updated`, `hidden`, `date_start`, `date_end`, `date_repeats`, `section`, `name`, `thumb`,
                               '' as `creator`, '' as `type`, '' as `from_user`, '' as `post_id`, '' as `link`
@@ -28,4 +28,4 @@ def dashboard_feed(profile, begin, end):
                            AND `deleted` = 0)
                        ORDER BY date_created DESC
                        LIMIT %s,%s""",
-                          (profile, profile, begin, end))
+                          (profile, profile, begin, page_size))

@@ -17,7 +17,6 @@ class SearchHandler(BaseHandler):
     offset = int(self.breadcrumbs["modifier"]) if self.breadcrumbs["modifier"] else 1
     offset -= 1
     begin  = self.constants['page_size'] * offset
-    end    = self.constants['page_size'] * offset + self.constants['page_size']
 
     if query:
       if content_owner.adult_content \
@@ -26,7 +25,7 @@ class SearchHandler(BaseHandler):
         return
 
       query = urllib.unquote_plus(query)
-      resultsQuery = db.search(profile=self.breadcrumbs["profile"], query=query, begin=begin, end=end)
+      resultsQuery = db.search(profile=self.breadcrumbs["profile"], query=query, begin=begin, page_size=self.constants['page_size'])
       results = [self.models.content(**result) for result in resultsQuery]
     else:
       results = []
