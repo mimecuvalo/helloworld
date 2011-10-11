@@ -1,13 +1,20 @@
 from autumn.db.query import Query
 
 def search(profile, query, begin, page_size):
-  return Query.sql("""SELECT * FROM `content`
+  return Query.sql("""SELECT *,
+                      (( length(title + view)
+                           - length(replace(title + view, %s, '')) )
+                           / length(%s) )
+                           /(length(title + view) + 1
+                           - length(replace(title + view, ' ', '')) ) as ratio_of_keyword_occurence_to_other_words
+                        FROM `content`
                         WHERE `username` = %s
                           AND hidden = 0
                           AND (`title` REGEXP %s
                           OR  `view` REGEXP %s)
-                          LIMIT %s,%s""",
-                          (profile, '[[:<:]]' + query + '[[:>:]]', '[[:<:]]' + query + '[[:>:]]',  begin, page_size))
+                          ORDER BY ratio_of_keyword_occurence_to_other_words DESC
+                          LIMIT %s, %s""",
+                          (query, query, profile, '[[:<:]]' + query + '[[:>:]]', '[[:<:]]' + query + '[[:>:]]',  begin, page_size))
 
 # this will work for now...
 def dashboard_feed(profile, begin, page_size):
