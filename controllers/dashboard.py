@@ -15,7 +15,7 @@ class DashboardHandler(BaseHandler):
     if self.get_argument('list_mode', None) != None:
       self.display["list_mode"] = int(self.get_argument('list_mode', 0))
     else:
-      self.display["list_mode"] = int(self.get_cookie("list_mode"))
+      self.display["list_mode"] = int(self.get_cookie("list_mode")) if self.get_cookie("list_mode") != None else 0
     self.display["read_spam"] = int(self.get_argument('read_spam', 0))
     self.display["specific_feed"] = self.get_argument('specific_feed', None)
     self.display["user"] = user = self.get_author_user()
