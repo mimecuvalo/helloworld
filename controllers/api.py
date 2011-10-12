@@ -147,7 +147,7 @@ class ApiHandler(BaseHandler):
 
     # get some content, yo
     feed_response = urllib2.urlopen(user.feed_url)
-    feed_doc = BeautifulSoup(feed_response.read())
+    feed_doc = BeautifulSoup(feed_response.read(), selfClosingTags=remote_content.self_closing_tags)
     remote_content.parse_feed(self.models, user, feed_doc)
 
   def unfollow(self):

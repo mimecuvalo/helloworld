@@ -23,7 +23,7 @@ remote_users = models.users_remote.get()[:]
 for remote_user in remote_users:
   try:
     feed_response = urllib2.urlopen(remote_user.feed_url)
-    feed_doc = BeautifulSoup(feed_response.read())
+    feed_doc = BeautifulSoup(feed_response.read(), selfClosingTags=remote_content.self_closing_tags)
     remote_content.parse_feed(models, remote_user, feed_doc)
   except:
     pass

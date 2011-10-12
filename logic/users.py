@@ -191,9 +191,9 @@ def get_remote_user_info(handler, user_url, profile):
       alias = alias.string
 
   if not feed_url:
-    raise tornado.web.HTTPError(400)
-
-  feed_url = feed_url['href']
+    feed_url = user_url
+  else:
+    feed_url = feed_url['href']
   base_url = None
 
   if not feed_url.startswith('/') and not feed_url.startswith('http://'):
@@ -231,7 +231,9 @@ def get_remote_user_info(handler, user_url, profile):
     user_remote = handler.models.users_remote()
 
   user_remote.local_username = profile
-  logo = feed_doc.find('logo', recursive=False)
+  logo = feed_doc.find('logo')
+  if logo and logo.parent.name == 'source':
+    logo = None
   image = feed_doc.find('image')
   if logo:
     user_remote.avatar = logo.string

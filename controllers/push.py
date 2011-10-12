@@ -19,7 +19,7 @@ class PushHandler(BaseHandler):
     if not user:
       raise tornado.web.HTTPError(404)
 
-    feed_doc = BeautifulSoup(self.request.body)
+    feed_doc = BeautifulSoup(self.request.body, selfClosingTags=remote_content.self_closing_tags)
     author = feed_doc.find('author')
     profile_url = author.find('uri').string
     remote_user = self.models.users_remote.get(local_username=user.username, profile_url=profile_url)[0]

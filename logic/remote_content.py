@@ -8,6 +8,8 @@ import tornado.escape
 
 from logic import users
 
+self_closing_tags = ['category']
+
 def parse_feed(models, user, feed_doc):
   entries = feed_doc.findAll('entry') # atom
   if len(entries) == 0:
@@ -15,50 +17,54 @@ def parse_feed(models, user, feed_doc):
   entries.reverse()
 
   for entry in entries:
-    try:
-      post_id = entry.find('id')
-      if not post_id:
-        post_id = entry.find('guid')
-      exists = models.content_remote.get(to_username=user.local_username, post_id=post_id.string)[0]
-      if exists:
-        continue
+    #try:
+    post_id = entry.find('id')
+    if not post_id:
+      post_id = entry.find('guid')
+    exists = models.content_remote.get(to_username=user.local_username, post_id=post_id.string)[0]
+    if exists:
+      continue
 
-      new_entry = models.content_remote()      
-      new_entry.to_username = user.local_username
-      new_entry.from_user = user.profile_url
-      new_entry.username = user.username
+    new_entry = models.content_remote()      
+    new_entry.to_username = user.local_username
+    new_entry.from_user = user.profile_url
+    new_entry.username = user.username
+    date = entry.find('published')
+    if not date:
       date = entry.find('updated')
-      if not date:
-        date = entry.find('pubdate')
-      decoded_date = datetime.datetime.fromtimestamp(mktime(parse_date(date.string)))
-      new_entry.date_created = decoded_date
-      new_entry.type = 'post'
-      creator = entry.find('dc:creator')
-      author = entry.find('author')
-      if creator:
-        new_entry.creator = creator.string
-      elif author:
-        name = author.find('name')
-        if name:
-          new_entry.creator = name.string
-      new_entry.title = entry.find('title').string
-      new_entry.post_id = post_id.string
-      if entry.find('link').has_key('href'):
-        new_entry.link = entry.find('link')['href']
-      else:
-        new_entry.link = entry.find('link').nextSibling # XXX UGH, BeautifulSoup treats <link> as self-closing tag, LAMESAUCE for rss
-      xhtml_content = entry.find('content', type='xhtml')
-      content = entry.find(re.compile('^content:?.*'))
-      if xhtml_content:
-        new_entry.view = sanitize(xhtml_content.renderContents())
-      elif content:
-        content = content.text
-        new_entry.view = sanitize(tornado.escape.xhtml_unescape(content))
-      else:
-        new_entry.view = sanitize(entry.find('summary', type='xhtml').renderContents())
-      new_entry.save()
-    except Exception as ex:
-      pass
+    if not date:
+      date = entry.find('pubdate')
+    decoded_date = datetime.datetime.fromtimestamp(mktime(parse_date(date.string)))
+    new_entry.date_created = decoded_date
+    new_entry.type = 'post'
+    creator = entry.find('dc:creator')
+    author = entry.find('author')
+    if creator:
+      new_entry.creator = creator.string
+    elif author:
+      name = author.find('name')
+      if name:
+        new_entry.creator = name.string
+    import logging
+    logging.error(entry)
+    new_entry.title = entry.find('title').string
+    new_entry.post_id = post_id.string
+    if entry.find('link').has_key('href'):
+      new_entry.link = entry.find('link')['href']
+    else:
+      new_entry.link = entry.find('link').nextSibling # XXX UGH, BeautifulSoup treats <link> as self-closing tag, LAMESAUCE for rss
+    xhtml_content = entry.find('content', type='xhtml')
+    content = entry.find(re.compile('^content:?.*'))
+    if xhtml_content:
+      new_entry.view = sanitize(xhtml_content.renderContents())
+    elif content:
+      content = content.text
+      new_entry.view = sanitize(tornado.escape.xhtml_unescape(content))
+    else:
+      new_entry.view = sanitize(entry.find('summary', type='xhtml').renderContents())
+    new_entry.save()
+    #except Exception as ex:
+    #  pass
 
 def sanitize(value):
   VALID_TAGS = ['a', 'abbr', 'acronym', 'address', 'audio', 'b', 'bdi', 'bdo',
