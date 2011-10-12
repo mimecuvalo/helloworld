@@ -194,6 +194,7 @@ def get_remote_user_info(handler, user_url, profile):
     raise tornado.web.HTTPError(400)
 
   feed_url = feed_url['href']
+  base_url = None
 
   if not feed_url.startswith('/') and not feed_url.startswith('http://'):
     base_url = user_doc.find('base')
@@ -211,11 +212,18 @@ def get_remote_user_info(handler, user_url, profile):
   feed_doc = BeautifulSoup(feed_response.read())
   author = feed_doc.find('author')
 
+  alias = None
   if author:
     uri = author.find('uri')
-    alias = uri.string  # alias or user_url
-  else:
-    alias = feed_doc.find('link').nextSibling # XXX UGH, BeautifulSoup treats <link> as self-closing tag, LAMESAUCE for rss
+    if uri:
+      alias = uri.string  # alias or user_url
+
+  if not alias:
+    alt_link = feed_doc.find('link', rel="alternate")
+    if alt_link:
+      alias = alt_link['href']
+    else:
+      alias = feed_doc.find('link').nextSibling # XXX UGH, BeautifulSoup treats <link> as self-closing tag, LAMESAUCE for rss
   user_remote = handler.models.users_remote.get(local_username=profile, profile_url=alias)[0]
   hub_url = feed_doc.find(re.compile('.+:link$'), rel='hub')
 
@@ -223,17 +231,32 @@ def get_remote_user_info(handler, user_url, profile):
     user_remote = handler.models.users_remote()
 
   user_remote.local_username = profile
-  logo = feed_doc.find('logo')
+  logo = feed_doc.find('logo', recursive=False)
+  image = feed_doc.find('image')
   if logo:
     user_remote.avatar = logo.string
-  else:
+  elif image:
     image = feed_doc.find('image')
     url = image.find('url')
     user_remote.avatar = url.string
+  else:
+    favicon = user_doc.find('link', rel='shortcut icon')
+    if favicon:
+      if base_url:
+        user_remote.avatar = base_url + favicon['href']
+      else:
+        user_remote.avatar = user_url + ('/' if not user_url.endswith('/') else '') + favicon['href']
+    else:
+      user_remote.avatar = user_url + ('/' if not user_url.endswith('/') else '') + 'favicon.ico'
+  preferred_username = None
+  display_name = None
   if author:
+    preferred_username = author.find(re.compile('.+:preferredusername$'))
+    display_name = author.find(re.compile('.+:displayname$'))
+  if author and preferred_username and display_name:
     #user_remote.avatar = author.find('link', rel='avatar')['href']
-    user_remote.username = author.find(re.compile('.+:preferredusername$')).string
-    user_remote.name = author.find(re.compile('.+:displayname$')).string
+    user_remote.username = preferred_username.string
+    user_remote.name = display_name.string
   elif webfinger_doc:
     user_remote.username = webfinger_doc.find('Property', type="http://apinamespace.org/atom/username").string
   else:

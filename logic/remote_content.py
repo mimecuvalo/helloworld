@@ -1,19 +1,21 @@
 import datetime
 import re
+from time import mktime
 
 from BeautifulSoup import BeautifulSoup
+from feedparser import _parse_date as parse_date
 import tornado.escape
 
 from logic import users
 
 def parse_feed(models, user, feed_doc):
-  try:
-    entries = feed_doc.findAll('entry') # atom
-    if len(entries) == 0:
-      entries = feed_doc.findAll('item')  # rss
-    entries.reverse()
+  entries = feed_doc.findAll('entry') # atom
+  if len(entries) == 0:
+    entries = feed_doc.findAll('item')  # rss
+  entries.reverse()
 
-    for entry in entries:
+  for entry in entries:
+    try:
       post_id = entry.find('id')
       if not post_id:
         post_id = entry.find('guid')
@@ -26,27 +28,37 @@ def parse_feed(models, user, feed_doc):
       new_entry.from_user = user.profile_url
       new_entry.username = user.username
       date = entry.find('updated')
-      if date:
-        decoded_date = datetime.datetime.strptime(date.string[:-6], '%Y-%m-%dT%H:%M:%S')
-      else:
+      if not date:
         date = entry.find('pubdate')
-        decoded_date = datetime.datetime.strptime(date.string[:-4], '%a, %d %b %Y %H:%M:%S')
+      decoded_date = datetime.datetime.fromtimestamp(mktime(parse_date(date.string)))
       new_entry.date_created = decoded_date
       new_entry.type = 'post'
       creator = entry.find('dc:creator')
+      author = entry.find('author')
       if creator:
         new_entry.creator = creator.string
+      elif author:
+        name = author.find('name')
+        if name:
+          new_entry.creator = name.string
       new_entry.title = entry.find('title').string
       new_entry.post_id = post_id.string
       if entry.find('link').has_key('href'):
         new_entry.link = entry.find('link')['href']
       else:
         new_entry.link = entry.find('link').nextSibling # XXX UGH, BeautifulSoup treats <link> as self-closing tag, LAMESAUCE for rss
-      content = entry.find(re.compile('^content:?.*')).text
-      new_entry.view = sanitize(tornado.escape.xhtml_unescape(content))
+      xhtml_content = entry.find('content', type='xhtml')
+      content = entry.find(re.compile('^content:?.*'))
+      if xhtml_content:
+        new_entry.view = sanitize(xhtml_content.renderContents())
+      elif content:
+        content = content.text
+        new_entry.view = sanitize(tornado.escape.xhtml_unescape(content))
+      else:
+        new_entry.view = sanitize(entry.find('summary', type='xhtml').renderContents())
       new_entry.save()
-  except:
-    pass
+    except Exception as ex:
+      pass
 
 def sanitize(value):
   VALID_TAGS = ['a', 'abbr', 'acronym', 'address', 'audio', 'b', 'bdi', 'bdo',
