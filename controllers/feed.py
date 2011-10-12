@@ -22,7 +22,8 @@ class FeedHandler(BaseHandler):
       common_options['hidden'] = False
 
     content_options = { 'username': user.username,
-                        'redirect': 0, }
+                        'redirect': 0,
+                        'section !=': 'comments', }
     if section:
       content_options['section'] = section
     if album:
