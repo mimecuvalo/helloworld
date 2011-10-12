@@ -3,6 +3,7 @@ import re
 import tornado.template
 import tornado.web
 
+from logic import remote_content
 from logic import url_factory
 
 class Create(tornado.web.UIModule):
@@ -32,7 +33,7 @@ class SiteMap(tornado.web.UIModule):
 
 
 class Content(tornado.web.UIModule):
-  def render(self, content, simple=True, template_type=None):
+  def render(self, content, simple=True, template_type=None, sanitize=False):
     content.restricted = False
     content.is_remote = False
 
@@ -53,16 +54,19 @@ class Content(tornado.web.UIModule):
         # re-raise
         raise ex
 
-    # check for link template
-    if template_type != 'links' and content.view.startswith('http://') and content.view.find(' ') == -1:
-      new_view = ''
-      if content.thumb:
-        new_view = '<a href="' + content.view + '" title="' + content.title + '"><img src="' + content.thumb + '"></a><br>'
-      new_view += '<a href="' + content.view + '" title="' + content.title + '">' + content.view + '</a>'
-      content.view = new_view
+    if sanitize:
+      content.view = remote_content.sanitize(content.view)
+    else:
+      # check for link template
+      if template_type != 'links' and content.view.startswith('http://') and content.view.find(' ') == -1:
+        new_view = ''
+        if content.thumb:
+          new_view = '<a href="' + content.view + '" title="' + content.title + '"><img src="' + content.thumb + '"></a><br>'
+        new_view += '<a href="' + content.view + '" title="' + content.title + '">' + content.view + '</a>'
+        content.view = new_view
 
-    # linkify tags
-    content.view = url_factory.linkify_tags(self.handler, content)
+      # linkify tags
+      content.view = url_factory.linkify_tags(self.handler, content)
 
     return content
 
@@ -74,12 +78,13 @@ class RemoteContent(tornado.web.UIModule):
     return content
 
 class ContentView(tornado.web.UIModule):
-  def render(self, content):
+  def render(self, content, list_mode=False):
     self.handler.display["individual_content"] = type(content) is not list
     self.handler.display["referrer"] = self.handler.get_argument('referrer', "")
 
     self.handler.display['favorites'] = []
     self.handler.display['comments'] = []
+    self.handler.display['list_mode'] = list_mode
 
     if not self.handler.display["individual_content"]:
       self.handler.display["feed"] = content

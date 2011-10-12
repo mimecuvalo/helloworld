@@ -47,12 +47,23 @@
 
 #hw-following.hw-edit-mode li {
   display: block;
+  margin: 3px 0;
 }
+#hw-following.hw-edit-mode li img {
+  vertical-align: middle;
+}
+#hw-following .hw-visit,
 #hw-following .hw-unfollow {
   display: none;
 }
+#hw-following.hw-edit-mode .hw-visit,
 #hw-following.hw-edit-mode .hw-unfollow {
   display: inline;
+}
+#hw-following #hw-following-read-all {
+  text-align: center;
+  display: block;
+  margin: 3px;
 }
 
 .hw-remote-actions {
@@ -74,6 +85,7 @@
 }
 
 #hw-feed {
+  clear: both;
   padding-bottom: 0;
 }
 
@@ -84,6 +96,7 @@ h1 {
 
 #hw-absorb > h1 {
   text-align: right;
+  border-bottom: 1px solid #ccc;
 }
 
 #hw-absorb .hw-remote img {
@@ -94,8 +107,18 @@ h1 {
   float: left;
 }
 
+#hw-absorb-options {
+  float: left;
+}
+#hw-absorb-options .hw-selected {
+  font-weight: bold;
+}
+
 #hw-feed header {
   margin-bottom: 0.5em;
+}
+#hw-feed.hw-list-mode header {
+  margin: 0;
 }
 #hw-feed h1 {
   text-align: left;

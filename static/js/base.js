@@ -614,9 +614,13 @@ hw.loadMore.prototype = {
         --this.offset;
       }
 
-      var url = this.url + (this.offset == 1 ? '' : '/page/' + this.offset);
+      var parameterStart = this.url.indexOf('?');
+      var pageUrl = this.url.substring(0, parameterStart == -1 ? this.url.length : parameterStart)
+                 + (this.offset == 1 ? '' : '/page/' + this.offset);
+                 //+ this.url.substring(parameterStart == -1 ? this.url.length : parameterStart, this.url.length);
+
       if (currentOffset != this.offset && this.offset != 0) {
-        history.replaceState({ 'title': document.title }, document.title, url);
+        history.replaceState({ 'title': document.title }, document.title, pageUrl);
       }
     }
 
@@ -644,6 +648,7 @@ hw.loadMore.prototype = {
 
       if (xhr.status = 404) {
         self.done = true;
+        self.processing = false;
       } else {
         var fn = function() {
           self.processing = false;
@@ -652,13 +657,18 @@ hw.loadMore.prototype = {
       }
     };
 
-    if (!this.done && !this.processing &&
+    if (!this.done && !this.processing && this.offset != 0 &&
         (document.height || document.body.parentNode.scrollHeight) -
         (document.body.parentNode.scrollTop || document.body.scrollTop) < (document.body.parentNode.clientHeight || document.body.clientHeight) * 3) {
       this.processing = true;
       this.feed.innerHTML += '<div id="hw-loading">' + hw.getMsg('loading') + '</div>';
 
-      new hw.ajax(this.url + '/page/' + (this.offset + 1),
+      var parameterStart = this.url.indexOf('?');
+      var nextPageUrl = this.url.substring(0, parameterStart == -1 ? this.url.length : parameterStart)
+                      + '/page/' + (this.offset + 1)
+                      + this.url.substring(parameterStart == -1 ? this.url.length : parameterStart, this.url.length);
+
+      new hw.ajax(nextPageUrl,
         { method: 'get',
           onSuccess: insertData,
           onError: badTrip });

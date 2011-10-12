@@ -2071,9 +2071,69 @@ hw.follow = function(event, el) {
       onError: badTrip });
 };
 
+hw.read = function(event, el, listMode, readSpam) {
+  if (event) {
+    hw.preventDefault(event);
+  }
+
+  var user = '';
+  var ownFeed = false;
+  var url;
+
+  if (listMode == undefined) {
+    if (el) {
+      user = el.parentNode.getAttribute('data-user');
+    } else {
+      ownFeed = true;
+    }
+
+    if (readSpam) {
+      url = hw.baseUri() + 'dashboard' + '?read_spam=1';
+    } else {
+      url = hw.baseUri() + 'dashboard' + '?specific_feed=' + encodeURIComponent(user)
+                                       + '&own_feed=' + (ownFeed ? 1 : 0)
+                                       + '&list_mode=' + (hw.hasClass('hw-feed', 'hw-list-mode') ? 1 : 0);
+    }
+  } else {
+    url = hw.loadMoreObject.url;  // this isn't the cleanest way of doing this i know...
+    url = url.replace('&list_mode=1', '').replace('&list_mode=0', '');
+    url += (url.indexOf('?') == -1 ? '?' : '&') + 'list_mode=' + (listMode ? 1 : 0);
+    hw.setClass('hw-feed', 'hw-list-mode', listMode);
+    hw.setClass('hw-absorb-complete', 'hw-selected', !listMode);
+    hw.setClass('hw-absorb-list', 'hw-selected', listMode);
+    hw.setCookie('list_mode', listMode ? '1' : '0', -1, hw.basePath());
+  }
+
+  var callback = function(xhr) {
+    hw.loadMoreObject.done = false;
+    hw.loadMoreObject.offset = 1;
+    if (user || ownFeed || listMode != undefined) {
+      hw.loadMoreObject.url = url;
+    } else if (!user) {
+      hw.loadMoreObject.url = hw.baseUri() + 'dashboard';
+    }
+    hw.$('hw-feed').innerHTML = '<a id="hw-feed-page-1"></a>' + xhr.responseText;
+  };
+
+  var badTrip = function(xhr) {
+    hw.$('hw-feed').innerHTML = el.parentNode.parentNode.getAttribute('data-error');
+  };
+
+  var createForm = hw.getFirstElementByName('hw-create');
+  new hw.ajax(url,
+    { method: 'get',
+      headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
+      onSuccess: callback,
+      onError: badTrip });
+};
+
 hw.unfollow = function(event, el) {
   if (event) {
     hw.preventDefault(event);
+  }
+
+  if (!window.confirm(hw.getMsg('confirm-delete'))) {
+    return;
   }
 
   var user = el.parentNode.getAttribute('data-user');

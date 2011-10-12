@@ -75,92 +75,96 @@
           {{ _('Ends:') }} {{ item.date_end }}<br>
         {% end %}
       </h1>
-      {% if item.is_remote and item.creator %}
-        <span class="hw-creator">{{ _('by %(creator)s') % { "creator": item.creator } }}</span>
-      {% end %}
-      {% if referrer %}
-        <h2 class="hw-warning">
-          {{ _('You were redirected here from: ') }} <a href="{{ referrer }}">{{ referrer }}</a>
-        </h2>
+      {% if not list_mode %}
+        {% if item.is_remote and item.creator %}
+          <span class="hw-creator">{{ _('by %(creator)s') % { "creator": item.creator } }}</span>
+        {% end %}
+        {% if referrer %}
+          <h2 class="hw-warning">
+            {{ _('You were redirected here from: ') }} <a href="{{ referrer }}">{{ referrer }}</a>
+          </h2>
+        {% end %}
       {% end %}
     </header>
 
-    {% if individual_content and is_owner_viewing %}
-      {% module Create(content) %}
-    {% else %}
-      <div name="hw-view" {% raw bidi(item.view) %}>
-        {% raw item.view %}
-      </div>
+    {% if not list_mode %}
+      {% if individual_content and is_owner_viewing %}
+        {% module Create(content) %}
+      {% else %}
+        <div name="hw-view" {% raw bidi(item.view) %}>
+          {% raw item.view %}
+        </div>
+      {% end %}
+
+      <div class="clear"></div>
+
+      <footer class="hw-info">
+        {% if item.is_remote %}
+          {% module Moderate(item) %}
+        {% end %}
+
+        {% if single_user_site %}
+          {{ item.username }}
+        {% end %}
+        {{ _("posted") }} <time pubdate>{{ locale.format_date(item.date_created) }}</time>
+        {% if not item.is_remote and item.date_updated != item.date_created %}
+          ({{ _("updated") }} <time>{{ locale.format_date(item.date_updated) }}</time>)
+        {% end %}
+        {% if not item.is_remote %}
+        • {{ _("%(count)s view", "%(count)s views", item.count) % { "count": locale.friendly_number(item.count) } }}
+        {% end %}
+        {% if not item.is_remote and not is_owner_viewing and username != item.username %}
+          <img src="{{ nav_url(section='stats', url=content_url(item)) }}">
+        {% end %}
+        <div class="clear"></div>
+        {% if individual_content and not item.is_remote %}
+          {% if current_user and current_user["email"] %}
+          <form name="hw-comment-form" method="post" action="/api" onsubmit="return false" data-error="{{ _('error submitting your comment. please try again.') }}">
+            {% raw xsrf_form_html() %}
+            <textarea name="hw-comment-input" class="hw-box-black" type="text" placeholder="{{ _('what\'s your take?') }}" data-local-id="{{ content.id }}"></textarea> <button class="hw-button hw-button-blue" onclick="hw.commentSubmit()">{{ _('submit') }}</button>
+            <div class="clear"></div>
+          </form>
+          {% else %}
+            <h2 class="hw-comment-header">{{ _('you need to be logged in to leave a comment.') }}</h2>
+            <a class="hw-button hw-button-green" href="{{ nav_url(section='login', next=handler.request.uri) }}" data-logging-in="logging in..." data-failed="{{ _('login failed. try again.') }}" onclick="hw.login(event, this)">{{ _('login') }}</a>
+          {% end %}
+        {% end %}
+
+        <ul name="hw-comments">
+        {% for comment in comments %}
+          {% if comment.is_remote %}
+            <li data-post-id="{{ comment.post_id }}" data-post-user="{% if comment.from_user.startswith('http://') %}{{ comment.from_user }}{% end %}">
+              <img src="{% if comment.avatar %}{{ comment.avatar }}{% else %}{{ static_url('img/pixel.gif') }}{% end %}" />
+              {% raw _('%(profile_url)s') % { "profile_url": ('<a href="' + comment.from_user + '">' + comment.username + '</a>' if comment.from_user.startswith('http://') else comment.from_user.split('@')[0]) } %}
+              <div class="hw-comment-text">{% raw comment.view %}</div>
+              {% if is_owner_viewing %}
+                {% module Moderate(comment) %}
+              {% end %}
+              <div class="clear"></div>
+            </li>
+          {% else %}
+            <li data-post-id="tag:{{ handler.request.host }},{{ tag_date }}:{{ content_url(comment) }}" data-post-user="{{ nav_url(username=comment.username) }}">
+              <img src="{% if comment.avatar %}{{ comment.avatar }}{% else %}{{ static_url('img/pixel.gif') }}{% end %}" />
+              {% raw _('<a href="%(profile_url)s">%(name)s</a>') % { "profile_url": nav_url(username=comment.username), "name": comment.username } %}
+              <div class="hw-comment-text">{% raw comment.view %}</div>
+              {% if is_owner_viewing %}
+                {% module Moderate(comment) %}
+              {% end %}
+              <div class="clear"></div>
+            </li>
+          {% end %}
+        {% end %}
+        {% set phrases = ['<a href="%(profile_url)s">%(name)s</a> thinks this is the bee\'s knees.', 'this rocks <a href="%(profile_url)s">%(name)s</a>\'s socks off.', '<a href="%(profile_url)s">%(name)s</a> crapped their pants when they saw this.', '<a href="%(profile_url)s">%(name)s</a> wants to name their baby after this page.'] %}
+        {% for fave in favorites %}
+          {% set phrase = phrases[random.randint(0, len(phrases) - 1)] %}
+
+          <li>{% raw _(phrase) % { "profile_url": fave.from_user, "name": fave.username } %}</li>
+        {% end %}
+        </ul>
+
+        <div class="clear"></div>
+      </footer>
     {% end %}
-
-    <div class="clear"></div>
-
-    <footer class="hw-info">
-      {% if item.is_remote %}
-        {% module Moderate(item) %}
-      {% end %}
-
-      {% if single_user_site %}
-        {{ item.username }}
-      {% end %}
-      {{ _("posted") }} <time pubdate>{{ locale.format_date(item.date_created) }}</time>
-      {% if not item.is_remote and item.date_updated != item.date_created %}
-        ({{ _("updated") }} <time>{{ locale.format_date(item.date_updated) }}</time>)
-      {% end %}
-      {% if not item.is_remote %}
-      • {{ _("%(count)s view", "%(count)s views", item.count) % { "count": locale.friendly_number(item.count) } }}
-      {% end %}
-      {% if not item.is_remote and not is_owner_viewing and username != item.username %}
-        <img src="{{ nav_url(section='stats', url=content_url(item)) }}">
-      {% end %}
-      <div class="clear"></div>
-      {% if individual_content and not item.is_remote %}
-        {% if current_user and current_user["email"] %}
-        <form name="hw-comment-form" method="post" action="/api" onsubmit="return false" data-error="{{ _('error submitting your comment. please try again.') }}">
-          {% raw xsrf_form_html() %}
-          <textarea name="hw-comment-input" class="hw-box-black" type="text" placeholder="{{ _('what\'s your take?') }}" data-local-id="{{ content.id }}"></textarea> <button class="hw-button hw-button-blue" onclick="hw.commentSubmit()">{{ _('submit') }}</button>
-          <div class="clear"></div>
-        </form>
-        {% else %}
-          <h2 class="hw-comment-header">{{ _('you need to be logged in to leave a comment.') }}</h2>
-          <a class="hw-button hw-button-green" href="{{ nav_url(section='login', next=handler.request.uri) }}" data-logging-in="logging in..." data-failed="{{ _('login failed. try again.') }}" onclick="hw.login(event, this)">{{ _('login') }}</a>
-        {% end %}
-      {% end %}
-
-      <ul name="hw-comments">
-      {% for comment in comments %}
-        {% if comment.is_remote %}
-          <li data-post-id="{{ comment.post_id }}" data-post-user="{% if comment.from_user.startswith('http://') %}{{ comment.from_user }}{% end %}">
-            <img src="{% if comment.avatar %}{{ comment.avatar }}{% else %}{{ static_url('img/pixel.gif') }}{% end %}" />
-            {% raw _('%(profile_url)s') % { "profile_url": ('<a href="' + comment.from_user + '">' + comment.username + '</a>' if comment.from_user.startswith('http://') else comment.from_user.split('@')[0]) } %}
-            <div class="hw-comment-text">{% raw comment.view %}</div>
-            {% if is_owner_viewing %}
-              {% module Moderate(comment) %}
-            {% end %}
-            <div class="clear"></div>
-          </li>
-        {% else %}
-          <li data-post-id="tag:{{ handler.request.host }},{{ tag_date }}:{{ content_url(comment) }}" data-post-user="{{ nav_url(username=comment.username) }}">
-            <img src="{% if comment.avatar %}{{ comment.avatar }}{% else %}{{ static_url('img/pixel.gif') }}{% end %}" />
-            {% raw _('<a href="%(profile_url)s">%(name)s</a>') % { "profile_url": nav_url(username=comment.username), "name": comment.username } %}
-            <div class="hw-comment-text">{% raw comment.view %}</div>
-            {% if is_owner_viewing %}
-              {% module Moderate(comment) %}
-            {% end %}
-            <div class="clear"></div>
-          </li>
-        {% end %}
-      {% end %}
-      {% set phrases = ['<a href="%(profile_url)s">%(name)s</a> thinks this is the bee\'s knees.', 'this rocks <a href="%(profile_url)s">%(name)s</a>\'s socks off.', '<a href="%(profile_url)s">%(name)s</a> crapped their pants when they saw this.', '<a href="%(profile_url)s">%(name)s</a> wants to name their baby after this page.'] %}
-      {% for fave in favorites %}
-        {% set phrase = phrases[random.randint(0, len(phrases) - 1)] %}
-
-        <li>{% raw _(phrase) % { "profile_url": fave.from_user, "name": fave.username } %}</li>
-      {% end %}
-      </ul>
-
-      <div class="clear"></div>
-    </footer>
   {% end %}
 </section>
 {% end %}

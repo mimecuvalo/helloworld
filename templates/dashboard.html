@@ -15,10 +15,14 @@
   </div>
 
   <div id="hw-absorb">
+    <div id="hw-absorb-options">
+      <a id="hw-absorb-complete" href="#view-complete" onclick="hw.read(event, null, false)" class="{% if not list_mode %}hw-selected{% end %}">{{ _('complete text') }}</a> |
+      <a id="hw-absorb-list" href="#view-list" onclick="hw.read(event, null, true)" class="{% if list_mode %}hw-selected{% end %}">{{ _('list') }}</a>
+    </div>
     <h1>{{ _("absorb.") }}</h1>
-    <article id="hw-feed">
+    <article id="hw-feed" class="{% if list_mode %}hw-list-mode{% end %}">
       <a id="hw-feed-page-1"></a>
-      {% module ContentView(combined_feed) %}
+      {% module ContentView(combined_feed, list_mode=list_mode) %}
     </article>
   </div>
 
@@ -48,10 +52,16 @@
       <button id="hw-following-button" class="hw-button hw-button-green" onclick="hw.follow(event)" data-normal="{{ _('follow') }}" data-following="{{ _('one sec...') }}">{{ _('follow') }}</button>
       <div class="clear"></div>
     </div>
-    <ul>
+    <ul data-error="{{ _('Error retrieving feed.') }}">
+      <li id="hw-following-read-all" data-user="">
+        <a href="#read-all" onclick="hw.read(event, this)">{{ _('read all') }}</a> |
+        <a href="#your-feed" onclick="hw.read(event, null)">{{ _('your feed') }}</a> |
+        <a href="#spam" onclick="hw.read(event, null, null, true)">{{ _('spam') }}</a>
+      </li>
       {% for follower in following %}
         <li data-user="{{ follower.profile_url }}">
-          <a href="{{ follower.profile_url }}" title="{{ follower.name }}"><img height="16" width="16" src="{{ follower.avatar }}" /></a>
+          <a href="#read" onclick="hw.read(event, this)" title="{{ follower.name }}"><img height="16" width="16" src="{{ follower.avatar }}" /></a>
+          <a href="{{ follower.profile_url }}" class="hw-visit">{{ _('visit') }}</a>
           <a href="#unfollow" onclick="hw.unfollow(event, this)" class="hw-unfollow">{{ _('unfollow') }}</a>
         </li>
       {% end %}
