@@ -204,8 +204,8 @@ def get_remote_user_info(handler, user_url, profile):
       base_url = ''
     feed_url = base_url + feed_url
 
+  parsed_url = urlparse.urlparse(user_url)
   if not feed_url.startswith('http://'):
-    parsed_url = urlparse.urlparse(user_url)
     feed_url = parsed_url.scheme + '://' + parsed_url.hostname + feed_url
 
   feed_response = urllib2.urlopen(feed_url)
@@ -253,9 +253,9 @@ def get_remote_user_info(handler, user_url, profile):
         if base_url:
           user_remote.avatar = base_url + favicon['href']
         else:
-          user_remote.avatar = user_url + ('/' if not user_url.endswith('/') else '') + favicon['href']
+          user_remote.avatar = parsed_url.scheme + '://' + parsed_url.hostname + ('' if favicon['href'].startswith('/') else '/') + favicon['href']
     else:
-      user_remote.avatar = user_url + ('/' if not user_url.endswith('/') else '') + 'favicon.ico'
+      user_remote.avatar = parsed_url.scheme + '://' + parsed_url.hostname + '/favicon.ico'
   preferred_username = None
   display_name = None
   if author:

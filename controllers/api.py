@@ -136,7 +136,7 @@ class ApiHandler(BaseHandler):
       self.rename_album(section_album[0], section_album[1], new_name, new_title)
 
   def follow(self):
-    user_url = self.get_argument('user')
+    user_url = self.get_argument('user').strip()
     profile = self.get_author_username()
     user = users.get_remote_user_info(self, user_url, profile)
     user.following = 1
@@ -147,8 +147,7 @@ class ApiHandler(BaseHandler):
 
     # get some content, yo
     feed_response = urllib2.urlopen(user.feed_url)
-    feed_doc = BeautifulSoup(feed_response.read(), selfClosingTags=remote_content.self_closing_tags)
-    remote_content.parse_feed(self.models, user, feed_doc)
+    remote_content.parse_feed(self.models, user, feed_response.read())
 
   def unfollow(self):
     user_url = self.get_argument('user')
