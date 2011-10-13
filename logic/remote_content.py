@@ -40,31 +40,4 @@ def parse_feed(models, user, feed):
     new_entry.save()
 
 def sanitize(value):
-  VALID_TAGS = ['a', 'abbr', 'acronym', 'address', 'audio', 'b', 'bdi', 'bdo',
-                'big', 'blockquote', 'br', 'caption', 'center', 'cite', 'code',
-                'col', 'colgroup', 'dd', 'del', 'details', 'dfn', 'div', 'dl',
-                'dt', 'em', 'figcaption', 'figure', 'font', 'h1', 'h2', 'h3',
-                'h4', 'h5', 'h6', 'hr', 'i', 'iframe', 'img', 'ins', 'kbd', 'li',
-                'mark', 'meter', 'noscript', 'ol', 'p', 'pre', 'pre', 'progress',
-                'q', 'rp', 'rt', 'ruby', 's', 'samp', 'small', 'source', 'span',
-                'strike', 'strong', 'sub', 'summary', 'sup', 'table', 'tbody',
-                'td', 'tfoot', 'th', 'thead', 'time', 'tr', 'u', 'ul', 'var', 'video', 'wbr']
-  VALID_ATTRS = ['allowfullscreen', 'align', 'alt', 'border', 'cite', 'class', 'clear', 'controls', 'datetime', 'frameborder',
-                 'height', 'href', 'hspace', 'rel', 'src', 'title', 'type', 'vspace', 'width']
-
-  soup = BeautifulSoup(value)
-
-  for tag in soup.findAll(True):
-    if tag.name not in VALID_TAGS:
-      tag.hidden = True
-    elif tag.name == 'a':
-      tag['rel'] = 'nofollow'
-    for x in range(len(tag.attrs) - 1, -1, -1):
-      if tag.attrs[x][0] not in VALID_ATTRS:
-        del tag.attrs[x]
-
-  # linkify
-  for text in soup.findAll(text=True):
-    if text.parent.name != 'a':
-      text.replaceWith(tornado.escape.linkify(text, shorten=True, extra_params='rel="nofollow"'))
-  return soup.renderContents()
+  return feedparser._sanitizeHTML(value, 'UTF-8', 'text/html')
