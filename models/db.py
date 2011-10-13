@@ -31,7 +31,8 @@ def dashboard_feed(profile, begin, page_size, specific_feed, just_local_feed):
                          FROM `content`
                          WHERE `username` = %s
                            AND `redirect` = 0
-                           AND `section` != 'comments') """
+                           AND `section` != 'comments'
+                         ORDER BY date_created DESC)"""
 
   remote_query = """ (SELECT `id`, `username`, `title`, `view`, `date_created`, `favorited`, `is_spam`, `deleted`,
                               0 as `count`, now() as `date_updated`, 0 as `hidden`, now() as `date_start`, now() as `date_end`, 0 as `date_repeats`, '' as `section`, '' as `name`, '' as `thumb`,
@@ -40,8 +41,9 @@ def dashboard_feed(profile, begin, page_size, specific_feed, just_local_feed):
                          WHERE `to_username` = %s """ \
                     +      content_remote_restrict \
                     +  """ AND `is_spam` = 0
-                           AND `deleted` = 0)
-                       ORDER BY date_created DESC """
+                           AND `deleted` = 0
+                         ORDER BY date_created DESC)
+                         ORDER BY date_created DESC """
 
   limit_fragment = """ LIMIT %s, %s """
 
