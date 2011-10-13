@@ -150,7 +150,7 @@ class SalmonHandler(BaseHandler):
           logging.error("something wrong with thread")
           logging.error(ex)
 
-      is_spam = spam.guess(atom_content)
+      is_spam = spam.guess(atom_content, self.application.settings["private_path"], self.display["user"].username)
 
       if existing_content:
         # possible that it's picked up via feed, before we get the salmon call
@@ -165,7 +165,7 @@ class SalmonHandler(BaseHandler):
       if is_spam:
         post_remote.is_spam = True
       else:
-        spam.train_ham(atom_content)
+        spam.train_ham(atom_content, self.application.settings["private_path"], self.display["user"].username)
       post_remote.type = 'comment' if ref else 'post'
       post_remote.title = salmon_doc.find('atom:title').string
       post_remote.post_id = salmon_doc.find('atom:id').string

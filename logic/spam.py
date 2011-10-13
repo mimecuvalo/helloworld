@@ -1,31 +1,39 @@
+import os
+
 from reverend.thomas import Bayes
 
-SPAM_DB = 'spam.bayes'
-guesser = Bayes()
+def get_db(private_path, username):
+  path = os.path.join(os.path.join(private_path, username), 'spam.bayes')
+  guesser = Bayes()
 
-# load the spam DB
-try:
-    guesser.load(SPAM_DB)
-except IOError:
-    print "Creating a new spam filter database"
-    guesser.save(SPAM_DB)
+  # load the spam DB
+  try:
+      guesser.load(path)
+  except IOError:
+      print "Creating a new spam filter database"
+      guesser.save(path)
 
-def train_spam(text):
-    guesser.train('spam', text)
-    guesser.save(SPAM_DB)
+  return guesser, path
 
-def train_ham(text):
-    guesser.train('ham', text)
-    guesser.save(SPAM_DB)
+def train_spam(text, private_path, username):
+  guesser, path = get_db(private_path, username)
+  guesser.train('spam', text)
+  guesser.save(path)
+
+def train_ham(text, private_path, username):
+  guesser, path = get_db(private_path, username)
+  guesser.train('ham', text)
+  guesser.save(path)
 
 # try to guess the spam / ham ratio of a text
-def guess(text):
-    guesser.load(SPAM_DB)
+def guess(text, private_path, username):
+  guesser, path = get_db(private_path, username)
+  guesser.load(path)
 
-    spam = 0
-    ham = 0
-    value = guesser.guess(text)
-    for o in value:
-        if o[0] == 'ham': ham = o[1]
-        if o[0] == 'spam': spam = o[1]
-    return spam > ham
+  spam = 0
+  ham = 0
+  value = guesser.guess(text)
+  for o in value:
+    if o[0] == 'ham': ham = o[1]
+    if o[0] == 'spam': spam = o[1]
+  return spam > ham

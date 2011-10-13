@@ -8,4 +8,3 @@ fabfile.py
 hello.pid
 mod_time
 site.cfg
-spam.bayes

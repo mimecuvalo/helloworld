@@ -219,15 +219,16 @@ class ApiHandler(BaseHandler):
     if not content:
       raise tornado.web.HTTPError(400)
 
+    profile = self.get_author_user()
     self.check_ownership(content, is_remote)
 
     content.is_spam = not int(not_spam)
     content.save()
 
     if not_spam:
-      spam.train_ham(content.view)
+      spam.train_ham(content.view, self.application.settings["private_path"], profile.username)
     else:
-      spam.train_spam(content.view)
+      spam.train_spam(content.view, self.application.settings["private_path"], profile.username)
 
   def delete(self):
     local_id = self.get_argument('local_id')
@@ -250,7 +251,7 @@ class ApiHandler(BaseHandler):
       commented_content = self.models.content.get(self.get_argument('local_id'))
       comment = self.get_argument('comment')
 
-      is_spam = spam.guess(comment)
+      is_spam = spam.guess(comment, self.application.settings["private_path"], profile.username)
 
       content = self.models.content()
       content.username = profile.username
@@ -261,7 +262,7 @@ class ApiHandler(BaseHandler):
       if is_spam:
         content.is_spam = True
       else:
-        spam.train_ham(comment)
+        spam.train_ham(comment, self.application.settings["private_path"], profile.username)
       content.avatar = profile.logo
       content.title = 'comment'
       thread_url = 'tag:' + self.request.host + ',' + self.display["tag_date"] + ':' + self.content_url(commented_content)
@@ -281,7 +282,7 @@ class ApiHandler(BaseHandler):
       commented_content = self.models.content.get(self.get_argument('local_id'))
       comment = self.get_argument('comment')
 
-      is_spam = spam.guess(comment)
+      is_spam = spam.guess(comment, self.application.settings["private_path"], commented_content.username)
 
       post_remote = self.models.content_remote()
       post_remote.to_username = commented_content.username
@@ -292,7 +293,7 @@ class ApiHandler(BaseHandler):
       if is_spam:
         post_remote.is_spam = True
       else:
-        spam.train_ham(comment)
+        spam.train_ham(comment, self.application.settings["private_path"], commented_content.username)
       post_remote.type = 'comment'
       post_remote.local_content_name = commented_content.name
       post_remote.view = remote_content.sanitize(comment)

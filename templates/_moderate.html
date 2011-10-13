@@ -1,4 +1,4 @@
-<div class="hw-remote-actions" data-username="{{ item.username }}" data-local-id="{{ item.id }}" data-is-remote="{{ item.is_remote }}"
+<div class="hw-remote-actions" data-username="{{ item.username }}" data-local-id="{{ item.id }}" data-is-remote="{% if item.is_remote %}1{% else %}0{% end %}"
     {% if item.is_remote %}
     data-user="{{ item.from_user }}" data-post-id="{{ item.post_id }}"
     {% end %}

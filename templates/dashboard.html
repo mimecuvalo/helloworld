@@ -39,7 +39,7 @@
     <ul>
       {% for follower in followers %}
         <li>
-          <a href="{{ follower.profile_url }}" title="{{ follower.name }}">
+          <a href="{{ follower.profile_url }}" title="{% if follower.name %}{{ follower.name }}{% else %}{{ follower.username }}{% end %}">
             <img height="16" width="16" src="{{ follower.avatar }}" onerror="this.src='{{ static_url('img/pixel.gif') }}';this.style.border='1px solid black';this.style.width='15px';this.style.height='15px'" />
           </a>
         </li>
@@ -62,7 +62,7 @@
       </li>
       {% for follower in following %}
         <li data-user="{{ follower.profile_url }}">
-          <a href="#read" onclick="hw.read(event, this)" title="{{ follower.name }}">
+          <a href="#read" onclick="hw.read(event, this)" title="{% if follower.name %}{{ follower.name }}{% else %}{{ follower.username }}{% end %}">
             <img height="16" width="16" src="{{ follower.avatar }}" onerror="this.src='{{ static_url('img/pixel.gif') }}';this.style.border='1px solid black';this.style.width='15px';this.style.height='15px'" />
           </a>
           <a href="{{ follower.profile_url }}" class="hw-visit">{{ _('visit') }}</a>
