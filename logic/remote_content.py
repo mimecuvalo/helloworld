@@ -61,7 +61,11 @@ def parse_feed(models, user, feed_doc):
       content = content.text
       new_entry.view = sanitize(tornado.escape.xhtml_unescape(content))
     else:
-      new_entry.view = sanitize(entry.find('summary', type='xhtml').renderContents())
+      xhtml_summary = entry.find('summary', type='xhtml')
+      if xhtml_summary:
+        new_entry.view = sanitize(xhtml_summary.renderContents())
+      else:
+        new_entry.view = sanitize(tornado.escape.xhtml_unescape(entry.find(re.compile('^summary:?.*')).text))
     new_entry.save()
     #except Exception as ex:
     #  pass

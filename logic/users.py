@@ -227,6 +227,9 @@ def get_remote_user_info(handler, user_url, profile):
   user_remote = handler.models.users_remote.get(local_username=profile, profile_url=alias)[0]
   hub_url = feed_doc.find(re.compile('.+:link$'), rel='hub')
 
+  if not alias:
+    raise tornado.web.HTTPError(400)
+
   if not user_remote:
     user_remote = handler.models.users_remote()
 
@@ -244,10 +247,13 @@ def get_remote_user_info(handler, user_url, profile):
   else:
     favicon = user_doc.find('link', rel='shortcut icon')
     if favicon:
-      if base_url:
-        user_remote.avatar = base_url + favicon['href']
+      if favicon['href'].startswith('http://'):
+        user_remote.avatar = favicon['href']
       else:
-        user_remote.avatar = user_url + ('/' if not user_url.endswith('/') else '') + favicon['href']
+        if base_url:
+          user_remote.avatar = base_url + favicon['href']
+        else:
+          user_remote.avatar = user_url + ('/' if not user_url.endswith('/') else '') + favicon['href']
     else:
       user_remote.avatar = user_url + ('/' if not user_url.endswith('/') else '') + 'favicon.ico'
   preferred_username = None
