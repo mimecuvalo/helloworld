@@ -167,6 +167,7 @@ def get_remote_user_info(handler, user_url, profile):
   magic_key = ''
   alias = ''
   webfinger_doc = None
+  user_doc = None
 
   if not lrdd_link:
     user_response = urllib2.urlopen(user_url)
@@ -178,17 +179,20 @@ def get_remote_user_info(handler, user_url, profile):
     feed_url = atom_url or rss_url
   else:
     # get webfinger
-    webfinger_doc = get_webfinger(lrdd_link, user_url)
-    feed_url = webfinger_doc.find('link', rel='http://schemas.google.com/g/2010#updates-from')
-    salmon_url = webfinger_doc.find('link', rel='salmon')
-    if salmon_url:
-      salmon_url = salmon_url['href']
-    magic_key = webfinger_doc.find('link', rel='magic-public-key')
-    if magic_key:
-      magic_key = magic_key['href'].replace('data:application/magic-public-key,', '')
-    alias = webfinger_doc.find('alias')
-    if alias:
-      alias = alias.string
+    try:
+      webfinger_doc = get_webfinger(lrdd_link, user_url)
+      feed_url = webfinger_doc.find('link', rel='http://schemas.google.com/g/2010#updates-from')
+      salmon_url = webfinger_doc.find('link', rel='salmon')
+      if salmon_url:
+        salmon_url = salmon_url['href']
+      magic_key = webfinger_doc.find('link', rel='magic-public-key')
+      if magic_key:
+        magic_key = magic_key['href'].replace('data:application/magic-public-key,', '')
+      alias = webfinger_doc.find('alias')
+      if alias:
+        alias = alias.string
+    except:
+      feed_url = None
 
   if not feed_url:
     feed_url = user_url
@@ -245,8 +249,9 @@ def get_remote_user_info(handler, user_url, profile):
     url = image.find('url')
     user_remote.avatar = url.string
   else:
-    favicon = user_doc.find('link', rel='shortcut icon')
-    if favicon:
+    if user_doc:
+      favicon = user_doc.find('link', rel='shortcut icon')
+    if user_doc and favicon:
       if favicon['href'].startswith('http://') or favicon['href'].startswith('https://'):
         user_remote.avatar = favicon['href']
       else:
