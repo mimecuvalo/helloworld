@@ -107,6 +107,8 @@ def clean_name(name):
 def clean_filename(name):
   if name == '..' or name == '.':
     return ''
+  if name.startswith('/'):  # get rid of leading /
+    name = name[1:]
   return re.compile(r'[\\\/]\.\.|\.\.[\\\/]', re.M | re.U).sub('', name)
 
 def get_remote_title_and_thumb(url):

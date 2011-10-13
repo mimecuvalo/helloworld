@@ -17,7 +17,7 @@ def get_full_filename(handler, url=None):
     url = handler.prefix + handler.breadcrumbs['uri']
   elif not url.startswith(handler.prefix):
     url = handler.prefix + url
-  filename = url_factory.clean_filename(url[1:])  # remove leading /
+  filename = url_factory.clean_filename(url)
   # TODO filename = handler.locale.code.replace('_', '-') + '/' + filename
   path = os.path.join(handler.application.settings["cache_path"], filename + '.htmgz')
   parent_directory = os.path.dirname(path)

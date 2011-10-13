@@ -42,16 +42,20 @@ class UploadHandler(BaseHandler):
     self.fill_template("upload.html")
 
   def process_html(self, is_remote, filename):
+    filename = url_factory.clean_filename(filename)
+
     media_type = media.detect_media_type(filename)
 
     full_caption = self.get_argument('hw-media-caption', '')
     alt_text = self.get_argument('hw-media-caption', '')
     source = self.get_argument('hw-media-source', '')
     tags = self.get_argument('hw-media-tags', '')
+    media_section = url_factory.clean_filename(self.get_argument('hw-media-section'))
+    media_album = url_factory.clean_filename(self.get_argument('hw-media-album', ''))
 
-    parent_directory = self.resource_directory(self.get_argument('hw-media-section'), self.get_argument('hw-media-album', ''))
+    parent_directory = self.resource_directory(media_section, media_album)
     leafname = os.path.basename(filename)
-    full_path = url_factory.clean_filename(os.path.join(parent_directory, leafname))
+    full_path = os.path.join(parent_directory, leafname)
 
     if leafname in ('crossdomain.xml', 'clientaccesspolicy.xml', '.htaccess', '.htpasswd'):
       raise tornado.web.HTTPError(400, "i call shenanigans")
@@ -154,7 +158,10 @@ class UploadHandler(BaseHandler):
     return media_html
 
   def save_locally(self, media_type, full_path, data):
-    parent_url = self.resource_url(self.get_argument('hw-media-section'), self.get_argument('hw-media-album', ''))
+    media_section = url_factory.clean_filename(self.get_argument('hw-media-section'))
+    media_album = url_factory.clean_filename(self.get_argument('hw-media-album', ''))
+
+    parent_url = self.resource_url(media_section, media_album)
     original_size_url = ''
     url = parent_url + os.path.split(full_path)[1]
 
