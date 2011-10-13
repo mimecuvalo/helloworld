@@ -55,17 +55,20 @@ def parse_feed(models, user, feed_doc):
       new_entry.link = entry.find('link').nextSibling # XXX UGH, BeautifulSoup treats <link> as self-closing tag, LAMESAUCE for rss
     xhtml_content = entry.find('content', type='xhtml')
     content = entry.find(re.compile('^content:?.*'))
+    xhtml_summary = entry.find('summary', type='xhtml')
+    summary = entry.find(re.compile('^summary:?.*'))
+    description = entry.find(re.compile('^description:?.*'))
     if xhtml_content:
       new_entry.view = sanitize(xhtml_content.renderContents())
     elif content:
       content = content.text
       new_entry.view = sanitize(tornado.escape.xhtml_unescape(content))
-    else:
-      xhtml_summary = entry.find('summary', type='xhtml')
-      if xhtml_summary:
-        new_entry.view = sanitize(xhtml_summary.renderContents())
-      else:
-        new_entry.view = sanitize(tornado.escape.xhtml_unescape(entry.find(re.compile('^summary:?.*')).text))
+    elif xhtml_summary:
+      new_entry.view = sanitize(xhtml_summary.renderContents())
+    elif summary:
+      new_entry.view = sanitize(tornado.escape.xhtml_unescape(summary.text))
+    elif description:
+      new_entry.view = sanitize(tornado.escape.xhtml_unescape(description.text))
     new_entry.save()
     #except Exception as ex:
     #  pass
