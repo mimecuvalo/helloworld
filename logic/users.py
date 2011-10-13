@@ -196,7 +196,7 @@ def get_remote_user_info(handler, user_url, profile):
     feed_url = feed_url['href']
   base_url = None
 
-  if not feed_url.startswith('/') and not feed_url.startswith('http://'):
+  if not feed_url.startswith('/') and not (feed_url.startswith('http://') or feed_url.startswith('https://')):
     base_url = user_doc.find('base')
     if base_url:
       base_url = base_url['href']
@@ -205,7 +205,7 @@ def get_remote_user_info(handler, user_url, profile):
     feed_url = base_url + feed_url
 
   parsed_url = urlparse.urlparse(user_url)
-  if not feed_url.startswith('http://'):
+  if not (feed_url.startswith('http://') or feed_url.startswith('https://')):
     feed_url = parsed_url.scheme + '://' + parsed_url.hostname + feed_url
 
   feed_response = urllib2.urlopen(feed_url)
@@ -247,7 +247,7 @@ def get_remote_user_info(handler, user_url, profile):
   else:
     favicon = user_doc.find('link', rel='shortcut icon')
     if favicon:
-      if favicon['href'].startswith('http://'):
+      if favicon['href'].startswith('http://') or favicon['href'].startswith('https://'):
         user_remote.avatar = favicon['href']
       else:
         if base_url:
