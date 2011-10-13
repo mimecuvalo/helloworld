@@ -20,9 +20,13 @@ def parse_feed(models, user, feed):
     new_entry.to_username = user.local_username
     new_entry.from_user = user.profile_url
     new_entry.username = user.username
-    parsed_date = entry.published_parsed if entry.has_key('published_parsed') else entry.updated_parsed
-    decoded_date = datetime.datetime.fromtimestamp(mktime(parsed_date))
-    new_entry.date_created = decoded_date
+    if entry.has_key('published_parsed'):
+      parsed_date = datetime.datetime.fromtimestamp(mktime(entry.published_parsed))
+    elif entry.has_key('updated_parsed'):
+      parsed_date = datetime.datetime.fromtimestamp(mktime(entry.updated_parsed))
+    else:
+      parsed_date = datetime.datetime.now()
+    new_entry.date_created = parsed_date
     new_entry.type = 'post'
     if entry.has_key('author'):
       new_entry.creator = entry.author
