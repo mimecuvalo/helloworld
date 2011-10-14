@@ -7,7 +7,7 @@
         {% if next %}
           href="{{ content_url(next) }}"
           title="{% if content_owner.title %}{{ content_owner.title }} - {% end %}{{ next.title }}"
-          {% if content.style or content.code or next.style or next.code %}
+          {% if content.style or content.code or next.style or next.code or section_code or album_code %}
             data-disallow-magic="1"
           {% else %}
             {% set title = next.title %}
@@ -26,7 +26,7 @@
         {% if previous %}
           href="{{ content_url(previous) }}"
           title="{% if content_owner.title %}{{ content_owner.title }} - {% end %}{{ previous.title }}"
-          {% if content.style or content.code or previous.style or previous.code %}
+          {% if content.style or content.code or previous.style or previous.code or section_code or album_code %}
             data-disallow-magic="1"
           {% else %}
             {% set title = previous.title %}

@@ -72,6 +72,8 @@ class BaseHandler(tornado.web.RequestHandler):
     self.display["base_path"] = self.base_path
     self.display["prefix"] = self.prefix
     self.display["has_code"] = False
+    self.display["section_code"] = ""
+    self.display["album_code"] = ""
     self.display["strip_html"] = self.strip_html
     self.display["ellipsize"] = self.ellipsize
     self.display["source_website"] = self.constants['source_website']
