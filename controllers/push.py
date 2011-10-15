@@ -1,6 +1,7 @@
 from base import BaseHandler
 
 from BeautifulSoup import BeautifulSoup
+import feedparser
 import tornado.web
 
 from logic import remote_content
@@ -19,12 +20,11 @@ class PushHandler(BaseHandler):
     if not user:
       raise tornado.web.HTTPError(404)
 
-    feed_doc = BeautifulSoup(self.request.body)
-    author = feed_doc.find('author')
-    profile_url = author.find('uri').string
+    feed_doc = feedparser.parse(self.request.body)
+    profile_url = feed_doc.feed['link']
     remote_user = self.models.users_remote.get(local_username=user.username, profile_url=profile_url)[0]
 
     if not remote_user:
       raise tornado.web.HTTPError(404)
 
-    remote_content.parse_feed(self.models, remote_user, self.request.body)
+    remote_content.parse_feed(self.models, remote_user, parsed_feed=self.request.body)

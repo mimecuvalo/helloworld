@@ -8,8 +8,8 @@ import tornado.escape
 
 from logic import users
 
-def parse_feed(models, user, feed):
-  feed_doc = feedparser.parse(feed)
+def parse_feed(models, user, feed=None, parsed_feed=None):
+  feed_doc = feedparser.parse(parsed_feed or feed)
 
   for entry in feed_doc.entries:
     exists = models.content_remote.get(to_username=user.local_username, post_id=entry.id)[0]
