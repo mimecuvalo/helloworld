@@ -10,9 +10,11 @@
       {% if index != 0 %}
         <option value="{{ resource_url(filename=dirname(file[0])) }}" data-directory title="{{ basename(dirname(file[0])) }}">&uarr; {{ basename(dirname(file[0])) }}</option>
       {% end %}
+      {{ file[1].sort() }}
       {% for dir in file[1] %}
         <option value="{{ resource_url(filename=join(file[0], dir)) }}" data-directory title="{{ dir }}">&rarr; {{ dir }}</option>
       {% end %}
+      {{ file[2].sort() }}
       {% for f in file[2] %}
         <option value="{{ resource_url(filename=join(file[0], f)) }}" title="{{ f }}">{{ f }}</option>
       {% end %}

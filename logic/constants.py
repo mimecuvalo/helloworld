@@ -27,7 +27,7 @@ dictionary = {
                     'data_liberation', 'feed', 'foaf', 'host_meta', 'login', 'logout', 
                     'media', 'opensearch', 'page', 'private', 'push', 'resource', 'restart', 'salmon', 'search',
                     'setup', 'stats', 'themes', 'upload', 'webfinger'],
-  'templates' : ['album', 'archive', 'blank', 'events', 'feed', 'links', 'latest', 'redirect', 'slideshow', 'store'],
+  'templates' : ['album', 'archive', 'blank', 'events', 'feed', 'links', 'latest', 'redirect', 'slideshow', 'store',],
   'licenses' : {
     'http://creativecommons.org/licenses/by/3.0/':
         { 'name': 'Creative Commons Attribution 3.0 Unported License',
