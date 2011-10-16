@@ -40,7 +40,7 @@ class BaseHandler(tornado.web.RequestHandler):
     self.base_uri = self.request.protocol + '://' + self.request.host + self.base_path
     if not self.base_uri.endswith('/'):
       self.base_uri += '/'
-    self.request.uri = self.prefix + self.request.uri[len(tornado.escape.url_escape(self.prefix).replace('%2F', '/')):]
+    self.request.uri = (self.prefix if not self.constants['http_hide_prefix'] else '') + self.request.uri[len(tornado.escape.url_escape(self.prefix).replace('%2F', '/')):]
     self.breadcrumbs = url_factory.load_basic_parameters(self)
     self.template = None
     self.content = None
