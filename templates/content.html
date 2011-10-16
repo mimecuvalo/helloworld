@@ -110,9 +110,16 @@
         {% if not item.is_remote and item.date_updated != item.date_created %}
           ({{ _("updated") }} <time>{{ locale.format_date(item.date_updated) }}</time>)
         {% end %}
-        {% if not item.is_remote %}
-        • {{ _("%(count)s view", "%(count)s views", item.count) % { "count": locale.friendly_number(item.count) } }}
-        {% end %}
+        {% if item.is_remote %}
+          {% if item.link %}
+            • <a href="{{ item.link }}">{{ _('view entire thread') }}</a>
+          {% end %}
+        {% else item.is_remote %}
+          • {{ _("%(count)s view", "%(count)s views", item.count) % { "count": locale.friendly_number(item.count) } }}
+          {% if item.thread %}
+              • <a href="{{ item.thread.split(':')[2] }}">{{ _('view entire thread') }}</a>
+            {% end %}
+          {% end %}
         {% if not item.is_remote and not is_owner_viewing and username != item.username %}
           <img src="{{ nav_url(section='stats', url=content_url(item)) }}">
         {% end %}

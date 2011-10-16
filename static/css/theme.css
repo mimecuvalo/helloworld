@@ -650,6 +650,7 @@ ul[name=hw-comments] {
 
 ul[name=hw-comments] li {
   list-style-type: none;
+  margin-bottom: 5px;
 }
 
 ul[name=hw-comments] img {
