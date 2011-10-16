@@ -114,7 +114,7 @@
           {% if item.link %}
             • <a href="{{ item.link }}">{{ _('view entire thread') }}</a>
           {% end %}
-        {% else item.is_remote %}
+        {% else %}
           • {{ _("%(count)s view", "%(count)s views", item.count) % { "count": locale.friendly_number(item.count) } }}
           {% if item.thread %}
               • <a href="{{ item.thread.split(':')[2] }}">{{ _('view entire thread') }}</a>
