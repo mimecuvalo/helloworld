@@ -636,6 +636,7 @@ hw.loadMore.prototype = {
 
       hw.$('hw-loading').parentNode.removeChild(hw.$('hw-loading'));
       self.feed.innerHTML += '<a id="hw-feed-page-' + nextOffset + '"></a>' + xhr.responseText;
+      var a = document.body.offsetWidth;  // XXX workaround https://bugzilla.mozilla.org/show_bug.cgi?id=693219#c33 
 
       //if (hw.supportsHistory()) {
       //  var url = self.url + '/page/' + (self.offset);
@@ -662,6 +663,7 @@ hw.loadMore.prototype = {
         (document.body.parentNode.scrollTop || document.body.scrollTop) < (document.body.parentNode.clientHeight || document.body.clientHeight) * 3) {
       this.processing = true;
       this.feed.innerHTML += '<div id="hw-loading">' + hw.getMsg('loading') + '</div>';
+      var a = document.body.offsetWidth;  // XXX workaround https://bugzilla.mozilla.org/show_bug.cgi?id=693219#c33 
 
       var parameterStart = this.url.indexOf('?');
       var nextPageUrl = this.url.substring(0, parameterStart == -1 ? this.url.length : parameterStart)
