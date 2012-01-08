@@ -26,7 +26,7 @@ def dashboard_feed(profile, begin, page_size, specific_feed, just_local_feed):
   parameters += [begin, page_size]
 
   local_query = """(SELECT `id`, `username`, `title`, `view`, `date_created`, `favorited`, `is_spam`, `deleted`,
-                              `count`, `date_updated`, `hidden`, `date_start`, `date_end`, `date_repeats`, `section`, `name`, `thumb`,
+                              `count`, `date_updated`, `hidden`, `date_start`, `date_end`, `date_repeats`, `section`, `name`, `thumb`, `thread`,
                               '' as `creator`, '' as `type`, '' as `from_user`, '' as `post_id`, '' as `link`
                          FROM `content`
                          WHERE `username` = %s
