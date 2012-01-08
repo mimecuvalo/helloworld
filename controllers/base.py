@@ -246,11 +246,9 @@ class BaseHandler(tornado.web.RequestHandler):
     output = ""
     for line in traceback.format_exception(*kwargs["exc_info"]):
       output += line
-    output += "%(code)\n\n%(message)s\n\n%(display)s\n\n" % {
-                    "code": status_code,
-                    "message": httplib.responses[status_code],
-                    "display": tornado.escape.xhtml_escape(repr(self.display)).replace(',', ',\n'),
-                  }
+    output += status_code + "\n\n" \
+           +  httplib.responses[status_code] + "\n\n" \
+           +  tornado.escape.xhtml_escape(repr(self.display)).replace(',', ',\n')
 
     if self.constants['debug']:
       self.display["debug_info"] = ""
