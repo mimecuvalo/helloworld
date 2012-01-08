@@ -35,7 +35,7 @@ def dashboard_feed(profile, begin, page_size, specific_feed, just_local_feed):
                          ORDER BY date_created DESC)"""
 
   remote_query = """ (SELECT `id`, `username`, `title`, `view`, `date_created`, `favorited`, `is_spam`, `deleted`,
-                              0 as `count`, now() as `date_updated`, 0 as `hidden`, now() as `date_start`, now() as `date_end`, 0 as `date_repeats`, '' as `section`, '' as `name`, '' as `thumb`,
+                              0 as `count`, now() as `date_updated`, 0 as `hidden`, now() as `date_start`, now() as `date_end`, 0 as `date_repeats`, '' as `section`, '' as `name`, '' as `thumb`, '' as `thread`,
                               `creator`, `type`, `from_user`, `post_id`, `link`
                          FROM `content_remote`
                          WHERE `to_username` = %s """ \
