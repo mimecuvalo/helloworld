@@ -2,9 +2,10 @@
 *.pyc
 *.svn
 *.swp
-server.log
 .htaccess
 fabfile.py
 hello.pid
 mod_time
+server.log
 site.cfg
+spam.bayes

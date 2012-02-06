@@ -6,10 +6,12 @@ import urllib2
 import urlparse
 import xml.dom.minidom
 
+import tornado.escape
 from BeautifulSoup import BeautifulSoup
 
 def load_basic_parameters(handler, prefix="", url=""):
   uri = url if url else handler.request.uri
+  uri = tornado.escape.url_unescape(uri)  # Hmmm, some servers send UTF-8 percent encoded and some don't...
 
   if handler.prefix and uri.find(handler.prefix) == 0:
     uri = uri[len(handler.prefix):]
