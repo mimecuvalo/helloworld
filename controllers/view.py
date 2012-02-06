@@ -362,7 +362,7 @@ class ViewHandler(BaseHandler):
       soup = BeautifulSoup(content.view)
       for text in soup.findAll(text=True):
         if text.parent.name != 'a':
-          text.replaceWith(tornado.escape.linkify(tornado.escape.xhtml_unescape(text), shorten=True))
+          text.replaceWith(tornado.escape.linkify(tornado.escape.xhtml_unescape(text)))
 
       content.view = soup.renderContents()
 
