@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+  <style>
+    #hw-container {
+      position: static;
+    }
+    h1 {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 500px;
+      margin-top: -64px;
+      margin-left: -250px;
+      font-size: 32px;
+    }
+    #hw-user {
+      top: 60%;
+      left: 50%;
+      font-size: 32px;
+    }
+  </style>
+{% end %}
+
+{% block title %}
+  {{ _("Login") }}
+{% end %}
+
+{% block content %}
+  <h1>{{ _("Hold up, I'm gonna need to see some ID...") }}</h1>
+{% end %}

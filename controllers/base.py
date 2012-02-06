@@ -218,13 +218,15 @@ class BaseHandler(tornado.web.RequestHandler):
     By default, we use the 'login_url' application setting.
     """
     self.require_setting("login_url", "@tornado.web.authenticated")
-    self.request.uri = self.prefix + self.request.uri
+    self.request.uri = self.request.uri
 
     url = ""
     if not self.constants['http_hide_prefix']:
       url += self.prefix
 
     url += self.application.settings["login_url"]
+
+    url += "?" + urllib.urlencode(dict(next=self.request.uri))
 
     return url
 

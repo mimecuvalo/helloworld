@@ -405,10 +405,6 @@ Object.extend(Event, {
 });
 
 hw.login = function(event, el) {
-  if (hw.isIE) {  // workaround IE
-    return;
-  }
-
   hw.preventDefault(event);
 
   var login = el || hw.$('hw-login');
