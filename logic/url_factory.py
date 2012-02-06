@@ -12,6 +12,7 @@ from BeautifulSoup import BeautifulSoup
 def load_basic_parameters(handler, prefix="", url=""):
   uri = url if url else handler.request.uri
   uri = tornado.escape.url_unescape(uri)  # Hmmm, some servers send UTF-8 percent encoded and some don't...
+  uri = tornado.escape.url_unescape(uri)  # XXX WTF?? it's double-escaped??? something's weird here.  FIX
 
   if handler.prefix and uri.find(handler.prefix) == 0:
     uri = uri[len(handler.prefix):]
