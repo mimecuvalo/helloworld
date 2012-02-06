@@ -10,12 +10,12 @@
 
 #hw-create,
 #hw-sidebar,
-#admin,
+#users,
 #customize {
   margin-top: 50px;
 }
 
-#admin,
+#users,
 #hw-absorb,
 #hw-tools,
 #customize,
@@ -26,7 +26,7 @@
 
 #hw-create,
 #hw-absorb,
-#admin,
+#users,
 #customize {
   float: left;
   width: 740px;
@@ -132,27 +132,27 @@ section {
 }
 
 
-#admin td, th {
+#users td, th {
   padding: 1px;
   border: 1px solid black;
   vertical-align: middle;
 }
 
-#admin tr {
+#users tr {
   transition: background-color 0.2s ease-out;
   -moz-transition: background-color 0.2s ease-out;
   -webkit-transition: background-color 0.2s ease-out;
 }
 
-#admin .good {
+#users .good {
   background-color: #0c9;
 }
 
-#admin .bad {
+#users .bad {
   background-color: #f33;
 }
 
-#admin .normal {
+#users .normal {
   transition: background-color 0.2s ease-out 2s;
   -moz-transition: background-color 0.2s ease-out 2s;
   -webkit-transition: background-color 0.2s ease-out 2s;

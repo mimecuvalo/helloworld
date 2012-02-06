@@ -78,7 +78,7 @@ if setup:
 else:
   handlers = [
     (prefix + r"/\.well-known/host-meta", "controllers.host_meta.HostMetaHandler"),
-    (prefix + r"/admin(?:$|/.*)", "controllers.admin.AdminHandler"),
+    (prefix + r"/admin(?:$|/.*)", "controllers.dashboard.DashboardHandler"), # for WP users :P
     (prefix + r"/api", "controllers.api.ApiHandler"),
     (prefix + r"/check_broken_links", "controllers.check_broken_links.CheckBrokenLinksHandler"),
     (prefix + r"/customize", "controllers.customize.CustomizeHandler"),
@@ -100,6 +100,7 @@ else:
     (prefix + r"/?[^/]+/search(?:$|/.*)", "controllers.search.SearchHandler"),
     (prefix + r"/stats", "controllers.stats.StatsStaticHandler", {"path": "./static"}),
     (prefix + r"/upload", "controllers.upload.UploadHandler"),
+    (prefix + r"/users(?:$|/.*)", "controllers.users.UsersHandler"),
     (prefix + r"/webfinger(?:$|/.*)", "controllers.webfinger.WebfingerHandler"),
     (r".*", "controllers.view.ViewHandler"),
   ]

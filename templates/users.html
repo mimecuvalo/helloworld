@@ -9,7 +9,7 @@
 {% end %}
 
 {% block extra_js %}
-  <script src="{{ static_url('js/admin.js') }}"></script>
+  <script src="{{ static_url('js/users.js') }}"></script>
   <script>
     hw.setMsg('confirm-delete', "{% raw js_escape(_('ya sure there, buddy?')) %}");
     hw.setMsg('delete-failed', "{% raw js_escape(_("no good, mate.")) %}");
@@ -18,13 +18,13 @@
 {% end %}
 
 {% block title %}
-  {{ _('Admin') }}
+  {{ _('User Admin') }}
 {% end %}
 
 {% block backend_content %}
-  <div id="admin">
+  <div id="users">
     <h1>{{ _('User Administration') }}</h1>
-    <form method="post" action="{{ nav_url(section='admin') }}" onsubmit="return false">
+    <form method="post" action="{{ nav_url(section='users') }}" onsubmit="return false">
       {% raw xsrf_form_html() %}
       <table>
         <tr>

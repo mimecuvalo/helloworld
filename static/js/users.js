@@ -22,7 +22,7 @@ hw.saveUser = function(event, el) {
 
   var callback = function(xhr) {
     if (id == "") {
-      window.location.href = hw.baseUri() + 'admin';
+      window.location.href = hw.baseUri() + 'users';
     } else {
       hw.removeClass(row, 'normal');
       hw.addClass(row, 'good');
@@ -50,7 +50,7 @@ hw.saveUser = function(event, el) {
     inputs['author'].el.checked = true;
   }
 
-  new hw.ajax(hw.baseUri() + 'admin/' + inputs['username'].value,
+  new hw.ajax(hw.baseUri() + 'users/' + inputs['username'].value,
     { method: id == "" ? 'post' : 'put',
       postBody:  'oauth='        + encodeURIComponent(inputs['oauth'].value)
               + '&name='         + encodeURIComponent(inputs['name'].value)
@@ -67,7 +67,7 @@ hw.deleteUser = function(el) {
   }
 
   var callback = function(xhr) {
-    window.location.href = hw.baseUri() + 'admin';
+    window.location.href = hw.baseUri() + 'users';
   };
 
   var badTrip = function(xhr) {
@@ -77,7 +77,7 @@ hw.deleteUser = function(el) {
   var row_inputs = el.parentNode.parentNode.getElementsByTagName('INPUT');
   var username = row_inputs[1].value;
 
-  new hw.ajax(hw.baseUri() + 'admin/' + username,
+  new hw.ajax(hw.baseUri() + 'users/' + username,
     { method: 'delete',
       headers: { 'X-Xsrftoken' : el.form['_xsrf'].value },
       onSuccess: callback,

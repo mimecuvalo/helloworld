@@ -10,6 +10,11 @@ class DashboardHandler(BaseHandler):
     if not self.authenticate(author=True):
       return
 
+    # redirect users that come here via /admin to proper /dashboard link
+    if self.breadcrumbs["name"] == 'admin':
+      self.redirect(self.nav_url(section='dashboard'), permanent=True)
+      return
+
     self.display["initial_media"] = self.get_argument('reblog', None)
     self.display["own_feed"] = int(self.get_argument('own_feed', 0))
     if self.get_argument('list_mode', None) != None:
