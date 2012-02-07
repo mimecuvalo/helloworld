@@ -12,6 +12,7 @@ import Image
 import tornado.escape
 import tornado.web
 from base import BaseHandler
+from logic import content as content_logic
 from logic import media
 from logic import url_factory
 
@@ -187,12 +188,12 @@ class UploadHandler(BaseHandler):
 
       buf = StringIO.StringIO(data)
       thumb = Image.open(buf)
-      thumb.thumbnail((154, 115), Image.ANTIALIAS)
+      thumb.thumbnail((content_logic.THUMB_WIDTH, content_logic.THUMB_HEIGHT), Image.ANTIALIAS)
       thumb.save(thumb_filename, quality=90)
 
       buf = StringIO.StringIO(data)
       normal = Image.open(buf)
-      normal.thumbnail((650, 525), Image.ANTIALIAS)
+      normal.thumbnail((content_logic.PHOTO_WIDTH, content_logic.PHOTO_HEIGHT), Image.ANTIALIAS)
       normal.save(full_path, quality=90)
 
       self.display['thumb'] = thumb_url

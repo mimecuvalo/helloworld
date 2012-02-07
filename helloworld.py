@@ -91,6 +91,7 @@ else:
     (prefix + r"/login", "controllers.auth.AuthHandler"),
     (prefix + r"/logout", "controllers.auth.AuthLogoutHandler"),
     (prefix + r"/media", "controllers.media.MediaHandler"),
+    (prefix + r"/oembed", "controllers.oembed.OembedHandler"),
     (prefix + r"/?[^/]+/opensearch", "controllers.opensearch.OpenSearchHandler"),
     (prefix + r"/private/(.*)", "controllers.private.PrivateResourceHandler", {"path": settings['private_path']}),
     (prefix + r"/?[^/]+/push", "controllers.push.PushHandler"),

@@ -13,6 +13,16 @@
   {% if content_owner.description %}
     <meta name="description" content="{{ content_owner.description }}" />
   {% end %}
+  <link rel="alternate" type="text/xml+oembed" href="{{ nav_url(section='oembed', url=content_url(content)) }}" title="{{ content.title }}">
+
+  <meta property="og:url"   content="{{ content_url(content, host=True) }}">
+  <meta property="og:title" content="{{ content.title }}">
+  {% if content_thumb %}
+  <meta property="og:image" content="{{ nav_url(host=True, section=content_thumb) }}">
+  {% end %}
+  {% if content_owner.title %}
+  <meta property="og:site_name" content="{{ content_owner.title }}">
+  {% end %}
 {% end %}
 
 {% block favicon %}

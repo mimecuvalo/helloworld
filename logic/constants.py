@@ -25,7 +25,7 @@ defaults = {
 dictionary = {
   'reserved_names' : ['admin', 'api', 'auth', 'check_broken_links', 'comments', 'customize', 'dashboard',
                     'data_liberation', 'feed', 'foaf', 'host_meta', 'login', 'logout', 
-                    'media', 'opensearch', 'page', 'private', 'push', 'resource', 'restart', 'salmon', 'search',
+                    'media', 'oembed', 'opensearch', 'page', 'private', 'push', 'resource', 'restart', 'salmon', 'search',
                     'setup', 'stats', 'themes', 'upload', 'users', 'webfinger'],
   'templates' : ['album', 'archive', 'blank', 'events', 'feed', 'links', 'latest', 'redirect', 'slideshow', 'store',],
   'licenses' : {

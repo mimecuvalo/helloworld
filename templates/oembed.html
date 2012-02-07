@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<oembed>
+  <type>rich</type>
+  <version>1.0</version>
+  <provider_url>{{ nav_url(host=True) }}</provider_url>
+  <title>{{ content.title }}</title>
+  <html>
+    <a href="{{ content_url(content, host=True) }}">
+      {% if content_thumb %}
+      <img src="{{ nav_url(host=True, section=content_thumb) }}" />
+      {% else %}
+      {{ content.title }}
+      {% end %}
+    </a>
+  </html>
+  {% if content_thumb %}
+  <width>{{ thumb_width }}</width>
+  <height>{{ thumb_height }}</height>
+  {% end %}
+  <author_name>{{ content.username }}</author_name>
+  <author_url>{{ nav_url(host=True, username=content.username) }}</author_url>
+  {% if content_owner.title %}
+  <provider_name>{{ content_owner.title }}</provider_name>
+  {% end %}
+  {% if content_thumb %}
+  <thumbnail_url>{{ nav_url(host=True, section=content_thumb) }}</thumbnail_url>
+  <thumbnail_width>{{ thumb_width }}</thumbnail_width>
+  <thumbnail_height>{{ thumb_height }}</thumbnail_height>
+  {% end %}
+</oembed>

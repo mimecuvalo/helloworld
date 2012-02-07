@@ -9,6 +9,7 @@ import tornado.web
 
 from base import BaseHandler
 from logic import cache
+from logic import content as content_logic
 from logic import loader
 from logic import socialize
 from logic import url_factory
@@ -116,6 +117,7 @@ class ViewHandler(BaseHandler):
     if content.code and not re.search(r"<script", content.code, re.I | re.M):
       content.code = '<script>\n' + content.code + '\n</script>'
 
+    self.display["content_thumb"] = content_logic.get_thumbnail(self, content)
     self.display["is_store"] = template == 'store'
     self.display["is_events"] = template == 'events'
 
