@@ -189,12 +189,12 @@ class UploadHandler(BaseHandler):
       buf = StringIO.StringIO(data)
       thumb = Image.open(buf)
       thumb.thumbnail((content_logic.THUMB_WIDTH, content_logic.THUMB_HEIGHT), Image.ANTIALIAS)
-      thumb.save(thumb_filename, quality=90)
+      thumb.save(thumb_filename, quality=95)
 
       buf = StringIO.StringIO(data)
       normal = Image.open(buf)
       normal.thumbnail((content_logic.PHOTO_WIDTH, content_logic.PHOTO_HEIGHT), Image.ANTIALIAS)
-      normal.save(full_path, quality=90)
+      normal.save(full_path, quality=95)
 
       self.display['thumb'] = thumb_url
     else:
