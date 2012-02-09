@@ -316,6 +316,8 @@ hw.deleteContent = function(event) {
     return;
   }
 
+  hw.changeBeforeUnloadState(null, true);
+
   var callback = function(xhr) {
     window.location.href = hw.baseUri() + 'dashboard';
   };
