@@ -4,7 +4,7 @@ from BeautifulSoup import BeautifulSoup
 import feedparser
 import tornado.web
 
-from logic import remote_content
+from logic import content_remote
 
 class PushHandler(BaseHandler):
   def get(self):
@@ -27,4 +27,4 @@ class PushHandler(BaseHandler):
     if not remote_user:
       raise tornado.web.HTTPError(404)
 
-    remote_content.parse_feed(self.models, remote_user, parsed_feed=self.request.body)
+    content_remote.parse_feed(self.models, remote_user, parsed_feed=self.request.body)

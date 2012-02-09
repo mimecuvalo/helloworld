@@ -8,7 +8,6 @@ sys.path.insert(0, os.path.normpath(os.path.realpath(__file__) + '/../../package
 
 from BeautifulSoup import BeautifulSoup
 from logic import constants as constants_module
-from logic import remote_content
 
 config = ConfigParser.ConfigParser()
 config.read(os.path.normpath(os.path.realpath(__file__) + '/../../site.cfg'))
@@ -19,9 +18,9 @@ autumn_db.conn.connect('mysql', host=constants['mysql_host'], user=constants['my
 from models import base as models
 
 
-remote_content = models.content_remote.get(type='post')[:]
+content_remote = models.content_remote.get(type='post')[:]
 
-for content in remote_content:
+for content in content_remote:
   try:
     if content.date_created < datetime.datetime.utcnow() - datetime.timedelta(days=30):
       content.delete()

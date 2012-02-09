@@ -5,7 +5,7 @@ import urllib2
 import urlparse
 
 from base import BaseHandler
-from logic import remote_content
+from logic import content_remote
 from logic import spam
 from logic import url_factory
 from logic import users
@@ -126,7 +126,7 @@ class SalmonHandler(BaseHandler):
       pass
     elif (activity_verb == 'http://activitystrea.ms/schema/1.0/post'):
       atom_content = salmon_doc.find('atom:content').string
-      atom_content = remote_content.sanitize(tornado.escape.xhtml_unescape(atom_content))
+      atom_content = content_remote.sanitize(tornado.escape.xhtml_unescape(atom_content))
 
       existing_content = self.models.content_remote.get(to_username=self.display["user"].username,
                                                       from_user=signer_uri,

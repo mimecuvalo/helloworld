@@ -1,7 +1,6 @@
 import tornado.web
 
 from base import BaseHandler
-from logic import remote_content
 from logic import users
 from models import db
 

@@ -3,7 +3,7 @@ import re
 import tornado.template
 import tornado.web
 
-from logic import remote_content
+from logic import content_remote
 from logic import url_factory
 
 class Create(tornado.web.UIModule):
@@ -55,7 +55,7 @@ class Content(tornado.web.UIModule):
         raise ex
 
     if sanitize:
-      content.view = remote_content.sanitize(content.view)
+      content.view = content_remote.sanitize(content.view)
     else:
       # check for link template
       if template_type != 'links' and content.view.startswith('http://') and content.view.find(' ') == -1:

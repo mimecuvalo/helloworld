@@ -6,8 +6,8 @@ import urllib2
 import urlparse
 
 from base import BaseHandler
+from logic import content_remote
 from logic import pubsubhubbub_subscribe
-from logic import remote_content
 from logic import socialize
 from logic import spam
 from logic import url_factory
@@ -147,7 +147,7 @@ class ApiHandler(BaseHandler):
 
     # get some content, yo
     feed_response = urllib2.urlopen(user.feed_url)
-    remote_content.parse_feed(self.models, user, feed_response.read())
+    content_remote.parse_feed(self.models, user, feed_response.read())
 
   def unfollow(self):
     user_url = self.get_argument('user')
@@ -268,7 +268,7 @@ class ApiHandler(BaseHandler):
       thread_url = 'tag:' + self.request.host + ',' + self.display["tag_date"] + ':' + self.content_url(commented_content)
       content.thread = thread_url
       content.thread_user = self.get_argument('thread_user', None)
-      content.view = remote_content.sanitize(comment)
+      content.view = content_remote.sanitize(comment)
       content.save()
 
       commented_content.comments += 1
@@ -296,7 +296,7 @@ class ApiHandler(BaseHandler):
         spam.train_ham(comment, self.application.settings["private_path"], commented_content.username)
       post_remote.type = 'comment'
       post_remote.local_content_name = commented_content.name
-      post_remote.view = remote_content.sanitize(comment)
+      post_remote.view = content_remote.sanitize(comment)
       post_remote.save()
 
       commented_content.comments += 1

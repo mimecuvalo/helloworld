@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.normpath(os.path.realpath(__file__) + '/../../package
 
 from BeautifulSoup import BeautifulSoup
 from logic import constants as constants_module
-from logic import remote_content
+from logic import content_remote
 
 config = ConfigParser.ConfigParser()
 config.read(os.path.normpath(os.path.realpath(__file__) + '/../../site.cfg'))
@@ -23,6 +23,6 @@ remote_users = models.users_remote.get()[:]
 for remote_user in remote_users:
   try:
     feed_response = urllib2.urlopen(remote_user.feed_url)
-    remote_content.parse_feed(models, remote_user, feed_response.read())
+    content_remote.parse_feed(models, remote_user, feed_response.read())
   except:
     pass
