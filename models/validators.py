@@ -34,6 +34,6 @@ class UnicodeString(validators.Validator):
     self.max_length = max_length
         
   def __call__(self, string):
-    l = len(unicode(string))
+    l = len(string)
     return (l >= self.min_length) and \
            (self.max_length is None or l <= self.max_length)
