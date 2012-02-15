@@ -9,6 +9,7 @@ class content(Model):
 
   class Meta:
     defaults = {'count': 0,
+                'count_robot': 0,
                 'favorites': 0,
                 'shares': 0,
                 'comments': 0,
@@ -42,6 +43,7 @@ class content(Model):
                    'date_end': custom_validators.DatetimeOrNull(),
                    'date_repeats': validators.Number(),
                    'count': validators.Number(),
+                   'count_robot': validators.Number(),
                    'favorites': validators.Number(),
                    'shares': validators.Number(),
                    'comments': validators.Number(),

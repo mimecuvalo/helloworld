@@ -18,6 +18,9 @@ class StatsStaticHandler(tornado.web.StaticFileHandler, BaseHandler):
     tornado.web.StaticFileHandler.get(self, 'img/pixel.gif')
 
 def increase_count(handler):
+  robots = re.compile(r'bot|spider|crawl|slurp|ia_archiver', re.M | re.U | re.I)
+  is_robot = "User-Agent" in handler.request.headers and robots.search(handler.request.headers["User-Agent"])
+
   url = handler.get_argument('url', '')
   if url:
     content_url = url_factory.load_basic_parameters(handler, url=url)
@@ -26,5 +29,9 @@ def increase_count(handler):
 
     if content:
       if not handler.is_owner_viewing(content.username):
-        content.count = content.count + 1
+        if is_robot:
+          content.count_robot = content.count_robot + 1
+        else:
+          content.count = content.count + 1
+
         content.save()

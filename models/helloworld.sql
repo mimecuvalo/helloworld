@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS `content` (
   `thumb` mediumtext NOT NULL,
   `order` int(11) NOT NULL,
   `count` int(11) NOT NULL default '0',
+  `count_robot` int(11) NOT NULL default '0',
   `favorites` int(11) NOT NULL,
   `shares` int(11) NOT NULL,
   `comments` int(11) NOT NULL,

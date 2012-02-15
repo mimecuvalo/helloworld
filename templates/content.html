@@ -115,7 +115,8 @@
             • <a href="{{ item.link }}">{{ _('view entire thread') }}</a>
           {% end %}
         {% else %}
-          • {{ _("%(count)s view", "%(count)s views", item.count) % { "count": locale.friendly_number(item.count) } }}
+          • {{ _("%(count)s human view", "%(count)s human views", item.count) % { "count": locale.friendly_number(item.count) } }}
+          • {% raw _("%(count)s robot view", "%(count)s robot views", item.count_robot) % { "count": locale.friendly_number(item.count_robot) } %}
           {% if item.thread %}
               • <a href="{{ item.thread.split(':')[2] }}">{{ _('view entire thread') }}</a>
             {% end %}
