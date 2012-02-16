@@ -26,7 +26,7 @@ def dashboard_feed(profile, begin, page_size, specific_feed, just_local_feed):
   parameters += [begin, page_size]
 
   local_query = """(SELECT `id`, `username`, `title`, `view`, `date_created`, `favorited`, `is_spam`, `deleted`,
-                              `count`, `date_updated`, `hidden`, `date_start`, `date_end`, `date_repeats`, `section`, `name`, `thumb`, `thread`,
+                              `count`, `count_robot`, `date_updated`, `hidden`, `date_start`, `date_end`, `date_repeats`, `section`, `name`, `thumb`, `thread`,
                               '' as `creator`, '' as `type`, '' as `from_user`, '' as `post_id`, '' as `link`
                          FROM `content`
                          WHERE `username` = %s
@@ -35,7 +35,7 @@ def dashboard_feed(profile, begin, page_size, specific_feed, just_local_feed):
                          ORDER BY date_created DESC)"""
 
   remote_query = """ (SELECT `id`, `username`, `title`, `view`, `date_created`, `favorited`, `is_spam`, `deleted`,
-                              0 as `count`, now() as `date_updated`, 0 as `hidden`, now() as `date_start`, now() as `date_end`, 0 as `date_repeats`, '' as `section`, '' as `name`, '' as `thumb`, '' as `thread`,
+                              0 as `count`, 0 as `count_robot`, now() as `date_updated`, 0 as `hidden`, now() as `date_start`, now() as `date_end`, 0 as `date_repeats`, '' as `section`, '' as `name`, '' as `thumb`, '' as `thread`,
                               `creator`, `type`, `from_user`, `post_id`, `link`
                          FROM `content_remote`
                          WHERE `to_username` = %s """ \
