@@ -16,14 +16,17 @@ for constant in ('debug', 'port', 'page_size', 'single_user_site', 'ioloop'):
 from autumn.db.connection import Database, DBConn
 from autumn.db.connection import autumn_db
 from autumn.db.query import Query
-autumn_db.conn.connect('mysql', host=constants['mysql_host'], user=constants['mysql_user'], passwd=constants['mysql_password'], db=constants['mysql_database'])
+autumn_db.conn.connect('mysql', host=constants['mysql_host'], user=constants['mysql_user'], passwd=constants['mysql_password'], db=constants['mysql_database'], charset="utf8", use_unicode=True)
 from models import base as models
 
 import datetime
 
 def fixstuff():
-  options = { 'username':'mime', 'name like':'untitled' + '-%' }
-  highest_existing_name = models.content.get(**options).order_by('name', 'DESC')[0]
-  print highest_existing_name.name
+  import random
+
+  content = models.content.get()[:]
+  for item in content:
+    item.id_shortlink = long(2**32*random.random())
+    item.save()
 
 #fixstuff()

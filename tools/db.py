@@ -12,7 +12,7 @@ for constant in ('debug', 'port', 'page_size', 'single_user_site', 'ioloop'):
   constants[constant] = int(constants[constant])
 
 from autumn.db.connection import autumn_db
-autumn_db.conn.connect('mysql', host=constants['mysql_host'], user=constants['mysql_user'], passwd=constants['mysql_password'], db=constants['mysql_database'])
+autumn_db.conn.connect('mysql', host=constants['mysql_host'], user=constants['mysql_user'], passwd=constants['mysql_password'], db=constants['mysql_database'], charset="utf8", use_unicode=True)
 from models import base as models
 
 comics_count = models.content.get(user=1, section='comic').count()

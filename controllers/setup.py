@@ -36,7 +36,7 @@ class SetupHandler(BaseHandler):
     self.fill_template("setup.html")
 
   def post(self):
-    connection = MySQLdb.connect(host=self.get_argument('mysql_host'), user=self.get_argument('mysql_user'), passwd=self.get_argument('mysql_password'), db=self.get_argument('mysql_database'))
+    connection = MySQLdb.connect(host=self.get_argument('mysql_host'), user=self.get_argument('mysql_user'), passwd=self.get_argument('mysql_password'), db=self.get_argument('mysql_database'), charset="utf8", use_unicode=True)
     cursor = connection.cursor()
     initial_sql = open(os.path.normpath(os.path.realpath(__file__) + '/../../models/helloworld.sql'))
     cursor.execute(initial_sql.read())
