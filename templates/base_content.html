@@ -13,6 +13,7 @@
   {% if content_owner.description %}
     <meta name="description" content="{{ content_owner.description }}" />
   {% end %}
+  <link rel="canonical" href="{{ content_url(content) }}">
   <link rel="alternate" type="text/xml+oembed" href="{{ nav_url(section='oembed', url=content_url(content)) }}" title="{{ content.title }}">
 
   <meta property="og:url"   content="{{ content_url(content, host=True) }}">
