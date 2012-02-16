@@ -452,7 +452,7 @@ hw.keyNavigation = function(event) {
   var topUrl = hw.getFirstElementByName('hw-top');
 
   switch (key) {
-    case Event.KEY_LEFT:
+    case Event.KEY_RIGHT:
       if (prev && prev.href) {
         if (prev.getAttribute('data-disallow-magic') || !hw.supportsHistory()) {
           window.location.href = prev.href;
@@ -461,7 +461,7 @@ hw.keyNavigation = function(event) {
         }
       }
       break;
-    case Event.KEY_RIGHT:
+    case Event.KEY_LEFT:
       if (next && next.href) {
         if (next.getAttribute('data-disallow-magic') || !hw.supportsHistory()) {
           window.location.href = next.href;
