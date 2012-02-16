@@ -21,11 +21,13 @@ RewriteBase /
 RewriteCond %{SERVER_PORT}s ^(443(s)|[0-9]+s)$
 RewriteRule ^(.+)$ - [env=protocol:%2]
 
-RewriteCond %{DOCUMENT_ROOT}$HTTP_PREFIX/static/cache/%{REQUEST_URI}.htmgz -f
-RewriteCond %{HTTP:Accept-Encoding} gzip
+# XXX: see logic/cache.py
+# also: http://code.google.com/p/phusion-passenger/issues/detail?id=709
+RewriteCond %{DOCUMENT_ROOT}$HTTP_PREFIX/static/cache/%{REQUEST_URI}.html -f
+#RewriteCond %{HTTP:Accept-Encoding} gzip
 RewriteCond %{HTTP:X-Requested-With} !^XMLHttpRequest$
 RewriteCond %{HTTP_COOKIE} !^.*user.*$
-RewriteRule ^(.*)$ $HTTP_PREFIX/static/cache$HTTP_PREFIX/$1.htmgz [L]
+RewriteRule ^(.*)$ $HTTP_PREFIX/static/cache$HTTP_PREFIX/$1.html [L]
 
 RewriteCond %{HTTPS} !=on
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -59,8 +61,8 @@ AddType video/ogg .ogv
 AddType video/mp4 .mp4
 AddType video/webm .webm
 
-AddType "text/html;charset=UTF-8" .htmgz
-AddEncoding gzip .htmgz
+# AddType "text/html;charset=UTF-8" .htmgz
+# AddEncoding gzip .htmgz
 
 <FilesMatch "\.(htmgz)$">
 FileETag None
