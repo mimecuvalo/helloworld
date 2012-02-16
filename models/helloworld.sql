@@ -26,13 +26,13 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 --
 
 CREATE TABLE IF NOT EXISTS `content` (
-  `id` int(11) NOT NULL auto_increment,
+  `id` bigint(20) unsigned NOT NULL auto_increment,
   `username` varchar(255) NOT NULL,
   `section` varchar(255) NOT NULL,
   `album` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `template` varchar(255) NOT NULL,
-  `redirect` int(11) NOT NULL default '0',
+  `redirect` bigint(20) unsigned NOT NULL default '0',
   `hidden` tinyint(1) NOT NULL default '0',
   `title` mediumtext NOT NULL,
   `date_created` datetime NOT NULL,
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `content` (
 --
 
 CREATE TABLE IF NOT EXISTS `content_access` (
-  `content` int(11) NOT NULL,
+  `content` bigint(20) unsigned NOT NULL,
   `user` int(11) NOT NULL,
   `has_access` tinyint(1) NOT NULL default '0',
   KEY `user` (`user`),
@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS `content_access` (
 --
 
 CREATE TABLE IF NOT EXISTS `content_remote` (
-  `id` int(11) NOT NULL auto_increment,
+  `id` bigint(20) unsigned NOT NULL auto_increment,
   `to_username` varchar(255) NOT NULL,
   `local_content_name` varchar(255) NOT NULL,
   `from_user` mediumtext NOT NULL,
