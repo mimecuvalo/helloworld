@@ -104,14 +104,6 @@ class ViewHandler(BaseHandler):
     else:
       self.display["start"] = None
 
-    if is_special:
-      if self.breadcrumbs["section"] == 'main':
-        self.display["top_url"] = self.nav_url(username=content.username, section=content.name)
-      else:
-        self.display["top_url"] = self.nav_url(username=content.username, section=content.name, name=self.breadcrumbs["name"])
-    else:
-      self.display["top_url"] = self.nav_url(username=content.username, section=content.section, name=content.album)
-
     if content.style and not re.search(r"<link|<style", content.style, re.I | re.M):
       content.style = '<style>\n' + content.style + '\n</style>'
     if content.code and not re.search(r"<script", content.code, re.I | re.M):
@@ -163,6 +155,17 @@ class ViewHandler(BaseHandler):
           self.display["section_template"] = content_album.template 
         self.display["is_store"] = self.display["is_store"] or content_album.template == 'store'
         self.display["is_events"] = self.display["is_events"] or content_album.template == 'events'
+
+    if is_special:
+      if self.breadcrumbs["section"] == 'main':
+        self.display["top_url"] = self.nav_url(username=content.username, section=content.name)
+      else:
+        self.display["top_url"] = self.nav_url(username=content.username, section=content.name, name=self.breadcrumbs["name"])
+    else:
+      if self.display["section_template"] in ('first', 'latest'):
+        self.display["top_url"] = self.nav_url(username=content.username, section=content.section, name=content.album, mode='archive')
+      else:
+        self.display["top_url"] = self.nav_url(username=content.username, section=content.section, name=content.album)
 
     self.display['has_code'] = content.code != "" or re.search(r"<script", content.view, re.I | re.M) \
                             or self.display["section_code"] or self.display["album_code"]

@@ -253,8 +253,13 @@ class Feed(tornado.web.UIModule):
 class Events(Feed):
   template_type = "events"
 
-class Latest(tornado.web.UIModule):
+class JumpTemplate(tornado.web.UIModule):
+  template_type = ""
+
   def render(self):
+    if self.handler.get_argument('mode', None) == 'archive':
+      return self.ui["modules"]['Archive']()
+
     is_owner_viewing = self.handler.is_owner_viewing(self.handler.breadcrumbs["profile"])
     content_options = { 'username': self.handler.breadcrumbs["profile"],
                         'section': self.handler.breadcrumbs["name"],
@@ -262,15 +267,28 @@ class Latest(tornado.web.UIModule):
     if not is_owner_viewing:
       content_options['hidden'] = False
 
-    count = self.handler.models.content.get(**content_options).count()
-    latest = self.handler.models.content.get(**content_options)[count - 1:count]
-    latest_url = self.handler.content_url(latest[0])
+    if self.template_type == "latest":
+      count = self.handler.models.content.get(**content_options).count()
+      jump = self.handler.models.content.get(**content_options)[count - 1:count]
+    else:
+      jump = self.handler.models.content.get(**content_options)[0:1]
+
+    if not jump:
+      raise tornado.web.HTTPError(404)
+      
+    jump_url = self.handler.content_url(jump[0])
 
     if self.handler.display["edit"]:
-      self.handler.display['redirect'] = latest_url
+      self.handler.display['redirect'] = jump_url
       self.handler.fill_template("redirect.html")
     else:
-      self.handler.redirect(latest_url)
+      self.handler.redirect(jump_url)
+
+class First(JumpTemplate):
+  template_type = "first"
+
+class Latest(JumpTemplate):
+  template_type = "latest"
 
 class Blank(tornado.web.UIModule):
   def render(self):
