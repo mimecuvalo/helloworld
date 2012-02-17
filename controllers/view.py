@@ -418,6 +418,7 @@ class ViewHandler(BaseHandler):
     content.title    = title
     content.thumb    = thumb
     content.template = template
+    content.sort_type = self.get_argument('sort_type', "")
     content.price    = float(self.get_argument('price', 0))
     content.thread   = self.get_argument('thread', '')
     date_start = self.get_argument('date_start', None)

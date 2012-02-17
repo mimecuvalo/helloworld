@@ -23,6 +23,7 @@ class content(Model):
                 'date_end': None,
                 'date_repeats': 0,
                 'template': '',
+                'sort_type': '',
                 'redirect': 0,
                 'hidden': 0,
                 'favorited': 0,

@@ -148,6 +148,7 @@ hw.save = function() {
                + '&name='         + encodeURIComponent(separate ? '' : createForm['hw-name'].value)
                + (createForm['hw-thumb'] ? '&thumb=' + encodeURIComponent(createForm['hw-thumb'].value) : '')
                + '&template='     + encodeURIComponent(createForm['hw-template'].value)
+               + '&sort_type='    + encodeURIComponent(createForm['hw-sort-type'].value)
                + '&section_template=' + encodeURIComponent(createForm['hw-section-template'].value)
                + '&hidden='       + encodeURIComponent(createForm['hw-hidden'].checked ? 1 : 0),
         headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },

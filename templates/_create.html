@@ -103,6 +103,13 @@
           <option value="{{ template }}" {% if content and template == content.template %}selected{% end %}>{{ _(template) }}</option>
         {% end %}
       </select></dd>
+      {% if not individual_content %}
+      <dt><label>{{ _("sorting:") }}</label></dt><dd><select name="hw-sort-type" {% if content %}value="{{ content.sort_type }}"{% end %}>
+        <option value="">{{ _('newest to oldest') }}</option>
+        <option value="oldest" {% if content and content.sort_type == 'oldest' %}selected{% end %}>{{ _('oldest to newest') }}</option>
+        <option value="alphabetical" {% if content and content.sort_type == 'alphabetical' %}selected{% end %}>{{ _('alphabetical') }}</option>
+      </select></dd>
+      {% end %}
       <dt><label>{{ _("hidden:") }}</label></dt><dd><input name="hw-hidden" type="checkbox" {% if content and content.hidden %}checked="checked"{% end %}></dd>
       {% if not content %}
       <dt><label>{{ _("insert as separate posts:") }}</label></dt><dd><input name="hw-separate" type="checkbox" onclick="hw.separate(this)"></dd>

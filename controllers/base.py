@@ -662,25 +662,39 @@ class BaseHandler(tornado.web.RequestHandler):
     if not self.is_owner_viewing(profile) and not self.display["content"].hidden:
       common_options['hidden'] = False
 
+    if section != 'main':
+      collection_entry = self.models.content.get(username=profile, name=section)[0]
+    if section == 'main' or not collection_entry.sort_type:
+      collection_entry = self.models.content.get(username=profile, name=name)[0]
+
+    sort_type = 'date_created'
+    sort_direction = 'DESC'
+    if collection_entry.sort_type == 'oldest':
+      sort_direction = 'ASC'
+    elif collection_entry.sort_type == 'alphabetical':
+      sort_type = 'title'
+      sort_direction = 'ASC'
+    sort_type = 'order,' + sort_type
+
     collection = None
     if section != 'main':
       content_options = { 'username' : profile,
                           'section' : section,
                           'album' : name, }
       content_options = dict(common_options.items() + content_options.items())
-      collection = self.models.content.get(**content_options).order_by('order,date_created', 'DESC')[:]
+      collection = self.models.content.get(**content_options).order_by(sort_type, sort_direction)[:]
 
     if not collection:
       content_options = { 'username' : profile,
                           'section' : name,
                           'album' : 'main', }
       content_options = dict(common_options.items() + content_options.items())
-      collection = self.models.content.get(**content_options).order_by('order,date_created', 'DESC')[:]
+      collection = self.models.content.get(**content_options).order_by(sort_type, sort_direction)[:]
 
       album_options = content_options
       for item in collection:
         album_options['album'] = item.name
-        album_item = self.models.content.get(**content_options).order_by('order,date_created', 'DESC')[0]
+        album_item = self.models.content.get(**content_options).order_by(sort_type, sort_direction)[0]
         if album_item:
           item.thumb = album_item.thumb
 
@@ -688,13 +702,13 @@ class BaseHandler(tornado.web.RequestHandler):
                           'section' : name,
                           'album' : '', }
       content_options = dict(common_options.items() + content_options.items())
-      collection += self.models.content.get(**content_options).order_by('order,date_created', 'DESC')[:]
+      collection += self.models.content.get(**content_options).order_by(sort_type, sort_direction)[:]
 
     if not collection and section != 'main':
       content_options = { 'username' : profile,
                           'section' : section, }
       content_options = dict(common_options.items() + content_options.items())
-      collection = self.models.content.get(**content_options).order_by('order,date_created', 'DESC')[:]
+      collection = self.models.content.get(**content_options).order_by(sort_type, sort_direction)[:]
 
     return collection, common_options
 
