@@ -29,6 +29,8 @@ class ViewHandler(BaseHandler):
     content = self.models.content.get(username=self.breadcrumbs["profile"],
                                       section=self.breadcrumbs["section"],
                                       name=self.breadcrumbs["name"])[0]
+    self.display["content"] = content # hmm, not sure this should go here, TODO fix ise now, clean up later
+
     if not content:
       # not found: see if the url maybe exists, and wasn't properly redirected
       alternate = self.models.content.get(username=self.breadcrumbs["profile"],
