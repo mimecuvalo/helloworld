@@ -1,7 +1,7 @@
 {% if individual_content and content.section != 'main' %}
-  <nav name="hw-neighbors">
+  <nav name="hw-neighbors" {% if section_sort_type != "" %}class="hw-reverse-sort"{% end %}>
     {% comment NOTE whitespace is important here %}<a
-       name="hw-last" rel="last" class="hw-button hw-button-blue" href="{{ content_url(last, host=True) }}">{{ _("newest") }}</a><a 
+       name="hw-last" rel="last" class="hw-button hw-button-blue" href="{{ content_url(last, host=True) }}">{{ _("last") }}</a><a 
 
        name="hw-next" rel="next" class="hw-button hw-button-orange"
         {% if next %}
@@ -18,7 +18,7 @@
           {% end %}
         {% else %}
           class="hw-disabled"
-        {% end %}>{{ _("newer") }}</a><a
+        {% end %}>{{ _("next") }}</a><a
 
        name="hw-top" rel="up" class="hw-button hw-button-green" href="{{ top_url }}">{% if content.album %}{{ content.album }}{% else %}{{ content.section }}{% end %}</a><a
 
@@ -37,9 +37,9 @@
           {% end %}
         {% else %}
           class="hw-disabled"
-        {% end %}>{{ _("older") }}</a><a
+        {% end %}>{{ _("previous") }}</a><a
         
-       name="hw-start" rel="start" class="hw-button hw-button-purple" href="{{ content_url(start, host=True) }}">{{ _("oldest") }}</a>
+       name="hw-start" rel="start" class="hw-button hw-button-purple" href="{{ content_url(start, host=True) }}">{{ _("first") }}</a>
   </nav>
 {% end %}
 

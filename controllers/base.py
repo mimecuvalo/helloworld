@@ -667,14 +667,7 @@ class BaseHandler(tornado.web.RequestHandler):
     if section == 'main' or not collection_entry.sort_type:
       collection_entry = self.models.content.get(username=profile, name=name)[0]
 
-    sort_type = 'date_created'
-    sort_direction = 'DESC'
-    if collection_entry.sort_type == 'oldest':
-      sort_direction = 'ASC'
-    elif collection_entry.sort_type == 'alphabetical':
-      sort_type = 'title'
-      sort_direction = 'ASC'
-    sort_type = 'order,' + sort_type
+    sort_type, sort_direction = self.get_sort_directives(collection_entry.sort_type)
 
     collection = None
     if section != 'main':
@@ -694,7 +687,8 @@ class BaseHandler(tornado.web.RequestHandler):
       album_options = content_options
       for item in collection:
         album_options['album'] = item.name
-        album_item = self.models.content.get(**content_options).order_by(sort_type, sort_direction)[0]
+        album_sort_type, album_sort_direction = self.get_sort_directives(item.sort_type)
+        album_item = self.models.content.get(**content_options).order_by(album_sort_type, album_sort_direction)[0]
         if album_item:
           item.thumb = album_item.thumb
 
@@ -711,6 +705,18 @@ class BaseHandler(tornado.web.RequestHandler):
       collection = self.models.content.get(**content_options).order_by(sort_type, sort_direction)[:]
 
     return collection, common_options
+
+  def get_sort_directives(self, entry_sort_type):
+    sort_type = 'date_created'
+    sort_direction = 'DESC'
+    if entry_sort_type == 'oldest':
+      sort_direction = 'ASC'
+    elif entry_sort_type == 'alphabetical':
+      sort_type = 'title'
+      sort_direction = 'ASC'
+    sort_type = 'order,' + sort_type
+
+    return sort_type, sort_direction
 
   def prevent_caching(self):
     self.set_header("Last-Modified", "Fri, 02 Jan 1970 14:19:41 GMT")

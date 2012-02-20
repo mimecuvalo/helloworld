@@ -450,31 +450,29 @@ hw.keyNavigation = function(event) {
   var prev = hw.getFirstElementByName('hw-previous');
   var next = hw.getFirstElementByName('hw-next');
   var topUrl = hw.getFirstElementByName('hw-top');
+  var neighbors = hw.getFirstElementByName('hw-neighbors');
+  var reverse = hw.hasClass(neighbors, 'hw-reverse-sort');
 
-  switch (key) {
-    case Event.KEY_RIGHT:
-      if (prev && prev.href) {
-        if (prev.getAttribute('data-disallow-magic') || !hw.supportsHistory()) {
-          window.location.href = prev.href;
-        } else {
-          hw.navigate(null, prev.href, prev.title);
-        }
+  if ((key == Event.KEY_RIGHT && !reverse) || (key == Event.KEY_LEFT && reverse)) {
+    if (prev && prev.href) {
+      if (prev.getAttribute('data-disallow-magic') || !hw.supportsHistory()) {
+        window.location.href = prev.href;
+      } else {
+        hw.navigate(null, prev.href, prev.title);
       }
-      break;
-    case Event.KEY_LEFT:
-      if (next && next.href) {
-        if (next.getAttribute('data-disallow-magic') || !hw.supportsHistory()) {
-          window.location.href = next.href;
-        } else {
-          hw.navigate(null, next.href, next.title);
-        }
+    }
+  } else if ((key == Event.KEY_LEFT && !reverse) || (key == Event.KEY_RIGHT && reverse)) {
+    if (next && next.href) {
+      if (next.getAttribute('data-disallow-magic') || !hw.supportsHistory()) {
+        window.location.href = next.href;
+      } else {
+        hw.navigate(null, next.href, next.title);
       }
-      break;
-    case Event.KEY_UP:
-      if (topUrl && topUrl.href) {
-        window.location.href = topUrl.href;
-      }
-      break;
+    }
+  } else if (key == Event.KEY_UP) {
+    if (topUrl && topUrl.href) {
+      window.location.href = topUrl.href;
+    }
   }
 };
 

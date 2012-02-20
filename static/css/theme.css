@@ -219,6 +219,9 @@ a.hw-button[href]:hover {
 .hw-editing #hw-content nav[name=hw-neighbors] {
   display: none;
 }
+#hw-content nav[name=hw-neighbors].hw-reverse-sort .hw-button {
+  float: right;
+}
 
 #hw-content > header,
 #hw-content > section > header {

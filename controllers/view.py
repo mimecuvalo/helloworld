@@ -66,44 +66,6 @@ class ViewHandler(BaseHandler):
       self.redirect(self.content_url(redirect, referrer=self.breadcrumbs['uri']), permanent=True)
       return
 
-    # grab neighbors
-    if is_special:
-      if self.breadcrumbs["section"] == 'main':
-        content_options = { 'username': content.username,
-                            'section': content.name, }
-      else:
-        content_options = { 'username': content.username,
-                            'section': content.name,
-                            'album': self.breadcrumbs["name"], }
-    elif content.album:
-      content_options = { 'username': content.username,
-                          'section': content.section,
-                          'album': content.album, }
-    else:
-      content_options = { 'username': content.username,
-                          'section': content.section, }
-
-    if not is_owner_viewing and not content.hidden:
-      content_options['hidden'] = False
-
-    content_options['redirect'] = False
-
-    collection = self.models.content.get(**content_options).order_by('date_created', 'DESC')
-
-    index = -1
-    for i, p in enumerate(collection):
-      if p.id == content.id:
-        index = i
-        break
-
-    if len(collection):
-      self.display["start"] = collection[len(collection) - 1]
-      self.display["previous"] = collection[index + 1] if index + 1 < len(collection) else None
-      self.display["next"] = collection[index - 1] if index - 1 >= 0 else None
-      self.display["last"] = collection[0]
-    else:
-      self.display["start"] = None
-
     if content.style and not re.search(r"<link|<style", content.style, re.I | re.M):
       content.style = '<style>\n' + content.style + '\n</style>'
     if content.code and not re.search(r"<script", content.code, re.I | re.M):
@@ -115,6 +77,7 @@ class ViewHandler(BaseHandler):
 
     # grab parent's styling, code
     self.display["section_template"] = None
+    self.display["section_sort_type"] = None
     content_section = self.models.content.get(username=content.username,
                                               section='main',
                                               name=content.section)[0]
@@ -127,6 +90,7 @@ class ViewHandler(BaseHandler):
         self.display["section_style"] = content_section.style
         self.display["section_code"] = content_section.code
         self.display["section_template"] = content_section.template
+        self.display["section_sort_type"] = content_section.sort_type
         self.display["is_store"] = self.display["is_store"] or content_section.template == 'store'
         self.display["is_events"] = self.display["is_events"] or content_section.template == 'events'
 
@@ -152,9 +116,54 @@ class ViewHandler(BaseHandler):
         self.display["album_style"] = content_album.style
         self.display["album_code"] = content_album.code
         if content_album.template:
-          self.display["section_template"] = content_album.template 
+          self.display["section_template"] = content_album.template
+        if content_album.sort_type:
+          self.display["section_sort_type"] = content_album.sort_type
         self.display["is_store"] = self.display["is_store"] or content_album.template == 'store'
         self.display["is_events"] = self.display["is_events"] or content_album.template == 'events'
+
+    # figure out breadcrumbs, grab neighbors
+    if is_special:
+      if self.breadcrumbs["section"] == 'main':
+        content_options = { 'username': content.username,
+                            'section': content.name,
+                            'name': None, }
+      else:
+        content_options = { 'username': content.username,
+                            'section': content.name,
+                            'name': self.breadcrumbs["name"], }
+    elif content.album:
+      content_options = { 'username': content.username,
+                          'section': content.section,
+                          'name': content.album, }
+    else:
+      content_options = { 'username': content.username,
+                          'section': content.section,
+                          'name': None, }
+
+    collection, common_options = self.get_collection(profile=content_options['username'],
+                                                     section=content_options['section'],
+                                                     name=content_options['name'])
+
+    index = -1
+    for i, p in enumerate(collection):
+      if p.id == content.id:
+        index = i
+        break
+
+    if len(collection):
+      if self.display["section_sort_type"] == "":
+        self.display["start"] = collection[len(collection) - 1]
+        self.display["previous"] = collection[index + 1] if index + 1 < len(collection) else None
+        self.display["next"] = collection[index - 1] if index - 1 >= 0 else None
+        self.display["last"] = collection[0]
+      else:
+        self.display["start"] = collection[0]
+        self.display["previous"] = collection[index - 1] if index - 1 >= 0 else None
+        self.display["next"] = collection[index + 1] if index + 1 < len(collection) else None
+        self.display["last"] = collection[len(collection) - 1]
+    else:
+      self.display["start"] = None
 
     if is_special:
       if self.breadcrumbs["section"] == 'main':
@@ -166,6 +175,7 @@ class ViewHandler(BaseHandler):
         self.display["top_url"] = self.nav_url(username=content.username, section=content.section, name=content.album, mode='archive')
       else:
         self.display["top_url"] = self.nav_url(username=content.username, section=content.section, name=content.album)
+
 
     self.display['has_code'] = content.code != "" or re.search(r"<script", content.view, re.I | re.M) \
                             or self.display["section_code"] or self.display["album_code"]
