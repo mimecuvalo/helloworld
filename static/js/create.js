@@ -129,6 +129,7 @@ hw.save = function() {
 
   var dateStart = createForm['hw-date-start'].value ? new Date(createForm['hw-date-start'].value).getTime() / 1000 : '';
   var dateEnd = createForm['hw-date-end'].value ? new Date(createForm['hw-date-end'].value).getTime() / 1000 : '';
+  var sortType = createForm['hw-sort-type'] ? createForm['hw-sort-type'].value : "";
 
   var sendContent = function(mediaHTML, opt_title, opt_extraCallback) {
     var separate = createForm['hw-separate'].checked;
@@ -148,7 +149,7 @@ hw.save = function() {
                + '&name='         + encodeURIComponent(separate ? '' : createForm['hw-name'].value)
                + (createForm['hw-thumb'] ? '&thumb=' + encodeURIComponent(createForm['hw-thumb'].value) : '')
                + '&template='     + encodeURIComponent(createForm['hw-template'].value)
-               + '&sort_type='    + encodeURIComponent(createForm['hw-sort-type'].value)
+               + '&sort_type='    + encodeURIComponent(sortType)
                + '&section_template=' + encodeURIComponent(createForm['hw-section-template'].value)
                + '&hidden='       + encodeURIComponent(createForm['hw-hidden'].checked ? 1 : 0),
         headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },

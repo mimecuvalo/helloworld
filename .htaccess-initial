@@ -64,7 +64,7 @@ AddType video/webm .webm
 # AddType "text/html;charset=UTF-8" .htmgz
 # AddEncoding gzip .htmgz
 
-<FilesMatch "\.(htmgz)$">
+<FilesMatch "\.(html)$">
 FileETag None
 <IfModule mod_headers.c>
 Header unset ETag
