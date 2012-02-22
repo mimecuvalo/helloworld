@@ -27,7 +27,7 @@ RewriteCond %{DOCUMENT_ROOT}$HTTP_PREFIX/static/cache/%{REQUEST_URI}.html -f
 #RewriteCond %{HTTP:Accept-Encoding} gzip
 RewriteCond %{HTTP:X-Requested-With} !^XMLHttpRequest$
 RewriteCond %{HTTP_COOKIE} !^.*user.*$
-RewriteRule ^(.*)$ $HTTP_PREFIX/static/cache$HTTP_PREFIX/$1.html [L]
+RewriteRule ^(.*)$ $HTTP_PREFIX/static/cache$HTTP_PREFIX/$1.html [P,QSA,L]
 
 RewriteCond %{HTTPS} !=on
 RewriteCond %{REQUEST_FILENAME} !-f
