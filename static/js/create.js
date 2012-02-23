@@ -1961,7 +1961,7 @@ hw.editSection = function(event, el, album) {
 
 hw.editContent = function(event, el) {
   if (hw.$('hw-container') && !hw.hasClass('hw-container', 'hw-editing')) {
-    return;
+    return false;
   }
 
   hw.preventDefault(event);
@@ -1972,6 +1972,8 @@ hw.editContent = function(event, el) {
   } else {
     window.location.href = href;
   }
+
+  return true;
 };
 
 hw.renameKeyPress = function(event, el, album) {

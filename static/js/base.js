@@ -508,6 +508,19 @@ hw.navigate = function(event, url, title) {
   hw.swapContent(url, title);
 };
 
+hw.albumClick = function(event, el) {
+  if (hw.hasClass('hw-content', 'hw-owner-viewing')) {
+    if (hw.editContent(event, el)) {
+      return; // we're going to edit
+    }
+  }
+
+  if (el.parentNode.getAttribute('data-is-album') == 'false') {
+    hw.preventDefault(event);  // stop regular links from continuing
+    hw.navigate(event, el.getAttribute('href'), el.getAttribute('title'));
+  }
+};
+
 hw.swapContent = function(url, title) {
   var onSuccess = function(xhr, preloadedContent) {
     hw.addClass(hw.$('hw-content'), 'hw-invisible');

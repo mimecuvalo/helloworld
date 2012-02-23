@@ -11,9 +11,9 @@
 
   <ul class="hw-album">
     {% comment NOTE whitespace is important here %}
-    {% for index, item in enumerate(collection) %}<li id="hw-collection|{{ item.name }}" class="hw-content-item" {% if is_owner_viewing %}draggable="true" ondragstart="hw.dragStart(event, this)" ondragover="hw.dragOver(event, this)" ondragenter="hw.dragOver(event, this)" ondragleave="hw.dragLeave(event, this)" ondrop="hw.dragDrop(event, this)" data-is-album="{% if item.album == 'main' %}true{% else %}false{% end %}"{% end %}>
-        <a href="{{ content_url(item) }}" title="{{ item.title }}" data-contentname="{{ item.name }}" onclick="{% if is_owner_viewing %}hw.editContent(event, this){% else %}hw.navigate(event, this.getAttribute('href'), this.getAttribute('title')){% end %}"><img src="{{ static_url('img/pixel.gif') }}" onload="hw.thumbnailDelayLoad.transition(this)" class="hw-invisible hw-invisible-slow-transition" data-thumb="{{ item.thumb }}"/></a>
-        <a class="hw-content-title {% if is_owner_viewing and item.hidden %}hw-content-hidden{% end %}" href="{{ content_url(item) }}" title="{{ item.title }}" data-contentname="{{ item.name }}" onclick="{% if is_owner_viewing %}hw.editContent(event, this){% else %}hw.navigate(event, this.getAttribute('href'), this.getAttribute('title')){% end %}">{{ item.title }}</a>
+    {% for index, item in enumerate(collection) %}<li id="hw-collection|{{ item.name }}" class="hw-content-item" data-is-album="{% if item.album == 'main' %}true{% else %}false{% end %}" {% if is_owner_viewing %}draggable="true" ondragstart="hw.dragStart(event, this)" ondragover="hw.dragOver(event, this)" ondragenter="hw.dragOver(event, this)" ondragleave="hw.dragLeave(event, this)" ondrop="hw.dragDrop(event, this)"{% end %}>
+        <a href="{{ content_url(item) }}" title="{{ item.title }}" data-contentname="{{ item.name }}" onclick="hw.albumClick(event, this)"><img src="{{ static_url('img/pixel.gif') }}" onload="hw.thumbnailDelayLoad.transition(this)" class="hw-invisible hw-invisible-slow-transition" data-thumb="{{ item.thumb }}"/></a>
+        <a class="hw-content-title {% if is_owner_viewing and item.hidden %}hw-content-hidden{% end %}" href="{{ content_url(item) }}" title="{{ item.title }}" data-contentname="{{ item.name }}" onclick="hw.albumClick(event, this)">{{ item.title }}</a>
         {% if item.album != 'main' and template == 'store' %}
           {% module StoreButton(item, content_owner) %}
         {% end %}
