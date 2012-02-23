@@ -397,10 +397,10 @@ hw.edit = function(event, opt_dontCreateMediaIframe) {
 
 hw.editScriptWorkaround = function() {
   var wysiwyg = hw.getFirstElementByName('hw-wysiwyg');
-  document.head.innerHTML = document.head.innerHTML.replace('<style name="HWSCRIPTWORKAROUND"', '<script');
-  document.head.innerHTML = document.head.innerHTML.replace('</style><!--HWSCRIPTWORKAROUND-->', '</script>');
-  wysiwyg.innerHTML = wysiwyg.innerHTML.replace('<style name="HWSCRIPTWORKAROUND"', '<script');
-  wysiwyg.innerHTML = wysiwyg.innerHTML.replace('</style><!--HWSCRIPTWORKAROUND-->', '</script>');
+  document.head.innerHTML = document.head.innerHTML.replace(/<style name="HWSCRIPTWORKAROUND"/g, '<script');
+  document.head.innerHTML = document.head.innerHTML.replace(/<\/style><!--HWSCRIPTWORKAROUND-->/g, '</script>');
+  wysiwyg.innerHTML = wysiwyg.innerHTML.replace(/<style name="HWSCRIPTWORKAROUND"/g, '<script');
+  wysiwyg.innerHTML = wysiwyg.innerHTML.replace(/<\/style><!--HWSCRIPTWORKAROUND-->/g, '</script>');
 };
 
 // TODO: use ace editor? has wrapping at least...
