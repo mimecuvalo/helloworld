@@ -27,13 +27,14 @@ def increase_count(handler):
   if url:
     content_url = url_factory.load_basic_parameters(handler, url=url)
 
-    content = handler.models.content.get(username=content_url["profile"], section=content_url["section"], name=content_url["name"])[0]
+    with handler.application.settings["db_lock"]:
+      content = handler.models.content.get(username=content_url["profile"], section=content_url["section"], name=content_url["name"])[0]
 
-    if content:
-      if not handler.is_owner_viewing(content.username):
-        if is_robot:
-          content.count_robot = content.count_robot + 1
-        else:
-          content.count = content.count + 1
+      if content:
+        if not handler.is_owner_viewing(content.username):
+          if is_robot:
+            content.count_robot = content.count_robot + 1
+          else:
+            content.count = content.count + 1
 
-        content.save()
+          content.save()

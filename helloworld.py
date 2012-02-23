@@ -3,6 +3,7 @@
 import ConfigParser
 import logging
 import sys, os
+import threading
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "packages"))
 
@@ -62,6 +63,7 @@ settings = {
   "ui_modules": controllers.uimodules,
   "cookie_secret": constants['xsrf_secret'],
   "template_loader": tornado.template.Loader(os.path.join(os.path.dirname(os.path.realpath(__file__)), "templates")),
+  "db_lock": threading.Lock(),
 }
 
 prefix = r"(?:" + tornado.escape.url_escape(constants['https_prefix']).replace('%2F', '/') + r")?"
