@@ -66,6 +66,10 @@
   margin: 3px;
 }
 
+#hw-following-button[disabled] {
+  cursor: wait;
+}
+
 .hw-remote-actions {
   float: right;
   font-size: 0.7692em;

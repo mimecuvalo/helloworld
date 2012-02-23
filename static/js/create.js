@@ -2056,6 +2056,7 @@ hw.follow = function(event, el) {
 
   var button = hw.$('hw-following-button');
   button.innerHTML = button.getAttribute('data-following');
+  button.disabled = true;
 
   var callback = function(xhr) {
     hw.$('hw-following-new').value = '';
@@ -2063,6 +2064,7 @@ hw.follow = function(event, el) {
   };
 
   var badTrip = function(xhr) {
+    button.disabled = false;
     button.innerHTML = button.getAttribute('data-normal');
     alert(hw.$('hw-following-new').getAttribute('data-error'));
   };

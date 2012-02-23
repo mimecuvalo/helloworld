@@ -23,6 +23,10 @@ span[name=hw-save-wrapper] {
   display: block;
 }
 
+input[name=hw-save][disabled] {
+  cursor: wait;
+}
+
 span[name=hw-response] {
   margin: 4px 0 3px 9px;
   float: left;
