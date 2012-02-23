@@ -128,7 +128,7 @@
         <span class="hw-initial hw-explanation">{{ _("(images, videos, audio, links)") }}</span>
         <br class="hw-initial">
         <label class="hw-created">{{ _("source") }}</label>
-        <input name="hw-media-remote" type="text" placeholder="{{ _("URL / embed") }}" onchange="parent.hw.remoteMedia(this)" onkeypress="parent.hw.checkPaste(this, event)">
+        <input name="hw-media-remote" type="text" placeholder="{{ _("URL / embed") }}" onchange="parent.hw.remoteMedia(this)" onkeyup="parent.hw.checkPaste(this, event)">
         <span class="hw-initial hw-media-or">{{ _("or") }}</span>
         <input name="hw-media-local" type="file" multiple value="{{ _("Upload file(s)") }}" onchange="parent.hw.localMedia(this)">
         <input class="hw-created hw-hidden" name="hw-media-file" type="text" disabled readonly value="">
@@ -253,10 +253,7 @@
 
 <script>
 {% if individual_content %}
-  Event.observe(hw.getFirstElementByName('hw-style'), 'keypress', hw.shortcuts, false);
-  Event.observe(hw.getFirstElementByName('hw-code'), 'keypress', hw.shortcuts, false);
-  Event.observe(hw.getFirstElementByName('hw-html'), 'keypress', hw.shortcuts, false);
-  Event.observe(hw.getFirstElementByName('hw-wysiwyg'), 'keypress', hw.shortcuts, false);
+  Event.observe(hw.getFirstElementByName('hw-wysiwyg'), 'keydown', hw.shortcuts, false);
 
   Event.observe(hw.getFirstElementByName('hw-wysiwyg'), 'keyup', hw.changeBeforeUnloadState, false);
   Event.observe(hw.getFirstElementByName('hw-wysiwyg'), 'mouseup', hw.changeBeforeUnloadState, false);

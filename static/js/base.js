@@ -476,7 +476,7 @@ hw.keyNavigation = function(event) {
   }
 };
 
-Event.observe(window, 'keypress', hw.keyNavigation, false);
+Event.observe(window, 'keyup', hw.keyNavigation, false);
 
 hw.supportsHistory = function() {
   return !!(window.history && history.pushState);
@@ -761,7 +761,7 @@ hw.slideshowSetup = function() {
 
   hw.createAutoload = false;
 
-  Event.observe(document, 'keypress', hw.slideshowKeys, false);
+  Event.observe(document, 'keyup', hw.slideshowKeys, false);
   Event.observe(document, 'click', hw.slideshowClick, false);
 
   hw.slideshowPause();
@@ -869,7 +869,7 @@ hw.slideshowKeys = function(event) {
     case 35: // end
       hw.slideshow(null, null, true);
       break;
-    case 99: // c
+    case 67: // c
       hw.slideshowTogglePlain(event);
       break;
   }

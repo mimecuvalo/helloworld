@@ -423,10 +423,13 @@ hw.setupCodeMirror = function() {
   if (hw.createIndividualContent) {
     hw.hide(cm.getWrapperElement());
   }
+  Event.observe(hw.getFirstElementByName('hw-style-cm'), 'keydown', hw.shortcuts, false);
+
   cm = CodeMirror.fromTextArea(hw.getFirstElementByName('hw-code'), { mode: "javascript", lineNumbers: true, matchBrackets: true, onChange: onChange });
   cm.getWrapperElement().setAttribute('name', 'hw-code-cm');
   cm.getWrapperElement().cm = cm;
   hw.hide(cm.getWrapperElement());
+  Event.observe(hw.getFirstElementByName('hw-code-cm'), 'keydown', hw.shortcuts, false);
 
   if (hw.createIndividualContent) {
     hw.getFirstElementByName('hw-html').value = hw.getFirstElementByName('hw-html').value.replace(/>([^\n])/g, '>\n$1');
@@ -434,6 +437,7 @@ hw.setupCodeMirror = function() {
     hw.cm.getWrapperElement().setAttribute('name', 'hw-html-cm');
     hw.cm.getWrapperElement().cm = hw.cm;
     hw.cm.focus();
+    Event.observe(hw.getFirstElementByName('hw-html-cm'), 'keydown', hw.shortcuts, false);
   }
 };
 
@@ -506,7 +510,7 @@ hw.shortcuts = function(event) {
     //case 64:    // @-symbol, autocomplete remote_user
     //  hw.showUserAutocomplete();
     //  break;
-    case 115:   // ctrl-s, save
+    case 83:   // ctrl-s, save
       if (hw.testAccelKey(event)) {
         hw.preventDefault(event);
         hw.save();
@@ -1976,7 +1980,7 @@ hw.editContent = function(event, el) {
   return true;
 };
 
-hw.renameKeyPress = function(event, el, album) {
+hw.renameKeyUp = function(event, el, album) {
   if (event.keyCode == 13 || event.keyCode == 27) { // enter or escape
     var fn = function() { hw.renameEnd(event, el, album, event.keyCode == 13); };
     setTimeout(fn, 0);
