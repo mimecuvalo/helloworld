@@ -378,7 +378,7 @@ class ViewHandler(BaseHandler):
     if section_template != 'links':
       soup = BeautifulSoup(content.view)
       for text in soup.findAll(text=True):
-        if text.parent.name != 'a':
+        if text.parent.name not in ('a', 'script', 'style'):
           text.replaceWith(tornado.escape.linkify(tornado.escape.xhtml_unescape(text)))
 
       content.view = soup.renderContents()
