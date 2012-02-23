@@ -230,6 +230,11 @@ div[name=hw-wysiwyg-controls] {
   margin-top: 29px; /* height of the toolbar */
 }
 
+.hw-editing div[name=hw-wysiwyg] a {
+  cursor: hand;
+  cursor: pointer;
+}
+
 .hw-fixed.hw-editing span[name=hw-save-wrapper] {
   position: fixed;
   z-index: 1;
