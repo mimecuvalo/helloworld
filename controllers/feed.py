@@ -33,7 +33,7 @@ class FeedHandler(BaseHandler):
     feed = self.models.content.get(**content_options).order_by('date_created', 'DESC')
 
     self.display["feed"] = [ self.ui["modules"].Content(content) \
-        for content in feed[:10] if content.section != 'main' and content.album != 'main' ]  # todo, this should move to query really
+        for content in feed[:20] if content.section != 'main' and content.album != 'main' ]  # todo, this should move to query really
     self.display["section"] = section
     self.display["album"] = album
 
