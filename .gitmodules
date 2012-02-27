@@ -4,3 +4,6 @@
 [submodule "static/js/pixastic"]
 	path = static/js/pixastic
 	url = git://github.com/mimecuvalo/pixastic.git
+[submodule "static/js/CodeMirror2"]
+	path = static/js/CodeMirror2
+	url = git://github.com/mimecuvalo/CodeMirror2.git
