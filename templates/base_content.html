@@ -59,7 +59,7 @@
 
 {% block extra_js %}
   {% if is_owner_viewing %}
-    <script src="{{ static_url('js/all_create.js', ['js/create.js', 'js/CodeMirror2/lib/codemirror.js', 'js/CodeMirror2/mode/xml/xml.js', 'js/CodeMirror2/mode/javascript/javascript.js', 'js/CodeMirror2/mode/css/css.js', 'js/CodeMirror2/mode/htmlmixed/htmlmixed.js', 'js/pixastic.custom.js']) }}"></script>
+    <script src="{{ static_url('js/all_create.js', ['js/create.js', 'js/CodeMirror2/lib/codemirror.js', 'js/CodeMirror2/mode/xml/xml.js', 'js/CodeMirror2/mode/javascript/javascript.js', 'js/CodeMirror2/mode/css/css.js', 'js/CodeMirror2/mode/htmlmixed/htmlmixed.js', 'js/pixastic/pixastic.core.js', 'js/pixastic/actions/brightness.js', 'js/pixastic/actions/crop.js', 'js/pixastic/actions/resize.js', 'js/pixastic/actions/rotate.js']) }}"></script>
   {% end %}
 
   {% raw section_code %}
