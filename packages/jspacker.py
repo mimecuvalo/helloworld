@@ -179,7 +179,8 @@ class JavaScriptPacker:
         if specialChars:
             parser.add(""";;;[^\n\r]+[\n\r]""")
         # remove redundant semi-colons
-        parser.add(r""";+\s*([};])""", "$2")
+        # !!! mime change - CodeMirror uses for (;;) which breaks this
+        #parser.add(r""";+\s*([};])""", "$2")
         # remove white-space
         parser.add(r"""(\b|\$)\s+(\b|\$)""", "$2 $3")
         parser.add(r"""([+\-])\s+([+\-])""", "$2 $3")

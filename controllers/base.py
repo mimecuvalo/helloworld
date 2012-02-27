@@ -306,11 +306,9 @@ class BaseHandler(tornado.web.RequestHandler):
             f = open(file_abs_path)
             combined_file = combined_file + '\n' + f.read()
             f.close()
-          # TODO, get errors currently b/c of the various mixes of compression
-          # in CodeMirror and Pixastic
-          #if is_js:
-          #  packer = jspacker.JavaScriptPacker()
-          #  combined_file = packer.pack(combined_file, encoding=62, fastDecode=True, specialChars=True)
+          if is_js:
+            packer = jspacker.JavaScriptPacker()
+            combined_file = packer.pack(combined_file, encoding=62, fastDecode=True)
           f = open(abs_path, 'w')
           f.write(combined_file)
           f.close()
