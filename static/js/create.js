@@ -493,14 +493,6 @@ hw.templateChange = function(oldTemplate, newTemplate) {
   hw.getFirstElementByName('hw-template').setAttribute('data-previous', newTemplate)
 };
 
-hw.testAccelKey = function(event) {
-  if (navigator.platform.toLowerCase().indexOf('mac') != -1) {
-    return event.metaKey;
-  }
-
-  return event.ctrlKey;
-}
-
 hw.shortcuts = function(event) {
   var key = event.which ? event.which : event.keyCode;
 
@@ -1943,7 +1935,7 @@ hw.editSection = function(event, el, album) {
   hw.preventDefault(event);
 
   var href = el.href + '?edit=true';
-  if (event.metaKey) {
+  if (hw.testAccelKey(event)) {
     window.open(href);
   } else {
     window.location.href = href;
@@ -1971,7 +1963,7 @@ hw.editContent = function(event, el) {
   hw.preventDefault(event);
 
   var href = hw.sectionUrl + '/' + el.getAttribute('data-contentname') + '?edit=true';
-  if (event.metaKey || event.ctrlKey) {
+  if (hw.testAccelKey(event)) {
     window.open(href);
   } else {
     window.location.href = href;

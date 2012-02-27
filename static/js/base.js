@@ -404,6 +404,14 @@ Object.extend(Event, {
   }
 });
 
+hw.testAccelKey = function(event) {
+  if (navigator.platform.toLowerCase().indexOf('mac') != -1) {
+    return event.metaKey;
+  }
+
+  return event.ctrlKey;
+}
+
 hw.login = function(event, el) {
   hw.preventDefault(event);
 
@@ -509,6 +517,10 @@ hw.navigate = function(event, url, title) {
 };
 
 hw.albumClick = function(event, el) {
+  if (hw.testAccelKey(event)) {
+    return;
+  }
+
   if (hw.hasClass('hw-content', 'hw-owner-viewing')) {
     if (hw.editContent(event, el)) {
       return; // we're going to edit
