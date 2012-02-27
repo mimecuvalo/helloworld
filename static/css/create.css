@@ -487,14 +487,14 @@ div[name=hw-user-autocomplete] {
   width: 275px;
   border: 1px solid black;
   background-color: white;
-  padding: 1em;
+  padding: 0 5px 5px 5px;
 }
 div[name=hw-image-editor] {
   position: absolute;
   top: 36px;
   left: 50%;
   margin-left: -450px;
-  padding: 10px;
+  padding: 0 10px 10px 10px;
   width: 900px;
   height: 525px;
   background-color: white;
@@ -546,6 +546,19 @@ a[name=hw-anchor-remove] {
 a[name=hw-anchor-remove] {
   vertical-align: middle;
   font-size: 0.7692em;
+}
+
+div[name=hw-anchor-editor] header,
+div[name=hw-image-options] header,
+div[name=hw-image-editor] header {
+  font-size: 11px;
+  background-color: #ddd;
+  cursor: move;
+  margin: 0 -5px 5px -5px;
+  padding: 0 5px;
+}
+div[name=hw-image-editor] header {
+  margin: 0 -10px 10px -10px;
 }
 
 div[name=hw-anchor-editor] label,

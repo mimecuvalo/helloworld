@@ -203,6 +203,7 @@
 </form>
 {% if individual_content %}
 <div name="hw-anchor-editor">
+  <header onmousedown="hw.dragElementStart(event, this)">{{ _('link editor') }}</header>
   <input name="hw-anchor-link" type="text" placeholder="{{ _('http://') }}" onchange="hw.changeAnchorLink(this)">
   <a name="hw-anchor-visit" href="#" target="_blank">{{ _('visit') }}</a>
   <a name="hw-anchor-remove" href="#removeLink" onclick='hw.wysiwyg(event, "createLink")'>{{ _('remove') }}</a><br>
@@ -210,12 +211,13 @@
   <input type="radio" name="hw-anchor-type" value="email" onclick="hw.changeAnchorType(this)"><label onclick="hw.changeAnchorType(this.previousSibling)">{{ _('email') }}</label>
 </div>
 <div name="hw-image-options">
-  <div>{{ _('change alignment') }}</div>
+  <header onmousedown="hw.dragElementStart(event, this)">{{ _('change alignment') }}</header>
   <input type="radio" name="hw-image-align" value="none" onclick="hw.changeImageAlign(this)"><label onclick="hw.changeImageAlign(this.previousSibling)">{{ _('none') }}</label>
   <input type="radio" name="hw-image-align" value="left" onclick="hw.changeImageAlign(this)"><label onclick="hw.changeImageAlign(this.previousSibling)">{{ _('left') }}</label>
   <input type="radio" name="hw-image-align" value="right" onclick="hw.changeImageAlign(this)"><label onclick="hw.changeImageAlign(this.previousSibling)">{{ _('right') }}</label>
 </div>
 <div name="hw-image-editor" class="hw-closed hw-box-black">
+  <header onmousedown="hw.dragElementStart(event, this)">{{ _('image editor') }}</header>
   <a href="#closeEditor" class="hw-image-close hw-button hw-button-red" onclick="hw.editImageClose(event)">x</a>
   <div class="hw-image-scratch-wrapper">
     <img name="hw-image-scratch">

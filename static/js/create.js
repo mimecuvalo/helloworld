@@ -620,7 +620,7 @@ hw.showAnchorEditor = function(anchor) {
   hw.getFirstElementByName('hw-anchor-link')['anchorTag'] = anchorTag;
   var anchorPosition = anchorTag.getBoundingClientRect();
   var contentPosition = hw.$('hw-content') ? hw.$('hw-content').getBoundingClientRect() : document.body.getBoundingClientRect();
-  hw.getFirstElementByName('hw-anchor-editor').style.top = (window.pageYOffset + anchorPosition.top) + 'px';
+  hw.getFirstElementByName('hw-anchor-editor').style.top = (window.pageYOffset + 15 + anchorPosition.top) + 'px';
   hw.getFirstElementByName('hw-anchor-editor').style.left = (anchorPosition.left + 5 - contentPosition.left) + 'px';
   hw.getFirstElementByName('hw-anchor-link').value = anchorTag.href;
   hw.getFirstElementByName('hw-anchor-visit').href = anchorTag.href;
@@ -987,7 +987,11 @@ hw.editImage = function(event, el) {
     return;
   }
 
-  hw.show(hw.getFirstElementByName('hw-image-editor'));
+  hw.show(editor);
+  editor.style.left = editor.getBoundingClientRect().left + 'px';
+  editor.style.top = editor.getBoundingClientRect().top + 'px';
+  editor.style.marginLeft = 0;
+
   var img = hw.getFirstElementByName('hw-image-scratch');
   if (!img) {
     var canvas = hw.editImageCanvas();
@@ -1046,7 +1050,11 @@ hw.editImageClose = function(event) {
   if (event) {
     hw.preventDefault(event);
   }
-  hw.hide(hw.getFirstElementByName('hw-image-editor'));
+  var editor = hw.getFirstElementByName('hw-image-editor');
+  hw.hide(editor);
+  editor.style.left = '50%';
+  editor.style.top = '36px';
+  editor.style.marginLeft = '-450px';
 };
 hw.editImageRotate = function(event) {
   var temp = hw.getFirstElementByName('hw-image-width').value;
@@ -1390,6 +1398,57 @@ hw.drop = function(event) {
     }
   }
 };
+
+// from quirksmode.org
+
+hw.getEventPos = function(event) {
+  var posx = 0;
+  var posy = 0;
+  if (!event) event = window.event;
+  if (event.pageX || event.pageY) {
+    posx = event.pageX;
+    posy = event.pageY;
+  } else if (event.clientX || event.clientY) {
+    posx = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+    posy = event.clientY + document.body.scrollTop  + document.documentElement.scrollTop;
+  }
+
+  return [posx, posy];
+}
+
+hw.dragEl = null;
+hw.dragOffsetX = 0;
+hw.dragOffsetY = 0;
+hw.dragMouseX = 0;
+hw.dragMouseY = 0;
+hw.dragElementStart = function(event, el) {
+  hw.dragEl = el;
+
+  hw.dragOffsetX = parseInt(hw.dragEl.parentNode.style.left);
+  hw.dragOffsetY = parseInt(hw.dragEl.parentNode.style.top);
+
+  var pos = hw.getEventPos(event);
+  hw.dragMouseX = pos[0];
+  hw.dragMouseY = pos[1];
+};
+hw.dragMouseMove = function(event) {
+  if (hw.dragEl) {
+    var pos = hw.getEventPos(event);
+    hw.dragEl.parentNode.style.left = (hw.dragOffsetX + pos[0] - hw.dragMouseX) + 'px';
+    hw.dragEl.parentNode.style.top  = (hw.dragOffsetY + pos[1] - hw.dragMouseY) + 'px';
+    if (document.selection) {
+      document.selection.empty();
+    } else {
+      window.getSelection().removeAllRanges();
+    }
+  }
+}
+hw.dragMouseUp = function(event) {
+  hw.dragEl = null;
+}
+Event.observe(document, 'mousemove', hw.dragMouseMove, false);
+Event.observe(document, 'mouseup', hw.dragMouseUp, false);
+
 
 hw.remoteMedia = function(el) {
   hw.newMedia(el.ownerDocument, true);
