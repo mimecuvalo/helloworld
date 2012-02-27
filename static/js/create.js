@@ -203,8 +203,9 @@ hw.separate = function(el) {
 };
 
 hw.processFiles = function(eventQueue, sendContent, mediaHTML) {
+  var createForm = hw.getFirstElementByName('hw-create');
+
   if (!eventQueue.length) {
-    var createForm = hw.getFirstElementByName('hw-create');
     if (createForm['hw-separate'].checked) {
       hw.resetSaveState();
       hw.resetCreateForm();
@@ -288,7 +289,14 @@ hw.processFiles = function(eventQueue, sendContent, mediaHTML) {
 
     var transferError = function(e) {
       hw.removeClass(hw.getFirstElementByName('hw-media-file-failed', iframeDoc), 'hw-hidden');
-      hw.processFiles(eventQueue, sendContent, mediaHTML);
+
+      // TODO maybe: we stop processing if we hit an error. best policy?
+      //hw.processFiles(eventQueue, sendContent, mediaHTML);
+      createForm['hw-save'].disabled = false;
+      createForm['hw-save'].value = createForm['hw-save'].getAttribute('data-save');
+      hw.getFirstElementByName('hw-wysiwyg').innerHTML = mediaHTML + hw.getFirstElementByName('hw-wysiwyg').innerHTML;
+      hw.htmlPreview();
+
       hw.addClass(progress, 'hw-hidden');
     };
 

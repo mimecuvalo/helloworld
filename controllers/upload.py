@@ -182,7 +182,7 @@ class UploadHandler(BaseHandler):
       thumb_url = parent_url + 'thumbs/' + leaf_name
       original_size_url = parent_url + 'original/' + leaf_name
 
-      f = open(original_size_filename, 'r+')
+      f = open(original_size_filename, 'w+')
       f.write(data)
       f.close()
 
