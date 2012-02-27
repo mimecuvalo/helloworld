@@ -79,13 +79,14 @@ div[name=hw-options] dl select {
 div[name=hw-options] dt {
   padding: 3px;
   width: 150px;
+  vertical-align: top;
   display: inline-block;
   zoom: 1; /* workaround ie7 */
   *display: inline; /* workaround ie7 */
 }
 .hw-new div[name=hw-options] dd,
 div[name=hw-options] dd {
-  width: 290px;
+  width: 288px;
   display: inline-block;
   zoom: 1; /* workaround ie7 */
   *display: inline; /* workaround ie7 */
