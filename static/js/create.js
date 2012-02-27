@@ -793,7 +793,7 @@ hw.html = function(event, el, close) {
   hw.setClass(createForm, 'hw-html', openHTML);
   hw.display(htmlWrapper, openHTML);
   hw.htmlPreview();
-  var fn = function() { hw.createOnScroll(); }
+  var fn = function() { hw.createOnScroll(); };
   setTimeout(fn, 300);
   html.focus();
   hw.hideElementOptions();
@@ -1422,7 +1422,7 @@ hw.getEventPos = function(event) {
   }
 
   return [posx, posy];
-}
+};
 
 hw.dragEl = null;
 hw.dragOffsetX = 0;
@@ -1450,10 +1450,10 @@ hw.dragMouseMove = function(event) {
       window.getSelection().removeAllRanges();
     }
   }
-}
+};
 hw.dragMouseUp = function(event) {
   hw.dragEl = null;
-}
+};
 Event.observe(document, 'mousemove', hw.dragMouseMove, false);
 Event.observe(document, 'mouseup', hw.dragMouseUp, false);
 
@@ -1536,7 +1536,7 @@ hw.mediaLibrary = function(event, el, close) {
   hw.setClass(wysiwyg, 'hw-media-library', openMedia);
   hw.setClass(createForm, 'hw-media-library', openMedia);
   hw.display(mediaWrapper, openMedia);
-  var fn = function() { hw.createOnScroll(); }
+  var fn = function() { hw.createOnScroll(); };
   setTimeout(fn, 300);
   hw.hideElementOptions();
 
@@ -2392,4 +2392,4 @@ hw.followingEdit = function(event) {
   }
 
   hw.setClass('hw-following', 'hw-edit-mode', !hw.hasClass('hw-following', 'hw-edit-mode'));
-}
+};

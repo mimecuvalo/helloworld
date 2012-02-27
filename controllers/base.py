@@ -13,6 +13,7 @@ import types
 import urllib
 import uuid
 
+import jspacker
 import tornado.database
 import tornado.escape
 import tornado.web
@@ -294,6 +295,7 @@ class BaseHandler(tornado.web.RequestHandler):
     hashes = RequestHandler._static_hashes
     abs_path = os.path.join(self.application.settings["static_path"],
                             path)
+    is_js = os.path.splitext(path)[1] == '.js'
     if abs_path not in hashes:
       try:
         if dependencies:
@@ -304,6 +306,11 @@ class BaseHandler(tornado.web.RequestHandler):
             f = open(file_abs_path)
             combined_file = combined_file + '\n' + f.read()
             f.close()
+          # TODO, get errors currently b/c of the various mixes of compression
+          # in CodeMirror and Pixastic
+          #if is_js:
+          #  packer = jspacker.JavaScriptPacker()
+          #  combined_file = packer.pack(combined_file, encoding=62, fastDecode=True, specialChars=True)
           f = open(abs_path, 'w')
           f.write(combined_file)
           f.close()

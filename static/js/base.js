@@ -302,7 +302,7 @@ Object.extend = function(destination, source) {
     destination[property] = source[property];
   }
   return destination;
-}
+};
 Object.extend(Event, {
   KEY_BACKSPACE: 8,
   KEY_TAB:       9,
@@ -410,7 +410,7 @@ hw.testAccelKey = function(event) {
   }
 
   return event.ctrlKey;
-}
+};
 
 hw.login = function(event, el) {
   hw.preventDefault(event);
@@ -606,10 +606,10 @@ Event.observe(window, 'popstate', function(e) {
 hw.msgs = {};
 hw.setMsg = function(key, msg) {
   hw.msgs[key] = msg;
-}
+};
 hw.getMsg = function(key, msg) {
   return hw.msgs[key];
-}
+};
 
 hw.loadMore = function(url, offset, opt_feed_id) {
   this.url = url;
@@ -1102,7 +1102,7 @@ hw.clearCart = function() {
 // simplecartjs.com
 // http://github.com/thewojogroup/simplecart-js/tree/master
 hw.checkoutPaypal = function(email, currency) {
-  var form = document.createElement("form")
+  var form = document.createElement("form");
   var counter = 1;
 
   form.style.display = "none";
