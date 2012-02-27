@@ -517,14 +517,14 @@ hw.navigate = function(event, url, title) {
 };
 
 hw.albumClick = function(event, el) {
-  if (hw.testAccelKey(event)) {
-    return;
-  }
-
   if (hw.hasClass('hw-content', 'hw-owner-viewing')) {
     if (hw.editContent(event, el)) {
       return; // we're going to edit
     }
+  }
+
+  if (hw.testAccelKey(event)) {
+    return;
   }
 
   if (el.parentNode.getAttribute('data-is-album') == 'false') {
