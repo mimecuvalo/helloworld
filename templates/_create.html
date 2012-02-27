@@ -5,12 +5,11 @@
   hw.xsrf = '{% raw xsrf_form_html() %}';
   hw.uploadUrl = '{{ nav_url(section='upload') }}';
   {% if content %}
-  hw.contentUrl = '{{ content_url(content) }}';
-  {% if content.section == 'main' %}
-    hw.sectionUrl = '{{ nav_url(username=content.username, section=content.name) }}';
-  {% else %}
-    hw.sectionUrl = '{{ nav_url(username=content.username, section=content.section) }}';
-  {% end %}
+    {% if content.section == 'main' %}
+      hw.sectionUrl = '{{ nav_url(username=content.username, section=content.name) }}';
+    {% else %}
+      hw.sectionUrl = '{{ nav_url(username=content.username, section=content.section) }}';
+    {% end %}
   {% end %}
   hw.createIndividualContent = {% if individual_content %}true{% else %}false{% end %};
   hw.pageHasCode = {% if has_code %}true{% else %}false{% end %};

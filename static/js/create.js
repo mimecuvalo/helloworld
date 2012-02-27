@@ -343,8 +343,9 @@ hw.edit = function(event, opt_dontCreateMediaIframe) {
     hw.preventDefault(event);
   }
 
-  if (!hw.inForcedEditPage && hw.pageHasCode) {
-    window.location.href = hw.contentUrl + '?edit=true';
+  // if page has code or we've started using the history api...
+  if (!hw.inForcedEditPage && (hw.pageHasCode || hw.addedFirstUrlToHistory)) {
+    window.location.href = window.location.pathname + '?edit=true';
     return;
   }
 
