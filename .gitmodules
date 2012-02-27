@@ -1,3 +1,6 @@
 [submodule "packages/tornado-project"]
 	path = packages/tornado-project
 	url = git://github.com/facebook/tornado.git
+[submodule "static/js/CodeMirror2"]
+	path = static/js/CodeMirror2
+	url = git://github.com/marijnh/CodeMirror2.git

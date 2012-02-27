@@ -858,8 +858,10 @@ hw.htmlPreview = function(force, codeMirror) {
   } else if (document.activeElement != styleCMTextarea && document.activeElement != codeCMTextarea) {
     if (!hw.isHidden(htmlWrapper)) {
       html.value = wysiwyg.innerHTML;
+      // hmm, this was supposed to help in formatting the html but it ends up being annoying...
+      // html.value.replace(/>([^\n])/g, '>\n$1')
       if (hw.cm) {
-        hw.cm.setValue(html.value.replace(/>([^\n])/g, '>\n$1'));
+        hw.cm.setValue(html.value);
       }
     }
   }

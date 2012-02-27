@@ -36,7 +36,7 @@
 
 {% block extra_css %}
   {% if is_owner_viewing %}
-    <link id="hw-stylesheet-create" rel="stylesheet" type="text/css" href="{{ static_url('css/all_create.css', ['css/codemirror.css', 'css/codemirror_default.css', 'css/create.css']) }}">
+    <link id="hw-stylesheet-create" rel="stylesheet" type="text/css" href="{{ static_url('css/all_create.css', ['js/CodeMirror2/lib/codemirror.css', 'css/create.css']) }}">
   {% end %}
 
   {% if content_owner.theme and content_owner.theme != 'default.css' %}
@@ -59,7 +59,7 @@
 
 {% block extra_js %}
   {% if is_owner_viewing %}
-    <script src="{{ static_url('js/all_create.js', ['js/create.js', 'js/codemirror-compressed.js', 'js/pixastic.custom.js']) }}"></script>
+    <script src="{{ static_url('js/all_create.js', ['js/create.js', 'js/CodeMirror2/lib/codemirror.js', 'js/CodeMirror2/mode/xml/xml.js', 'js/CodeMirror2/mode/javascript/javascript.js', 'js/CodeMirror2/mode/css/css.js', 'js/CodeMirror2/mode/htmlmixed/htmlmixed.js', 'js/pixastic.custom.js']) }}"></script>
   {% end %}
 
   {% raw section_code %}
