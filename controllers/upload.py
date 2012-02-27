@@ -1,13 +1,13 @@
 import os
 import os.path
 import re
-import StringIO
 import urllib2
 import urlparse
 import xml.dom.minidom
 
 from BeautifulSoup import BeautifulSoup
 import Image
+from PIL.ExifTags import TAGS
 
 import tornado.escape
 import tornado.web
@@ -182,17 +182,53 @@ class UploadHandler(BaseHandler):
       thumb_url = parent_url + 'thumbs/' + leaf_name
       original_size_url = parent_url + 'original/' + leaf_name
 
-      f = open(original_size_filename, 'w')
+      f = open(original_size_filename, 'r+')
       f.write(data)
       f.close()
 
-      buf = StringIO.StringIO(data)
-      thumb = Image.open(buf)
+      original_img = Image.open(original_size_filename)
+      info = original_img._getexif()
+      exif = {}
+      if info:
+        for tag, value in info.items():
+          decoded = TAGS.get(tag, tag)    
+          exif[decoded] = value
+
+      if 'Orientation' in exif:
+        orientation = exif['Orientation']
+        changed = True
+        if orientation == 1:
+          changed = False
+        elif orientation == 2:
+          # Vertical Mirror
+          original_img = original_img.transpose(Image.FLIP_LEFT_RIGHT)
+        elif orientation == 3:
+          # Rotation 180
+          original_img = original_img.transpose(Image.ROTATE_180)
+        elif orientation == 4:
+          # Horizontal Mirror
+          original_img = original_img.transpose(Image.FLIP_TOP_BOTTOM)
+        elif orientation == 5:
+          # Horizontal Mirror + Rotation 270
+          original_img = original_img.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.ROTATE_270)
+        elif orientation == 6:
+          # Rotation 270
+          original_img = original_img.transpose(Image.ROTATE_270)
+        elif orientation == 7:
+          # Vertical Mirror + Rotation 270
+          original_img = original_img.transpose(Image.FLIP_LEFT_RIGHT).transpose(Image.ROTATE_270)
+        elif orientation == 8:
+          # Rotation 90
+          original_img = original_img.transpose(Image.ROTATE_90)
+
+        if changed:
+          original_img.save(original_size_filename, quality=95)
+
+      thumb = Image.open(original_size_filename)
       thumb.thumbnail((content_logic.THUMB_WIDTH, content_logic.THUMB_HEIGHT), Image.ANTIALIAS)
       thumb.save(thumb_filename, quality=95)
 
-      buf = StringIO.StringIO(data)
-      normal = Image.open(buf)
+      normal = Image.open(original_size_filename)
       normal.thumbnail((content_logic.PHOTO_WIDTH, content_logic.PHOTO_HEIGHT), Image.ANTIALIAS)
       normal.save(full_path, quality=95)
 
