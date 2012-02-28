@@ -122,6 +122,9 @@ hw.removeClass = function(el, oldClass) {
   el.className = classes.join(' ');
 };
 
+// remove no-js
+hw.removeClass(document.documentElement, 'no-js');
+
 hw.setClass = function(el, className, condition) {
   el = hw.$(el);
   if (condition) {
