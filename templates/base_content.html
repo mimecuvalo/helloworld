@@ -93,9 +93,7 @@
 {% block end_content %}
   {% if content_owner.google_analytics %}
     <script>
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', '{{ content_owner.google_analytics }}']);
-      _gaq.push(['_trackPageview']);
+      var _gaq = [['_setAccount', '{{ content_owner.google_analytics }}'], ['_gat._anonymizeIp'], ['_trackPageview']];
 
       (function() {
         var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
