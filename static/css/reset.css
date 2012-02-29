@@ -82,7 +82,7 @@ audio:not([controls]) { display: none; }
 
 html { font-size: 100%; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; color: #222; }
 
-html, button, input, select, textarea { font-family: sans-serif; }
+/*html, button, input, select, textarea { font-family: sans-serif; }*/
 
 body { margin: 0; font-size: 1em; line-height: 1.4; }
 
