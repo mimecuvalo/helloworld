@@ -65,12 +65,7 @@ class UploadHandler(BaseHandler):
       os.makedirs(parent_directory)
 
     # check dupe
-    counter = 1
-    original_path = full_path
-    while os.path.exists(full_path):
-      split_path = os.path.splitext(original_path)
-      full_path = split_path[0] + '_' + str(counter) + split_path[1]
-      counter += 1
+    full_path = self.get_unique_name(full_path)
 
     if is_remote:
       remote_url = filename
@@ -177,17 +172,20 @@ class UploadHandler(BaseHandler):
       if not os.path.isdir(original_size_dir):
         os.makedirs(original_size_dir)
 
-      thumb_filename = os.path.join(thumb_dir, leaf_name)
-      original_size_filename = os.path.join(original_size_dir, leaf_name)
-      thumb_url = parent_url + 'thumbs/' + leaf_name
-      original_size_url = parent_url + 'original/' + leaf_name
+      thumb_filename = self.get_unique_name(os.path.join(thumb_dir, leaf_name))
+      original_size_filename = self.get_unique_name(os.path.join(original_size_dir, leaf_name))
+      thumb_url = parent_url + 'thumbs/' + os.path.split(thumb_filename)[1]
+      original_size_url = parent_url + 'original/' + os.path.split(original_size_filename)[1]
 
       f = open(original_size_filename, 'w+')
       f.write(data)
       f.close()
 
       original_img = Image.open(original_size_filename)
-      info = original_img._getexif()
+      try:
+        info = original_img._getexif()
+      except:
+        info = None
       exif = {}
       if info:
         for tag, value in info.items():
@@ -241,3 +239,13 @@ class UploadHandler(BaseHandler):
       self.display['thumb'] = ''
 
     return original_size_url, url
+
+  def get_unique_name(self, full_path):
+    counter = 1
+    original_path = full_path
+    while os.path.exists(full_path):
+      split_path = os.path.splitext(original_path)
+      full_path = split_path[0] + '_' + str(counter) + split_path[1]
+      counter += 1
+
+    return full_path
