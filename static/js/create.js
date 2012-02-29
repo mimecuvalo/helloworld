@@ -329,7 +329,12 @@ hw.deleteContent = function(event) {
   hw.changeBeforeUnloadState(null, true);
 
   var callback = function(xhr) {
-    window.location.href = hw.baseUri() + 'dashboard';
+    var next = hw.getFirstElementByName('hw-next');
+    if (next && next.href) {
+      window.location.href = next.href;
+    } else {
+      window.location.href = hw.baseUri() + 'dashboard';
+    }
   };
 
   var badTrip = function(xhr) {
@@ -343,6 +348,41 @@ hw.deleteContent = function(event) {
       headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
       onSuccess: callback,
       onError: badTrip });
+};
+
+hw.deleteContentViaCollection = function(event, el) {
+  hw.preventDefault(event);
+  var li = el.parentNode;
+
+  li.style.width = li.getBoundingClientRect().width + 'px';
+  var func = function() {
+    hw.addClass(li, 'hw-deleted');
+
+    if (!window.confirm(hw.getMsg('confirm-delete'))) {
+      hw.removeClass(li, 'hw-deleted');
+      li.style.width = '';
+      return;
+    }
+
+    var callback = function(xhr) {
+      li.parentNode.removeChild(li);
+    };
+
+    var badTrip = function(xhr) {
+      alert(hw.getFirstElementByName('hw-response').getAttribute('data-bad'));
+      hw.removeClass(li, 'hw-deleted');
+      li.style.width = '';
+    };
+
+    var createForm = hw.getFirstElementByName('hw-create');
+
+    new hw.ajax(el.getAttribute('data-contenturl'),
+      { method: 'delete',
+        headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
+        onSuccess: callback,
+        onError: badTrip });
+  };
+  setTimeout(func, 100);
 };
 
 hw.inForcedEditPage = false;

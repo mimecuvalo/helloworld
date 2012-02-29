@@ -539,6 +539,11 @@ a.hw-read-more {
   vertical-align: top;
   padding: 3px 3px 10px 3px;
   margin-bottom: 10px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -webkit-transition: all 0.3s ease-out;
 }
 .hw-album > li > a {
   display: block;
@@ -563,6 +568,20 @@ a.hw-read-more {
 }
 .hw-album .hw-content-title {
   min-height: 1.1em;
+}
+.hw-album > li.hw-deleted {
+  width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.hw-album > li > span[name=hw-content-delete] {
+  display: none;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+.hw-editing .hw-album > li:hover > span[name=hw-content-delete] {
+  display: block;
 }
 
 #hw-loading {
