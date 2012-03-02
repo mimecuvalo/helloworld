@@ -245,7 +245,7 @@
 <div name="hw-user-autocomplete"></div>
 {% end %}
 <div class="clear"></div>
-<div name="hw-view" {% if not individual_content %}class="hw-closed"{% end %}>
+<div name="hw-view" class="hw-view {% if not individual_content %}hw-closed{% end %}">
   <div class="{% if not content and individual_content %}hw-new{% end %} {% if section_template %}hw-template-{{ section_template }}{% end %}" name="hw-wysiwyg" tabindex="2"
     {% if not content %}contenteditable{% end %}
     onmouseup="hw.saveSelection()" onkeyup="hw.saveSelection()" onfocus="hw.restoreSelection()">{% if content and individual_content %}{% raw content.view %}{% end %}</div>
