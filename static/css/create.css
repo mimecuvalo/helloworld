@@ -258,7 +258,7 @@ div[name=hw-wysiwyg-controls] {
   padding-left: 150px;
 }
 
-.hw-separate div[name=hw-view],
+.hw-separate div.hw-view,
 .hw-separate div[name=hw-html-wrapper],
 .hw-separate iframe[name=hw-media-wrapper],
 .hw-separate div[name=hw-wysiwyg-controls],

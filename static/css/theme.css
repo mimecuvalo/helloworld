@@ -211,16 +211,16 @@ a.hw-button[href]:hover {
   padding-bottom: 10px;
 }
 
-#hw-content nav[name=hw-neighbors] {
+#hw-content nav.hw-neighbors {
   text-align: center;
   padding: 4px 0;
   float: right;
   width: 335px;
 }
-.hw-editing #hw-content nav[name=hw-neighbors] {
+.hw-editing #hw-content nav.hw-neighbors {
   display: none;
 }
-#hw-content nav[name=hw-neighbors].hw-reverse-sort .hw-button {
+#hw-content nav.hw-neighbors.hw-reverse-sort .hw-button {
   float: right;
 }
 
@@ -271,7 +271,7 @@ a.hw-button[href]:hover {
 #hw-content.hw-presentation > section.hw-shown > header a {
   color: white;
 }
-#hw-content.hw-presentation > section.hw-shown > div[name="hw-view"] {
+#hw-content.hw-presentation > section.hw-shown > div.hw-view {
   position: fixed;
   top: 45px;
   left: 0;
@@ -338,7 +338,7 @@ a.hw-button[href]:hover {
   color: white;
 }
 
-div[name=hw-view] {
+div.hw-view {
   position: relative;
   clear: both;
 }
@@ -574,13 +574,13 @@ a.hw-read-more {
   padding: 0 !important;
   margin: 0 !important;
 }
-.hw-album > li > span[name=hw-content-delete] {
+.hw-album > li > span.hw-content-delete {
   display: none;
   position: absolute;
   top: 5px;
   right: 5px;
 }
-.hw-editing .hw-album > li:hover > span[name=hw-content-delete] {
+.hw-editing .hw-album > li:hover > span.hw-content-delete {
   display: block;
 }
 
@@ -667,17 +667,17 @@ span[data-tooltip]:hover:after {
   box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
 }
 
-ul[name=hw-comments] {
+ul.hw-comments {
   clear: both;
   margin-top: 6px;
 }
 
-ul[name=hw-comments] li {
+ul.hw-comments li {
   list-style-type: none;
   margin-bottom: 5px;
 }
 
-ul[name=hw-comments] img {
+ul.hw-comments img {
   float: left;
   margin-right: 5px;
   width: 42px;
@@ -702,7 +702,7 @@ textarea[name=hw-comment-input] {
 
 @media print {
   #hw-user,
-  nav[name=hw-neighbors],
+  nav.hw-neighbors,
   #hw-sitemap {
     display: none;
   }
