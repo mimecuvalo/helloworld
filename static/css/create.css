@@ -134,7 +134,7 @@ div[name=hw-wysiwyg].hw-template-links {
   min-height: 40px;
   border: 1px inset black;
   padding: 0.5em;
-  font-size: 1.5384em;
+  font-size: 20px;
   overflow-x: scroll;
 }
 
@@ -164,11 +164,11 @@ form[name=hw-create].hw-template-events div[name=hw-events] {
 }
 
 form[name=hw-create] label {
-  font-size: 1.230em;
+  font-size: 16px;
   color: black;
 }
 form[name=hw-create] .hw-explanation {
-  font-size: 0.7692em;
+  font-size: 10px;
   color: #666;
 }
 
@@ -195,7 +195,7 @@ ul[name=hw-html-tabs] {
 }
 ul[name=hw-html-tabs] li {
   list-style: none;
-  padding: 0 0.5384em;
+  padding: 0 7px;
   font-size: 13px;
   border-left: 1px solid black;
   border-right: 1px solid black;
@@ -423,7 +423,7 @@ span[name=hw-media-cancel] {
   cursor: hand;
   cursor: pointer;
   float: right;
-  font-size: 1.230em;
+  font-size: 16px;
 }
 
 input[name=hw-media-remote],
@@ -546,7 +546,7 @@ a[name=hw-anchor-remove] {
 
 a[name=hw-anchor-remove] {
   vertical-align: middle;
-  font-size: 0.7692em;
+  font-size: 10px;
 }
 
 div[name=hw-anchor-editor] header,
@@ -566,7 +566,7 @@ div[name=hw-anchor-editor] label,
 div[name=hw-image-options] label {
   cursor: hand;
   cursor: pointer;
-  font-size: 0.7692em;
+  font-size: 10px;
   vertical-align: middle;
   padding-top: 3px;
 }

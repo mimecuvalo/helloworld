@@ -21,8 +21,8 @@ img {
 
 blockquote {
   border-left: 1px solid #cd5c5c;
-  margin-left: 1em;
-  padding-left: 0.5384em;
+  margin-left: 13px;
+  padding-left: 7px;
 }
 
 strong {
@@ -323,7 +323,7 @@ a.hw-button[href]:hover {
   cursor: hand;
   cursor: pointer;
   color: #03c;
-  font-size: 2.6923em;
+  font-size: 36px;
   -webkit-user-select: none;
   -moz-user-select: -moz-none;
   user-select: none;  
@@ -332,7 +332,7 @@ a.hw-button[href]:hover {
 .hw-slideshow-control,
 .hw-slideshow-label,
 .hw-media-slideshow-label {
-  font-size: 1.923em;
+  font-size: 25px;
 }
 #hw-content.hw-presentation .hw-slideshow-control {
   color: white;
@@ -372,7 +372,7 @@ form#hw-login-form {
 }
 
 #hw-sitemap > ul > li > ul {
-  padding-left: 0.5384em;
+  padding-left: 7px;
   zoom: 1; /* workaround ie7 */
 }
 
@@ -399,7 +399,7 @@ form#hw-login-form {
 }
 
 #hw-sidebar-tipjar {
-  font-size: 0.7692em;
+  font-size: 10px;
   text-align: center;
 }
 
@@ -414,7 +414,7 @@ form#hw-login-form {
 }
 
 #hw-sidebar-newsletter input {
-  font-size: 0.7692em;
+  font-size: 10px;
 }
 #hw-sidebar-newsletter input {
   width: auto;
@@ -429,18 +429,18 @@ form#hw-login-form {
 
 #hw-sidebar-license {
   text-align: center;
-  font-size: 0.9230em;
+  font-size: 12px;
 }
 
 #hw-sidebar-helloworld {
-  font-size: 0.7692em;
+  font-size: 10px;
   text-align: center;
 }
 
 #hw-content footer {
   background-color: white;
   color: black;
-  font-size: 0.8461em;
+  font-size: 11px;
   margin: 6px 6px 24px 0;
   border-top: 1px solid #0bf;
   padding: 3px 6px 6px 3px;
@@ -448,13 +448,13 @@ form#hw-login-form {
 
 #hw-content header h1,
 form.hw-media-library-standalone header h1 {
-  font-size: 1.230em;
+  font-size: 16px;
   margin: 3px 3px 3px 0;
 }
 
 .hw-creator {
   color: #999;
-  font-size: 0.8461em;
+  font-size: 11px;
 }
 
 .hw-warning {
@@ -474,7 +474,7 @@ div[name=hw-wysiwyg] ol {
 
 #hw-content li,
 div[name=hw-wysiwyg] li {
-  padding-left: 0.5384em;
+  padding-left: 7px;
 }
 
 #hw-content img.hw-read-more,
@@ -488,7 +488,7 @@ div[name=hw-wysiwyg] img.hw-read-more {
 
 a.hw-read-more {
   border-top: 1px dotted gray;
-  font-size: 1.230em;
+  font-size: 16px;
   width: 100%;
   display: block;
   text-align: right;
@@ -516,7 +516,7 @@ a.hw-read-more {
 }
 
 #hw-content #hw-results .hw-results-text {
-  font-size: 0.8461em;
+  font-size: 11px;
 }
 
 .hw-pager {
@@ -686,7 +686,7 @@ ul[name=hw-comments] img {
 
 .hw-comment-header {
   float: left;
-  font-size: 1.23em;
+  font-size: 16px;
   margin: 1em 0;
 }
 form[name=hw-comment-form] {

@@ -72,7 +72,7 @@
 
 .hw-remote-actions {
   float: right;
-  font-size: 0.7692em;
+  font-size: 10px;
 }
 .hw-remote-actions a {
   display: inline-block;
@@ -95,7 +95,7 @@
 
 h1 {
   text-transform: uppercase;
-  font-size: 1.2em;
+  font-size: 16px;
 }
 
 #hw-absorb > h1 {
@@ -205,7 +205,7 @@ section {
 #customize dt label {
   display: block;
   float: left;
-  font-size: 1.23em;
+  font-size: 16px;
 }
 
 #customize dd {
@@ -221,7 +221,7 @@ section {
 }
 
 #hw-delete-account {
-  font-size: 0.7692em;
+  font-size: 10px;
   float: right;
   margin-top: 1em;
 }
