@@ -27,7 +27,7 @@
     {% if not username %}
     <script src="https://browserid.org/include.js" type="text/javascript"></script>
     {% end %}
-    <script src="{{ static_url('js/all.js', ['js/base.js', 'js/thumbnails.js']) }}"></script>
+    <script src="{{ static_url('js/all.js', ['js/base.js', 'js/site.js', 'js/slideshow.js', 'js/cart.js', 'js/thumbnails.js']) }}"></script>
     {% block extra_js %}{% end %}
     <title>{% block title %}{{ _("Hello, world.") }}{% end %}</title>
   </head>
