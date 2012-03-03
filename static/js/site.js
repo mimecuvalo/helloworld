@@ -45,6 +45,9 @@ hw.keyNavigation = function(event) {
   var next = hw.getFirstElementByName('hw-next');
   var topUrl = hw.getFirstElementByName('hw-top');
   var neighbors = hw.getFirstElementByName('hw-neighbors');
+  if (!neighbors) {
+    return;
+  }
   var reverse = hw.hasClass(neighbors, 'hw-reverse-sort');
 
   if ((key == Event.KEY_RIGHT && !reverse) || (key == Event.KEY_LEFT && reverse)) {
