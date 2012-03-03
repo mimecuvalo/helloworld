@@ -19,6 +19,7 @@ hw.changeBeforeUnloadState = function(event, allowPageChange) {
   }
 
   window.onbeforeunload = allowPageChange ? null : function() { return "" };
+  document.title = allowPageChange ? document.title.replace(/ \+$/, '') : document.title.replace(/([^+])$/, '$1 +');
 };
 
 hw.resetSaveState = function() {
