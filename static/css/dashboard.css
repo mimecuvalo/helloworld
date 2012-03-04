@@ -104,11 +104,11 @@ h1 {
 }
 
 #hw-absorb .hw-remote img {
-  float: right;
+  float: left;
   max-width: 720px;
 }
-#hw-absorb .hw-remote img[align=left] {
-  float: left;
+#hw-absorb .hw-remote img[align=right] {
+  float: right;
 }
 
 #hw-absorb-options {

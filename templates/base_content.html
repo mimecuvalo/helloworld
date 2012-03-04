@@ -36,7 +36,7 @@
 
 {% block extra_css %}
   {% if is_owner_viewing %}
-    <link id="hw-stylesheet-create" rel="stylesheet" type="text/css" href="{{ static_url('css/all_create.css', ['js/CodeMirror2/lib/codemirror.css', 'css/create.css']) }}">
+    <link id="hw-stylesheet-create" rel="stylesheet" type="text/css" href="{{ static_url('css/all_create.css', 'css/all_create.inc') }}">
   {% end %}
 
   {% if content_owner.theme and content_owner.theme != 'default.css' %}
@@ -59,7 +59,7 @@
 
 {% block extra_js %}
   {% if is_owner_viewing %}
-    <script src="{{ static_url('js/all_create.js', ['js/create.js', 'js/wysiwyg.js', 'js/media.js', 'js/image_editor.js', 'js/dragdrop.js', 'js/moderate.js', 'js/CodeMirror2/lib/codemirror.js', 'js/CodeMirror2/mode/xml/xml.js', 'js/CodeMirror2/mode/javascript/javascript.js', 'js/CodeMirror2/mode/css/css.js', 'js/CodeMirror2/mode/htmlmixed/htmlmixed.js', 'js/pixastic/pixastic.core.js', 'js/pixastic/actions/brightness.js', 'js/pixastic/actions/crop.js', 'js/pixastic/actions/resize.js', 'js/pixastic/actions/rotate.js']) }}"></script>
+    <script src="{{ static_url('js/all_create.js', 'js/all_create.inc') }}"></script>
   {% end %}
 
   {% raw section_code %}

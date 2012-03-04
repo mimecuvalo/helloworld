@@ -272,7 +272,7 @@ class BaseHandler(tornado.web.RequestHandler):
       logging.error(output)
       self.fill_template("error.html")
 
-  def static_url(self, path, dependencies=None, include_host=False):
+  def static_url(self, path, include_filename=None, include_host=False):
     """Returns a static URL for the given relative static file path.
 
     This method requires you set the 'static_path' setting in your
@@ -298,14 +298,18 @@ class BaseHandler(tornado.web.RequestHandler):
     is_js = os.path.splitext(path)[1] == '.js'
     if abs_path not in hashes:
       try:
-        if dependencies:
+        if include_filename:
+          include_file = open(os.path.join(self.application.settings["static_path"],
+                                           include_filename))
           combined_file = ''
-          for dependent in dependencies:
+          lines = include_file.readlines()
+          for dependency in lines:
             file_abs_path = os.path.join(self.application.settings["static_path"],
-                                         dependent)
+                                         dependency.replace('\n', ''))
             f = open(file_abs_path)
             combined_file = combined_file + '\n' + f.read()
             f.close()
+          include_file.close()
           if is_js:
             packer = jspacker.JavaScriptPacker()
             combined_file = packer.pack(combined_file, encoding=62, fastDecode=True)
