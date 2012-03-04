@@ -13,6 +13,7 @@ import tornado.escape
 import tornado.web
 from base import BaseHandler
 from logic import content as content_logic
+from logic import content_remote
 from logic import media
 from logic import url_factory
 
@@ -72,29 +73,12 @@ class UploadHandler(BaseHandler):
       url = filename
 
       if not media_type and url.find('http://') == 0:
-        try:
-          # XXX youtube doesn't like the scraping, too many captchas
-          parsed_url = urlparse.urlparse(url)
-          is_youtube = parsed_url.hostname.find('youtube.com') != -1
+        remote_title, remote_thumb, remote_html = content_remote.get_remote_title_and_thumb(url)
+        if remote_html:
+          return remote_html
 
-          if not is_youtube:
-            response = urllib2.urlopen(url)
-            doc = BeautifulSoup(response.read())
-            oembed_link = doc.find('link', type='text/xml+oembed')
-          else:
-            video_id = urlparse.parse_qs(parsed_url.query)['v'][0]
-            oembed_link = { 'href': 'http://www.youtube.com/oembed?url=http%3A//www.youtube.com/watch?v%3D' + video_id + '&amp;format=xml' }
-
-          if oembed_link:
-            oembed = urllib2.urlopen(oembed_link['href'])
-            oembed_doc = BeautifulSoup(oembed.read())
-            return tornado.escape.xhtml_unescape(oembed_doc.find('html').string)
-
-          image_meta = doc.find('meta', property='og:image')
-          if image_meta:
-            return '<a href="' + url + '"><img src="' + image_meta['content'] + '"></a>'
-        except:
-          pass
+        if remote_thumb:
+          return '<a href="' + url + '"><img src="' + remote_thumb + '"></a>'
 
         return '<a href="' + url + '">' + url + '</a>'
       else:

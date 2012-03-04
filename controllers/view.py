@@ -10,6 +10,7 @@ import tornado.web
 from base import BaseHandler
 from logic import cache
 from logic import content as content_logic
+from logic import content_remote
 from logic import loader
 from logic import socialize
 from logic import url_factory
@@ -417,7 +418,7 @@ class ViewHandler(BaseHandler):
     title = self.get_argument('title', "")
     thumb = self.get_argument('thumb', "")
     if section_template == 'links':
-      remote_title, remote_thumb = url_factory.get_remote_title_and_thumb(content.view)
+      remote_title, remote_thumb, remote_html = content_remote.get_remote_title_and_thumb(content.view)
       if not title:
         title = remote_title
         self.set_header('X-Helloworld-Title', title)

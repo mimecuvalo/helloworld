@@ -1,5 +1,8 @@
 import datetime
+import random
 import re
+import urllib2
+import urlparse
 from time import mktime
 
 from BeautifulSoup import BeautifulSoup
@@ -41,3 +44,44 @@ def parse_feed(models, user, feed=None, parsed_feed=None):
 
 def sanitize(value):
   return feedparser._sanitizeHTML(value, 'UTF-8', 'text/html')
+
+def get_remote_title_and_thumb(url):
+  try:
+    # XXX youtube doesn't like the scraping, too many captchas
+    parsed_url = urlparse.urlparse(url)
+    is_youtube = parsed_url.hostname.find('youtube.com') != -1
+
+    title = ''
+    image = ''
+    html  = ''
+
+    if not is_youtube:
+      response = urllib2.urlopen(url)
+      doc = BeautifulSoup(response.read())
+
+      title_meta = doc.find('meta', property='og:title')
+      image_meta = doc.find('meta', property='og:image')
+      if title_meta and image_meta:
+        title = title_meta['content']
+        image = image_meta['content']
+
+      oembed_link = doc.find('link', type='text/xml+oembed')
+    else:
+      video_id = urlparse.parse_qs(parsed_url.query)['v'][0]
+      oembed_link = { 'href': 'http://www.youtube.com/oembed?url=http%3A//www.youtube.com/watch?v%3D' + video_id + '&amp;format=xml' }
+
+    if oembed_link:
+      oembed = urllib2.urlopen(oembed_link['href'])
+      oembed_doc = BeautifulSoup(oembed.read())
+      title = oembed_doc.find('title').string
+      image = oembed_doc.find('thumbnail_url').string
+      html = tornado.escape.xhtml_unescape(oembed_doc.find('html').string)
+
+      if is_youtube:  # they serve up hqdefault for some reason...too big
+        image = 'http://i' + str(random.randint(1, 4)) + '.ytimg.com/vi/' + video_id + '/default.jpg'
+
+    return (title, image, html)
+  except:
+    pass
+
+  return ('', '', '')

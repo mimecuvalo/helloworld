@@ -99,7 +99,7 @@ h1 {
 }
 
 #hw-absorb > h1 {
-  text-align: right;
+  text-align: left;
   border-bottom: 1px solid #ccc;
 }
 
@@ -112,7 +112,7 @@ h1 {
 }
 
 #hw-absorb-options {
-  float: left;
+  float: right;
 }
 #hw-absorb-options .hw-selected {
   font-weight: bold;
