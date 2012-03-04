@@ -80,6 +80,7 @@ a.hw-button[href]:hover {
 }
 .hw-button-blue:hover {
   border: 1px solid #09f;
+  color: #06f;
   -moz-box-shadow: 1px 1px #09f, 2px 2px #09f, 3px 3px #09f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   -webkit-box-shadow: 1px 1px #09f, 2px 2px #09f, 3px 3px #09f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   box-shadow: 1px 1px #09f, 2px 2px #09f, 3px 3px #09f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
@@ -95,6 +96,7 @@ a.hw-button[href]:hover {
 }
 .hw-button-orange:hover {
   border: 1px solid #f60;
+  color: #f30;
   -moz-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   -webkit-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
@@ -110,6 +112,7 @@ a.hw-button[href]:hover {
 }
 .hw-button-green:hover {
   border: 1px solid #090;
+  color: #060;
   -moz-box-shadow: 1px 1px #090, 2px 2px #090, 3px 3px #090, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   -webkit-box-shadow: 1px 1px #090, 2px 2px #090, 3px 3px #090, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   box-shadow: 1px 1px #090, 2px 2px #090, 3px 3px #090, 4px 4px #333, 4px 3px #333, 3px 4px #333;
@@ -125,6 +128,7 @@ a.hw-button[href]:hover {
 }
 .hw-button-red:hover {
   border: 1px solid #f30;
+  color: #f30;
   -moz-box-shadow: 1px 1px #f30, 2px 2px #f30, 3px 3px #f30, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   -webkit-box-shadow: 1px 1px #f30, 2px 2px #f30, 3px 3px #f30, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   box-shadow: 1px 1px #f30, 2px 2px #f30, 3px 3px #f30, 4px 4px #333, 4px 3px #333, 3px 4px #333;
@@ -140,6 +144,7 @@ a.hw-button[href]:hover {
 }
 .hw-button-purple:hover {
   border: 1px solid #90f;
+  color: #90f;
   -moz-box-shadow: 1px 1px #90f, 2px 2px #90f, 3px 3px #90f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   -webkit-box-shadow: 1px 1px #90f, 2px 2px #90f, 3px 3px #90f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   box-shadow: 1px 1px #90f, 2px 2px #90f, 3px 3px #90f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
