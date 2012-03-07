@@ -47,6 +47,9 @@ table {
 	border-spacing: 0;
 }
 
+i {
+  font-style: italic;
+}
 
 /*
  * HTML5 Boilerplate

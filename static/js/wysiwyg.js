@@ -45,6 +45,9 @@ hw.edit = function(event, opt_dontCreateMediaIframe) {
       if (!opt_dontCreateMediaIframe) {
         hw.createMediaIframe();
       }
+      if (!wysiwyg.innerHTML.match(/<br>$/g)) {
+        wysiwyg.innerHTML += "<br>";
+      }
       wysiwyg.setAttribute('contenteditable', '');
     } else {
       wysiwyg.removeAttribute('contenteditable');
@@ -155,15 +158,21 @@ hw.templateChange = function(oldTemplate, newTemplate) {
   hw.getFirstElementByName('hw-template').setAttribute('data-previous', newTemplate)
 };
 
+hw.wysiwygKeymap = {
+  9:  'insertUnorderedList',  // tab
+  42: 'bold',         // *
+  47: 'italic',       // /
+  95: 'underline'     // _
+};
+
+hw.wysiwygLastKeys = "";
+
 hw.shortcuts = function(event) {
-  var key = event.which ? event.which : event.keyCode;
+  var key = event.which || event.keyCode;
 
   //hw.hideUserAutocomplete();
 
   switch (key) {
-    //case 64:    // @-symbol, autocomplete remote_user
-    //  hw.showUserAutocomplete();
-    //  break;
     case 83:   // ctrl-s, save
       if (hw.testAccelKey(event)) {
         hw.preventDefault(event);
@@ -173,10 +182,147 @@ hw.shortcuts = function(event) {
     default:
       break;
   }
+};
+
+hw.wysiwygKeys = function(event) {
+  var key = event.charCode || event.keyCode || event.which;
+
+  var wysiwyg = hw.getFirstElementByName('hw-wysiwyg');
+  if (document.activeElement == wysiwyg) {
+    console.log(key);
+    switch (key) {
+      case 9:   // tab
+      case 42:  // *
+      case 47:  // /
+      case 95:  // _
+        var action = hw.wysiwygKeymap[key];
+        document.execCommand(action, false, null);
+
+        if (key == 9) {
+          hw.preventDefault(event);
+        } else if (hw.wysiwygLastKeys[hw.wysiwygLastKeys.length - 1] == String.fromCharCode(key)) {
+          hw.wysiwygLastKeys = "";
+          break;
+        } else {
+          hw.preventDefault(event);
+          hw.wysiwygLastKeys += String.fromCharCode(key);
+        }
+        break;
+      //case 64:    // @-symbol, autocomplete remote_user
+      //  hw.showUserAutocomplete();
+      //  break;
+      case 45: // -
+        if (hw.wysiwygLastKeys.slice(-2) == "--") {
+          hw.preventDefault(event);
+          var sel = window.getSelection();
+          for (var x = 0; x < 2; ++x) {
+            sel.modify("extend", "backward", "character")
+          }
+          document.execCommand("insertHTML", false, '<hr>');
+          hw.wysiwygLastKeys = "";
+        } else if (hw.wysiwygLastKeys.slice(-5) == "-more") {
+          hw.preventDefault(event);
+          var sel = window.getSelection();
+          for (var x = 0; x < 5; ++x) {
+            sel.modify("extend", "backward", "character")
+          }
+          document.execCommand("insertHTML", false, '<img class="hw-read-more" src="/helloworld/static/img/pixel.gif?v=df3e5">');
+          hw.wysiwygLastKeys = "";
+        } else {
+          hw.wysiwygLastKeys += String.fromCharCode(key);
+        }
+        break;
+      default:
+        hw.wysiwygLastKeys += String.fromCharCode(key);
+        hw.wysiwygLastKeys = hw.wysiwygLastKeys.slice(-5);
+        break;
+    }
+  }
+
+  /*var savedSel = hw.saveSelectionBeforeInnerHTML(wysiwyg);
+  wysiwyg.innerHTML = el.innerHTML.replace(/(<([^>]+)>)/ig,"");
+  wysiwyg.innerHTML = el.innerHTML.replace(/(http:\/\/[\S]+)/ig,"<a href='$1'>$1</a>");
+  if (!wysiwyg.innerHTML.match(/<br>$/g)) {
+    wysiwyg.innerHTML += "<br>";
+  }
+  hw.restoreSelectionAfterInnerHTML(el, savedSel);*/
 
   setTimeout(hw.htmlPreview, 0);
 };
 
+// Tim Down is my hero.  <3
+// http://stackoverflow.com/questions/5595956/replace-innerhtml-in-contenteditable-div
+hw.saveSelectionBeforeInnerHTML = function(containerEl) {
+  var charIndex = 0, start = 0, end = 0, foundStart = false, stop = {};
+  var sel = rangy.getSelection(), range;
+
+  function traverseTextNodes(node, range) {
+    if (node.nodeType == 3) {
+      if (!foundStart && node == range.startContainer) {
+        start = charIndex + range.startOffset;
+        foundStart = true;
+      }
+      if (foundStart && node == range.endContainer) {
+        end = charIndex + range.endOffset;
+        throw stop;
+      }
+      charIndex += node.length;
+    } else {
+      for (var i = 0, len = node.childNodes.length; i < len; ++i) {
+        traverseTextNodes(node.childNodes[i], range);
+      }
+    }
+  }
+
+  if (sel.rangeCount) {
+    try {
+      traverseTextNodes(containerEl, sel.getRangeAt(0));
+    } catch (ex) {
+      if (ex != stop) {
+        throw ex;
+      }
+    }
+  }
+
+  return {
+    start: start,
+    end: end
+  };
+}
+
+hw.restoreSelectionAfterInnerHTML = function(containerEl, savedSel) {
+  var charIndex = 0, range = rangy.createRange(), foundStart = false, stop = {};
+  range.collapseToPoint(containerEl, 0);
+
+  function traverseTextNodes(node) {
+    if (node.nodeType == 3) {
+      var nextCharIndex = charIndex + node.length;
+      if (!foundStart && savedSel.start >= charIndex && savedSel.start <= nextCharIndex) {
+        range.setStart(node, savedSel.start - charIndex);
+        foundStart = true;
+      }
+      if (foundStart && savedSel.end >= charIndex && savedSel.end <= nextCharIndex) {
+        range.setEnd(node, savedSel.end - charIndex);
+        throw stop;
+      }
+      charIndex = nextCharIndex;
+    } else {
+      for (var i = 0, len = node.childNodes.length; i < len; ++i) {
+          traverseTextNodes(node.childNodes[i]);
+      }
+    }
+  }
+
+  try {
+    traverseTextNodes(containerEl);
+  } catch (ex) {
+    if (ex == stop) {
+      rangy.getSelection().setSingleRange(range);
+    } else {
+      throw ex;
+    }
+  }
+}
 
 hw.wysiwyg = function(event, cmd, value, el) {
   hw.preventDefault(event);

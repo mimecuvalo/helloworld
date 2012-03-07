@@ -310,9 +310,10 @@ class BaseHandler(tornado.web.RequestHandler):
             combined_file = combined_file + '\n' + f.read()
             f.close()
           include_file.close()
-          if is_js:
-            packer = jspacker.JavaScriptPacker()
-            combined_file = packer.pack(combined_file, encoding=62, fastDecode=True)
+          # XXX too many problems with jspacker...
+          #if is_js:
+          #  packer = jspacker.JavaScriptPacker()
+          #  combined_file = packer.pack(combined_file, encoding=62, fastDecode=True)
           f = open(abs_path, 'w')
           f.write(combined_file)
           f.close()

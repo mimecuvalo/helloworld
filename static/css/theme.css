@@ -19,11 +19,11 @@ img {
   border: 0;
 }
 
-blockquote {
+/*blockquote {
   border-left: 1px solid #cd5c5c;
   margin-left: 13px;
   padding-left: 7px;
-}
+}*/
 
 strong {
   font-weight: bold;

@@ -255,6 +255,7 @@
 <script>
 {% if individual_content %}
   Event.observe(hw.getFirstElementByName('hw-wysiwyg'), 'keydown', hw.shortcuts, false);
+  Event.observe(hw.getFirstElementByName('hw-wysiwyg'), 'keypress', hw.wysiwygKeys, false);
 
   Event.observe(hw.getFirstElementByName('hw-wysiwyg'), 'keyup', hw.changeBeforeUnloadState, false);
   Event.observe(hw.getFirstElementByName('hw-wysiwyg'), 'mouseup', hw.changeBeforeUnloadState, false);
