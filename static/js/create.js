@@ -19,7 +19,19 @@ hw.changeBeforeUnloadState = function(event, allowPageChange) {
   }
 
   window.onbeforeunload = allowPageChange ? null : function() { return "" };
-  document.title = allowPageChange ? document.title.replace(/ \+$/, '') : document.title.replace(/([^+])$/, '$1 +');
+
+  var createForm = hw.getFirstElementByName('hw-create');
+  var title = "";
+  if (!createForm['hw-id'].value) {
+    var newTitle = hw.$('hw-new-title');
+    title = newTitle && newTitle.textContent != hw.getMsg('untitled') ? newTitle.textContent : '(' + hw.getMsg('untitled') + ')';
+  } else {
+    title = createForm['hw-title'].value || '(' + hw.getMsg('untitled') + ')';
+  }
+  document.title = hw.contentOwnerTitle
+                + (hw.contentOwnerTitle && title ? ' - ' : '')
+                + title
+                + (allowPageChange ? '' : ' +');
 };
 
 hw.resetSaveState = function() {
@@ -42,7 +54,7 @@ hw.resetCreateForm = function() {
   createForm['hw-date-start'].value = '';
   createForm['hw-date-end'].value = '';
   createForm['hw-date-repeats'].value = '';
-  hw.getFirstElementByName('hw-wysiwyg').innerHTML = '';
+  hw.getFirstElementByName('hw-wysiwyg').innerHTML = '<h1 id="hw-new-title">' + hw.getMsg('untitled') + '</h1><br>';
   createForm['hw-name'].value = '';
   createForm['hw-thumb'].value = '';
   var section = createForm['hw-section-album'];
@@ -134,6 +146,24 @@ hw.save = function() {
 
   var sendContent = function(mediaHTML, opt_title, opt_extraCallback) {
     var separate = createForm['hw-separate'].checked;
+
+    var html = hw.getFirstElementByName('hw-wysiwyg').innerHTML;
+    if (!createForm['hw-id'].value) {
+      var newTitle = hw.$('hw-new-title');
+      createForm['hw-title'].value = newTitle && newTitle.textContent != hw.getMsg('untitled') ? newTitle.textContent : '';
+
+      if (newTitle) {
+        var div = document.createElement('DIV');
+        div.innerHTML = html;
+        var titleInDiv = div.querySelector('#hw-new-title');
+        if (titleInDiv.nextSibling.nodeName == 'BR') {
+          titleInDiv.parentNode.removeChild(titleInDiv.nextSibling);
+        }
+        titleInDiv.parentNode.removeChild(titleInDiv);
+        html = div.innerHTML;
+      }
+    }
+
     new hw.ajax(createForm['hw-url'].value,
       { method: !createForm['hw-id'].value ? 'post' : 'put',
         postBody: 'section='      + encodeURIComponent(section)
@@ -146,7 +176,7 @@ hw.save = function() {
                + '&date_repeats=' + encodeURIComponent(createForm['hw-date-repeats'].value)
                + '&style='        + encodeURIComponent(createForm['hw-style'].value)
                + '&code='         + encodeURIComponent(createForm['hw-code'].value)
-               + (hw.getFirstElementByName('hw-wysiwyg') ? '&view=' + encodeURIComponent(mediaHTML + hw.getFirstElementByName('hw-wysiwyg').innerHTML) : '')
+               + (hw.getFirstElementByName('hw-wysiwyg') ? '&view=' + encodeURIComponent(mediaHTML + html) : '')
                + '&name='         + encodeURIComponent(separate ? '' : createForm['hw-name'].value)
                + (createForm['hw-thumb'] ? '&thumb=' + encodeURIComponent(createForm['hw-thumb'].value) : '')
                + '&template='     + encodeURIComponent(createForm['hw-template'].value)
@@ -473,4 +503,13 @@ hw.renameEnd = function(event, el, album, accept) {
 
 hw.cleanName = function(name) {
   return name.replace(/ /g, "_").replace(/-/g, "_").replace(/[\W]+/g, '').replace(/_/g, "-").substring(0, 255);
+};
+
+hw.help = function(event) {
+  hw.preventDefault(event);
+
+  var help = hw.getFirstElementByName('hw-help');
+  var openHelp = hw.isHidden(help);
+  hw.setClass(hw.getFirstElementByName('hw-help-button'), 'hw-selected', openHelp);
+  hw.display(help, openHelp);
 };

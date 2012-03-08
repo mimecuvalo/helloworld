@@ -119,6 +119,9 @@ hw.options = function(open) {
   hw.setClass(hw.getFirstElementByName('hw-more-options'), 'hw-selected', openOptions);
   hw.setClass(createForm, 'hw-options', openOptions);
   hw.display(options, openOptions);
+  if (!openOptions) {
+    hw.html(null, null, true);
+  }
   return false;
 };
 
@@ -160,9 +163,9 @@ hw.templateChange = function(oldTemplate, newTemplate) {
 
 hw.wysiwygKeymap = {
   9:  'insertUnorderedList',  // tab
+  33: 'createLink',   // !
   42: 'bold',         // *
   //47: 'italic',       // /
-  91: 'createLink',   // [
   95: 'underline'     // _
 };
 
@@ -192,9 +195,9 @@ hw.wysiwygKeys = function(event) {
   if (document.activeElement == wysiwyg) {
     switch (key) {
       case 9:   // tab
+      case 33:  // !
       case 42:  // *
       //case 47:  // /
-      case 91:  // [
       case 95:  // _
         var action = hw.wysiwygKeymap[key];
 
@@ -371,7 +374,7 @@ hw.paste = function(event) {
                    + '&url='  + encodeURIComponent(pastedContent),
             onSuccess: callback,
             headers: { 'X-Xsrftoken' : createForm['_xsrf'].value } });
-        pastedContent = "";
+        pastedContent = " ";
       } else if (pastedContent.search(/&lt;(embed|object|iframe)\s/ig) == 0) { // embed code
         pastedContent = pastedContent.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"");
         pastedContent += '<br><br>';
@@ -456,6 +459,7 @@ hw.wysiwygDetectState = function() {
 
   wysiwyg.focus();
 
+  /*
   var features = ['bold', 'italic', 'strikeThrough', 'insertUnorderedList', 'insertOrderedList'];
   for (var x = 0; x < features.length; ++x) {
     var control = hw.getFirstElementByName('hw-' + features[x]);
@@ -463,9 +467,10 @@ hw.wysiwygDetectState = function() {
   }
 
   hw.getFirstElementByName('hw-fontSize').value = document.queryCommandValue('fontSize') || "2";
+  */
 
   var isAnchor = hw.getSelectionStartNode().nodeName == 'A';
-  hw.setClass(hw.getFirstElementByName('hw-createLink'), 'hw-selected', isAnchor);
+  //hw.setClass(hw.getFirstElementByName('hw-createLink'), 'hw-selected', isAnchor);
   if (isAnchor) {
     hw.showAnchorEditor();
   } else {
@@ -489,6 +494,9 @@ hw.hideElementOptions = function() {
 
 hw.showAnchorEditor = function(anchor) {
   var anchorTag = anchor || hw.getSelectionStartNode();
+  if (anchorTag.nodeName != 'A') {
+    return;
+  }
   hw.getFirstElementByName('hw-anchor-link')['anchorTag'] = anchorTag;
   var anchorPosition = anchorTag.getBoundingClientRect();
   var contentPosition = hw.$('hw-content') ? hw.$('hw-content').getBoundingClientRect() : document.body.getBoundingClientRect();

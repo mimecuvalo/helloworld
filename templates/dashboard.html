@@ -10,7 +10,6 @@
 
 {% block backend_content %}
   <div id="hw-create">
-    <h1>{{ _("create.") }}</h1>
     {% module Create(initial_media=initial_media) %}
   </div>
 
@@ -19,7 +18,7 @@
       <a id="hw-absorb-complete" href="#view-complete" onclick="hw.read(event, null, false)" class="{% if not list_mode %}hw-selected{% end %}">{{ _('complete text') }}</a> |
       <a id="hw-absorb-list" href="#view-list" onclick="hw.read(event, null, true)" class="{% if list_mode %}hw-selected{% end %}">{{ _('list') }}</a>
     </div>
-    <h1>{{ _("absorb.") }}</h1>
+    <div class="clear"></div>
     <article id="hw-feed" class="{% if list_mode %}hw-list-mode{% end %}">
       <a id="hw-feed-page-1"></a>
       {% module ContentView(combined_feed, list_mode=list_mode) %}
@@ -31,6 +30,10 @@
     hw.setMsg('loading', "{% raw js_escape(_('loading...')) %}");
     Event.observe(window, 'scroll', function() { hw.loadMoreObject.onScroll() }, false);
   </script>
+{% end %}
+
+{% block more_tools %}
+  <li><a href="#media" onclick="hw.mediaLibrary(event, this)">{{ _('media library') }}</a></li>
 {% end %}
 
 {% block more_sidebar %}

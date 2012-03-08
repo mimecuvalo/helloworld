@@ -53,10 +53,10 @@
             {% if content and content.name != 'home' and content.name != 'main' %}
             <a id="hw-delete" class="hw-button hw-button-red" href="#delete" onclick="hw.deleteContent(event)">{{ _('delete') }}</a>
             {% end %}
-          {% else %}
-            <a id="hw-customize" href="{{ nav_url(section='customize') }}" class="hw-button hw-button-green{% if handler.request.uri == nav_url(section='customize') %} hw-selected {% end %}">{{ _('customize') }}</a>
           {% end %}
-          <a id="hw-dashboard" href="{{ nav_url(section='dashboard') }}" class="hw-button hw-button-blue{% if handler.request.uri == nav_url(section='dashboard') %} hw-selected{% end %}">{{ _('dashboard') }}</a>
+          {% if handler.request.uri != nav_url(section='dashboard') %}
+            <a id="hw-dashboard" href="{{ nav_url(section='dashboard') }}" class="hw-button hw-button-blue">{{ _('dashboard') }}</a>
+          {% end %}
         {% end %}
       {% end %}
     </nav>
