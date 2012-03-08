@@ -117,7 +117,7 @@ class BaseHandler(tornado.web.RequestHandler):
       self.display["is_superuser"] = False
 
   def get_user_by_hostname(self):
-    return self.models.users.get(hostname=self.request.host)
+    return self.models.users.get(hostname=self.request.host)[0]
 
   def get_author_user(self):
     if not self.author_user:
