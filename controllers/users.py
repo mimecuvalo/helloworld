@@ -1,6 +1,8 @@
 import os
 import shutil
 
+import tornado.escape
+
 from base import BaseHandler
 from logic import users
 from logic import url_factory
@@ -8,6 +10,14 @@ from logic import url_factory
 class UsersHandler(BaseHandler):
   def get(self):
     if not self.authenticate(superuser=True):
+      return
+
+    if self.get_argument('login_as', None):
+      content_url = url_factory.load_basic_parameters(self, prefix="/users")
+      user = self.models.users.get(username=content_url["profile"])[0]
+      response = { 'email': user.oauth }
+      self.set_secure_cookie("user", tornado.escape.json_encode(response), path=self.base_path, HttpOnly=True)
+      self.redirect(self.nav_url(username=content_url["profile"]))
       return
 
     self.display["user"] = self.get_author_user()
