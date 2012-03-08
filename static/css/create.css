@@ -48,9 +48,8 @@ div[name=hw-help] {
 }
 div[name=hw-options].hw-open,
 div[name=hw-help].hw-open {
-  margin: 5px 3px 5px 0;
+  margin: 39px 3px 5px 0;
   padding: 10px;
-  clear: both;
 }
 
 div[name=hw-options] dl {
