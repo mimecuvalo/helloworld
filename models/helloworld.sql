@@ -136,6 +136,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `superuser` tinyint(1) NOT NULL default '0',
   `title` varchar(255) NOT NULL,
   `description` varchar(255) NOT NULL,
+  `hostname` varchar(255) NOT NULL,
   `adult_content` tinyint(1) NOT NULL default '0',
   `license` text NOT NULL,
   `tipjar` mediumtext NOT NULL,

@@ -97,6 +97,7 @@ class users(Model):
   class Meta:
     defaults = {'title': '',
                 'description': '',
+                'hostname': '',
                 'name': '',
                 'google_analytics': '',
                 'license': '',

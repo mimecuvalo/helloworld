@@ -18,8 +18,14 @@ def load_basic_parameters(handler, prefix="", url=""):
     uri = uri[len(prefix):]
 
   implied_profile = None
+  hostname_user = None
+  if handler.models:
+    hostname_user = handler.get_user_by_hostname()
+
   if handler.constants['single_user_site'] and handler.models:
     implied_profile = handler.get_author_username()
+  elif hostname_user:
+    implied_profile = hostname_user.username
   elif handler.current_user is not None:
     implied_profile = handler.current_user.get('username', None)
 
@@ -49,7 +55,7 @@ def load_basic_parameters(handler, prefix="", url=""):
 
   if uri_array[0] in handler.constants['reserved_names']:
     uri_array.insert(0, implied_profile)
-  elif handler.constants['single_user_site'] and uri_array[0] != implied_profile:
+  elif (handler.constants['single_user_site'] or hostname_user) and uri_array[0] != implied_profile:
     uri_array.insert(0, implied_profile)
 
   uri_dict['profile'] = uri_array[0]

@@ -54,6 +54,7 @@ hw.saveUser = function(event, el) {
     { method: id == "" ? 'post' : 'put',
       postBody:  'oauth='        + encodeURIComponent(inputs['oauth'].value)
               + '&name='         + encodeURIComponent(inputs['name'].value)
+              + '&hostname='     + encodeURIComponent(inputs['hostname'].value)
               + '&author='       + encodeURIComponent(inputs['author'].checked ? 1 : 0)
               + '&superuser='    + encodeURIComponent(inputs['superuser'].checked ? 1 : 0),
       headers: { 'X-Xsrftoken' : el.form['_xsrf'].value },

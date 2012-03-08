@@ -70,6 +70,7 @@ class UsersHandler(BaseHandler):
     user.name      = self.get_argument('name', '')
     user.author    = int(self.get_argument('author'))
     user.superuser = int(self.get_argument('superuser'))
+    user.hostname  = self.get_argument('hostname')
 
     if user.superuser:
       user.author = True
