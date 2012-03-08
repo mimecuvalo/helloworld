@@ -161,7 +161,8 @@ hw.templateChange = function(oldTemplate, newTemplate) {
 hw.wysiwygKeymap = {
   9:  'insertUnorderedList',  // tab
   42: 'bold',         // *
-  47: 'italic',       // /
+  //47: 'italic',       // /
+  91: 'createLink',   // [
   95: 'underline'     // _
 };
 
@@ -189,25 +190,85 @@ hw.wysiwygKeys = function(event) {
 
   var wysiwyg = hw.getFirstElementByName('hw-wysiwyg');
   if (document.activeElement == wysiwyg) {
-    console.log(key);
     switch (key) {
       case 9:   // tab
       case 42:  // *
-      case 47:  // /
+      //case 47:  // /
+      case 91:  // [
       case 95:  // _
         var action = hw.wysiwygKeymap[key];
-        document.execCommand(action, false, null);
+
+        var skipExec = false;
+        var value = null;
+
+        if (action == "createLink") {
+          var startNode = hw.getSelectionStartNode();
+          if (startNode.nodeName == 'A') {
+            skipExec = true;
+            var fragment = document.createDocumentFragment();
+            for (var x = 0; x < startNode.childNodes.length; ++x) {
+              fragment.appendChild(startNode.childNodes[x]);
+            }
+            startNode.parentNode.replaceChild(fragment, startNode);
+            hw.hideElementOptions();
+            return;
+          } else {
+            if (!hw.selection.toString()) {
+              return;
+            }
+            value = "http://";
+          }
+        }
+
+        if (!skipExec) {
+          document.execCommand(action, false, value);
+        }
+  
+        if (action == "createLink") {
+          var anchorTag = hw.getSelectionStartNode(true).nextSibling;
+          hw.showAnchorEditor(anchorTag);
+          hw.getFirstElementByName('hw-anchor-link').value = value;
+          hw.getFirstElementByName('hw-anchor-visit').href = '';
+          hw.getFirstElementByName('hw-anchor-link').focus();
+          hw.getFirstElementByName('hw-anchor-link').select();
+        }
 
         if (key == 9) {
           hw.preventDefault(event);
         } else if (hw.wysiwygLastKeys[hw.wysiwygLastKeys.length - 1] == String.fromCharCode(key)) {
           hw.wysiwygLastKeys = "";
-          break;
         } else {
           hw.preventDefault(event);
           hw.wysiwygLastKeys += String.fromCharCode(key);
         }
         break;
+
+      case 32:  // space
+        // auto-tag things
+        setTimeout(function() {
+          var hashIndex = hw.wysiwygLastKeys.lastIndexOf('#');
+          if (hashIndex == -1) {
+            hw.wysiwygLastKeys = "";
+            return;
+          }
+
+          var sel = window.getSelection();
+          var charsBack = hw.wysiwygLastKeys.length - hashIndex;
+          sel.modify("move", "backward", "character");
+          for (var x = 0; x < charsBack; ++x) {
+            sel.modify("extend", "backward", "character");
+          }
+          var tag = hw.wysiwygLastKeys.substring(hashIndex + 1);
+
+          document.execCommand("createLink", false, hw.tagUrl + tag);
+
+          sel.modify("move", "forward", "character");
+          sel.modify("move", "forward", "character");
+
+          hw.wysiwygLastKeys = "";
+        }, 0);
+        break;
+
       //case 64:    // @-symbol, autocomplete remote_user
       //  hw.showUserAutocomplete();
       //  break;
@@ -216,7 +277,7 @@ hw.wysiwygKeys = function(event) {
           hw.preventDefault(event);
           var sel = window.getSelection();
           for (var x = 0; x < 2; ++x) {
-            sel.modify("extend", "backward", "character")
+            sel.modify("extend", "backward", "character");
           }
           document.execCommand("insertHTML", false, '<hr>');
           hw.wysiwygLastKeys = "";
@@ -224,7 +285,7 @@ hw.wysiwygKeys = function(event) {
           hw.preventDefault(event);
           var sel = window.getSelection();
           for (var x = 0; x < 5; ++x) {
-            sel.modify("extend", "backward", "character")
+            sel.modify("extend", "backward", "character");
           }
           document.execCommand("insertHTML", false, '<img class="hw-read-more" src="/helloworld/static/img/pixel.gif?v=df3e5">');
           hw.wysiwygLastKeys = "";
@@ -232,97 +293,101 @@ hw.wysiwygKeys = function(event) {
           hw.wysiwygLastKeys += String.fromCharCode(key);
         }
         break;
+
       default:
+        // modify existing tags
+        setTimeout(function() {
+          var tag = hw.getSelectionStartNode();
+          if (tag.nodeName == 'A' && tag.href.indexOf(hw.tagUrl) == 0) {
+            tag.href = hw.tagUrl + tag.textContent;
+          }
+        }, 0);
+
+        // cache all other letters, up to 100 in the history
         hw.wysiwygLastKeys += String.fromCharCode(key);
-        hw.wysiwygLastKeys = hw.wysiwygLastKeys.slice(-5);
+        hw.wysiwygLastKeys = hw.wysiwygLastKeys.slice(-100);  // don't keep everything in memory
         break;
     }
   }
 
-  /*var savedSel = hw.saveSelectionBeforeInnerHTML(wysiwyg);
-  wysiwyg.innerHTML = el.innerHTML.replace(/(<([^>]+)>)/ig,"");
-  wysiwyg.innerHTML = el.innerHTML.replace(/(http:\/\/[\S]+)/ig,"<a href='$1'>$1</a>");
-  if (!wysiwyg.innerHTML.match(/<br>$/g)) {
-    wysiwyg.innerHTML += "<br>";
-  }
-  hw.restoreSelectionAfterInnerHTML(el, savedSel);*/
-
-  setTimeout(hw.htmlPreview, 0);
+  setTimeout(hw.htmlPreview, 100);
 };
 
-// Tim Down is my hero.  <3
-// http://stackoverflow.com/questions/5595956/replace-innerhtml-in-contenteditable-div
-hw.saveSelectionBeforeInnerHTML = function(containerEl) {
-  var charIndex = 0, start = 0, end = 0, foundStart = false, stop = {};
-  var sel = rangy.getSelection(), range;
-
-  function traverseTextNodes(node, range) {
-    if (node.nodeType == 3) {
-      if (!foundStart && node == range.startContainer) {
-        start = charIndex + range.startOffset;
-        foundStart = true;
-      }
-      if (foundStart && node == range.endContainer) {
-        end = charIndex + range.endOffset;
-        throw stop;
-      }
-      charIndex += node.length;
-    } else {
-      for (var i = 0, len = node.childNodes.length; i < len; ++i) {
-        traverseTextNodes(node.childNodes[i], range);
-      }
-    }
+hw.paste = function(event) {
+  if (!hw.hasClass('hw-container', 'hw-editing')) {
+    return;
   }
 
-  if (sel.rangeCount) {
-    try {
-      traverseTextNodes(containerEl, sel.getRangeAt(0));
-    } catch (ex) {
-      if (ex != stop) {
-        throw ex;
+  var wysiwyg = hw.getFirstElementByName('hw-wysiwyg');
+  document.execCommand("insertHTML", false, " "); // if there's something currently selected, delete it now
+  var original = wysiwyg.innerHTML;
+
+  var postPaste = function() {
+    var current = wysiwyg.innerHTML;
+
+    if (original == current) {
+      return;
+    }
+
+    var pastedContent = "";
+    var diffStart = -1;
+    for (var x = 0; x < current.length; ++x) {
+      if (original == current.substring(0, diffStart) + current.substring(x)) {
+        break;
+      }
+      if (original[x] != current[x] || diffStart != -1) {
+        if (diffStart == -1) {
+          diffStart = x;
+        }
+        pastedContent += current[x];
       }
     }
-  }
 
-  return {
-    start: start,
-    end: end
+    if (pastedContent) {
+      var sel = window.getSelection();
+      var div = document.createElement('DIV');
+      div.innerHTML = pastedContent;
+      hw.getFirstElementByName('hw-view').style.overflow = 'hidden';
+      wysiwyg.style.width = '1000000px';  // XXX workaround crappy Firefox bug that includes '\n' in selection when wrapping...todo file bug.
+      for (var x = 0; x < div.textContent.length; ++x) {
+        sel.modify("extend", "backward", "character");
+      }
+      wysiwyg.style.width = '';
+      hw.getFirstElementByName('hw-view').style.overflow = '';
+
+      if (pastedContent.search(/https?:\/\/maps.google.com/ig) == 0) {
+        pastedContent = '&lt;iframe width="425" height="350" src="' + pastedContent + '&output=embed" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;';
+      }
+
+      if (pastedContent.search(/https?:\/\//ig) == 0) { // links
+        var createForm = hw.getFirstElementByName('hw-create');
+        var callback = function(xhr) {
+          document.execCommand("insertHTML", false, xhr.responseText + "<br><br>");
+          sel.modify("move", "forward", "character");
+        };
+        new hw.ajax(hw.baseUri() + 'api',
+          { method: 'post',
+            postBody: 'op='   + encodeURIComponent('embed')
+                   + '&url='  + encodeURIComponent(pastedContent),
+            onSuccess: callback,
+            headers: { 'X-Xsrftoken' : createForm['_xsrf'].value } });
+        pastedContent = "";
+      } else if (pastedContent.search(/&lt;(embed|object|iframe)\s/ig) == 0) { // embed code
+        pastedContent = pastedContent.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"");
+        pastedContent += '<br><br>';
+      } else {
+        // very simple html sanitizer, not meant for xss prevention
+        // just to strip annoying styling when pasting
+        pastedContent = pastedContent.replace(/<(?!\/?(a|b|strong|em)(>|\s+[^>]+))[^>]*>/ig, ""); // remove all but whitelisted tags
+        pastedContent = pastedContent.replace(/\s(?!(href))[^<>=]*=('([^']*)'|"([^"]*)")/ig, ""); // remove all but whitelisted attributes
+      }
+
+      document.execCommand("insertHTML", false, pastedContent);
+    }
   };
-}
 
-hw.restoreSelectionAfterInnerHTML = function(containerEl, savedSel) {
-  var charIndex = 0, range = rangy.createRange(), foundStart = false, stop = {};
-  range.collapseToPoint(containerEl, 0);
-
-  function traverseTextNodes(node) {
-    if (node.nodeType == 3) {
-      var nextCharIndex = charIndex + node.length;
-      if (!foundStart && savedSel.start >= charIndex && savedSel.start <= nextCharIndex) {
-        range.setStart(node, savedSel.start - charIndex);
-        foundStart = true;
-      }
-      if (foundStart && savedSel.end >= charIndex && savedSel.end <= nextCharIndex) {
-        range.setEnd(node, savedSel.end - charIndex);
-        throw stop;
-      }
-      charIndex = nextCharIndex;
-    } else {
-      for (var i = 0, len = node.childNodes.length; i < len; ++i) {
-          traverseTextNodes(node.childNodes[i]);
-      }
-    }
-  }
-
-  try {
-    traverseTextNodes(containerEl);
-  } catch (ex) {
-    if (ex == stop) {
-      rangy.getSelection().setSingleRange(range);
-    } else {
-      throw ex;
-    }
-  }
-}
+  setTimeout(postPaste, 0);
+};
 
 hw.wysiwyg = function(event, cmd, value, el) {
   hw.preventDefault(event);

@@ -348,6 +348,13 @@ div.hw-view {
   clear: both;
 }
 
+div.hw-view iframe,
+div.hw-view object, 
+div.hw-view embed {
+  max-height: 225px;
+  max-width: 400px;
+}
+
 .hw-content-hidden {
   font-style: italic;
 }

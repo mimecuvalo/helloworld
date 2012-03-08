@@ -1,4 +1,5 @@
 import datetime
+import json
 import random
 import re
 import urllib2
@@ -45,7 +46,7 @@ def parse_feed(models, user, feed=None, parsed_feed=None):
 def sanitize(value):
   return feedparser._sanitizeHTML(value, 'UTF-8', 'text/html')
 
-def get_remote_title_and_thumb(url):
+def get_remote_title_and_thumb(url, content_type=None):
   try:
     # XXX youtube doesn't like the scraping, too many captchas
     parsed_url = urlparse.urlparse(url)
@@ -54,9 +55,15 @@ def get_remote_title_and_thumb(url):
     title = ''
     image = ''
     html  = ''
+    oembed_json = None
 
     if not is_youtube:
-      response = urllib2.urlopen(url)
+      opener = urllib2.build_opener()
+      response = opener.open(url)
+      info = response.info()
+      if content_type is not None and 'content-type' in info and info['content-type'] != content_type:
+        # save on bandwidth
+        return ('', '', '')
       doc = BeautifulSoup(response.read())
 
       title_meta = doc.find('meta', property='og:title')
@@ -66,19 +73,37 @@ def get_remote_title_and_thumb(url):
         image = image_meta['content']
 
       oembed_link = doc.find('link', type='text/xml+oembed')
+      if not oembed_link:
+        oembed_link = doc.find('link', type='application/xml+oembed')
+      if not oembed_link:
+        oembed_json = doc.find('link', type='application/json+oembed')
     else:
       video_id = urlparse.parse_qs(parsed_url.query)['v'][0]
       oembed_link = { 'href': 'http://www.youtube.com/oembed?url=http%3A//www.youtube.com/watch?v%3D' + video_id + '&amp;format=xml' }
 
     if oembed_link:
-      oembed = urllib2.urlopen(oembed_link['href'])
+      opener = urllib2.build_opener()
+      # this is major bullshit. vimeo doesn't allow robot calls to oembed - who else is going to look at it??
+      opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+      oembed = opener.open(oembed_link['href'])
       oembed_doc = BeautifulSoup(oembed.read())
       title = oembed_doc.find('title').string
-      image = oembed_doc.find('thumbnail_url').string
-      html = tornado.escape.xhtml_unescape(oembed_doc.find('html').string)
+      image = oembed_doc.find('thumbnail_url')
+      if image:
+        image = image.string
+      raw_html = oembed_doc.find('html').string
+      raw_html = raw_html.replace('&lt;![CDATA[', '').replace(']]&gt;', '')
+      html = tornado.escape.xhtml_unescape(raw_html)
 
       if is_youtube:  # they serve up hqdefault for some reason...too big
         image = 'http://i' + str(random.randint(1, 4)) + '.ytimg.com/vi/' + video_id + '/default.jpg'
+    elif oembed_json:
+      # kickstarter, for example, only does json  
+      opener = urllib2.build_opener()
+      oembed = opener.open(oembed_json['href'])
+      oembed_data = json.loads(oembed.read().decode('utf8'))
+      title = oembed_data['title']
+      html = tornado.escape.xhtml_unescape(oembed_data['html'])
 
     return (title, image, html)
   except:

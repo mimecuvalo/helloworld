@@ -40,7 +40,10 @@ class ApiHandler(BaseHandler):
     if not self.authenticate(author=True):
       return
 
-    if op == 'order':
+    if op == 'embed':
+      self.embed()
+      return
+    elif op == 'order':
       self.order()
     elif op == 'rename':
       self.rename()
@@ -56,6 +59,24 @@ class ApiHandler(BaseHandler):
       self.delete()
 
     self.set_status(204)
+
+  def embed(self):
+    # TODO, same code in upload.py - code be unified...
+
+    try:
+      url = self.get_argument('url')
+      remote_title, remote_thumb, remote_html = content_remote.get_remote_title_and_thumb(url, 'text/html')
+      if remote_html:
+        self.write(remote_html)
+        return
+
+      if remote_thumb:
+        self.write('<a href="' + url + '" title="' + remote_title + '"><img src="' + remote_thumb + '"></a>')
+        return
+    except:
+      pass
+
+    self.write('<a href="' + url + '">' + url + '</a>')
 
   def order(self):
     op_type = self.get_argument('type')

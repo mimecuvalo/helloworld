@@ -65,8 +65,8 @@ class Content(tornado.web.UIModule):
         new_view += '<a href="' + content.view + '" title="' + content.title + '">' + content.view + '</a>'
         content.view = new_view
 
-      # linkify tags
-      content.view = url_factory.linkify_tags(self.handler, content)
+      # linkify tags,  xxx this is now done in wysiwyg
+      # content.view = url_factory.linkify_tags(self.handler, content)
 
     return content
 

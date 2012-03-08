@@ -78,7 +78,7 @@ class UploadHandler(BaseHandler):
           return remote_html
 
         if remote_thumb:
-          return '<a href="' + url + '"><img src="' + remote_thumb + '"></a>'
+          return '<a href="' + url + '" title="' + remote_title + '"><img src="' + remote_thumb + '"></a>'
 
         return '<a href="' + url + '">' + url + '</a>'
       else:

@@ -5,6 +5,11 @@
   hw.xsrf = '{% raw xsrf_form_html() %}';
   hw.uploadUrl = '{{ nav_url(section='upload') }}';
   {% if content %}
+    hw.tagUrl = '{{ nav_url(host=True, username=content.username, section='search') }}?q=%23';
+  {% else %}
+    hw.tagUrl = '{{ nav_url(host=True, username=default_username, section='search') }}?q=%23';
+  {% end %}
+  {% if content %}
     {% if content.section == 'main' %}
       hw.sectionUrl = '{{ nav_url(username=content.username, section=content.name) }}';
     {% else %}
@@ -248,7 +253,7 @@
 <div name="hw-view" class="hw-view {% if not individual_content %}hw-closed{% end %}">
   <div class="{% if not content and individual_content %}hw-new{% end %} {% if section_template %}hw-template-{{ section_template }}{% end %}" name="hw-wysiwyg" tabindex="2"
     {% if not content %}contenteditable{% end %}
-    onmouseup="hw.saveSelection()" onkeyup="hw.saveSelection()" onfocus="hw.restoreSelection()">{% if content and individual_content %}{% raw content.view %}{% end %}</div>
+    onmouseup="hw.saveSelection()" onkeyup="hw.saveSelection()" onfocus="hw.restoreSelection()" onpaste="hw.paste(event)">{% if content and individual_content %}{% raw content.view %}{% end %}</div>
   <div class="clear"></div>
 </div>
 
