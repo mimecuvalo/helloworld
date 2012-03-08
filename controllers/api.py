@@ -80,10 +80,18 @@ class ApiHandler(BaseHandler):
 
         response = urllib2.urlopen(url)
         original_size_url, url, thumb_url = media.save_locally(parent_url, full_path, response.read())
+
+        if thumb_url:
+          self.set_header('X-Helloworld-Thumbnail', thumb_url)
+
         self.write(media.generate_full_html(self, url, original_size_url))
         return
 
       remote_title, remote_thumb, remote_html = content_remote.get_remote_title_and_thumb(url, 'text/html')
+
+      if remote_thumb:
+        self.set_header('X-Helloworld-Thumbnail', remote_thumb)
+
       if remote_html:
         self.write(remote_html)
         return
