@@ -177,7 +177,7 @@ hw.shortcuts = function(event) {
   //hw.hideUserAutocomplete();
 
   switch (key) {
-    case 83:   // ctrl-s, save
+    case 83:   // ctrl-s, save  TODO report bug to ff, messed up with dvorak keyboard
       if (hw.testAccelKey(event)) {
         hw.preventDefault(event);
         hw.save();

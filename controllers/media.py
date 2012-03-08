@@ -47,10 +47,7 @@ class MediaHandler(BaseHandler):
 
     for uploaded_file in self.request.files['hw-media-uploaded-file']:
       full_path = os.path.join(parent_directory, uploaded_file['filename'])
-
-      leafname = os.path.basename(full_path)
-      if leafname in ('crossdomain.xml', 'clientaccesspolicy.xml', '.htaccess', '.htpasswd'):
-        raise tornado.web.HTTPError(400, "i call shenanigans")
+      url_factory.check_legit_filename(full_path)
 
       if not os.path.isdir(parent_directory):
         os.makedirs(parent_directory)
@@ -86,7 +83,7 @@ class MediaHandler(BaseHandler):
 
     uri = self.get_argument('preview')
     media_type = media.detect_media_type(uri)
-    html = media.generate_html(self, uri)
+    html = media.generate_html(uri)
     if media_type in ('video', 'audio'):
       html += '<br>'
       if media_type == 'video':

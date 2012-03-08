@@ -1,5 +1,6 @@
 import datetime
 import hashlib
+import os.path
 import re
 import urllib
 import urllib2
@@ -7,6 +8,7 @@ import urlparse
 
 from base import BaseHandler
 from logic import content_remote
+from logic import media
 from logic import pubsubhubbub_subscribe
 from logic import socialize
 from logic import spam
@@ -61,10 +63,26 @@ class ApiHandler(BaseHandler):
     self.set_status(204)
 
   def embed(self):
-    # TODO, same code in upload.py - code be unified...
-
+    # TODO, similar code in upload.py - code be unified...
     try:
       url = self.get_argument('url')
+      media_type = media.detect_media_type(url)
+
+      if media_type:
+        parent_url = self.resource_url('remote')
+        parent_directory = self.resource_directory('remote')
+        leafname = os.path.basename(url)
+        full_path = os.path.join(parent_directory, leafname)
+        url_factory.check_legit_filename(full_path)
+
+        if not os.path.isdir(parent_directory):
+          os.makedirs(parent_directory)
+
+        response = urllib2.urlopen(url)
+        original_size_url, url, thumb_url = media.save_locally(parent_url, full_path, response.read())
+        self.write(media.generate_full_html(self, url, original_size_url))
+        return
+
       remote_title, remote_thumb, remote_html = content_remote.get_remote_title_and_thumb(url, 'text/html')
       if remote_html:
         self.write(remote_html)

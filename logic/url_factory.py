@@ -1,4 +1,5 @@
 import cgi
+import os.path
 import re
 import urllib
 
@@ -103,6 +104,11 @@ def linkify_tags(handler, content):
 
 def clean_name(name):
   return re.compile(r'[\W]+', re.M | re.U).sub('', name.replace(" ", "_").replace("-", "_")).replace("_", "-")[:255]
+
+def check_legit_filename(full_path):
+  leafname = os.path.basename(full_path)
+  if leafname in ('crossdomain.xml', 'clientaccesspolicy.xml', '.htaccess', '.htpasswd'):
+    raise tornado.web.HTTPError(400, "i call shenanigans")
 
 def clean_filename(name):
   if name == '..' or name == '.':

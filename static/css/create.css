@@ -282,6 +282,10 @@ div[name=hw-media-list-template] {
   display: none;
 }
 
+div[name=hw-media-list].hw-shown {
+  clear: both;
+}
+
 div[name=hw-media-creator],
 form.hw-media-library-standalone {
   background-color: #ffe;
