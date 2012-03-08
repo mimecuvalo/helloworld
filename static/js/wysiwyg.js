@@ -373,7 +373,7 @@ hw.paste = function(event) {
           document.execCommand("insertHTML", false, xhr.responseText + "<br><br>");
           sel.modify("move", "forward", "character");
 
-          if (createForm['hw-id'].value && xhr.getResponseHeader('X-Helloworld-Thumbnail') && !createForm['hw-thumb'].value) {
+          if (!createForm['hw-id'].value && xhr.getResponseHeader('X-Helloworld-Thumbnail') && !createForm['hw-thumb'].value) {
             createForm['hw-thumb'].value = xhr.getResponseHeader('X-Helloworld-Thumbnail');
             hw.changeThumbPreview();
           }
