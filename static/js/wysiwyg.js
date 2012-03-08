@@ -322,7 +322,7 @@ hw.paste = function(event) {
   }
 
   var wysiwyg = hw.getFirstElementByName('hw-wysiwyg');
-  document.execCommand("insertHTML", false, " "); // if there's something currently selected, delete it now
+  document.execCommand("insertHTML", false, "<br>"); // if there's something currently selected, delete it now
   var original = wysiwyg.innerHTML;
 
   var postPaste = function() {
@@ -341,6 +341,11 @@ hw.paste = function(event) {
       if (original[x] != current[x] || diffStart != -1) {
         if (diffStart == -1) {
           diffStart = x;
+
+          if (x != 0 && original[x - 1] == '<') { // make sure we get that first < in there
+            diffStart = x - 1;
+            pastedContent += original[x - 1];
+          }
         }
         pastedContent += current[x];
       }
@@ -352,7 +357,7 @@ hw.paste = function(event) {
       div.innerHTML = pastedContent;
       hw.getFirstElementByName('hw-view').style.overflow = 'hidden';
       wysiwyg.style.width = '1000000px';  // XXX workaround crappy Firefox bug that includes '\n' in selection when wrapping...todo file bug.
-      for (var x = 0; x < div.textContent.length; ++x) {
+      for (var x = 0; x < div.textContent.length + 1; ++x) {
         sel.modify("extend", "backward", "character");
       }
       wysiwyg.style.width = '';
@@ -381,7 +386,7 @@ hw.paste = function(event) {
       } else {
         // very simple html sanitizer, not meant for xss prevention
         // just to strip annoying styling when pasting
-        pastedContent = pastedContent.replace(/<(?!\/?(a|b|strong|em)(>|\s+[^>]+))[^>]*>/ig, ""); // remove all but whitelisted tags
+        pastedContent = pastedContent.replace(/<(?!\/?(a|b|br|strong|em)(>|\s+[^>]+))[^>]*>/ig, ""); // remove all but whitelisted tags
         pastedContent = pastedContent.replace(/\s(?!(href))[^<>=]*=('([^']*)'|"([^"]*)")/ig, ""); // remove all but whitelisted attributes
       }
 
