@@ -3,7 +3,7 @@
     {% comment NOTE whitespace is important here %}<a
        rel="last" class="hw-last hw-button" href="{{ content_url(last, host=True) }}">{{ _("last") }}</a><a 
 
-       rel="next" class="hw-next hw-button"
+       rel="next" class="hw-next hw-button {% if not next %} hw-disabled {% end %}"
         {% if next %}
           href="{{ content_url(next) }}"
           title="{% if content_owner.title %}{{ content_owner.title }} - {% end %}{{ next.title }}"
@@ -16,13 +16,11 @@
             {% end %}
             onclick='hw.navigate(event, "{{ content_url(next, host=True) }}", "{% raw js_in_html_escape(next.title) %}")'
           {% end %}
-        {% else %}
-          class="hw-disabled"
         {% end %}>{{ _("next") }}</a><a
 
        rel="up" class="hw-top hw-button" href="{{ top_url }}">{% if content.album %}{{ content.album }}{% else %}{{ content.section }}{% end %}</a><a
 
-       rel="prev" class="hw-previous hw-button"
+       rel="prev" class="hw-previous hw-button {% if not previous %} hw-disabled {% end %}"
         {% if previous %}
           href="{{ content_url(previous) }}"
           title="{% if content_owner.title %}{{ content_owner.title }} - {% end %}{{ previous.title }}"
@@ -35,8 +33,6 @@
             {% end %}
             onclick='hw.navigate(event, "{{ content_url(previous, host=True) }}", "{% raw js_in_html_escape(previous.title) %}")'
           {% end %}
-        {% else %}
-          class="hw-disabled"
         {% end %}>{{ _("previous") }}</a><a
         
        rel="start" class="hw-start hw-button" href="{{ content_url(start, host=True) }}">{{ _("first") }}</a>
