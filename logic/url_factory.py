@@ -43,7 +43,7 @@ def load_basic_parameters(handler, prefix="", url=""):
     'private': None,
   }
 
-  if len(uri_array) == 0 or uri_array[0] == "":
+  if not hostname_user and (len(uri_array) == 0 or uri_array[0] == ""):
     uri_dict['profile'] = implied_profile or (handler.models.users.get(1).username if handler.models else '')
     uri_dict['section'] = 'main'
     uri_dict['name']    = 'main'
