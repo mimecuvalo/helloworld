@@ -16,7 +16,7 @@
 {% block backend_content %}
   <div id="customize">
     <h1>{{ _('Customize Site') }}</h1>
-    <form id="customize-form" method="post" action="{{ nav_url(section='customize') }}" class="hw-box-blue">
+    <form id="hw-customize-form" method="post" action="{{ nav_url(section='customize') }}">
       {% raw xsrf_form_html() %}
       <dl>
         <dt><label for="hw-name">{{ _('name:') }}</label></dt>
@@ -28,18 +28,18 @@
         <dt><label for="hw-description">{{ _('description:') }}</label></dt>
         <dd><input id="hw-description" name="description" maxlength="255" type="text" placeholder="{{ _('description') }}" value="{{ user.description }}"></dd>
         <dt><label for="hw-customize-logo">{{ _('logo:') }}</label></dt>
-        <dd><input id="hw-customize-logo" name="logo" type="text" placeholder="{{ _('logo') }}" value="{{ user.logo }}"> <button class="hw-button hw-button-orange" onclick="hw.preventDefault(event);hw.selectFile(hw.$('hw-customize-logo'))">{{ _('select image') }}</button></dd>
+        <dd><input id="hw-customize-logo" name="logo" type="text" placeholder="{{ _('logo') }}" value="{{ user.logo }}"> <button class="hw-button hw-button-media" onclick="hw.preventDefault(event);hw.selectFile(hw.$('hw-customize-logo'))">{{ _('select image') }}</button></dd>
         <dt><label for="hw-favicon">{{ _('favicon:') }}</label></dt>
-        <dd><input id="hw-favicon" name="favicon" type="text" placeholder="{{ _('favicon') }}" value="{{ user.favicon }}"> <button class="hw-button hw-button-orange" onclick="hw.preventDefault(event);hw.selectFile(hw.$('hw-favicon'))">{{ _('select image') }}</button></dd>
+        <dd><input id="hw-favicon" name="favicon" type="text" placeholder="{{ _('favicon') }}" value="{{ user.favicon }}"> <button class="hw-button hw-button-media" onclick="hw.preventDefault(event);hw.selectFile(hw.$('hw-favicon'))">{{ _('select image') }}</button></dd>
         <dt><label for="hw-themes">{{ _('theme:') }}</label></dt>
         <dd>
           <select name="theme" id="hw-themes">
             <option value=""></option>
             {% for theme in sorted(themes) %}
-              <option value="{{ theme }}" {% if user.theme == theme %}selected{% end %}>{{ theme }}</option>
+              <option value="{{ theme }}" {% if (user.theme == theme) or (not user.theme and theme == 'default.css') %}selected{% end %}>{{ theme }}</option>
             {% end %}
           </select>
-          <button class="hw-button hw-button-orange" onclick="hw.preventDefault(event);hw.selectFile(hw.$('hw-themes'), window.location.reload, 'themes')">{{ _('upload theme') }}</button>
+          <button class="hw-button hw-button-media" onclick="hw.preventDefault(event);hw.selectFile(hw.$('hw-themes'), window.location.reload, 'themes')">{{ _('upload theme') }}</button>
         </dd>
         <dt><label for="hw-currency">{{ _('currency:') }}</label></dt>
         <dd>
@@ -50,7 +50,7 @@
           </select>
         </dd>
         <dt><label for="hw-background">{{ _('background image:') }}</label></dt>
-        <dd><input id="hw-background" name="background" type="text" placeholder="{{ _('background') }}" value="{{ user.background }}"> <button class="hw-button hw-button-orange" onclick="hw.preventDefault(event);hw.selectFile(hw.$('hw-background'))">{{ _('select image') }}</button></dd>
+        <dd><input id="hw-background" name="background" type="text" placeholder="{{ _('background') }}" value="{{ user.background }}"> <button class="hw-button hw-button-media" onclick="hw.preventDefault(event);hw.selectFile(hw.$('hw-background'))">{{ _('select image') }}</button></dd>
         <dt><label for="hw-license-type">{{ _('license:') }}</label></dt>
         <dd>
           <input id="hw-license-type" name="license" type="url" value="{{ user.license }}">
@@ -73,7 +73,7 @@
         <dt><label for="hw-adult-content">{{ _('adult content:') }}</label></dt>
         <dd><input id="hw-adult-content" name="adult_content" type="checkbox" {% if user.adult_content %}checked="checked"{% end %}></dd>
         <dt></dt>
-        <dd><input id="hw-customize-save" class="hw-button hw-button-blue" data-save="{{ _("save") }}" data-saving="{{ _("saving") }}" type="submit" value="{{ _("save") }}"></dd>
+        <dd><input id="hw-customize-save" class="hw-button hw-button-save" data-save="{{ _("save") }}" data-saving="{{ _("saving") }}" type="submit" value="{{ _("save") }}"></dd>
       </dl>
     </form>
   </div>
@@ -81,6 +81,6 @@
 
 {% block more_sidebar %}
   <aside>
-    <a id="hw-delete-account" class="hw-button hw-button-red" href="#deleteAccount" onclick="hw.deleteAccount(event, '{{ user.username }}')">{{ _('delete account') }}</a>
+    <a id="hw-delete-account" class="hw-button hw-button-delete" href="#deleteAccount" onclick="hw.deleteAccount(event, '{{ user.username }}')">{{ _('delete account') }}</a>
   </aside>
 {% end %}

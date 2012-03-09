@@ -36,10 +36,10 @@
     {% else %}
       <div class="hw-pager">
         {% if len(results) == page_size %}
-          <a class="hw-button hw-button-green hw-next" href="{{ nav_url(username=content_owner.username, section='search', page=(page + 1), q=query) }}">{{ _('next') }}</a>
+          <a class="hw-button hw-button-pager hw-next" href="{{ nav_url(username=content_owner.username, section='search', page=(page + 1), q=query) }}">{{ _('next') }}</a>
         {% end %}
         {% if page != 1 %}
-          <a class="hw-button hw-button-green hw-prev" href="{{ nav_url(username=content_owner.username, section='search', page=(page - 1 if page != 2 else None), q=query) }}">{{ _('previous') }}</a>
+          <a class="hw-button hw-button-pager hw-prev" href="{{ nav_url(username=content_owner.username, section='search', page=(page - 1 if page != 2 else None), q=query) }}">{{ _('previous') }}</a>
         {% end %}
       </div>
     {% end %}

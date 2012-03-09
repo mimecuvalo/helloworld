@@ -1,43 +1,43 @@
 hw.mediaClick = function(event) {
   hw.preventDefault(event);
 
-  var mediaList = hw.getFirstElementByName('hw-media-list');
+  var mediaList = hw.$c('hw-media-list');
   hw.show(mediaList);
 
   for (var x = mediaList.childNodes.length - 1; x >= 0; --x) {
     var iframe = mediaList.childNodes[x];
     var iframeDoc = iframe.contentWindow.document;
-    var fileBrowse = hw.getFirstElementByName('hw-media-local', iframeDoc);
+    var fileBrowse = hw.$c('hw-media-local', iframeDoc);
     fileBrowse.click();
     break;
   }
 };
 
 hw.newMedia = function(doc, remote, file) {
-  var createForm = hw.getFirstElementByName('hw-create');
-  var mediaCreator = hw.getFirstElementByName('hw-media-creator', doc);
+  var createForm = hw.$c('hw-create');
+  var mediaCreator = hw.$c('hw-media-creator', doc);
   hw.addClass(mediaCreator, 'hw-created');
   hw.setClass(mediaCreator, 'hw-separate', createForm['hw-separate'].checked);
 
-  var oppositeSource = remote ? hw.getFirstElementByName('hw-media-local', doc)
-                              : hw.getFirstElementByName('hw-media-remote', doc);
+  var oppositeSource = remote ? hw.$c('hw-media-local', doc)
+                              : hw.$c('hw-media-remote', doc);
   oppositeSource.value = '';
   hw.addClass(oppositeSource, 'hw-initial');
 
   if (file) {
     hw.addClass(mediaCreator, 'hw-file');
-    var fileInput = hw.getFirstElementByName('hw-media-file', doc);
+    var fileInput = hw.$c('hw-media-file', doc);
     hw.removeClass(fileInput, 'hw-hidden');
     fileInput.value = file.name;
     fileInput['file'] = file;
   }
 
   if (!remote) {
-    hw.getFirstElementByName('hw-media-local', doc).removeAttribute('multiple');
+    hw.$c('hw-media-local', doc).removeAttribute('multiple');
   }
 
   if (remote) {
-    hw.newMediaPreview(doc, remote, hw.getFirstElementByName('hw-media-remote', doc).value);
+    hw.newMediaPreview(doc, remote, hw.$c('hw-media-remote', doc).value);
   } else {
     hw.newMediaPreview(doc, remote, file);
   }
@@ -46,8 +46,8 @@ hw.newMedia = function(doc, remote, file) {
 };
 
 hw.newMediaPreview = function(doc, remote, source) {
-  var preview = hw.getFirstElementByName('hw-media-preview', doc);
-  var previewWrapper = hw.getFirstElementByName('hw-media-preview-wrapper', doc);
+  var preview = hw.$c('hw-media-preview', doc);
+  var previewWrapper = hw.$c('hw-media-preview-wrapper', doc);
   var filename = source;
 
   if (!remote) {
@@ -80,48 +80,44 @@ hw.newMediaPreview = function(doc, remote, source) {
 hw.stylesheetCache = '';
 hw.generateStylesheetCache = function() {
   var cssContent = '';
-  if (!hw.$('hw-stylesheet').styleSheet) {
-    var rules = hw.$('hw-stylesheet').sheet.cssRules;
-    for (var x = 0; x < rules.length; ++x) {
-      cssContent += rules[x].cssText;
+  var sheets = ['hw-stylesheet', 'hw-stylesheet-create', 'hw-stylesheet-create-theme'];
+  for (var x = 0; x < sheets.length; ++x) {
+    var sheetElement = hw.$(sheets[x]);
+    if (!sheetElement.styleSheet) {
+      var rules = sheetElement.sheet.cssRules;
+      for (var y = 0; y < rules.length; ++y) {
+        cssContent += rules[y].cssText;
+      }
+    } else {
+      cssContent = sheetElement.styleSheet.cssText;    // workaround ie < 9
     }
-  } else {
-    cssContent = hw.$('hw-stylesheet').styleSheet.cssText;    // workaround ie < 9
-  }
-  if (!hw.$('hw-stylesheet-create').styleSheet) {
-    var createRules = hw.$('hw-stylesheet-create').sheet.cssRules;
-    for (var x = 0; x < createRules.length; ++x) {
-      cssContent += createRules[x].cssText;
-    }
-  } else {
-    cssContent += hw.$('hw-stylesheet-create').styleSheet.cssText;  // workaround ie < 9
   }
   hw.stylesheetCache = cssContent;
   return cssContent;
 };
 
 hw.createMediaIframe = function(callback) {
-  var mediaList = hw.getFirstElementByName('hw-media-list');
+  var mediaList = hw.$c('hw-media-list');
 
   hw.hideElementOptions();
 
   if (mediaList.childNodes.length
-      && hw.getFirstElementByName('hw-media-remote', mediaList.childNodes[mediaList.childNodes.length - 1].contentWindow.document)
-      && !hw.getFirstElementByName('hw-media-remote', mediaList.childNodes[mediaList.childNodes.length - 1].contentWindow.document).value
-      && !hw.getFirstElementByName('hw-media-local', mediaList.childNodes[mediaList.childNodes.length - 1].contentWindow.document).value
-      && !hw.getFirstElementByName('hw-media-file', mediaList.childNodes[mediaList.childNodes.length - 1].contentWindow.document).value) {
+      && hw.$c('hw-media-remote', mediaList.childNodes[mediaList.childNodes.length - 1].contentWindow.document)
+      && !hw.$c('hw-media-remote', mediaList.childNodes[mediaList.childNodes.length - 1].contentWindow.document).value
+      && !hw.$c('hw-media-local', mediaList.childNodes[mediaList.childNodes.length - 1].contentWindow.document).value
+      && !hw.$c('hw-media-file', mediaList.childNodes[mediaList.childNodes.length - 1].contentWindow.document).value) {
     return;
   }
 
-  var createForm = hw.getFirstElementByName('hw-create');
-  hw.setClass(createForm, 'hw-media', true);
+  var createForm = hw.$c('hw-create');
+  hw.setClass(createForm, 'hw-media-open', true);
   var iframe = document.createElement('iframe');
   var child = mediaList.appendChild(iframe);
   iframe.src = 'about:blank';
   iframe.setAttribute('name', 'hw-media-creator');
   iframe.setAttribute('width', '100%');
   iframe.setAttribute('height', '88');
-  iframe.setAttribute('class', 'hw-slide-transition');
+  iframe.setAttribute('class', 'hw-media-creator hw-slide-transition');
 
   var fn = function() {
     var cssContent = hw.stylesheetCache ? hw.stylesheetCache : hw.generateStylesheetCache();
@@ -141,15 +137,15 @@ hw.createMediaIframe = function(callback) {
     }
 
     var body = iframe.contentWindow.document.body;
-    body.innerHTML = '<form id="form" method="post" action="' + hw.uploadUrl + '" enctype="multipart/form-data" name="hw-create">'
+    body.innerHTML = '<form id="form" method="post" action="' + hw.uploadUrl + '" enctype="multipart/form-data" class="hw-create" name="hw-create">'
         + hw.xsrf
-        + hw.getFirstElementByName('hw-media-creator-template').innerHTML
+        + hw.$c('hw-media-creator-template').innerHTML
         + '</form>';
 
-    Event.observe(hw.getFirstElementByName('hw-create', iframe.contentWindow.document), 'dragenter', hw.dragenter, false);
-    Event.observe(hw.getFirstElementByName('hw-create', iframe.contentWindow.document), 'dragleave', hw.dragleave, false);
-    Event.observe(hw.getFirstElementByName('hw-create', iframe.contentWindow.document), 'dragover', hw.dragover, false);
-    Event.observe(hw.getFirstElementByName('hw-create', iframe.contentWindow.document), 'drop', hw.drop, false);
+    Event.observe(hw.$c('hw-create', iframe.contentWindow.document), 'dragenter', hw.dragenter, false);
+    Event.observe(hw.$c('hw-create', iframe.contentWindow.document), 'dragleave', hw.dragleave, false);
+    Event.observe(hw.$c('hw-create', iframe.contentWindow.document), 'dragover', hw.dragover, false);
+    Event.observe(hw.$c('hw-create', iframe.contentWindow.document), 'drop', hw.drop, false);
 
     Event.stopObserving(iframe, 'load', fn, false);
     hw.workaroundPlaceholder(null, iframe.contentWindow.document);
@@ -212,7 +208,7 @@ hw.localMediaHelper = function(file, last) {
 };
 
 hw.cancelMedia = function(el) {
-  var mediaList = hw.getFirstElementByName('hw-media-list');
+  var mediaList = hw.$c('hw-media-list');
 
   for (var x = 0; x < mediaList.childNodes.length; ++x) {
     if (mediaList.childNodes[x].contentWindow.document == el.ownerDocument) {
@@ -233,14 +229,11 @@ hw.mediaLibrary = function(event, el, close) {
     hw.html(null, null, true);
   }
 
-  //var media = hw.getFirstElementByName('hw-wysi-media');
-  var mediaWrapper = hw.getFirstElementByName('hw-media-wrapper');
-  var wysiwyg = hw.getFirstElementByName('hw-wysiwyg');
-  var createForm = hw.getFirstElementByName('hw-create');
+  var mediaWrapper = hw.$c('hw-media-wrapper');
+  var wysiwyg = hw.$c('hw-wysiwyg');
+  var createForm = hw.$c('hw-create');
   var openMedia = close ? false : hw.isHidden(mediaWrapper);
-  //hw.setClass(media, 'hw-selected', openMedia);
-  hw.setClass(wysiwyg, 'hw-media-library', openMedia);
-  hw.setClass(createForm, 'hw-media-library', openMedia);
+  hw.setClass(createForm, 'hw-media-library-open', openMedia);
   hw.display(mediaWrapper, openMedia);
   var fn = function() { hw.createOnScroll(); };
   setTimeout(fn, 300);
@@ -252,7 +245,7 @@ hw.mediaLibrary = function(event, el, close) {
   return;
 
   // old code
-  if (!hw.getFirstElementByName('hw-file-list') && !close) {
+  if (!hw.$c('hw-file-list') && !close) {
     mediaWrapper.innerHTML = mediaWrapper.getAttribute('data-loading'); 
 
     var callback = function(xhr) {
@@ -283,7 +276,7 @@ hw.mediaSelect = function(event, selectEl, opt_mediaValue) {
 
   var uploadedMedia = null;
   if (!selectEl && opt_mediaValue && hw.mediaEmbedded) {
-    var fileList = hw.getFirstElementByName('hw-file-list');
+    var fileList = hw.$c('hw-file-list');
     var selectElements = fileList.getElementsByTagName('select');
     var found = false;
     for (var x = 0; x < selectElements.length; ++x) {
@@ -313,8 +306,8 @@ hw.mediaSelect = function(event, selectEl, opt_mediaValue) {
   var media = uploadedMedia || selectEl.options[selectEl.selectedIndex];
 
   if (media.hasAttribute('data-directory')) {
-    hw.getFirstElementByName('hw-media-directory').value = media.value;
-    hw.show(hw.getFirstElementByName('hw-files-' + media.value.replace(/\//g, '-')));
+    hw.$$('[name=hw-media-directory]')[0].value = media.value;
+    hw.show(hw.$$('[name=hw-files-' + media.value.replace(/\//g, '-') + ']')[0]);
     hw.hide(selectEl);
   } else if (hw.mediaStandalone) {
     parent.opener.hw.selectFileFinish(media.value);
@@ -338,7 +331,7 @@ hw.mediaSelect = function(event, selectEl, opt_mediaValue) {
 };
 
 hw.mediaGetCurrentSelectElement = function() {
-  var fileList = hw.getFirstElementByName('hw-file-list');
+  var fileList = hw.$c('hw-file-list');
   var selectElements = fileList.getElementsByTagName('select');
   for (var x = 0; x < selectElements.length; ++x) {
     if (!hw.isHidden(selectElements[x])) {
@@ -394,16 +387,16 @@ hw.mediaPreview = function(selectEl) {
 
   var callback = function(xhr) {
     media.setAttribute('data-html', xhr.responseText);
-    hw.getFirstElementByName('hw-preview').innerHTML = xhr.responseText;
+    hw.$c('hw-preview').innerHTML = xhr.responseText;
   };
 
   hw.mediaHTML(media.value, callback);
 };
 
 hw.mediaUpload = function(form) {
-  var progress = hw.getFirstElementByName('hw-media-file-progress');
+  var progress = hw.$c('hw-media-file-progress');
   hw.removeClass(progress, 'hw-hidden');
-  hw.addClass(hw.getFirstElementByName('hw-media-file-failed'), 'hw-hidden');
+  hw.addClass(hw.$c('hw-media-file-failed'), 'hw-hidden');
 
   var transferProgress = function(e) {
     if (e.lengthComputable) {
@@ -418,7 +411,7 @@ hw.mediaUpload = function(form) {
   };
 
   var transferError = function(e) {
-    hw.removeClass(hw.getFirstElementByName('hw-media-file-failed'), 'hw-hidden');
+    hw.removeClass(hw.$c('hw-media-file-failed'), 'hw-hidden');
     hw.addClass(progress, 'hw-hidden');
   };
 
@@ -462,7 +455,7 @@ hw.mediaDelete = function(event, form) {
     window.location.href = window.location.href + '&uploaded_file=' + encodeURIComponent(form["hw-media-directory"].value);
   };
 
-  var createForm = hw.getFirstElementByName('hw-create');
+  var createForm = hw.$c('hw-create');
   new hw.ajax(hw.baseUri() + 'media',
       { method: 'delete',
         postBody: 'files=' + encodeURIComponent(JSON.stringify(allMedia)),
@@ -471,7 +464,7 @@ hw.mediaDelete = function(event, form) {
 };
 
 hw.mediaHTML = function(media, callback) {
-  var createForm = hw.getFirstElementByName('hw-create');
+  var createForm = hw.$c('hw-create');
   new hw.ajax(hw.baseUri() + 'media?preview=' + encodeURIComponent(media),
       { method: 'get',
         headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
@@ -479,7 +472,7 @@ hw.mediaHTML = function(media, callback) {
 };
 
 hw.insertHtmlAtCursor = function(html) {
-  hw.getFirstElementByName('hw-wysiwyg').focus();
+  hw.$c('hw-wysiwyg').focus();
 
   hw.changeBeforeUnloadState(null);
 

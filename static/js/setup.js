@@ -6,21 +6,21 @@ hw.setup = function() {
   var callback = function(xhr) {
     var restartCallback = function() {
       var fn = function() {
-        window.location.href = hw.$('setup-form').action;
+        window.location.href = hw.$('hw-setup-form').action;
       };
       setTimeout(fn, 1000);
     };
 
     // restart the server
-    new hw.ajax(hw.$('setup-form').action + '?kill=true',
+    new hw.ajax(hw.$('hw-setup-form').action + '?kill=true',
       { method: 'get',
         onSuccess: restartCallback,
         onError: restartCallback });
   };
 
-  var form = hw.$('setup-form');
+  var form = hw.$('hw-setup-form');
 
-  new hw.ajax(hw.$('setup-form').action,
+  new hw.ajax(hw.$('hw-setup-form').action,
     { method: 'post',
       postBody:  'prefix='         + encodeURIComponent(form['prefix'].value)
               + '&username='       + encodeURIComponent(form['username'].value)

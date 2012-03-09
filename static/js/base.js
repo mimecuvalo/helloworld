@@ -2,19 +2,6 @@ hw = {};
 
 hw.isIE = !!eval('/*@cc_on!@*/false');
 
-if (hw.isIE) {
-  document.getElementsByName = function(name, opt_doc) {   // fuck off and die, IE
-    var allElements = opt_doc ? opt_doc.getElementsByTagName('*') : document.getElementsByTagName('*');
-    var matchingEls = [];
-    for (var x = 0; x < allElements.length; ++x) {
-      if (allElements[x].getAttribute('name') == name) {
-        matchingEls.push(allElements[x]);
-      }
-    }
-    return matchingEls;
-  }
-}
-
 // usage: log('inside coolFunc', this, arguments);
 // paulirish.com/2009/log-a-lightweight-wrapper-for-consolelog/
 window.log = function f(){ log.history = log.history || []; log.history.push(arguments); if(this.console) { var args = arguments, newarr; args.callee = args.callee.caller; newarr = [].slice.call(args); if (typeof console.log === 'object') log.apply.call(console.log, console, newarr); else console.log.apply(console, newarr);}};
@@ -56,18 +43,9 @@ hw.$$ = function(query, doc) {
   return doc.querySelectorAll(query);
 };
 
-hw.getFirstElementByName = function(name, doc) {
+hw.$c = function(name, doc) {
   doc = doc || document;
-  return doc.querySelector
-      ? doc.querySelector('[name=' + name + ']')
-      : document.getElementsByName(name, doc)[0];
-};
-
-hw.getElementsByName = function(name, doc) {
-  doc = doc || document;
-  return doc.querySelectorAll
-      ? doc.querySelectorAll('[name=' + name + ']')
-      : document.getElementsByName(name, doc);
+  return doc.querySelector('.' + name + '');
 };
 
 hw.firstChildNonText = function(el) {

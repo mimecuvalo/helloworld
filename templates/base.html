@@ -35,13 +35,13 @@
     {% block nav %}
     <nav id="hw-user">
       {% if not is_author and not is_owner_viewing and content %}
-        <a id="hw-follow" class="hw-button hw-button-blue" href="{% if current_user and current_user.has_key('ostatus_subscribe') %}{{ current_user['ostatus_subscribe'].replace('{uri}', urllib.quote_plus(nav_url(host=True, username=content.username)).encode('utf-8')) }}{% else %}{{ nav_url(username=content.username, section='feed') }}{% end %}">{{ _('follow') }}</a>
+        <a id="hw-follow" class="hw-button" href="{% if current_user and current_user.has_key('ostatus_subscribe') %}{{ current_user['ostatus_subscribe'].replace('{uri}', urllib.quote_plus(nav_url(host=True, username=content.username)).encode('utf-8')) }}{% else %}{{ nav_url(username=content.username, section='feed') }}{% end %}">{{ _('follow') }}</a>
       {% end %}
       {% if not username %}
         {% if current_user and current_user["email"] %}
-          <a id="hw-logout" class="hw-button hw-button-red" href="{{ nav_url(section='logout', next=handler.request.uri) }}">{{ _('logout') }}</a>
+          <a id="hw-logout" class="hw-button hw-button-logout" href="{{ nav_url(section='logout', next=handler.request.uri) }}">{{ _('logout') }}</a>
         {% else %}
-          <a id="hw-login" class="hw-button hw-button-green" href="{{ nav_url(section='login', next=handler.request.uri) }}" data-logging-in="logging in..." data-failed="{{ _('login failed. try again.') }}" onclick="hw.login(event)">{{ _('login') }}</a>
+          <a id="hw-login" class="hw-button hw-button-login" href="{{ nav_url(section='login', next=handler.request.uri) }}" data-logging-in="logging in..." data-failed="{{ _('login failed. try again.') }}" onclick="hw.login(event)">{{ _('login') }}</a>
           <form id="hw-login-form">
             {% raw xsrf_form_html() %}
           </form>
@@ -49,13 +49,13 @@
       {% else %}
         {% if is_author %}
           {% if is_owner_viewing %}
-            <a id="hw-edit" class="hw-button hw-button-green" href="#edit" onclick="hw.edit(event)">{{ _('edit') }}</a>
+            <a id="hw-edit" class="hw-button" href="#edit" onclick="hw.edit(event)">{{ _('edit') }}</a>
             {% if content and content.name != 'home' and content.name != 'main' %}
-            <a id="hw-delete" class="hw-button hw-button-red" href="#delete" onclick="hw.deleteContent(event)">{{ _('delete') }}</a>
+            <a id="hw-delete" class="hw-button hw-button-delete" href="#delete" onclick="hw.deleteContent(event)">{{ _('delete') }}</a>
             {% end %}
           {% end %}
           {% if handler.request.uri != nav_url(section='dashboard') %}
-            <a id="hw-dashboard" href="{{ nav_url(section='dashboard') }}" class="hw-button hw-button-blue">{{ _('dashboard') }}</a>
+            <a id="hw-dashboard" href="{{ nav_url(section='dashboard') }}" class="hw-button">{{ _('dashboard') }}</a>
           {% end %}
         {% end %}
       {% end %}

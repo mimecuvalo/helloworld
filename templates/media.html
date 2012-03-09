@@ -2,7 +2,7 @@
   <h1>{{ _('media library') }}</h1>
 </header>
 
-<div name="hw-file-list">
+<div class="hw-file-list">
   <h2>{{ _('files:') }}</h2>
   <input name="hw-media-directory" type="hidden" value="{% if initial_section %}{{ initial_section }}{% end %}">
   {% for index, file in enumerate(files) %}
@@ -22,17 +22,17 @@
   {% end %}
 </div>
 
-<div name="hw-preview-wrapper">
+<div class="hw-preview-wrapper">
   <h2>{{ _('preview:') }}</h2>
-  <div name="hw-preview"></div>
+  <div class="hw-preview"></div>
 </div>
 
 <div class="clear"></div>
 <br>
-<button name="hw-media-delete" class="hw-button hw-button-red" onclick="hw.mediaDelete(event, this.form)">{{ _('delete') }}</button>
-<button name="hw-media-select" class="hw-button hw-button-blue" onclick="hw.mediaSelect(event)">{{ _('select') }}</button>
+<button class="hw-media-delete hw-button hw-button-delete" onclick="hw.mediaDelete(event, this.form)">{{ _('delete') }}</button>
+<button class="hw-media-select hw-button hw-button-save" onclick="hw.mediaSelect(event)">{{ _('select') }}</button>
 {% if standalone or embedded %}
-<input name="hw-media-uploaded-file" type="file" multiple value="{{ _("Upload file") }}" onchange="hw.mediaUpload(this.form)"> 
+<input name="hw-media-uploaded-file" class="hw-media-uploaded-file" type="file" multiple value="{{ _("Upload file") }}" onchange="hw.mediaUpload(this.form)"> 
 {% end %}
-<progress name="hw-media-file-progress" value="0" max="100" class="hw-hidden">0%</progress>
-<span name="hw-media-file-failed" class="hw-hidden">{{ _('failed!') }}</span>
+<progress class="hw-media-file-progress hw-hidden" value="0" max="100">0%</progress>
+<span class="hw-media-file-failed hw-hidden">{{ _('failed!') }}</span>

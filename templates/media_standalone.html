@@ -2,8 +2,13 @@
 
 {% block extra_css %}
 <link id="hw-stylesheet-create" rel="stylesheet" type="text/css" href="{{ static_url('css/create.css') }}">
+{% if user.theme %}
+  <link id="hw-stylesheet-create-theme" rel="stylesheet" type="text/css" href="{{ static_url('css/themes/' + user.theme) }}">
+{% else %}
+  <link id="hw-stylesheet-create-theme" rel="stylesheet" type="text/css" href="{{ static_url('css/themes/default.css') }}">
+{% end %}
 <style>
-  form[name=hw-create] {
+  form.hw-create {
     padding: 1em;
     {% if standalone %}margin: 1em;{% end %}
   }
@@ -30,7 +35,7 @@
 {% end %}
 
 {% block content %}
-  <form name="hw-create" method="post" enctype="multipart/form-data" class="hw-media-library-standalone hw-box-orange">
+  <form method="post" enctype="multipart/form-data" class="hw-create hw-media-library-standalone">
     {% raw xsrf_form_html() %}
     {% include 'media.html' %}
   </div>

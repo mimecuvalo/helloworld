@@ -40,7 +40,7 @@
 {% block content %}
   <div id="setup">
     <h1>{{ _('Setup Site') }}</h1>
-    <form id="setup-form" method="post" action="{{ prefix }}/" onsubmit="return false;" class="hw-box-blue">
+    <form id="hw-setup-form" method="post" action="{{ prefix }}/" onsubmit="return false;">
       <dl>
         <input name="prefix" type="hidden" value="{{ prefix }}">
 
@@ -57,7 +57,7 @@
         <dt><label for="hw-title">{{ _('password:') }}</label></dt>
         <dd><input id="hw-password" required name="mysql_password" type="password" placeholder="{{ _('password') }}"></dd>
         <dt></dt>
-        <dd><input id="hw-setup-save" class="hw-button hw-button-blue" type="button" onclick="hw.setup()" value="{{ _("setup!") }}"></dd>
+        <dd><input id="hw-setup-save" class="hw-button hw-button-save" type="button" onclick="hw.setup()" value="{{ _("setup!") }}"></dd>
       </dl>
     </form>
   </div>

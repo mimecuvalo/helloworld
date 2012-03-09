@@ -1,5 +1,5 @@
 hw.displayResponse = function(good, msg) {
-  var response = hw.getFirstElementByName('hw-response');
+  var response = hw.$c('hw-response');
   hw.removeClass(response, 'hw-invisible-reverse-transition');
   hw.addClass(response, 'hw-invisible-transition');
   hw.removeClass(response, 'hw-invisible');
@@ -20,7 +20,7 @@ hw.changeBeforeUnloadState = function(event, allowPageChange) {
 
   window.onbeforeunload = allowPageChange ? null : function() { return "" };
 
-  var createForm = hw.getFirstElementByName('hw-create');
+  var createForm = hw.$c('hw-create');
   var title = "";
   if (!createForm['hw-id'].value) {
     var newTitle = hw.$('hw-new-title');
@@ -35,8 +35,8 @@ hw.changeBeforeUnloadState = function(event, allowPageChange) {
 };
 
 hw.resetSaveState = function() {
-  var createForm = hw.getFirstElementByName('hw-create');
-  var response = hw.getFirstElementByName('hw-response');
+  var createForm = hw.$c('hw-create');
+  var response = hw.$c('hw-response');
 
   hw.displayResponse(true, response.getAttribute('data-saved'));
   createForm['hw-save'].value = createForm['hw-save'].getAttribute('data-save');
@@ -46,7 +46,7 @@ hw.resetSaveState = function() {
 };
 
 hw.resetCreateForm = function() {
-  var createForm = hw.getFirstElementByName('hw-create');
+  var createForm = hw.$c('hw-create');
 
   createForm['hw-title'].value = '';
   createForm['hw-price'].value = '0.00';
@@ -54,7 +54,7 @@ hw.resetCreateForm = function() {
   createForm['hw-date-start'].value = '';
   createForm['hw-date-end'].value = '';
   createForm['hw-date-repeats'].value = '';
-  hw.getFirstElementByName('hw-wysiwyg').innerHTML = '<h1 id="hw-new-title">' + hw.getMsg('untitled') + '</h1><br>';
+  hw.$c('hw-wysiwyg').innerHTML = '<h1 id="hw-new-title">' + hw.getMsg('untitled') + '</h1><br>';
   createForm['hw-name'].value = '';
   createForm['hw-thumb'].value = '';
   var section = createForm['hw-section-album'];
@@ -75,8 +75,8 @@ hw.addToFeed = function(html) {
 };
 
 hw.save = function() {
-  var createForm = hw.getFirstElementByName('hw-create');
-  var response = hw.getFirstElementByName('hw-response');
+  var createForm = hw.$c('hw-create');
+  var response = hw.$c('hw-response');
 
   if (hw.isHidden(createForm)) {
     return;
@@ -147,7 +147,7 @@ hw.save = function() {
   var sendContent = function(mediaHTML, opt_title, opt_extraCallback) {
     var separate = createForm['hw-separate'].checked;
 
-    var html = hw.getFirstElementByName('hw-wysiwyg').innerHTML;
+    var html = hw.$c('hw-wysiwyg').innerHTML;
     if (!createForm['hw-id'].value) {
       var newTitle = hw.$('hw-new-title');
       createForm['hw-title'].value = newTitle && newTitle.textContent != hw.getMsg('untitled') ? newTitle.textContent : '';
@@ -176,7 +176,7 @@ hw.save = function() {
                + '&date_repeats=' + encodeURIComponent(createForm['hw-date-repeats'].value)
                + '&style='        + encodeURIComponent(createForm['hw-style'].value)
                + '&code='         + encodeURIComponent(createForm['hw-code'].value)
-               + (hw.getFirstElementByName('hw-wysiwyg') ? '&view=' + encodeURIComponent(mediaHTML + html) : '')
+               + (hw.$c('hw-wysiwyg') ? '&view=' + encodeURIComponent(mediaHTML + html) : '')
                + '&name='         + encodeURIComponent(separate ? '' : createForm['hw-name'].value)
                + (createForm['hw-thumb'] ? '&thumb=' + encodeURIComponent(createForm['hw-thumb'].value) : '')
                + '&template='     + encodeURIComponent(createForm['hw-template'].value)
@@ -188,7 +188,7 @@ hw.save = function() {
         onError: badTrip });
   };
 
-  var mediaList = hw.getFirstElementByName('hw-media-list');
+  var mediaList = hw.$c('hw-media-list');
   var eventQueue = [];
   if (!mediaList || !mediaList.childNodes.length || createForm['hw-section-template'].value == 'links') {
     sendContent('');
@@ -196,12 +196,12 @@ hw.save = function() {
     for (var x = 0; x < mediaList.childNodes.length; ++x) {
       var iframe = mediaList.childNodes[x];
       var iframeDoc = iframe.contentWindow.document;
-      var form = hw.getFirstElementByName('hw-create', iframeDoc);
+      var form = hw.$c('hw-create', iframeDoc);
       if (!form) {
         continue;
       }
 
-      var container = hw.getFirstElementByName('hw-media-creator', iframeDoc);
+      var container = hw.$c('hw-media-creator', iframeDoc);
       if (!hw.hasClass(container, 'hw-created')) {
         break;
       }
@@ -222,11 +222,11 @@ hw.save = function() {
 hw.separate = function(el) {
   hw.setClass(hw.$('create'), 'hw-separate', el.checked);
 
-  var mediaList = hw.getFirstElementByName('hw-media-list');
+  var mediaList = hw.$c('hw-media-list');
 
   for (var x = 0; x < mediaList.childNodes.length; ++x) {
     var doc = mediaList.childNodes[x].contentWindow.document;
-    var mediaCreator = hw.getFirstElementByName('hw-media-creator', doc);
+    var mediaCreator = hw.$c('hw-media-creator', doc);
     if (mediaCreator) {
       hw.setClass(mediaCreator, 'hw-separate', el.checked);
     }
@@ -234,7 +234,7 @@ hw.separate = function(el) {
 };
 
 hw.processFiles = function(eventQueue, sendContent, mediaHTML) {
-  var createForm = hw.getFirstElementByName('hw-create');
+  var createForm = hw.$c('hw-create');
 
   if (!eventQueue.length) {
     if (createForm['hw-separate'].checked) {
@@ -243,7 +243,7 @@ hw.processFiles = function(eventQueue, sendContent, mediaHTML) {
     } else {
       sendContent(mediaHTML);
       if (!hw.hasClass(createForm, 'hw-new')) {
-        hw.getFirstElementByName('hw-wysiwyg').innerHTML = mediaHTML + hw.getFirstElementByName('hw-wysiwyg').innerHTML;
+        hw.$c('hw-wysiwyg').innerHTML = mediaHTML + hw.$c('hw-wysiwyg').innerHTML;
         hw.htmlPreview();
       }
     }
@@ -265,8 +265,8 @@ hw.processFiles = function(eventQueue, sendContent, mediaHTML) {
       item['iframe'].contentWindow.document.getElementsByTagName('head')[0].appendChild(styleElement);
     }
 
-    var createForm = hw.getFirstElementByName('hw-create');
-    var form = hw.getFirstElementByName('hw-uploaded', item['iframe'].contentWindow.document);
+    var createForm = hw.$c('hw-create');
+    var form = hw.$c('hw-uploaded', item['iframe'].contentWindow.document);
 
     if (form && form['hw-media-success'].value) {
       mediaHTML += form['hw-media-html'].value + '\n';
@@ -302,7 +302,7 @@ hw.processFiles = function(eventQueue, sendContent, mediaHTML) {
 
   if (item['form']['hw-media-file'].value) {
     var iframeDoc = item['iframe'].contentWindow.document;
-    var progress = hw.getFirstElementByName('hw-media-file-progress', iframeDoc);
+    var progress = hw.$c('hw-media-file-progress', iframeDoc);
     hw.removeClass(progress, 'hw-hidden');
 
     var transferProgress = function(e) {
@@ -319,13 +319,13 @@ hw.processFiles = function(eventQueue, sendContent, mediaHTML) {
     };
 
     var transferError = function(e) {
-      hw.removeClass(hw.getFirstElementByName('hw-media-file-failed', iframeDoc), 'hw-hidden');
+      hw.removeClass(hw.$c('hw-media-file-failed', iframeDoc), 'hw-hidden');
 
       // TODO maybe: we stop processing if we hit an error. best policy?
       //hw.processFiles(eventQueue, sendContent, mediaHTML);
       createForm['hw-save'].disabled = false;
       createForm['hw-save'].value = createForm['hw-save'].getAttribute('data-save');
-      hw.getFirstElementByName('hw-wysiwyg').innerHTML = mediaHTML + hw.getFirstElementByName('hw-wysiwyg').innerHTML;
+      hw.$c('hw-wysiwyg').innerHTML = mediaHTML + hw.$c('hw-wysiwyg').innerHTML;
       hw.htmlPreview();
 
       hw.addClass(progress, 'hw-hidden');
@@ -360,7 +360,7 @@ hw.deleteContent = function(event) {
   hw.changeBeforeUnloadState(null, true);
 
   var callback = function(xhr) {
-    var next = hw.getFirstElementByName('hw-next');
+    var next = hw.$c('hw-next');
     if (next && next.href) {
       window.location.href = next.href;
     } else {
@@ -369,10 +369,10 @@ hw.deleteContent = function(event) {
   };
 
   var badTrip = function(xhr) {
-    alert(hw.getFirstElementByName('hw-response').getAttribute('data-bad'));
+    alert(hw.$c('hw-response').getAttribute('data-bad'));
   };
 
-  var createForm = hw.getFirstElementByName('hw-create');
+  var createForm = hw.$c('hw-create');
 
   new hw.ajax(createForm['hw-url'].value,
     { method: 'delete',
@@ -400,12 +400,12 @@ hw.deleteContentViaCollection = function(event, el) {
     };
 
     var badTrip = function(xhr) {
-      alert(hw.getFirstElementByName('hw-response').getAttribute('data-bad'));
+      alert(hw.$c('hw-response').getAttribute('data-bad'));
       hw.removeClass(li, 'hw-deleted');
       li.style.width = '';
     };
 
-    var createForm = hw.getFirstElementByName('hw-create');
+    var createForm = hw.$c('hw-create');
 
     new hw.ajax(el.getAttribute('data-contenturl'),
       { method: 'delete',
@@ -480,7 +480,7 @@ hw.renameEnd = function(event, el, album, accept) {
   el.removeAttribute('contenteditable');
 
   if (accept) {
-    var createForm = hw.getFirstElementByName('hw-create');
+    var createForm = hw.$c('hw-create');
     var newName = hw.cleanName(el.textContent);
     el.href = el.href.substring(0, el.href.lastIndexOf('/')) + '/' + newName;
     el.setAttribute('data-original', el.textContent);
@@ -508,8 +508,8 @@ hw.cleanName = function(name) {
 hw.help = function(event) {
   hw.preventDefault(event);
 
-  var help = hw.getFirstElementByName('hw-help');
+  var help = hw.$c('hw-help');
   var openHelp = hw.isHidden(help);
-  hw.setClass(hw.getFirstElementByName('hw-help-button'), 'hw-selected', openHelp);
+  hw.setClass(hw.$c('hw-help-button'), 'hw-selected', openHelp);
   hw.display(help, openHelp);
 };

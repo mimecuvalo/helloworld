@@ -37,7 +37,7 @@
 {% end %}
 
 {% block more_sidebar %}
-  <div id="hw-followers" class="hw-box-orange">
+  <div id="hw-followers">
     <h2>{{ _('followers') }}</h2><br>
     <ul>
       {% for follower in followers %}
@@ -49,12 +49,12 @@
       {% end %}
     </ul>
   </div>
-  <div id="hw-following" class="hw-box-green">
+  <div id="hw-following">
     {% comment TODO to do unfollow maybe drag to a trash? %}
     <h2>{{ _('following') }} <a href="#edit" onclick="hw.followingEdit(event)">[{{ _('edit') }}]</a></h2>
     <div id="hw-following-new-wrapper">
       <input id="hw-following-new" type="text" data-error="{{ _('error subscribing!') }}" data-error-unsub="{{ _('error unsubscribing!') }}">
-      <button id="hw-following-button" class="hw-button hw-button-green" onclick="hw.follow(event)" data-normal="{{ _('follow') }}" data-following="{{ _('one sec...') }}">{{ _('follow') }}</button>
+      <button id="hw-following-button" class="hw-button" onclick="hw.follow(event)" data-normal="{{ _('follow') }}" data-following="{{ _('one sec...') }}">{{ _('follow') }}</button>
       <div class="clear"></div>
     </div>
     <ul data-error="{{ _('Error retrieving feed.') }}">

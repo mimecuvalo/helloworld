@@ -39,8 +39,10 @@
     <link id="hw-stylesheet-create" rel="stylesheet" type="text/css" href="{{ static_url('css/all_create.css', 'css/all_create.inc') }}">
   {% end %}
 
-  {% if content_owner.theme and content_owner.theme != 'default.css' %}
-    <link rel="stylesheet" type="text/css" href="{{ static_url('css/themes/' + content_owner.theme) }}">
+  {% if content_owner.theme %}
+    <link id="hw-stylesheet-create-theme" rel="stylesheet" type="text/css" href="{{ static_url('css/themes/' + content_owner.theme) }}">
+  {% else %}
+    <link id="hw-stylesheet-create-theme" rel="stylesheet" type="text/css" href="{{ static_url('css/themes/default.css') }}">
   {% end %}
 
   {% if content_owner.background %}

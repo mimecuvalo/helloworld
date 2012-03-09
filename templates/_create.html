@@ -28,18 +28,18 @@
                      {% end %} ];
 </script>
 
-<form name="hw-create" method="post" action="/create" onsubmit="return false" class="{% if content %}hw-edit hw-slide-transition hw-closed{% else %}hw-new{% end %}">
+<form method="post" action="/create" onsubmit="return false" class="hw-create {% if content %}hw-edit hw-slide-transition hw-closed{% else %}hw-new{% end %}">
   {% raw xsrf_form_html() %}
   <input name="hw-id" type="hidden" {% if content %}value="{{ content.id }}"{% end %}>
   <input name="hw-url" type="hidden" {% if content %}value="{{ content_url(content) }}"{% end %}>
   <input name="hw-username" type="hidden" placeholder="{{ _("username") }}"
          value="{% if content %}{{ content.username }}{% else %}{{ default_username }}{% end %}">
-  <input name="hw-thread" type="hidden" value="">
+  <input class="hw-thread" name="hw-thread" type="hidden" value="">
 
-  <div name="hw-wysiwyg-controls">
+  <div class="hw-wysiwyg-controls">
     <span class="hw-create-section-wrapper">
       {% if individual_content %}
-        <select name="hw-section-album" onclick="" onchange="hw.sectionChange(this)">
+        <select name="hw-section-album" class="hw-section-album" onclick="" onchange="hw.sectionChange(this)">
           <option value="_new_">{{ _('new section/album...') }}</option>
           <option value="" {% if len(sections) == 0 or not content %}selected{% end %}>------------</option>
           <option value="main" {% if content and content.section == 'main' %}selected{% end %} data-hidden="false">{{ _('main (top-level page)') }}</option>
@@ -52,23 +52,23 @@
         </select>
       {% end %}
 
-      <input name="hw-price" type="text" placeholder="{{ _("price") }}"
+      <input name="hw-price" class="hw-price" type="text" placeholder="{{ _("price") }}"
              {% if content %}value="{{ content.price }}"{% end %}>
 
-      <input {% if not content %}style="display: none"{% end %} name="hw-title" type="text" placeholder="{{ _("title (optional)") }}" tabindex="1"
+      <input {% if not content %}style="display: none"{% end %} name="hw-title" class="hw-title" type="text" placeholder="{{ _("title (optional)") }}" tabindex="1"
                {% if content %}value="{{ content.title }}"{% end %}>
     </span>
 
-    <input name="hw-save" type="button" class="hw-button hw-button-blue" data-save="{{ _("save") }}" data-saving="{{ _("saving") }}" value="{{ _("save") }}" onclick="hw.save()">
+    <input name="hw-save" type="button" class="hw-save hw-button hw-button-save" data-save="{{ _("save") }}" data-saving="{{ _("saving") }}" value="{{ _("save") }}" onclick="hw.save()">
 
-    <a href="#options" name="hw-more-options" class="hw-button hw-button-green" onclick="hw.optionsClick(event)">{{ _('options') }}</a>
-    <a href="#media" name="hw-media-insert" class="hw-button hw-button-orange" onclick="hw.mediaClick(event)">+</a>
-    <a href="#help" name="hw-help-button" class="hw-button hw-button-green" onclick="hw.help(event)">?</a>
-    <span name="hw-response" class="hw-invisible-transition hw-invisible" data-saved="{{ _("saved.") }}"
+    <a href="#options" class="hw-more-options hw-button" onclick="hw.optionsClick(event)">{{ _('options') }}</a>
+    <a href="#media" class="hw-media-insert hw-button hw-button-media" onclick="hw.mediaClick(event)">+</a>
+    <a href="#help" class="hw-help-button hw-button" onclick="hw.help(event)">?</a>
+    <span class="hw-response hw-invisible-transition hw-invisible" data-saved="{{ _("saved.") }}"
             data-bad="{{ _("no good, mate.") }}" data-duplicate="{{ _("duplicate id.") }}">&nbsp;</span>
   </div>
 
-  <div name="hw-events">
+  <div class="hw-events">
     <input name="hw-date-start" type="datetime" placeholder="{{ _("start, e.g. 2011/05/23 20:30") }}"
            {% if content %}value="{{ content.date_start }}"{% end %}>
     <input name="hw-date-end" type="datetime" placeholder="{{ _("ends, e.g. 2011/05/24 00:30") }}"
@@ -77,7 +77,7 @@
            {% if content %}value="{{ content.date_repeats }}"{% end %}>
   </div>
 
-  <div name="hw-help" class="hw-slide-transition hw-closed hw-box-green">
+  <div class="hw-help hw-slide-transition hw-closed">
     *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <strong>{{ _('bold') }}</strong><br>
     !&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= {{ _('link (highlight text first)') }}<br>
     _&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <u>{{ _('underline') }}</u><br>
@@ -89,18 +89,18 @@
     ctrl-s = {{ _('save') }}<br>
   </div>
 
-  <div name="hw-options" class="hw-slide-transition hw-closed hw-box-green">
+  <div class="hw-options hw-slide-transition hw-closed">
     {% if individual_content %}
     <div class="hw-thumb-preview-wrapper">
       <label>{{ _('thumbnail preview:') }}</label><br>
-      <img name="hw-thumb-preview" {% if content and content.thumb %}src="{{ content.thumb }}"{% else %}class="hw-hidden"{% end %}>
+      <img {% if content and content.thumb %}src="{{ content.thumb }}"{% end %} class="hw-thumb-preview {% if not (content and content.thumb) %}hw-hidden{% end %}">
     </div>
     {% end %}
     <dl>
       {% if individual_content or content.section != 'main' %}
-      <dt><label>{{ _("section:") }}</label></dt><dd><input name="hw-section" maxlength="255" type="text" placeholder="{{ _("section") }}" {% if content %}value="{{ content.section }}"{% end %}></dd>
+      <dt><label>{{ _("section:") }}</label></dt><dd><input class="hw-section" name="hw-section" maxlength="255" type="text" placeholder="{{ _("section") }}" {% if content %}value="{{ content.section }}"{% end %}></dd>
       {% else %}
-      <input name="hw-section" type="hidden" value="{{ content.section }}">
+      <input class="hw-section" name="hw-section" type="hidden" value="{{ content.section }}">
       {% end %}
       <input name="hw-section-template" type="hidden" value="{{ section_template }}">
       {% if individual_content %}
@@ -108,9 +108,9 @@
       {% end %}
       <dt><label>{{ _("name:") }}</label></dt><dd><input name="hw-name" maxlength="255" type="text" placeholder="{{ _("name") }}" {% if content %}value="{{ content.name }}"{% end %}></dd>
       {% if individual_content %}
-      <dt><label>{{ _("thumbnail:") }}</label></dt><dd><input name="hw-thumb" type="text" placeholder="{{ _("thumb") }}" {% if content %}value="{{ content.thumb }}"{% end %} onchange="hw.changeThumbPreview()"> <button type="button" class="hw-button hw-button-orange" onclick="hw.selectFile(hw.getFirstElementByName('hw-thumb'), hw.changeThumbPreview)">{{ _('select image') }}</button></dd>
+      <dt><label>{{ _("thumbnail:") }}</label></dt><dd><input name="hw-thumb" type="text" placeholder="{{ _("thumb") }}" {% if content %}value="{{ content.thumb }}"{% end %} onchange="hw.changeThumbPreview()"> <button type="button" class="hw-button hw-button-media" onclick="hw.selectFile(hw.$c('hw-thumb'), hw.changeThumbPreview)">{{ _('select image') }}</button></dd>
       {% end %}
-      <dt><label>{{ _("template:") }}</label></dt><dd><select name="hw-template" {% if content %}value="{{ content.template }}"{% end %} onchange="hw.templateChange(null, this.value)">
+      <dt><label>{{ _("template:") }}</label></dt><dd><select class="hw-template" name="hw-template" {% if content %}value="{{ content.template }}"{% end %} onchange="hw.templateChange(null, this.value)">
           <option value="">{{ _('-none-') }}</option>
         {% for template in templates %}
           <option value="{{ template }}" {% if content and template == content.template %}selected{% end %}>{{ _(template) }}</option>
@@ -131,45 +131,45 @@
       {% end %}
     </dl>
     <br>
-    <a href="#html" name="hw-html-toggle" class="hw-button hw-button-green" onclick="hw.html(event, this)" title="{{ _('html') }}">HTML</a>
+    <a href="#html" class="hw-html-toggle hw-button" onclick="hw.html(event, this)" title="{{ _('html') }}">HTML</a>
   </div>
 
-  <div name="hw-playground" class="{% if section_template %}hw-template-{{ section_template }}{% end %}">
+  <div class="hw-playground {% if section_template %}hw-template-{{ section_template }}{% end %}">
     {% if individual_content %}
-    <div name="hw-media-creator-template" class="hw-hidden">
-      <div name="hw-media-creator" class="hw-box-orange">
-        <span class="hw-created hw-button hw-button-red" name="hw-media-cancel" onclick="parent.hw.cancelMedia(this)">x</span>
+    <div class="hw-media-creator-template hw-hidden">
+      <div class="hw-media-creator">
+        <span class="hw-media-cancel hw-created hw-button hw-button-delete" onclick="parent.hw.cancelMedia(this)">x</span>
         <label class="hw-initial">{{ _("media upload") }}</label>
         <span style="display: none" class="hw-initial hw-explanation">{{ _("(images, videos, audio, links)") }}</span>
         <br style="display: none" class="hw-initial">
         <label class="hw-created">{{ _("source") }}</label>
-        <input style="display: none" name="hw-media-remote" type="text" placeholder="{{ _("URL / embed") }}" onchange="parent.hw.remoteMedia(this)" onkeyup="parent.hw.checkPaste(this, event)">
+        <input style="display: none" class="hw-media-remote" name="hw-media-remote" type="text" placeholder="{{ _("URL / embed") }}" onchange="parent.hw.remoteMedia(this)" onkeyup="parent.hw.checkPaste(this, event)">
         <span style="display: none" class="hw-initial hw-media-or">{{ _("or") }}</span>
-        <input name="hw-media-local" type="file" multiple value="{{ _("Upload file(s)") }}" onchange="parent.hw.localMedia(this)">
-        <input class="hw-created hw-hidden" name="hw-media-file" type="text" disabled readonly value="">
+        <input class="hw-media-local" name="hw-media-local" type="file" multiple value="{{ _("Upload file(s)") }}" onchange="parent.hw.localMedia(this)">
+        <input class="hw-media-file hw-created hw-hidden" name="hw-media-file" type="text" disabled readonly value="">
         <br class="hw-created">
-        <input class="hw-created" name="hw-media-title" type="text" placeholder="{{ _('title') }}">
-        <input class="hw-created" name="hw-media-caption" type="text" placeholder="{{ _('caption') }}">
-        <input class="hw-created" name="hw-media-source" type="text" placeholder="{{ _('source') }}">
-        <input class="hw-created" name="hw-media-tags" type="text" placeholder="{{ _('tags') }}">
-        <span name="hw-media-file-failed" class="hw-hidden">{{ _('failed!') }}</span>
-        <progress name="hw-media-file-progress" value="0" max="100" class="hw-hidden">0%</progress>
+        <input class="hw-media-title hw-created" name="hw-media-title" type="text" placeholder="{{ _('title') }}">
+        <input class="hw-media-caption hw-created" name="hw-media-caption" type="text" placeholder="{{ _('caption') }}">
+        <input class="hw-media-source hw-created" name="hw-media-source" type="text" placeholder="{{ _('source') }}">
+        <input class="hw-media-tags hw-created" name="hw-media-tags" type="text" placeholder="{{ _('tags') }}">
+        <span class="hw-media-file-failed hw-hidden">{{ _('failed!') }}</span>
+        <progress value="0" max="100" class="hw-media-file-progress hw-hidden">0%</progress>
         <input name="hw-media-section" type="hidden">
         <input name="hw-media-album" type="hidden">
         <input name="hw-media-template" type="hidden">
-        <a class="hw-created hw-closed" name="hw-media-preview-wrapper" href="#edit" onclick="parent.hw.editImage(event, this);">
-          <img name="hw-media-preview">
+        <a class="hw-media-preview-wrapper hw-created hw-closed" href="#edit" onclick="parent.hw.editImage(event, this);">
+          <img class="hw-media-preview">
           <span>{{ _('edit') }}</span>
         </a>
       </div>
     </div>
-    <div class="hw-hidden" name="hw-media-list"></div>
+    <div class="hw-hidden hw-media-list"></div>
     <script>
       (function() {
         var callback = null;
         {% if initial_media %}
           callback = function(iframeDoc) {
-            var remoteField = hw.getFirstElementByName('hw-media-remote', iframeDoc);
+            var remoteField = hw.$c('hw-media-remote', iframeDoc);
             remoteField.value = "{% raw js_escape(initial_media) %}";
             hw.remoteMedia(remoteField);
           }
@@ -182,67 +182,67 @@
     {% if not individual_content %}
       <strong>{{ _('styling and code added here will apply to all items belonging to this section.') }}</strong>
     {% end %}
-    <div name="hw-html-wrapper" class="hw-slide-transition {% if individual_content %}hw-closed{% end %}">
-      <textarea name="hw-style" {% if individual_content %}class="hw-hidden"{% end %}>{% if content %}{{ content.style }}{% end %}</textarea>
-      <textarea name="hw-code" class="hw-hidden">{% if content %}{% if edit and has_code %}{{ content.original_code }}{% else %}{{ content.code }}{% end %}{% end %}</textarea>
-      {% if individual_content %}<textarea name="hw-html"></textarea>{% end %}
-      <ul name="hw-html-tabs">
-        <li name="hw-style-tab" onclick="hw.htmlTab(this)" {% if not individual_content %}class="hw-selected"{% end %}>{{ _('style') }}</li>
-        <li name="hw-code-tab" onclick="hw.htmlTab(this)">{{ _('code') }}</li>
-        {% if individual_content %}<li name="hw-html-tab" onclick="hw.htmlTab(this)" class="hw-selected">{{ _('html') }}</li>{% end %}
+    <div class="hw-html-wrapper hw-slide-transition {% if individual_content %}hw-closed{% end %}">
+      <textarea name="hw-style" class="hw-style {% if individual_content %}hw-hidden{% end %}">{% if content %}{{ content.style }}{% end %}</textarea>
+      <textarea name="hw-code" class="hw-code hw-hidden">{% if content %}{% if edit and has_code %}{{ content.original_code }}{% else %}{{ content.code }}{% end %}{% end %}</textarea>
+      {% if individual_content %}<textarea name="hw-html" class="hw-html"></textarea>{% end %}
+      <ul class="hw-html-tabs">
+        <li onclick="hw.htmlTab(this)" {% if not individual_content %}class="hw-selected"{% end %}>{{ _('style') }}</li>
+        <li onclick="hw.htmlTab(this)">{{ _('code') }}</li>
+        {% if individual_content %}<li onclick="hw.htmlTab(this)" class="hw-selected">{{ _('html') }}</li>{% end %}
       </ul>
     </div>
 
     {% if individual_content %}
-      <iframe name="hw-media-wrapper" class="hw-slide-transition hw-closed" data-loading="{{ _('loading...') }}" data-bad="{{ _('Error loading the media library.') }}" src="about:blank" width="100%"></iframe>
+      <iframe name="hw-media-wrapper" class="hw-media-wrapper hw-slide-transition hw-closed" data-loading="{{ _('loading...') }}" data-bad="{{ _('Error loading the media library.') }}" src="about:blank" width="100%"></iframe>
     {% end %}
   </div>
 </form>
 {% if individual_content %}
-<div name="hw-anchor-editor">
+<div class="hw-anchor-editor">
   <header onmousedown="hw.dragElementStart(event, this)">{{ _('link editor') }}</header>
-  <input name="hw-anchor-link" type="text" placeholder="{{ _('http://') }}" onchange="hw.changeAnchorLink(this)">
-  <a name="hw-anchor-visit" href="#" target="_blank">{{ _('visit') }}</a>
-  <a name="hw-anchor-remove" href="#removeLink" onclick='hw.wysiwyg(event, "createLink")'>{{ _('remove') }}</a><br>
-  <input type="radio" name="hw-anchor-type" value="web" onclick="hw.changeAnchorType(this)"><label onclick="hw.changeAnchorType(this.previousSibling)">{{ _('web') }}</label>
+  <input class="hw-anchor-link" name="hw-anchor-link" type="text" placeholder="{{ _('http://') }}" onchange="hw.changeAnchorLink(this)">
+  <a class="hw-anchor-visit" href="#" target="_blank">{{ _('visit') }}</a>
+  <a class="hw-anchor-remove" href="#removeLink" onclick='hw.wysiwyg(event, "createLink")'>{{ _('remove') }}</a><br>
+  <input type="radio" class="" name="hw-anchor-type" value="web" onclick="hw.changeAnchorType(this)"><label onclick="hw.changeAnchorType(this.previousSibling)">{{ _('web') }}</label>
   <input type="radio" name="hw-anchor-type" value="email" onclick="hw.changeAnchorType(this)"><label onclick="hw.changeAnchorType(this.previousSibling)">{{ _('email') }}</label>
 </div>
-<div name="hw-image-options">
+<div class="hw-image-options">
   <header onmousedown="hw.dragElementStart(event, this)">{{ _('change alignment') }}</header>
   <input type="radio" name="hw-image-align" value="none" onclick="hw.changeImageAlign(this)"><label onclick="hw.changeImageAlign(this.previousSibling)">{{ _('none') }}</label>
   <input type="radio" name="hw-image-align" value="left" onclick="hw.changeImageAlign(this)"><label onclick="hw.changeImageAlign(this.previousSibling)">{{ _('left') }}</label>
   <input type="radio" name="hw-image-align" value="right" onclick="hw.changeImageAlign(this)"><label onclick="hw.changeImageAlign(this.previousSibling)">{{ _('right') }}</label>
 </div>
-<div name="hw-image-editor" class="hw-closed hw-box-black">
+<div class="hw-image-editor hw-closed">
   <header onmousedown="hw.dragElementStart(event, this)">{{ _('image editor') }}</header>
-  <a href="#closeEditor" class="hw-image-close hw-button hw-button-red" onclick="hw.editImageClose(event)">x</a>
+  <a href="#close-editor" class="hw-image-close hw-button hw-button-delete" onclick="hw.editImageClose(event)">x</a>
   <div class="hw-image-scratch-wrapper">
-    <img name="hw-image-scratch">
+    <img class="hw-image-scratch">
   </div>
   <div class="hw-image-actions">
     <br>
     <ul>
-      <li><button onclick="hw.editImageRotate()" class="hw-button hw-button-green">{{ _('rotate') }}</button> <button class="hw-button hw-button-orange" name="hw-image-crop" onclick="hw.editImageCrop()" data-select-area="{{ _('now, select an area to crop') }}" data-crop="{{ _('crop') }}">{{ _('crop') }}</button></li>
+      <li><button onclick="hw.editImageRotate()" class="hw-button hw-button-rotate">{{ _('rotate') }}</button> <button class="hw-image-crop hw-button" onclick="hw.editImageCrop()" data-select-area="{{ _('now, select an area to crop') }}" data-crop="{{ _('crop') }}">{{ _('crop') }}</button></li>
       <li><hr/></li>
       <li>
         <label>{{ _('width') }}</label>
-        <input name="hw-image-width" type="range" min="1" max="1280" step="1" value="0" data-previous="0" onchange="hw.editImageWidth(this)" onmousedown="hw.rangeStart(event, this)" onmousemove="hw.rangeMove(event, this)" onmouseup="hw.rangeEnd(event, this)" onmouseout="hw.rangeEnd(event, this)">
-        <input name="hw-image-height" type="hidden" value="0">
+        <input class="hw-image-width" name="hw-image-width" type="range" min="1" max="1280" step="1" value="0" data-previous="0" onchange="hw.editImageWidth(this)" onmousedown="hw.rangeStart(event, this)" onmousemove="hw.rangeMove(event, this)" onmouseup="hw.rangeEnd(event, this)" onmouseout="hw.rangeEnd(event, this)">
+        <input class="hw-image-height" name="hw-image-height" type="hidden" value="0">
       </li>
-      <li><label>{{ _('brightness') }}</label><input name="hw-image-brightness" type="range" min="-150" max="150" step="1" value="0" onchange="hw.editImageBrightness(this)" onmousedown="hw.rangeStart(event, this)" onmousemove="hw.rangeMove(event, this)" onmouseup="hw.rangeEnd(event, this)" onmouseout="hw.rangeEnd(event, this)"></li>
-      <li><label>{{ _('contrast') }}</label><input name="hw-image-contrast" type="range" min="-1" max="3" step="0.1" value="0" onchange="hw.editImageContrast(this)" onmousedown="hw.rangeStart(event, this)" onmousemove="hw.rangeMove(event, this)" onmouseup="hw.rangeEnd(event, this)" onmouseout="hw.rangeEnd(event, this)"></li>
-      <li><input name="hw-image-preview" type="checkbox" onchange="hw.editImagePreview(this)" checked><label>{{ _('preview') }}</label></li>
+      <li><label>{{ _('brightness') }}</label><input class="hw-image-brightness" name="hw-image-brightness" type="range" min="-150" max="150" step="1" value="0" onchange="hw.editImageBrightness(this)" onmousedown="hw.rangeStart(event, this)" onmousemove="hw.rangeMove(event, this)" onmouseup="hw.rangeEnd(event, this)" onmouseout="hw.rangeEnd(event, this)"></li>
+      <li><label>{{ _('contrast') }}</label><input class="hw-image-contrast" name="hw-image-contrast" type="range" min="-1" max="3" step="0.1" value="0" onchange="hw.editImageContrast(this)" onmousedown="hw.rangeStart(event, this)" onmousemove="hw.rangeMove(event, this)" onmouseup="hw.rangeEnd(event, this)" onmouseout="hw.rangeEnd(event, this)"></li>
+      <li><input class="hw-image-preview" name="hw-image-preview" type="checkbox" onchange="hw.editImagePreview(this)" checked><label>{{ _('preview') }}</label></li>
       <li><hr/></li>
-      <li><button onclick="hw.editImageRevert()" class="hw-button hw-button-red">{{ _('revert') }}</button> <button class="hw-button hw-button-blue" onclick="hw.editImageSave()">{{ _('save') }}</button></li>
+      <li><button onclick="hw.editImageRevert()" class="hw-button hw-button-delete">{{ _('revert') }}</button> <button class="hw-button hw-button-save" onclick="hw.editImageSave()">{{ _('save') }}</button></li>
     </ul>
     <br>
   </div>
   <div class="clear"></div>
 </div>
-<div name="hw-user-autocomplete"></div>
+<div class="hw-user-autocomplete"></div>
 {% end %}
-<div name="hw-view" class="hw-view {% if not individual_content %}hw-closed{% end %}">
-  <div class="{% if not content and individual_content %}hw-new{% end %} {% if section_template %}hw-template-{{ section_template }}{% end %}" name="hw-wysiwyg" tabindex="2"
+<div class="hw-view {% if not individual_content %}hw-closed{% end %}">
+  <div class="hw-wysiwyg {% if not content and individual_content %}hw-new{% end %} {% if section_template %}hw-template-{{ section_template }}{% end %}" tabindex="2"
     {% if not content %}contenteditable{% end %}
     onmouseup="hw.saveSelection()" onkeyup="hw.saveSelection()" onfocus="hw.restoreSelection()" onpaste="hw.paste(event)">{% if content and individual_content %}{% raw content.view %}{% else %}<h1 id="hw-new-title">{{ _('untitled') }}</h1><br>{% end %}</div>
   <div class="clear"></div>
@@ -250,18 +250,18 @@
 
 <script>
 {% if individual_content %}
-  Event.observe(hw.getFirstElementByName('hw-wysiwyg'), 'keydown', hw.shortcuts, false);
-  Event.observe(hw.getFirstElementByName('hw-wysiwyg'), 'keypress', hw.wysiwygKeys, false);
+  Event.observe(hw.$c('hw-wysiwyg'), 'keydown', hw.shortcuts, false);
+  Event.observe(hw.$c('hw-wysiwyg'), 'keypress', hw.wysiwygKeys, false);
 
-  Event.observe(hw.getFirstElementByName('hw-title'), 'keyup', hw.changeBeforeUnloadState, false);
-  Event.observe(hw.getFirstElementByName('hw-title'), 'mouseup', hw.changeBeforeUnloadState, false);
-  Event.observe(hw.getFirstElementByName('hw-wysiwyg'), 'keyup', hw.changeBeforeUnloadState, false);
-  Event.observe(hw.getFirstElementByName('hw-wysiwyg'), 'mouseup', hw.changeBeforeUnloadState, false);
+  Event.observe(hw.$c('hw-title'), 'keyup', hw.changeBeforeUnloadState, false);
+  Event.observe(hw.$c('hw-title'), 'mouseup', hw.changeBeforeUnloadState, false);
+  Event.observe(hw.$c('hw-wysiwyg'), 'keyup', hw.changeBeforeUnloadState, false);
+  Event.observe(hw.$c('hw-wysiwyg'), 'mouseup', hw.changeBeforeUnloadState, false);
   Event.observe(window, 'scroll', hw.createOnScroll, false);
 {% end %}
 
 {% if not content %}
-  hw.sectionChange(hw.getFirstElementByName('hw-section'));
+  hw.sectionChange(hw.$c('hw-section'));
   hw.addClass('hw-container', 'hw-editing');
 {% end %}
 

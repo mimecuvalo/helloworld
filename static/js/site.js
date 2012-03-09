@@ -41,10 +41,10 @@ hw.keyNavigation = function(event) {
     return;
   }
 
-  var prev = hw.getFirstElementByName('hw-previous');
-  var next = hw.getFirstElementByName('hw-next');
-  var topUrl = hw.getFirstElementByName('hw-top');
-  var neighbors = hw.getFirstElementByName('hw-neighbors');
+  var prev = hw.$c('hw-previous');
+  var next = hw.$c('hw-next');
+  var topUrl = hw.$c('hw-top');
+  var neighbors = hw.$c('hw-neighbors');
   if (!neighbors) {
     return;
   }
@@ -151,7 +151,7 @@ hw.swapContent = function(url, title) {
 hw.loadedContent = {};
 
 hw.preloadPreviousContent = function() {
-  var prev = hw.getFirstElementByName('hw-previous');
+  var prev = hw.$c('hw-previous');
   if (!hw.supportsHistory() || !prev || !prev.href || prev.getAttribute('data-disallow-magic')) {
     return;
   }
@@ -279,8 +279,8 @@ hw.loadMore.prototype = {
 };
 
 hw.commentSubmit = function() {
-  var form = hw.getFirstElementByName('hw-comment-form');
-  var comment = hw.getFirstElementByName('hw-comment-input');
+  var form = hw.$c('hw-comment-form');
+  var comment = hw.$c('hw-comment-input');
   var localId = comment.getAttribute('data-local-id');
   var thread = comment.hasAttribute('data-thread') ? comment.getAttribute('data-thread') : '';
   var threadUser = comment.hasAttribute('data-thread-user') ? comment.getAttribute('data-thread-user') : '';

@@ -1,9 +1,11 @@
+/* plain styling for the site */
+
 body,
 button,
 input,
 select,
 option {
-  font: 13px Courier New, monospace;
+  font-size: 13px;
 }
 
 a, a:visited {
@@ -19,30 +21,9 @@ img {
   border: 0;
 }
 
-/*blockquote {
-  border-left: 1px solid #cd5c5c;
-  margin-left: 13px;
-  padding-left: 7px;
-}*/
-
 strong {
   font-weight: bold;
 }
-
-/* from fontsquirrel.com
-@font-face {
-  font-family: 'SilkscreenNormal';
-  src: url('../fonts/slkscr-webfont.eot');
-  src: url('../fonts/slkscr-webfont.eot?#iefix') format('embedded-opentype'),
-       url('../fonts/slkscr-webfont.woff') format('woff'),
-       url('../fonts/slkscr-webfont.ttf') format('truetype'),
-       url('../fonts/slkscr-webfont.svg#SilkscreenNormal') format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
-body {
-  font-family: 'SilkscreenNormal', Courier New;
-}*/
 
 .hw-disabled {
   color: #999;
@@ -68,139 +49,6 @@ a.hw-button {
 a.hw-button[href],
 a.hw-button[href]:hover {
   text-decoration: none;
-}
-.hw-button-blue,
-.hw-button-blue:visited {
-  background-color: #eff;
-  border: 1px solid #0cf;
-  color: #06f;
-  -moz-box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-  -webkit-box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-  box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-}
-.hw-button-blue:hover {
-  border: 1px solid #09f;
-  color: #06f;
-  -moz-box-shadow: 1px 1px #09f, 2px 2px #09f, 3px 3px #09f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-  -webkit-box-shadow: 1px 1px #09f, 2px 2px #09f, 3px 3px #09f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-  box-shadow: 1px 1px #09f, 2px 2px #09f, 3px 3px #09f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-}
-.hw-button-orange,
-.hw-button-orange:visited {
-  background-color: #ffe;
-  border: 1px solid #f90;
-  color: #f30;
-  -moz-box-shadow: 1px 1px #f90, 2px 2px #f90, 3px 3px #f90, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-  -webkit-box-shadow: 1px 1px #f90, 2px 2px #f90, 3px 3px #f90, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-  box-shadow: 1px 1px #f90, 2px 2px #f90, 3px 3px #f90, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-}
-.hw-button-orange:hover {
-  border: 1px solid #f60;
-  color: #f30;
-  -moz-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-  -webkit-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-  box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-}
-.hw-button-green,
-.hw-button-green:visited {
-  background-color: #eff;
-  border: 1px solid #0c0;
-  color: #060;
-  -moz-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-  -webkit-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-  box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-}
-.hw-button-green:hover {
-  border: 1px solid #090;
-  color: #060;
-  -moz-box-shadow: 1px 1px #090, 2px 2px #090, 3px 3px #090, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-  -webkit-box-shadow: 1px 1px #090, 2px 2px #090, 3px 3px #090, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-  box-shadow: 1px 1px #090, 2px 2px #090, 3px 3px #090, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-}
-.hw-button-red,
-.hw-button-red:visited {
-  background-color: #fcfcfc;
-  border: 1px solid #f60;
-  color: #f30;
-  -moz-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-  -webkit-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-  box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-}
-.hw-button-red:hover {
-  border: 1px solid #f30;
-  color: #f30;
-  -moz-box-shadow: 1px 1px #f30, 2px 2px #f30, 3px 3px #f30, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-  -webkit-box-shadow: 1px 1px #f30, 2px 2px #f30, 3px 3px #f30, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-  box-shadow: 1px 1px #f30, 2px 2px #f30, 3px 3px #f30, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-}
-.hw-button-purple,
-.hw-button-purple:visited {
-  background-color: #fef;
-  border: 1px solid #c0f;
-  color: #90f;
-  -moz-box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-  -webkit-box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-  box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-}
-.hw-button-purple:hover {
-  border: 1px solid #90f;
-  color: #90f;
-  -moz-box-shadow: 1px 1px #90f, 2px 2px #90f, 3px 3px #90f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-  -webkit-box-shadow: 1px 1px #90f, 2px 2px #90f, 3px 3px #90f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-  box-shadow: 1px 1px #90f, 2px 2px #90f, 3px 3px #90f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
-}
-.hw-button.hw-selected,
-.hw-button:active,
-.hw-button[disabled] {
-  -moz-box-shadow: 1px 1px #333, 1px 0px #333, 0px 1px #333 !important;
-  -webkit-box-shadow: 1px 1px #333, 1px 0px #333, 0px 1px #333 !important;
-  box-shadow: 1px 1px #333, 1px 0px #333, 0px 1px #333 !important;
-  margin-top: 3px;
-  margin-left: 6px;
-  margin-right: 0;
-  margin-bottom: 3px;
-}
-
-.hw-box-blue {
-  border: 1px solid #0cf;
-  -moz-box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf;
-  -webkit-box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf;
-  box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf;
-}
-
-.hw-box-orange {
-  border: 1px solid #fa0;
-  -moz-box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
-  -webkit-box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
-  box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
-}
-
-.hw-box-green {
-  border: 1px solid #0c0;
-  -moz-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
-  -webkit-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
-  box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
-}
-
-.hw-box-red {
-  border: 1px solid #f60;
-  -moz-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60;
-  -webkit-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60;
-  box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60;
-}
-
-.hw-box-purple {
-  border: 1px solid #c0f;
-  -moz-box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f;
-  -webkit-box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f;
-  box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f;
-}
-
-.hw-box-black {
-  border: 1px solid #000;
-  -moz-box-shadow: 1px 1px 0 #000, 2px 2px 0 #000, 3px 3px 0 #000;
-  -webkit-box-shadow: 1px 1px 0 #000, 2px 2px 0 #000, 3px 3px 0 #000;
-  box-shadow: 1px 1px 0 #000, 2px 2px 0 #000, 3px 3px 0 #000;
 }
 
 #hw-container {
@@ -236,10 +84,6 @@ a.hw-button[href]:hover {
   padding: 0 6px;
   width: 290px;
   background-color: white;
-  border: 1px solid #fa0;
-  -moz-box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
-  -webkit-box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
-  box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
 }
 
 #hw-content.hw-presentation {
@@ -475,22 +319,22 @@ form.hw-media-library-standalone header h1 {
 }
 
 #hw-content ul,
-div[name=hw-wysiwyg] ul {
+.hw-wysiwyg ul {
   list-style: disc inside;
 }
 
 #hw-content ol,
-div[name=hw-wysiwyg] ol {
+.hw-wysiwyg ol {
   list-style: decimal inside;
 }
 
 #hw-content li,
-div[name=hw-wysiwyg] li {
+.hw-wysiwyg li {
   padding-left: 7px;
 }
 
 #hw-content img.hw-read-more,
-div[name=hw-wysiwyg] img.hw-read-more {
+.hw-wysiwyg img.hw-read-more {
   border-top: 3px dotted #03c;
   height: 1em;
   margin: 1em 0;
@@ -640,15 +484,15 @@ a.hw-read-more {
   float: right;
 }
 
-a[name=hw-cart-thumb] img {
+a.hw-cart-thumb img {
   display: block;
 }
-a[name=hw-cart-title] {
+a.hw-cart-title {
   display: block;
   min-height: 1.1em;
   margin: 3px 0;
 }
-div[name=hw-cart-item] {
+.hw-cart-item {
   padding-bottom: 1em;
   margin: 1em;
   border-bottom: 1px solid black;
@@ -673,10 +517,7 @@ span[data-tooltip]:hover:after {
   -webkit-border-radius: 5px;
   border-radius: 5px;*/
   background-color: white;
-  border: 1px solid #0c0;
-  -moz-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
-  -webkit-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
-  box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
+  border: 1px solid #000;
 }
 
 ul.hw-comments {
@@ -701,10 +542,10 @@ ul.hw-comments img {
   font-size: 16px;
   margin: 1em 0;
 }
-form[name=hw-comment-form] {
+form.hw-comment-form {
   margin: 1em 0;
 }
-textarea[name=hw-comment-input] {
+textarea.hw-comment-input {
   width: 300px;
   float: left;
 }
@@ -727,18 +568,4 @@ textarea[name=hw-comment-input] {
   #hw-content a[href]:after {
     content: " (" attr(href) ") ";
   }
-
-  /* from http://html5boilerplate.com/ */
-  * { background: transparent !important; color: black !important; text-shadow: none !important; filter:none !important; -ms-filter: none !important; } /* Black prints faster: sanbeiji.com/archives/953 */
-  a, a:visited { color: #444 !important; text-decoration: underline; }
-  /* a[href]:after { content: " (" attr(href) ")"; } */
-  abbr[title]:after { content: " (" attr(title) ")"; }
-  .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after { content: ""; }  /* Don't show links for images, or javascript/internal links */
-  pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }
-  thead { display: table-header-group; } /* css-discuss.incutio.com/wiki/Printing_Tables */
-  tr, img { page-break-inside: avoid; }
-  img { max-width: 100% !important; }
-  @page { margin: 0.5cm; }
-  p, h2, h3 { orphans: 3; widows: 3; }
-  h2, h3{ page-break-after: avoid; }
 }

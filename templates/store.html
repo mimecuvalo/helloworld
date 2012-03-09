@@ -15,11 +15,11 @@
   <div id="hw-cart-wrapper" class="hw-hidden">
     <a href="#close" onclick="hw.checkoutClose(event)" id="hw-cart-close">[x]</a>
     <div id="hw-cart-template" class="hw-hidden">
-      <div name="hw-cart-item">
-        <a href="$url" name="hw-cart-thumb">
+      <div class="hw-cart-item">
+        <a href="$url" class="hw-cart-thumb">
           <img $thumb/>
         </a>
-        <a href="$url" name="hw-cart-title">$title</a>
+        <a href="$url" class="hw-cart-title">$title</a>
         <strong>
           {% if not content_owner.currency or content_owner.currency == 'USD' %}${% end %}$price
           {% if content_owner.currency and content_owner.currency != 'USD' %}{{ content_owner.currency }}{% end %}

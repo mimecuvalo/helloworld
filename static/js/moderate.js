@@ -24,7 +24,7 @@ hw.follow = function(event, el) {
     alert(hw.$('hw-following-new').getAttribute('data-error'));
   };
 
-  var createForm = hw.getFirstElementByName('hw-create');
+  var createForm = hw.$c('hw-create');
   new hw.ajax(hw.baseUri() + 'api',
     { method: 'post',
       postBody: 'op='       + encodeURIComponent('follow')
@@ -82,7 +82,7 @@ hw.read = function(event, el, listMode, readSpam) {
     hw.$('hw-feed').innerHTML = el.parentNode.parentNode.getAttribute('data-error');
   };
 
-  var createForm = hw.getFirstElementByName('hw-create');
+  var createForm = hw.$c('hw-create');
   new hw.ajax(url,
     { method: 'get',
       headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
@@ -109,7 +109,7 @@ hw.unfollow = function(event, el) {
     alert(hw.$('hw-following-new').getAttribute('data-error-unsub'));
   };
 
-  var createForm = hw.getFirstElementByName('hw-create');
+  var createForm = hw.$c('hw-create');
   new hw.ajax(hw.baseUri() + 'api',
     { method: 'post',
       postBody: 'op='       + encodeURIComponent('unfollow')
@@ -139,7 +139,7 @@ hw.favorite = function(event, el) {
     el.innerHTML = el.parentNode.getAttribute('data-error');
   };
 
-  var createForm = hw.getFirstElementByName('hw-create');
+  var createForm = hw.$c('hw-create');
   new hw.ajax(hw.baseUri() + 'api',
     { method: 'post',
       postBody: 'op='       + encodeURIComponent('favorite')
@@ -159,7 +159,7 @@ hw.reply = function(event, el) {
   }
 
   var username = el.parentNode.getAttribute('data-username');
-  var commentForm = hw.getFirstElementByName('hw-comment-form');
+  var commentForm = hw.$c('hw-comment-form');
 
   if (commentForm) {
     if (document.body.parentNode.scrollTop) {
@@ -168,7 +168,7 @@ hw.reply = function(event, el) {
       document.body.scrollTop = commentForm.getBoundingClientRect().top - 100;
     }
 
-    var input = hw.getFirstElementByName('hw-comment-input');
+    var input = hw.$c('hw-comment-input');
     var str = '@' + username + (input.value ? ' ' : '') + input.value + ' ';
     input.value = str;
     if (el.parentNode.parentNode.hasAttribute('data-post-id')) {  // we go to <li> element
@@ -186,12 +186,12 @@ hw.reply = function(event, el) {
   }
 
   if (document.body.parentNode.scrollTop) {
-    document.body.parentNode.scrollTop = hw.getFirstElementByName('hw-wysiwyg').getBoundingClientRect().top - 100;
+    document.body.parentNode.scrollTop = hw.$c('hw-wysiwyg').getBoundingClientRect().top - 100;
   } else {
-    document.body.scrollTop = hw.getFirstElementByName('hw-wysiwyg').getBoundingClientRect().top - 100;
+    document.body.scrollTop = hw.$c('hw-wysiwyg').getBoundingClientRect().top - 100;
   }
 
-  var wysiwyg = hw.getFirstElementByName('hw-wysiwyg');
+  var wysiwyg = hw.$c('hw-wysiwyg');
   var str = '@' + username + (wysiwyg.innerHTML ? ' ' : '') + wysiwyg.innerHTML + ' ';
   wysiwyg.innerHTML = str;
   wysiwyg.focus();
@@ -210,7 +210,7 @@ hw.reply = function(event, el) {
     range.select();
   }
 
-  hw.getFirstElementByName('hw-thread').value = el.parentNode.getAttribute('data-post-id');
+  hw.$c('hw-thread').value = el.parentNode.getAttribute('data-post-id');
 };
 
 hw.spam = function(event, el) {
@@ -232,7 +232,7 @@ hw.spam = function(event, el) {
     el.innerHTML = el.parentNode.getAttribute('data-error');
   };
 
-  var createForm = hw.getFirstElementByName('hw-create');
+  var createForm = hw.$c('hw-create');
   new hw.ajax(hw.baseUri() + 'api',
     { method: 'post',
       postBody: 'op='       + encodeURIComponent('spam')
@@ -264,7 +264,7 @@ hw.deletePost = function(event, el) {
     el.innerHTML = el.parentNode.getAttribute('data-error');
   };
 
-  var createForm = hw.getFirstElementByName('hw-create');
+  var createForm = hw.$c('hw-create');
   new hw.ajax(hw.baseUri() + 'api',
     { method: 'post',
       postBody: 'op='       + encodeURIComponent('delete')

@@ -15,7 +15,7 @@ hw.deleteAccount = function(event, username) {
 
   new hw.ajax(hw.baseUri() + 'users/' + username,
     { method: 'delete',
-      headers: { 'X-Xsrftoken' : hw.$('customize-form')['_xsrf'].value },
+      headers: { 'X-Xsrftoken' : hw.$('hw-customize-form')['_xsrf'].value },
       onSuccess: callback,
       onError: badTrip });
 };

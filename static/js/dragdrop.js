@@ -277,9 +277,8 @@ hw.dragDrop = function(event, el) {
     }
   }
 
-  var sectionAlbum = hw.getFirstElementByName('hw-section').value + '|' + hw.getFirstElementByName('hw-name').value;
-
-  var createForm = hw.getFirstElementByName('hw-create');
+  var createForm = hw.$c('hw-create');
+  var sectionAlbum = createForm['hw-section'].value + '|' + createForm['hw-name'].value;
   new hw.ajax(hw.baseUri() + 'api',
     { method: 'post',
       postBody: 'op='       + encodeURIComponent('order')

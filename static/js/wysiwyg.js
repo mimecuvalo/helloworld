@@ -17,7 +17,7 @@ hw.edit = function(event, opt_dontCreateMediaIframe) {
 
   hw.createAutoload = false;
 
-  var createForm = hw.getFirstElementByName('hw-create');
+  var createForm = hw.$c('hw-create');
   var turnEditingOn = hw.isHidden(createForm);
 
   // XXX, edge case: if you edit the page, then click 'edit' to close edit mode (without saving),
@@ -38,7 +38,7 @@ hw.edit = function(event, opt_dontCreateMediaIframe) {
     hw.hideElementOptions();
   }
   createForm['hw-save'].disabled = false;
-  var wysiwyg = hw.getFirstElementByName('hw-wysiwyg');
+  var wysiwyg = hw.$c('hw-wysiwyg');
 
   if (hw.createIndividualContent) {
     if (turnEditingOn) {
@@ -61,7 +61,7 @@ hw.edit = function(event, opt_dontCreateMediaIframe) {
 };
 
 hw.editScriptWorkaround = function() {
-  var wysiwyg = hw.getFirstElementByName('hw-wysiwyg');
+  var wysiwyg = hw.$c('hw-wysiwyg');
   document.head.innerHTML = document.head.innerHTML.replace(/<style name="HWSCRIPTWORKAROUND"/g, '<script');
   document.head.innerHTML = document.head.innerHTML.replace(/<\/style><!--HWSCRIPTWORKAROUND-->/g, '</script>');
   wysiwyg.innerHTML = wysiwyg.innerHTML.replace(/<style name="HWSCRIPTWORKAROUND"/g, '<script');
@@ -73,7 +73,7 @@ hw.editScriptWorkaround = function() {
 // another example of vi emulation: http://gpl.internetconnection.net/vi/
 hw.cm = null;
 hw.setupCodeMirror = function() {
-  if (hw.getFirstElementByName('hw-style-cm')) {
+  if (hw.$c('hw-style-cm')) {
     return;
   }
 
@@ -82,27 +82,30 @@ hw.setupCodeMirror = function() {
     hw.htmlPreview(true, true);
   };
 
-  var cm = CodeMirror.fromTextArea(hw.getFirstElementByName('hw-style'), { mode: "css", lineNumbers: true, matchBrackets: true, onChange: onChange });
+  var cm = CodeMirror.fromTextArea(hw.$c('hw-style'), { mode: "css", lineNumbers: true, matchBrackets: true, onChange: onChange });
   cm.getWrapperElement().setAttribute('name', 'hw-style-cm');
+  cm.getWrapperElement().setAttribute('class', 'hw-style-cm');
   cm.getWrapperElement().cm = cm;
   if (hw.createIndividualContent) {
     hw.hide(cm.getWrapperElement());
   }
-  Event.observe(hw.getFirstElementByName('hw-style-cm'), 'keydown', hw.shortcuts, false);
+  Event.observe(hw.$c('hw-style-cm'), 'keydown', hw.shortcuts, false);
 
-  cm = CodeMirror.fromTextArea(hw.getFirstElementByName('hw-code'), { mode: "javascript", lineNumbers: true, matchBrackets: true, onChange: onChange });
+  cm = CodeMirror.fromTextArea(hw.$c('hw-code'), { mode: "javascript", lineNumbers: true, matchBrackets: true, onChange: onChange });
   cm.getWrapperElement().setAttribute('name', 'hw-code-cm');
+  cm.getWrapperElement().setAttribute('class', 'hw-code-cm');
   cm.getWrapperElement().cm = cm;
   hw.hide(cm.getWrapperElement());
-  Event.observe(hw.getFirstElementByName('hw-code-cm'), 'keydown', hw.shortcuts, false);
+  Event.observe(hw.$c('hw-code-cm'), 'keydown', hw.shortcuts, false);
 
   if (hw.createIndividualContent) {
-    hw.getFirstElementByName('hw-html').value = hw.getFirstElementByName('hw-html').value.replace(/>([^\n])/g, '>\n$1');
-    hw.cm = CodeMirror.fromTextArea(hw.getFirstElementByName('hw-html'), { mode: "text/html", lineNumbers: true, matchBrackets: true, onChange: onChange });
+    hw.$c('hw-html').value = hw.$c('hw-html').value.replace(/>([^\n])/g, '>\n$1');
+    hw.cm = CodeMirror.fromTextArea(hw.$c('hw-html'), { mode: "text/html", lineNumbers: true, matchBrackets: true, onChange: onChange });
     hw.cm.getWrapperElement().setAttribute('name', 'hw-html-cm');
+    hw.cm.getWrapperElement().setAttribute('class', 'hw-html-cm');
     hw.cm.getWrapperElement().cm = hw.cm;
     hw.cm.focus();
-    Event.observe(hw.getFirstElementByName('hw-html-cm'), 'keydown', hw.shortcuts, false);
+    Event.observe(hw.$c('hw-html-cm'), 'keydown', hw.shortcuts, false);
   }
 };
 
@@ -113,11 +116,11 @@ hw.optionsClick = function(event) {
 };
 
 hw.options = function(open) {
-  var createForm = hw.getFirstElementByName('hw-create');
-  var options = hw.getFirstElementByName('hw-options');
+  var createForm = hw.$c('hw-create');
+  var options = hw.$c('hw-options');
   var openOptions = open || hw.isHidden(options);
-  hw.setClass(hw.getFirstElementByName('hw-more-options'), 'hw-selected', openOptions);
-  hw.setClass(createForm, 'hw-options', openOptions);
+  hw.setClass(hw.$c('hw-more-options'), 'hw-selected', openOptions);
+  hw.setClass(createForm, 'hw-options-open', openOptions);
   hw.display(options, openOptions);
   if (!openOptions) {
     hw.html(null, null, true);
@@ -126,7 +129,7 @@ hw.options = function(open) {
 };
 
 hw.sectionChange = function(section) {
-  var createForm = hw.getFirstElementByName('hw-create');
+  var createForm = hw.$c('hw-create');
 
   var oldTemplate = createForm['hw-section-template'].value;
   var newTemplate = '';
@@ -149,16 +152,16 @@ hw.sectionChange = function(section) {
 
 hw.templateChange = function(oldTemplate, newTemplate) {
   if (!oldTemplate) {
-    oldTemplate = hw.getFirstElementByName('hw-template').getAttribute('data-previous');
+    oldTemplate = hw.$c('hw-template').getAttribute('data-previous');
   }
-  hw.removeClass(hw.getFirstElementByName('hw-playground'), 'hw-template-' + oldTemplate);
-  hw.addClass(hw.getFirstElementByName('hw-playground'), 'hw-template-' + newTemplate);
-  hw.removeClass(hw.getFirstElementByName('hw-wysiwyg'), 'hw-template-' + oldTemplate);
-  hw.addClass(hw.getFirstElementByName('hw-wysiwyg'), 'hw-template-' + newTemplate);
-  hw.removeClass(hw.getFirstElementByName('hw-create'), 'hw-template-' + oldTemplate);
-  hw.addClass(hw.getFirstElementByName('hw-create'), 'hw-template-' + newTemplate);
+  hw.removeClass(hw.$c('hw-playground'), 'hw-template-' + oldTemplate);
+  hw.addClass(hw.$c('hw-playground'), 'hw-template-' + newTemplate);
+  hw.removeClass(hw.$c('hw-wysiwyg'), 'hw-template-' + oldTemplate);
+  hw.addClass(hw.$c('hw-wysiwyg'), 'hw-template-' + newTemplate);
+  hw.removeClass(hw.$c('hw-create'), 'hw-template-' + oldTemplate);
+  hw.addClass(hw.$c('hw-create'), 'hw-template-' + newTemplate);
 
-  hw.getFirstElementByName('hw-template').setAttribute('data-previous', newTemplate)
+  hw.$c('hw-template').setAttribute('data-previous', newTemplate)
 };
 
 hw.wysiwygKeymap = {
@@ -191,7 +194,7 @@ hw.shortcuts = function(event) {
 hw.wysiwygKeys = function(event) {
   var key = event.charCode || event.keyCode || event.which;
 
-  var wysiwyg = hw.getFirstElementByName('hw-wysiwyg');
+  var wysiwyg = hw.$c('hw-wysiwyg');
   if (document.activeElement == wysiwyg) {
     switch (key) {
       case 9:   // tab
@@ -230,10 +233,10 @@ hw.wysiwygKeys = function(event) {
         if (action == "createLink") {
           var anchorTag = hw.getSelectionStartNode(true).nextSibling;
           hw.showAnchorEditor(anchorTag);
-          hw.getFirstElementByName('hw-anchor-link').value = value;
-          hw.getFirstElementByName('hw-anchor-visit').href = '';
-          hw.getFirstElementByName('hw-anchor-link').focus();
-          hw.getFirstElementByName('hw-anchor-link').select();
+          hw.$c('hw-anchor-link').value = value;
+          hw.$c('hw-anchor-visit').href = '';
+          hw.$c('hw-anchor-link').focus();
+          hw.$c('hw-anchor-link').select();
         }
 
         if (key == 9) {
@@ -321,7 +324,7 @@ hw.paste = function(event) {
     return;
   }
 
-  var wysiwyg = hw.getFirstElementByName('hw-wysiwyg');
+  var wysiwyg = hw.$c('hw-wysiwyg');
   document.execCommand("insertHTML", false, "<br>"); // if there's something currently selected, delete it now
   var original = wysiwyg.innerHTML;
 
@@ -355,20 +358,20 @@ hw.paste = function(event) {
       var sel = window.getSelection();
       var div = document.createElement('DIV');
       div.innerHTML = pastedContent;
-      hw.getFirstElementByName('hw-view').style.overflow = 'hidden';
+      hw.$c('hw-view').style.overflow = 'hidden';
       wysiwyg.style.width = '1000000px';  // XXX workaround crappy Firefox bug that includes '\n' in selection when wrapping...todo file bug.
       for (var x = 0; x < div.textContent.length + 1; ++x) {
         sel.modify("extend", "backward", "character");
       }
       wysiwyg.style.width = '';
-      hw.getFirstElementByName('hw-view').style.overflow = '';
+      hw.$c('hw-view').style.overflow = '';
 
       if (pastedContent.search(/https?:\/\/maps.google.com/ig) == 0) {
         pastedContent = '&lt;iframe width="425" height="350" src="' + pastedContent + '&output=embed" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;';
       }
 
       if (pastedContent.search(/https?:\/\//ig) == 0) { // links
-        var createForm = hw.getFirstElementByName('hw-create');
+        var createForm = hw.$c('hw-create');
         var callback = function(xhr) {
           document.execCommand("insertHTML", false, xhr.responseText + "<br><br>");
           sel.modify("move", "forward", "character");
@@ -405,7 +408,7 @@ hw.paste = function(event) {
 hw.wysiwyg = function(event, cmd, value, el) {
   hw.preventDefault(event);
 
-  var wysiwyg = hw.getFirstElementByName('hw-wysiwyg');
+  var wysiwyg = hw.$c('hw-wysiwyg');
   wysiwyg.focus();
   var skipExec = false;
 
@@ -453,15 +456,15 @@ hw.wysiwyg = function(event, cmd, value, el) {
   if (cmd == "createLink") {
     var anchorTag = hw.getSelectionStartNode(true).nextSibling;
     hw.showAnchorEditor(anchorTag);
-    hw.getFirstElementByName('hw-anchor-link').value = 'http://';
-    hw.getFirstElementByName('hw-anchor-visit').href = '';
-    hw.getFirstElementByName('hw-anchor-link').focus();
-    hw.getFirstElementByName('hw-anchor-link').select();
+    hw.$c('hw-anchor-link').value = 'http://';
+    hw.$c('hw-anchor-visit').href = '';
+    hw.$c('hw-anchor-link').focus();
+    hw.$c('hw-anchor-link').select();
   }
 };
 
 hw.wysiwygDetectState = function() {
-  var wysiwyg = hw.getFirstElementByName('hw-wysiwyg');
+  var wysiwyg = hw.$c('hw-wysiwyg');
 
   if (!wysiwyg.hasAttribute('contenteditable')) {
     return;
@@ -469,18 +472,7 @@ hw.wysiwygDetectState = function() {
 
   wysiwyg.focus();
 
-  /*
-  var features = ['bold', 'italic', 'strikeThrough', 'insertUnorderedList', 'insertOrderedList'];
-  for (var x = 0; x < features.length; ++x) {
-    var control = hw.getFirstElementByName('hw-' + features[x]);
-    hw.setClass(control, 'hw-selected', document.queryCommandState(features[x]));
-  }
-
-  hw.getFirstElementByName('hw-fontSize').value = document.queryCommandValue('fontSize') || "2";
-  */
-
   var isAnchor = hw.getSelectionStartNode().nodeName == 'A';
-  //hw.setClass(hw.getFirstElementByName('hw-createLink'), 'hw-selected', isAnchor);
   if (isAnchor) {
     hw.showAnchorEditor();
   } else {
@@ -507,43 +499,43 @@ hw.showAnchorEditor = function(anchor) {
   if (anchorTag.nodeName != 'A') {
     return;
   }
-  hw.getFirstElementByName('hw-anchor-link')['anchorTag'] = anchorTag;
+  hw.$c('hw-anchor-link')['anchorTag'] = anchorTag;
   var anchorPosition = anchorTag.getBoundingClientRect();
   var contentPosition = hw.$('hw-content') ? hw.$('hw-content').getBoundingClientRect() : document.body.getBoundingClientRect();
-  hw.getFirstElementByName('hw-anchor-editor').style.top = (window.pageYOffset + 15 + anchorPosition.top) + 'px';
-  hw.getFirstElementByName('hw-anchor-editor').style.left = (anchorPosition.left + 5 - contentPosition.left) + 'px';
-  hw.getFirstElementByName('hw-anchor-link').value = anchorTag.href;
-  hw.getFirstElementByName('hw-anchor-visit').href = anchorTag.href;
-  hw.getFirstElementByName('hw-anchor-type').checked = anchorTag.href.indexOf('mailto:') != 0;
-  hw.getElementsByName('hw-anchor-type')[1].checked = anchorTag.href.indexOf('mailto:') == 0;
+  hw.$c('hw-anchor-editor').style.top = (window.pageYOffset + 15 + anchorPosition.top) + 'px';
+  hw.$c('hw-anchor-editor').style.left = (anchorPosition.left + 5 - contentPosition.left) + 'px';
+  hw.$c('hw-anchor-link').value = anchorTag.href;
+  hw.$c('hw-anchor-visit').href = anchorTag.href;
+  hw.$$('[name=hw-anchor-type]')[0].checked = anchorTag.href.indexOf('mailto:') != 0;
+  hw.$$('[name=hw-anchor-type]')[1].checked = anchorTag.href.indexOf('mailto:') == 0;
 };
 
 hw.hideAnchorEditor = function() {
-  if (hw.getFirstElementByName('hw-anchor-editor')) {
-    hw.getFirstElementByName('hw-anchor-editor').style.top = '-10000px';
-    hw.getFirstElementByName('hw-anchor-editor').style.left = '-10000px';
+  if (hw.$c('hw-anchor-editor')) {
+    hw.$c('hw-anchor-editor').style.top = '-10000px';
+    hw.$c('hw-anchor-editor').style.left = '-10000px';
   }
 };
 
 hw.changeAnchorType = function(el) {
-  var link = hw.getFirstElementByName('hw-anchor-link');
+  var link = hw.$c('hw-anchor-link');
   el.checked = true;
   if (el.value == 'web' && link.value.indexOf('mailto:') == 0) {
-    hw.getFirstElementByName('hw-anchor-link').value = 'http://';
-    hw.getFirstElementByName('hw-anchor-visit').href = '';
-    hw.getFirstElementByName('hw-anchor-link').focus();
+    hw.$c('hw-anchor-link').value = 'http://';
+    hw.$c('hw-anchor-visit').href = '';
+    hw.$c('hw-anchor-link').focus();
   } else if (el.value == 'email' && link.value.indexOf('mailto:') != 0) {
-    hw.getFirstElementByName('hw-anchor-link').value = 'mailto:';
-    hw.getFirstElementByName('hw-anchor-visit').href = '';
-    hw.getFirstElementByName('hw-anchor-link').focus();
+    hw.$c('hw-anchor-link').value = 'mailto:';
+    hw.$c('hw-anchor-visit').href = '';
+    hw.$c('hw-anchor-link').focus();
   }
 };
 
 hw.changeAnchorLink = function(el) {
-  hw.getFirstElementByName('hw-anchor-visit').href = el.value;
-  var wysiwyg = hw.getFirstElementByName('hw-wysiwyg');
+  hw.$c('hw-anchor-visit').href = el.value;
+  var wysiwyg = hw.$c('hw-wysiwyg');
   wysiwyg.focus();
-  var anchorTag = hw.getFirstElementByName('hw-anchor-link')['anchorTag'];
+  var anchorTag = hw.$c('hw-anchor-link')['anchorTag'];
   anchorTag.href = el.value;
 };
 
@@ -554,29 +546,29 @@ hw.showImageOptions = function(image) {
   } else {
     imageTag = hw.getSelectionStartNode().getElementsByTagName('IMG')[0];
   }
-  hw.getFirstElementByName('hw-image-options')['imageTag'] = imageTag;
+  hw.$c('hw-image-options')['imageTag'] = imageTag;
   var imagePosition = imageTag.getBoundingClientRect();
   var contentPosition = hw.$('hw-content') ? hw.$('hw-content').getBoundingClientRect() : document.body.getBoundingClientRect();
-  hw.getFirstElementByName('hw-image-options').style.top = (window.pageYOffset + imagePosition.top
-      + hw.getFirstElementByName('hw-anchor-editor').getBoundingClientRect().height + 25) + 'px';
-  hw.getFirstElementByName('hw-image-options').style.left = (imagePosition.left + 5 - contentPosition.left) + 'px';
-  hw.getFirstElementByName('hw-image-align').checked = imageTag.style.cssFloat == '' || imageTag.style.float == 'none';
-  hw.getElementsByName('hw-image-align')[1].checked = imageTag.style.cssFloat == 'left';
-  hw.getElementsByName('hw-image-align')[1].checked = imageTag.style.cssFloat == 'right';
+  hw.$c('hw-image-options').style.top = (window.pageYOffset + imagePosition.top
+      + hw.$c('hw-anchor-editor').getBoundingClientRect().height + 25) + 'px';
+  hw.$c('hw-image-options').style.left = (imagePosition.left + 5 - contentPosition.left) + 'px';
+  hw.$$('[name=hw-image-align]')[0].checked = imageTag.style.cssFloat == '' || imageTag.style.float == 'none';
+  hw.$$('[name=hw-image-align]')[1].checked = imageTag.style.cssFloat == 'left';
+  hw.$$('[name=hw-image-align]')[2].checked = imageTag.style.cssFloat == 'right';
 };
 
 hw.hideImageOptions = function() {
-  if (hw.getFirstElementByName('hw-image-options')) {
-    hw.getFirstElementByName('hw-image-options').style.top = '-10000px';
-    hw.getFirstElementByName('hw-image-options').style.left = '-10000px';
+  if (hw.$c('hw-image-options')) {
+    hw.$c('hw-image-options').style.top = '-10000px';
+    hw.$c('hw-image-options').style.left = '-10000px';
   }
 };
 
 hw.changeImageAlign = function(el) {
   el.checked = true;
-  var wysiwyg = hw.getFirstElementByName('hw-wysiwyg');
+  var wysiwyg = hw.$c('hw-wysiwyg');
   wysiwyg.focus();
-  var imageTag = hw.getFirstElementByName('hw-image-options')['imageTag'];
+  var imageTag = hw.$c('hw-image-options')['imageTag'];
   imageTag.style.cssFloat = el.value;
 
   if (imageTag.parentNode.nodeName == 'A') {
@@ -594,7 +586,7 @@ hw.showUserAutocomplete = function() {
   }
 
   var node = hw.getSelectionStartNode();
-  var users = hw.getFirstElementByName('hw-user-autocomplete');
+  var users = hw.$c('hw-user-autocomplete');
 
   var html = "";
   for (var x = 0; x < hw.remoteUsers.length; ++x) {
@@ -602,7 +594,7 @@ hw.showUserAutocomplete = function() {
   }
   users.innerHTML = html;
 
-  var contentPosition = hw.$('hw-content') ? hw.$('hw-content').getBoundingClientRect() : hw.getFirstElementByName('hw-wysiwyg').getBoundingClientRect();
+  var contentPosition = hw.$('hw-content') ? hw.$('hw-content').getBoundingClientRect() : hw.$c('hw-wysiwyg').getBoundingClientRect();
   users.style.top = (window.pageYOffset + node.getBoundingClientRect().top + contentPosition.top) + 'px';
   users.style.left = (node.getBoundingClientRect().left + 5) + 'px';
 };
@@ -665,14 +657,13 @@ hw.html = function(event, el, close) {
     hw.mediaLibrary(null, null, true);
   }
 
-  var html = hw.getFirstElementByName('hw-html-toggle');
-  var wysiwyg = hw.getFirstElementByName('hw-wysiwyg');
-  var htmlWrapper = hw.getFirstElementByName('hw-html-wrapper');
+  var html = hw.$c('hw-html-toggle');
+  var wysiwyg = hw.$c('hw-wysiwyg');
+  var htmlWrapper = hw.$c('hw-html-wrapper');
   var openHTML = close ? false : hw.isHidden(htmlWrapper);
   hw.setClass(html, 'hw-selected', openHTML);
-  var createForm = hw.getFirstElementByName('hw-create');
-  hw.setClass(wysiwyg, 'hw-html', openHTML);
-  hw.setClass(createForm, 'hw-html', openHTML);
+  var createForm = hw.$c('hw-create');
+  hw.setClass(createForm, 'hw-html-open', openHTML);
   hw.display(htmlWrapper, openHTML);
   hw.htmlPreview();
   var fn = function() { hw.createOnScroll(); };
@@ -684,7 +675,7 @@ hw.html = function(event, el, close) {
 };
 
 hw.htmlTab = function(el) {
-  var child = hw.getFirstElementByName('hw-html-wrapper').firstChild;
+  var child = hw.$c('hw-html-wrapper').firstChild;
   var tabName = el.getAttribute('name');
   while (child) {
     if (child.nodeName != "TEXTAREA" && child.nodeName != "DIV") {
@@ -698,7 +689,7 @@ hw.htmlTab = function(el) {
     child = child.nextSibling;
   }
 
-  var child = hw.getFirstElementByName('hw-html-tabs').firstChild;
+  var child = hw.$c('hw-html-tabs').firstChild;
   while (child) {
     if (child.nodeName != "LI") {
       child = child.nextSibling;
@@ -710,22 +701,22 @@ hw.htmlTab = function(el) {
 };
 
 hw.htmlPreview = function(force, codeMirror) {
-  var createForm = hw.getFirstElementByName('hw-create');
-  var html = hw.getFirstElementByName('hw-html');
-  var htmlCM = hw.getFirstElementByName('hw-html-cm');
+  var createForm = hw.$c('hw-create');
+  var html = hw.$c('hw-html');
+  var htmlCM = hw.$c('hw-html-cm');
   var htmlCMTextarea = htmlCM ? htmlCM.getElementsByTagName('textarea')[0] : null;
-  var style = hw.getFirstElementByName('hw-style');
-  var styleCM = hw.getFirstElementByName('hw-style-cm');
+  var style = hw.$c('hw-style');
+  var styleCM = hw.$c('hw-style-cm');
   var styleCMTextarea = styleCM ? styleCM.getElementsByTagName('textarea')[0] : null;
-  var code = hw.getFirstElementByName('hw-code');
-  var codeCM = hw.getFirstElementByName('hw-code-cm');
+  var code = hw.$c('hw-code');
+  var codeCM = hw.$c('hw-code-cm');
   var codeCMTextarea = codeCM ? codeCM.getElementsByTagName('textarea')[0] : null;
-  var wysiwyg = hw.getFirstElementByName('hw-wysiwyg');
-  var htmlWrapper = hw.getFirstElementByName('hw-html-wrapper');
+  var wysiwyg = hw.$c('hw-wysiwyg');
+  var htmlWrapper = hw.$c('hw-html-wrapper');
 
   hw.changeBeforeUnloadState();
 
-  if (!force && hw.isHidden(hw.getFirstElementByName('hw-html-wrapper'))) {
+  if (!force && hw.isHidden(hw.$c('hw-html-wrapper'))) {
     return;
   }
 
@@ -805,21 +796,21 @@ hw.htmlPreview = function(force, codeMirror) {
 };
 
 hw.createOnScroll = function(event) {
-  var text = hw.getFirstElementByName('hw-wysiwyg-controls');
-  var makeTextFixed = hw.getFirstElementByName('hw-wysiwyg').getBoundingClientRect().top - text.getBoundingClientRect().height < 0
-               && text.getBoundingClientRect().height < hw.getFirstElementByName('hw-view').getBoundingClientRect().bottom;
+  var text = hw.$c('hw-wysiwyg-controls');
+  var makeTextFixed = hw.$c('hw-wysiwyg').getBoundingClientRect().top - text.getBoundingClientRect().height < 0
+               && text.getBoundingClientRect().height < hw.$c('hw-view').getBoundingClientRect().bottom;
   hw.setClass(text, 'hw-fixed', makeTextFixed);
   /*var marginTop = 0;
   if (makeFixed) {
-    marginTop = (hw.getFirstElementByName('hw-text').getBoundingClientRect().height - 2) + 'px';
+    marginTop = (hw.$c('hw-text').getBoundingClientRect().height - 2) + 'px';
   }
-  hw.getFirstElementByName('hw-wysiwyg').style.marginTop = marginTop;*/
+  hw.$c('hw-wysiwyg').style.marginTop = marginTop;*/
   hw.setClass(hw.$('hw-container'), 'hw-fixed', makeTextFixed);
 };
 
 hw.changeThumbPreview = function() {
-  var thumb = hw.getFirstElementByName('hw-thumb');
-  var thumbPreview = hw.getFirstElementByName('hw-thumb-preview');
+  var thumb = hw.$c('hw-thumb');
+  var thumbPreview = hw.$c('hw-thumb-preview');
   if (!thumbPreview) {
     return;
   }
