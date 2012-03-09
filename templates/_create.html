@@ -108,7 +108,7 @@
       {% end %}
       <dt><label>{{ _("name:") }}</label></dt><dd><input name="hw-name" maxlength="255" type="text" placeholder="{{ _("name") }}" {% if content %}value="{{ content.name }}"{% end %}></dd>
       {% if individual_content %}
-      <dt><label>{{ _("thumbnail:") }}</label></dt><dd><input name="hw-thumb" type="text" placeholder="{{ _("thumb") }}" {% if content %}value="{{ content.thumb }}"{% end %} onchange="hw.changeThumbPreview()"> <button type="button" class="hw-button hw-button-media" onclick="hw.selectFile(hw.$c('hw-thumb'), hw.changeThumbPreview)">{{ _('select image') }}</button></dd>
+      <dt><label>{{ _("thumbnail:") }}</label></dt><dd><input class="hw-thumb" name="hw-thumb" type="text" placeholder="{{ _("thumb") }}" {% if content %}value="{{ content.thumb }}"{% end %} onchange="hw.changeThumbPreview()"> <button type="button" class="hw-button hw-button-media" onclick="hw.selectFile(hw.$c('hw-thumb'), hw.changeThumbPreview)">{{ _('select image') }}</button></dd>
       {% end %}
       <dt><label>{{ _("template:") }}</label></dt><dd><select class="hw-template" name="hw-template" {% if content %}value="{{ content.template }}"{% end %} onchange="hw.templateChange(null, this.value)">
           <option value="">{{ _('-none-') }}</option>
