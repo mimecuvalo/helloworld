@@ -154,7 +154,7 @@ class BaseHandler(tornado.web.RequestHandler):
     return string.replace("'", "\\'").replace('"', '\\"')
 
   def js_in_html_escape(self, string):
-    return tornado.escape.xhtml_escape(string).replace("'", "&#39;").replace('"', '&quot;')
+    return tornado.escape.xhtml_escape(string).replace("'", "&#39;").replace('"', '\\"')
 
   def bidi(self, string):
     # modified from goog.i18n.bidi
