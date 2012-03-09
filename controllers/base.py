@@ -34,6 +34,7 @@ class BaseHandler(tornado.web.RequestHandler):
       self.models = None
       pass
     self.author_user = None
+    self.hostname_user = None
     self.request.uri = self.request.uri.replace('/helloworld.py', '')
     prefix_constant = self.constants['https_prefix'] if self.request.protocol == 'https' else self.constants['http_prefix']
     if self.request.uri.startswith(tornado.escape.url_escape(prefix_constant).replace('%2F', '/')):
@@ -121,7 +122,9 @@ class BaseHandler(tornado.web.RequestHandler):
       self.display["is_superuser"] = False
 
   def get_user_by_hostname(self):
-    return self.models.users.get(hostname=self.request.host)[0]
+    if not self.hostname_user:
+      self.hostname_user = self.models.users.get(hostname=self.request.host)[0]
+    return self.hostname_user
 
   def get_author_user(self):
     if not self.author_user:
@@ -372,7 +375,7 @@ class BaseHandler(tornado.web.RequestHandler):
     if not self.constants['http_hide_prefix']:
       url += self.prefix
 
-    if not self.constants['single_user_site']:
+    if not self.constants['single_user_site'] and not self.hostname_user:
       url += '/' + item.username
 
     args = ""
@@ -393,7 +396,7 @@ class BaseHandler(tornado.web.RequestHandler):
     if not self.constants['http_hide_prefix']:
       url += self.prefix
 
-    if not self.constants['single_user_site'] and username:
+    if not self.constants['single_user_site'] and not self.hostname_user and username:
       url += '/' + username
 
     if section:
