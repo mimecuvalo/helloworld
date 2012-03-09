@@ -28,9 +28,9 @@ hw.changeBeforeUnloadState = function(event, allowPageChange) {
   } else {
     title = createForm['hw-title'].value || '(' + hw.getMsg('untitled') + ')';
   }
-  document.title = hw.contentOwnerTitle.replace('&quot;', '"');
+  document.title = hw.contentOwnerTitle.replace(/&quot;/g, '"');
                 + (hw.contentOwnerTitle && title ? ' - ' : '')
-                + title.replace('&quot;', '"');
+                + title.replace(/&quot;/g, '"');
                 + (allowPageChange ? '' : ' +');
 };
 
@@ -485,7 +485,7 @@ hw.renameEnd = function(event, el, album, accept) {
     el.href = el.href.substring(0, el.href.lastIndexOf('/')) + '/' + newName;
     el.setAttribute('data-original', el.textContent);
     var oldId = el.parentNode.id;
-    el.parentNode.id = el.parentNode.id.substring(0, el.parentNode.id.lastIndexOf('|')) + '|' + newName;
+    el.parentNode.id = el.parentNode.id.substring(0, el.parentNode.id.lastIndexOf('_')) + '_' + newName;
 
     new hw.ajax(hw.baseUri() + 'api',
       { method: 'post',

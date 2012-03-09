@@ -113,15 +113,15 @@ class ApiHandler(BaseHandler):
     new_section = self.get_argument('new_section', '')
 
     profile = self.get_author_username()
-    if dragged.find('hw-sitemap|') == 0:
-      dragged = dragged[len('hw-sitemap|'):]
+    if dragged.find('hw-sitemap_') == 0:
+      dragged = dragged[len('hw-sitemap_'):]
     else:
-      dragged = dragged[len('hw-collection|'):]
+      dragged = dragged[len('hw-collection_'):]
 
     if op_type == 'content':
       name = dragged
-      if dropped.find('hw-sitemap|') == 0:  # moving to another section/album
-        section_album = dropped.split('|')
+      if dropped.find('hw-sitemap_') == 0:  # moving to another section/album
+        section_album = dropped.split('_')
         content = self.models.content.get(username=profile, name=name)[0]
         content.section = section_album[1]
         if len(section_album) == 3:
@@ -131,13 +131,13 @@ class ApiHandler(BaseHandler):
         content.save()
         return
       else:
-        section_album = section_album.split('|')
+        section_album = section_album.split('_')
         collection, common_options = self.get_collection(profile=profile, section=section_album[0], name=section_album[1])[:]
     elif op_type == 'section':
       name = dragged
       collection = self.get_main_sections(profile=profile)
     else:
-      section_album = dragged.split('|')
+      section_album = dragged.split('_')
       name = section_album[1]
 
       if not new_section:
@@ -175,7 +175,7 @@ class ApiHandler(BaseHandler):
     new_title = self.get_argument('new')
     new_name = new_title
 
-    old_name = old_id[11:]  # remove hw-sitemap|
+    old_name = old_id[11:]  # remove hw-sitemap_
 
     if op_type == 'section':
       self.rename_section(old_name, new_name, new_title)

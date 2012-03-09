@@ -8,6 +8,10 @@ option {
   font: 13px helvetica neue, arial, sans-serif;
 }
 
+.hw-help {
+  font: 13px Courier New, monospace;
+}
+
 .hw-button,
 .hw-button:visited {
   background-color: #eff;

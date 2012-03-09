@@ -124,8 +124,8 @@ hw.dragLogic = function(event, el) {
   var draggedIsSitemap = id.indexOf('hw-sitemap') == 0;
   var dropIsSitemap = el.id.indexOf('hw-sitemap') == 0;
 
-  var draggedIsAlbum = draggedIsSitemap && id.indexOf('|', 11) != -1;
-  var dropIsAlbum = dropIsSitemap && el.id.indexOf('|', 11) != -1;
+  var draggedIsAlbum = draggedIsSitemap && id.indexOf('_', 11) != -1;
+  var dropIsAlbum = dropIsSitemap && el.id.indexOf('_', 11) != -1;
 
   var draggedNextSibling = hw.nextSiblingNonText(draggedElement);
   var draggedHasAlbum = draggedIsSitemap && draggedNextSibling && draggedNextSibling.firstChild && draggedNextSibling.firstChild.nodeName == 'UL';
@@ -211,7 +211,7 @@ hw.dragDrop = function(event, el) {
 
   var draggedElement = dragInfo['draggedElement'];
 
-  var newSection = dragInfo['draggedIsSitemap'] && el.id.split('|')[1] != draggedElement.id.split('|')[1] ? el.id.split('|')[1] : '';
+  var newSection = dragInfo['draggedIsSitemap'] && el.id.split('_')[1] != draggedElement.id.split('_')[1] ? el.id.split('_')[1] : '';
 
   draggedElement = draggedElement.parentNode.removeChild(draggedElement);
 
@@ -278,7 +278,7 @@ hw.dragDrop = function(event, el) {
   }
 
   var createForm = hw.$c('hw-create');
-  var sectionAlbum = createForm['hw-section'].value + '|' + createForm['hw-name'].value;
+  var sectionAlbum = createForm['hw-section'].value + '_' + createForm['hw-name'].value;
   new hw.ajax(hw.baseUri() + 'api',
     { method: 'post',
       postBody: 'op='       + encodeURIComponent('order')

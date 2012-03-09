@@ -11,7 +11,7 @@
 
   <ul class="hw-album">
     {% comment NOTE whitespace is important here %}
-    {% for index, link in enumerate(collection) %}<li id="hw-collection|{{ link.name }}" class="hw-content-item" {% if is_owner_viewing %}draggable="true" ondragstart="hw.dragStart(event, this)" ondragover="hw.dragOver(event, this)" ondragenter="hw.dragOver(event, this)" ondragleave="hw.dragLeave(event, this)" ondrop="hw.dragDrop(event, this)" data-is-album="{% if link.album == 'main' %}true{% else %}false{% end %}"{% end %}>
+    {% for index, link in enumerate(collection) %}<li id="hw-collection_{{ link.name }}" class="hw-content-item" {% if is_owner_viewing %}draggable="true" ondragstart="hw.dragStart(event, this)" ondragover="hw.dragOver(event, this)" ondragenter="hw.dragOver(event, this)" ondragleave="hw.dragLeave(event, this)" ondrop="hw.dragDrop(event, this)" data-is-album="{% if link.album == 'main' %}true{% else %}false{% end %}"{% end %}>
         {% if is_owner_viewing %}
         <span class="hw-button hw-button-delete hw-content-delete" data-contenturl="{{ content_url(link) }}" onclick="hw.deleteContentViaCollection(event, this)">x</span>
         {% end %}

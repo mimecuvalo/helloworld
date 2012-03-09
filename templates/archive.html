@@ -8,7 +8,7 @@
   <ul>
   {% for index, item in enumerate(collection) %}
     {% if item.name != content.name  %}
-      <li id="hw-collection|{{ item.name }}" class="hw-content-item {% if is_owner_viewing and item.hidden %} hw-content-hidden {% end %}" {% if is_owner_viewing %}draggable="true" ondragstart="hw.dragStart(event, this)" ondragover="hw.dragOver(event, this)" ondragenter="hw.dragOver(event, this)" ondragleave="hw.dragLeave(event, this)" ondrop="hw.dragDrop(event, this)" data-is-album="{% if item.album == 'main' %}true{% else %}false{% end %}"{% end %}>
+      <li id="hw-collection_{{ item.name }}" class="hw-content-item {% if is_owner_viewing and item.hidden %} hw-content-hidden {% end %}" {% if is_owner_viewing %}draggable="true" ondragstart="hw.dragStart(event, this)" ondragover="hw.dragOver(event, this)" ondragenter="hw.dragOver(event, this)" ondragleave="hw.dragLeave(event, this)" ondrop="hw.dragDrop(event, this)" data-is-album="{% if item.album == 'main' %}true{% else %}false{% end %}"{% end %}>
         {% if is_owner_viewing %}
         <span class="hw-button hw-button-delete hw-content-delete" data-contenturl="{{ content_url(item) }}" onclick="hw.deleteContentViaCollection(event, this)">x</span>
         {% end %}
