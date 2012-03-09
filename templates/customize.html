@@ -34,7 +34,6 @@
         <dt><label for="hw-themes">{{ _('theme:') }}</label></dt>
         <dd>
           <select name="theme" id="hw-themes">
-            <option value=""></option>
             {% for theme in sorted(themes) %}
               <option value="{{ theme }}" {% if (user.theme == theme) or (not user.theme and theme == 'static/css/themes/default.css') %}selected{% end %}>{{ theme }}</option>
             {% end %}
