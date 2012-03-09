@@ -6,15 +6,19 @@
        rel="next" class="hw-next hw-button {% if not next %} hw-disabled {% end %}"
         {% if next %}
           href="{{ content_url(next) }}"
-          title="{% if content_owner.title %}{{ content_owner.title }} - {% end %}{{ next.title }}"
+          title="{% if content_owner.title %}{{ content_owner.title }}{% end %}{% if content_owner.title and next.title %} - {% end %}{{ next.title }}"
           {% if content.style or content.code or next.style or next.code or section_code or album_code %}
             data-disallow-magic="1"
           {% else %}
-            {% set title = next.title %}
+            {% set title = "" %}
             {% if content_owner.title %}
-              {% set title = content_owner.title + '-' + title %}
+              {% set title = content_owner.title %}
             {% end %}
-            onclick='hw.navigate(event, "{{ content_url(next, host=True) }}", "{% raw js_in_html_escape(next.title) %}")'
+            {% if content_owner.title and next.title %}
+              {% set title = ' - ' %}
+            {% end %}
+            {% set title += next.title %}
+            onclick='hw.navigate(event, "{{ content_url(next, host=True) }}", "{% raw js_in_html_escape(title) %}")'
           {% end %}
         {% end %}>{{ _("next") }}</a><a
 
@@ -23,15 +27,19 @@
        rel="prev" class="hw-previous hw-button {% if not previous %} hw-disabled {% end %}"
         {% if previous %}
           href="{{ content_url(previous) }}"
-          title="{% if content_owner.title %}{{ content_owner.title }} - {% end %}{{ previous.title }}"
+          title="{% if content_owner.title %}{{ content_owner.title }}{% end %}{% if content_owner.title and previous.title %} - {% end %}{{ previous.title }}"
           {% if content.style or content.code or previous.style or previous.code or section_code or album_code %}
             data-disallow-magic="1"
           {% else %}
-            {% set title = previous.title %}
+            {% set title = "" %}
             {% if content_owner.title %}
-              {% set title = content_owner.title + '-' + title %}
+              {% set title = content_owner.title %}
             {% end %}
-            onclick='hw.navigate(event, "{{ content_url(previous, host=True) }}", "{% raw js_in_html_escape(previous.title) %}")'
+            {% if content_owner.title and previous.title %}
+              {% set title = ' - ' %}
+            {% end %}
+            {% set title += previous.title %}
+            onclick='hw.navigate(event, "{{ content_url(previous, host=True) }}", "{% raw js_in_html_escape(title) %}")'
           {% end %}
         {% end %}>{{ _("previous") }}</a><a
         

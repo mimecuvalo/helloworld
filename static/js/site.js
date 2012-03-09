@@ -92,6 +92,8 @@ hw.navigate = function(event, url, title) {
     hw.preventDefault(event);  // stop regular links from continuing
   }
 
+  title = title.replace(/&quot;/g, '"');
+
   if (!hw.addedFirstUrlToHistory) {
     history.replaceState({ 'title': document.title }, document.title, window.location.href);
     hw.loadedContent[window.location.href] = hw.$('hw-content').innerHTML;

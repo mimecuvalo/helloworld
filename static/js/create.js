@@ -28,9 +28,9 @@ hw.changeBeforeUnloadState = function(event, allowPageChange) {
   } else {
     title = createForm['hw-title'].value || '(' + hw.getMsg('untitled') + ')';
   }
-  document.title = hw.contentOwnerTitle.replace(/&quot;/g, '"');
+  document.title = hw.contentOwnerTitle.replace(/&quot;/g, '"')
                 + (hw.contentOwnerTitle && title ? ' - ' : '')
-                + title.replace(/&quot;/g, '"');
+                + title.replace(/&quot;/g, '"')
                 + (allowPageChange ? '' : ' +');
 };
 
