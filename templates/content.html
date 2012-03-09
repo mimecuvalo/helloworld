@@ -95,7 +95,7 @@
       {% if individual_content and is_owner_viewing %}
         {% module Create(content) %}
       {% else %}
-        <div {% raw bidi(item.view) %} class="{% if individual_content %}hw-view hw-individual-content{% else %}hw-aggregate-content{% end %}">
+        <div {% raw bidi(item.view) %} class="hw-view {% if individual_content %}hw-individual-content{% else %}hw-aggregate-content{% end %}">
           {% raw item.view %}
         </div>
       {% end %}
