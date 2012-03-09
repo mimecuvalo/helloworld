@@ -36,7 +36,7 @@
           <select name="theme" id="hw-themes">
             <option value=""></option>
             {% for theme in sorted(themes) %}
-              <option value="{{ theme }}" {% if (user.theme == theme) or (not user.theme and theme == 'default.css') %}selected{% end %}>{{ theme }}</option>
+              <option value="{{ theme }}" {% if (user.theme == theme) or (not user.theme and theme == 'static/css/themes/default.css') %}selected{% end %}>{{ theme }}</option>
             {% end %}
           </select>
           <button class="hw-button hw-button-media" onclick="hw.preventDefault(event);hw.selectFile(hw.$('hw-themes'), window.location.reload, 'themes')">{{ _('upload theme') }}</button>

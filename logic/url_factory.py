@@ -119,6 +119,9 @@ def check_legit_filename(full_path):
 def clean_filename(name):
   if name == '..' or name == '.':
     return ''
+
+  check_legit_filename(name)
+
   if name.startswith('/'):  # get rid of leading /
     name = name[1:]
   return re.compile(r'[\\\/]\.\.|\.\.[\\\/]', re.M | re.U).sub('', name)
