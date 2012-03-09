@@ -156,7 +156,7 @@ hw.save = function() {
         var div = document.createElement('DIV');
         div.innerHTML = html;
         var titleInDiv = div.querySelector('#hw-new-title');
-        if (titleInDiv.nextSibling.nodeName == 'BR') {
+        if (titleInDiv.nextSibling && titleInDiv.nextSibling.nodeName == 'BR') {
           titleInDiv.parentNode.removeChild(titleInDiv.nextSibling);
         }
         titleInDiv.parentNode.removeChild(titleInDiv);
