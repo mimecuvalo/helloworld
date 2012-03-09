@@ -23,7 +23,7 @@ hw.editImage = function(event, el) {
     var parentNode = img.parentNode;
     parentNode.removeChild(img);
     var newImg = document.createElement('img');
-    newImg.setAttribute('name', 'hw-image-scratch');
+    hw.addClass(newImg, 'hw-image-scratch');
     parentNode.appendChild(newImg);
     img = newImg;
   }
@@ -42,7 +42,7 @@ hw.editImageSave = function(event) {
   parentNode.removeChild(editor.__hw_image);
   var newImg = document.createElement('img');
   newImg.src = canvas.toDataURL();
-  newImg.setAttribute('name', 'hw-media-preview');
+  hw.addClass(newImg, 'hw-media-preview');
   parentNode.insertBefore(newImg, parentNode.firstChild);
 
   var mediaCreator = hw.$c('hw-media-creator', editor.__hw_media_doc);
@@ -91,7 +91,7 @@ hw.editImageRotate = function(event) {
   hw.addClass(hw.$c('hw-image-editor'), 'hw-editing');
   canvas = hw.editImageCanvas();
   var img = document.createElement('img');
-  img.setAttribute('name', 'hw-image-scratch');
+  hw.addClass(img, 'hw-image-scratch');
   img.src = canvas.toDataURL();
   canvas.__scratchImage = img;
 };
@@ -198,7 +198,7 @@ hw.cropMouseUp = function(event) {
   hw.$('hw-image-crop-rect').parentNode.removeChild(hw.$('hw-image-crop-rect'));
   var img = document.createElement('img');
   img.src = canvas.toDataURL();
-  img.setAttribute('name', 'hw-image-scratch');
+  hw.addClass(img, 'hw-image-scratch');
   canvas.__scratchImage = img;
   hw.editImageCropStart = null;
   hw.editImageCrop();

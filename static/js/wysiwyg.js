@@ -84,7 +84,7 @@ hw.setupCodeMirror = function() {
 
   var cm = CodeMirror.fromTextArea(hw.$c('hw-style'), { mode: "css", lineNumbers: true, matchBrackets: true, onChange: onChange });
   cm.getWrapperElement().setAttribute('name', 'hw-style-cm');
-  cm.getWrapperElement().setAttribute('class', 'hw-style-cm');
+  hw.addClass(cm.getWrapperElement(), 'hw-style-cm');
   cm.getWrapperElement().cm = cm;
   if (hw.createIndividualContent) {
     hw.hide(cm.getWrapperElement());
@@ -93,7 +93,7 @@ hw.setupCodeMirror = function() {
 
   cm = CodeMirror.fromTextArea(hw.$c('hw-code'), { mode: "javascript", lineNumbers: true, matchBrackets: true, onChange: onChange });
   cm.getWrapperElement().setAttribute('name', 'hw-code-cm');
-  cm.getWrapperElement().setAttribute('class', 'hw-code-cm');
+  hw.addClass(cm.getWrapperElement(), 'hw-code-cm');
   cm.getWrapperElement().cm = cm;
   hw.hide(cm.getWrapperElement());
   Event.observe(hw.$c('hw-code-cm'), 'keydown', hw.shortcuts, false);
@@ -102,7 +102,7 @@ hw.setupCodeMirror = function() {
     hw.$c('hw-html').value = hw.$c('hw-html').value.replace(/>([^\n])/g, '>\n$1');
     hw.cm = CodeMirror.fromTextArea(hw.$c('hw-html'), { mode: "text/html", lineNumbers: true, matchBrackets: true, onChange: onChange });
     hw.cm.getWrapperElement().setAttribute('name', 'hw-html-cm');
-    hw.cm.getWrapperElement().setAttribute('class', 'hw-html-cm');
+    hw.addClass(hw.cm.getWrapperElement(), 'hw-html-cm');
     hw.cm.getWrapperElement().cm = hw.cm;
     hw.cm.focus();
     Event.observe(hw.$c('hw-html-cm'), 'keydown', hw.shortcuts, false);

@@ -187,9 +187,9 @@
       <textarea name="hw-code" class="hw-code hw-hidden">{% if content %}{% if edit and has_code %}{{ content.original_code }}{% else %}{{ content.code }}{% end %}{% end %}</textarea>
       {% if individual_content %}<textarea name="hw-html" class="hw-html"></textarea>{% end %}
       <ul class="hw-html-tabs">
-        <li onclick="hw.htmlTab(this)" {% if not individual_content %}class="hw-selected"{% end %}>{{ _('style') }}</li>
-        <li onclick="hw.htmlTab(this)">{{ _('code') }}</li>
-        {% if individual_content %}<li onclick="hw.htmlTab(this)" class="hw-selected">{{ _('html') }}</li>{% end %}
+        <li name="hw-style-tab" onclick="hw.htmlTab(this)" {% if not individual_content %}class="hw-selected"{% end %}>{{ _('style') }}</li>
+        <li name="hw-code-tab" onclick="hw.htmlTab(this)">{{ _('code') }}</li>
+        {% if individual_content %}<li name="hw-html-tab" onclick="hw.htmlTab(this)" class="hw-selected">{{ _('html') }}</li>{% end %}
       </ul>
     </div>
 
@@ -244,7 +244,7 @@
 <div class="hw-view {% if not individual_content %}hw-closed{% end %}">
   <div class="hw-wysiwyg {% if not content and individual_content %}hw-new{% end %} {% if section_template %}hw-template-{{ section_template }}{% end %}" tabindex="2"
     {% if not content %}contenteditable{% end %}
-    onmouseup="hw.saveSelection()" onkeyup="hw.saveSelection()" onfocus="hw.restoreSelection()" onpaste="hw.paste(event)">{% if content and individual_content %}{% raw content.view %}{% else %}<h1 id="hw-new-title">{{ _('untitled') }}</h1><br>{% end %}</div>
+    onmouseup="hw.saveSelection()" onkeyup="hw.saveSelection()" onfocus="hw.restoreSelection()" onpaste="hw.paste(event)">{% if content and individual_content %}{% raw content.view %}{% elif not content %}<h1 id="hw-new-title">{{ _('untitled') }}</h1><br>{% end %}</div>
   <div class="clear"></div>
 </div>
 
