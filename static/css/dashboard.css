@@ -96,11 +96,16 @@
 }
 
 #hw-absorb .hw-remote img {
-  float: left;
   max-width: 720px;
+}
+#hw-absorb .hw-remote img[align=left],
+#hw-absorb .hw-remote img.alignleft { /* boing boing wp */
+  float: left;
+  margin: 0 22px 11px 0;
 }
 #hw-absorb .hw-remote img[align=right] {
   float: right;
+  margin: 0 0 11px 22px;
 }
 
 #hw-absorb-options {
