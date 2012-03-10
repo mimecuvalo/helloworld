@@ -95,7 +95,8 @@ hw.navigate = function(event, url, title) {
   title = title.replace(/&quot;/g, '"');
 
   if (!hw.addedFirstUrlToHistory) {
-    history.replaceState({ 'title': document.title }, document.title, window.location.href);
+    var isAlbum = !!hw.$c('hw-album');
+    history.replaceState({ 'title': document.title, 'isAlbum': isAlbum }, document.title, window.location.href);
     hw.loadedContent[window.location.href] = hw.$('hw-content').innerHTML;
     hw.addedFirstUrlToHistory = true;
   }
@@ -104,7 +105,7 @@ hw.navigate = function(event, url, title) {
   history.pushState({ 'title': title }, title, url);
   document.title = title;
 
-  hw.swapContent(url, title);
+  hw.swapContent(url);
 };
 
 hw.albumClick = function(event, el) {
@@ -124,14 +125,14 @@ hw.albumClick = function(event, el) {
   }
 };
 
-hw.swapContent = function(url, title) {
+hw.swapContent = function(url, event) {
   var onSuccess = function(xhr, preloadedContent) {
     hw.addClass(hw.$('hw-content'), 'hw-invisible');
     var fn = function() {
       hw.$('hw-content').innerHTML = preloadedContent || (xhr ? xhr.responseText : '');
       hw.loadedContent[url] = preloadedContent || (xhr ? xhr.responseText : '');
       hw.removeClass(hw.$('hw-content'), 'hw-invisible');
-      hw.preloadPreviousContent();
+      hw.preloadNextLogicalContent();
     };
     setTimeout(fn, 100);
   };
@@ -140,7 +141,9 @@ hw.swapContent = function(url, title) {
     window.location.href = url;
   };
 
-  if (hw.loadedContent[url]) {
+  if (event && event.state['isAlbum']) {
+    window.location.href = url;
+  } else if (hw.loadedContent[url]) {
     onSuccess(null, hw.loadedContent[url]);
   } else {
     new hw.ajax(url,
@@ -152,13 +155,17 @@ hw.swapContent = function(url, title) {
 
 hw.loadedContent = {};
 
-hw.preloadPreviousContent = function() {
-  var prev = hw.$c('hw-previous');
-  if (!hw.supportsHistory() || !prev || !prev.href || prev.getAttribute('data-disallow-magic')) {
+hw.preloadNextLogicalContent = function() {
+  if (!hw.$c('hw-neighbors')) {
     return;
   }
 
-  var url = prev.href;
+  var nextContent = hw.hasClass(hw.$c('hw-neighbors'), 'hw-reverse-sort') ? hw.$c('hw-next') : hw.$c('hw-previous');
+  if (!hw.supportsHistory() || !nextContent || !nextContent.href || nextContent.getAttribute('data-disallow-magic')) {
+    return;
+  }
+
+  var url = nextContent.href;
 
   if (hw.loadedContent[url]) {
     return;
@@ -180,7 +187,7 @@ hw.preloadPreviousContent = function() {
           onSuccess: onSuccess });
 };
 
-Event.observe(window, 'load', hw.preloadPreviousContent, false);
+Event.observe(window, 'load', hw.preloadNextLogicalContent, false);
 hw.startUrl = window.location.href;
 Event.observe(window, 'popstate', function(e) {
   if (hw.startUrl == window.location.href) { // XXX chrome sends a popstate event onload too
@@ -188,7 +195,7 @@ Event.observe(window, 'popstate', function(e) {
     return;
   }
 
-  hw.swapContent(window.location.href);
+  hw.swapContent(window.location.href, e);
   if (e.state) {
     document.title = e.state['title'];
   }
