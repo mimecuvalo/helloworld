@@ -100,10 +100,6 @@ select.hw-section-album option[data-hidden=true] {
   font-style: italic;
 }
 
-div.hw-playground.hw-template-links  {
-  display: none;
-}
-
 div.hw-wysiwyg {
   outline: 0;
 }
@@ -113,8 +109,7 @@ div.hw-wysiwyg.hw-new h1 {
   font-size: 24px;
 }
 
-div.hw-wysiwyg.hw-new,
-div.hw-wysiwyg.hw-template-links {
+div.hw-wysiwyg.hw-new {
   min-height: 200px;
   border: 1px solid #333;
   width: 735px;
@@ -124,14 +119,6 @@ div.hw-wysiwyg.hw-template-links {
   z-index: 2;
   position: relative;
   background-color: white;
-}
-div.hw-wysiwyg.hw-template-links {
-  margin-top: 1em;
-  min-height: 40px;
-  border: 1px inset black;
-  padding: 0.5em;
-  font-size: 20px;
-  overflow-x: scroll;
 }
 
 input.hw-price,

@@ -192,7 +192,7 @@ hw.save = function() {
 
   var mediaList = hw.$c('hw-media-list');
   var eventQueue = [];
-  if (!mediaList || !mediaList.childNodes.length || createForm['hw-section-template'].value == 'links') {
+  if (!mediaList || !mediaList.childNodes.length) {
     sendContent('');
   } else {
     for (var x = 0; x < mediaList.childNodes.length; ++x) {

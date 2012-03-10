@@ -58,8 +58,8 @@ class Content(tornado.web.UIModule):
     if sanitize:
       content.view = content_remote.sanitize(content.view)
     else:
-      # check for link template
-      if template_type != 'links' and content.view.startswith('http://') and content.view.find(' ') == -1:
+      # check for link template, backwards compatibility
+      if content.view.startswith('http://') and content.view.find(' ') == -1:
         new_view = ''
         if content.thumb:
           new_view = '<a href="' + content.view + '" title="' + content.title + '"><img src="' + content.thumb + '"></a><br>'
@@ -169,8 +169,9 @@ class Store(SimpleTemplate):
 class Archive(SimpleTemplate):
   template_type = "archive"
 
+# this template doesn't exist anymore, keep around class for backwards compatibility
 class Links(SimpleTemplate):
-  template_type = "links"
+  template_type = "album"
 
 class Slideshow(SimpleTemplate):
   template_type = "slideshow"

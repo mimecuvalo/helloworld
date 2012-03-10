@@ -376,13 +376,11 @@ class ViewHandler(BaseHandler):
     section_template = self.get_argument('section_template', "")
 
     # linkify
-    if section_template != 'links':
-      soup = BeautifulSoup(content.view)
-      for text in soup.findAll(text=True):
-        if text.parent.name not in ('a', 'script', 'style'):
-          text.replaceWith(tornado.escape.linkify(tornado.escape.xhtml_unescape(text)))
-
-      content.view = soup.renderContents()
+    soup = BeautifulSoup(content.view)
+    for text in soup.findAll(text=True):
+      if text.parent.name not in ('a', 'script', 'style'):
+        text.replaceWith(tornado.escape.linkify(tornado.escape.xhtml_unescape(text)))
+    content.view = soup.renderContents()
 
     template = self.get_argument('template', "")
 
@@ -417,14 +415,6 @@ class ViewHandler(BaseHandler):
 
     title = self.get_argument('title', "")
     thumb = self.get_argument('thumb', "")
-    if section_template == 'links':
-      remote_title, remote_thumb, remote_html = content_remote.get_remote_title_and_thumb(content.view)
-      if not title:
-        title = remote_title
-        self.set_header('X-Helloworld-Title', title)
-      if not thumb:
-        thumb = remote_thumb
-        self.set_header('X-Helloworld-Thumbnail', thumb)
 
     name = self.get_argument('name') if self.get_argument('name', "") else content_url["name"]
     content.name = self.get_unique_name(content, name, title)

@@ -38,7 +38,7 @@ def create_user(handler, username, email):
   create_empty_content(handler, user.username, 'main', 'photos', 'photos', template='album', translate=True)
   create_empty_content(handler, user.username, 'main', 'microblog', 'microblog', template='feed', translate=True)
   create_empty_content(handler, user.username, 'main', 'reblogged', 'reblogged', template='feed', translate=True)
-  create_empty_content(handler, user.username, 'main', 'links', 'links', template='links', translate=True)
+  create_empty_content(handler, user.username, 'main', 'links', 'links', template='album', translate=True)
   create_empty_content(handler, user.username, 'main', 'about', 'about', view="I like turtles.", translate=True)
   create_empty_content(handler, user.username, 'main', 'comments', 'comments', translate=True, hidden=True)
   create_empty_content(handler, user.username, 'microblog', 'first', "first!", view="Hello, world.", translate=True)
