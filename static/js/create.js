@@ -18,6 +18,13 @@ hw.changeBeforeUnloadState = function(event, allowPageChange) {
     return;
   }
 
+  var createForm = hw.$c('hw-create');
+  var wysiwyg = hw.$c('hw-wysiwyg');
+  var noChange = wysiwyg.textContent.replace('\n', '') == hw.getMsg('untitled');
+  noChange = noChange && !createForm['hw-code'].value && !createForm['hw-style'].value;
+  noChange = noChange && wysiwyg.innerHTML.search(/<(?!\/?(h1|br))/ig) == -1;
+  allowPageChange = allowPageChange || noChange;
+
   window.onbeforeunload = allowPageChange ? null : function() { return "" };
 
   var createForm = hw.$c('hw-create');
