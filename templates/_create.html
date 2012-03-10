@@ -78,6 +78,7 @@
   </div>
 
   <div class="hw-help hw-slide-transition hw-closed">
+    {# yeaaaah, how awesome is this?!? i iz l33t programm3r #}
     *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <strong>{{ _('bold') }}</strong><br>
     !&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= {{ _('link (highlight text first)') }}<br>
     _&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <u>{{ _('underline') }}</u><br>
@@ -130,15 +131,13 @@
       <input name="hw-separate" type="hidden" value="0">
       {% end %}
     </dl>
-    <br>
-    <a href="#html" class="hw-html-toggle hw-button" onclick="hw.html(event, this)" title="{{ _('html') }}">HTML</a>
   </div>
 
   <div class="hw-playground {% if section_template %}hw-template-{{ section_template }}{% end %}">
     {% if individual_content %}
     <div class="hw-media-creator-template hw-hidden">
       <div class="hw-media-creator">
-        <span class="hw-media-cancel hw-created hw-button hw-button-delete" onclick="parent.hw.cancelMedia(this)">x</span>
+        <span style="display: none" class="hw-media-cancel hw-created hw-button hw-button-delete" onclick="parent.hw.cancelMedia(this)">x</span>
         <label class="hw-initial">{{ _("media upload") }}</label>
         <span style="display: none" class="hw-initial hw-explanation">{{ _("(images, videos, audio, links)") }}</span>
         <br style="display: none" class="hw-initial">
@@ -147,19 +146,19 @@
         <span style="display: none" class="hw-initial hw-media-or">{{ _("or") }}</span>
         <input class="hw-media-local" name="hw-media-local" type="file" multiple value="{{ _("Upload file(s)") }}" onchange="parent.hw.localMedia(this)">
         <input class="hw-media-file hw-created hw-hidden" name="hw-media-file" type="text" disabled readonly value="">
-        <br class="hw-created">
-        <input class="hw-media-title hw-created" name="hw-media-title" type="text" placeholder="{{ _('title') }}">
-        <input class="hw-media-caption hw-created" name="hw-media-caption" type="text" placeholder="{{ _('caption') }}">
-        <input class="hw-media-source hw-created" name="hw-media-source" type="text" placeholder="{{ _('source') }}">
-        <input class="hw-media-tags hw-created" name="hw-media-tags" type="text" placeholder="{{ _('tags') }}">
-        <span class="hw-media-file-failed hw-hidden">{{ _('failed!') }}</span>
         <progress value="0" max="100" class="hw-media-file-progress hw-hidden">0%</progress>
+        <br class="hw-created">
+        <input style="display: none" class="hw-media-title hw-created" name="hw-media-title" type="text" placeholder="{{ _('title') }}">
+        <input style="display: none" class="hw-media-caption hw-created" name="hw-media-caption" type="text" placeholder="{{ _('caption') }}">
+        <input style="display: none" class="hw-media-source hw-created" name="hw-media-source" type="text" placeholder="{{ _('source') }}">
+        <input style="visibility: hidden; width: 5px" class="hw-media-tags hw-created" name="hw-media-tags" type="text" placeholder="{{ _('tags') }}">
+        <span class="hw-media-file-failed hw-hidden">{{ _('failed!') }}</span>
         <input name="hw-media-section" type="hidden">
         <input name="hw-media-album" type="hidden">
         <input name="hw-media-template" type="hidden">
         <a class="hw-media-preview-wrapper hw-created hw-closed" href="#edit" onclick="parent.hw.editImage(event, this);">
           <img class="hw-media-preview">
-          <span>{{ _('edit') }}</span>
+          <span style="display: none">{{ _('edit') }}</span>
         </a>
       </div>
     </div>
@@ -263,6 +262,9 @@
 {% if not content %}
   hw.sectionChange(hw.$c('hw-section'));
   hw.addClass('hw-container', 'hw-editing');
+  hw.$c('hw-wysiwyg').focus();
+  window.getSelection().modify("move", "forward", "line");
+  window.getSelection().modify("move", "forward", "line");
 {% end %}
 
 {% if edit %}

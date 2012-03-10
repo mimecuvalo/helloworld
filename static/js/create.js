@@ -143,10 +143,9 @@ hw.save = function() {
   var dateStart = createForm['hw-date-start'].value ? new Date(createForm['hw-date-start'].value).getTime() / 1000 : '';
   var dateEnd = createForm['hw-date-end'].value ? new Date(createForm['hw-date-end'].value).getTime() / 1000 : '';
   var sortType = createForm['hw-sort-type'] ? createForm['hw-sort-type'].value : "";
+  var separate = createForm['hw-separate'].checked;
 
   var sendContent = function(mediaHTML, opt_title, opt_extraCallback) {
-    var separate = createForm['hw-separate'].checked;
-
     var html = hw.$c('hw-wysiwyg').innerHTML;
     if (!createForm['hw-id'].value) {
       var newTitle = hw.$('hw-new-title');
@@ -190,34 +189,10 @@ hw.save = function() {
         onError: badTrip });
   };
 
-  var mediaList = hw.$c('hw-media-list');
-  var eventQueue = [];
-  if (!mediaList || !mediaList.childNodes.length) {
+  if (!separate) {
     sendContent('');
   } else {
-    for (var x = 0; x < mediaList.childNodes.length; ++x) {
-      var iframe = mediaList.childNodes[x];
-      var iframeDoc = iframe.contentWindow.document;
-      var form = hw.$c('hw-create', iframeDoc);
-      if (!form) {
-        continue;
-      }
-
-      var container = hw.$c('hw-media-creator', iframeDoc);
-      if (!hw.hasClass(container, 'hw-created')) {
-        break;
-      }
-
-      form['hw-media-section'].value = createForm['hw-section'].value;
-      form['hw-media-album'].value = createForm['hw-album'].value;
-      form['hw-media-template'].value = createForm['hw-section-template'].value;
-
-      eventQueue.push({ 'form': '', 'iframe': '' });
-      eventQueue[eventQueue.length - 1]['form'] = form;
-      eventQueue[eventQueue.length - 1]['iframe'] = iframe;
-    }
-
-    hw.processFiles(eventQueue, sendContent, "");
+    hw.prepareFilesAndSendOff(sendContent);
   }
 };
 
@@ -232,123 +207,6 @@ hw.separate = function(el) {
     if (mediaCreator) {
       hw.setClass(mediaCreator, 'hw-separate', el.checked);
     }
-  }
-};
-
-hw.processFiles = function(eventQueue, sendContent, mediaHTML) {
-  var createForm = hw.$c('hw-create');
-
-  if (!eventQueue.length) {
-    if (createForm['hw-separate'].checked) {
-      hw.resetSaveState();
-      hw.resetCreateForm();
-    } else {
-      sendContent(mediaHTML);
-      if (!hw.hasClass(createForm, 'hw-new')) {
-        hw.$c('hw-wysiwyg').innerHTML = mediaHTML + hw.$c('hw-wysiwyg').innerHTML;
-        hw.htmlPreview();
-      }
-    }
-    return;
-  }
-
-  var item = eventQueue.shift();
-  var iframeDoc = item['iframe'].contentWindow.document;
-  var iframeOnLoad = function(event, ajax) {
-    if (!ajax) {
-      var cssContent = hw.stylesheetCache ? hw.stylesheetCache : hw.generateStylesheetCache();
-      var styleElement = document.createElement('style');
-      styleElement.setAttribute('type', 'text/css');
-      if (styleElement.styleSheet) {
-        styleElement.styleSheet.cssText = cssContent;
-      } else {
-        styleElement.appendChild(document.createTextNode(cssContent));
-      }
-      item['iframe'].contentWindow.document.getElementsByTagName('head')[0].appendChild(styleElement);
-    }
-
-    var createForm = hw.$c('hw-create');
-    var form = hw.$c('hw-uploaded', item['iframe'].contentWindow.document);
-
-    if (form && form['hw-media-success'].value) {
-      mediaHTML += form['hw-media-html'].value + '\n';
-
-      var hideIframe = function() {
-        hw.hide(item['iframe']);
-        var lamesauce = function() {
-          item['iframe'].setAttribute('style', 'width: 0px !important');
-        };
-        setTimeout(lamesauce, 300);
-      };
-      setTimeout(hideIframe, 3000);
-
-      if (createForm['hw-separate'].checked || (form['hw-media-thumb'].value && !createForm['hw-thumb'].value)) {
-        createForm['hw-thumb'].value = form['hw-media-thumb'].value;
-        hw.changeThumbPreview();
-      }
-
-      if (createForm['hw-separate'].checked) {
-        var callback = function(xhr) {
-          hw.addToFeed(xhr.responseText);
-          hw.processFiles(eventQueue, sendContent, mediaHTML);
-        };
-        sendContent(mediaHTML, form['hw-media-title'].value, callback);
-        mediaHTML = "";
-        return;
-      }
-    }
-
-    hw.processFiles(eventQueue, sendContent, mediaHTML);
-  };
-  Event.observe(item['iframe'], 'load', iframeOnLoad, false);
-
-  if (item['form']['hw-media-file'].value) {
-    var iframeDoc = item['iframe'].contentWindow.document;
-    var progress = hw.$c('hw-media-file-progress', iframeDoc);
-    hw.removeClass(progress, 'hw-hidden');
-
-    var transferProgress = function(e) {
-      if (e.lengthComputable) {
-        var percentage = Math.round((e.loaded * 100) / e.total);
-        progress.setAttribute('value', percentage);
-        progress.innerHTML = percentage + '%';
-      }        
-    };
-
-    var onSuccess = function(xhr) {
-      iframeDoc.body.innerHTML = xhr.responseText;
-      iframeOnLoad(null, true);
-    };
-
-    var transferError = function(e) {
-      hw.removeClass(hw.$c('hw-media-file-failed', iframeDoc), 'hw-hidden');
-
-      // TODO maybe: we stop processing if we hit an error. best policy?
-      //hw.processFiles(eventQueue, sendContent, mediaHTML);
-      createForm['hw-save'].disabled = false;
-      createForm['hw-save'].value = createForm['hw-save'].getAttribute('data-save');
-      hw.$c('hw-wysiwyg').innerHTML = mediaHTML + hw.$c('hw-wysiwyg').innerHTML;
-      hw.htmlPreview();
-
-      hw.addClass(progress, 'hw-hidden');
-    };
-
-    item['form']['hw-media-local'].value = null;
-    var formData = new FormData(item['form']);
-    formData.append('hw-media-local', item['form']['hw-media-file']['file']);
-
-    var uploadRequest = new hw.ajax(hw.uploadUrl,
-      { upload: formData,
-        onProgress: transferProgress,
-        onSuccess: onSuccess,
-        onError: transferError });
-
-    if (!uploadRequest.transport.upload) {
-      progress.setAttribute('max', '');
-      item['form'].submit();
-    }
-  } else {
-    item['form'].submit();
   }
 };
 

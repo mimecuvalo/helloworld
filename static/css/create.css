@@ -56,6 +56,10 @@ div.hw-help.hw-open,
   margin: 39px 3px 5px 0;
   padding: 10px;
 }
+.hw-media-list.hw-shown {
+  margin: 39px 3px -13px 0;
+  padding: 0;
+}
 
 div.hw-options dl {
   width: 447px;
@@ -216,6 +220,9 @@ div.hw-wysiwyg-controls {
 
 .hw-editing div.hw-wysiwyg {
   margin-top: 39px;  /* height of the toolbar */
+}
+.hw-editing.hw-media-open div.hw-wysiwyg {
+  margin-top: 0;
 }
 
 .hw-editing div.hw-wysiwyg a {

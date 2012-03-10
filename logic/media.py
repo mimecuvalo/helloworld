@@ -76,7 +76,7 @@ def save_locally(parent_url, full_path, data):
 
   media_type = detect_media_type(full_path)
   original_size_url = ''
-  url = parent_url + os.path.split(full_path)[1]
+  url = os.path.join(parent_url, os.path.split(full_path)[1])
   thumb_url = ''
 
   if media_type == 'image':
@@ -92,8 +92,8 @@ def save_locally(parent_url, full_path, data):
 
     thumb_filename = get_unique_name(os.path.join(thumb_dir, leaf_name))
     original_size_filename = get_unique_name(os.path.join(original_size_dir, leaf_name))
-    thumb_url = parent_url + 'thumbs/' + os.path.split(thumb_filename)[1]
-    original_size_url = parent_url + 'original/' + os.path.split(original_size_filename)[1]
+    thumb_url = os.path.join(os.path.join(parent_url, 'thumbs'), os.path.split(thumb_filename)[1])
+    original_size_url = os.path.join(os.path.join(parent_url, 'original'), os.path.split(original_size_filename)[1])
 
     f = open(original_size_filename, 'w+')
     f.write(data)

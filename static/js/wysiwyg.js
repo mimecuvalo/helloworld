@@ -104,7 +104,7 @@ hw.setupCodeMirror = function() {
     hw.cm.getWrapperElement().setAttribute('name', 'hw-html-cm');
     hw.addClass(hw.cm.getWrapperElement(), 'hw-html-cm');
     hw.cm.getWrapperElement().cm = hw.cm;
-    hw.cm.focus();
+    //hw.cm.focus();
     Event.observe(hw.$c('hw-html-cm'), 'keydown', hw.shortcuts, false);
   }
 };
@@ -119,12 +119,10 @@ hw.options = function(open) {
   var createForm = hw.$c('hw-create');
   var options = hw.$c('hw-options');
   var openOptions = open || hw.isHidden(options);
+  hw.html(null, null, !openOptions);
   hw.setClass(hw.$c('hw-more-options'), 'hw-selected', openOptions);
   hw.setClass(createForm, 'hw-options-open', openOptions);
   hw.display(options, openOptions);
-  if (!openOptions) {
-    hw.html(null, null, true);
-  }
   return false;
 };
 
@@ -657,18 +655,15 @@ hw.html = function(event, el, close) {
     hw.mediaLibrary(null, null, true);
   }
 
-  var html = hw.$c('hw-html-toggle');
   var wysiwyg = hw.$c('hw-wysiwyg');
   var htmlWrapper = hw.$c('hw-html-wrapper');
   var openHTML = close ? false : hw.isHidden(htmlWrapper);
-  hw.setClass(html, 'hw-selected', openHTML);
   var createForm = hw.$c('hw-create');
   hw.setClass(createForm, 'hw-html-open', openHTML);
   hw.display(htmlWrapper, openHTML);
   hw.htmlPreview();
   var fn = function() { hw.createOnScroll(); };
   setTimeout(fn, 300);
-  html.focus();
   hw.hideElementOptions();
 
   setTimeout(hw.setupCodeMirror, 0);

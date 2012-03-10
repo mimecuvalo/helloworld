@@ -1,11 +1,162 @@
+hw.prepareFilesAndSendOff = function(callback) {
+  var mediaList = hw.$c('hw-media-list');
+  var createForm = hw.$c('hw-create');
+  var eventQueue = [];
+
+  for (var x = 0; x < mediaList.childNodes.length; ++x) {
+    var iframe = mediaList.childNodes[x];
+    var iframeDoc = iframe.contentWindow.document;
+    var form = hw.$c('hw-create', iframeDoc);
+    if (!form) {
+      continue;
+    }
+
+    var container = hw.$c('hw-media-creator', iframeDoc);
+    if (!hw.hasClass(container, 'hw-created')) {
+      break;
+    }
+
+    form['hw-media-section'].value = createForm['hw-section'].value;
+    form['hw-media-album'].value = createForm['hw-album'].value;
+    form['hw-media-template'].value = createForm['hw-section-template'].value;
+
+    eventQueue.push({ 'form': '', 'iframe': '' });
+    eventQueue[eventQueue.length - 1]['form'] = form;
+    eventQueue[eventQueue.length - 1]['iframe'] = iframe;
+  }
+
+  if (!callback) {
+    callback = function(mediaHTML) {
+      var wysiwyg = hw.$c('hw-wysiwyg');
+      wysiwyg.focus();
+      document.execCommand("insertHTML", false, mediaHTML + "<br><br>");
+    };
+  }
+
+  hw.processFiles(eventQueue, callback, "");
+};
+
+hw.processFiles = function(eventQueue, callback, mediaHTML) {
+  var createForm = hw.$c('hw-create');
+
+  if (!eventQueue.length) {
+    if (createForm['hw-separate'].checked) {
+      hw.resetSaveState();
+      hw.resetCreateForm();
+    } else {
+      callback(mediaHTML);
+      if (!hw.hasClass(createForm, 'hw-new')) {
+        hw.$c('hw-wysiwyg').innerHTML = mediaHTML + hw.$c('hw-wysiwyg').innerHTML;
+        hw.htmlPreview();
+      }
+    }
+    return;
+  }
+
+  var item = eventQueue.shift();
+  var iframeDoc = item['iframe'].contentWindow.document;
+  var iframeOnLoad = function(event, ajax) {
+    if (!ajax) {
+      var cssContent = hw.stylesheetCache ? hw.stylesheetCache : hw.generateStylesheetCache();
+      var styleElement = document.createElement('style');
+      styleElement.setAttribute('type', 'text/css');
+      if (styleElement.styleSheet) {
+        styleElement.styleSheet.cssText = cssContent;
+      } else {
+        styleElement.appendChild(document.createTextNode(cssContent));
+      }
+      item['iframe'].contentWindow.document.getElementsByTagName('head')[0].appendChild(styleElement);
+    }
+
+    var createForm = hw.$c('hw-create');
+    var form = hw.$c('hw-uploaded', item['iframe'].contentWindow.document);
+
+    if (form && form['hw-media-success'].value) {
+      mediaHTML += form['hw-media-html'].value + '\n';
+
+      var hideIframe = function() {
+        hw.hide(item['iframe']);
+        var lamesauce = function() {
+          item['iframe'].setAttribute('style', 'width: 0px !important');
+        };
+        setTimeout(lamesauce, 300);
+      };
+      setTimeout(hideIframe, 3000);
+
+      if (createForm['hw-separate'].checked || (form['hw-media-thumb'].value && !createForm['hw-thumb'].value)) {
+        createForm['hw-thumb'].value = form['hw-media-thumb'].value;
+        hw.changeThumbPreview();
+      }
+
+      if (createForm['hw-separate'].checked) {
+        var separateCallback = function(xhr) {
+          hw.addToFeed(xhr.responseText);
+          hw.processFiles(eventQueue, callback, mediaHTML);
+        };
+        callback(mediaHTML, form['hw-media-title'].value, separateCallback);
+        mediaHTML = "";
+        return;
+      }
+    }
+
+    hw.processFiles(eventQueue, callback, mediaHTML);
+  };
+  Event.observe(item['iframe'], 'load', iframeOnLoad, false);
+
+  if (item['form']['hw-media-file'].value) {
+    var iframeDoc = item['iframe'].contentWindow.document;
+    var progress = hw.$c('hw-media-file-progress', iframeDoc);
+    hw.removeClass(progress, 'hw-hidden');
+
+    var transferProgress = function(e) {
+      if (e.lengthComputable) {
+        var percentage = Math.round((e.loaded * 100) / e.total);
+        progress.setAttribute('value', percentage);
+        progress.innerHTML = percentage + '%';
+      }        
+    };
+
+    var onSuccess = function(xhr) {
+      iframeDoc.body.innerHTML = xhr.responseText;
+      iframeOnLoad(null, true);
+    };
+
+    var transferError = function(e) {
+      hw.removeClass(hw.$c('hw-media-file-failed', iframeDoc), 'hw-hidden');
+      hw.addClass(progress, 'hw-hidden');
+    };
+
+    item['form']['hw-media-local'].value = null;
+    var formData = new FormData(item['form']);
+    formData.append('hw-media-local', item['form']['hw-media-file']['file']);
+
+    var uploadRequest = new hw.ajax(hw.uploadUrl,
+      { upload: formData,
+        onProgress: transferProgress,
+        onSuccess: onSuccess,
+        onError: transferError });
+
+    if (!uploadRequest.transport.upload) {
+      progress.setAttribute('max', '');
+      item['form'].submit();
+    }
+  } else {
+    item['form'].submit();
+  }
+};
+
 hw.mediaClick = function(event) {
   hw.preventDefault(event);
 
   var mediaList = hw.$c('hw-media-list');
   hw.show(mediaList);
+  var createForm = hw.$c('hw-create');
+  hw.setClass(createForm, 'hw-media-open', true);
+  hw.setClass(hw.$('hw-container'), 'hw-media-open', true);
 
   for (var x = mediaList.childNodes.length - 1; x >= 0; --x) {
     var iframe = mediaList.childNodes[x];
+    hw.removeClass(iframe, 'hw-hidden');
     var iframeDoc = iframe.contentWindow.document;
     var fileBrowse = hw.$c('hw-media-local', iframeDoc);
     fileBrowse.click();
@@ -110,14 +261,13 @@ hw.createMediaIframe = function(callback) {
   }
 
   var createForm = hw.$c('hw-create');
-  hw.setClass(createForm, 'hw-media-open', true);
   var iframe = document.createElement('iframe');
   var child = mediaList.appendChild(iframe);
   iframe.src = 'about:blank';
   iframe.setAttribute('name', 'hw-media-creator');
   iframe.setAttribute('width', '100%');
   iframe.setAttribute('height', '88');
-  iframe.setAttribute('class', 'hw-media-creator hw-slide-transition');
+  iframe.setAttribute('class', 'hw-media-creator hw-slide-transition hw-hidden');
 
   var fn = function() {
     var cssContent = hw.stylesheetCache ? hw.stylesheetCache : hw.generateStylesheetCache();
@@ -196,6 +346,7 @@ hw.localMedia = function(el) {
   } else {
     hw.newMedia(el.ownerDocument, false);
     hw.createMediaIframe();
+    hw.prepareFilesAndSendOff();
   }
 };
 hw.localMediaHelper = function(file, last) {
@@ -203,6 +354,7 @@ hw.localMediaHelper = function(file, last) {
     hw.newMedia(iframeDocument, false, file);
     if (last) {
       hw.createMediaIframe();
+      hw.prepareFilesAndSendOff();
     }
   };
 };
