@@ -178,9 +178,6 @@
     </script>
     {% end %}
 
-    {% if not individual_content %}
-      <strong>{{ _('styling and code added here will apply to all items belonging to this section.') }}</strong>
-    {% end %}
     <div class="hw-html-wrapper hw-slide-transition {% if individual_content %}hw-closed{% end %}">
       <textarea name="hw-style" class="hw-style {% if individual_content %}hw-hidden{% end %}">{% if content %}{{ content.style }}{% end %}</textarea>
       <textarea name="hw-code" class="hw-code hw-hidden">{% if content %}{% if edit and has_code %}{{ content.original_code }}{% else %}{{ content.code }}{% end %}{% end %}</textarea>
@@ -191,6 +188,9 @@
         {% if individual_content %}<li name="hw-html-tab" onclick="hw.htmlTab(this)" class="hw-selected">{{ _('html') }}</li>{% end %}
       </ul>
     </div>
+    {% if not individual_content %}
+      <strong>{{ _('styling and code added here will apply to all items belonging to this section.') }}</strong>
+    {% end %}
 
     {% if individual_content %}
       <iframe name="hw-media-wrapper" class="hw-media-wrapper hw-slide-transition hw-closed" data-loading="{{ _('loading...') }}" data-bad="{{ _('Error loading the media library.') }}" src="about:blank" width="100%"></iframe>

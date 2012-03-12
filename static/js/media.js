@@ -382,6 +382,11 @@ hw.mediaLibrary = function(event, el, close) {
   }
 
   var mediaWrapper = hw.$c('hw-media-wrapper');
+
+  if (!mediaWrapper) {
+    return;
+  }
+
   var wysiwyg = hw.$c('hw-wysiwyg');
   var createForm = hw.$c('hw-create');
   var openMedia = close ? false : hw.isHidden(mediaWrapper);
