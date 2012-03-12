@@ -724,7 +724,7 @@ hw.htmlPreview = function(force, codeMirror) {
   if (document.activeElement == html || document.activeElement == htmlCMTextarea) {
     wysiwyg.innerHTML = html.value;
   } else if (document.activeElement != styleCMTextarea && document.activeElement != codeCMTextarea) {
-    if (!hw.isHidden(htmlWrapper)) {
+    if (html && !hw.isHidden(htmlWrapper)) {
       html.value = wysiwyg.innerHTML;
       // hmm, this was supposed to help in formatting the html but it ends up being annoying...
       // html.value.replace(/>([^\n])/g, '>\n$1')
