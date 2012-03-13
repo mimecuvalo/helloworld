@@ -324,47 +324,23 @@ hw.paste = function(event) {
     return;
   }
 
-  var wysiwyg = hw.$c('hw-wysiwyg');
-  document.execCommand("insertHTML", false, "<br>"); // if there's something currently selected, delete it now
-  var original = wysiwyg.innerHTML;
+  var createForm = hw.$c('hw-create');
+  var pasteArea = document.createElement('div');
+  pasteArea.setAttribute('class', 'hw-paste-area');
+  pasteArea.setAttribute('contenteditable', '');
+  createForm.appendChild(pasteArea);
+  pasteArea.focus();
 
   var postPaste = function() {
-    var current = wysiwyg.innerHTML;
+    var wysiwyg = hw.$c('hw-wysiwyg');
+    wysiwyg.focus();
 
-    if (original == current) {
-      return;
-    }
-
-    var pastedContent = "";
-    var diffStart = -1;
-    for (var x = 0; x < current.length; ++x) {
-      if (original == current.substring(0, diffStart) + current.substring(x)) {
-        break;
-      }
-      if (original[x] != current[x] || diffStart != -1) {
-        if (diffStart == -1) {
-          diffStart = x;
-
-          if (x != 0 && original[x - 1] == '<') { // make sure we get that first < in there
-            diffStart = x - 1;
-            pastedContent += original[x - 1];
-          }
-        }
-        pastedContent += current[x];
-      }
-    }
+    var createForm = hw.$c('hw-create');
+    var pastedContent = pasteArea.innerHTML;
+    createForm.removeChild(pasteArea);
 
     if (pastedContent) {
       var sel = window.getSelection();
-      var div = document.createElement('DIV');
-      div.innerHTML = pastedContent;
-      hw.$c('hw-view').style.overflow = 'hidden';
-      wysiwyg.style.width = '1000000px';  // XXX workaround crappy Firefox bug that includes '\n' in selection when wrapping...todo file bug.
-      for (var x = 0; x < div.textContent.length + 1; ++x) {
-        sel.modify("extend", "backward", "character");
-      }
-      wysiwyg.style.width = '';
-      hw.$c('hw-view').style.overflow = '';
 
       if (pastedContent.search(/https?:\/\/maps.google.com/ig) == 0) {
         pastedContent = '&lt;iframe width="425" height="350" src="' + pastedContent + '&output=embed" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;';
@@ -402,7 +378,7 @@ hw.paste = function(event) {
     }
   };
 
-  setTimeout(postPaste, 0);
+  setTimeout(postPaste, 100);
 };
 
 hw.wysiwyg = function(event, cmd, value, el) {
