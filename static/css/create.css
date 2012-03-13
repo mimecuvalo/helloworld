@@ -2,7 +2,7 @@ form.hw-create.hw-new,
 #hw-container.hw-editing > #hw-content > section > form.hw-create {
   margin-top: 5px;
 }
-#hw-container.hw-editing > #hw-content > section > form.hw-create {
+/*#hw-container.hw-editing > #hw-content > section > form.hw-create {
   height: 136px;
 }
 #hw-container.hw-editing > #hw-content > section > form.hw-create.hw-options-open,
@@ -10,7 +10,7 @@ form.hw-create.hw-new,
 #hw-container.hw-editing > #hw-content > section > form.hw-create.hw-html-open,
 #hw-container.hw-editing > #hw-content > section > form.hw-create.hw-media-open {
   height: auto;
-}
+}*/
 
 form.hw-create.hw-media-library-open .hw-playground {
   clear: both;

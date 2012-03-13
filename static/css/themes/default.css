@@ -30,7 +30,7 @@ option {
 .hw-last,
 .hw-last:visited,
 #hw-dashboard,
-#hw-dashboard:visited
+#hw-dashboard:visited,
 #hw-follow,
 #hw-follow:visited {
   background-color: #eff;
