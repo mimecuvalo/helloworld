@@ -570,6 +570,7 @@ hw.changeImageAlign = function(el) {
   wysiwyg.focus();
   var imageTag = hw.$c('hw-image-options')['imageTag'];
   imageTag.style.cssFloat = el.value;
+  imageTag.style.margin = el.value == 'left' ? '0 22px 11px 0' : (el.value == 'right' ? '0 0 11px 22px' : '');
 
   if (imageTag.parentNode.nodeName == 'A') {
     imageTag.parentNode.style.cssFloat = el.value;

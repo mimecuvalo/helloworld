@@ -70,6 +70,7 @@ hw.resetCreateForm = function() {
                                   : false;
 
   hw.changeThumbPreview();
+  hw.htmlPreview();
 };
 
 hw.addToFeed = function(html) {

@@ -124,3 +124,7 @@ div.hw-media-creator {
 span[data-tooltip]:hover:after {
   border: 1px solid #0c0;
 }
+
+.hw-individual-content figure {
+  text-align: center;
+}
