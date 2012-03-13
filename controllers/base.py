@@ -679,7 +679,7 @@ class BaseHandler(tornado.web.RequestHandler):
     name = name or self.breadcrumbs["name"]
 
     common_options = { 'redirect': False }
-    if not self.is_owner_viewing(profile) and not self.display["content"].hidden:
+    if not self.is_owner_viewing(profile):
       common_options['hidden'] = False
 
     if section != 'main':

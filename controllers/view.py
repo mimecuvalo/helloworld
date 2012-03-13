@@ -144,17 +144,18 @@ class ViewHandler(BaseHandler):
                           'section': content.section,
                           'name': None, }
 
-    collection, common_options = self.get_collection(profile=content_options['username'],
-                                                     section=content_options['section'],
-                                                     name=content_options['name'])
+    if not content.hidden:
+      collection, common_options = self.get_collection(profile=content_options['username'],
+                                                       section=content_options['section'],
+                                                       name=content_options['name'])
 
-    index = -1
-    for i, p in enumerate(collection):
-      if p.id == content.id:
-        index = i
-        break
+      index = -1
+      for i, p in enumerate(collection):
+        if p.id == content.id:
+          index = i
+          break
 
-    if len(collection):
+    if not content.hidden and len(collection):
       if self.display["section_sort_type"] == "":
         self.display["start"] = collection[len(collection) - 1]
         self.display["previous"] = collection[index + 1] if index + 1 < len(collection) else None

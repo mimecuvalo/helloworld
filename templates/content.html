@@ -1,4 +1,4 @@
-{% if individual_content and content.section != 'main' %}
+{% if individual_content and content.section != 'main' and start %}
   <nav class="hw-neighbors {% if section_sort_type != "" %}hw-reverse-sort{% end %}">
     {% comment NOTE whitespace is important here %}<a
        rel="last" class="hw-last hw-button" href="{{ content_url(last, host=True) }}">{{ _("last") }}</a><a 
