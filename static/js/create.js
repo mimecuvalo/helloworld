@@ -20,7 +20,7 @@ hw.changeBeforeUnloadState = function(event, allowPageChange) {
 
   var createForm = hw.$c('hw-create');
   var wysiwyg = hw.$c('hw-wysiwyg');
-  var noChange = wysiwyg.textContent.replace('\n', '') == hw.getMsg('untitled');
+  var noChange = wysiwyg.textContent.replace('\n', '') == hw.getMsg('untitled') || wysiwyg.textContent == '';
   noChange = noChange && !createForm['hw-code'].value && !createForm['hw-style'].value;
   noChange = noChange && wysiwyg.innerHTML.search(/<(?!\/?(h1|br))/ig) == -1;
   allowPageChange = allowPageChange || noChange;

@@ -160,7 +160,7 @@ form.hw-create .hw-explanation {
 }
 
 div.hw-html-wrapper {
-  height: 220px;
+  height: 235px;
 }
 div.hw-html-wrapper {
   margin-right: 3px;
@@ -197,6 +197,11 @@ ul.hw-html-tabs li {
   -moz-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
   -webkit-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
   box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
+}
+.hw-style-info {
+  display: block;
+  clear: both;
+  padding: 10px 0;
 }
 
 .hw-new div.hw-wysiwyg-controls.hw-fixed,

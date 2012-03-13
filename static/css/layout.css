@@ -410,13 +410,13 @@ a.hw-read-more {
   box-shadow: 2px 2px 6px #666;
 }
 .hw-album > li > a:first-child {
-  min-height: 119px;
+  min-height: 115px;
 }
 .hw-album > li img {
   display: inline-block;
   zoom: 1; /* workaround ie7 */
   *display: inline; /* workaround ie7 */
-  max-width: 155px;
+  max-width: 154px;
   max-height: 115px;
 }
 .hw-album > li img.hw-invisible {

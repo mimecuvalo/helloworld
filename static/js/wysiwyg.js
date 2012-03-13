@@ -4,11 +4,16 @@ hw.edit = function(event, opt_dontCreateMediaIframe) {
     hw.preventDefault(event);
   }
 
+  var createForm = hw.$c('hw-create');
+  var turnEditingOn = hw.isHidden(createForm);
+
   // if page has code or we've started using the history api...
   if (!hw.inForcedEditPage && (hw.pageHasCode || hw.addedFirstUrlToHistory)) {
     window.location.href = window.location.pathname + '?edit=true';
     return;
   }
+
+  // if on forced edit page, remove it from the url
 
   // convert code back to normal
   if (hw.createAutoload && hw.inForcedEditPage && hw.pageHasCode) {
@@ -17,14 +22,11 @@ hw.edit = function(event, opt_dontCreateMediaIframe) {
 
   hw.createAutoload = false;
 
-  var createForm = hw.$c('hw-create');
-  var turnEditingOn = hw.isHidden(createForm);
-
   // XXX, edge case: if you edit the page, then click 'edit' to close edit mode (without saving),
   // then, navigate to a neighbor page (which uses html5 history) you don't get
   // the onbeforeunload call for the page you were editing.
   // therefore, show force onbeforeunload to show up
-  if (!turnEditingOn && window.onbeforeunload) {
+  if (!turnEditingOn && window.onbeforeunload && !hw.inForcedEditPage) {
     window.location.reload();
     return;
   }
