@@ -23,7 +23,7 @@ defaults = {
 }
 
 dictionary = {
-  'reserved_names' : ['admin', 'api', 'auth', 'check_broken_links', 'comments', 'customize', 'dashboard',
+  'reserved_names' : ['about', 'admin', 'api', 'auth', 'check_broken_links', 'comments', 'customize', 'dashboard',
                     'data_liberation', 'feed', 'foaf', 'host_meta', 'login', 'logout', 
                     'media', 'oembed', 'opensearch', 'page', 'private', 'push', 'remote', 'resource', 'restart', 'salmon', 'search',
                     'setup', 'stats', 'themes', 'upload', 'users', 'webfinger'],

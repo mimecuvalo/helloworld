@@ -35,6 +35,7 @@ class BaseHandler(tornado.web.RequestHandler):
       pass
     self.author_user = None
     self.hostname_user = None
+    self.display["original_uri"] = self.request.uri
     self.request.uri = self.request.uri.replace('/helloworld.py', '')
     prefix_constant = self.constants['https_prefix'] if self.request.protocol == 'https' else self.constants['http_prefix']
     if self.request.uri.startswith(tornado.escape.url_escape(prefix_constant).replace('%2F', '/')):

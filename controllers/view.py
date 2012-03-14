@@ -344,6 +344,9 @@ class ViewHandler(BaseHandler):
     if not content:
       raise tornado.web.HTTPError(404)
 
+    if content.name == 'about':  # not allowed to delete
+      raise tornado.web.HTTPError(400)
+
     if not self.constants['single_user_site'] and content.username != self.current_user["username"]:
       raise tornado.web.HTTPError(400, "i call shenanigans")
 
