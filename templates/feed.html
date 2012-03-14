@@ -43,7 +43,7 @@
   {% if user.logo %}
   <logo>{{ nav_url(host=True, section=user.logo) }}</logo>
   {% end %}
-  <icon>{{ static_url('favicon.ico', include_host=True) }}</icon>
+  <icon>{% if user.favicon %}{{ nav_url(host=True, section=user.favicon) }}{% else %}{{ static_url('favicon.ico', include_host=True) }}{% end %}</icon>
   {% if type(feed) is list %}
     {% for item in feed %}
       {% if not item.restricted %}
