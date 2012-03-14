@@ -27,11 +27,7 @@
 {% end %}
 
 {% block favicon %}
-  {% if content_owner.favicon %}
-    <link rel="shortcut icon" href="{{ content_owner.favicon }}">
-  {% else %}
-    <link rel="shortcut icon" href="{{ static_url('favicon.ico') }}">
-  {% end %}
+  <link rel="shortcut icon" href="{% if content_owner.favicon %}{{ content_owner.favicon }}{% else %}{{ static_url('favicon.ico') }}{% end %}">
 {% end %}
 
 {% block extra_css %}
