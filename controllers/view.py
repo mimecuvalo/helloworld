@@ -65,9 +65,12 @@ class ViewHandler(BaseHandler):
       return
 
     if content.redirect:
-      redirect = self.models.content.get(content.redirect)
-      self.redirect(self.content_url(redirect, referrer=self.breadcrumbs['uri']), permanent=True)
-      return
+      if self.display["edit"]:
+        self.display["refers_to"] = self.content_url(self.models.content.get(content.redirect))
+      else:
+        redirect = self.models.content.get(content.redirect)
+        self.redirect(self.content_url(redirect, referrer=self.breadcrumbs['uri']), permanent=True)
+        return
 
     if content.style and not re.search(r"<link|<style", content.style, re.I | re.M):
       content.style = '<style>\n' + content.style + '\n</style>'
