@@ -2,6 +2,6 @@
 <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
   <ShortName>{{ user.title }}</ShortName>
   <Description>{{ user.title }}</Description>
-  <Image height="16" width="16" type="image/x-icon">{% if user.favicon %}{{ static_url(user.favicon, include_host=True) }}{% else %}{{ static_url('favicon.ico', include_host=True) }}{% end %}</Image>
+  <Image height="16" width="16" type="image/x-icon">{% if user.favicon %}{{ add_base_uris(user.favicon) }}{% else %}{{ static_url('favicon.ico', include_host=True) }}{% end %}</Image>
   <Url type="text/html" method="get" template="{{ nav_url(host=True, username=user.username, section='search', q="{searchTerms}") }}"/>
 </OpenSearchDescription>
