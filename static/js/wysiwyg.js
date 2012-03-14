@@ -328,6 +328,8 @@ hw.paste = function(event) {
   var pasteArea = document.createElement('div');
   pasteArea.setAttribute('class', 'hw-paste-area');
   pasteArea.setAttribute('contenteditable', '');
+  pasteArea.style.top = (hw.$c('hw-wysiwyg').getBoundingClientRect().top * -1 + 45) + 'px';
+  pasteArea.style.left = '0px';
   createForm.appendChild(pasteArea);
   pasteArea.focus();
 
@@ -378,7 +380,7 @@ hw.paste = function(event) {
     }
   };
 
-  setTimeout(postPaste, 100);
+  setTimeout(postPaste, 0);
 };
 
 hw.wysiwyg = function(event, cmd, value, el) {
