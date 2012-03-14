@@ -378,14 +378,20 @@ class BaseHandler(tornado.web.RequestHandler):
     if not self.constants['single_user_site'] and not self.hostname_user:
       url += '/' + item.username
 
-    args = ""
+    if item.section != 'main':
+      url += '/' + item.section
+
+    if item.name != 'home' and item.name != 'main':
+      url += '/' + item.name
+    elif item.name == 'home' and self.hostname_user:
+      url += '/'
+
     if arguments:
       for arg in arguments:
         arguments[arg] = arguments[arg].encode('utf-8')
-      args = '?' + urllib.urlencode(arguments)
+      url += '?' + urllib.urlencode(arguments)
 
-    return url_factory.href(url + ('/' + item.section if item.section != 'main' else '') \
-        + ('/' + item.name if item.name != 'home' else '')) + args
+    return url_factory.href(url)
 
   def nav_url(self, host=False, username="", section="", name="", page=None, **arguments):
     url = ""
