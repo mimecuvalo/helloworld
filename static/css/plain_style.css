@@ -90,6 +90,9 @@ option {
 #hw-customize-form {
   border: 1px solid #0cf;
 }
+#hw-logo img {
+  max-width: 155px;
+}
 
 .hw-media-library-standalone,
 #hw-followers,
