@@ -3,27 +3,28 @@
 {% block nav %}{% end %}
 
 {% block extra_css %}
-<link rel="stylesheet" type="text/css" href="{{ static_url('css/dashboard.css') }}" />
-<style>
-  body {
-    text-align: center;
-  }
-  #setup {
-    width: 600px;
-    margin: 5em auto;
-    text-align: left;
-  }
+  <link rel="stylesheet" type="text/css" href="{{ static_url('css/themes/default.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ static_url('css/dashboard.css') }}" />
+  <style>
+    body {
+      text-align: center;
+    }
+    #setup {
+      width: 600px;
+      margin: 5em auto;
+      text-align: left;
+    }
 
-  #setup dt {
-    display: inline-block;
-    width: 175px;
-  }
+    #setup dt {
+      display: inline-block;
+      width: 175px;
+    }
 
-  #setup dd {
-    display: inline-block;
-    width: 375px;
-  }
-</style>
+    #setup dd {
+      display: inline-block;
+      width: 375px;
+    }
+  </style>
 {% end %}
 
 {% block extra_js %}
