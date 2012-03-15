@@ -8,9 +8,9 @@ import urlparse
 
 from base import BaseHandler
 from logic import content_remote
-from logic import email
 from logic import media
 from logic import pubsubhubbub_subscribe
+from logic import smtp
 from logic import socialize
 from logic import spam
 from logic import url_factory
@@ -351,4 +351,4 @@ class ApiHandler(BaseHandler):
       commented_content.comments += 1
       commented_content.save()
 
-    email.comment(self, from_username, commented_user.oauth, self.content_url(commented_content))
+    smtp.comment(self, from_username, commented_user.oauth, self.content_url(commented_content))

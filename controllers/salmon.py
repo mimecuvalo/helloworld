@@ -6,7 +6,7 @@ import urlparse
 
 from base import BaseHandler
 from logic import content_remote
-from logic import email
+from logic import smtp
 from logic import spam
 from logic import url_factory
 from logic import users
@@ -88,7 +88,7 @@ class SalmonHandler(BaseHandler):
       user = users.get_remote_user_info(self, signer_uri, user_remote.local_username)
       user.follower = 1
       user.save()
-      email.follow(self, user.username, self.display["user"].oauth, user.profile_url)
+      smtp.follow(self, user.username, self.display["user"].oauth, user.profile_url)
     elif (activity_verb == 'http://ostatus.org/schema/1.0/unfollow' or activity_verb == 'http://activitystrea.ms/schema/1.0/stop-following'):
       user_remote.follower = 0
       user_remote.save()
@@ -178,4 +178,4 @@ class SalmonHandler(BaseHandler):
       post_remote.save()
 
       if ref:
-        email.comment(self, post_remote.username, commented_user.oauth, self.content_url(content))
+        smtp.comment(self, post_remote.username, commented_user.oauth, self.content_url(content))

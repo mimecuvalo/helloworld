@@ -9,7 +9,7 @@ except:
 
 import tornado.escape
 
-def email(handler, subject, to, content):
+def send(handler, subject, to, content):
   if not has_email_support or not handler.constants['smtp_password']:
     return
 
@@ -32,13 +32,13 @@ def email(handler, subject, to, content):
     logging.error(ex)
 
 def comment(handler, from_username, to_email, content_url):
-  email(handler, handler.locale.translate('%(user)s made a comment on your post.' % { "user": from_username }), to_email, handler.locale.translate("""
+  send(handler, handler.locale.translate('%(user)s made a comment on your post.' % { "user": from_username }), to_email, handler.locale.translate("""
     <a href="%(url)s">View the post here.</a>
   """) % { "url": content_url })
 
 def follow(handler, from_username, to_email, blog):
   follow = handler.nav_url(host=True, section='api') + '?op=follow&amp;user=' + tornado.escape.url_escape(blog)
-  email(handler, handler.locale.translate('%(user)s started following you!' % { "user": from_username }), to_email, handler.locale.translate("""
+  send(handler, handler.locale.translate('%(user)s started following you!' % { "user": from_username }), to_email, handler.locale.translate("""
     <a href="%(url)s">View their blog.</a><br>
     <a href="%(follow)s">Follow them here.</a>
   """) % { "blog": blog, "follow": follow })
