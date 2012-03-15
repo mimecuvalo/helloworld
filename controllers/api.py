@@ -351,4 +351,4 @@ class ApiHandler(BaseHandler):
       commented_content.comments += 1
       commented_content.save()
 
-    smtp.comment(self, from_username, commented_user.oauth, self.content_url(commented_content))
+    smtp.comment(self, from_username, commented_user.oauth, self.content_url(commented_content, host=True))

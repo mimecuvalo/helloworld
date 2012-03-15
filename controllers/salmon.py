@@ -178,4 +178,4 @@ class SalmonHandler(BaseHandler):
       post_remote.save()
 
       if ref:
-        smtp.comment(self, post_remote.username, commented_user.oauth, self.content_url(content))
+        smtp.comment(self, post_remote.username, commented_user.oauth, self.content_url(content, host=True))

@@ -2,6 +2,7 @@ import smtplib
 
 has_email_support = False
 try:
+  from email.mime.multipart import MIMEMultipart
   from email.mime.text import MIMEText
   has_email_support = True
 except:
@@ -13,13 +14,16 @@ def send(handler, subject, to, content):
   if not has_email_support or not handler.constants['smtp_password']:
     return
 
-  msg = MIMEText(content)
+  msg = MIMEMultipart('alternative')
 
   me = 'no-reply@' + handler.request.host
 
   msg['Subject'] = subject
-  msg['From'] = me
+  msg['From'] = 'Hello, world.'
   msg['To'] = to
+
+  part1 = MIMEText(content, 'html')
+  msg.attach(part1)
 
   try:
     s = smtplib.SMTP('localhost')
