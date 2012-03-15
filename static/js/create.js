@@ -76,6 +76,7 @@ hw.resetCreateForm = function() {
   hw.$c('hw-wysiwyg').focus();
   window.getSelection().modify("move", "forward", "line");
   window.getSelection().modify("move", "forward", "line");
+  hw.saveSelection();
 };
 
 hw.addToFeed = function(html) {

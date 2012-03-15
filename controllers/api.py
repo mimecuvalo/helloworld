@@ -29,7 +29,7 @@ class ApiHandler(BaseHandler):
       self.follow()
 
     if self.get_argument('from_email', ''):
-      self.redirect(self.nav_url())
+      self.redirect(self.nav_url(section='dashboard'))
     else:
       self.set_status(204)
 

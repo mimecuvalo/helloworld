@@ -141,7 +141,6 @@ div.hw-wysiwyg.hw-new {
 
 div.hw-paste-area {
   position: absolute;
-  visibility: hidden;
 }
 
 input.hw-price,

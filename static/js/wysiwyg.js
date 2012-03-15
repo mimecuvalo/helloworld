@@ -328,7 +328,7 @@ hw.paste = function(event) {
   var pasteArea = document.createElement('div');
   pasteArea.setAttribute('class', 'hw-paste-area');
   pasteArea.setAttribute('contenteditable', '');
-  pasteArea.style.top = (hw.$c('hw-wysiwyg').getBoundingClientRect().top * -1 + 45) + 'px';
+  pasteArea.style.top = (Math.abs(hw.$c('hw-wysiwyg').getBoundingClientRect().top) + 45) + 'px';
   pasteArea.style.left = '0px';
   createForm.appendChild(pasteArea);
   pasteArea.focus();
