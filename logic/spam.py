@@ -1,4 +1,5 @@
 import os
+import os.path
 
 from reverend.thomas import Bayes
 
@@ -8,10 +9,15 @@ def get_db(private_path, username):
 
   # load the spam DB
   try:
-      guesser.load(path)
+    guesser.load(path)
   except IOError:
-      print "Creating a new spam filter database"
-      guesser.save(path)
+    print "Creating a new spam filter database"
+
+    parent_directory = os.path.dirname(path)
+    if not os.path.isdir(parent_directory):
+      os.makedirs(parent_directory)
+
+    guesser.save(path)
 
   return guesser, path
 
