@@ -90,15 +90,11 @@ div.hw-options dt {
   width: 150px;
   vertical-align: top;
   display: inline-block;
-  zoom: 1; /* workaround ie7 */
-  *display: inline; /* workaround ie7 */
 }
 .hw-new div.hw-options dd,
 div.hw-options dd {
   width: 288px;
   display: inline-block;
-  zoom: 1; /* workaround ie7 */
-  *display: inline; /* workaround ie7 */
 }
 .hw-new div.hw-options dd input,
 div.hw-options dd input {
@@ -177,10 +173,6 @@ form.hw-create label {
   font-size: 16px;
   color: black;
 }
-form.hw-create .hw-explanation {
-  font-size: 10px;
-  color: #666;
-}
 
 div.hw-html-wrapper {
   height: 235px;
@@ -211,8 +203,6 @@ ul.hw-html-tabs li {
   border-right: 1px solid black;
   border-bottom: 1px solid black;
   display: inline-block;
-  zoom: 1; /* workaround ie7 */
-  *display: inline; /* workaround ie7 */
   cursor: hand;
   cursor: pointer;
   background-color: white;
@@ -261,15 +251,32 @@ div.hw-wysiwyg-controls {
 .hw-separate div.hw-view,
 .hw-separate div.hw-html-wrapper,
 .hw-separate iframe.hw-media-wrapper,
-.hw-separate div.hw-wysiwyg-controls,
 .hw-separate input.hw-title,
 div.hw-created.hw-media-creator > input.hw-media-title {
   display: none;
 }
 div.hw-created.hw-separate.hw-media-creator > input.hw-media-title {
   display: inline-block;
-  zoom: 1; /* workaround ie7 */
-  *display: inline; /* workaround ie7 */
+}
+.hw-media-cancel,
+.hw-media-title,
+.hw-media-caption,
+.hw-media-source {
+  display: none;
+}
+.hw-media-tags {
+  visibility: hidden;
+  width: 5px;
+}
+.hw-separate .hw-media-cancel,
+.hw-separate .hw-media-title,
+.hw-separate .hw-media-caption,
+.hw-separate .hw-media-source {
+  display: none;
+}
+.hw-separate .hw-media-tags {
+  visibility: visible;
+  width: 115px;
 }
 
 div.hw-wysiwyg-controls {
@@ -404,12 +411,6 @@ input.hw-media-local {
 input.hw-media-local {
   width: 275px;
 }
-span.hw-media-or {
-  margin-top: 3px;
-  display: inline-block;
-  zoom: 1; /* workaround ie7 */
-  *display: inline; /* workaround ie7 */
-}
 .hw-created > input.hw-media-file,
 .hw-created > input.hw-media-remote {
   width: 400px;
@@ -420,8 +421,6 @@ div.hw-media-creator > .hw-created {
 }
 div.hw-media-creator.hw-created > .hw-created {
   display: inline-block;
-  zoom: 1; /* workaround ie7 */
-  *display: inline; /* workaround ie7 */
 }
 div.hw-media-creator.hw-created > .hw-initial {
   display: none;

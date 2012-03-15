@@ -386,7 +386,7 @@ class ViewHandler(BaseHandler):
     soup = BeautifulSoup(content.view)
     for text in soup.findAll(text=True):
       if text.parent.name not in ('a', 'script', 'style'):
-        text.replaceWith(tornado.escape.linkify(tornado.escape.xhtml_unescape(text)))
+        text.replaceWith(url_factory.linkify_tags(self, content.username, tornado.escape.linkify(tornado.escape.xhtml_unescape(text))))
     content.view = soup.renderContents()
 
     template = self.get_argument('template', "")

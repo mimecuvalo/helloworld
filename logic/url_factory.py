@@ -105,8 +105,8 @@ def add_base_uris(handler, view):
   return re.compile(r'(["\'])(static/resource)', re.M | re.U).sub(r'\1' + handler.base_uri + r'\2', view)
 
 # xxx, this is now done in wysiwyg
-def linkify_tags(handler, content):
-  return re.compile(r'#(\w+)(?![^<&]*([>;]))', re.M | re.U).sub(r' <a href="' + handler.nav_url(username=content.username, section='search') + r'?q=%23\1" rel="tag">#\1</a>', content.view)
+def linkify_tags(handler, username, text):
+  return re.compile(r'#(\w+)(?![^<&]*([>;]))', re.M | re.U).sub(r' <a href="' + handler.nav_url(username=username, section='search') + r'?q=%23\1" rel="tag">#\1</a>', text)
 
 def clean_name(name):
   return re.compile(r'[\W]+', re.M | re.U).sub('', name.replace(" ", "_").replace("-", "_")).replace("_", "-")[:255]

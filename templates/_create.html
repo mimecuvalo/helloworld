@@ -3,6 +3,7 @@
   hw.setMsg('slideshow', "{% raw js_escape(_('slideshow')) %}");
   hw.setMsg('insert-as-slideshow', "{% raw js_escape(_('insert as slideshow?')) %}");
   hw.setMsg('untitled', "{% raw js_escape(_('untitled')) %}");
+  hw.setMsg('separate', "{% raw js_escape(_('make separate posts for each media file?')) %}");
   hw.xsrf = '{% raw xsrf_form_html() %}';
   hw.uploadUrl = '{{ nav_url(section='upload') }}';
   hw.contentOwnerTitle = {% if content %}"{{ content_owner.title }}"{% else %}"{% raw js_escape(_('Dashboard')) %}"{% end %};
@@ -127,9 +128,9 @@
       {% end %}
       <dt><label>{{ _("hidden:") }}</label></dt><dd><input name="hw-hidden" type="checkbox" {% if content and content.hidden %}checked="checked"{% end %}></dd>
       {% if not content %}
-      <dt><label>{{ _("insert as separate posts:") }}</label></dt><dd><input name="hw-separate" type="checkbox" onclick="hw.separate(this)"></dd>
+      <dt><label>{{ _("insert as separate posts:") }}</label></dt><dd><input class="hw-separate" name="hw-separate" type="checkbox" onclick="hw.separate(this)"></dd>
       {% else %}
-      <input name="hw-separate" type="hidden" value="0">
+      <input class="hw-separate" name="hw-separate" type="hidden" value="0">
       {% end %}
     </dl>
   </div>
@@ -138,21 +139,18 @@
     {% if individual_content %}
     <div class="hw-media-creator-template hw-hidden">
       <div class="hw-media-creator">
-        <span style="display: none" class="hw-media-cancel hw-created hw-button hw-button-delete" onclick="parent.hw.cancelMedia(this)">x</span>
+        <span class="hw-media-cancel hw-created hw-button hw-button-delete" onclick="parent.hw.cancelMedia(this)">x</span>
         <label class="hw-initial">{{ _("media upload") }}</label>
-        <span style="display: none" class="hw-initial hw-explanation">{{ _("(images, videos, audio, links)") }}</span>
-        <br style="display: none" class="hw-initial">
         <label class="hw-created">{{ _("source") }}</label>
         <input style="display: none" class="hw-media-remote" name="hw-media-remote" type="text" placeholder="{{ _("URL / embed") }}" onchange="parent.hw.remoteMedia(this)" onkeyup="parent.hw.checkPaste(this, event)">
-        <span style="display: none" class="hw-initial hw-media-or">{{ _("or") }}</span>
         <input class="hw-media-local" name="hw-media-local" type="file" multiple value="{{ _("Upload file(s)") }}" onchange="parent.hw.localMedia(this)">
         <input class="hw-media-file hw-created hw-hidden" name="hw-media-file" type="text" disabled readonly value="">
         <progress value="0" max="100" class="hw-media-file-progress hw-hidden">0%</progress>
         <br class="hw-created">
-        <input style="display: none" class="hw-media-title hw-created" name="hw-media-title" type="text" placeholder="{{ _('title') }}">
-        <input style="display: none" class="hw-media-caption hw-created" name="hw-media-caption" type="text" placeholder="{{ _('caption') }}">
-        <input style="display: none" class="hw-media-source hw-created" name="hw-media-source" type="text" placeholder="{{ _('source') }}">
-        <input style="visibility: hidden; width: 5px" class="hw-media-tags hw-created" name="hw-media-tags" type="text" placeholder="{{ _('tags') }}">
+        <input class="hw-media-title hw-created" name="hw-media-title" type="text" placeholder="{{ _('title') }}">
+        <input class="hw-media-caption hw-created" name="hw-media-caption" type="text" placeholder="{{ _('caption') }}">
+        <input class="hw-media-source hw-created" name="hw-media-source" type="text" placeholder="{{ _('source') }}">
+        <input class="hw-media-tags hw-created" name="hw-media-tags" type="text" placeholder="{{ _('tags') }}">
         <span class="hw-media-file-failed hw-hidden">{{ _('failed!') }}</span>
         <input name="hw-media-section" type="hidden">
         <input name="hw-media-album" type="hidden">

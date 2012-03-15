@@ -204,8 +204,13 @@ hw.save = function() {
   }
 };
 
-hw.separate = function(el) {
-  hw.setClass(hw.$('create'), 'hw-separate', el.checked);
+hw.separate = function(el, forceEnable) {
+  var separateCheckbox = hw.$c('hw-separate');
+  if (forceEnable) {
+    separateCheckbox.checked = true;
+  }
+  var enabled = separateCheckbox.checked;
+  hw.setClass(hw.$('hw-create'), 'hw-separate', enabled);
 
   var mediaList = hw.$c('hw-media-list');
 
@@ -213,7 +218,7 @@ hw.separate = function(el) {
     var doc = mediaList.childNodes[x].contentWindow.document;
     var mediaCreator = hw.$c('hw-media-creator', doc);
     if (mediaCreator) {
-      hw.setClass(mediaCreator, 'hw-separate', el.checked);
+      hw.setClass(mediaCreator, 'hw-separate', enabled);
     }
   }
 };

@@ -16,6 +16,7 @@ hw.prepareFilesAndSendOff = function(callback) {
       break;
     }
 
+    hw.removeClass(iframe, 'hw-hidden');
     form['hw-media-section'].value = createForm['hw-section'].value;
     form['hw-media-album'].value = createForm['hw-album'].value;
     form['hw-media-template'].value = createForm['hw-section-template'].value;
@@ -25,15 +26,19 @@ hw.prepareFilesAndSendOff = function(callback) {
     eventQueue[eventQueue.length - 1]['iframe'] = iframe;
   }
 
-  if (!callback) {
+  var separate = hw.$c('hw-separate');
+  if (!callback && !separate) {
     callback = function(mediaHTML) {
       var wysiwyg = hw.$c('hw-wysiwyg');
       wysiwyg.focus();
       document.execCommand("insertHTML", false, mediaHTML + "<br><br>");
+      hw.changeBeforeUnloadState();
     };
   }
 
-  hw.processFiles(eventQueue, callback, "");
+  if (!separate || callback) {
+    hw.processFiles(eventQueue, callback, "");
+  }
 };
 
 hw.processFiles = function(eventQueue, callback, mediaHTML) {
@@ -156,7 +161,6 @@ hw.mediaClick = function(event) {
 
   for (var x = mediaList.childNodes.length - 1; x >= 0; --x) {
     var iframe = mediaList.childNodes[x];
-    hw.removeClass(iframe, 'hw-hidden');
     var iframeDoc = iframe.contentWindow.document;
     var fileBrowse = hw.$c('hw-media-local', iframeDoc);
     fileBrowse.click();
@@ -333,6 +337,12 @@ hw.checkPaste = function(el, event) {
 // TODO combine with hw.drop
 hw.localMedia = function(el) {
   if (el.files) {
+    if (el.files.length > 1) {
+      if (confirm(hw.getMsg('separate'))) {
+        hw.separate(null, true);
+      }
+    }
+
     for (var x = 0; x < el.files.length; ++x) {
       var file = el.files[x];
       var last = x == el.files.length - 1;
