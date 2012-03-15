@@ -41,8 +41,8 @@ def comment(handler, from_username, to_email, content_url):
   """) % { "url": content_url })
 
 def follow(handler, from_username, to_email, blog):
-  follow = handler.nav_url(host=True, section='api') + '?op=follow&amp;user=' + tornado.escape.url_escape(blog)
+  follow = handler.nav_url(host=True, section='api') + '?op=follow&amp;from_email=1&amp;user=' + tornado.escape.url_escape(blog)
   send(handler, handler.locale.translate('%(user)s started following you!' % { "user": from_username }), to_email, handler.locale.translate("""
-    <a href="%(blog)s">View their blog.</a><br>
-    <a href="%(follow)s">Follow them here.</a>
+    <a href="%(blog)s">View their blog.</a><br><br>
+    If you like their stuff, you can <a href="%(follow)s">follow them here.</a>
   """) % { "blog": blog, "follow": follow })

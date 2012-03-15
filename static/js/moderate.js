@@ -15,6 +15,7 @@ hw.follow = function(event, el) {
 
   var callback = function(xhr) {
     hw.$('hw-following-new').value = '';
+    button.disabled = false;
     window.location.reload();
   };
 

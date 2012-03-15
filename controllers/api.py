@@ -28,7 +28,10 @@ class ApiHandler(BaseHandler):
     if op == 'follow':
       self.follow()
 
-    self.set_status(204)
+    if self.get_argument('from_email', ''):
+      self.redirect(self.nav_url())
+    else:
+      self.set_status(204)
 
   def post(self):
     op = self.get_argument('op')
