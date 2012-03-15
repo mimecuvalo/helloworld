@@ -26,7 +26,7 @@ hw.prepareFilesAndSendOff = function(callback) {
     eventQueue[eventQueue.length - 1]['iframe'] = iframe;
   }
 
-  var separate = hw.$c('hw-separate');
+  var separate = createForm['hw-separate'].checked;
   if (!callback && !separate) {
     callback = function(mediaHTML) {
       var wysiwyg = hw.$c('hw-wysiwyg');

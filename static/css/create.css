@@ -26,6 +26,7 @@ input.hw-save[disabled] {
 }
 
 span.hw-response {
+  font-weight: bold;
   padding: 3px;
   position: fixed;
   top: 0;
@@ -272,7 +273,7 @@ div.hw-created.hw-separate.hw-media-creator > input.hw-media-title {
 .hw-separate .hw-media-title,
 .hw-separate .hw-media-caption,
 .hw-separate .hw-media-source {
-  display: none;
+  display: inline-block;
 }
 .hw-separate .hw-media-tags {
   visibility: visible;

@@ -64,6 +64,8 @@ hw.resetCreateForm = function() {
   hw.$c('hw-wysiwyg').innerHTML = '<h1 id="hw-new-title">' + hw.getMsg('untitled') + '</h1><br>';
   createForm['hw-name'].value = '';
   createForm['hw-thumb'].value = '';
+  createForm['hw-separate'].checked = false;
+  hw.separate();
   var section = createForm['hw-section-album'];
   createForm['hw-hidden'].checked = section.value && section.value != '_new_'
                                   ? section.options[section.selectedIndex].getAttribute('data-hidden') == 'true'
@@ -71,6 +73,9 @@ hw.resetCreateForm = function() {
 
   hw.changeThumbPreview();
   hw.htmlPreview();
+  hw.$c('hw-wysiwyg').focus();
+  window.getSelection().modify("move", "forward", "line");
+  window.getSelection().modify("move", "forward", "line");
 };
 
 hw.addToFeed = function(html) {
@@ -205,7 +210,7 @@ hw.save = function() {
 };
 
 hw.separate = function(el, forceEnable) {
-  var separateCheckbox = hw.$c('hw-separate');
+  var separateCheckbox = hw.$c('hw-separate-checkbox');
   if (forceEnable) {
     separateCheckbox.checked = true;
   }

@@ -128,9 +128,9 @@
       {% end %}
       <dt><label>{{ _("hidden:") }}</label></dt><dd><input name="hw-hidden" type="checkbox" {% if content and content.hidden %}checked="checked"{% end %}></dd>
       {% if not content %}
-      <dt><label>{{ _("insert as separate posts:") }}</label></dt><dd><input class="hw-separate" name="hw-separate" type="checkbox" onclick="hw.separate(this)"></dd>
+      <dt><label>{{ _("insert as separate posts:") }}</label></dt><dd><input class="hw-separate-checkbox" name="hw-separate" type="checkbox" onclick="hw.separate(this)"></dd>
       {% else %}
-      <input class="hw-separate" name="hw-separate" type="hidden" value="0">
+      <input class="hw-separate-checkbox" name="hw-separate" type="hidden" value="0">
       {% end %}
     </dl>
   </div>
@@ -147,10 +147,10 @@
         <input class="hw-media-file hw-created hw-hidden" name="hw-media-file" type="text" disabled readonly value="">
         <progress value="0" max="100" class="hw-media-file-progress hw-hidden">0%</progress>
         <br class="hw-created">
-        <input class="hw-media-title hw-created" name="hw-media-title" type="text" placeholder="{{ _('title') }}">
-        <input class="hw-media-caption hw-created" name="hw-media-caption" type="text" placeholder="{{ _('caption') }}">
-        <input class="hw-media-source hw-created" name="hw-media-source" type="text" placeholder="{{ _('source') }}">
-        <input class="hw-media-tags hw-created" name="hw-media-tags" type="text" placeholder="{{ _('tags') }}">
+        <input class="hw-media-title" name="hw-media-title" type="text" placeholder="{{ _('title') }}">
+        <input class="hw-media-caption" name="hw-media-caption" type="text" placeholder="{{ _('caption') }}">
+        <input class="hw-media-source" name="hw-media-source" type="text" placeholder="{{ _('source') }}">
+        <input class="hw-media-tags" name="hw-media-tags" type="text" placeholder="{{ _('tags') }}">
         <span class="hw-media-file-failed hw-hidden">{{ _('failed!') }}</span>
         <input name="hw-media-section" type="hidden">
         <input name="hw-media-album" type="hidden">
