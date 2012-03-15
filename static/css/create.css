@@ -66,8 +66,7 @@ div.hw-help {
   border-radius: 5px;*/
 }
 div.hw-options.hw-open,
-div.hw-help.hw-open,
-.hw-media-wrapper.hw-open {
+div.hw-help.hw-open {
   margin: 39px 3px 5px 0;
   padding: 10px;
 }
@@ -240,6 +239,7 @@ div.hw-wysiwyg-controls {
 .hw-editing div.hw-wysiwyg {
   margin-top: 39px;  /* height of the toolbar */
 }
+.hw-editing.hw-media-library-open div.hw-wysiwyg,
 .hw-editing.hw-media-open div.hw-wysiwyg {
   margin-top: 0;
 }

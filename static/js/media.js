@@ -43,6 +43,7 @@ hw.prepareFilesAndSendOff = function(callback) {
 
 hw.processFiles = function(eventQueue, callback, mediaHTML) {
   var createForm = hw.$c('hw-create');
+  var mediaList = hw.$c('hw-media-list');
 
   if (!eventQueue.length) {
     if (createForm['hw-separate'].checked) {
@@ -55,6 +56,9 @@ hw.processFiles = function(eventQueue, callback, mediaHTML) {
         hw.htmlPreview();
       }
     }
+    hw.hide(mediaList);
+    hw.setClass(createForm, 'hw-media-open', false);
+    hw.setClass(hw.$('hw-container'), 'hw-media-open', false);
     return;
   }
 
@@ -401,6 +405,7 @@ hw.mediaLibrary = function(event, el, close) {
   var createForm = hw.$c('hw-create');
   var openMedia = close ? false : hw.isHidden(mediaWrapper);
   hw.setClass(createForm, 'hw-media-library-open', openMedia);
+  hw.setClass(hw.$('hw-container'), 'hw-media-library-open', openMedia);
   hw.display(mediaWrapper, openMedia);
   var fn = function() { hw.createOnScroll(); };
   setTimeout(fn, 300);
@@ -564,6 +569,7 @@ hw.mediaUpload = function(form) {
   var progress = hw.$c('hw-media-file-progress');
   hw.removeClass(progress, 'hw-hidden');
   hw.addClass(hw.$c('hw-media-file-failed'), 'hw-hidden');
+  var uploadElement = hw.$c('hw-media-uploaded-file');
 
   var transferProgress = function(e) {
     if (e.lengthComputable) {
@@ -574,7 +580,9 @@ hw.mediaUpload = function(form) {
   };
 
   var onSuccess = function(xhr) {
-    window.location.href = window.location.href + '&uploaded_file=' + encodeURIComponent(form["hw-media-directory"].value);
+    window.location.href = hw.baseUri() + 'media'
+                         + (hw.mediaEmbedded ? '?embedded=true' : '?standalone=true')
+                         + '&uploaded_file=' + encodeURIComponent(xhr.responseText);
   };
 
   var transferError = function(e) {
@@ -582,9 +590,9 @@ hw.mediaUpload = function(form) {
     hw.addClass(progress, 'hw-hidden');
   };
 
-  var formData = new FormData(form);
+  var formData = window['FormData'] ? new FormData(form) : '';
 
-  var uploadRequest = new hw.ajax(window.location.href,
+  var uploadRequest = new hw.ajax(window.location.pathname,
     { upload: formData,
       onProgress: transferProgress,
       onSuccess: onSuccess,

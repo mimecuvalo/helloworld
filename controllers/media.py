@@ -4,6 +4,8 @@ import os.path
 import shutil
 import zipfile
 
+import tornado.web
+
 from base import BaseHandler
 from logic import media
 from logic import url_factory
@@ -21,16 +23,32 @@ class MediaHandler(BaseHandler):
 
     parent_directory = self.resource_directory()
     self.display["files"] = os.walk(parent_directory)
-    self.display["initial_section"] = self.get_argument('initial_section', None)
+    self.display["initial_section"] = None
+    initial_section_check = self.get_argument('initial_section', None)
+    if initial_section_check and os.path.exists(os.path.join(self.resource_directory(), initial_section_check)):
+      self.display["initial_section"] = initial_section_check
 
     self.display["basename"] = os.path.basename
     self.display["dirname"] = os.path.dirname
     self.display["join"] = os.path.join
+
     if not self.display.has_key('uploaded_file'):
-      self.display["uploaded_file"] = self.get_argument('uploaded_file', None)
+      self.display["uploaded_file"] = None
+      uploaded_file_check = self.get_argument('uploaded_file', None)
+
+      if uploaded_file_check:
+        uploaded_file_check = url_factory.clean_filename(uploaded_file_check)
+        uploaded_file_check = os.path.join(self.application.settings["base_path"], uploaded_file_check)
+
+        if not uploaded_file_check.startswith(self.resource_directory()):
+          raise tornado.web.HTTPError(400, "i call shenanigans")
+
+        if os.path.exists(uploaded_file_check):
+          self.display["uploaded_file"] = uploaded_file_check.replace(self.application.settings["base_path"] + '/', '')
+          self.display["initial_section"] = os.path.dirname(self.display["uploaded_file"])
+
     self.display["embedded"] = self.get_argument('embedded', '')
     self.display["standalone"] = self.get_argument('standalone', '')
-    self.display["initial_directory"] = self.get_argument('hw-media-directory', '')
 
     if self.display["standalone"] or self.display["embedded"]:
       self.fill_template("media_standalone.html")
@@ -41,9 +59,15 @@ class MediaHandler(BaseHandler):
     if not self.authenticate(author=True):
       return
 
-    parent_leading_path = self.application.settings["resource_url"] + "/" + self.get_author_username()
-    media_directory = url_factory.clean_filename(self.get_argument('hw-media-directory', '')).replace(parent_leading_path + '/', '')
-    parent_directory = os.path.join(self.resource_directory(), media_directory)
+    media_directory = self.get_argument('hw-media-directory', '')
+    if media_directory:
+      media_directory = url_factory.clean_filename(media_directory)
+    else:
+      media_directory = self.resource_directory().replace(self.application.settings["base_path"] + '/', '')
+    parent_directory = os.path.join(self.application.settings["base_path"], media_directory)
+
+    if not parent_directory.startswith(self.resource_directory()):
+      raise tornado.web.HTTPError(400, "i call shenanigans")
 
     for uploaded_file in self.request.files['hw-media-uploaded-file']:
       full_path = os.path.join(parent_directory, uploaded_file['filename'])
@@ -75,7 +99,10 @@ class MediaHandler(BaseHandler):
       if not self.display.has_key('uploaded_file'):
         self.display["uploaded_file"] = self.resource_url(filename=full_path)
 
-    self.get()
+    if not self.request.headers.get("X-Requested-With") == "XMLHttpRequest":
+      self.get()
+    else:
+      self.write(self.display["uploaded_file"])
 
   def preview(self):  
     if not self.authenticate(author=True):

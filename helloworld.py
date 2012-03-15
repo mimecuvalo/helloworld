@@ -47,6 +47,7 @@ tornado.locale.load_translations(os.path.join(os.path.dirname(__file__), "transl
 
 settings = {
   "constants": constants,
+  "base_path": os.path.dirname(os.path.realpath(__file__)),
   "private_path": os.path.join(os.path.dirname(os.path.realpath(__file__)), "private"),
   "resource_path": os.path.join(os.path.dirname(os.path.realpath(__file__)), "static/resource"),
   "cache_path": os.path.join(os.path.dirname(os.path.realpath(__file__)), "static/cache"),
