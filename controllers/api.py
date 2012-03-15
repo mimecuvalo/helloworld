@@ -8,6 +8,7 @@ import urlparse
 
 from base import BaseHandler
 from logic import content_remote
+from logic import email
 from logic import media
 from logic import pubsubhubbub_subscribe
 from logic import socialize
@@ -292,16 +293,19 @@ class ApiHandler(BaseHandler):
     content.save()
 
   def comment(self):
+    commented_content = self.models.content.get(self.get_argument('local_id'))
+    commented_user = self.models.users.get(username=commented_content.username)[0]
+    comment = self.get_argument('comment')
+
     if self.current_user["user"]:
       # local user
       profile = self.get_author_user()
-      commented_content = self.models.content.get(self.get_argument('local_id'))
-      comment = self.get_argument('comment')
 
       is_spam = spam.guess(comment, self.application.settings["private_path"], profile.username)
 
       content = self.models.content()
       content.username = profile.username
+      from_username = content.username
       content.section  = 'comments'
       content.name     = self.get_unique_name(content, title='comment')
       content.date_created = datetime.datetime.utcnow()
@@ -326,15 +330,13 @@ class ApiHandler(BaseHandler):
         socialize.reply(self, content, thread=thread)
     else:
       # remote user
-      commented_content = self.models.content.get(self.get_argument('local_id'))
-      comment = self.get_argument('comment')
-
       is_spam = spam.guess(comment, self.application.settings["private_path"], commented_content.username)
 
       post_remote = self.models.content_remote()
       post_remote.to_username = commented_content.username
       post_remote.from_user = self.current_user["email"]
       post_remote.username = self.current_user["email"].split('@')[0]
+      from_username = post_remote.username
       post_remote.avatar = 'http://www.gravatar.com/avatar/' + hashlib.md5(self.current_user["email"].lower()).hexdigest()
       post_remote.date_created = datetime.datetime.utcnow()
       if is_spam:
@@ -348,3 +350,5 @@ class ApiHandler(BaseHandler):
 
       commented_content.comments += 1
       commented_content.save()
+
+    email.comment(self, from_username, commented_user.oauth, self.content_url(commented_content))

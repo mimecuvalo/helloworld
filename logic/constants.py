@@ -8,6 +8,7 @@ defaults = {
   'mysql_host' : '',
   'mysql_user' : '',
   'mysql_password' : '',
+  'smtp_password' : '',
 
   'debug' : 0,
   'port' : 8282,

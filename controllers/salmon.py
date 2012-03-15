@@ -6,6 +6,7 @@ import urlparse
 
 from base import BaseHandler
 from logic import content_remote
+from logic import email
 from logic import spam
 from logic import url_factory
 from logic import users
@@ -87,6 +88,7 @@ class SalmonHandler(BaseHandler):
       user = users.get_remote_user_info(self, signer_uri, user_remote.local_username)
       user.follower = 1
       user.save()
+      email.follow(self, user.username, self.display["user"].oauth, user.profile_url)
     elif (activity_verb == 'http://ostatus.org/schema/1.0/unfollow' or activity_verb == 'http://activitystrea.ms/schema/1.0/stop-following'):
       user_remote.follower = 0
       user_remote.save()
@@ -143,6 +145,7 @@ class SalmonHandler(BaseHandler):
           if not content:
             raise tornado.web.HTTPError(400)
           ref = content_url['name']
+          commented_user = self.models.users.get(username=content.username)[0]
           content.comments += 1
           content.save()
         except Exception as ex:
@@ -173,3 +176,6 @@ class SalmonHandler(BaseHandler):
       post_remote.local_content_name = content.name if ref else ''
       post_remote.view = atom_content
       post_remote.save()
+
+      if ref:
+        email.comment(self, post_remote.username, commented_user.oauth, self.content_url(content))
