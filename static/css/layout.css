@@ -393,8 +393,8 @@ a.hw-read-more {
   zoom: 1; /* workaround ie7 */
   *display: inline; /* workaround ie7 */
   vertical-align: top;
-  padding: 3px 3px 10px 3px;
-  margin-bottom: 10px;
+  padding: 3px;
+  margin-bottom: 3px;
   position: relative;
   overflow: hidden;
   transition: all 0.3s ease-out;
