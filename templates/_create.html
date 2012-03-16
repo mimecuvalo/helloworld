@@ -83,6 +83,7 @@
     *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <strong>{{ _('bold') }}</strong><br>
     !&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= {{ _('link (highlight text first)') }}<br>
     _&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <u>{{ _('underline') }}</u><br>
+    @&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= {{ _('mention person') }}<br>
     #&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= {{ _('tag') }}<br>
     paste&nbsp;&nbsp;= {{ _('urls and embed codes will be auto generated!') }}<br>
     tab&nbsp;&nbsp;&nbsp;&nbsp;= {{ _('list') }}<br>
@@ -161,6 +162,9 @@
         </a>
       </div>
     </div>
+    {% if not content %}
+      <strong class="hw-separate-info">{{ _('images will be auto-rotated when uploaded.') }}</strong>
+    {% end %}
     <div class="hw-hidden hw-media-list"></div>
     <script>
       (function() {

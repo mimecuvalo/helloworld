@@ -6,7 +6,6 @@ hw.cursorCoords = function() {
   sel.modify("extend", "backward", "character");
   var range = sel.getRangeAt(0);
   sel.modify("move", "forward", "character");
-  hw.insertHtmlAtCursor('');
 
   return range.getBoundingClientRect();
 };
@@ -36,11 +35,9 @@ hw.getLatestTypedUser = function() {
 
 // borrowed from codemirror's simplehint
 // http://codemirror.net/lib/util/simple-hint.js
-hw.completePosition = null;
-hw.showUserAutocomplete = function(continuing) {
+hw.showUserAutocomplete = function() {
   var wysiwyg = hw.$c('hw-wysiwyg');
 
-  var completions = hw.getLatestTypedUser();
   function insert(user) {
     wysiwyg.focus();
 
@@ -57,16 +54,6 @@ hw.showUserAutocomplete = function(continuing) {
     hw.saveSelection();
   }
 
-  if (!completions.length) {
-    return;
-  }
-
-  // When there is only one completion, use it directly.
-  if (completions.length == 1) {
-    insert(completions[0]);
-    return;
-  }
-
   // Build the select widget
   var complete = document.createElement("div");
   complete.className = "hw-completions";
@@ -79,25 +66,47 @@ hw.showUserAutocomplete = function(continuing) {
     sel.multiple = true;
   }
 
-  for (var x = 0; x < completions.length; ++x) {
-    var opt = sel.appendChild(document.createElement("option"));
-    opt.appendChild(document.createTextNode(completions[x]['username']));
-    opt.setAttribute('data-profile-url', completions[x]['profile_url']);
+  function updateChoices() {
+    var completions = hw.getLatestTypedUser();
+    if (!completions.length) {
+      return [];
+    }
+
+    // When there is only one completion, use it directly.
+    if (completions.length == 1) {
+      insert(completions[0]);
+      close();
+      setTimeout(function(){
+        wysiwyg.focus();
+      }, 0);
+    }
+
+    while (sel.firstChild) {
+      sel.removeChild(sel.firstChild);
+    }
+
+    for (var x = 0; x < completions.length; ++x) {
+      var opt = sel.appendChild(document.createElement("option"));
+      opt.appendChild(document.createTextNode(completions[x]['username']));
+      opt.setAttribute('data-profile-url', completions[x]['profile_url']);
+    }
+
+    sel.firstChild.selected = true;
+    sel.size = Math.min(10, completions.length);
+
+    // Hack to hide the scrollbar.
+    if (completions.length <= 10) {
+      complete.style.width = (sel.clientWidth - 1) + "px";
+    }
   }
 
-  sel.firstChild.selected = true;
-  sel.size = Math.min(10, completions.length);
+  updateChoices();
 
-  var pos;
-  if (continuing) {
-    pos = hw.completePosition;
-  } else {
-    pos = hw.cursorCoords();
-    hw.completePosition = pos;
-  }
+  var pos = hw.cursorCoords();
 
   complete.style.left = pos.left + "px";
-  complete.style.top = (pos.top + 20) + "px";
+  var docRect = document.body.getBoundingClientRect();
+  complete.style.top = (Math.abs(docRect.top) + pos.top + 20) + "px";
   document.body.appendChild(complete);
 
   // If we're at the edge of the screen, then we want the menu to appear on the left of the cursor.
@@ -106,9 +115,17 @@ hw.showUserAutocomplete = function(continuing) {
     complete.style.left = (pos.top - sel.clientWidth) + "px";
   }
 
-  // Hack to hide the scrollbar.
-  if (completions.length <= 10) {
-    complete.style.width = (sel.clientWidth - 1) + "px";
+  function closeAutocompletion(event) {
+    var el = event.target;
+    var ancestor = complete;
+    while (el != null) {
+      if (el == ancestor) {
+         return;
+      }
+      el = el.parentNode;
+    }
+
+    close();
   }
 
   var done = false;
@@ -118,47 +135,50 @@ hw.showUserAutocomplete = function(continuing) {
     }
 
     done = true;
+    hw.wysiwygLastKeys = "";
+    Event.stopObserving(document, 'click', closeAutocompletion, false);
     complete.parentNode.removeChild(complete);
   }
 
   function pick() {
+    var completions = hw.getLatestTypedUser();
     insert(completions[sel.selectedIndex]);
     close();
     setTimeout(function(){
       wysiwyg.focus();
-    }, 50);
+    }, 0);
   }
 
-  Event.observe(sel, 'blur', close, false);
   Event.observe(sel, 'keydown', function(event) {
     var code = event.which || event.keyCode;
 
     if (code == 13) { // Enter
       hw.preventDefault(event);
       pick();
-    } else if (code == 27) {  // Escape
-      hw.wysiwygLastKeys = "";
-      hw.preventDefault(event);
-      close();
+    } else if (code == 27 || code == 32) {  // Escape, Space
       wysiwyg.focus();
-    } else if (code != 38 && code != 40) {
+      if (code == 27) {
+        hw.preventDefault(event);
+      }
       close();
+    } else if (code != 38 && code != 40) {
       wysiwyg.focus();
       setTimeout(function() {
-        hw.showUserAutocomplete(true);
-      }, 50);
+        hw.saveSelection();
+        sel.focus();
+        updateChoices();
+      }, 0);
     }
   }, false);
   Event.observe(sel, 'dblclick', pick, false);
+  Event.observe(document, 'click', closeAutocompletion, false);
 
-  //sel.focus();
-
-  // Opera sometimes ignores focusing a freshly created node
-  //if (window.opera) {
-    setTimeout(function(){
-      if (!done) sel.focus();
-    }, 100);
-  //}
+  setTimeout(function(){
+    if (!done) {
+      hw.saveSelection();
+      sel.focus();
+    }
+  }, 0);
 };
 
 hw.follow = function(event, el) {

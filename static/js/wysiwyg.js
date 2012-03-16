@@ -281,7 +281,9 @@ hw.wysiwygKeys = function(event) {
           hw.wysiwygLastKeys = "";
         } else {
           hw.wysiwygLastKeys += String.fromCharCode(key);
-          hw.showUserAutocomplete();
+          setTimeout(function() {
+            hw.showUserAutocomplete();
+          }, 0);
         }
         break;
       case 45: // -
@@ -310,7 +312,7 @@ hw.wysiwygKeys = function(event) {
         // modify existing tags
         setTimeout(function() {
           var tag = hw.getSelectionStartNode();
-          if (tag.nodeName == 'A' && tag.href.indexOf(hw.tagUrl) == 0) {
+          if (tag && tag.nodeName == 'A' && tag.href.indexOf(hw.tagUrl) == 0) {
             tag.href = hw.tagUrl + tag.textContent;
           }
         }, 0);

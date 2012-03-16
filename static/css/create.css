@@ -278,6 +278,15 @@ div.hw-created.hw-media-creator > input.hw-media-title {
 div.hw-created.hw-separate.hw-media-creator > input.hw-media-title {
   display: inline-block;
 }
+.hw-separate-info {
+  display: none;
+}
+.hw-separate .hw-separate-info {
+  display: block;
+  clear: both;
+  text-align: center;
+  margin-bottom: -39px;
+}
 .hw-media-cancel,
 .hw-media-title,
 .hw-media-caption,
