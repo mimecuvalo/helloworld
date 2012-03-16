@@ -142,6 +142,26 @@ div.hw-wysiwyg.hw-new {
 div.hw-paste-area {
   position: absolute;
 }
+div.hw-completions {
+  position: absolute;
+  z-index: 10;
+  overflow: hidden;
+  -webkit-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+  -moz-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+  box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+}
+div.hw-completions select {
+  background: #fafafa;
+  outline: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+div.hw-completions select,
+div.hw-completions option {
+  font-size: 11px;
+  font-family: monospace;
+}
 
 input.hw-price,
 div.hw-events {

@@ -177,8 +177,6 @@ hw.wysiwygLastKeys = "";
 hw.shortcuts = function(event) {
   var key = event.which || event.keyCode;
 
-  //hw.hideUserAutocomplete();
-
   switch (key) {
     case 83:   // ctrl-s, save  TODO report bug to ff, messed up with dvorak keyboard
       if (hw.testAccelKey(event)) {
@@ -197,6 +195,9 @@ hw.wysiwygKeys = function(event) {
   var wysiwyg = hw.$c('hw-wysiwyg');
   if (document.activeElement == wysiwyg) {
     switch (key) {
+      case 8:   // backspace
+        hw.wysiwygLastKeys = hw.wysiwygLastKeys.substring(0, hw.wysiwygLastKeys.length - 1);
+        break;
       case 9:   // tab
       case 33:  // !
       case 42:  // *
@@ -275,9 +276,14 @@ hw.wysiwygKeys = function(event) {
         }, 0);
         break;
 
-      //case 64:    // @-symbol, autocomplete remote_user
-      //  hw.showUserAutocomplete();
-      //  break;
+      case 64:    // @-symbol, autocomplete remote_user
+        if (hw.wysiwygLastKeys[hw.wysiwygLastKeys.length - 1] == String.fromCharCode(key)) {
+          hw.wysiwygLastKeys = "";
+        } else {
+          hw.wysiwygLastKeys += String.fromCharCode(key);
+          hw.showUserAutocomplete();
+        }
+        break;
       case 45: // -
         if (hw.wysiwygLastKeys.slice(-2) == "--") {
           hw.preventDefault(event);

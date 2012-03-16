@@ -1,3 +1,166 @@
+hw.cursorCoords = function() {
+  var wysiwyg = hw.$c('hw-wysiwyg');
+  wysiwyg.focus();
+
+  var sel = window.getSelection();
+  sel.modify("extend", "backward", "character");
+  var range = sel.getRangeAt(0);
+  sel.modify("move", "forward", "character");
+  hw.insertHtmlAtCursor('');
+
+  return range.getBoundingClientRect();
+};
+
+hw.getLatestTypedUser = function() {
+  var results = [];
+  var monkeyIndex = hw.wysiwygLastKeys.lastIndexOf('@');
+  // yes, they call it 'monkey' in some countries. cute, eh?
+  if (monkeyIndex == -1) {
+    return results;
+  }
+
+  var charsBack = hw.wysiwygLastKeys.length - monkeyIndex;
+  var name = hw.wysiwygLastKeys.substring(monkeyIndex + 1);
+
+  for (var x = 0; x < hw.remoteUsers.length; ++x) {
+    if (!hw.remoteUsers[x]['username'] || !hw.remoteUsers[x]['profile_url']) {
+      continue;
+    }
+    if (hw.remoteUsers[x]['username'].toLowerCase().indexOf(name.toLowerCase()) == 0) {
+      results.push(hw.remoteUsers[x]);
+    }
+  }
+
+  return results;
+};
+
+// borrowed from codemirror's simplehint
+// http://codemirror.net/lib/util/simple-hint.js
+hw.completePosition = null;
+hw.showUserAutocomplete = function(continuing) {
+  var wysiwyg = hw.$c('hw-wysiwyg');
+
+  var completions = hw.getLatestTypedUser();
+  function insert(user) {
+    wysiwyg.focus();
+
+    var monkeyIndex = hw.wysiwygLastKeys.lastIndexOf('@');
+    var charsBack = hw.wysiwygLastKeys.length - monkeyIndex;
+    var sel = window.getSelection();
+
+    for (var x = 0; x < charsBack; ++x) {
+      sel.modify("extend", "backward", "character");
+    }
+
+    hw.wysiwygLastKeys = "";
+    document.execCommand("insertHTML", false, '<a href="' + user['profile_url'] + '">@' + user['username'] + '</a>&nbsp;');
+    hw.saveSelection();
+  }
+
+  if (!completions.length) {
+    return;
+  }
+
+  // When there is only one completion, use it directly.
+  if (completions.length == 1) {
+    insert(completions[0]);
+    return;
+  }
+
+  // Build the select widget
+  var complete = document.createElement("div");
+  complete.className = "hw-completions";
+  var sel = complete.appendChild(document.createElement("select"));
+
+  // Opera doesn't move the selection when pressing up/down in a
+  // multi-select, but it does properly support the size property on
+  // single-selects, so no multi-select is necessary.
+  if (!window.opera) {
+    sel.multiple = true;
+  }
+
+  for (var x = 0; x < completions.length; ++x) {
+    var opt = sel.appendChild(document.createElement("option"));
+    opt.appendChild(document.createTextNode(completions[x]['username']));
+    opt.setAttribute('data-profile-url', completions[x]['profile_url']);
+  }
+
+  sel.firstChild.selected = true;
+  sel.size = Math.min(10, completions.length);
+
+  var pos;
+  if (continuing) {
+    pos = hw.completePosition;
+  } else {
+    pos = hw.cursorCoords();
+    hw.completePosition = pos;
+  }
+
+  complete.style.left = pos.left + "px";
+  complete.style.top = (pos.top + 20) + "px";
+  document.body.appendChild(complete);
+
+  // If we're at the edge of the screen, then we want the menu to appear on the left of the cursor.
+  var winW = window.innerWidth || Math.max(document.body.offsetWidth, document.documentElement.offsetWidth);
+  if (winW - pos.top < sel.clientWidth) {
+    complete.style.left = (pos.top - sel.clientWidth) + "px";
+  }
+
+  // Hack to hide the scrollbar.
+  if (completions.length <= 10) {
+    complete.style.width = (sel.clientWidth - 1) + "px";
+  }
+
+  var done = false;
+  function close() {
+    if (done) {
+      return;
+    }
+
+    done = true;
+    complete.parentNode.removeChild(complete);
+  }
+
+  function pick() {
+    insert(completions[sel.selectedIndex]);
+    close();
+    setTimeout(function(){
+      wysiwyg.focus();
+    }, 50);
+  }
+
+  Event.observe(sel, 'blur', close, false);
+  Event.observe(sel, 'keydown', function(event) {
+    var code = event.which || event.keyCode;
+
+    if (code == 13) { // Enter
+      hw.preventDefault(event);
+      pick();
+    } else if (code == 27) {  // Escape
+      hw.wysiwygLastKeys = "";
+      hw.preventDefault(event);
+      close();
+      wysiwyg.focus();
+    } else if (code != 38 && code != 40) {
+      close();
+      wysiwyg.focus();
+      setTimeout(function() {
+        hw.showUserAutocomplete(true);
+      }, 50);
+    }
+  }, false);
+  Event.observe(sel, 'dblclick', pick, false);
+
+  //sel.focus();
+
+  // Opera sometimes ignores focusing a freshly created node
+  //if (window.opera) {
+    setTimeout(function(){
+      if (!done) sel.focus();
+    }, 100);
+  //}
+};
+
 hw.follow = function(event, el) {
   if (event) {
     hw.preventDefault(event);
