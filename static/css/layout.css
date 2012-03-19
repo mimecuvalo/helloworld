@@ -528,6 +528,14 @@ ul.hw-comments {
 ul.hw-comments li {
   list-style-type: none;
   margin-bottom: 5px;
+  padding: 3px;
+  border: 1px solid transparent;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+}
+ul.hw-comments li:hover {
+  border: 1px solid #ccc;
 }
 
 ul.hw-comments img {

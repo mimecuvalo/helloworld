@@ -16,7 +16,8 @@ def parse_feed(models, user, feed=None, parsed_feed=None):
   feed_doc = feedparser.parse(parsed_feed or feed)
 
   for entry in feed_doc.entries:
-    exists = models.content_remote.get(to_username=user.local_username, post_id=entry.id)[0]
+    entry_id = entry.id if entry.has_key('id') else entry.link
+    exists = models.content_remote.get(to_username=user.local_username, post_id=entry_id)[0]
     if exists:
       continue
 
@@ -35,7 +36,7 @@ def parse_feed(models, user, feed=None, parsed_feed=None):
     if entry.has_key('author'):
       new_entry.creator = entry.author
     new_entry.title = entry.title
-    new_entry.post_id = entry.id
+    new_entry.post_id = entry_id
     new_entry.link = entry.link
     if entry.has_key('content'):
       new_entry.view = entry.content[0].value
