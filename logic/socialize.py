@@ -7,7 +7,7 @@ def socialize(handler, content):
   if content.hidden:
     return
 
-  mentions = re.search(r'(?=\W*)@(\w*)(?=[^>;]*(<+|$))', content.view, re.M | re.U)
+  mentions = re.findall(r'@(\w+)', content.view, re.M | re.U)
 
   if content.thread or mentions:
     reply(handler, content, mentions)
@@ -37,22 +37,14 @@ def reply(handler, content, mentions=None, thread=None):
       users.append(thread_user_remote)
 
   if mentions:
-    for user in mentions.groups():
-      if not user:
-        continue
-
+    for user in mentions:
       user_remote = handler.models.users_remote.get(local_username=profile, username=user)[0]
 
-      if not user_remote or thread_user_remote.profile_url == user_remote.profile_url:
+      if not user_remote or (thread_user_remote and thread_user_remote.profile_url == user_remote.profile_url):
         continue
 
       if user_remote.salmon_url:
         users.append(user_remote)
-        content.view = re.compile(r'(?=\W*)(@' + user_remote.username + r')(?=[^>;]*(<+|$))', re.M | re.I | re.U) \
-            .sub('<a href="' + user_remote.profile_url + r'">\1</a>', content.view)
-
-    content.save()
 
   for user in users:
     users.salmon_reply(handler, user, content, thread=thread)
-
