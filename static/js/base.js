@@ -392,9 +392,9 @@ hw.testAccelKey = function(event) {
 
 hw.msgs = {};
 hw.setMsg = function(key, msg) {
-  hw.msgs[key] = msg;
+  hw.msgs[key] = msg;alert(hw.msgs['confirm-delete'])
 };
-hw.getMsg = function(key, msg) {
+hw.getMsg = function(key) {
   return hw.msgs[key];
 };
 

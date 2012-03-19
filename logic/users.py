@@ -229,11 +229,12 @@ def get_remote_user_info(handler, user_url, profile):
       alias = alt_link['href']
     else:
       alias = feed_doc.find('link').nextSibling # XXX UGH, BeautifulSoup treats <link> as self-closing tag, LAMESAUCE for rss
+  if not alias or not alias.strip():
+    raise tornado.web.HTTPError(400)
+
+  alias = alias.strip()
   user_remote = handler.models.users_remote.get(local_username=profile, profile_url=alias)[0]
   hub_url = feed_doc.find(re.compile('.+:link$'), rel='hub')
-
-  if not alias:
-    raise tornado.web.HTTPError(400)
 
   if not user_remote:
     user_remote = handler.models.users_remote()
