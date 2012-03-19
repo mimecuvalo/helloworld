@@ -1,7 +1,7 @@
 import re
 
 from logic import pubsubhubbub_publish
-from logic import users
+from logic import users as user_logic
 
 def socialize(handler, content):
   if content.hidden:
@@ -47,4 +47,4 @@ def reply(handler, content, mentions=None, thread=None):
         users.append(user_remote)
 
   for user in users:
-    users.salmon_reply(handler, user, content, thread=thread)
+    user_logic.salmon_reply(handler, user, content, thread=thread)
