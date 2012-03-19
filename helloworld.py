@@ -88,6 +88,7 @@ else:
     (prefix + r"/dashboard(?:$|/.*)", "controllers.dashboard.DashboardHandler"),
     (prefix + r"/data_liberation", "controllers.data_liberation.DataLiberationHandler"),
     (prefix + r"/data_liberation\.zip", "controllers.data_liberation.DataLiberationDownloadHandler", {"path": "/tmp"}),
+    (prefix + r"/(favicon\.ico)", tornado.web.StaticFileHandler, {"path": settings['static_path']}),
     (prefix + r"(?:/[^/]+)?/feed", "controllers.feed.FeedHandler"),
     (prefix + r"(?:/[^/]+)?/foaf", "controllers.foaf.FoafHandler"),
     (prefix + r"/(humans\.txt)", "controllers.humans.HumansTxtHandler", {"path": settings['static_path']}),
