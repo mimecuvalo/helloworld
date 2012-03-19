@@ -380,7 +380,7 @@ hw.paste = function(event) {
       } else {
         // very simple html sanitizer, not meant for xss prevention
         // just to strip annoying styling when pasting
-        pastedContent = pastedContent.replace(/<(?!\/?(a|b|br|strong|em)(>|\s+[^>]+))[^>]*>/ig, ""); // remove all but whitelisted tags
+        pastedContent = pastedContent.replace(/<(?!\/?(a|b|br|strong|em|div)(>|\s+[^>]+))[^>]*>/ig, ""); // remove all but whitelisted tags
         pastedContent = pastedContent.replace(/\s(?!(href))[^<>=]*=('([^']*)'|"([^"]*)")/ig, ""); // remove all but whitelisted attributes
       }
 
