@@ -52,13 +52,23 @@ class DashboardHandler(BaseHandler):
         and self.request.headers.get("X-Requested-With") == "XMLHttpRequest":
       raise tornado.web.HTTPError(404)
 
-    self.display['followers'] = self.models.users_remote.get(local_username=user.username, follower=1)[:]
-    self.display['following'] = self.models.users_remote.get(local_username=user.username, following=1)[:]
-
     self.display["offset"] = offset + 1
 
     if self.request.headers.get("X-Requested-With") == "XMLHttpRequest":
       self.prevent_caching()
       self.write(self.ui["modules"].ContentView(self.display["combined_feed"], list_mode=self.display["list_mode"]))
-    else:
-      self.fill_template("dashboard.html")
+      return
+
+    self.display['followers'] = self.models.users_remote.get(local_username=user.username, follower=1).order_by('username')[:]
+    self.display['following'] = self.models.users_remote.get(local_username=user.username, following=1).order_by('order,username')[:]
+
+    total_count = 0
+    for profile in self.display['following']:
+      profile_count = self.models.content_remote.get(to_username=user.username, from_user=profile.profile_url, read=0, is_spam=0, deleted=0).count()
+      profile.unread_entries = profile_count
+      total_count += profile_count
+
+    self.display['total_count'] = total_count
+    self.display['spam_count'] = self.models.content_remote.get(to_username=user.username, is_spam=True).count()
+
+    self.fill_template("dashboard.html")

@@ -40,30 +40,65 @@
   padding: 5px;
 }
 
-#hw-followers li,
-#hw-following li {
+#hw-followers li {
   display: inline-block;
 }
 
-#hw-following.hw-edit-mode li {
-  display: block;
+#hw-following li {
   margin: 3px 0;
+  border: 1px solid transparent;
+  padding: 1px;
 }
-#hw-following.hw-edit-mode li img {
+#hw-following li:hover {
+  border: 1px solid #999;
+}
+
+#hw-following .hw-unread-count {
+  font-size: 11px;
+  color: #666;
+  display: inline-block;
+  width: 35px;
+}
+#hw-following .hw-following-username {
+  display: inline-block;
+  max-width: 95px;
+  width: 95px;
+  overflow: hidden;
+  height: 16px;
   vertical-align: middle;
+  white-space: nowrap;
+  position: relative;
 }
-#hw-following .hw-visit,
-#hw-following .hw-unfollow {
-  display: none;
+.hw-overflow-shadow {
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  background-image: -moz-radial-gradient(right center, ellipse farthest-side, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6));
 }
-#hw-following.hw-edit-mode .hw-visit,
-#hw-following.hw-edit-mode .hw-unfollow {
-  display: inline;
+#hw-following a:hover {
+  text-decoration: none;
 }
-#hw-following #hw-following-read-all {
-  text-align: center;
-  display: block;
-  margin: 3px;
+#hw-following-spam {
+  font-size: 11px;
+}
+#hw-following .hw-selected {
+  font-weight: bold;
+}
+#hw-following #hw-following-spam {
+  margin-top: 20px;
+}
+#hw-following li .hw-menu-button {
+  visibility: hidden;
+}
+#hw-following li:hover .hw-menu-button,
+#hw-following li.hw-active .hw-menu-button {
+  visibility: visible;
+}
+#hw-following li.hw-over {
+  border-bottom: 3px solid #000;
 }
 
 #hw-following-button[disabled] {

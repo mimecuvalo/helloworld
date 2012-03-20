@@ -291,3 +291,59 @@ hw.dragDrop = function(event, el) {
              + '&new_section=' + encodeURIComponent(newSection),
       headers: { 'X-Xsrftoken' : createForm['_xsrf'].value } });
 };
+
+
+hw.followingDragStart = function(event, el) {
+  event.dataTransfer.setData('text/plain', el.id);
+  event.dataTransfer.effectAllowed = 'move';
+};
+
+hw.followingDragOver = function(event, el) {
+  if (!el || el.nodeName != 'LI' || !el.id || !el.id.match(/hw-following-/)) {
+    return;
+  }
+
+  hw.preventDefault(event);
+
+  hw.addClass(el, 'hw-over');
+};
+
+hw.followingDragLeave = function(event, el) {
+  hw.removeClass(el, 'hw-over');
+};
+
+hw.followingDragDrop = function(event, el) {
+  hw.preventDefault(event);
+
+  var id = event.dataTransfer.getData('text/plain');
+  var draggedElement = hw.$(id);
+  draggedElement = draggedElement.parentNode.removeChild(draggedElement);
+
+  var insertedElement;
+
+  hw.removeClass(el, 'hw-over');
+  var insertBeforeElement = el.nextSibling;
+  insertedElement = el.parentNode.insertBefore(draggedElement, insertBeforeElement);
+
+  var position = -2;  // we have 'read all' and 'your feed' in front
+  var sectionEl = insertedElement.parentNode.firstChild;
+  while (sectionEl) {
+    if (sectionEl.nodeName != "LI") {
+      sectionEl = sectionEl.nextSibling;
+      continue;
+    }
+    if (sectionEl.id == insertedElement.id) {
+      break;
+    }
+    ++position;
+    sectionEl = sectionEl.nextSibling;
+  }
+
+  var createForm = hw.$c('hw-create');
+  new hw.ajax(hw.baseUri() + 'api',
+    { method: 'post',
+      postBody: 'op='       + encodeURIComponent('order_following')
+             + '&dragged='  + encodeURIComponent(id)
+             + '&position=' + encodeURIComponent(position),
+      headers: { 'X-Xsrftoken' : createForm['_xsrf'].value } });
+};

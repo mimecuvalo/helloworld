@@ -18,7 +18,7 @@ autumn_db.conn.connect('mysql', host=constants['mysql_host'], user=constants['my
 from models import base as models
 
 
-content_remote = models.content_remote.get(type='post')[:]
+content_remote = models.content_remote.get(type='post', favorited=False)[:]
 
 for content in content_remote:
   try:

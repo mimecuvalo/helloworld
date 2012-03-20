@@ -1,5 +1,6 @@
 import datetime
 import hashlib
+import json
 import os.path
 import re
 import urllib
@@ -49,8 +50,14 @@ class ApiHandler(BaseHandler):
     if op == 'embed':
       self.embed()
       return
+    elif op == 'read':
+      self.read()
+    elif op == 'read_all':
+      self.read_all()
     elif op == 'order':
       self.order()
+    elif op == 'order_following':
+      self.order_following()
     elif op == 'rename':
       self.rename()
     elif op == 'follow':
@@ -107,6 +114,27 @@ class ApiHandler(BaseHandler):
       pass
 
     self.write('<a href="' + url + '">' + url + '</a>')
+
+  def read(self):
+    ids = json.loads(self.get_argument('ids'))
+
+    for item in ids:
+      remote_item = self.models.content_remote.get(int(item))
+
+      if not self.constants['single_user_site'] and remote_item.to_username != self.current_user["username"]:
+        raise tornado.web.HTTPError(400, "i call shenanigans")
+
+      remote_item.read = True
+      remote_item.save()
+
+  def read_all(self):
+    user = self.get_argument('user')
+    profile = self.get_author_username()
+    content = self.models.content_remote.get(to_username=profile, from_user=user)[:]
+
+    for item in content:
+      item.read = True
+      item.save()
 
   def order(self):
     op_type = self.get_argument('type')
@@ -167,6 +195,28 @@ class ApiHandler(BaseHandler):
         counter += 1
       item.order = counter
       if item.name == name:
+        item.order = position
+        inserted = True
+        counter -= 1
+      item.save()
+      counter += 1
+
+  def order_following(self):
+    dragged = self.get_argument('dragged')
+    position = int(self.get_argument('position'))
+
+    profile = self.get_author_username()
+    following = self.models.users_remote.get(local_username=profile, following=1).order_by('order,username')[:]
+    dragged_id = int(dragged[len('hw-following-'):])
+
+    # TODO consolidate with above function?
+    counter = 0
+    inserted = False
+    for item in following:
+      if counter == position:
+        counter += 1
+      item.order = counter
+      if item.id == dragged_id:
         item.order = position
         inserted = True
         counter -= 1

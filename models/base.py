@@ -60,6 +60,7 @@ class content_remote(Model):
                 'creator': '',
                 'title': '',
                 'post_id': '',
+                'read': '0',
                 'is_spam': 0,
                 'favorited': 0,
                 'deleted': 0,
@@ -126,6 +127,7 @@ class users_remote(Model):
   class Meta:
     defaults = {'username': '',
                 'name': '',
+                'order': 0,
                 'magic_key': '',
                 'avatar': '',
                 'salmon_url': '',

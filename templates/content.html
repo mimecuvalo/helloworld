@@ -58,7 +58,7 @@
 {% end %}
 
 {% for item in content_list %}
-<section class="{% if individual_content %} hw-individual-content {% end %}{% if item.is_remote %} hw-remote {% end %}">
+<section class="{% if individual_content %} hw-individual-content {% end %}{% if item.is_remote %} hw-remote {% end %}" {% if item.is_remote %}data-remote-profile-url="{{ item.from_user }}" data-remote-id="{{ item.id }}" data-unread="true"{% end %}>
   {% if not item.restricted %}
     <header>
       <h1 class="hw-content-title">

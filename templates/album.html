@@ -2,7 +2,7 @@
 
 {% block user_content %}
   <script>
-    {% comment  delay loading of thumbs for quicker page loads %}
+    {# delay loading of thumbs for quicker page loads #}
     if (document.documentElement["getBoundingClientRect"]) {
       Event.observe(window, 'scroll', hw.thumbnailDelayLoad.loadImages, false);
       Event.observe(window, 'resize', hw.thumbnailDelayLoad.loadImages, false);

@@ -461,3 +461,30 @@ hw.videoError = function(source) {
   var video = source.parentNode;
   video.parentNode.removeChild(video);
 };
+
+hw.menuActive = null;
+hw.menu = function(event, el) {
+  hw.menuActive = el;
+  hw.addClass(el, 'hw-active');
+  hw.addClass(el.parentNode.parentNode, 'hw-active');
+};
+hw.closeMenu = function(event) {
+  if (!hw.menuActive) {
+    return;
+  }
+
+  var el = event.target;
+  var ancestor = hw.menuActive;
+  while (el != null) {
+    if (el == ancestor) {
+       return;
+    }
+    el = el.parentNode;
+  }
+
+  hw.removeClass(hw.menuActive, 'hw-active');
+  hw.removeClass(hw.menuActive.parentNode.parentNode, 'hw-active');
+
+  hw.menuActive = null;
+};
+Event.observe(document, 'click', hw.closeMenu, false);

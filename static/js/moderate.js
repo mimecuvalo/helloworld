@@ -218,6 +218,7 @@ hw.follow = function(event, el) {
       onError: badTrip });
 };
 
+hw.readCurrent = null;
 hw.read = function(event, el, listMode, readSpam) {
   if (event) {
     hw.preventDefault(event);
@@ -227,22 +228,30 @@ hw.read = function(event, el, listMode, readSpam) {
   var ownFeed = false;
   var url;
 
+  hw.removeClass(hw.readCurrent || hw.$('hw-following-read-all'), 'hw-selected');
+
   if (listMode == undefined) {
     if (el) {
       user = el.parentNode.getAttribute('data-user');
+      hw.readCurrent = el.parentNode;
+      hw.addClass(el.parentNode, 'hw-selected');
     } else {
       ownFeed = true;
+      hw.readCurrent = hw.$('hw-following-your-feed');
+      hw.addClass(hw.$('hw-following-your-feed'), 'hw-selected');
     }
 
     if (readSpam) {
       url = hw.baseUri() + 'dashboard' + '?read_spam=1';
+      hw.readCurrent = hw.$('hw-following-spam');
+      hw.addClass(hw.$('hw-following-spam'), 'hw-selected');
     } else {
       url = hw.baseUri() + 'dashboard' + '?specific_feed=' + encodeURIComponent(user)
                                        + '&own_feed=' + (ownFeed ? 1 : 0)
                                        + '&list_mode=' + (hw.hasClass('hw-feed', 'hw-list-mode') ? 1 : 0);
     }
   } else {
-    url = hw.loadMoreObject.url;  // this isn't the cleanest way of doing this i know...
+    url = hw.loadMoreObject.url;  // TODO this isn't the cleanest way of doing this i know...
     url = url.replace('&list_mode=1', '').replace('&list_mode=0', '');
     url += (url.indexOf('?') == -1 ? '?' : '&') + 'list_mode=' + (listMode ? 1 : 0);
     hw.setClass('hw-feed', 'hw-list-mode', listMode);
@@ -283,7 +292,7 @@ hw.unfollow = function(event, el) {
     return;
   }
 
-  var user = el.parentNode.getAttribute('data-user');
+  var user = el.getAttribute('data-user');
 
   var callback = function(xhr) {
     window.location.reload();
@@ -461,10 +470,68 @@ hw.deletePost = function(event, el) {
       onError: badTrip });
 };
 
-hw.followingEdit = function(event) {
-  if (event) {
-    hw.preventDefault(event);
+hw.markedAsRead = [];
+hw.testSection = function(section, windowPositionY) {
+  // get the position of the 'fold' line from the parameter or manually
+  windowPositionY = windowPositionY || (hw.thumbnailDelayLoad.getWindowScrollY() + hw.thumbnailDelayLoad.getWindowSizeY());
+
+  if (hw.thumbnailDelayLoad.getPositionY(section) <= windowPositionY) {
+    // section is above the fold, mark as read
+    hw.markedAsRead.push(section.getAttribute('data-remote-id'));
+    section.removeAttribute('data-unread');
+    hw.$('hw-total-unread-count').innerHTML = '(' + (parseInt(hw.$('hw-total-unread-count').innerHTML.slice(1, -1)) - 1) + ')';
+    var countEl = hw.$$('#hw-following li[data-user="' + section.getAttribute('data-remote-profile-url') + '"] .hw-unread-count')[0];
+    countEl.innerHTML = '(' + (parseInt(countEl.innerHTML.slice(1, -1)) - 1) + ')';
+  }
+};
+
+hw.markAsRead = function(event) {
+  var sections = document.getElementsByTagName('SECTION');
+  // get the position of the fold line
+  // TODO shouldn't really be dependant on thumbnailDelayLoad...
+  var windowPositionY = hw.thumbnailDelayLoad.getWindowScrollY() + hw.thumbnailDelayLoad.getWindowSizeY();
+
+  for (var x = 0; x < sections.length; ++x) {
+    if (sections[x].getAttribute('data-remote-id') && sections[x].getAttribute('data-unread')) {
+      // test the image to see if it's above the fold
+      hw.testSection(sections[x], windowPositionY);
+    }
+  }
+};
+hw.markAsUnread = function(event, el) {
+  
+};
+hw.sendMarkedAsRead = function() {
+  if (!hw.markedAsRead.length) {
+    return;
   }
 
-  hw.setClass('hw-following', 'hw-edit-mode', !hw.hasClass('hw-following', 'hw-edit-mode'));
+  var createForm = hw.$c('hw-create');
+  new hw.ajax(hw.baseUri() + 'api',
+    { method: 'post',
+      postBody: 'op='   + encodeURIComponent('read')
+             + '&ids='  + encodeURIComponent(JSON.stringify(hw.markedAsRead)),
+      headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
+      onSuccess: function() {},
+      onError: function() {} });
+
+  hw.markedAsRead = [];
+};
+hw.markAllAsRead = function(event, el) {
+  hw.preventDefault(event);
+
+  var user = el.getAttribute('data-user');
+  var countEl = hw.$$('#hw-following li[data-user="' + user + '"] .hw-unread-count')[0];
+  var count = parseInt(countEl.innerHTML);
+  hw.$('hw-total-unread-count').innerHTML = '(' + (parseInt(hw.$('hw-total-unread-count').innerHTML.slice(1, -1)) - count) + ')';
+  countEl.innerHTML = '(0)';
+
+  var createForm = hw.$c('hw-create');
+  new hw.ajax(hw.baseUri() + 'api',
+    { method: 'post',
+      postBody: 'op='   + encodeURIComponent('read_all')
+             + '&user=' + encodeURIComponent(user),
+      headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
+      onSuccess: function() {},
+      onError: function() {} });
 };

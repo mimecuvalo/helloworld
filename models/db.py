@@ -40,7 +40,8 @@ def dashboard_feed(profile, begin, page_size, specific_feed, just_local_feed):
                          FROM `content_remote`
                          WHERE `to_username` = %s """ \
                     +      content_remote_restrict \
-                    +  """ AND `is_spam` = 0
+                    +  """ AND `read` = 0
+                           AND `is_spam` = 0
                            AND `deleted` = 0
                          ORDER BY date_created DESC)
                          ORDER BY date_created DESC """
