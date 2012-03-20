@@ -522,7 +522,7 @@ hw.markAllAsRead = function(event, el) {
 
   var user = el.getAttribute('data-user');
   var countEl = hw.$$('#hw-following li[data-user="' + user + '"] .hw-unread-count')[0];
-  var count = parseInt(countEl.innerHTML);
+  var count = parseInt(countEl.innerHTML.slice(1, -1));
   hw.$('hw-total-unread-count').innerHTML = '(' + (parseInt(hw.$('hw-total-unread-count').innerHTML.slice(1, -1)) - count) + ')';
   countEl.innerHTML = '(0)';
 

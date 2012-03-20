@@ -133,7 +133,7 @@
           {% if current_user and current_user["email"] %}
           <form class="hw-comment-form" method="post" action="/api" onsubmit="return false" data-error="{{ _('error submitting your comment. please try again.') }}">
             {% raw xsrf_form_html() %}
-            <textarea name="hw-comment-input" class="hw-comment-input" type="text" placeholder="{{ _('what\'s your take?') }}" data-local-id="{{ content.id }}"></textarea> <button class="hw-button hw-button-save" onclick="hw.commentSubmit()">{{ _('submit') }}</button>
+            <textarea name="hw-comment-input" class="hw-comment-input" type="text" placeholder="{{ _('what\'s your take?') }}" data-local-id="{{ content.id }}"></textarea> <button class="hw-button hw-button-save" type="button" onclick="hw.commentSubmit()">{{ _('submit') }}</button>
             <div class="clear"></div>
           </form>
           {% else %}

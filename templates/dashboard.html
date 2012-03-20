@@ -59,7 +59,7 @@
     <h2>{{ _('following') }}</h2>
     <div id="hw-following-new-wrapper">
       <input id="hw-following-new" type="text" data-error="{{ _('error subscribing!') }}" data-error-unsub="{{ _('error unsubscribing!') }}">
-      <button id="hw-following-button" class="hw-button" onclick="hw.follow(event)" data-normal="{{ _('follow') }}" data-following="{{ _('one sec...') }}">{{ _('follow') }}</button>
+      <button id="hw-following-button" type="button" class="hw-button" onclick="hw.follow(event)" data-normal="{{ _('follow') }}" data-following="{{ _('one sec...') }}">{{ _('follow') }}</button>
       <div class="clear"></div>
     </div>
     <ul data-error="{{ _('Error retrieving feed.') }}">

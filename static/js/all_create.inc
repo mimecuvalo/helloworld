@@ -14,3 +14,4 @@ js/pixastic/actions/brightness.js
 js/pixastic/actions/crop.js
 js/pixastic/actions/resize.js
 js/pixastic/actions/rotate.js
+js/resumable/resumable.js

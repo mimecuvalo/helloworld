@@ -29,8 +29,8 @@
 
 <div class="clear"></div>
 <br>
-<button class="hw-media-delete hw-button hw-button-delete" onclick="hw.mediaDelete(event, this.form)">{{ _('delete') }}</button>
-<button class="hw-media-select hw-button hw-button-save" onclick="hw.mediaSelect(event)">{{ _('select') }}</button>
+<button type="button" class="hw-media-delete hw-button hw-button-delete" onclick="hw.mediaDelete(event, this.form)">{{ _('delete') }}</button>
+<button type="button" class="hw-media-select hw-button hw-button-save" onclick="hw.mediaSelect(event)">{{ _('select') }}</button>
 {% if standalone or embedded %}
 <input name="hw-media-uploaded-file" class="hw-media-uploaded-file" type="file" multiple value="{{ _("Upload file") }}" onchange="hw.mediaUpload(this.form)"> 
 {% end %}

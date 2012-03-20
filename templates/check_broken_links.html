@@ -97,7 +97,7 @@
 
 {% block backend_content %}
 <div id="admin">
-  <button id="pause" onclick="pause()" data-pause="{{ _('Pause') }}" data-resume="{{ _('Resume') }}">{{ _('Pause') }}</button>
+  <button id="pause" type="button" onclick="pause()" data-pause="{{ _('Pause') }}" data-resume="{{ _('Resume') }}">{{ _('Pause') }}</button>
 
   <strong>{{ _('Progress:') }}</strong> <progress id="progress" value="0" max="100">%0</progress><br>
   <strong>{{ _('Currently checking:') }}</strong> <div id="current"></div><br>

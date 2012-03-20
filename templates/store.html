@@ -1,5 +1,5 @@
 {% if mode == 'button' %}
-  <button data-content-id="{{ item.id }}" data-content-url="{{content_url(item)  }}" data-content-title="{{ item.title }}" data-content-thumb="{{ item.thumb }}" data-content-price="{{ item.price }}" onclick="hw.addToCart(this)">
+  <button type="button" data-content-id="{{ item.id }}" data-content-url="{{content_url(item)  }}" data-content-title="{{ item.title }}" data-content-thumb="{{ item.thumb }}" data-content-price="{{ item.price }}" onclick="hw.addToCart(this)">
     <strong>
       {% if item.price %}
         {% if not content_owner.currency or content_owner.currency == 'USD' %}${% end %}{{ "%.2f" % item.price }}
@@ -11,7 +11,7 @@
     {{ _('add to cart') }}
   </button>
 {% elif mode == 'checkout' %}
-  <button id="hw-checkout" onclick="hw.viewCart()">{{ _('view cart') }} [<span id="hw-cart-item-count">0</span>]</button>
+  <button id="hw-checkout" type="button" onclick="hw.viewCart()">{{ _('view cart') }} [<span id="hw-cart-item-count">0</span>]</button>
   <div id="hw-cart-wrapper" class="hw-hidden">
     <a href="#close" onclick="hw.checkoutClose(event)" id="hw-cart-close">[x]</a>
     <div id="hw-cart-template" class="hw-hidden">
@@ -28,15 +28,15 @@
       </div>
     </div>
     <div id="hw-cart"></div>
-    <button onclick="hw.clearCart()">{{ _('clear cart') }}</button>
+    <button type="button" onclick="hw.clearCart()">{{ _('clear cart') }}</button>
     <div id="hw-cart-checkout">
       <strong id="hw-cart-total-wrapper">
         {{ _("Total:") }}
         {% if not content_owner.currency or content_owner.currency == 'USD' %}${% end %}<span id="hw-cart-total"></span>
         {% if content_owner.currency and content_owner.currency != 'USD' %}{{ content_owner.currency }}{% end %}
       </strong>
-      <button onclick='hw.checkoutPaypal("{% raw js_in_html_escape(content_owner.oauth) %}", "{% raw js_in_html_escape(content_owner.currency) %}")'>{{ _('checkout with paypal') }}</button>
-      <button onclick='hw.checkoutBarter("{% raw js_in_html_escape(content_owner.oauth) %}", "{% raw js_in_html_escape(_("Hello, I'd like to make a barter!")) %}")'>{{ _('checkout via email/barter') }}</button>
+      <button type="button" onclick='hw.checkoutPaypal("{% raw js_in_html_escape(content_owner.oauth) %}", "{% raw js_in_html_escape(content_owner.currency) %}")'>{{ _('checkout with paypal') }}</button>
+      <button type="button" onclick='hw.checkoutBarter("{% raw js_in_html_escape(content_owner.oauth) %}", "{% raw js_in_html_escape(_("Hello, I'd like to make a barter!")) %}")'>{{ _('checkout via email/barter') }}</button>
     </div>
   </div>
 {% end %}

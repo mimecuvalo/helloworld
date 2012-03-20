@@ -28,9 +28,9 @@
         <dt><label for="hw-description">{{ _('description:') }}</label></dt>
         <dd><input id="hw-description" name="description" maxlength="255" type="text" placeholder="{{ _('description') }}" value="{{ user.description }}"></dd>
         <dt><label for="hw-customize-logo">{{ _('logo:') }}</label></dt>
-        <dd><input id="hw-customize-logo" name="logo" type="text" placeholder="{{ _('logo') }}" value="{{ user.logo }}"> <button class="hw-button hw-button-media" onclick="hw.preventDefault(event);hw.selectFile(hw.$('hw-customize-logo'))">{{ _('select image') }}</button></dd>
+        <dd><input id="hw-customize-logo" name="logo" type="text" placeholder="{{ _('logo') }}" value="{{ user.logo }}"> <button type="button" class="hw-button hw-button-media" onclick="hw.preventDefault(event);hw.selectFile(hw.$('hw-customize-logo'))">{{ _('select image') }}</button></dd>
         <dt><label for="hw-favicon">{{ _('favicon:') }}</label></dt>
-        <dd><input id="hw-favicon" name="favicon" type="text" placeholder="{{ _('favicon') }}" value="{{ user.favicon }}"> <button class="hw-button hw-button-media" onclick="hw.preventDefault(event);hw.selectFile(hw.$('hw-favicon'))">{{ _('select image') }}</button></dd>
+        <dd><input id="hw-favicon" name="favicon" type="text" placeholder="{{ _('favicon') }}" value="{{ user.favicon }}"> <button type="button" class="hw-button hw-button-media" onclick="hw.preventDefault(event);hw.selectFile(hw.$('hw-favicon'))">{{ _('select image') }}</button></dd>
         <dt><label for="hw-themes">{{ _('theme:') }}</label></dt>
         <dd>
           <select name="theme" id="hw-themes">
@@ -38,7 +38,7 @@
               <option value="{{ theme }}" {% if (user.theme == theme) or (not user.theme and theme == 'static/css/themes/default.css') %}selected{% end %}>{{ theme }}</option>
             {% end %}
           </select>
-          <button class="hw-button hw-button-media" onclick="hw.preventDefault(event);hw.selectFile(hw.$('hw-themes'), window.location.reload, 'themes')">{{ _('upload theme') }}</button>
+          <button type="button" class="hw-button hw-button-media" onclick="hw.preventDefault(event);hw.selectFile(hw.$('hw-themes'), window.location.reload, 'themes')">{{ _('upload theme') }}</button>
         </dd>
         <dt><label for="hw-currency">{{ _('currency:') }}</label></dt>
         <dd>
@@ -49,7 +49,7 @@
           </select>
         </dd>
         <dt><label for="hw-background">{{ _('background image:') }}</label></dt>
-        <dd><input id="hw-background" name="background" type="text" placeholder="{{ _('background') }}" value="{{ user.background }}"> <button class="hw-button hw-button-media" onclick="hw.preventDefault(event);hw.selectFile(hw.$('hw-background'))">{{ _('select image') }}</button></dd>
+        <dd><input id="hw-background" name="background" type="text" placeholder="{{ _('background') }}" value="{{ user.background }}"> <button type="button" class="hw-button hw-button-media" onclick="hw.preventDefault(event);hw.selectFile(hw.$('hw-background'))">{{ _('select image') }}</button></dd>
         <dt><label for="hw-license-type">{{ _('license:') }}</label></dt>
         <dd>
           <input id="hw-license-type" name="license" type="url" value="{{ user.license }}">
