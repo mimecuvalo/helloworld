@@ -2,7 +2,6 @@ import json
 import os
 import os.path
 import shutil
-import zipfile
 
 import tornado.web
 
@@ -48,61 +47,11 @@ class MediaHandler(BaseHandler):
           self.display["initial_section"] = os.path.dirname(self.display["uploaded_file"])
 
     self.display["embedded"] = self.get_argument('embedded', '')
-    self.display["standalone"] = self.get_argument('standalone', '')
 
-    if self.display["standalone"] or self.display["embedded"]:
+    if self.display["embedded"]:
       self.fill_template("media_standalone.html")
     else:
       self.fill_template("media.html")  # disabled for now
-
-  def post(self):
-    if not self.authenticate(author=True):
-      return
-
-    media_directory = self.get_argument('hw-media-directory', '')
-    if media_directory:
-      media_directory = url_factory.clean_filename(media_directory)
-    else:
-      media_directory = self.resource_directory().replace(self.application.settings["base_path"] + '/', '')
-    parent_directory = os.path.join(self.application.settings["base_path"], media_directory)
-
-    if not parent_directory.startswith(self.resource_directory()):
-      raise tornado.web.HTTPError(400, "i call shenanigans")
-
-    for uploaded_file in self.request.files['hw-media-uploaded-file']:
-      full_path = os.path.join(parent_directory, uploaded_file['filename'])
-      url_factory.check_legit_filename(full_path)
-
-      if not os.path.isdir(parent_directory):
-        os.makedirs(parent_directory)
-
-      # check dupe
-      counter = 1
-      original_path = full_path
-      while os.path.exists(full_path):
-        split_path = os.path.splitext(original_path)
-        full_path = split_path[0] + '_' + str(counter) + split_path[1]
-        counter += 1
-
-      f = open(full_path, 'w')
-      f.write(uploaded_file['body'])
-      f.close()
-
-      if os.path.splitext(full_path)[1] == '.zip':
-        z = zipfile.ZipFile(full_path)
-        for f in z.namelist():
-          if f.endswith('/'):
-            os.makedirs(os.path.join(os.path.dirname(full_path), url_factory.clean_filename(f)))
-          else:
-            z.extract(url_factory.clean_filename(f), os.path.dirname(full_path))
-
-      if not self.display.has_key('uploaded_file'):
-        self.display["uploaded_file"] = self.resource_url(filename=full_path)
-
-    if not self.request.headers.get("X-Requested-With") == "XMLHttpRequest":
-      self.get()
-    else:
-      self.write(self.display["uploaded_file"])
 
   def preview(self):  
     if not self.authenticate(author=True):

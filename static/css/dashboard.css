@@ -248,9 +248,15 @@ section {
 
 #customize dd input,
 #customize dd label,
+#customize dd progress,
+#customize dd iframe,
+#customize dd .hw-media-result,
 #customize dd select {
   display: block;
   float: left;
+}
+#customize dd .hw-media-result {
+  margin: 3px 0 0 5px;
 }
 
 #hw-delete-account {

@@ -314,18 +314,3 @@ hw.commentSubmit = function() {
       onSuccess: callback,
       onError: badTrip });
 };
-
-hw.selectInputField = null;
-hw.selectFileCallback = null;
-hw.selectFile = function(inputField, callback, section) {
-  hw.selectInputField = inputField;
-  hw.selectFileCallback = callback;
-  window.open(hw.baseUri() + 'media?standalone=true' + (section ? '&initial_section=' + section : ''), null, "height=300,width=630");
-};
-
-hw.selectFileFinish = function(filePath) {
-  hw.selectInputField.value = filePath;
-  if (hw.selectFileCallback) {
-    hw.selectFileCallback();
-  }
-};

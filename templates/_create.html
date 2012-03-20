@@ -4,6 +4,8 @@
   hw.setMsg('insert-as-slideshow', "{% raw js_escape(_('insert as slideshow?')) %}");
   hw.setMsg('untitled', "{% raw js_escape(_('untitled')) %}");
   hw.setMsg('separate', "{% raw js_escape(_('make separate posts for each media file?')) %}");
+  hw.setMsg('saved', "{% raw js_escape(_('saved!')) %}");
+  hw.setMsg('error', "{% raw js_escape(_('no good, mate.')) %}");
   hw.xsrf = '{% raw xsrf_form_html() %}';
   hw.uploadUrl = '{{ nav_url(section='upload') }}';
   hw.contentOwnerTitle = {% if content %}"{{ content_owner.title }}"{% else %}"{% raw js_escape(_('Dashboard')) %}"{% end %};
@@ -63,7 +65,7 @@
     <input name="hw-save" type="button" class="hw-save hw-button hw-button-save" data-save="{{ _("save") }}" data-saving="{{ _("saving") }}" value="{{ _("save") }}" onclick="hw.save()">
 
     <a href="#options" class="hw-more-options hw-button" onclick="hw.optionsClick(event)">{{ _('options') }}</a>
-    <a href="#media" class="hw-media-insert hw-button hw-button-media" onclick="hw.mediaClick(event)">+</a>
+    <script>hw.uploadButton(function(json) { hw.processFiles(json); });</script>
     <a href="#help" class="hw-help-button hw-button" onclick="hw.help(event)">?</a>
     <span class="hw-response hw-invisible-transition hw-invisible" data-saved="{{ _("saved.") }}"
             data-bad="{{ _("no good, mate.") }}" data-duplicate="{{ _("duplicate id.") }}">&nbsp;</span>
@@ -112,7 +114,12 @@
       {% end %}
       <dt><label>{{ _("name:") }}</label></dt><dd><input name="hw-name" maxlength="255" type="text" placeholder="{{ _("name") }}" {% if content %}value="{{ content.name }}"{% end %}></dd>
       {% if individual_content %}
-      <dt><label>{{ _("thumbnail:") }}</label></dt><dd><input class="hw-thumb" name="hw-thumb" type="text" placeholder="{{ _("thumb") }}" {% if content %}value="{{ content.thumb }}"{% end %} onchange="hw.changeThumbPreview()"> <button type="button" class="hw-button hw-button-media" onclick="hw.selectFile(hw.$c('hw-thumb'), hw.changeThumbPreview)">{{ _('select image') }}</button></dd>
+      <dt>
+        <label>{{ _("thumbnail:") }}</label>
+      </dt><dd>
+        <input class="hw-thumb" name="hw-thumb" type="text" placeholder="{{ _("thumb") }}" {% if content %}value="{{ content.thumb }}"{% end %} onchange="hw.changeThumbPreview()">
+        <script>hw.uploadButton(function(json) { hw.$c('hw-thumb').value = json['url']; hw.changeThumbPreview(); });</script>
+      </dd>
       {% end %}
       <dt><label>{{ _("template:") }}</label></dt><dd><select class="hw-template" name="hw-template" {% if content %}value="{{ content.template }}"{% end %} onchange="hw.templateChange(null, this.value)">
           <option value="">{{ _('-none-') }}</option>
@@ -137,50 +144,6 @@
   </div>
 
   <div class="hw-playground {% if section_template %}hw-template-{{ section_template }}{% end %}">
-    {% if individual_content %}
-    <div class="hw-media-creator-template hw-hidden">
-      <div class="hw-media-creator">
-        <span class="hw-media-cancel hw-created hw-button hw-button-delete" onclick="parent.hw.cancelMedia(this)">x</span>
-        <label class="hw-initial">{{ _("media upload") }}</label>
-        <label class="hw-created">{{ _("source") }}</label>
-        <input style="display: none" class="hw-media-remote" name="hw-media-remote" type="text" placeholder="{{ _("URL / embed") }}" onchange="parent.hw.remoteMedia(this)" onkeyup="parent.hw.checkPaste(this, event)">
-        <input class="hw-media-local" name="hw-media-local" type="file" multiple value="{{ _("Upload file(s)") }}" onchange="parent.hw.localMedia(this)">
-        <input class="hw-media-file hw-created hw-hidden" name="hw-media-file" type="text" disabled readonly value="">
-        <progress value="0" max="100" class="hw-media-file-progress hw-hidden">0%</progress>
-        <br class="hw-created">
-        <input class="hw-media-title" name="hw-media-title" type="text" placeholder="{{ _('title') }}">
-        <input class="hw-media-caption" name="hw-media-caption" type="text" placeholder="{{ _('caption') }}">
-        <input class="hw-media-source" name="hw-media-source" type="text" placeholder="{{ _('source') }}">
-        <input class="hw-media-tags" name="hw-media-tags" type="text" placeholder="{{ _('tags') }}">
-        <span class="hw-media-file-failed hw-hidden">{{ _('failed!') }}</span>
-        <input name="hw-media-section" type="hidden">
-        <input name="hw-media-album" type="hidden">
-        <input name="hw-media-template" type="hidden">
-        <a class="hw-media-preview-wrapper hw-created hw-closed" href="#edit" onclick="parent.hw.editImage(event, this);">
-          <img class="hw-media-preview">
-          <span style="display: none">{{ _('edit') }}</span>
-        </a>
-      </div>
-    </div>
-    {% if not content %}
-      <strong class="hw-separate-info">{{ _('images will be auto-rotated when uploaded.') }}</strong>
-    {% end %}
-    <div class="hw-hidden hw-media-list"></div>
-    <script>
-      (function() {
-        var callback = null;
-        {% if initial_media %}
-          callback = function(iframeDoc) {
-            var remoteField = hw.$c('hw-media-remote', iframeDoc);
-            remoteField.value = "{% raw js_escape(initial_media) %}";
-            hw.remoteMedia(remoteField);
-          }
-        {% end %}
-        hw.createMediaIframe(callback);
-      })();
-    </script>
-    {% end %}
-
     <div class="hw-html-wrapper hw-slide-transition hw-closed">
       <textarea name="hw-style" class="hw-style {% if individual_content %}hw-hidden{% end %}">{% if content %}{{ content.style }}{% end %}</textarea>
       <textarea name="hw-code" class="hw-code hw-hidden">{% if content %}{% if edit and has_code %}{{ content.original_code }}{% else %}{{ content.code }}{% end %}{% end %}</textarea>

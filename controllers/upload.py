@@ -1,106 +1,90 @@
+import json
 import os
 import os.path
-import re
-import urllib2
 
-import tornado.web
 from base import BaseHandler
-from logic import content_remote
 from logic import media
 from logic import url_factory
 
 class UploadHandler(BaseHandler):
+  def get(self):
+    if not self.authenticate(author=True):
+      return
+
+    self.get_common_parameters()
+
+    self.prevent_caching()
+    if not os.path.exists(self.tmp_path):
+      self.set_status(404)
+
   def post(self):
     if not self.authenticate(author=True):
       return
 
-    remote_file = self.get_argument('hw-media-remote')
+    self.get_common_parameters()
 
-    self.display['thumb'] = ''
-    self.display['title'] = self.get_argument('hw-media-title', '')
+    uploaded_file = self.request.files['file'][0]
+    self.media_section = url_factory.clean_filename(self.get_argument('section'))
+    if self.media_section.startswith(self.resource_url()):
+      self.media_section = self.media_section[len(self.resource_url()) + 1:]
+    self.parent_directory = self.resource_directory(self.media_section)
+    self.parent_url = self.resource_url(self.media_section)
+    self.full_path = media.get_unique_name(os.path.join(self.parent_directory, self.base_leafname))
 
-    if remote_file:
-      self.display['success'] = True
+    if not os.path.isdir(self.parent_directory):
+      os.makedirs(self.parent_directory)
 
-      if re.search(r'^\s*<', remote_file):
-        self.display['html'] = remote_file    # embed
+    if self.chunked_upload:
+      f = open(self.tmp_path, 'w')
+      f.write(uploaded_file['body'])
+      f.close()
+
+      total_chunks_uploaded = 0
+      for f in os.listdir(self.tmp_dir):
+        if f.startswith(self.base_leafname):
+          total_chunks_uploaded += 1
+
+      if total_chunks_uploaded == max(self.total_size / self.chunk_size, 1):
+        final_file = open(self.full_path, 'w')
+        for f in os.listdir(self.tmp_dir):
+          if f.startswith(self.base_leafname):
+            chunk_path = os.path.join(self.tmp_dir, f)
+            chunk_file = open(chunk_path, 'r')
+            final_file.write(chunk_file.read())
+            chunk_file.close()
+            os.unlink(chunk_path)
+        final_file.close()
+
+        original_size_url, url, thumb_url = media.save_locally(self.parent_url, self.full_path, None, skip_write=True)
       else:
-        self.display['html'] = self.process_html(True, remote_file)
+        return
     else:
-      uploaded_file = self.request.files['hw-media-local'][0]
+      original_size_url, url, thumb_url = media.save_locally(self.parent_url, self.full_path, uploaded_file['body'])
 
-      self.display['success'] = True
-      self.display['html'] = self.process_html(False, uploaded_file['filename'])
+    media_html = media.generate_full_html(self, url, original_size_url)
+    self.write(json.dumps({ 'original_size_url': original_size_url, \
+                            'url': url, \
+                            'thumb_url': thumb_url, \
+                            'html': media_html, }))
 
-    self.set_status(201)
-    self.fill_template("upload.html")
+  def get_common_parameters(self):
+    self.chunked_upload = True
+    if not self.get_argument('resumableChunkSize', None):
+      self.base_leafname = self.request.files['file'][0]['filename']
+      self.chunked_upload = False
+      return
 
-  def process_html(self, is_remote, filename):
-    filename = url_factory.clean_filename(filename)
+    self.chunk_number = url_factory.clean_filename(self.get_argument('resumableChunkNumber'))
+    self.chunk_size = int(self.get_argument('resumableChunkSize'))
+    self.total_size = int(self.get_argument('resumableTotalSize'))
+    self.identifier = self.get_argument('resumableIdentifier')
+    self.filename = url_factory.clean_filename(self.get_argument('resumableFilename'))
 
-    media_type = media.detect_media_type(filename)
+    self.base_leafname = os.path.basename(self.filename)
+    self.leafname = self.base_leafname + '_' + self.chunk_number.zfill(4)
+    self.private_path = os.path.join(self.application.settings["private_path"], self.get_author_username())
+    self.tmp_dir = os.path.join(self.private_path, 'tmp')
+    self.tmp_path = os.path.join(self.tmp_dir, self.leafname)
 
-    full_caption = self.get_argument('hw-media-caption', '')
-    alt_text = self.get_argument('hw-media-caption', '')
-    source = self.get_argument('hw-media-source', '')
-    tags = self.get_argument('hw-media-tags', '')
-    media_section = url_factory.clean_filename(self.get_argument('hw-media-section'))
-    media_album = url_factory.clean_filename(self.get_argument('hw-media-album', ''))
-
-    parent_directory = self.resource_directory(media_section, media_album)
-    parent_url = self.resource_url(media_section, media_album)
-    leafname = os.path.basename(filename)
-    full_path = os.path.join(parent_directory, leafname)
-    url_factory.check_legit_filename(full_path)
-
-    if not os.path.isdir(parent_directory):
-      os.makedirs(parent_directory)
-
-    if is_remote:
-      remote_url = filename
-      url = filename
-
-      if not media_type and url.find('http://') == 0:
-        remote_title, remote_thumb, remote_html = content_remote.get_remote_title_and_thumb(url)
-        if remote_html:
-          return remote_html
-
-        if remote_thumb:
-          return '<a href="' + url + '" title="' + remote_title + '"><img src="' + remote_thumb + '"></a>'
-
-        return '<a href="' + url + '">' + url + '</a>'
-      else:
-        if not source:
-          source = url
-
-        response = urllib2.urlopen(url)
-        original_size_url, url, thumb_url = media.save_locally(parent_url, full_path, response.read())
-        self.display['thumb'] = thumb_url
-    else:
-      uploaded_file = self.request.files['hw-media-local'][0]
-      original_size_url, url, thumb_url = media.save_locally(parent_url, full_path, uploaded_file['body'])
-      self.display['thumb'] = thumb_url
-
-    if source:
-      if full_caption:
-        full_caption += ' &mdash; '
-      full_caption += self.locale.translate('source:') + ' '
-      if source.find('http://') == 0:
-        full_caption += '<a href="' + source + '">' + source + '</a>'
-      else:
-        full_caption += source
-
-      if alt_text:
-        alt_text += ' &mdash; '
-      alt_text += self.locale.translate('source:') + ' ' + source
-
-    if tags:
-      if full_caption:
-        full_caption += ' &mdash; '
-      full_caption += self.locale.translate('tags:') + ' '
-      full_caption += tags
-
-    if is_remote:
-      original_size_url = remote_url
-
-    return media.generate_full_html(self, url, original_size_url, full_caption, alt_text)
+    if not os.path.isdir(self.tmp_dir):
+      os.makedirs(self.tmp_dir)

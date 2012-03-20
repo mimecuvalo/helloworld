@@ -431,10 +431,10 @@ class BaseHandler(tornado.web.RequestHandler):
     path = os.path.join(path, self.get_author_username())
 
     if section:
-      path = os.path.join(path, section)
+      path += '/' + section
 
     if album:
-      path = os.path.join(path, album)
+      path += '/' + album
 
     return path
 

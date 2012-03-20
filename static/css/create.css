@@ -71,10 +71,6 @@ div.hw-help.hw-open {
   margin: 39px 3px 5px 0;
   padding: 10px;
 }
-.hw-media-list.hw-shown {
-  margin: 39px 3px -13px 0;
-  padding: 0;
-}
 
 div.hw-options dl {
   width: 447px;
@@ -97,10 +93,16 @@ div.hw-options dd {
   width: 288px;
   display: inline-block;
 }
-.hw-new div.hw-options dd input,
-div.hw-options dd input {
+div.hw-options input,
+div.hw-options progress,
+div.hw-options iframe,
+div.hw-options .hw-media-result,
+div.hw-options select {
   display: block;
   float: left;
+}
+div.hw-options .hw-media-result {
+  margin: 3px 0 0 5px;
 }
 
 .hw-thumb-preview-wrapper {
@@ -279,15 +281,6 @@ div.hw-created.hw-media-creator > input.hw-media-title {
 div.hw-created.hw-separate.hw-media-creator > input.hw-media-title {
   display: inline-block;
 }
-.hw-separate-info {
-  display: none;
-}
-.hw-separate .hw-separate-info {
-  display: block;
-  clear: both;
-  text-align: center;
-  margin-bottom: -39px;
-}
 .hw-media-cancel,
 .hw-media-title,
 .hw-media-caption,
@@ -324,13 +317,12 @@ div.hw-wysiwyg-controls .hw-button {
   float: right;
 }
 
-div.hw-wysiwyg-controls a.hw-media-insert,
+div.hw-wysiwyg-controls a.hw-button-media,
 div.hw-wysiwyg-controls a.hw-help-button {
   float: left;
 }
-
-div.hw-media-list.hw-shown {
-  clear: both;
+div.hw-wysiwyg-controls span.hw-media-result {
+  display: none;
 }
 
 div.hw-media-creator,
@@ -487,6 +479,9 @@ div.hw-user-autocomplete {
   border: 1px solid black;
   background-color: white;
   padding: 0 5px 5px 5px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
 }
 div.hw-image-editor {
   position: absolute;
@@ -551,10 +546,11 @@ div.hw-anchor-editor header,
 div.hw-image-options header,
 div.hw-image-editor header {
   font-size: 11px;
-  background-color: #ddd;
+  background-color: #eef;
+  border-bottom: 1px solid #ccc;
   cursor: move;
   margin: 0 -5px 5px -5px;
-  padding: 0 5px;
+  padding: 1px 5px;
 }
 div.hw-image-editor header {
   margin: 0 -10px 10px -10px;
@@ -566,7 +562,7 @@ div.hw-image-options label {
   cursor: pointer;
   font-size: 10px;
   vertical-align: middle;
-  padding-top: 3px;
+  padding: 3px 0 0 3px;
 }
 
 div.hw-anchor-editor input,
@@ -575,7 +571,8 @@ div.hw-anchor-editor a {
   vertical-align: middle;
 }
 
-input[name=hw-anchor-type] {
+input[name=hw-anchor-type],
+input[name=hw-image-align] {
   margin-top: 5px;
 }
 
@@ -662,4 +659,22 @@ div.hw-preview img {
 .CodeMirror-scroll {
   height: 190px;
   border: 1px solid gray;
+}
+
+a.hw-button-media {
+  text-decoration: none;
+  overflow: hidden;
+}
+
+a.hw-button-media + progress.hw-shown {
+  height: 12px;
+  width: 82px;
+  margin: 5px 0 0 5px;
+  float: left;
+  display: block;
+}
+.hw-media-result {
+  float: left;
+  margin: 3px 0 0 5px;
+  display: block;
 }

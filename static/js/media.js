@@ -1,209 +1,19 @@
 hw.prepareFilesAndSendOff = function(callback) {
-  var mediaList = hw.$c('hw-media-list');
+  
+};
+
+hw.processFiles = function(json) {
   var createForm = hw.$c('hw-create');
-  var eventQueue = [];
+  hw.insertHtmlAtCursor(json['html']);
+  hw.htmlPreview();
 
-  for (var x = 0; x < mediaList.childNodes.length; ++x) {
-    var iframe = mediaList.childNodes[x];
-    var iframeDoc = iframe.contentWindow.document;
-    var form = hw.$c('hw-create', iframeDoc);
-    if (!form) {
-      continue;
-    }
-
-    var container = hw.$c('hw-media-creator', iframeDoc);
-    if (!hw.hasClass(container, 'hw-created')) {
-      break;
-    }
-
-    hw.removeClass(iframe, 'hw-hidden');
-    form['hw-media-section'].value = createForm['hw-section'].value;
-    form['hw-media-album'].value = createForm['hw-album'].value;
-    form['hw-media-template'].value = createForm['hw-section-template'].value;
-
-    eventQueue.push({ 'form': '', 'iframe': '' });
-    eventQueue[eventQueue.length - 1]['form'] = form;
-    eventQueue[eventQueue.length - 1]['iframe'] = iframe;
-  }
-
-  var separate = createForm['hw-separate'].checked;
-  if (!callback && !separate) {
-    callback = function(mediaHTML) {
-      var wysiwyg = hw.$c('hw-wysiwyg');
-      wysiwyg.focus();
-      document.execCommand("insertHTML", false, mediaHTML + "<br><br>");
-      hw.changeBeforeUnloadState();
-    };
-  }
-
-  if (!separate || callback) {
-    hw.processFiles(eventQueue, callback, "");
+  if (json['thumb_url'] && !createForm['hw-thumb'].value) {
+    createForm['hw-thumb'].value = json['thumb_url'];
+    hw.changeThumbPreview();
   }
 };
 
-hw.processFiles = function(eventQueue, callback, mediaHTML) {
-  var createForm = hw.$c('hw-create');
-  var mediaList = hw.$c('hw-media-list');
-
-  if (!eventQueue.length) {
-    if (createForm['hw-separate'].checked) {
-      hw.resetSaveState();
-      hw.resetCreateForm();
-    } else {
-      callback(mediaHTML);
-      if (!hw.hasClass(createForm, 'hw-new')) {
-        hw.$c('hw-wysiwyg').innerHTML = mediaHTML + hw.$c('hw-wysiwyg').innerHTML;
-        hw.htmlPreview();
-      }
-    }
-    hw.hide(mediaList);
-    hw.setClass(createForm, 'hw-media-open', false);
-    hw.setClass(hw.$('hw-container'), 'hw-media-open', false);
-    return;
-  }
-
-  var item = eventQueue.shift();
-  var iframeDoc = item['iframe'].contentWindow.document;
-  var iframeOnLoad = function(event, ajax) {
-    if (!ajax) {
-      var cssContent = hw.stylesheetCache ? hw.stylesheetCache : hw.generateStylesheetCache();
-      var styleElement = document.createElement('style');
-      styleElement.setAttribute('type', 'text/css');
-      if (styleElement.styleSheet) {
-        styleElement.styleSheet.cssText = cssContent;
-      } else {
-        styleElement.appendChild(document.createTextNode(cssContent));
-      }
-      item['iframe'].contentWindow.document.getElementsByTagName('head')[0].appendChild(styleElement);
-    }
-
-    var createForm = hw.$c('hw-create');
-    var form = hw.$c('hw-uploaded', item['iframe'].contentWindow.document);
-
-    if (form && form['hw-media-success'].value) {
-      mediaHTML += form['hw-media-html'].value + '\n';
-
-      var hideIframe = function() {
-        hw.hide(item['iframe']);
-        var lamesauce = function() {
-          item['iframe'].setAttribute('style', 'width: 0px !important');
-        };
-        setTimeout(lamesauce, 300);
-      };
-      setTimeout(hideIframe, 3000);
-
-      if (createForm['hw-separate'].checked || (form['hw-media-thumb'].value && !createForm['hw-thumb'].value)) {
-        createForm['hw-thumb'].value = form['hw-media-thumb'].value;
-        hw.changeThumbPreview();
-      }
-
-      if (createForm['hw-separate'].checked) {
-        var separateCallback = function(xhr) {
-          hw.addToFeed(xhr.responseText);
-          hw.processFiles(eventQueue, callback, mediaHTML);
-        };
-        callback(mediaHTML, form['hw-media-title'].value, separateCallback);
-        mediaHTML = "";
-        return;
-      }
-    }
-
-    hw.processFiles(eventQueue, callback, mediaHTML);
-  };
-  Event.observe(item['iframe'], 'load', iframeOnLoad, false);
-
-  if (item['form']['hw-media-file'].value) {
-    var iframeDoc = item['iframe'].contentWindow.document;
-    var progress = hw.$c('hw-media-file-progress', iframeDoc);
-    hw.removeClass(progress, 'hw-hidden');
-
-    var transferProgress = function(e) {
-      if (e.lengthComputable) {
-        var percentage = Math.round((e.loaded * 100) / e.total);
-        progress.setAttribute('value', percentage);
-        progress.innerHTML = percentage + '%';
-      }        
-    };
-
-    var onSuccess = function(xhr) {
-      iframeDoc.body.innerHTML = xhr.responseText;
-      iframeOnLoad(null, true);
-    };
-
-    var transferError = function(e) {
-      hw.removeClass(hw.$c('hw-media-file-failed', iframeDoc), 'hw-hidden');
-      hw.addClass(progress, 'hw-hidden');
-    };
-
-    item['form']['hw-media-local'].value = null;
-    var formData = new FormData(item['form']);
-    formData.append('hw-media-local', item['form']['hw-media-file']['file']);
-
-    var uploadRequest = new hw.ajax(hw.uploadUrl,
-      { upload: formData,
-        onProgress: transferProgress,
-        onSuccess: onSuccess,
-        onError: transferError });
-
-    if (!uploadRequest.transport.upload) {
-      progress.setAttribute('max', '');
-      item['form'].submit();
-    }
-  } else {
-    item['form'].submit();
-  }
-};
-
-hw.mediaClick = function(event) {
-  hw.preventDefault(event);
-
-  var mediaList = hw.$c('hw-media-list');
-  hw.show(mediaList);
-  var createForm = hw.$c('hw-create');
-  hw.setClass(createForm, 'hw-media-open', true);
-  hw.setClass(hw.$('hw-container'), 'hw-media-open', true);
-
-  for (var x = mediaList.childNodes.length - 1; x >= 0; --x) {
-    var iframe = mediaList.childNodes[x];
-    var iframeDoc = iframe.contentWindow.document;
-    var fileBrowse = hw.$c('hw-media-local', iframeDoc);
-    fileBrowse.click();
-    break;
-  }
-};
-
-hw.newMedia = function(doc, remote, file) {
-  var createForm = hw.$c('hw-create');
-  var mediaCreator = hw.$c('hw-media-creator', doc);
-  hw.addClass(mediaCreator, 'hw-created');
-  hw.setClass(mediaCreator, 'hw-separate', createForm['hw-separate'].checked);
-
-  var oppositeSource = remote ? hw.$c('hw-media-local', doc)
-                              : hw.$c('hw-media-remote', doc);
-  oppositeSource.value = '';
-  hw.addClass(oppositeSource, 'hw-initial');
-
-  if (file) {
-    hw.addClass(mediaCreator, 'hw-file');
-    var fileInput = hw.$c('hw-media-file', doc);
-    hw.removeClass(fileInput, 'hw-hidden');
-    fileInput.value = file.name;
-    fileInput['file'] = file;
-  }
-
-  if (!remote) {
-    hw.$c('hw-media-local', doc).removeAttribute('multiple');
-  }
-
-  if (remote) {
-    hw.newMediaPreview(doc, remote, hw.$c('hw-media-remote', doc).value);
-  } else {
-    hw.newMediaPreview(doc, remote, file);
-  }
-
-  hw.changeBeforeUnloadState();
-};
-
+/*
 hw.newMediaPreview = function(doc, remote, source) {
   var preview = hw.$c('hw-media-preview', doc);
   var previewWrapper = hw.$c('hw-media-preview-wrapper', doc);
@@ -235,156 +45,7 @@ hw.newMediaPreview = function(doc, remote, source) {
     hw.hide(previewWrapper);
   }
 };
-
-hw.stylesheetCache = '';
-hw.generateStylesheetCache = function() {
-  var cssContent = '';
-  var sheets = ['hw-stylesheet', 'hw-stylesheet-create', 'hw-stylesheet-create-theme'];
-  for (var x = 0; x < sheets.length; ++x) {
-    var sheetElement = hw.$(sheets[x]);
-    if (!sheetElement.styleSheet) {
-      var rules = sheetElement.sheet.cssRules;
-      for (var y = 0; y < rules.length; ++y) {
-        cssContent += rules[y].cssText;
-      }
-    } else {
-      cssContent = sheetElement.styleSheet.cssText;    // workaround ie < 9
-    }
-  }
-  hw.stylesheetCache = cssContent;
-  return cssContent;
-};
-
-hw.createMediaIframe = function(callback) {
-  var mediaList = hw.$c('hw-media-list');
-
-  hw.hideElementOptions();
-
-  if (mediaList.childNodes.length
-      && hw.$c('hw-media-remote', mediaList.childNodes[mediaList.childNodes.length - 1].contentWindow.document)
-      && !hw.$c('hw-media-remote', mediaList.childNodes[mediaList.childNodes.length - 1].contentWindow.document).value
-      && !hw.$c('hw-media-local', mediaList.childNodes[mediaList.childNodes.length - 1].contentWindow.document).value
-      && !hw.$c('hw-media-file', mediaList.childNodes[mediaList.childNodes.length - 1].contentWindow.document).value) {
-    return;
-  }
-
-  var createForm = hw.$c('hw-create');
-  var iframe = document.createElement('iframe');
-  var child = mediaList.appendChild(iframe);
-  iframe.src = 'about:blank';
-  iframe.setAttribute('name', 'hw-media-creator');
-  iframe.setAttribute('width', '100%');
-  iframe.setAttribute('height', '88');
-  iframe.setAttribute('class', 'hw-media-creator hw-slide-transition hw-hidden');
-
-  var fn = function() {
-    var cssContent = hw.stylesheetCache ? hw.stylesheetCache : hw.generateStylesheetCache();
-    var styleElement = document.createElement('style');
-    styleElement.setAttribute('type', 'text/css');
-    if (styleElement.styleSheet) {
-      styleElement.styleSheet.cssText = cssContent;
-    } else {
-      styleElement.appendChild(document.createTextNode(cssContent));
-    }
-    iframe.contentWindow.document.getElementsByTagName('head')[0].appendChild(styleElement);
-
-    if (hw.isIE) {
-      var scriptElement = document.createElement('script');
-      scriptElement.src = 'http://html5shiv.googlecode.com/svn/trunk/html5.js';
-      iframe.contentWindow.document.getElementsByTagName('head')[0].appendChild(scriptElement);
-    }
-
-    var body = iframe.contentWindow.document.body;
-    body.innerHTML = '<form id="form" method="post" action="' + hw.uploadUrl + '" enctype="multipart/form-data" class="hw-create" name="hw-create">'
-        + hw.xsrf
-        + hw.$c('hw-media-creator-template').innerHTML
-        + '</form>';
-
-    Event.observe(hw.$c('hw-create', iframe.contentWindow.document), 'dragenter', hw.dragenter, false);
-    Event.observe(hw.$c('hw-create', iframe.contentWindow.document), 'dragleave', hw.dragleave, false);
-    Event.observe(hw.$c('hw-create', iframe.contentWindow.document), 'dragover', hw.dragover, false);
-    Event.observe(hw.$c('hw-create', iframe.contentWindow.document), 'drop', hw.drop, false);
-
-    Event.stopObserving(iframe, 'load', fn, false);
-    hw.workaroundPlaceholder(null, iframe.contentWindow.document);
-
-    if (callback) {
-      //var cb = function() {
-        callback(iframe.contentWindow.document);
-      //};
-      //setTimeout(cb, 0);
-    }
-  };
-  Event.observe(iframe, 'load', fn, false);
-};
-
-hw.remoteMedia = function(el) {
-  hw.newMedia(el.ownerDocument, true);
-  hw.createMediaIframe();
-};
-
-hw.checkPaste = function(el, event) {
-  var key = event.which ? event.which : event.keyCode;
-
-  switch (key) {
-    case 118:   // ctrl-v, paste
-      if (hw.testAccelKey(event)) {
-        var fn = function() {
-          hw.remoteMedia(el, true);
-        };
-        setTimeout(fn, 0);
-        break;
-      }
-  }
-};
-
-// TODO combine with hw.drop
-hw.localMedia = function(el) {
-  if (el.files) {
-    if (el.files.length > 1) {
-      if (confirm(hw.getMsg('separate'))) {
-        hw.separate(null, true);
-      }
-    }
-
-    for (var x = 0; x < el.files.length; ++x) {
-      var file = el.files[x];
-      var last = x == el.files.length - 1;
-      var callback = hw.localMediaHelper(file, last);
-      if (x > 0) {
-        hw.createMediaIframe(callback);
-      } else {
-        callback(el.ownerDocument);
-      }
-    }
-  } else {
-    hw.newMedia(el.ownerDocument, false);
-    hw.createMediaIframe();
-    hw.prepareFilesAndSendOff();
-  }
-};
-hw.localMediaHelper = function(file, last) {
-  return function(iframeDocument) {
-    hw.newMedia(iframeDocument, false, file);
-    if (last) {
-      hw.createMediaIframe();
-      hw.prepareFilesAndSendOff();
-    }
-  };
-};
-
-hw.cancelMedia = function(el) {
-  var mediaList = hw.$c('hw-media-list');
-
-  for (var x = 0; x < mediaList.childNodes.length; ++x) {
-    if (mediaList.childNodes[x].contentWindow.document == el.ownerDocument) {
-      mediaList.removeChild(mediaList.childNodes[x]);
-      break;
-    }
-  }
-
-  hw.createMediaIframe();
-};
+*/
 
 hw.mediaLibrary = function(event, el, close) {
   if (event) {
@@ -414,38 +75,12 @@ hw.mediaLibrary = function(event, el, close) {
   if (mediaWrapper.src == 'about:blank' && !close) {
     mediaWrapper.src = hw.baseUri() + 'media?embedded=true';
   }
-  return;
-
-  // old code
-  if (!hw.$c('hw-file-list') && !close) {
-    mediaWrapper.innerHTML = mediaWrapper.getAttribute('data-loading'); 
-
-    var callback = function(xhr) {
-      mediaWrapper.innerHTML = xhr.responseText;
-    };
-
-    var badTrip = function(xhr) {
-      mediaWrapper.innerHTML = mediaWrapper.getAttribute('data-bad'); 
-    };
-
-    new hw.ajax(hw.baseUri() + 'media',
-      { method: 'get',
-        headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
-        onSuccess: callback,
-        onError: badTrip });
-  }
 };
 
 hw.mediaEmbedded = false;
 hw.mediaStandalone = false;
 // todo, all this should be refactored into a nice class and such
 hw.mediaSelect = function(event, selectEl, opt_mediaValue) {
-  if (!selectEl && opt_mediaValue && hw.mediaStandalone) {
-    parent.opener.hw.selectFileFinish(opt_mediaValue);
-    window.close();
-    return;
-  }
-
   var uploadedMedia = null;
   if (!selectEl && opt_mediaValue && hw.mediaEmbedded) {
     var fileList = hw.$c('hw-file-list');
@@ -479,11 +114,9 @@ hw.mediaSelect = function(event, selectEl, opt_mediaValue) {
 
   if (media.hasAttribute('data-directory')) {
     hw.$$('[name=hw-media-directory]')[0].value = media.value;
+    hw.$$('[name=hw-button-media]')[0].setAttribute('data-section', media.value);
     hw.show(hw.$$('[name=hw-files-' + media.value.replace(/\//g, '-') + ']')[0]);
     hw.hide(selectEl);
-  } else if (hw.mediaStandalone) {
-    parent.opener.hw.selectFileFinish(media.value);
-    window.close();
   } else {
     var allMedia = [];
     for (var x = selectEl.options.length - 1; x >= 0; --x) {
@@ -565,45 +198,6 @@ hw.mediaPreview = function(selectEl) {
   hw.mediaHTML(media.value, callback);
 };
 
-hw.mediaUpload = function(form) {
-  var progress = hw.$c('hw-media-file-progress');
-  hw.removeClass(progress, 'hw-hidden');
-  hw.addClass(hw.$c('hw-media-file-failed'), 'hw-hidden');
-  var uploadElement = hw.$c('hw-media-uploaded-file');
-
-  var transferProgress = function(e) {
-    if (e.lengthComputable) {
-      var percentage = Math.round((e.loaded * 100) / e.total);
-      progress.setAttribute('value', percentage);
-      progress.innerHTML = percentage + '%';
-    }        
-  };
-
-  var onSuccess = function(xhr) {
-    window.location.href = hw.baseUri() + 'media'
-                         + (hw.mediaEmbedded ? '?embedded=true' : '?standalone=true')
-                         + '&uploaded_file=' + encodeURIComponent(xhr.responseText);
-  };
-
-  var transferError = function(e) {
-    hw.removeClass(hw.$c('hw-media-file-failed'), 'hw-hidden');
-    hw.addClass(progress, 'hw-hidden');
-  };
-
-  var formData = window['FormData'] ? new FormData(form) : '';
-
-  var uploadRequest = new hw.ajax(window.location.pathname,
-    { upload: formData,
-      onProgress: transferProgress,
-      onSuccess: onSuccess,
-      onError: transferError });
-
-  if (!uploadRequest.transport.upload) {
-    progress.setAttribute('max', '');
-    form.submit();
-  }
-};
-
 hw.mediaDelete = function(event, form) {
   if (hw.mediaEmbedded && event) {
     hw.preventDefault(event);
@@ -659,4 +253,129 @@ hw.insertHtmlAtCursor = function(html) {
   } else if (document.selection && document.selection.createRange) {
     document.selection.createRange().pasteHTML(html);
   }
+};
+
+hw.uploadButton = function(callback, section) {
+  section = section || "";
+  document.write('<a name="hw-button-media" class="hw-button hw-button-media" data-section="' + section + '">+</a>'
+               + '<progress value="0" max="100" class="hw-hidden">0%</progress>'
+               + '<span class="hw-media-result hw-hidden"></span>');
+  var buttons = hw.$$('.hw-button-media');
+  var button = buttons[buttons.length - 1];
+  var progress = button.nextSibling;
+  var result = progress.nextSibling;
+  var xsrf = hw.$$('input[name=_xsrf]')[0].value;
+
+  var r = new Resumable({
+    target: hw.uploadUrl, 
+    query: { 'section': encodeURIComponent(section),
+             '_xsrf' : encodeURIComponent(xsrf) }
+  });
+
+  // Resumable.js isn't supported, fall back on a different method
+  if (!r.support) {
+    var iframe = document.createElement('iframe');
+    var child = button.parentNode.appendChild(iframe);
+    iframe.src = 'about:blank';
+    iframe.setAttribute('name', 'hw-media-creator');
+    iframe.setAttribute('width', '100%');
+    iframe.setAttribute('height', '16');
+    iframe.setAttribute('class', 'hw-hidden');
+
+    var onUpload = function() {
+      Event.stopObserving(iframe, 'load', onUpload, false);
+
+      var doc = iframe.contentWindow.document;
+      var body = doc.body;
+
+      var bad = false;
+      var json;
+      try {
+        json = JSON.parse(body.innerHTML);
+      } catch(ex) {
+        bad = true;
+      }
+
+      if (bad) {
+        result.innerHTML = hw.getMsg('error');
+        hw.show(result);
+      } else {
+        result.innerHTML = hw.getMsg('saved');
+        hw.show(result);
+        callback(json);
+      }
+
+      fn();
+    };
+
+    var fn = function() {
+      var doc = iframe.contentWindow.document;
+      var body = doc.body;
+      body.innerHTML = '<form id="form" method="post" action="' + hw.uploadUrl + '" enctype="multipart/form-data">'
+          + hw.xsrf
+          + '<input id="section" type="hidden" name="section" value="' + section + '">'
+          + '<input id="file" name="file" type="file" multiple="multiple" onchange="this.form.submit()">'
+          + '</form>';
+
+      Event.stopObserving(iframe, 'load', fn, false);
+      Event.observe(iframe, 'load', onUpload, false);
+
+      hw.hide(result);
+      result.innerHTML = "";
+
+      button.onclick = function() {
+        doc.getElementById('section').value = button.getAttribute('data-section');
+        doc.getElementById('file').click();
+      }
+    };
+    Event.observe(iframe, 'load', fn, false);
+
+    return;
+  }
+
+  r.assignBrowse(button);
+
+  var resumableObj = null;
+
+  r.on('fileAdded', function(file) {
+    resumableObj = file.resumableObj;
+    resumableObj.opts.query['section'] = button.getAttribute('data-section');
+    file.resumableObj.upload();
+    hw.show(progress);
+    hw.hide(button);
+    hw.hide(result);
+    result.innerHTML = "";
+  });
+  r.on('fileSuccess', function(file, msg) {
+    var json = JSON.parse(msg);
+    callback(json);
+  });
+
+  r.on('complete', function() {
+    resumableObj.files = [];
+    hw.show(button);
+    hw.hide(progress);
+    progress.setAttribute('value', '0');
+    progress.innerHTML = '0%';
+    result.innerHTML = hw.getMsg('saved');
+    hw.show(result);
+  });
+  r.on('error', function(message, file) {
+    resumableObj.files = [];
+    hw.show(button);
+    hw.hide(progress);
+    progress.setAttribute('value', '0');
+    progress.innerHTML = '0%';
+    result.innerHTML = hw.getMsg('error');
+    hw.show(result);
+  });
+  r.on('progress', function() {
+    if (!resumableObj) {
+      return;
+    }
+
+    var percent = resumableObj.progress() * 100;
+    progress.setAttribute('value', percent);
+    progress.innerHTML = percent + '%';
+  });
 };

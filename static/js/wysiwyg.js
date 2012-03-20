@@ -1,5 +1,5 @@
 hw.inForcedEditPage = false;
-hw.edit = function(event, opt_dontCreateMediaIframe) {
+hw.edit = function(event) {
   if (event) {
     hw.preventDefault(event);
   }
@@ -44,9 +44,6 @@ hw.edit = function(event, opt_dontCreateMediaIframe) {
 
   if (hw.createIndividualContent) {
     if (turnEditingOn) {
-      if (!opt_dontCreateMediaIframe) {
-        hw.createMediaIframe();
-      }
       if (!wysiwyg.innerHTML.match(/<br>$/g)) {
         wysiwyg.innerHTML += "<br>";
       }
@@ -536,7 +533,7 @@ hw.showImageOptions = function(image) {
   var imagePosition = imageTag.getBoundingClientRect();
   var contentPosition = hw.$('hw-content') ? hw.$('hw-content').getBoundingClientRect() : document.body.getBoundingClientRect();
   hw.$c('hw-image-options').style.top = (window.pageYOffset + imagePosition.top
-      + hw.$c('hw-anchor-editor').getBoundingClientRect().height + 25) + 'px';
+      + hw.$c('hw-anchor-editor').getBoundingClientRect().height + 110) + 'px';
   hw.$c('hw-image-options').style.left = (imagePosition.left + 5 - contentPosition.left) + 'px';
   hw.$$('[name=hw-image-align]')[0].checked = imageTag.style.cssFloat == '' || imageTag.style.float == 'none';
   hw.$$('[name=hw-image-align]')[1].checked = imageTag.style.cssFloat == 'left';

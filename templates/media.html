@@ -31,8 +31,6 @@
 <br>
 <button type="button" class="hw-media-delete hw-button hw-button-delete" onclick="hw.mediaDelete(event, this.form)">{{ _('delete') }}</button>
 <button type="button" class="hw-media-select hw-button hw-button-save" onclick="hw.mediaSelect(event)">{{ _('select') }}</button>
-{% if standalone or embedded %}
-<input name="hw-media-uploaded-file" class="hw-media-uploaded-file" type="file" multiple value="{{ _("Upload file") }}" onchange="hw.mediaUpload(this.form)"> 
+{% if embedded %}
+<script>hw.uploadButton(function(json) { window.location.href = window.location.pathname + '?embedded=true&uploaded_file=' + encodeURIComponent(json['url']); });</script>
 {% end %}
-<progress class="hw-media-file-progress hw-hidden" value="0" max="100">0%</progress>
-<span class="hw-media-file-failed hw-hidden">{{ _('failed!') }}</span>

@@ -1,5 +1,7 @@
 import mimetypes
+import os
 import os.path
+import zipfile
 
 import Image
 from PIL.ExifTags import TAGS
@@ -70,9 +72,10 @@ def generate_html(filename, alt_text=''):
   else:
     return filename
 
-def save_locally(parent_url, full_path, data):
+def save_locally(parent_url, full_path, data, skip_write=False):
   # check dupe
-  full_path = get_unique_name(full_path)
+  if not skip_write:
+    full_path = get_unique_name(full_path)
 
   media_type = detect_media_type(full_path)
   original_size_url = ''
@@ -95,9 +98,12 @@ def save_locally(parent_url, full_path, data):
     thumb_url = os.path.join(os.path.join(parent_url, 'thumbs'), os.path.split(thumb_filename)[1])
     original_size_url = os.path.join(os.path.join(parent_url, 'original'), os.path.split(original_size_filename)[1])
 
-    f = open(original_size_filename, 'w+')
-    f.write(data)
-    f.close()
+    if skip_write:
+      os.rename(full_path, original_size_filename)
+    else:
+      f = open(original_size_filename, 'w+')
+      f.write(data)
+      f.close()
 
     original_img = Image.open(original_size_filename)
     try:
@@ -148,9 +154,18 @@ def save_locally(parent_url, full_path, data):
     normal.thumbnail((content_logic.PHOTO_WIDTH, content_logic.PHOTO_HEIGHT), Image.ANTIALIAS)
     normal.save(full_path, quality=95)
   else:
-    f = open(full_path, 'w')
-    f.write(data)
-    f.close()
+    if not skip_write:
+      f = open(full_path, 'w')
+      f.write(data)
+      f.close()
+
+    if os.path.splitext(full_path)[1] == '.zip':
+      z = zipfile.ZipFile(full_path)
+      for f in z.namelist():
+        if f.endswith('/'):
+          os.makedirs(os.path.join(os.path.dirname(full_path), url_factory.clean_filename(f)))
+        else:
+          z.extract(url_factory.clean_filename(f), os.path.dirname(full_path))
 
   return original_size_url, url, thumb_url
 

@@ -1,11 +1,16 @@
 {% extends "base_backend.html" %}
 
 {% block extra_js %}
+  <script src="{{ static_url('js/all_create.js', 'js/all_create.inc') }}"></script>
   <script src="{{ static_url('js/customize.js') }}"></script>
 
   <script>
     hw.setMsg('confirm-delete', "{% raw js_escape(_('ya sure there, buddy?')) %}");
     hw.setMsg('delete-failed', "{% raw js_escape(_("no good, mate.")) %}");
+    hw.setMsg('error', "{% raw js_escape(_('no good, mate.')) %}");
+    hw.setMsg('saved', "{% raw js_escape(_('saved!')) %}");
+    hw.xsrf = '{% raw xsrf_form_html() %}';
+    hw.uploadUrl = '{{ nav_url(section='upload') }}';
   </script>
 {% end %}
 
@@ -28,9 +33,15 @@
         <dt><label for="hw-description">{{ _('description:') }}</label></dt>
         <dd><input id="hw-description" name="description" maxlength="255" type="text" placeholder="{{ _('description') }}" value="{{ user.description }}"></dd>
         <dt><label for="hw-customize-logo">{{ _('logo:') }}</label></dt>
-        <dd><input id="hw-customize-logo" name="logo" type="text" placeholder="{{ _('logo') }}" value="{{ user.logo }}"> <button type="button" class="hw-button hw-button-media" onclick="hw.preventDefault(event);hw.selectFile(hw.$('hw-customize-logo'))">{{ _('select image') }}</button></dd>
+        <dd>
+          <input id="hw-customize-logo" name="logo" type="text" placeholder="{{ _('logo') }}" value="{{ user.logo }}">
+          <script>hw.uploadButton(function(json) { hw.$('hw-customize-logo').value = json['url']; });</script>
+        </dd>
         <dt><label for="hw-favicon">{{ _('favicon:') }}</label></dt>
-        <dd><input id="hw-favicon" name="favicon" type="text" placeholder="{{ _('favicon') }}" value="{{ user.favicon }}"> <button type="button" class="hw-button hw-button-media" onclick="hw.preventDefault(event);hw.selectFile(hw.$('hw-favicon'))">{{ _('select image') }}</button></dd>
+        <dd>
+          <input id="hw-favicon" name="favicon" type="text" placeholder="{{ _('favicon') }}" value="{{ user.favicon }}">
+          <script>hw.uploadButton(function(json) { hw.$('hw-favicon').value = json['url']; });</script>
+        </dd>
         <dt><label for="hw-themes">{{ _('theme:') }}</label></dt>
         <dd>
           <select name="theme" id="hw-themes">
@@ -38,7 +49,7 @@
               <option value="{{ theme }}" {% if (user.theme == theme) or (not user.theme and theme == 'static/css/themes/default.css') %}selected{% end %}>{{ theme }}</option>
             {% end %}
           </select>
-          <button type="button" class="hw-button hw-button-media" onclick="hw.preventDefault(event);hw.selectFile(hw.$('hw-themes'), window.location.reload, 'themes')">{{ _('upload theme') }}</button>
+          <script>hw.uploadButton(window.location.reload, 'themes');</script>
         </dd>
         <dt><label for="hw-currency">{{ _('currency:') }}</label></dt>
         <dd>
@@ -49,7 +60,10 @@
           </select>
         </dd>
         <dt><label for="hw-background">{{ _('background image:') }}</label></dt>
-        <dd><input id="hw-background" name="background" type="text" placeholder="{{ _('background') }}" value="{{ user.background }}"> <button type="button" class="hw-button hw-button-media" onclick="hw.preventDefault(event);hw.selectFile(hw.$('hw-background'))">{{ _('select image') }}</button></dd>
+        <dd>
+          <input id="hw-background" name="background" type="text" placeholder="{{ _('background') }}" value="{{ user.background }}">
+          <script>hw.uploadButton(function(json) { hw.$('hw-background').value = json['url']; });</script>
+        </dd>
         <dt><label for="hw-license-type">{{ _('license:') }}</label></dt>
         <dd>
           <input id="hw-license-type" name="license" type="url" value="{{ user.license }}">

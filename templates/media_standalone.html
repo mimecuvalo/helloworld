@@ -10,7 +10,6 @@
 <style>
   form.hw-create {
     padding: 1em;
-    {% if standalone %}margin: 1em;{% end %}
   }
 </style>
 {% end %}
@@ -18,18 +17,18 @@
 {% block extra_js %}
   <script src="{{ static_url('js/all_create.js', 'js/all_create.inc') }}"></script>
   <script>
+    hw.setMsg('error', "{% raw js_escape(_('no good, mate.')) %}");
+    hw.setMsg('saved', "{% raw js_escape(_('saved!')) %}");
+    hw.xsrf = '{% raw xsrf_form_html() %}';
+    hw.uploadUrl = '{{ nav_url(section='upload') }}';
+
     hw.setMsg('confirm-delete', "{% raw js_escape(_('ya sure there, buddy?')) %}");
     hw.mediaEmbedded = {% if embedded %}true{% else %}false{% end %};
-    hw.mediaStandalone = {% if standalone %}true{% else %}false{% end %};
     {% if uploaded_file %}
       var mediaSelect = function() {
         hw.mediaSelect(null, null, '{{ uploaded_file }}');
       }
-      {% if standalone %}
-        mediaSelect();
-      {% else %}
-        Event.observe(window, 'load', mediaSelect, false);
-      {% end %}
+      Event.observe(window, 'load', mediaSelect, false);
     {% end %}
   </script>
 {% end %}
