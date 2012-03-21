@@ -529,7 +529,21 @@ hw.showImageOptions = function(image) {
   } else {
     imageTag = hw.getSelectionStartNode().getElementsByTagName('IMG')[0];
   }
+  var figureTag = imageTag.parentNode.nodeName == 'FIGURE' ? imageTag.parentNode
+                : (imageTag.parentNode.parentNode.nodeName == 'FIGURE' ? imageTag.parentNode.parentNode : null);
+  var caption = null;
+  if (figureTag) {
+    var captions = figureTag.getElementsByTagName('FIGCAPTION');
+    if (!captions.length) {
+      caption = document.createElement('FIGCAPTION');
+      var div = document.createElement('DIV'); // mozilla doesn't like editing in just the figcaption
+      div.appendChild(document.createTextNode(hw.getMsg('image-info')));
+      caption.appendChild(div);
+      figureTag.appendChild(caption);
+    }
+  }
   hw.$c('hw-image-options')['imageTag'] = imageTag;
+  hw.$c('hw-image-options')['captionTag'] = caption;
   var imagePosition = imageTag.getBoundingClientRect();
   var contentPosition = hw.$('hw-content') ? hw.$('hw-content').getBoundingClientRect() : document.body.getBoundingClientRect();
   hw.$c('hw-image-options').style.top = (window.pageYOffset + imagePosition.top
@@ -542,6 +556,14 @@ hw.showImageOptions = function(image) {
 
 hw.hideImageOptions = function() {
   if (hw.$c('hw-image-options')) {
+    if (hw.$c('hw-image-options')['captionTag']) {
+      if (hw.getSelectionStartNode() == hw.$c('hw-image-options')['captionTag']) {
+        return;
+      }
+      if (hw.$c('hw-image-options')['captionTag'].textContent == hw.getMsg('image-info')) {
+        hw.$c('hw-image-options')['captionTag'].parentNode.parentNode.removeChild(hw.$c('hw-image-options')['captionTag']);
+      }
+    }
     hw.$c('hw-image-options').style.top = '-10000px';
     hw.$c('hw-image-options').style.left = '-10000px';
   }

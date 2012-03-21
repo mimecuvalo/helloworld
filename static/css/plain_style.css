@@ -8,6 +8,16 @@ option {
   font: 13px helvetica neue, arial, sans-serif;
 }
 
+figure {
+  text-align: center;
+}
+
+figcaption {
+  text-align: center;
+  color: #666;
+  font-size: 12px;
+}
+
 .hw-help {
   font: 13px Courier New, monospace;
 }
@@ -126,8 +136,4 @@ div.hw-media-creator {
 
 span[data-tooltip]:hover:after {
   border: 1px solid #0c0;
-}
-
-.hw-individual-content figure {
-  text-align: center;
 }

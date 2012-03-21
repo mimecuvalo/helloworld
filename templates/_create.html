@@ -6,6 +6,7 @@
   hw.setMsg('separate', "{% raw js_escape(_('make separate posts for each media file?')) %}");
   hw.setMsg('saved', "{% raw js_escape(_('saved!')) %}");
   hw.setMsg('error', "{% raw js_escape(_('no good, mate.')) %}");
+  hw.setMsg('image-info', "{% raw js_escape(_('caption')) %}");
   hw.xsrf = '{% raw xsrf_form_html() %}';
   hw.uploadUrl = '{{ nav_url(section='upload') }}';
   hw.contentOwnerTitle = {% if content %}"{{ content_owner.title }}"{% else %}"{% raw js_escape(_('Dashboard')) %}"{% end %};
