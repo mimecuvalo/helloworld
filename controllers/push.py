@@ -6,6 +6,9 @@ import tornado.web
 
 from logic import content_remote
 
+# monkeypatch
+feedparser._HTMLSanitizer.acceptable_elements = feedparser._HTMLSanitizer.acceptable_elements + ['iframe']
+
 class PushHandler(BaseHandler):
   def get(self):
     self.write(self.get_argument('hub.challenge'))

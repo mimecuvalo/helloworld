@@ -12,6 +12,9 @@ import tornado.escape
 
 from logic import users
 
+# monkeypatch
+feedparser._HTMLSanitizer.acceptable_elements = feedparser._HTMLSanitizer.acceptable_elements + ['iframe']
+
 def parse_feed(models, user, feed=None, parsed_feed=None):
   feed_doc = feedparser.parse(parsed_feed or feed)
 
