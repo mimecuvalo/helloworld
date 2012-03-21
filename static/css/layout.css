@@ -39,6 +39,8 @@ strong {
   float: left;
   -moz-transition: all 0.03s linear 0.1s;
   -webkit-transition: all 0.03s linear 0.1s;
+  -o-transition: all 0.03s linear 0.1s;
+  -ms-transition: all 0.03s linear 0.1s;
   transition: all 0.03s linear 0.1s;
   cursor: hand;
   cursor: pointer;
@@ -397,9 +399,11 @@ a.hw-read-more {
   margin-bottom: 3px;
   position: relative;
   overflow: hidden;
-  transition: all 0.3s ease-out;
   -moz-transition: all 0.3s ease-out;
   -webkit-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  -ms-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
 }
 .hw-album > li > a {
   display: block;
@@ -515,6 +519,8 @@ span[data-tooltip]:hover:after {
   z-index: 2000;
   /*-moz-border-radius: 5px;
   -webkit-border-radius: 5px;
+  -o-border-radius: 5px;
+  -ms-border-radius: 5px;
   border-radius: 5px;*/
   background-color: white;
   border: 1px solid #000;
@@ -532,6 +538,8 @@ ul.hw-comments li {
   border: 1px solid transparent;
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
+  -o-border-radius: 3px;
+  -ms-border-radius: 3px;
   border-radius: 3px;
 }
 ul.hw-comments li:hover {

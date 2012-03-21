@@ -41,6 +41,8 @@ span.hw-response {
   margin-left: -100px;
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
+  -o-border-radius: 3px;
+  -ms-border-radius: 3px;
   border-radius: 3px;
 }
 
@@ -64,6 +66,8 @@ div.hw-help {
   background-color: white;
   /*-moz-border-radius: 5px;
   -webkit-border-radius: 5px;
+  -o-border-radius: 5px;
+  -ms-border-radius: 5px;
   border-radius: 5px;*/
 }
 div.hw-options.hw-open,
@@ -136,6 +140,8 @@ div.hw-wysiwyg.hw-new {
   width: 735px;
   -moz-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
   -webkit-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
+  -o-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
+  -ms-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
   box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
   z-index: 2;
   position: relative;
@@ -149,9 +155,11 @@ div.hw-completions {
   position: absolute;
   z-index: 10;
   overflow: hidden;
-  -webkit-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
-  -moz-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
-  box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+  -moz-box-shadow: 2px 3px 5px rgba(0, 0, 0, .2);
+  -webkit-box-shadow: 2px 3px 5px rgba(0, 0, 0, .2);
+  -o-box-shadow: 2px 3px 5px rgba(0, 0, 0, .2);
+  -ms-box-shadow: 2px 3px 5px rgba(0, 0, 0, .2);
+  box-shadow: 2px 3px 5px rgba(0, 0, 0, .2);
 }
 div.hw-completions select {
   background: #fafafa;
@@ -231,6 +239,8 @@ ul.hw-html-tabs li {
   color: black;
   -moz-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
   -webkit-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
+  -o-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
+  -ms-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
   box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
 }
 .hw-style-info {
@@ -275,6 +285,8 @@ div.hw-wysiwyg-controls {
   border: 0;
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
+  -o-box-shadow: none;
+  -ms-box-shadow: none;
   box-shadow: none;
 }
 
@@ -316,6 +328,8 @@ form.hw-media-library-standalone {
   padding: 11px 10px 15px;
   /*-moz-border-radius: 5px;
   -webkit-border-radius: 5px;
+  -o-border-radius: 5px;
+  -ms-border-radius: 5px;
   border-radius: 5px;*/
   margin: 3px 3px 0 0;
 }
@@ -465,6 +479,8 @@ div.hw-user-autocomplete {
   padding: 0 5px 5px 5px;
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
+  -o-border-radius: 3px;
+  -ms-border-radius: 3px;
   border-radius: 3px;
 }
 div.hw-image-editor {
@@ -638,6 +654,8 @@ div.hw-preview img {
   color: black;
   -moz-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
   -webkit-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
+  -o-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
+  -ms-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
   box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
 }
 .CodeMirror-scroll {

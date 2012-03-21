@@ -9,9 +9,11 @@
 }
 
 .hw-hidden-transition {
-  transition: opacity 0.3s ease-out;
   -moz-transition: opacity 0.3s ease-out;
   -webkit-transition: opacity 0.3s ease-out;
+  -o-transition: opacity 0.3s ease-out;
+  -ms-transition: opacity 0.3s ease-out;
+  transition: opacity 0.3s ease-out;
 }
 
 .hw-open {
@@ -29,15 +31,19 @@
 }
 
 .hw-slide-transition {
-  transition: height 0.3s ease-out;
   -moz-transition: height 0.3s ease-out;
   -webkit-transition: height 0.3s ease-out;
+  -o-transition: height 0.3s ease-out;
+  -ms-transition: height 0.3s ease-out;
+  transition: height 0.3s ease-out;
 }
 
 .hw-all-transition {
-  transition: all 0.3s ease-out;
   -moz-transition: all 0.3s ease-out;
   -webkit-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  -ms-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
 }
 
 .hw-invisible {
@@ -48,21 +54,27 @@
 }
 
 .hw-invisible-transition {
-  transition: opacity 0.3s ease-in-out;
   -moz-transition: opacity 0.3s ease-in-out;
   -webkit-transition: opacity 0.3s ease-in-out;
+  -o-transition: opacity 0.3s ease-in-out;
+  -ms-transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
 }
 
 .hw-invisible-slow-transition {
-  transition: opacity 1s ease-in-out;
   -moz-transition: opacity 1s ease-in-out;
   -webkit-transition: opacity 1s ease-in-out;
+  -o-transition: opacity 1s ease-in-out;
+  -ms-transition: opacity 1s ease-in-out;
+  transition: opacity 1s ease-in-out;
 }
 
 .hw-invisible-reverse-transition {
-  transition: opacity 0.2s ease-in-out 5s;
   -moz-transition: opacity 0.2s ease-in-out 5s;
   -webkit-transition: opacity 0.2s ease-in-out 5s;
+  -o-transition: opacity 0.2s ease-in-out 5s;
+  -ms-transition: opacity 0.2s ease-in-out 5s;
+  transition: opacity 0.2s ease-in-out 5s;
 }
 
 #hw-preloaded-content {

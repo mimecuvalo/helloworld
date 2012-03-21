@@ -15,6 +15,8 @@ option {
   color: #060;
   -moz-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   -webkit-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -o-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -ms-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0, 4px 4px #333, 4px 3px #333, 3px 4px #333;
 }
 .hw-button:hover {
@@ -22,6 +24,8 @@ option {
   color: #060;
   -moz-box-shadow: 1px 1px #090, 2px 2px #090, 3px 3px #090, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   -webkit-box-shadow: 1px 1px #090, 2px 2px #090, 3px 3px #090, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -o-box-shadow: 1px 1px #090, 2px 2px #090, 3px 3px #090, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -ms-box-shadow: 1px 1px #090, 2px 2px #090, 3px 3px #090, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   box-shadow: 1px 1px #090, 2px 2px #090, 3px 3px #090, 4px 4px #333, 4px 3px #333, 3px 4px #333;
 }
 
@@ -38,6 +42,8 @@ option {
   color: #06f;
   -moz-box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   -webkit-box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -o-box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -ms-box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf, 4px 4px #333, 4px 3px #333, 3px 4px #333;
 }
 .hw-button-save:hover,
@@ -48,6 +54,8 @@ option {
   color: #06f;
   -moz-box-shadow: 1px 1px #09f, 2px 2px #09f, 3px 3px #09f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   -webkit-box-shadow: 1px 1px #09f, 2px 2px #09f, 3px 3px #09f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -o-box-shadow: 1px 1px #09f, 2px 2px #09f, 3px 3px #09f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -ms-box-shadow: 1px 1px #09f, 2px 2px #09f, 3px 3px #09f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   box-shadow: 1px 1px #09f, 2px 2px #09f, 3px 3px #09f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
 }
 .hw-button-media,
@@ -61,6 +69,8 @@ option {
   color: #f30;
   -moz-box-shadow: 1px 1px #f90, 2px 2px #f90, 3px 3px #f90, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   -webkit-box-shadow: 1px 1px #f90, 2px 2px #f90, 3px 3px #f90, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -o-box-shadow: 1px 1px #f90, 2px 2px #f90, 3px 3px #f90, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -ms-box-shadow: 1px 1px #f90, 2px 2px #f90, 3px 3px #f90, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   box-shadow: 1px 1px #f90, 2px 2px #f90, 3px 3px #f90, 4px 4px #333, 4px 3px #333, 3px 4px #333;
 }
 .hw-button-media:hover,
@@ -70,6 +80,8 @@ option {
   color: #f30;
   -moz-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   -webkit-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -o-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -ms-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
 }
 .hw-button-delete,
@@ -83,6 +95,8 @@ option {
   color: #f30;
   -moz-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   -webkit-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -o-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -ms-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60, 4px 4px #333, 4px 3px #333, 3px 4px #333;
 }
 .hw-button-delete:hover,
@@ -92,6 +106,8 @@ option {
   color: #f30;
   -moz-box-shadow: 1px 1px #f30, 2px 2px #f30, 3px 3px #f30, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   -webkit-box-shadow: 1px 1px #f30, 2px 2px #f30, 3px 3px #f30, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -o-box-shadow: 1px 1px #f30, 2px 2px #f30, 3px 3px #f30, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -ms-box-shadow: 1px 1px #f30, 2px 2px #f30, 3px 3px #f30, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   box-shadow: 1px 1px #f30, 2px 2px #f30, 3px 3px #f30, 4px 4px #333, 4px 3px #333, 3px 4px #333;
 }
 .hw-start,
@@ -101,6 +117,8 @@ option {
   color: #90f;
   -moz-box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   -webkit-box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -o-box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -ms-box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
 }
 .hw-start:hover {
@@ -108,6 +126,8 @@ option {
   color: #90f;
   -moz-box-shadow: 1px 1px #90f, 2px 2px #90f, 3px 3px #90f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   -webkit-box-shadow: 1px 1px #90f, 2px 2px #90f, 3px 3px #90f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -o-box-shadow: 1px 1px #90f, 2px 2px #90f, 3px 3px #90f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
+  -ms-box-shadow: 1px 1px #90f, 2px 2px #90f, 3px 3px #90f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
   box-shadow: 1px 1px #90f, 2px 2px #90f, 3px 3px #90f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
 }
 .hw-button.hw-selected,
@@ -115,6 +135,8 @@ option {
 .hw-button[disabled] {
   -moz-box-shadow: 1px 1px #333, 1px 0px #333, 0px 1px #333 !important;
   -webkit-box-shadow: 1px 1px #333, 1px 0px #333, 0px 1px #333 !important;
+  -o-box-shadow: 1px 1px #333, 1px 0px #333, 0px 1px #333 !important;
+  -ms-box-shadow: 1px 1px #333, 1px 0px #333, 0px 1px #333 !important;
   box-shadow: 1px 1px #333, 1px 0px #333, 0px 1px #333 !important;
   margin-top: 3px;
   margin-left: 6px;
@@ -128,6 +150,8 @@ option {
   border: 1px solid #0cf;
   -moz-box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf;
   -webkit-box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf;
+  -o-box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf;
+  -ms-box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf;
   box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf;
 }
 
@@ -137,6 +161,8 @@ div.hw-media-creator {
   border: 1px solid #fa0;
   -moz-box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
   -webkit-box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
+  -o-box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
+  -ms-box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
   box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
 }
 
@@ -146,6 +172,8 @@ div.hw-media-creator {
   border: 1px solid #0c0;
   -moz-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
   -webkit-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
+  -o-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
+  -ms-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
   box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
 }
 
@@ -153,6 +181,8 @@ div.hw-media-creator {
   border: 1px solid #f60;
   -moz-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60;
   -webkit-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60;
+  -o-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60;
+  -ms-box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60;
   box-shadow: 1px 1px #f60, 2px 2px #f60, 3px 3px #f60;
 }
 
@@ -160,6 +190,8 @@ div.hw-media-creator {
   border: 1px solid #c0f;
   -moz-box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f;
   -webkit-box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f;
+  -o-box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f;
+  -ms-box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f;
   box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f;
 }
 
@@ -168,6 +200,8 @@ div.hw-media-creator {
   border: 1px solid #000;
   -moz-box-shadow: 1px 1px 0 #000, 2px 2px 0 #000, 3px 3px 0 #000;
   -webkit-box-shadow: 1px 1px 0 #000, 2px 2px 0 #000, 3px 3px 0 #000;
+  -o-box-shadow: 1px 1px 0 #000, 2px 2px 0 #000, 3px 3px 0 #000;
+  -ms-box-shadow: 1px 1px 0 #000, 2px 2px 0 #000, 3px 3px 0 #000;
   box-shadow: 1px 1px 0 #000, 2px 2px 0 #000, 3px 3px 0 #000;
 }
 
@@ -176,6 +210,8 @@ div.hw-media-creator {
   border: 1px solid #fa0;
   -moz-box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
   -webkit-box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
+  -o-box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
+  -ms-box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
   box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
 }
 
@@ -183,5 +219,7 @@ span[data-tooltip]:hover:after {
   border: 1px solid #0c0;
   -moz-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
   -webkit-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
+  -o-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
+  -ms-box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
   box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
 }
