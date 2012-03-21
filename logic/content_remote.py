@@ -65,7 +65,7 @@ def get_remote_title_and_thumb(url, content_type=None):
       opener = urllib2.build_opener()
       response = opener.open(url)
       info = response.info()
-      if content_type is not None and 'content-type' in info and info['content-type'] != content_type:
+      if content_type is not None and 'content-type' in info and not info['content-type'].startswith(content_type):
         # save on bandwidth
         return ('', '', '')
       doc = BeautifulSoup(response.read())

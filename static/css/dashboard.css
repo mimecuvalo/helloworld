@@ -111,7 +111,7 @@
 
 .hw-remote-actions {
   float: right;
-  font-size: 10px;
+  font-size: 11px;
 }
 .hw-remote-actions a {
   display: inline-block;
@@ -132,6 +132,14 @@
   padding-bottom: 0;
   border-top: 1px solid #ccc;
   margin-top: 3px;
+}
+
+#hw-absorb footer {
+  margin-top: 10px;
+}
+
+#hw-absorb footer .hw-remote-actions {
+  margin-top: 1px;
 }
 
 #hw-absorb .hw-remote img {
