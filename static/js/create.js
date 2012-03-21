@@ -64,6 +64,8 @@ hw.resetCreateForm = function() {
   hw.$c('hw-wysiwyg').innerHTML = '<h1 id="hw-new-title">' + hw.getMsg('untitled') + '</h1><br>';
   createForm['hw-name'].value = '';
   createForm['hw-thumb'].value = '';
+  createForm['hw-save'].value = createForm['hw-save'].getAttribute('data-save');
+  createForm['hw-save'].disabled = false;
   createForm['hw-separate'].checked = false;
   hw.separate();
   var section = createForm['hw-section-album'];
@@ -179,6 +181,10 @@ hw.save = function() {
       }
     }
 
+    if (mediaHTML) {
+      html = mediaHTML;
+    }
+
     new hw.ajax(createForm['hw-url'].value,
       { method: !createForm['hw-id'].value ? 'post' : 'put',
         postBody: 'section='      + encodeURIComponent(section)
@@ -191,7 +197,7 @@ hw.save = function() {
                + '&date_repeats=' + encodeURIComponent(createForm['hw-date-repeats'].value)
                + '&style='        + encodeURIComponent(createForm['hw-style'].value)
                + '&code='         + encodeURIComponent(createForm['hw-code'].value)
-               + (hw.$c('hw-wysiwyg') ? '&view=' + encodeURIComponent(mediaHTML + html) : '')
+               + (hw.$c('hw-wysiwyg') ? '&view=' + encodeURIComponent(html) : '')
                + '&name='         + encodeURIComponent(separate ? '' : createForm['hw-name'].value)
                + (createForm['hw-thumb'] ? '&thumb=' + encodeURIComponent(createForm['hw-thumb'].value) : '')
                + '&template='     + encodeURIComponent(createForm['hw-template'].value)
@@ -218,14 +224,8 @@ hw.separate = function(el, forceEnable) {
   var enabled = separateCheckbox.checked;
   hw.setClass(hw.$('hw-create'), 'hw-separate', enabled);
 
-  var mediaList = hw.$c('hw-media-list');
-
-  for (var x = 0; x < mediaList.childNodes.length; ++x) {
-    var doc = mediaList.childNodes[x].contentWindow.document;
-    var mediaCreator = hw.$c('hw-media-creator', doc);
-    if (mediaCreator) {
-      hw.setClass(mediaCreator, 'hw-separate', enabled);
-    }
+  if (enabled) {
+    hw.options();
   }
 };
 

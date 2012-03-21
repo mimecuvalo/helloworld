@@ -231,10 +231,7 @@
 {% if not content %}
   hw.sectionChange(hw.$c('hw-section'));
   hw.addClass('hw-container', 'hw-editing');
-  hw.$c('hw-wysiwyg').focus();
-  window.getSelection().modify("move", "forward", "line");
-  window.getSelection().modify("move", "forward", "line");
-  hw.saveSelection();
+  hw.resetCreateForm();
 {% end %}
 
 {% if edit %}

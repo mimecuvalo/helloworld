@@ -540,6 +540,8 @@ hw.showImageOptions = function(image) {
       div.appendChild(document.createTextNode(hw.getMsg('image-info')));
       caption.appendChild(div);
       figureTag.appendChild(caption);
+    } else {
+      caption = captions[0];
     }
   }
   hw.$c('hw-image-options')['imageTag'] = imageTag;
@@ -557,11 +559,13 @@ hw.showImageOptions = function(image) {
 hw.hideImageOptions = function() {
   if (hw.$c('hw-image-options')) {
     if (hw.$c('hw-image-options')['captionTag']) {
-      if (hw.getSelectionStartNode() == hw.$c('hw-image-options')['captionTag']) {
+      if (hw.getSelectionStartNode() == hw.$c('hw-image-options')['captionTag']
+          || hw.getSelectionStartNode() == hw.$c('hw-image-options')['captionTag'].firstChild) {
         return;
       }
-      if (hw.$c('hw-image-options')['captionTag'].textContent == hw.getMsg('image-info')) {
-        hw.$c('hw-image-options')['captionTag'].parentNode.parentNode.removeChild(hw.$c('hw-image-options')['captionTag']);
+      if (hw.$c('hw-image-options')['captionTag'].textContent.replace(/\W/g, '') == hw.getMsg('image-info')) {
+        hw.$c('hw-image-options')['captionTag'].parentNode.removeChild(hw.$c('hw-image-options')['captionTag']);
+        hw.$c('hw-image-options')['captionTag'] = null;
       }
     }
     hw.$c('hw-image-options').style.top = '-10000px';

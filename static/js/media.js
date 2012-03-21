@@ -1,5 +1,21 @@
-hw.prepareFilesAndSendOff = function(callback) {
-  
+hw.prepareFilesAndSendOff = function(callback, figures) {
+  figures = figures || hw.$c('hw-wysiwyg').innerHTML.match(/<figure>.*?<\/figure>/ig);
+
+  if (!figures.length) {
+    hw.resetSaveState();
+    hw.resetCreateForm();
+    return;
+  }
+
+  var figure = figures.pop();
+  var caption = figure.match(/<figcaption>.*?<\/figcaption>/ig);
+  var title = caption ? caption[0].replace(/<\/?.*?>/ig, '') : hw.getMsg('untitled');
+
+  var separateCallback = function(xhr) {
+    hw.addToFeed(xhr.responseText);
+    hw.prepareFilesAndSendOff(callback, figures);
+  };
+  callback(figure, title, separateCallback);
 };
 
 hw.processFiles = function(json) {
