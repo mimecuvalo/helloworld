@@ -195,8 +195,8 @@ div.hw-view {
 div.hw-view iframe,
 div.hw-view object, 
 div.hw-view embed {
-  max-height: 225px;
-  max-width: 400px;
+  max-height: 450px;
+  max-width: 600px;
 }
 
 .hw-content-hidden {

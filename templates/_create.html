@@ -232,6 +232,10 @@
   hw.sectionChange(hw.$c('hw-section'));
   hw.addClass('hw-container', 'hw-editing');
   hw.resetCreateForm();
+
+  {% if initial_media %}
+  hw.getEmbedHtml("{% raw js_escape(initial_media) %}");
+  {% end %}
 {% end %}
 
 {% if edit %}

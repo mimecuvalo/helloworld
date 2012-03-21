@@ -650,6 +650,10 @@ a.hw-button-media {
   overflow: hidden;
 }
 
+a.hw-button-media input {
+  left: auto !important;
+}
+
 a.hw-button-media + progress.hw-shown {
   height: 12px;
   width: 82px;

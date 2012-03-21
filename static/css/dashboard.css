@@ -77,6 +77,10 @@
   right: 0;
   width: 10px;
   background-image: -moz-radial-gradient(right center, ellipse farthest-side, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6));
+  background-image: -webkit-radial-gradient(right center, ellipse farthest-side, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6));
+  background-image: -o-radial-gradient(right center, ellipse farthest-side, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6));
+  background-image: -ms-radial-gradient(right center, ellipse farthest-side, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6));
+  background-image: radial-gradient(right center, ellipse farthest-side, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6));
 }
 #hw-following a:hover {
   text-decoration: none;

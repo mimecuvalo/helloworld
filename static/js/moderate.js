@@ -352,6 +352,7 @@ hw.reply = function(event, el) {
   }
 
   var username = el.parentNode.getAttribute('data-username');
+  var user = el.parentNode.getAttribute('data-user');
   var commentForm = hw.$c('hw-comment-form');
 
   if (commentForm) {
@@ -385,8 +386,7 @@ hw.reply = function(event, el) {
   }
 
   var wysiwyg = hw.$c('hw-wysiwyg');
-  var str = '@' + username + (wysiwyg.innerHTML ? ' ' : '') + wysiwyg.innerHTML + ' ';
-  wysiwyg.innerHTML = str;
+  wysiwyg.innerHTML = '<a href="' + user + '">@' + username + '</a>';
   wysiwyg.focus();
 
   if (document.createRange) {

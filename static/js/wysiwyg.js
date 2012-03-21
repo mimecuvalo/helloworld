@@ -347,29 +347,12 @@ hw.paste = function(event) {
     createForm.removeChild(pasteArea);
 
     if (pastedContent) {
-      var sel = window.getSelection();
-
       if (pastedContent.search(/https?:\/\/maps.google.com/ig) == 0) {
         pastedContent = '&lt;iframe width="425" height="350" src="' + pastedContent + '&output=embed" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;';
       }
 
       if (pastedContent.search(/https?:\/\//ig) == 0) { // links
-        var createForm = hw.$c('hw-create');
-        var callback = function(xhr) {
-          document.execCommand("insertHTML", false, xhr.responseText + "<br><br>");
-          sel.modify("move", "forward", "character");
-
-          if (!createForm['hw-id'].value && xhr.getResponseHeader('X-Helloworld-Thumbnail') && !createForm['hw-thumb'].value) {
-            createForm['hw-thumb'].value = xhr.getResponseHeader('X-Helloworld-Thumbnail');
-            hw.changeThumbPreview();
-          }
-        };
-        new hw.ajax(hw.baseUri() + 'api',
-          { method: 'post',
-            postBody: 'op='   + encodeURIComponent('embed')
-                   + '&url='  + encodeURIComponent(pastedContent),
-            onSuccess: callback,
-            headers: { 'X-Xsrftoken' : createForm['_xsrf'].value } });
+        hw.getEmbedHtml(pastedContent);
         pastedContent = " ";
       } else if (pastedContent.search(/&lt;(embed|object|iframe)\s/ig) == 0) { // embed code
         pastedContent = pastedContent.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"");
@@ -386,6 +369,27 @@ hw.paste = function(event) {
   };
 
   setTimeout(postPaste, 0);
+};
+
+hw.getEmbedHtml = function(link) {
+  var createForm = hw.$c('hw-create');
+  var sel = window.getSelection();
+
+  var callback = function(xhr) {
+    document.execCommand("insertHTML", false, xhr.responseText + "<br><br>");
+    sel.modify("move", "forward", "character");
+
+    if (!createForm['hw-id'].value && xhr.getResponseHeader('X-Helloworld-Thumbnail') && !createForm['hw-thumb'].value) {
+      createForm['hw-thumb'].value = xhr.getResponseHeader('X-Helloworld-Thumbnail');
+      hw.changeThumbPreview();
+    }
+  };
+  new hw.ajax(hw.baseUri() + 'api',
+    { method: 'post',
+      postBody: 'op='   + encodeURIComponent('embed')
+             + '&url='  + encodeURIComponent(link),
+      onSuccess: callback,
+      headers: { 'X-Xsrftoken' : createForm['_xsrf'].value } });
 };
 
 hw.wysiwyg = function(event, cmd, value, el) {

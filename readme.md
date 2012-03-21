@@ -8,6 +8,7 @@ federated social web tumblr/blog/rss reader/wordpress-like app to be used on sha
 - ostatus stack, PuSH/Salmon/Webfinger
 - edit content in page, or add new content via dashboard
 - media manager (get oembed/open graph info from websites)
+- rich content pasting (paste in url/embed and we'll grab the video or image)
 - REST-style editing
 - spam control
 - rss reader
@@ -17,6 +18,7 @@ federated social web tumblr/blog/rss reader/wordpress-like app to be used on sha
 - album template using html5 history for nicer transitions between pages
 - browserid for logins, fallback to oauth
 - edit images via pixastic
+- resumable uploads via resumable.js
 - have hidden content (not private content - that's on the todo list though)
 - drag & drop to move sections
 - drag & drop to move content in albums

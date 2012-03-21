@@ -74,7 +74,6 @@ class ApiHandler(BaseHandler):
     self.set_status(204)
 
   def embed(self):
-    # TODO, similar code in upload.py - code be unified...
     try:
       url = self.get_argument('url')
       media_type = media.detect_media_type(url)
