@@ -9,6 +9,7 @@
     hw.setMsg('delete-failed', "{% raw js_escape(_("no good, mate.")) %}");
     hw.setMsg('error', "{% raw js_escape(_('no good, mate.')) %}");
     hw.setMsg('saved', "{% raw js_escape(_('saved!')) %}");
+    hw.setMsg('uploading', "{% raw js_escape(_('uploading...')) %}");
     hw.xsrf = '{% raw xsrf_form_html() %}';
     hw.uploadUrl = '{{ nav_url(section='upload') }}';
   </script>

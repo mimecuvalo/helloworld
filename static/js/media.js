@@ -320,13 +320,19 @@ hw.uploadButton = function(callback, section) {
       Event.stopObserving(iframe, 'load', fn, false);
       Event.observe(iframe, 'load', onUpload, false);
 
+      hw.show(button);
       hw.hide(result);
       result.innerHTML = "";
 
-      button.onclick = function() {
+      var clickFunc = function() {
         doc.getElementById('section').value = button.getAttribute('data-section');
         doc.getElementById('file').click();
-      }
+        hw.hide(button);
+        hw.show(result);
+        result.innerHTML = hw.getMsg('uploading');
+      };
+
+      button.onclick = clickFunc;
     };
     Event.observe(iframe, 'load', fn, false);
 

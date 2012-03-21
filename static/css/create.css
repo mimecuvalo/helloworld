@@ -678,3 +678,10 @@ a.hw-button-media + progress.hw-shown {
   margin: 3px 0 0 5px;
   display: block;
 }
+
+.hw-edit-image {
+  display: block;
+  float: right;
+  font-size: 11px;
+  margin-top: 3px;
+}

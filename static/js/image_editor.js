@@ -1,18 +1,17 @@
 hw.editImage = function(event, el) {
   hw.preventDefault(event);
 
-  var editor = hw.$c('hw-image-editor');
-  editor.__hw_image = hw.$c('hw-media-preview', el.ownerDocument);
-  editor.__hw_media_doc = el.ownerDocument;
-
-  if (!hw.hasClass(hw.$c('hw-media-creator', el.ownerDocument), 'hw-file')) {
+  if (!hw.$c('hw-image-options')['imageTag']) {
     return;
   }
 
+  var editor = hw.$c('hw-image-editor');
+  editor.__hw_image = hw.$c('hw-image-options')['imageTag'];
+
   hw.show(editor);
-  editor.style.left = editor.getBoundingClientRect().left + 'px';
+  editor.style.left = '50%';
   editor.style.top = editor.getBoundingClientRect().top + 'px';
-  editor.style.marginLeft = 0;
+  editor.style.marginLeft = '-' + (editor.getBoundingClientRect().width / 2) + 'px';
 
   var img = hw.$c('hw-image-scratch');
   if (!img) {
@@ -35,36 +34,22 @@ hw.editImage = function(event, el) {
 hw.editImageCanvas = function() {
   return hw.$c('hw-image-editor').getElementsByTagName('canvas')[0];
 };
+// XXX doesn't work right now
 hw.editImageSave = function(event) {
   var editor = hw.$c('hw-image-editor');
   var canvas = hw.editImageCanvas();
-  var parentNode = editor.__hw_image.parentNode;
-  parentNode.removeChild(editor.__hw_image);
-  var newImg = document.createElement('img');
-  newImg.src = canvas.toDataURL();
-  hw.addClass(newImg, 'hw-media-preview');
-  parentNode.insertBefore(newImg, parentNode.firstChild);
 
-  var mediaCreator = hw.$c('hw-media-creator', editor.__hw_media_doc);
-  var remoteSource = hw.$c('hw-media-remote', editor.__hw_media_doc);
-  var fileInput = hw.$c('hw-media-file', editor.__hw_media_doc);
-
-  var fileName;
-  if (hw.hasClass(mediaCreator, 'hw-file')) {
-    fileName = fileInput.value;
-  } else if (!hw.addClass(remoteSource, 'hw-initial')) {
-    fileName = remoteSource.value;
-  } else {
-    fileName = hw.$c('hw-media-local', editor.__hw_media_doc).value;
-  }
-
-  remoteSource.value = '';
-  hw.addClass(remoteSource, 'hw-initial');
-
-  hw.addClass(mediaCreator, 'hw-file');
-  hw.removeClass(fileInput, 'hw-hidden');
-  fileInput['file'] = canvas.toBlob ? canvas.toBlob() : canvas.mozGetAsFile(fileName);
-  fileInput.value = fileName;
+  var callback = function(json) {
+    alert(json.toSource())
+  };
+  var name = editor.__hw_image.src.substring(editor.__hw_image.src.lastIndexOf('/') + 1);
+  var data = canvas.toBlob ? canvas.toBlob() : canvas.mozGetAsFile(name);
+  
+  var iframe = hw.$$('[name=hw-media-creator]')[0];
+var doc = iframe.contentWindow.document;
+        doc.getElementById('file')['file'] = data;
+        doc.getElementById('file').value = name;
+       // clickFunc();
 
   hw.editImageClose();
 };
