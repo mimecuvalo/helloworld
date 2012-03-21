@@ -481,7 +481,9 @@ hw.testSection = function(section, windowPositionY) {
     section.removeAttribute('data-unread');
     hw.$('hw-total-unread-count').innerHTML = '(' + (parseInt(hw.$('hw-total-unread-count').innerHTML.slice(1, -1)) - 1) + ')';
     var countEl = hw.$$('#hw-following li[data-user="' + section.getAttribute('data-remote-profile-url') + '"] .hw-unread-count')[0];
-    countEl.innerHTML = '(' + (parseInt(countEl.innerHTML.slice(1, -1)) - 1) + ')';
+    if (countEl) {
+      countEl.innerHTML = '(' + (parseInt(countEl.innerHTML.slice(1, -1)) - 1) + ')';
+    }
   }
 };
 
