@@ -5,7 +5,7 @@ button,
 input,
 select,
 option {
-  font: 13px helvetica neue, arial, sans-serif;
+  font: 13px arial, sans-serif;
 }
 
 figure {
@@ -16,6 +16,12 @@ figcaption {
   text-align: center;
   color: #666;
   font-size: 12px;
+}
+
+h1 {
+  font-size: 140%;
+  font-weight: bold;
+  margin: 0;
 }
 
 .hw-help {
