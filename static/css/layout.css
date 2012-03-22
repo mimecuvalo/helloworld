@@ -444,6 +444,28 @@ a.hw-read-more {
   display: block;
 }
 
+.hw-archive {
+  padding: 25px 10px;
+}
+
+#hw-content .hw-archive li {
+  clear: both;
+  position: relative;
+  padding-left: 15px;
+  margin: 5px 0;
+  list-style: inside square;
+}
+
+.hw-archive li .hw-content-delete {
+  display: none;
+}
+.hw-editing .hw-archive li:hover .hw-content-delete {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 #hw-loading {
   border: 1px solid black;
   padding: 1em;

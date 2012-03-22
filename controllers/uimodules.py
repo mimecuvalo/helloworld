@@ -166,6 +166,9 @@ class Album(SimpleTemplate):
 class Store(SimpleTemplate):
   template_type = "album"
 
+class Forum(SimpleTemplate):
+  template_type = "forum"
+
 class Archive(SimpleTemplate):
   template_type = "archive"
 

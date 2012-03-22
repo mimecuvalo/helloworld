@@ -46,7 +46,7 @@
       {% if individual_content %}
         <select name="hw-section-album" class="hw-section-album" onclick="" onchange="hw.sectionChange(this)">
           <option value="_new_">{{ _('new section/album...') }}</option>
-          <option value="" {% if len(sections) == 0 or not content %}selected{% end %}>------------</option>
+          <option value="" {% if len(sections) == 0 or not content %}selected{% end %}>{{ _('(choose section)') }}</option>
           <option value="main" {% if content and content.section == 'main' %}selected{% end %} data-hidden="false">{{ _('main (top-level page)') }}</option>
           {% for section in sections %}
             <option value="{{ section['name'] }}||{{ section['template'] }}|" {% if content and content.section == section['name'] and not content.album %}selected{% end %} data-hidden="{% if section['hidden'] %}true{% else %}false{% end %}">{{ section['title'] }}</option>

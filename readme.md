@@ -45,10 +45,9 @@ federated social web tumblr/blog/rss reader/wordpress-like app to be used on sha
 - be a good, easy-to-use alternative to what's out there!
 
 ## todo (hey, intrepid open source developer! check out all this stuff you could help work on! email me: mimecuvalo@gmail.com)
-- autocomplete username if typing '@'
 - fb/google+/twitter mirroring?
 - privacy
-- possibly: forum/wiki
+- possibly: wiki
 - possibly: js "templating" - be able to add microformatting, creativeworks/recipes/person, schema.org
 - reduce/cache mysql calls
 - mysql migrator
