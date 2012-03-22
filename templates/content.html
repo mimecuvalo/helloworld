@@ -6,18 +6,18 @@
        rel="next" class="hw-next hw-button {% if not next %} hw-disabled {% end %}"
         {% if next %}
           href="{{ content_url(next) }}"
-          title="{% if content_owner.title %}{{ content_owner.title }}{% end %}{% if content_owner.title and next.title %} - {% end %}{{ next.title }}"
+          {% set title = "" %}
+          {% if content_owner.title %}
+            {% set title = content_owner.title %}
+          {% end %}
+          {% if content_owner.title and next.title %}
+            {% set title += ' - ' %}
+          {% end %}
+          {% set title += next.title %}
+          title="{{ title }}"
           {% if content.style or content.code or next.style or next.code or section_code or album_code %}
             data-disallow-magic="1"
           {% else %}
-            {% set title = "" %}
-            {% if content_owner.title %}
-              {% set title = content_owner.title %}
-            {% end %}
-            {% if content_owner.title and next.title %}
-              {% set title = ' - ' %}
-            {% end %}
-            {% set title += next.title %}
             onclick='hw.navigate(event, "{{ content_url(next, host=True) }}", "{% raw js_in_html_escape(title) %}")'
           {% end %}
         {% end %}>{{ _("next") }}</a><a
@@ -27,18 +27,18 @@
        rel="prev" class="hw-previous hw-button {% if not previous %} hw-disabled {% end %}"
         {% if previous %}
           href="{{ content_url(previous) }}"
-          title="{% if content_owner.title %}{{ content_owner.title }}{% end %}{% if content_owner.title and previous.title %} - {% end %}{{ previous.title }}"
+          {% set title = "" %}
+          {% if content_owner.title %}
+            {% set title = content_owner.title %}
+          {% end %}
+          {% if content_owner.title and previous.title %}
+            {% set title += ' - ' %}
+          {% end %}
+          {% set title += previous.title %}
+          title="{{ title }}"
           {% if content.style or content.code or previous.style or previous.code or section_code or album_code %}
             data-disallow-magic="1"
           {% else %}
-            {% set title = "" %}
-            {% if content_owner.title %}
-              {% set title = content_owner.title %}
-            {% end %}
-            {% if content_owner.title and previous.title %}
-              {% set title = ' - ' %}
-            {% end %}
-            {% set title += previous.title %}
             onclick='hw.navigate(event, "{{ content_url(previous, host=True) }}", "{% raw js_in_html_escape(title) %}")'
           {% end %}
         {% end %}>{{ _("previous") }}</a><a
