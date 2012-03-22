@@ -69,7 +69,7 @@
     <a href="#options" class="hw-more-options hw-button" onclick="hw.optionsClick(event)">{{ _('options') }}</a>
     <script>hw.uploadButton(function(json) { hw.processFiles(json); });</script>
     <a href="#help" class="hw-help-button hw-button" onclick="hw.help(event)">?</a>
-    <span class="hw-response hw-invisible-transition hw-invisible" data-saved="{{ _("saved.") }}"
+    <span class="hw-response hw-hidden-transition hw-hidden" data-saved="{{ _("saved.") }}"
             data-bad="{{ _("no good, mate.") }}" data-duplicate="{{ _("duplicate id.") }}">&nbsp;</span>
   </div>
 

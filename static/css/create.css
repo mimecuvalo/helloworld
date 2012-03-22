@@ -45,9 +45,6 @@ span.hw-response {
   -ms-border-radius: 3px;
   border-radius: 3px;
 }
-span.hw-response.hw-invisible {
-  z-index: -1;
-}
 
 span.hw-response.hw-bad {
   color: white;

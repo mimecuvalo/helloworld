@@ -1,16 +1,12 @@
 hw.displayResponse = function(good, msg) {
   var response = hw.$c('hw-response');
-  hw.removeClass(response, 'hw-invisible-reverse-transition');
-  hw.addClass(response, 'hw-invisible-transition');
-  hw.removeClass(response, 'hw-invisible');
+  hw.removeClass(response, 'hw-hidden');
   hw.setClass(response, 'hw-bad', !good);
   response.innerHTML = msg;
   var callback = function() {
-    hw.removeClass(response, 'hw-invisible-transition');
-    hw.addClass(response, 'hw-invisible-reverse-transition');
-    hw.addClass(response, 'hw-invisible');
+    hw.addClass(response, 'hw-hidden');
   };
-  setTimeout(callback, 300);
+  setTimeout(callback, 3000);
 };
 
 hw.changeBeforeUnloadState = function(event, allowPageChange) {
