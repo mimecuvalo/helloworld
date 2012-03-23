@@ -21,7 +21,6 @@
 
 {% block backend_content %}
   <div id="customize">
-    <h1>{{ _('Customize Site') }}</h1>
     <form id="hw-customize-form" method="post" action="{{ nav_url(section='customize') }}">
       {% raw xsrf_form_html() %}
       <dl>

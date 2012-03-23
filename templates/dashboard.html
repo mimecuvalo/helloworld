@@ -42,18 +42,6 @@
 {% end %}
 
 {% block more_sidebar %}
-  <div id="hw-followers">
-    <h2>{{ _('followers') }}</h2><br>
-    <ul>
-      {% for follower in followers %}
-        <li>
-          <a href="{{ follower.profile_url }}" title="{% if follower.name %}{{ follower.name }}{% else %}{{ follower.username }}{% end %}">
-            <img height="16" width="16" src="{{ follower.avatar }}" onerror="this.src='{{ static_url('img/pixel.gif') }}';this.style.border='1px solid black';this.style.width='15px';this.style.height='15px'" />
-          </a>
-        </li>
-      {% end %}
-    </ul>
-  </div>
   <div id="hw-following">
     {% comment TODO to do unfollow maybe drag to a trash? %}
     <h2>{{ _('following') }}</h2>
@@ -101,6 +89,19 @@
         <a href="#spam" onclick="hw.read(event, null, null, true)">{{ _('review spam') }}</a>
         <span class="hw-unread-count">({{ spam_count }})</span>
       </li>
+    </ul>
+  </div>
+
+  <div id="hw-followers">
+    <h2>{{ _('followers') }}</h2><br>
+    <ul>
+      {% for follower in followers %}
+        <li>
+          <a href="{{ follower.profile_url }}" title="{% if follower.name %}{{ follower.name }}{% else %}{{ follower.username }}{% end %}">
+            <img height="16" width="16" src="{{ follower.avatar }}" onerror="this.src='{{ static_url('img/pixel.gif') }}';this.style.border='1px solid black';this.style.width='15px';this.style.height='15px'" />
+          </a>
+        </li>
+      {% end %}
     </ul>
   </div>
 {% end %}

@@ -40,8 +40,18 @@
   padding: 5px;
 }
 
+#hw-navigation {
+  margin-top: 5px;
+}
+
 #hw-followers li {
   display: inline-block;
+}
+
+#hw-following,
+#hw-followers {
+  max-height: 600px;
+  overflow-y: scroll;
 }
 
 #hw-following li {
@@ -61,8 +71,8 @@
 }
 #hw-following .hw-following-username {
   display: inline-block;
-  max-width: 95px;
-  width: 95px;
+  max-width: 82px;
+  width: 82px;
   overflow: hidden;
   height: 16px;
   vertical-align: middle;
