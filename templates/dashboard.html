@@ -2,6 +2,9 @@
 
 {% block extra_js %}
   <script src="{{ static_url('js/all_create.js', 'js/all_create.inc') }}"></script>
+  <script>
+    hw.disableHistory = true; {# disable popstate events #}
+  </script>
 {% end block %}
 
 {% block title %}
@@ -10,7 +13,7 @@
 
 {% block backend_content %}
   <div id="hw-create">
-    {% module Create(initial_media=initial_media) %}
+    {% module Create() %}
   </div>
 
   <div id="hw-absorb">

@@ -29,7 +29,7 @@
         {% block more_tools %}{% end %}
         <li><hr></li>
         <li><a href="javascript:window.location.href='{{ nav_url(host=True, section='api') }}?op=follow&amp;user='+encodeURIComponent(window.location.href)">{{ _('follow bookmarklet') }}</a> <span data-tooltip="{{ _('drag the link to your bookmarks and then use it on websites you want to follow!') }}">[?]</span></li>
-        <li><a href="javascript:window.location.href='{{ nav_url(host=True, section='dashboard') }}?reblog='+encodeURIComponent(window.location.href)">{{ _('reblog bookmarklet') }}</a> <span data-tooltip="{{ _('drag the link to your bookmarks and then use it on websites you want to reblog!') }}">[?]</span></li>
+        <li><a href="javascript:window.location.href='{{ nav_url(host=True, section='dashboard') }}#reblog='+encodeURIComponent(window.location.href)">{{ _('reblog bookmarklet') }}</a> <span data-tooltip="{{ _('drag the link to your bookmarks and then use it on websites you want to reblog!') }}">[?]</span></li>
         {% if is_superuser %}
           <li><hr></li>
           <li><a href="{{ nav_url(section='users') }}">{{ _('user admin') }}</a></li>

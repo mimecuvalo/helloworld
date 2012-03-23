@@ -189,7 +189,12 @@ hw.preloadNextLogicalContent = function() {
 
 Event.observe(window, 'load', hw.preloadNextLogicalContent, false);
 hw.startUrl = window.location.href;
+hw.disableHistory = false;
 Event.observe(window, 'popstate', function(e) {
+  if (hw.disableHistory) {
+    return;
+  }
+
   if (hw.startUrl == window.location.href) { // XXX chrome sends a popstate event onload too
     hw.startUrl = null;
     return;

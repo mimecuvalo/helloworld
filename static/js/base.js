@@ -382,6 +382,16 @@ Object.extend(Event, {
   }
 });
 
+hw.getArgument = function(args, field) {
+  args = args.split('?');
+  var parsedArgs = {};
+  for (var x = 0; x < args.length; ++x) {
+    var split = args[x].split('=');
+    parsedArgs[split[0]] = decodeURIComponent(split[1]);
+  }
+  return parsedArgs[field];
+};
+
 hw.testAccelKey = function(event) {
   if (navigator.platform.toLowerCase().indexOf('mac') != -1) {
     return event.metaKey;

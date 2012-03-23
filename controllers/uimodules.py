@@ -2,15 +2,15 @@ import datetime
 import re
 import tornado.template
 import tornado.web
+import urllib
 
 from logic import content_remote
 from logic import url_factory
 
 class Create(tornado.web.UIModule):
-  def render(self, content=None, edit=False, individual_content=True, initial_media=None):
+  def render(self, content=None, edit=False, individual_content=True):
     self.handler.display["individual_content"] = individual_content
     self.handler.display["content"] = content
-    self.handler.display["initial_media"] = initial_media
     self.handler.display["edit"] = self.handler.get_argument('edit', False)
     self.handler.display["default_username"] = self.handler.get_author_username()
     self.handler.display["remote_users"] = self.handler.models.users_remote.get(local_username=self.handler.display["default_username"])[:]
@@ -22,6 +22,7 @@ class Create(tornado.web.UIModule):
 class Moderate(tornado.web.UIModule):
   def render(self, item):
     self.handler.display["item"] = item
+    self.handler.display["urlencode"] = urllib.urlencode
     return self.render_string("_moderate.html", **self.handler.display)
 
 class SiteMap(tornado.web.UIModule):

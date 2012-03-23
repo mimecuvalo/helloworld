@@ -14,7 +14,6 @@ class DashboardHandler(BaseHandler):
       self.redirect(self.nav_url(section='dashboard'), permanent=True)
       return
 
-    self.display["initial_media"] = self.get_argument('reblog', None)
     self.display["own_feed"] = int(self.get_argument('own_feed', 0))
     if self.get_argument('list_mode', None) != None:
       self.display["list_mode"] = int(self.get_argument('list_mode', 0))
