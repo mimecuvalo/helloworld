@@ -57,17 +57,6 @@ class Content(tornado.web.UIModule):
 
     if sanitize:
       content.view = content_remote.sanitize(content.view)
-    else:
-      # check for link template, backwards compatibility
-      if content.view.startswith('http://') and content.view.find(' ') == -1:
-        new_view = ''
-        if content.thumb:
-          new_view = '<a href="' + content.view + '" title="' + content.title + '"><img src="' + content.thumb + '"></a><br>'
-        new_view += '<a href="' + content.view + '" title="' + content.title + '">' + content.view + '</a>'
-        content.view = new_view
-
-      # linkify tags,  xxx this is now done in wysiwyg
-      # content.view = url_factory.linkify_tags(self.handler, content)
 
     return content
 
