@@ -22,6 +22,8 @@ class DashboardHandler(BaseHandler):
     else:
       self.display["list_mode"] = int(self.get_cookie("list_mode")) if self.get_cookie("list_mode") != None else 0
     self.display["read_spam"] = int(self.get_argument('read_spam', 0))
+    self.display["read_favorites"] = int(self.get_argument('read_favorites', 0))
+    self.display["read_comments"] = int(self.get_argument('read_comments', 0))
     self.display["specific_feed"] = self.get_argument('specific_feed', None)
     self.display["user"] = user = self.get_author_user()
     offset = int(self.breadcrumbs["modifier"]) if self.breadcrumbs["modifier"] else 1
@@ -32,6 +34,12 @@ class DashboardHandler(BaseHandler):
     if self.display["read_spam"]:
       self.display["list_mode"] = 0
       dashboard_objects = self.models.content_remote.get(to_username=user.username, is_spam=True)[begin:end]
+    elif self.display["read_favorites"]:
+      self.display["list_mode"] = 0
+      dashboard_objects = self.models.content_remote.get(to_username=user.username, favorited=True)[begin:end]
+    elif self.display["read_comments"]:
+      self.display["list_mode"] = 0
+      dashboard_objects = self.models.content_remote.get(to_username=user.username, type='comment')[begin:end]
     else:
       dashboard_objects = \
           [ self.models.content_remote(**content) \
@@ -70,6 +78,8 @@ class DashboardHandler(BaseHandler):
       total_count += profile_count
 
     self.display['total_count'] = total_count
+    self.display['favorites_count'] = self.models.content_remote.get(to_username=user.username, favorited=True).count()
+    self.display['comments_count'] = self.models.content_remote.get(to_username=user.username, type='comment').count()
     self.display['spam_count'] = self.models.content_remote.get(to_username=user.username, is_spam=True).count()
 
     self.fill_template("dashboard.html")

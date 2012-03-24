@@ -53,7 +53,7 @@
       <button id="hw-following-button" type="button" class="hw-button" onclick="hw.follow(event)" data-normal="{{ _('follow') }}" data-following="{{ _('one sec...') }}">{{ _('follow') }}</button>
       <div class="clear"></div>
     </div>
-    <ul data-error="{{ _('Error retrieving feed.') }}">
+    <ul data-error="{{ _('Nothing to read here!') }}">
       <li id="hw-following-read-all" data-user="" class="hw-selected">
         <a href="#read-all" onclick="hw.read(event, this)">{{ _('read all') }}</a>
         <span id="hw-total-unread-count" class="hw-unread-count">({{ total_count }})</span>
@@ -63,6 +63,20 @@
           <img height="16" width="16" src="{% if user.favicon %}{{ user.favicon }}{% else %}{{ static_url('favicon.ico') }}{% end %}" />
         </a>
         <a href="#your-feed" onclick="hw.read(event, null)">{{ _('your feed') }}</a>
+      </li>
+      <li id="hw-following-favorites" data-user="">
+        <a href="#favorites" onclick="hw.read(event, this, null, 'favorites')" title="{{ _('favorites') }}">
+          <img height="16" width="16" src="{% if user.favicon %}{{ user.favicon }}{% else %}{{ static_url('favicon.ico') }}{% end %}" />
+        </a>
+        <a href="#your-feed" class="hw-following-username" onclick="hw.read(event, this, null, 'favorites')">{{ _('favorites') }}</a>
+        <span class="hw-unread-count">({{ favorites_count }})</span>
+      </li>
+      <li id="hw-following-comments" data-user="">
+        <a href="#comments" onclick="hw.read(event, this, null, 'comments')" title="{{ _('comments') }}">
+          <img height="16" width="16" src="{% if user.favicon %}{{ user.favicon }}{% else %}{{ static_url('favicon.ico') }}{% end %}" />
+        </a>
+        <a href="#comments" class="hw-following-username" onclick="hw.read(event, this, null, 'comments')">{{ _('comments') }}</a>
+        <span class="hw-unread-count">({{ comments_count }})</span>
       </li>
       {% for follower in following %}
         {% if follower.name %}
@@ -89,7 +103,7 @@
         </li>
       {% end %}
       <li id="hw-following-spam" data-user="">
-        <a href="#spam" onclick="hw.read(event, null, null, true)">{{ _('review spam') }}</a>
+        <a href="#spam" onclick="hw.read(event, this, null, 'spam')">{{ _('review spam') }}</a>
         <span class="hw-unread-count">({{ spam_count }})</span>
       </li>
     </ul>

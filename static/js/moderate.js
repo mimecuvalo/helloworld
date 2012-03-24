@@ -219,7 +219,7 @@ hw.follow = function(event, el) {
 };
 
 hw.readCurrent = null;
-hw.read = function(event, el, listMode, readSpam) {
+hw.read = function(event, el, listMode, special) {
   if (event) {
     hw.preventDefault(event);
   }
@@ -241,10 +241,10 @@ hw.read = function(event, el, listMode, readSpam) {
       hw.addClass(hw.$('hw-following-your-feed'), 'hw-selected');
     }
 
-    if (readSpam) {
-      url = hw.baseUri() + 'dashboard' + '?read_spam=1';
-      hw.readCurrent = hw.$('hw-following-spam');
-      hw.addClass(hw.$('hw-following-spam'), 'hw-selected');
+    if (special) {
+      url = hw.baseUri() + 'dashboard' + '?read_' + special + '=1';
+      hw.readCurrent = hw.$('hw-following-' + special);
+      hw.addClass(hw.$('hw-following-' + special), 'hw-selected');
     } else {
       url = hw.baseUri() + 'dashboard' + '?specific_feed=' + encodeURIComponent(user)
                                        + '&own_feed=' + (ownFeed ? 1 : 0)
@@ -263,7 +263,7 @@ hw.read = function(event, el, listMode, readSpam) {
   var callback = function(xhr) {
     hw.loadMoreObject.done = false;
     hw.loadMoreObject.offset = 1;
-    if (user || ownFeed || listMode != undefined) {
+    if (user || ownFeed || listMode != undefined || special) {
       hw.loadMoreObject.url = url;
     } else if (!user) {
       hw.loadMoreObject.url = hw.baseUri() + 'dashboard';
