@@ -179,6 +179,11 @@
 #hw-feed.hw-list-mode header {
   margin: 0;
 }
+#hw-feed.hw-list-mode .hw-list-closed .hw-creator,
+#hw-feed.hw-list-mode .hw-list-closed .hw-view,
+#hw-feed.hw-list-mode .hw-list-closed .hw-info {
+  display: none;
+}
 #hw-feed h1 {
   text-align: left;
   text-transform: none;

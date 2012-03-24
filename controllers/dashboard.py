@@ -15,6 +15,8 @@ class DashboardHandler(BaseHandler):
       return
 
     self.display["own_feed"] = int(self.get_argument('own_feed', 0))
+    self.display["local_entry"] = self.get_argument('local_entry', None)
+    self.display["remote_entry"] = self.get_argument('remote_entry', None)
     if self.get_argument('list_mode', None) != None:
       self.display["list_mode"] = int(self.get_argument('list_mode', 0))
     else:
@@ -36,7 +38,7 @@ class DashboardHandler(BaseHandler):
             if content['post_id'] else \
                 self.models.content(**content) \
             for content in db.dashboard_feed(user.username, begin, self.constants['page_size'], \
-                                             self.display["specific_feed"], self.display["own_feed"]) ]
+                                             self.display["specific_feed"], self.display["own_feed"], self.display["local_entry"], self.display["remote_entry"]) ]
 
     self.display['combined_feed'] = \
         [ self.ui["modules"].RemoteContent(content) \

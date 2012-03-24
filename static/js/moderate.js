@@ -537,3 +537,55 @@ hw.markAllAsRead = function(event, el) {
       onSuccess: function() {},
       onError: function() {} });
 };
+
+hw.listOpen = function(event, el) {
+  if (hw.getCookie('list_mode', '0') == '0') {
+    return;
+  }
+
+  hw.preventDefault(event);
+
+  var local_entry = el.getAttribute('data-local-id');
+  var remote_entry = el.getAttribute('data-remote-id');
+  var entry = local_entry || remote_entry;
+  var section = el;
+  while (section) {
+    if (section.nodeName == 'SECTION') {
+      break;
+    }
+    section = section.parentNode;
+  }
+
+  if (hw.hasClass(section, 'hw-list-open')) {
+    hw.removeClass(section, 'hw-list-open');
+    hw.addClass(section, 'hw-list-closed');
+    return;
+  } else if (hw.hasClass(section, 'hw-list-closed')) {
+    hw.removeClass(section, 'hw-list-closed');
+    hw.addClass(section, 'hw-list-open');
+    return;
+  }
+
+  var callback = function(xhr) {
+    var div = document.createElement('DIV');
+    div.innerHTML = xhr.responseText;
+    section.parentNode.replaceChild(div, section);
+    var newSection = div.getElementsByTagName('SECTION')[0];
+    hw.addClass(newSection, 'hw-list-open');
+    hw.testSection(newSection);
+  };
+
+  var badTrip = function() {
+    hw.displayResponse(false, hw.getMsg('error'));
+  };
+
+  var url = hw.baseUri() + 'dashboard?' + (local_entry ? 'local' : 'remote') + '_entry='  + encodeURIComponent(entry)
+                                        + '&list_mode=0';
+
+  var createForm = hw.$c('hw-create');
+  new hw.ajax(url,
+    { method: 'get',
+      headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
+      onSuccess: callback,
+      onError: badTrip });
+};
