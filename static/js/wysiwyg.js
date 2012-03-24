@@ -376,8 +376,11 @@ hw.getEmbedHtml = function(link) {
   var sel = window.getSelection();
 
   var callback = function(xhr) {
-    document.execCommand("insertHTML", false, xhr.responseText + "<br><br>");
-    sel.modify("move", "forward", "character");
+    var isEmbed = xhr.responseText.search(/&lt;(embed|object|iframe)\s/ig) == 0;
+    document.execCommand("insertHTML", false, xhr.responseText + (isEmbed ? "<br><br>" : ""));
+    if (isEmbed) {
+      sel.modify("move", "forward", "character");
+    }
 
     if (!createForm['hw-id'].value && xhr.getResponseHeader('X-Helloworld-Thumbnail') && !createForm['hw-thumb'].value) {
       createForm['hw-thumb'].value = xhr.getResponseHeader('X-Helloworld-Thumbnail');
