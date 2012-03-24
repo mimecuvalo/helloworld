@@ -269,6 +269,7 @@ hw.read = function(event, el, listMode, special) {
       hw.loadMoreObject.url = hw.baseUri() + 'dashboard';
     }
     hw.$('hw-feed').innerHTML = '<a id="hw-feed-page-1"></a>' + xhr.responseText;
+    hw.updateCounts();
   };
 
   var badTrip = function(xhr) {
@@ -281,6 +282,39 @@ hw.read = function(event, el, listMode, special) {
       headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
       onSuccess: callback,
       onError: badTrip });
+};
+
+hw.updateCount = function(el, delta, opt_setCount) {
+  var newCount;
+  if (opt_setCount != undefined) {
+    newCount = opt_setCount;
+  } else {
+    newCount = parseInt(el.innerHTML.slice(1, -1)) + delta;
+  }
+  el.innerHTML = '(' + newCount + ')';
+};
+
+hw.updateCounts = function() {
+  var callback = function(xhr) {
+    var json = JSON.parse(xhr.responseText);
+    hw.updateCount(hw.$('hw-total-unread-count'), null, json['total_count']);
+    hw.updateCount(hw.$$('#hw-following #hw-following-favorites .hw-unread-count')[0], null, json['favorites_count']);
+    hw.updateCount(hw.$$('#hw-following #hw-following-comments .hw-unread-count')[0], null, json['comments_count']);
+    hw.updateCount(hw.$$('#hw-following #hw-following-spam .hw-unread-count')[0], null, json['spam_count']);
+
+    for (var user in json) {
+      if (user.indexOf('http') == 0) {
+        hw.updateCount(hw.$$('#hw-following li[data-user="' + user + '"] .hw-unread-count')[0], null, json[user]);
+      }
+    }
+  };
+
+  var createForm = hw.$c('hw-create');
+  new hw.ajax(hw.baseUri() + 'dashboard?get_counts=1',
+    { method: 'get',
+      headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
+      onSuccess: callback,
+      onError: function() {} });
 };
 
 hw.unfollow = function(event, el) {
@@ -480,10 +514,10 @@ hw.markSectionAsRead = function(section) {
   // section is above the fold, mark as read
   hw.markedAsRead.push(section.getAttribute('data-remote-id'));
   section.setAttribute('data-unread', 'false');
-  hw.$('hw-total-unread-count').innerHTML = '(' + (parseInt(hw.$('hw-total-unread-count').innerHTML.slice(1, -1)) - 1) + ')';
+  hw.updateCount(hw.$('hw-total-unread-count'), -1);
   var countEl = hw.$$('#hw-following li[data-user="' + section.getAttribute('data-remote-profile-url') + '"] .hw-unread-count')[0];
   if (countEl) {
-    countEl.innerHTML = '(' + (parseInt(countEl.innerHTML.slice(1, -1)) - 1) + ')';
+    hw.updateCount(count, -1);
   }
 };
 hw.markReadOnScroll = function(event) {
@@ -527,10 +561,10 @@ hw.markAsUnread = function(event, el) {
 
   hw.markedAsUnread.push(section.getAttribute('data-remote-id'));
   section.setAttribute('data-unread', 'true');
-  hw.$('hw-total-unread-count').innerHTML = '(' + (parseInt(hw.$('hw-total-unread-count').innerHTML.slice(1, -1)) + 1) + ')';
+  hw.updateCount(hw.$('hw-total-unread-count'), 1);
   var countEl = hw.$$('#hw-following li[data-user="' + section.getAttribute('data-remote-profile-url') + '"] .hw-unread-count')[0];
   if (countEl) {
-    countEl.innerHTML = '(' + (parseInt(countEl.innerHTML.slice(1, -1)) + 1) + ')';
+    hw.updateCount(count, 1);
   }
 };
 hw.sendMarkedAsRead = function() {
@@ -564,7 +598,7 @@ hw.markAllAsRead = function(event, el) {
   var user = el.getAttribute('data-user');
   var countEl = hw.$$('#hw-following li[data-user="' + user + '"] .hw-unread-count')[0];
   var count = parseInt(countEl.innerHTML.slice(1, -1));
-  hw.$('hw-total-unread-count').innerHTML = '(' + (parseInt(hw.$('hw-total-unread-count').innerHTML.slice(1, -1)) - count) + ')';
+  hw.updateCount(hw.$('hw-total-unread-count'), -1 * count);
   countEl.innerHTML = '(0)';
 
   var createForm = hw.$c('hw-create');

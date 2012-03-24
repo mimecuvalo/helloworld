@@ -249,7 +249,7 @@ class ApiHandler(BaseHandler):
 
     # get some content, yo
     feed_response = urllib2.urlopen(user.feed_url)
-    content_remote.parse_feed(self.models, user, feed_response.read())
+    content_remote.parse_feed(self.models, user, feed_response.read(), max_days_old=self.constants['feed_max_days_old'])
 
   def unfollow(self):
     user_url = self.get_argument('user')

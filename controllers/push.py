@@ -30,4 +30,4 @@ class PushHandler(BaseHandler):
     if not remote_user:
       raise tornado.web.HTTPError(404)
 
-    content_remote.parse_feed(self.models, remote_user, parsed_feed=self.request.body)
+    content_remote.parse_feed(self.models, remote_user, parsed_feed=self.request.body, max_days_old=self.constants['feed_max_days_old'])

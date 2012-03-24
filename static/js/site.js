@@ -217,7 +217,7 @@ hw.loadMore.prototype = {
   processing : false,
   done : false,
 
-  onScroll : function() {
+  onScroll : function(opt_callback) {
     var currentOffset = this.offset;
 
     if (hw.supportsHistory()) {
@@ -250,7 +250,11 @@ hw.loadMore.prototype = {
 
       hw.$('hw-loading').parentNode.removeChild(hw.$('hw-loading'));
       self.feed.innerHTML += '<a id="hw-feed-page-' + nextOffset + '"></a>' + xhr.responseText;
-      var a = document.body.offsetWidth;  // XXX workaround https://bugzilla.mozilla.org/show_bug.cgi?id=693219#c33 
+      var a = document.body.offsetWidth;  // XXX workaround https://bugzilla.mozilla.org/show_bug.cgi?id=693219#c33
+
+      if (opt_callback) {
+        opt_callback();
+      }
 
       //if (hw.supportsHistory()) {
       //  var url = self.url + '/page/' + (self.offset);

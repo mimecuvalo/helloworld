@@ -15,7 +15,7 @@ from logic import users
 # monkeypatch
 feedparser._HTMLSanitizer.acceptable_elements = feedparser._HTMLSanitizer.acceptable_elements + ['iframe']
 
-def parse_feed(models, user, feed=None, parsed_feed=None):
+def parse_feed(models, user, feed=None, parsed_feed=None, max_days_old=30):
   feed_doc = feedparser.parse(parsed_feed or feed)
 
   for entry in feed_doc.entries:
@@ -36,7 +36,7 @@ def parse_feed(models, user, feed=None, parsed_feed=None):
       parsed_date = datetime.datetime.now()
 
     # we don't keep items that are over 30 days old
-    if parsed_date < datetime.datetime.utcnow() - datetime.timedelta(days=self.constants['feed_max_days_old']):
+    if parsed_date < datetime.datetime.utcnow() - datetime.timedelta(days=max_days_old):
       continue
 
     new_entry.date_created = parsed_date

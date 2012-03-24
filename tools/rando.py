@@ -9,9 +9,12 @@ from logic import constants as constants_module
 import ConfigParser
 config = ConfigParser.ConfigParser()
 config.read('../site.cfg')
-constants = dict(constants_module.dictionary.items() + config.items('general'))
-for constant in ('debug', 'port', 'page_size', 'single_user_site', 'ioloop'):
-  constants[constant] = int(constants[constant])
+constants = dict(constants_module.dictionary.items() + constants_module.defaults.items() + config.items('general'))
+for constant in constants:
+  try:
+    constants[constant] = int(constants[constant])
+  except:
+    pass
 
 from autumn.db.connection import Database, DBConn
 from autumn.db.connection import autumn_db

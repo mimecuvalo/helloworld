@@ -1,3 +1,5 @@
+import json
+
 import tornado.web
 
 from base import BaseHandler
@@ -14,6 +16,20 @@ class DashboardHandler(BaseHandler):
       self.redirect(self.nav_url(section='dashboard'), permanent=True)
       return
 
+    self.display["user"] = user = self.get_author_user()
+
+    if self.get_argument('get_counts', None):
+      self.get_latest_counts(user)
+      result = { 'total_count' : self.display['total_count'],
+                 'favorites_count' : self.display['favorites_count'],
+                 'comments_count' : self.display['comments_count'],
+                 'spam_count' : self.display['spam_count'] }
+      for profile in self.display['following']:
+        result[profile.profile_url] = profile.unread_entries
+      self.prevent_caching()
+      self.write(json.dumps(result))
+      return
+
     self.display["own_feed"] = int(self.get_argument('own_feed', 0))
     self.display["local_entry"] = self.get_argument('local_entry', None)
     self.display["remote_entry"] = self.get_argument('remote_entry', None)
@@ -25,7 +41,6 @@ class DashboardHandler(BaseHandler):
     self.display["read_favorites"] = int(self.get_argument('read_favorites', 0))
     self.display["read_comments"] = int(self.get_argument('read_comments', 0))
     self.display["specific_feed"] = self.get_argument('specific_feed', None)
-    self.display["user"] = user = self.get_author_user()
     offset = int(self.breadcrumbs["modifier"]) if self.breadcrumbs["modifier"] else 1
     offset -= 1
     begin  = self.constants['page_size'] * offset
@@ -68,6 +83,11 @@ class DashboardHandler(BaseHandler):
       self.write(self.ui["modules"].ContentView(self.display["combined_feed"], list_mode=self.display["list_mode"]))
       return
 
+    self.get_latest_counts(user)
+
+    self.fill_template("dashboard.html")
+
+  def get_latest_counts(self, user):
     self.display['followers'] = self.models.users_remote.get(local_username=user.username, follower=1).order_by('username')[:]
     self.display['following'] = self.models.users_remote.get(local_username=user.username, following=1).order_by('order,username')[:]
 
@@ -81,5 +101,3 @@ class DashboardHandler(BaseHandler):
     self.display['favorites_count'] = self.models.content_remote.get(to_username=user.username, favorited=True).count()
     self.display['comments_count'] = self.models.content_remote.get(to_username=user.username, type='comment').count()
     self.display['spam_count'] = self.models.content_remote.get(to_username=user.username, is_spam=True).count()
-
-    self.fill_template("dashboard.html")
