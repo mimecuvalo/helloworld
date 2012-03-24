@@ -188,6 +188,12 @@
   text-align: left;
   text-transform: none;
 }
+#hw-feed section[data-unread=false] h1 {
+  font-weight: normal;
+}
+#hw-feed section.hw-leave-unread .hw-mark-unread {
+  font-weight: bold;
+}
 
 #hw-feed {
   font: 13px arial, sans-serif;

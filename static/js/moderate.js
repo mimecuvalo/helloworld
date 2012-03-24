@@ -471,53 +471,92 @@ hw.deletePost = function(event, el) {
 };
 
 hw.markedAsRead = [];
-hw.testSection = function(section, windowPositionY) {
-  // get the position of the 'fold' line from the parameter or manually
-  windowPositionY = windowPositionY || (hw.thumbnailDelayLoad.getWindowScrollY() + hw.thumbnailDelayLoad.getWindowSizeY());
+hw.markedAsUnread = [];
+hw.markSectionAsRead = function(section) {
+  if (hw.hasClass(section, 'hw-leave-unread') || section.getAttribute('data-unread') == 'false') {
+    return;
+  }
 
-  if (hw.thumbnailDelayLoad.getPositionY(section) <= windowPositionY) {
-    // section is above the fold, mark as read
-    hw.markedAsRead.push(section.getAttribute('data-remote-id'));
-    section.removeAttribute('data-unread');
-    hw.$('hw-total-unread-count').innerHTML = '(' + (parseInt(hw.$('hw-total-unread-count').innerHTML.slice(1, -1)) - 1) + ')';
-    var countEl = hw.$$('#hw-following li[data-user="' + section.getAttribute('data-remote-profile-url') + '"] .hw-unread-count')[0];
-    if (countEl) {
-      countEl.innerHTML = '(' + (parseInt(countEl.innerHTML.slice(1, -1)) - 1) + ')';
-    }
+  // section is above the fold, mark as read
+  hw.markedAsRead.push(section.getAttribute('data-remote-id'));
+  section.setAttribute('data-unread', 'false');
+  hw.$('hw-total-unread-count').innerHTML = '(' + (parseInt(hw.$('hw-total-unread-count').innerHTML.slice(1, -1)) - 1) + ')';
+  var countEl = hw.$$('#hw-following li[data-user="' + section.getAttribute('data-remote-profile-url') + '"] .hw-unread-count')[0];
+  if (countEl) {
+    countEl.innerHTML = '(' + (parseInt(countEl.innerHTML.slice(1, -1)) - 1) + ')';
   }
 };
-
-hw.markAsRead = function(event) {
+hw.markReadOnScroll = function(event) {
   var sections = document.getElementsByTagName('SECTION');
-  // get the position of the fold line
-  // TODO shouldn't really be dependant on thumbnailDelayLoad...
-  var windowPositionY = hw.thumbnailDelayLoad.getWindowScrollY() + hw.thumbnailDelayLoad.getWindowSizeY();
 
   for (var x = 0; x < sections.length; ++x) {
-    if (sections[x].getAttribute('data-remote-id') && sections[x].getAttribute('data-unread')) {
-      // test the image to see if it's above the fold
-      hw.testSection(sections[x], windowPositionY);
+    if (sections[x].getAttribute('data-remote-id') && sections[x].getAttribute('data-unread') == 'true') {
+      // TODO shouldn't really be dependant on thumbnailDelayLoad...
+      // get the position of the 'fold' line from the parameter or manually
+      windowPositionY = hw.thumbnailDelayLoad.getWindowScrollY() + 20;  //hw.thumbnailDelayLoad.getWindowSizeY();
+
+      if (hw.thumbnailDelayLoad.getPositionY(sections[x]) <= windowPositionY) {
+        hw.markSectionAsRead(sections[x]);
+      }
     }
   }
 };
 hw.markAsUnread = function(event, el) {
-  
-};
-hw.sendMarkedAsRead = function() {
-  if (!hw.markedAsRead.length) {
+  hw.preventDefault(event);
+  hw.stopPropagation(event);
+
+  var section = el;
+  while (section) {
+    if (section.nodeName == 'SECTION') {
+      break;
+    }
+    section = section.parentNode;
+  }
+
+  if (section.getAttribute('data-unread') == 'true') {
+    if (hw.hasClass(section, 'hw-leave-unread')) {
+      hw.removeClass(section, 'hw-leave-unread');
+      hw.markSectionAsRead(section);
+    } else {
+      hw.addClass(section, 'hw-leave-unread');
+    }
     return;
   }
 
-  var createForm = hw.$c('hw-create');
-  new hw.ajax(hw.baseUri() + 'api',
-    { method: 'post',
-      postBody: 'op='   + encodeURIComponent('read')
-             + '&ids='  + encodeURIComponent(JSON.stringify(hw.markedAsRead)),
-      headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
-      onSuccess: function() {},
-      onError: function() {} });
+  hw.addClass(section, 'hw-leave-unread');
 
-  hw.markedAsRead = [];
+  hw.markedAsUnread.push(section.getAttribute('data-remote-id'));
+  section.setAttribute('data-unread', 'true');
+  hw.$('hw-total-unread-count').innerHTML = '(' + (parseInt(hw.$('hw-total-unread-count').innerHTML.slice(1, -1)) + 1) + ')';
+  var countEl = hw.$$('#hw-following li[data-user="' + section.getAttribute('data-remote-profile-url') + '"] .hw-unread-count')[0];
+  if (countEl) {
+    countEl.innerHTML = '(' + (parseInt(countEl.innerHTML.slice(1, -1)) + 1) + ')';
+  }
+};
+hw.sendMarkedAsRead = function() {
+  var createForm = hw.$c('hw-create');
+
+  if (hw.markedAsRead.length) {
+    new hw.ajax(hw.baseUri() + 'api',
+      { method: 'post',
+        postBody: 'op='   + encodeURIComponent('read')
+               + '&ids='  + encodeURIComponent(JSON.stringify(hw.markedAsRead)),
+        headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
+        onSuccess: function() {},
+        onError: function() {} });
+    hw.markedAsRead = [];
+  }
+
+  if (hw.markedAsUnread.length) {
+    new hw.ajax(hw.baseUri() + 'api',
+      { method: 'post',
+        postBody: 'op='   + encodeURIComponent('unread')
+               + '&ids='  + encodeURIComponent(JSON.stringify(hw.markedAsUnread)),
+        headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
+        onSuccess: function() {},
+        onError: function() {} });
+    hw.markedAsUnread = [];
+  }
 };
 hw.markAllAsRead = function(event, el) {
   hw.preventDefault(event);
@@ -572,7 +611,7 @@ hw.listOpen = function(event, el) {
     section.parentNode.replaceChild(div, section);
     var newSection = div.getElementsByTagName('SECTION')[0];
     hw.addClass(newSection, 'hw-list-open');
-    hw.testSection(newSection);
+    hw.markSectionAsRead(newSection);
   };
 
   var badTrip = function() {

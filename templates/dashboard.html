@@ -33,10 +33,10 @@
     hw.setMsg('loading', "{% raw js_escape(_('loading...')) %}");
     Event.observe(window, 'scroll', function() { hw.loadMoreObject.onScroll() }, false);
 
-    Event.observe(window, 'scroll', hw.markAsRead, false);
-    Event.observe(window, 'resize', hw.markAsRead, false);
+    Event.observe(window, 'scroll', hw.markReadOnScroll, false);
+    Event.observe(window, 'resize', hw.markReadOnScroll, false);
 
-    window.setInterval(hw.sendMarkedAsRead, 3000);
+    window.setInterval(hw.sendMarkedAsRead, 500);
   </script>
 {% end %}
 

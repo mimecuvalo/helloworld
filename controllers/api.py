@@ -51,7 +51,9 @@ class ApiHandler(BaseHandler):
       self.embed()
       return
     elif op == 'read':
-      self.read()
+      self.read(read=True)
+    elif op == 'unread':
+      self.read(read=False)
     elif op == 'read_all':
       self.read_all()
     elif op == 'order':
@@ -114,7 +116,7 @@ class ApiHandler(BaseHandler):
 
     self.write('<a href="' + url + '">' + url + '</a>')
 
-  def read(self):
+  def read(self, read=True):
     ids = json.loads(self.get_argument('ids'))
 
     for item in ids:
@@ -123,7 +125,7 @@ class ApiHandler(BaseHandler):
       if not self.constants['single_user_site'] and remote_item.to_username != self.current_user["username"]:
         raise tornado.web.HTTPError(400, "i call shenanigans")
 
-      remote_item.read = True
+      remote_item.read = read
       remote_item.save()
 
   def read_all(self):
