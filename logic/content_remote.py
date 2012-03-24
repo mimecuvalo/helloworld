@@ -34,6 +34,11 @@ def parse_feed(models, user, feed=None, parsed_feed=None):
       parsed_date = datetime.datetime.fromtimestamp(mktime(entry.updated_parsed))
     else:
       parsed_date = datetime.datetime.now()
+
+    # we don't keep items that are over 30 days old
+    if parsed_date < datetime.datetime.utcnow() - datetime.timedelta(days=30):
+      continue
+
     new_entry.date_created = parsed_date
     new_entry.type = 'post'
     if entry.has_key('author'):
