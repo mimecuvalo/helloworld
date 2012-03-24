@@ -20,7 +20,10 @@ hw.prepareFilesAndSendOff = function(callback, figures) {
 
 hw.processFiles = function(json) {
   var createForm = hw.$c('hw-create');
-  hw.insertHtmlAtCursor(json['html']);
+
+  var wysiwyg = hw.$c('hw-wysiwyg');
+  wysiwyg.focus();
+  document.execCommand("insertHTML", false, json['html']);
   hw.htmlPreview();
 
   if (json['thumb_url'] && !createForm['hw-thumb'].value) {
@@ -171,7 +174,9 @@ hw.mediaSelectHelper = function(allMedia, position, insertAsSlideshow, slideshow
         +   '<span class="hw-media-slideshow-control" onclick="hw.mediaSlideshow(this, 1)">&nbsp;&rarr;&nbsp;</span>'
         +   slideshowHTML
         + '</div>';
-      parent.hw.insertHtmlAtCursor(slideshowHTML + '<br><br>');
+      var wysiwyg = parent.hw.$c('hw-wysiwyg');
+      wysiwyg.focus();
+      parent.document.execCommand("insertHTML", false, slideshowHTML + '<br><br>');
     }
     return;
   }
@@ -188,7 +193,9 @@ hw.mediaSelectHelper = function(allMedia, position, insertAsSlideshow, slideshow
           + "</div>"
           + slideshowHTML;
     } else {
-      parent.hw.insertHtmlAtCursor(mediaHTML + '<br><br>');
+      var wysiwyg = parent.hw.$c('hw-wysiwyg');
+      wysiwyg.focus();
+      parent.document.execCommand("insertHTML", false, mediaHTML + '<br><br>');
     }
     parent.hw.htmlPreview();
     hw.mediaSelectHelper(allMedia, position + 1, insertAsSlideshow, slideshowHTML);
@@ -256,22 +263,7 @@ hw.mediaHTML = function(media, callback) {
         onSuccess: callback });
 };
 
-hw.insertHtmlAtCursor = function(html) {
-  hw.$c('hw-wysiwyg').focus();
-
-  hw.changeBeforeUnloadState(null);
-
-  var range, node;
-  if (window.getSelection && window.getSelection().getRangeAt) {
-    range = window.getSelection().getRangeAt(0);
-    node = range.createContextualFragment(html);
-    range.insertNode(node);
-  } else if (document.selection && document.selection.createRange) {
-    document.selection.createRange().pasteHTML(html);
-  }
-};
-
-hw.uploadButton = function(callback, section) {
+hw.uploadButton = function(callback, section, opt_drop) {
   section = section || "";
   document.write('<a name="hw-button-media" class="hw-button hw-button-media" data-section="' + section + '">+</a>'
                + '<progress value="0" max="100" class="hw-hidden">0%</progress>'
@@ -356,6 +348,10 @@ hw.uploadButton = function(callback, section) {
   }
 
   r.assignBrowse(button);
+
+  if (opt_drop) {
+    r.assignDrop(document);
+  }
 
   var resumableObj = null;
 

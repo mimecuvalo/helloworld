@@ -67,7 +67,7 @@
     <input name="hw-save" type="button" class="hw-save hw-button hw-button-save" data-save="{{ _("save") }}" data-saving="{{ _("saving") }}" value="{{ _("save") }}" onclick="hw.save()">
 
     <a href="#options" class="hw-more-options hw-button" onclick="hw.optionsClick(event)">{{ _('options') }}</a>
-    <script>hw.uploadButton(function(json) { hw.processFiles(json); });</script>
+    <script>hw.uploadButton(function(json) { hw.processFiles(json); }, null, true);</script>
     <a href="#help" class="hw-help-button hw-button" onclick="hw.help(event)">?</a>
     <span class="hw-response hw-hidden-transition hw-hidden" data-saved="{{ _("saved.") }}"
             data-bad="{{ _("no good, mate.") }}" data-duplicate="{{ _("duplicate id.") }}">&nbsp;</span>
