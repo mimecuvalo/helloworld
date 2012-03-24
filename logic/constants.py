@@ -12,6 +12,7 @@ defaults = {
 
   'debug' : 0,
   'port' : 8282,
+  'feed_max_days_old' : 30,
   'page_size' : 20,
   'single_user_site' : 0,
   'source' : 'ssh://git@github.com:mimecuvalo/helloworld.git',

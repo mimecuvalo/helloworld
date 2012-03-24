@@ -36,7 +36,7 @@ def parse_feed(models, user, feed=None, parsed_feed=None):
       parsed_date = datetime.datetime.now()
 
     # we don't keep items that are over 30 days old
-    if parsed_date < datetime.datetime.utcnow() - datetime.timedelta(days=30):
+    if parsed_date < datetime.datetime.utcnow() - datetime.timedelta(days=self.constants['feed_max_days_old']):
       continue
 
     new_entry.date_created = parsed_date

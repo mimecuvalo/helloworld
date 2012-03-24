@@ -22,7 +22,7 @@ content_remote = models.content_remote.get(type='post', favorited=False)[:]
 
 for content in content_remote:
   try:
-    if content.date_created < datetime.datetime.utcnow() - datetime.timedelta(days=30):
+    if content.date_created < datetime.datetime.utcnow() - datetime.timedelta(days=constants['feed_max_days_old']):
       content.delete()
   except:
     pass
