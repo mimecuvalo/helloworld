@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 
+import sys, os
+if sys.version < "2.6":
+  os.execl("/usr/local/bin/python2.6", "python2.6", *sys.argv)
+
 import ConfigParser
 import logging
-import sys, os
 import threading
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "packages"))
