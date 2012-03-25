@@ -337,7 +337,7 @@ class BaseHandler(tornado.web.RequestHandler):
         hashes[abs_path] = None
     base = self.request.protocol + "://" + self.request.host \
       if getattr(self, "include_host", False) or include_host else ""
-    if not self.constants['http_hide_prefix']:
+    if self.request.protocol == 'https' or not self.constants['http_hide_prefix']:
       base += self.prefix
     static_url_prefix = self.settings.get('static_url_prefix', '/static/')
     if hashes.get(abs_path):
