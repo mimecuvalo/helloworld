@@ -17,7 +17,7 @@ def search(profile, query, begin, page_size):
                           (query, query, profile, '[[:<:]]' + query + '[[:>:]]', '[[:<:]]' + query + '[[:>:]]',  begin, page_size))
 
 # this will work for now...
-def dashboard_feed(profile, begin, page_size, sort_type, specific_feed, just_local_feed, local_entry=None, remote_entry=None, \
+def dashboard_feed(profile, begin, page_size, sort_type, read_all_mode, specific_feed, just_local_feed, local_entry=None, remote_entry=None, \
                    spam=False, favorite=False, comments=False, query=None):
   content_local_restrict = ""
   content_remote_restrict = ""
@@ -37,7 +37,7 @@ def dashboard_feed(profile, begin, page_size, sort_type, specific_feed, just_loc
   if remote_entry:
     content_remote_restrict = """ AND `id` = %s """
     parameters.append(remote_entry)
-  elif not spam and not favorite and not comments and not query:
+  elif not spam and not favorite and not comments and not query and read_all_mode == 0:
     content_remote_restrict += """ AND `read` = 0 """
   if spam:
     just_remote_feed = True
@@ -58,7 +58,7 @@ def dashboard_feed(profile, begin, page_size, sort_type, specific_feed, just_loc
 
   local_query = """(SELECT `id`, `username`, `title`, `view`, `date_created`, `favorited`, `is_spam`, `deleted`,
                               `count`, `count_robot`, `date_updated`, `hidden`, `date_start`, `date_end`, `date_repeats`, `section`, `name`, `thumb`, `thread`,
-                              '' as `creator`, '' as `type`, '' as `from_user`, '' as `post_id`, '' as `link`
+                              '' as `creator`, '' as `type`, '' as `from_user`, '' as `post_id`, '' as `link`, '' as `read`
                          FROM `content`
                          WHERE `username` = %s """ \
                     +      content_local_restrict \
@@ -68,7 +68,7 @@ def dashboard_feed(profile, begin, page_size, sort_type, specific_feed, just_loc
 
   remote_query = """ (SELECT `id`, `username`, `title`, `view`, `date_created`, `favorited`, `is_spam`, `deleted`,
                               0 as `count`, 0 as `count_robot`, now() as `date_updated`, 0 as `hidden`, now() as `date_start`, now() as `date_end`, 0 as `date_repeats`, '' as `section`, '' as `name`, '' as `thumb`, '' as `thread`,
-                              `creator`, `type`, `from_user`, `post_id`, `link`
+                              `creator`, `type`, `from_user`, `post_id`, `link`, `read`
                          FROM `content_remote`
                          WHERE `to_username` = %s """ \
                     +      content_remote_restrict \

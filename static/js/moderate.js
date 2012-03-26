@@ -219,7 +219,7 @@ hw.follow = function(event, el) {
 };
 
 hw.readCurrent = null;
-hw.read = function(event, el, listMode, special, query) {
+hw.read = function(event, el, listMode, special, query, readAllMode) {
   if (event) {
     hw.preventDefault(event);
   }
@@ -235,7 +235,7 @@ hw.read = function(event, el, listMode, special, query) {
     var args = hw.parseArguments(url);
     args['q'] = encodeURIComponent(query.value);
     url = url.split('?')[0] + hw.generateArgs(args);
-  } else if (listMode == undefined) {
+  } else if (listMode == undefined && readAllMode == undefined) {
     var sortType = '';
     if (el) {
       user = el.parentNode.getAttribute('data-user');
@@ -262,27 +262,32 @@ hw.read = function(event, el, listMode, special, query) {
     url = hw.loadMoreObject.url;
     var args = hw.parseArguments(url);
     args['list_mode'] = listMode ? 1 : 0;
+    args['read_all_mode'] = readAllMode ? 1 : 0;
     url = url.split('?')[0] + hw.generateArgs(args);
     hw.setClass('hw-feed', 'hw-list-mode', listMode);
-    hw.setClass('hw-absorb-complete', 'hw-selected', !listMode);
-    hw.setClass('hw-absorb-list', 'hw-selected', listMode);
     hw.setCookie('list_mode', listMode ? '1' : '0', -1, hw.basePath());
+    hw.setCookie('read_all_mode', readAllMode ? '1' : '0', -1, hw.basePath());
   }
 
-  var callback = function(xhr) {
-    hw.loadMoreObject.done = false;
+  var callback = function(xhr, badTrip) {
+    hw.loadMoreObject.done = badTrip ? true : false;
     hw.loadMoreObject.offset = 1;
-    if (user || ownFeed || listMode != undefined || special || query) {
+    if (user || ownFeed || listMode != undefined || readAllMode != undefined || special || query) {
       hw.loadMoreObject.url = url;
     } else if (!user) {
       hw.loadMoreObject.url = hw.baseUri() + 'dashboard';
     }
-    hw.$('hw-feed').innerHTML = '<a id="hw-feed-page-1"></a>' + xhr.responseText;
+
+    if (badTrip) {
+      hw.$('hw-feed').innerHTML = hw.$('hw-following-list').getAttribute('data-error');
+    } else {
+      hw.$('hw-feed').innerHTML = '<a id="hw-feed-page-1"></a>' + xhr.responseText;
+    }
     hw.updateCounts();
   };
 
   var badTrip = function(xhr) {
-    hw.$('hw-feed').innerHTML = el.parentNode.parentNode.getAttribute('data-error');
+    callback(null, true);
   };
 
   var createForm = hw.$c('hw-create');
@@ -291,6 +296,36 @@ hw.read = function(event, el, listMode, special, query) {
       headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
       onSuccess: callback,
       onError: badTrip });
+};
+
+hw.listMode = function(event, el) {
+  hw.preventDefault(event);
+
+  var isListMode = hw.hasClass(hw.menuOriginal, 'hw-list-mode');
+  if (isListMode) {
+    hw.removeClass(hw.menuOriginal, 'hw-list-mode');
+    hw.addClass(hw.menuOriginal, 'hw-complete-mode');
+  } else {
+    hw.removeClass(hw.menuOriginal, 'hw-complete-mode');
+    hw.addClass(hw.menuOriginal, 'hw-list-mode');
+  }
+
+  hw.read(event, null, (isListMode ? false : true));
+};
+
+hw.readAllMode = function(event, el) {
+  hw.preventDefault(event);
+
+  var isReadAllMode = hw.hasClass(hw.menuOriginal, 'hw-read-all-mode');
+  if (isReadAllMode) {
+    hw.removeClass(hw.menuOriginal, 'hw-read-all-mode');
+    hw.addClass(hw.menuOriginal, 'hw-unread-mode');
+  } else {
+    hw.removeClass(hw.menuOriginal, 'hw-unread-mode');
+    hw.addClass(hw.menuOriginal, 'hw-read-all-mode');
+  }
+
+  hw.read(event, null, null, null, null, (isReadAllMode ? false : true));
 };
 
 hw.sort = function(event, el) {

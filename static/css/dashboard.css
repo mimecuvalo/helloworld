@@ -119,6 +119,10 @@
   border-bottom: 3px solid #000;
 }
 
+.hw-list-mode .hw-list-mode-label,
+.hw-complete-mode .hw-complete-mode-label,
+.hw-read-all-mode .hw-read-all-mode-label,
+.hw-unread-mode .hw-unread-mode-label,
 .hw-sort-oldest .hw-sort-oldest-label,
 .hw-sort-newest .hw-sort-newest-label {
   font-weight: bold;

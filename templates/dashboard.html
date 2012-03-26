@@ -18,8 +18,16 @@
 
   <div id="hw-absorb">
     <div id="hw-absorb-options">
-      <a id="hw-absorb-complete" href="#view-complete" onclick="hw.read(event, null, false)" class="{% if not list_mode %}hw-selected{% end %}">{{ _('complete text') }}</a> |
-      <a id="hw-absorb-list" href="#view-list" onclick="hw.read(event, null, true)" class="{% if list_mode %}hw-selected{% end %}">{{ _('list') }}</a>
+      <span class="hw-button-group">
+        <button class="hw-menu-button" onclick="hw.menu(event, this)" type="button">
+          <a href="#settings" onclick="return false;">{{ _('settings') }}</a>
+          <span class="hw-arrow-button"></span>
+        </button>
+        <div class="hw-menu {% if list_mode %}hw-list-mode{% else %}hw-complete-mode{% end %} {% if read_all_mode %}hw-read-all-mode{% else %}hw-unread-mode{% end %}">
+          <a href="#list-mode" onclick="hw.listMode(event, this)">{% raw _('<span class="hw-complete-mode-label">complete text</span> / <span class="hw-list-mode-label">list</span>') %}</a>
+          <a href="#read-all-mode" onclick="hw.readAllMode(event, this)">{% raw _('<span class="hw-unread-mode-label">unread items</span> / <span class="hw-read-all-mode-label">all items</span>') %}</a>
+        </div>
+      </span>
     </div>
     <div class="clear"></div>
     <article id="hw-feed" class="{% if list_mode %}hw-list-mode{% end %}">
@@ -55,7 +63,7 @@
       <button id="hw-following-button" type="button" class="hw-button" onclick="hw.follow(event)" data-normal="{{ _('follow') }}" data-following="{{ _('one sec...') }}">{{ _('follow') }}</button>
       <div class="clear"></div>
     </div>
-    <ul data-error="{{ _('Nothing to read here!') }}">
+    <ul id="hw-following-list" data-error="{{ _('Nothing to read here!') }}">
       <li id="hw-following-read-all" data-user="" class="hw-selected">
         <a href="#read-all" onclick="hw.read(event, this)">{{ _('read all') }}</a>
         <span id="hw-total-unread-count" class="hw-unread-count">({{ total_count }})</span>
