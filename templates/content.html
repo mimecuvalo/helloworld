@@ -115,7 +115,7 @@
           ({{ _("updated") }} <time>{{ locale.format_date(item.date_updated) }}</time>)
         {% end %}
         {% if item.is_remote %}
-          • <a href="{{ item.link }}">{{ _('view post') }}</a>
+          • <a href="{{ item.link }}" target="_blank">{{ _('view post') }}</a>
           • <a href="#markAsUnread" onclick="hw.markAsUnread(event, this)" class="hw-mark-unread">{{ _('keep unread') }}</a>
         {% else %}
           • {{ _("%(count)s human view", "%(count)s human views", item.count) % { "count": locale.friendly_number(item.count) } }}

@@ -120,7 +120,7 @@ hw.showUserAutocomplete = function() {
     var ancestor = complete;
     while (el != null) {
       if (el == ancestor) {
-         return;
+        return;
       }
       el = el.parentNode;
     }
@@ -687,4 +687,21 @@ hw.listOpen = function(event, el) {
       headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
       onSuccess: callback,
       onError: badTrip });
+};
+
+hw.outgoingLink = function(event) {
+  var link = event.target;
+  if (link.nodeName != 'A') {
+    return;
+  }
+
+  var el = link;
+  while (el != null) {
+    if (hw.hasClass(el, 'hw-view')) {
+      hw.preventDefault(event);
+      window.open(link.href, '_blank');
+      return;
+    }
+    el = el.parentNode;
+  }
 };
