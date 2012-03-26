@@ -280,7 +280,10 @@ class BaseHandler(tornado.web.RequestHandler):
       self.display["profile"] = self.breadcrumbs["profile"]
       self.display["name"] = self.breadcrumbs["name"]
       self.fill_debug_info()
-      logging.error(output)
+      if status_code == 404:
+        logging.error('404: ' + self.display["original_uri"])
+      else:
+        logging.error(output)
       self.fill_template("error.html")
 
   def static_url(self, path, include_filename=None, include_host=False):
