@@ -133,6 +133,7 @@ class users_remote(Model):
                 'salmon_url': '',
                 'hub_url': '',
                 'feed_url': '',
+                'sort_type': '',
                 'follower': 0,
                 'following': 0, }
     validations = {'local_username': (custom_validators.UnicodeString(1, 255), custom_validators.Alphanumeric()),

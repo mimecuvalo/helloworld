@@ -236,10 +236,12 @@ hw.read = function(event, el, listMode, special, query) {
     args['q'] = encodeURIComponent(query.value);
     url = url.split('?')[0] + hw.generateArgs(args);
   } else if (listMode == undefined) {
+    var sortType = '';
     if (el) {
       user = el.parentNode.getAttribute('data-user');
       hw.readCurrent = el.parentNode;
       hw.addClass(el.parentNode, 'hw-selected');
+      sortType = el.parentNode.getAttribute('data-sort-type');
     } else {
       ownFeed = true;
       hw.readCurrent = hw.$('hw-following-your-feed');
@@ -253,6 +255,7 @@ hw.read = function(event, el, listMode, special, query) {
     } else {
       url = hw.baseUri() + 'dashboard' + '?specific_feed=' + encodeURIComponent(user)
                                        + '&own_feed=' + (ownFeed ? 1 : 0)
+                                       + '&sort_type=' + (sortType == 'oldest' ? 'oldest' : '')
                                        + '&list_mode=' + (hw.hasClass('hw-feed', 'hw-list-mode') ? 1 : 0);
     }
   } else {
@@ -288,6 +291,22 @@ hw.read = function(event, el, listMode, special, query) {
       headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
       onSuccess: callback,
       onError: badTrip });
+};
+
+hw.sort = function(event, el) {
+  hw.preventDefault(event);
+
+  var newest = hw.hasClass(hw.menuOriginal, 'hw-sort-newest');
+  if (newest) {
+    hw.removeClass(hw.menuOriginal, 'hw-sort-newest');
+    hw.addClass(hw.menuOriginal, 'hw-sort-oldest');
+  } else {
+    hw.removeClass(hw.menuOriginal, 'hw-sort-oldest');
+    hw.addClass(hw.menuOriginal, 'hw-sort-newest');
+  }
+
+  hw.menuButton.parentNode.parentNode.setAttribute('data-sort-type', newest ? 'oldest' : '');
+  hw.read(event, hw.menuButton.parentNode);
 };
 
 hw.updateCount = function(el, delta, opt_setCount) {

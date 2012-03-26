@@ -119,6 +119,11 @@
   border-bottom: 3px solid #000;
 }
 
+.hw-sort-oldest .hw-sort-oldest-label,
+.hw-sort-newest .hw-sort-newest-label {
+  font-weight: bold;
+}
+
 #hw-following-button[disabled] {
   cursor: wait;
 }

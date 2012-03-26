@@ -17,12 +17,16 @@ def search(profile, query, begin, page_size):
                           (query, query, profile, '[[:<:]]' + query + '[[:>:]]', '[[:<:]]' + query + '[[:>:]]',  begin, page_size))
 
 # this will work for now...
-def dashboard_feed(profile, begin, page_size, specific_feed, just_local_feed, local_entry=None, remote_entry=None, \
+def dashboard_feed(profile, begin, page_size, sort_type, specific_feed, just_local_feed, local_entry=None, remote_entry=None, \
                    spam=False, favorite=False, comments=False, query=None):
   content_local_restrict = ""
   content_remote_restrict = ""
   parameters = [profile, profile]
   just_remote_feed = False
+
+  sort_query = 'DESC'
+  if sort_type == 'oldest':
+    sort_query = 'ASC'
 
   if specific_feed:
     content_remote_restrict = """ AND `from_user` = %s """
@@ -60,7 +64,7 @@ def dashboard_feed(profile, begin, page_size, specific_feed, just_local_feed, lo
                     +      content_local_restrict \
                     +  """ AND `redirect` = 0
                            AND `section` != 'comments'
-                         ORDER BY date_created DESC)"""
+                         ORDER BY date_created """ + sort_query + """)"""
 
   remote_query = """ (SELECT `id`, `username`, `title`, `view`, `date_created`, `favorited`, `is_spam`, `deleted`,
                               0 as `count`, 0 as `count_robot`, now() as `date_updated`, 0 as `hidden`, now() as `date_start`, now() as `date_end`, 0 as `date_repeats`, '' as `section`, '' as `name`, '' as `thumb`, '' as `thread`,
@@ -70,8 +74,8 @@ def dashboard_feed(profile, begin, page_size, specific_feed, just_local_feed, lo
                     +      content_remote_restrict \
                     +  """ AND `is_spam` = 0
                            AND `deleted` = 0
-                         ORDER BY date_created DESC)
-                         ORDER BY date_created DESC """
+                         ORDER BY date_created """ + sort_query + """)
+                         ORDER BY date_created """ + sort_query
 
   limit_fragment = """ LIMIT %s, %s """
 

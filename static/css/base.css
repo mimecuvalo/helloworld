@@ -121,7 +121,7 @@
   padding: 3px 0;
   z-index: 10;
 }
-.hw-menu-button.hw-active + .hw-menu {
+.hw-menu.hw-active {
   display: block;
 }
 
@@ -133,4 +133,5 @@
 }
 .hw-menu a:hover {
   background-color: #eef;
+  text-decoration: none;
 }

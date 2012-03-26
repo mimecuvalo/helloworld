@@ -85,7 +85,7 @@
         {% else %}
           {% set name = follower.username %}
         {% end %}
-        <li id="hw-following-{{ follower.id }}" data-user="{{ follower.profile_url }}" draggable="true" ondragstart="hw.followingDragStart(event, this)" ondragover="hw.followingDragOver(event, this)" ondragenter="hw.followingDragOver(event, this)" ondragleave="hw.followingDragLeave(event, this)" ondrop="hw.followingDragDrop(event, this)">
+        <li id="hw-following-{{ follower.id }}" data-user="{{ follower.profile_url }}" data-sort-type="{{ follower.sort_type }}" draggable="true" ondragstart="hw.followingDragStart(event, this)" ondragover="hw.followingDragOver(event, this)" ondragenter="hw.followingDragOver(event, this)" ondragleave="hw.followingDragLeave(event, this)" ondrop="hw.followingDragDrop(event, this)">
           <a href="#read" onclick="hw.read(event, this)" title="{{ name }}">
             <img height="16" width="16" src="{{ follower.avatar }}" onerror="this.src='{{ static_url('img/pixel.gif') }}';this.style.border='1px solid black';this.style.width='14px';this.style.height='14px'" />
           </a>
@@ -95,9 +95,10 @@
             <button class="hw-menu-button" onclick="hw.menu(event, this)" type="button">
               <span class="hw-arrow-button"></span>
             </button>
-            <div class="hw-menu">
+            <div class="hw-menu hw-{% if follower.sort_type == 'oldest' %}sort-oldest{% else %}sort-newest{% end %}">
               <a href="{{ follower.profile_url }}" target="_blank" class="hw-visit">{{ _('visit') }}</a>
               <a href="#mark-all-as-read" data-user="{{ follower.profile_url }}" onclick="hw.markAllAsRead(event, this)">{{ _('mark all as read') }}</a>
+              <a href="#sort" data-user="{{ follower.profile_url }}" onclick="hw.sort(event, this)">{% raw _('sorting by <span class="hw-sort-oldest-label">oldest</span> / <span class="hw-sort-newest-label">newest</span>') %}</a>
               <a href="#unfollow" data-user="{{ follower.profile_url }}" onclick="hw.unfollow(event, this)" class="hw-unfollow">{{ _('unfollow') }}</a>
             </div>
           </span>

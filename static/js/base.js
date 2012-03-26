@@ -496,9 +496,23 @@ hw.videoError = function(source) {
   video.parentNode.removeChild(video);
 };
 
+hw.menuButton = null;
+hw.menuOriginal = null;
 hw.menuActive = null;
 hw.menu = function(event, el) {
-  hw.menuActive = el;
+  if (hw.menuActive) {
+    hw.closeMenu();
+  }
+
+  var menu = el.nextSibling.nextSibling;
+  var clonedMenu = menu.cloneNode(true);
+  clonedMenu.style.top = (hw.thumbnailDelayLoad.getWindowScrollY() + el.getBoundingClientRect().top) + 'px';
+  clonedMenu.style.left = el.getBoundingClientRect().left + 'px';
+  document.body.appendChild(clonedMenu);
+  hw.addClass(clonedMenu, 'hw-active');
+  hw.menuActive = clonedMenu;
+  hw.menuOriginal = menu;
+  hw.menuButton = el;
   hw.addClass(el, 'hw-active');
   hw.addClass(el.parentNode.parentNode, 'hw-active');
 };
@@ -507,18 +521,22 @@ hw.closeMenu = function(event) {
     return;
   }
 
-  var el = event.target;
-  var ancestor = hw.menuActive;
-  while (el != null) {
-    if (el == ancestor) {
-       return;
+  if (event) {
+    var el = event.target;
+    while (el != null) {
+      if (el == hw.menuButton) {
+         return;
+      }
+      el = el.parentNode;
     }
-    el = el.parentNode;
   }
 
-  hw.removeClass(hw.menuActive, 'hw-active');
-  hw.removeClass(hw.menuActive.parentNode.parentNode, 'hw-active');
+  document.body.removeChild(hw.menuActive);
+  hw.removeClass(hw.menuButton, 'hw-active');
+  hw.removeClass(hw.menuButton.parentNode.parentNode, 'hw-active');
 
+  hw.menuButton = null;
+  hw.menuOriginal = null;
   hw.menuActive = null;
 };
 Event.observe(document, 'click', hw.closeMenu, false);

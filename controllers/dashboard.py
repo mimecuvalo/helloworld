@@ -33,6 +33,8 @@ class DashboardHandler(BaseHandler):
     self.display["own_feed"] = int(self.get_argument('own_feed', 0))
     self.display["local_entry"] = self.get_argument('local_entry', None)
     self.display["remote_entry"] = self.get_argument('remote_entry', None)
+    self.display["sort_type"] = self.get_argument('sort_type', None)
+    self.display["sort_type"] = 'oldest' if self.display["sort_type"] == 'oldest' else ''
     if self.get_argument('list_mode', None) != None:
       self.display["list_mode"] = int(self.get_argument('list_mode', 0))
     else:
@@ -47,11 +49,17 @@ class DashboardHandler(BaseHandler):
     begin  = self.constants['page_size'] * offset
     end  = self.constants['page_size'] * offset + self.constants['page_size']
 
+    if self.display["specific_feed"]:
+      specific_user = self.models.users_remote.get(local_username=user.username, profile_url=self.display["specific_feed"])[0]
+      if self.display["sort_type"] != specific_user.sort_type:
+        specific_user.sort_type = self.display["sort_type"]
+        specific_user.save()
+
     dashboard_objects = \
         [ self.models.content_remote(**content) \
           if content['post_id'] else \
              self.models.content(**content) \
-          for content in db.dashboard_feed(user.username, begin, self.constants['page_size'], \
+          for content in db.dashboard_feed(user.username, begin, self.constants['page_size'], self.display["sort_type"], \
                                            self.display["specific_feed"], self.display["own_feed"], \
                                            self.display["local_entry"], self.display["remote_entry"], \
                                            self.display["read_spam"], self.display["read_favorites"], self.display["read_comments"], \
@@ -64,7 +72,7 @@ class DashboardHandler(BaseHandler):
           for content in dashboard_objects ]
 
     if self.display['combined_feed']:
-      self.display['combined_feed'].sort(key=lambda x: x.date_created, reverse=True)
+      self.display['combined_feed'].sort(key=lambda x: x.date_created, reverse=(self.display["sort_type"] != 'oldest'))
 
     if (not self.display['combined_feed'] or self.display['combined_feed'] == 0) \
         and self.request.headers.get("X-Requested-With") == "XMLHttpRequest":
