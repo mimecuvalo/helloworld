@@ -103,6 +103,11 @@
           </span>
         </li>
       {% end %}
+      <li id="hw-following-search" data-user="">
+        <form method="get" onsubmit="return false">
+          <input type="search" name="q" placeholder="{{ _('search') }}" onkeypress="if (event.keyCode == 13) hw.read(event, this, null, null, this)">
+        </form>
+      </li>
       <li id="hw-following-spam" data-user="">
         <a href="#spam" onclick="hw.read(event, this, null, 'spam')">{{ _('review spam') }}</a>
         <span class="hw-unread-count">({{ spam_count }})</span>

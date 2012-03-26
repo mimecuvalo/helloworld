@@ -219,7 +219,7 @@ hw.follow = function(event, el) {
 };
 
 hw.readCurrent = null;
-hw.read = function(event, el, listMode, special) {
+hw.read = function(event, el, listMode, special, query) {
   if (event) {
     hw.preventDefault(event);
   }
@@ -230,7 +230,12 @@ hw.read = function(event, el, listMode, special) {
 
   hw.removeClass(hw.readCurrent || hw.$('hw-following-read-all'), 'hw-selected');
 
-  if (listMode == undefined) {
+  if (query) {
+    url = hw.loadMoreObject.url;
+    var args = hw.parseArguments(url);
+    args['q'] = encodeURIComponent(query.value);
+    url = url.split('?')[0] + hw.generateArgs(args);
+  } else if (listMode == undefined) {
     if (el) {
       user = el.parentNode.getAttribute('data-user');
       hw.readCurrent = el.parentNode;
@@ -251,9 +256,10 @@ hw.read = function(event, el, listMode, special) {
                                        + '&list_mode=' + (hw.hasClass('hw-feed', 'hw-list-mode') ? 1 : 0);
     }
   } else {
-    url = hw.loadMoreObject.url;  // TODO this isn't the cleanest way of doing this i know...
-    url = url.replace('&list_mode=1', '').replace('&list_mode=0', '');
-    url += (url.indexOf('?') == -1 ? '?' : '&') + 'list_mode=' + (listMode ? 1 : 0);
+    url = hw.loadMoreObject.url;
+    var args = hw.parseArguments(url);
+    args['list_mode'] = listMode ? 1 : 0;
+    url = url.split('?')[0] + hw.generateArgs(args);
     hw.setClass('hw-feed', 'hw-list-mode', listMode);
     hw.setClass('hw-absorb-complete', 'hw-selected', !listMode);
     hw.setClass('hw-absorb-list', 'hw-selected', listMode);
@@ -263,7 +269,7 @@ hw.read = function(event, el, listMode, special) {
   var callback = function(xhr) {
     hw.loadMoreObject.done = false;
     hw.loadMoreObject.offset = 1;
-    if (user || ownFeed || listMode != undefined || special) {
+    if (user || ownFeed || listMode != undefined || special || query) {
       hw.loadMoreObject.url = url;
     } else if (!user) {
       hw.loadMoreObject.url = hw.baseUri() + 'dashboard';
@@ -360,6 +366,7 @@ hw.favorite = function(event, el) {
   var callback = function(xhr) {
     el.innerHTML = isFavorited == '1' ? el.parentNode.getAttribute('data-favorite') : el.parentNode.getAttribute('data-unfavorite');
     el.parentNode.setAttribute('data-is-favorited', isFavorited == '1' ? '0' : '1');
+    hw.updateCount(hw.$$('#hw-following #hw-following-favorites .hw-unread-count')[0], isFavorited == '1' ? -1 : 1);
   };
 
   var badTrip = function(xhr) {
@@ -517,7 +524,7 @@ hw.markSectionAsRead = function(section) {
   hw.updateCount(hw.$('hw-total-unread-count'), -1);
   var countEl = hw.$$('#hw-following li[data-user="' + section.getAttribute('data-remote-profile-url') + '"] .hw-unread-count')[0];
   if (countEl) {
-    hw.updateCount(count, -1);
+    hw.updateCount(countEl, -1);
   }
 };
 hw.markReadOnScroll = function(event) {
@@ -564,7 +571,7 @@ hw.markAsUnread = function(event, el) {
   hw.updateCount(hw.$('hw-total-unread-count'), 1);
   var countEl = hw.$$('#hw-following li[data-user="' + section.getAttribute('data-remote-profile-url') + '"] .hw-unread-count')[0];
   if (countEl) {
-    hw.updateCount(count, 1);
+    hw.updateCount(countEl, 1);
   }
 };
 hw.sendMarkedAsRead = function() {

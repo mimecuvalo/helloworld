@@ -40,28 +40,22 @@ class DashboardHandler(BaseHandler):
     self.display["read_spam"] = int(self.get_argument('read_spam', 0))
     self.display["read_favorites"] = int(self.get_argument('read_favorites', 0))
     self.display["read_comments"] = int(self.get_argument('read_comments', 0))
+    self.display["q"] = self.get_argument('q', None)
     self.display["specific_feed"] = self.get_argument('specific_feed', None)
     offset = int(self.breadcrumbs["modifier"]) if self.breadcrumbs["modifier"] else 1
     offset -= 1
     begin  = self.constants['page_size'] * offset
     end  = self.constants['page_size'] * offset + self.constants['page_size']
 
-    if self.display["read_spam"]:
-      self.display["list_mode"] = 0
-      dashboard_objects = self.models.content_remote.get(to_username=user.username, is_spam=True)[begin:end]
-    elif self.display["read_favorites"]:
-      self.display["list_mode"] = 0
-      dashboard_objects = self.models.content_remote.get(to_username=user.username, favorited=True)[begin:end]
-    elif self.display["read_comments"]:
-      self.display["list_mode"] = 0
-      dashboard_objects = self.models.content_remote.get(to_username=user.username, type='comment')[begin:end]
-    else:
-      dashboard_objects = \
-          [ self.models.content_remote(**content) \
-            if content['post_id'] else \
-                self.models.content(**content) \
-            for content in db.dashboard_feed(user.username, begin, self.constants['page_size'], \
-                                             self.display["specific_feed"], self.display["own_feed"], self.display["local_entry"], self.display["remote_entry"]) ]
+    dashboard_objects = \
+        [ self.models.content_remote(**content) \
+          if content['post_id'] else \
+             self.models.content(**content) \
+          for content in db.dashboard_feed(user.username, begin, self.constants['page_size'], \
+                                           self.display["specific_feed"], self.display["own_feed"], \
+                                           self.display["local_entry"], self.display["remote_entry"], \
+                                           self.display["read_spam"], self.display["read_favorites"], self.display["read_comments"], \
+                                           self.display["q"]) ]
 
     self.display['combined_feed'] = \
         [ self.ui["modules"].RemoteContent(content) \

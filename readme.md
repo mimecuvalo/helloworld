@@ -52,3 +52,4 @@ federated social web tumblr/blog/rss reader/wordpress-like app to be used on sha
 - reduce/cache mysql calls
 - mysql migrator
 - plugins?
+- translations (UI like [pontoon](https://github.com/mathjazz/pontoon))

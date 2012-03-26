@@ -382,14 +382,38 @@ Object.extend(Event, {
   }
 });
 
-hw.getArgument = function(args, field) {
+hw.parseArguments = function(args) {
   args = args.split('?');
+  if (args.length < 2) {
+    return {};
+  }
+  args = args[1].split('&');
+  
   var parsedArgs = {};
   for (var x = 0; x < args.length; ++x) {
     var split = args[x].split('=');
     parsedArgs[split[0]] = decodeURIComponent(split[1]);
   }
+
+  return parsedArgs;
+};
+
+hw.getArgument = function(args, field) {
+  var parsedArgs = hw.parseArguments(args);
   return parsedArgs[field];
+};
+
+hw.generateArgs = function(args) {
+  if (!args) {
+    return '';
+  }
+
+  var queryString = '';
+  for (var key in args) {
+    queryString += (!queryString.length ? '?' : '&') + key + '=' + encodeURIComponent(args[key]);
+  }
+
+  return queryString;
 };
 
 hw.testAccelKey = function(event) {

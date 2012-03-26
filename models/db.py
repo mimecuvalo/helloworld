@@ -17,10 +17,13 @@ def search(profile, query, begin, page_size):
                           (query, query, profile, '[[:<:]]' + query + '[[:>:]]', '[[:<:]]' + query + '[[:>:]]',  begin, page_size))
 
 # this will work for now...
-def dashboard_feed(profile, begin, page_size, specific_feed, just_local_feed, local_entry=None, remote_entry=None):
+def dashboard_feed(profile, begin, page_size, specific_feed, just_local_feed, local_entry=None, remote_entry=None, \
+                   spam=False, favorite=False, comments=False, query=None):
   content_local_restrict = ""
   content_remote_restrict = ""
   parameters = [profile, profile]
+  just_remote_feed = False
+
   if specific_feed:
     content_remote_restrict = """ AND `from_user` = %s """
     parameters.append(specific_feed)
@@ -30,8 +33,23 @@ def dashboard_feed(profile, begin, page_size, specific_feed, just_local_feed, lo
   if remote_entry:
     content_remote_restrict = """ AND `id` = %s """
     parameters.append(remote_entry)
-  else:
+  elif not spam and not favorite and not comments and not query:
     content_remote_restrict += """ AND `read` = 0 """
+  if spam:
+    just_remote_feed = True
+    content_remote_restrict += """ AND `is_spam` = 1 """
+  if favorite:
+    just_remote_feed = True
+    content_remote_restrict += """ AND `favorited` = 1 """
+  if comments:
+    just_remote_feed = True
+    content_remote_restrict += """ AND `type` = %s """
+    parameters.append('comment')
+  if query:
+    just_remote_feed = True
+    content_remote_restrict += """ AND (`title` LIKE %s or `view` LIKE %s)"""
+    parameters.append('%' + query + '%')
+    parameters.append('%' + query + '%')
   parameters += [begin, page_size]
 
   local_query = """(SELECT `id`, `username`, `title`, `view`, `date_created`, `favorited`, `is_spam`, `deleted`,
@@ -57,11 +75,11 @@ def dashboard_feed(profile, begin, page_size, specific_feed, just_local_feed, lo
 
   limit_fragment = """ LIMIT %s, %s """
 
-  if just_local_feed or local_entry:
+  if not just_remote_feed and (just_local_feed or local_entry):
     parameters.pop(0)  # remove first profile
     return Query.sql(local_query + limit_fragment, parameters)
 
-  if specific_feed or remote_entry:
+  if just_remote_feed or specific_feed or remote_entry:
     parameters.pop(0)  # remove first profile
     return Query.sql(remote_query + limit_fragment, parameters)
 

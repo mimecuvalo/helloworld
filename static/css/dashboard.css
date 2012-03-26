@@ -62,6 +62,9 @@
 #hw-following li:hover {
   border: 1px solid #999;
 }
+#hw-following #hw-following-search:hover {
+  border: 1px solid transparent;
+}
 
 #hw-following .hw-unread-count {
   font-size: 11px;
@@ -101,6 +104,7 @@
 #hw-following .hw-selected {
   font-weight: bold;
 }
+#hw-following #hw-following-search,
 #hw-following #hw-following-spam {
   margin-top: 20px;
 }
