@@ -741,6 +741,7 @@ a.hw-button-media + progress.hw-shown {
 
 div.hw-paste-area {
   position: absolute;
+  z-index: -1;
 }
 
 .hw-remote-actions {
