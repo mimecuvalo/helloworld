@@ -25,6 +25,7 @@ class content(Model):
                 'template': '',
                 'sort_type': '',
                 'redirect': 0,
+                'forum': 0,
                 'hidden': 0,
                 'favorited': 0,
                 'is_spam': 0,

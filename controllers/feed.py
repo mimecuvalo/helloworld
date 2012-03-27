@@ -23,6 +23,7 @@ class FeedHandler(BaseHandler):
 
     content_options = { 'username': user.username,
                         'redirect': 0,
+                        'forum': 0,
                         'section !=': 'comments', }
     if section:
       content_options['section'] = section

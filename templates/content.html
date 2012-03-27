@@ -58,7 +58,7 @@
 {% end %}
 
 {% for item in content_list %}
-<section class="{% if individual_content %} hw-individual-content {% end %}{% if item.is_remote %} hw-remote {% end %}" {% if item.is_remote %}data-remote-profile-url="{{ item.from_user }}" data-remote-id="{{ item.id }}" data-unread="{% if item.is_remote and item.read %}false{% else %}true{% end %}" onclick="hw.markSectionAsRead(this)"{% end %}>
+<section class="{% if individual_content %} hw-individual-content {% end %}{% if item.is_remote %} hw-remote {% end %} {% if section_template %}hw-template-{{ section_template }}{% end %}" {% if item.is_remote %}data-remote-profile-url="{{ item.from_user }}" data-remote-id="{{ item.id }}" data-unread="{% if item.is_remote and item.read %}false{% else %}true{% end %}" onclick="hw.markSectionAsRead(this)"{% end %}>
   {% if not item.restricted %}
     <header>
       <h1 class="hw-content-title">
@@ -107,23 +107,25 @@
           {% module Moderate(item) %}
         {% end %}
 
-        {% if single_user_site %}
-          {{ item.username }}
-        {% end %}
-        {{ _("posted") }} <time pubdate>{{ locale.format_date(item.date_created) }}</time>
-        {% if not item.is_remote and item.date_updated != item.date_created %}
-          ({{ _("updated") }} <time>{{ locale.format_date(item.date_updated) }}</time>)
-        {% end %}
-        {% if item.is_remote %}
-          • <a href="{{ item.link }}" target="_blank">{{ _('view post') }}</a>
-          • <a href="#markAsUnread" onclick="hw.markAsUnread(event, this)" class="hw-mark-unread">{{ _('keep unread') }}</a>
-        {% else %}
-          • {{ _("%(count)s human view", "%(count)s human views", item.count) % { "count": locale.friendly_number(item.count) } }}
-          • {% raw _("%(count)s robot view", "%(count)s robot views", item.count_robot) % { "count": locale.friendly_number(item.count_robot) } %}
-          {% if item.thread %}
-              • <a href="{{ item.thread.split(':')[2] }}">{{ _('view post') }}</a>
-            {% end %}
+        <span class="hw-basic-info">
+          {% if single_user_site %}
+            {{ item.username }}
           {% end %}
+          {{ _("posted") }} <time pubdate>{{ locale.format_date(item.date_created) }}</time>
+          {% if not item.is_remote and item.date_updated != item.date_created %}
+            ({{ _("updated") }} <time>{{ locale.format_date(item.date_updated) }}</time>)
+          {% end %}
+          {% if item.is_remote %}
+            • <a href="{{ item.link }}" target="_blank">{{ _('view post') }}</a>
+            • <a href="#markAsUnread" onclick="hw.markAsUnread(event, this)" class="hw-mark-unread">{{ _('keep unread') }}</a>
+          {% else %}
+            • {{ _("%(count)s human view", "%(count)s human views", item.count) % { "count": locale.friendly_number(item.count) } }}
+            • {% raw _("%(count)s robot view", "%(count)s robot views", item.count_robot) % { "count": locale.friendly_number(item.count_robot) } %}
+            {% if item.thread %}
+                • <a href="{{ item.thread.split(':')[2] }}">{{ _('view post') }}</a>
+              {% end %}
+            {% end %}
+        </span>
         {% if not item.is_remote and not is_owner_viewing and username != item.username %}
           <img src="{{ nav_url(section='stats', url=content_url(item)) }}">
         {% end %}
@@ -132,7 +134,7 @@
           {% if current_user and current_user["email"] %}
           <form class="hw-comment-form" method="post" action="/api" onsubmit="return false" data-error="{{ _('error submitting your comment. please try again.') }}">
             {% raw xsrf_form_html() %}
-            <textarea name="hw-comment-input" class="hw-comment-input" type="text" placeholder="{{ _('what\'s your take?') }}" data-local-id="{{ content.id }}"></textarea> <button class="hw-button hw-button-save" type="button" onclick="hw.commentSubmit()">{{ _('submit') }}</button>
+            <textarea name="hw-comment-input" class="hw-comment-input" type="text" placeholder="{% if section_template == 'forum' %} {% else %}{{ _('what\'s your take?') }}{% end %}" data-local-id="{{ content.id }}"></textarea> <button class="hw-button hw-button-save" type="button" onclick="hw.commentSubmit()">{{ _('submit') }}</button>
             <div class="clear"></div>
           </form>
           {% else %}

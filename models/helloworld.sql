@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS `content` (
   `sort_type` varchar(255) NOT NULL,
   `redirect` bigint(20) unsigned NOT NULL default '0',
   `hidden` tinyint(1) NOT NULL default '0',
+  `forum` tinyint(1) NOT NULL default '0',
   `title` mediumtext NOT NULL,
   `date_created` datetime NOT NULL,
   `date_updated` datetime NOT NULL,

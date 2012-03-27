@@ -44,6 +44,13 @@ class ApiHandler(BaseHandler):
       self.set_status(204)
       return
 
+    if op == 'topic':
+      if not self.current_user:
+        raise tornado.web.HTTPError(400)
+      self.topic()
+      self.set_status(201)
+      return
+
     if not self.authenticate(author=True):
       return
 
@@ -409,3 +416,38 @@ class ApiHandler(BaseHandler):
       commented_content.save()
 
     smtp.comment(self, from_username, commented_user.oauth, self.content_url(commented_content, host=True))
+
+  def topic(self):
+    username = self.get_argument('username')
+    section = self.get_argument('section')
+    album = self.get_argument('album', '')
+    topic = self.get_argument('topic')
+
+    section_item = self.models.content.get(username=username,
+                                           section='main',
+                                           name=section)[0]
+    template = section_item.template
+
+    if not template and album:
+      album_item = self.models.content.get(username=username,
+                                           section=section,
+                                           album='main',
+                                           name=album)[0]
+      template = album_item.template
+
+    if template != 'forum':
+      raise tornado.web.HTTPError(400, "i call shenanigans")
+
+    content              = self.models.content()
+    content.username     = username
+    content.section      = section
+    content.album        = album
+    content.title        = topic
+    content.name         = self.get_unique_name(content, "_", topic)
+    content.forum        = True
+    current_datetime     = datetime.datetime.utcnow()
+    content.date_created = current_datetime
+    content.date_updated = current_datetime
+    content.save()
+
+    self.set_header('Location', self.content_url(content))

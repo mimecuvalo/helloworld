@@ -112,7 +112,8 @@ class ContentView(tornado.web.UIModule):
         for comment in local_comments:
           comment.is_remote = 0
         self.handler.display['comments'] = local_comments + remote_comments
-        self.handler.display['comments'].sort(key=lambda x: x.date_created, reverse=True)
+        is_forum = self.handler.display["section_template"] == 'forum'
+        self.handler.display['comments'].sort(key=lambda x: x.date_created, reverse=(not is_forum))
 
     return self.render_string("content.html", **self.handler.display)
 

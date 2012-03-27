@@ -439,11 +439,18 @@ a.hw-read-more {
   display: block;
 }
 
-.hw-archive {
+.hw-archive,
+.hw-forum {
   padding: 25px 10px;
+  clear: both;
 }
 
-#hw-content .hw-archive li {
+.hw-forum {
+  border: 1px solid #aaa;
+}
+
+#hw-content .hw-archive li,
+#hw-content .hw-forum li {
   clear: both;
   position: relative;
   padding-left: 15px;
@@ -451,14 +458,45 @@ a.hw-read-more {
   list-style: inside square;
 }
 
-.hw-archive li .hw-content-delete {
+#hw-content .hw-forum form {
+  padding: 10px;
+  background-color: #eef;
+  width: 90%;
+}
+#hw-content .hw-forum li {
+  padding: 10px;
+  margin: 0;
+  display: block;
+  width: 90%;
+}
+#hw-content .hw-forum li.hw-even {
+  background-color: #eef;
+}
+#hw-content .hw-forum li[data-is-album=true] {
+  font-weight: bold;
+}
+
+.hw-archive li .hw-content-delete,
+.hw-forum li .hw-content-delete {
   display: none;
 }
-.hw-editing .hw-archive li:hover .hw-content-delete {
+.hw-editing .hw-archive li:hover .hw-content-delete,
+.hw-editing .hw-forum li:hover .hw-content-delete {
   display: block;
   position: absolute;
   top: 0;
   left: 0;
+}
+
+section.hw-template-forum footer .hw-basic-info {
+  display: none;
+}
+#hw-content section.hw-template-forum footer.hw-info {
+  border: 0;
+}
+section.hw-template-forum footer .hw-comment-form {
+  padding: 10px 0;
+  border-bottom: 1px solid #0bf;
 }
 
 #hw-loading {

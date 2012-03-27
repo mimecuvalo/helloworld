@@ -376,7 +376,6 @@ hw.getEmbedHtml = function(link) {
   var sel = window.getSelection();
 
   var callback = function(xhr) {
-  log(xhr.responseText)
     var isEmbed = xhr.responseText.search(/<(embed|object|iframe|img)\s/ig) != -1;
     document.execCommand("insertHTML", false, xhr.responseText + (isEmbed ? "<br><br>" : ""));
     if (isEmbed) {

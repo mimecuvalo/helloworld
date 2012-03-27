@@ -79,6 +79,7 @@ class BaseHandler(tornado.web.RequestHandler):
     self.display["base_uri"] = self.base_uri
     self.display["base_path"] = self.base_path
     self.display["prefix"] = self.prefix
+    self.display["section_template"] = None
     self.display["has_code"] = False
     self.display["strip_html"] = self.strip_html
     self.display["ellipsize"] = self.ellipsize

@@ -323,3 +323,30 @@ hw.commentSubmit = function() {
       onSuccess: callback,
       onError: badTrip });
 };
+
+hw.postTopic = function(topic) {
+  var form = hw.$c('hw-post-form');
+  var username = topic.getAttribute('data-username');
+  var section = topic.getAttribute('data-section');
+  var album = topic.getAttribute('data-album');
+
+  var callback = function(xhr) {
+    topic.value = '';
+    window.location.href = xhr.getResponseHeader('Location');
+  };
+
+  var badTrip = function(xhr) {
+    alert(form.getAttribute('data-error'));
+  };
+
+  new hw.ajax(hw.baseUri() + 'api',
+    { method: 'post',
+      postBody: 'op='        + encodeURIComponent('topic')
+             + '&username='  + encodeURIComponent(username)
+             + '&section='   + encodeURIComponent(section)
+             + '&album='     + encodeURIComponent(album)
+             + '&topic='     + encodeURIComponent(topic.value),
+      headers: { 'X-Xsrftoken' : form['_xsrf'].value },
+      onSuccess: callback,
+      onError: badTrip });
+};

@@ -66,6 +66,8 @@
             hw.$c('hw-section-album').options[1].selected = true;
           {% end %}
         </script>
+      {% else %}
+        &nbsp;
       {% end %}
 
       <input name="hw-price" class="hw-price" type="text" placeholder="{{ _("price") }}"
