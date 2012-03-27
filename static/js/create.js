@@ -112,8 +112,18 @@ hw.save = function() {
     }
 
     if (!createForm['hw-id'].value) {
+      hw.setCookie('section', xhr.getResponseHeader('X-Helloworld-Section') || createForm['hw-section'].value, -1, hw.basePath());
+      hw.setCookie('album', xhr.getResponseHeader('X-Helloworld-Album') || createForm['hw-album'].value, -1, hw.basePath());
+    }
+
+    if (!createForm['hw-id'].value) {
       hw.resetCreateForm();
       hw.addToFeed(xhr.responseText);
+    }
+
+    if (createForm['hw-section-album'].value == '_new_') {
+      createForm['hw-section-album'].value = '';
+      window.location.reload();
     }
   };
 

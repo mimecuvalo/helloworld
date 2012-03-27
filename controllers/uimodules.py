@@ -17,6 +17,8 @@ class Create(tornado.web.UIModule):
     self.handler.display["sections"] = self.handler.get_sections_with_albums(profile=self.handler.display["default_username"])
     self.handler.display["section_template"] = self.handler.get_argument('section_template', None)
     self.handler.display["templates"] = self.handler.constants['templates']
+    self.handler.display["section_cookie"] = self.handler.get_cookie("section")
+    self.handler.display["album_cookie"] = self.handler.get_cookie("album")
     return self.render_string("_create.html", **self.handler.display)
 
 class Moderate(tornado.web.UIModule):

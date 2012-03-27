@@ -682,7 +682,7 @@ hw.html = function(event, el, close) {
 
   var wysiwyg = hw.$c('hw-wysiwyg');
   var htmlWrapper = hw.$c('hw-html-wrapper');
-  var openHTML = close ? false : hw.isHidden(htmlWrapper);
+  var openHTML = close != undefined ? !close : hw.isHidden(htmlWrapper);
   var createForm = hw.$c('hw-create');
   hw.setClass(createForm, 'hw-html-open', openHTML);
   hw.display(htmlWrapper, openHTML);

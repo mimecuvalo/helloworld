@@ -44,17 +44,28 @@
   <div class="hw-wysiwyg-controls">
     <span class="hw-create-section-wrapper">
       {% if individual_content %}
+        {% set found_cookie = None %}
+        {% set option_counter = 2 %}
         <select name="hw-section-album" class="hw-section-album" onclick="" onchange="hw.sectionChange(this)">
           <option value="_new_">{{ _('new section/album...') }}</option>
-          <option value="" {% if len(sections) == 0 or not content %}selected{% end %}>{{ _('(choose section)') }}</option>
+          <option value="" {% if len(sections) == 0 or (not content and not section_cookie) %}selected{% end %}>{{ _('(choose section)') }}</option>
           <option value="main" {% if content and content.section == 'main' %}selected{% end %} data-hidden="false">{{ _('main (top-level page)') }}</option>
           {% for section in sections %}
-            <option value="{{ section['name'] }}||{{ section['template'] }}|" {% if content and content.section == section['name'] and not content.album %}selected{% end %} data-hidden="{% if section['hidden'] %}true{% else %}false{% end %}">{{ section['title'] }}</option>
+            {% set option_counter += 1 %}
+            <option value="{{ section['name'] }}||{{ section['template'] }}|" {% if (content and content.section == section['name'] and not content.album) or (not content and section_cookie and not album_cookie and section_cookie == section['name']) %}selected{% set found_cookie = option_counter %}{% end %} data-hidden="{% if section['hidden'] %}true{% else %}false{% end %}">{{ section['title'] }}</option>
             {% for album in section['albums'] %}
-              <option value="{{ section['name'] }}|{{ album['name'] }}|{{ section['template'] }}|{{ album['template'] }}" {% if content and content.section == section['name'] and content.album == album['name'] %}selected{% end %} data-hidden="{% if section['hidden'] or album['hidden'] %}true{% else %}false{% end %}"> - {{ album['title'] }}</option>
+              {% set option_counter += 1 %}
+              <option value="{{ section['name'] }}|{{ album['name'] }}|{{ section['template'] }}|{{ album['template'] }}" {% if (content and content.section == section['name'] and content.album == album['name']) or (not content and album_cookie and album_cookie == album['name']) %}selected{% set found_cookie = option_counter %}{% end %} data-hidden="{% if section['hidden'] or album['hidden'] %}true{% else %}false{% end %}"> - {{ album['title'] }}</option>
             {% end %}
           {% end %}
         </select>
+        <script>
+          {% if found_cookie %}
+            hw.$c('hw-section-album').options[{{ found_cookie }}].selected = true;
+          {% else %}
+            hw.$c('hw-section-album').options[1].selected = true;
+          {% end %}
+        </script>
       {% end %}
 
       <input name="hw-price" class="hw-price" type="text" placeholder="{{ _("price") }}"

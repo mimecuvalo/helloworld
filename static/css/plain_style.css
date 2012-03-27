@@ -33,6 +33,7 @@ h1 {
   background-color: #eff;
   border: 1px solid #0c0;
   color: #060;
+  outline: 0;
 }
 .hw-button:hover {
   border: 1px solid #090;

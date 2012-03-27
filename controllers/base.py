@@ -555,6 +555,8 @@ class BaseHandler(tornado.web.RequestHandler):
       new_section.date_updated = datetime.datetime.utcnow()
       new_section.save()
 
+      self.set_header('X-Helloworld-Section', section)
+
     return section
 
   def rename_section(self, old_name, new_name, new_title):
@@ -610,6 +612,8 @@ class BaseHandler(tornado.web.RequestHandler):
       new_album.date_created = datetime.datetime.utcnow()
       new_album.date_updated = datetime.datetime.utcnow()
       new_album.save()
+
+      self.set_header('X-Helloworld-Album', album)
 
     return album
 
