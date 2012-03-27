@@ -1,18 +1,58 @@
-#hw-container {
+/*#hw-container {
   width: 970px;
   margin: 0 auto;
-}
+}*/
 
 #hw-sidebar {
-  float: right;
+  position: fixed;
   width: 200px;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  padding: 0 10px;
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+#hw-sidebar:hover {
+  overflow-y: scroll;
+}
+
+#hw-sidebar > * {
+  width: 178px;
+}
+
+#hw-sidebar::-webkit-scrollbar-corner {
+  background: transparent;
+}
+#hw-sidebar::-webkit-scrollbar-track {
+  background-clip: padding-box;
+  border: solid transparent;
+  border-width: 0 0 0 4px;
+}
+#hw-sidebar::-webkit-scrollbar-button {
+  height: 0;
+  width: 0;
+}
+#hw-sidebar::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, .2);
+  background-clip: padding-box;
+  border: solid transparent;
+  min-height: 28px;
+  padding: 100px 0 0;
+  box-shadow: inset 1px 1px 0 rgba(0, 0, 0, .1), inset 0 -1px 0 rgba(0, 0, 0, .07);
+  border-width: 1px 1px 1px 6px;
+}
+#hw-sidebar::-webkit-scrollbar {
+  height: 16px;
+  overflow: visible;
+  width: 16px;
 }
 
 #hw-create,
 #hw-sidebar,
 #users,
 #customize {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 #users,
@@ -32,6 +72,15 @@
   width: 740px;
 }
 
+#hw-backend-content {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-left: 240px;
+}
+
 #hw-feed,
 #hw-navigation,
 #hw-tools,
@@ -46,12 +95,6 @@
 
 #hw-followers li {
   display: inline-block;
-}
-
-#hw-following,
-#hw-followers {
-  max-height: 600px;
-  overflow-y: scroll;
 }
 
 #hw-following li {
