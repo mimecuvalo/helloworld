@@ -60,9 +60,9 @@
           {% end %}
         </select>
         <script>
-          {% if found_cookie %}
+          {% if not content and found_cookie %}
             hw.$c('hw-section-album').options[{{ found_cookie }}].selected = true;
-          {% else %}
+          {% elif not content %}
             hw.$c('hw-section-album').options[1].selected = true;
           {% end %}
         </script>
@@ -227,7 +227,7 @@
 {% end %}
 
 {% if not content %}
-  hw.sectionChange(hw.$c('hw-section'));
+  hw.sectionChange(hw.$c('hw-section-album'));
   hw.addClass('hw-container', 'hw-editing');
   hw.resetCreateForm();
 

@@ -1,5 +1,4 @@
 import json
-import mimetypes
 import os
 import os.path
 

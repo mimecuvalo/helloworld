@@ -264,7 +264,6 @@ hw.read = function(event, el, listMode, special, query, readAllMode) {
     args['list_mode'] = listMode ? 1 : 0;
     args['read_all_mode'] = readAllMode ? 1 : 0;
     url = url.split('?')[0] + hw.generateArgs(args);
-    hw.setClass('hw-feed', 'hw-list-mode', listMode);
     hw.setCookie('list_mode', listMode ? '1' : '0', -1, hw.basePath());
     hw.setCookie('read_all_mode', readAllMode ? '1' : '0', -1, hw.basePath());
   }
@@ -272,6 +271,9 @@ hw.read = function(event, el, listMode, special, query, readAllMode) {
   var callback = function(xhr, badTrip) {
     hw.loadMoreObject.done = badTrip ? true : false;
     hw.loadMoreObject.offset = 1;
+    if (listMode != undefined) {
+      hw.setClass('hw-feed', 'hw-list-mode', listMode);
+    }
     if (user || ownFeed || listMode != undefined || readAllMode != undefined || special || query) {
       hw.loadMoreObject.url = url;
     } else if (!user) {
