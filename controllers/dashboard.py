@@ -104,6 +104,6 @@ class DashboardHandler(BaseHandler):
       total_count += profile_count
 
     self.display['total_count'] = total_count
-    self.display['favorites_count'] = self.models.content_remote.get(to_username=user.username, favorited=True).count()
-    self.display['comments_count'] = self.models.content_remote.get(to_username=user.username, type='comment').count()
-    self.display['spam_count'] = self.models.content_remote.get(to_username=user.username, is_spam=True).count()
+    self.display['favorites_count'] = self.models.content_remote.get(to_username=user.username, favorited=True, deleted=False).count()
+    self.display['comments_count'] = self.models.content_remote.get(to_username=user.username, type='comment', deleted=False).count()
+    self.display['spam_count'] = self.models.content_remote.get(to_username=user.username, is_spam=True, deleted=False).count()
