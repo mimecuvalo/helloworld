@@ -72,7 +72,7 @@ def generate_html(filename, alt_text=''):
   else:
     return filename
 
-def save_locally(parent_url, full_path, data, skip_write=False):
+def save_locally(parent_url, full_path, data, skip_write=False, disallow_zip=False):
   # check dupe
   if not skip_write:
     full_path = get_unique_name(full_path)
@@ -159,7 +159,7 @@ def save_locally(parent_url, full_path, data, skip_write=False):
       f.write(data)
       f.close()
 
-    if os.path.splitext(full_path)[1] == '.zip':
+    if os.path.splitext(full_path)[1] == '.zip' and not disallow_zip:
       z = zipfile.ZipFile(full_path)
       for f in z.namelist():
         if f.endswith('/'):

@@ -1,6 +1,9 @@
 import json
+import mimetypes
 import os
 import os.path
+
+import tornado.web
 
 from base import BaseHandler
 from logic import media
@@ -18,23 +21,32 @@ class UploadHandler(BaseHandler):
       self.set_status(404)
 
   def post(self):
-    if not self.authenticate(author=True):
-      return
+    safe_user = False
+    if self.authenticate(author=True):
+      safe_user = True
 
     self.get_common_parameters()
 
+    if not safe_user:
+      if media.detect_media_type(self.base_leafname) != 'image':
+        raise tornado.web.HTTPError(400, "i call shenanigans")
+
     uploaded_file = self.request.files['file'][0]
-    self.media_section = url_factory.clean_filename(self.get_argument('section'))
-    if self.media_section.startswith(self.resource_url()):
-      self.media_section = self.media_section[len(self.resource_url()) + 1:]
-    self.parent_directory = self.resource_directory(self.media_section)
-    self.parent_url = self.resource_url(self.media_section)
+    if safe_user:
+      self.media_section = url_factory.clean_filename(self.get_argument('section'))
+      if self.media_section.startswith(self.resource_url()):
+        self.media_section = self.media_section[len(self.resource_url()) + 1:]
+      self.parent_directory = self.resource_directory(self.media_section)
+      self.parent_url = self.resource_url(self.media_section)
+    else:
+      self.parent_directory = os.path.join(self.application.settings["resource_path"], 'remote')
+      self.parent_url = os.path.join(self.application.settings["resource_url"], 'remote')
     self.full_path = media.get_unique_name(os.path.join(self.parent_directory, self.base_leafname))
 
     if not os.path.isdir(self.parent_directory):
       os.makedirs(self.parent_directory)
 
-    if self.chunked_upload:
+    if self.chunked_upload and safe_user:
       f = open(self.tmp_path, 'w')
       f.write(uploaded_file['body'])
       f.close()
@@ -59,9 +71,10 @@ class UploadHandler(BaseHandler):
       else:
         return
     else:
-      original_size_url, url, thumb_url = media.save_locally(self.parent_url, self.full_path, uploaded_file['body'])
+      original_size_url, url, thumb_url = media.save_locally(self.parent_url, self.full_path, uploaded_file['body'], disallow_zip=(not safe_user))
 
     media_html = media.generate_full_html(self, url, original_size_url)
+    self.set_header("Content-Type", "text/plain; charset=UTF-8")
     self.write(json.dumps({ 'original_size_url': original_size_url, \
                             'url': url, \
                             'thumb_url': thumb_url, \
@@ -73,6 +86,9 @@ class UploadHandler(BaseHandler):
       self.base_leafname = self.request.files['file'][0]['filename']
       self.chunked_upload = False
       return
+
+    if not self.authenticate(author=True):
+      raise tornado.web.HTTPError(400, "i call shenanigans")
 
     self.chunk_number = url_factory.clean_filename(self.get_argument('resumableChunkNumber'))
     self.chunk_size = int(self.get_argument('resumableChunkSize'))

@@ -6,10 +6,10 @@
   hw.setMsg('separate', "{% raw js_escape(_('make separate posts for each media file?')) %}");
   hw.setMsg('saved', "{% raw js_escape(_('saved!')) %}");
   hw.setMsg('error', "{% raw js_escape(_('no good, mate.')) %}");
-  hw.setMsg('image-info', "{% raw js_escape(_('caption')) %}");
-  hw.setMsg('uploading', "{% raw js_escape(_('uploading...')) %}");
   hw.xsrf = '{% raw xsrf_form_html() %}';
   hw.uploadUrl = '{{ nav_url(section='upload') }}';
+  hw.setMsg('uploading', "{% raw js_escape(_('uploading...')) %}");
+  hw.setMsg('image-info', "{% raw js_escape(_('caption')) %}");
   hw.contentOwnerTitle = {% if content %}"{{ content_owner.title }}"{% else %}"{% raw js_escape(_('Dashboard')) %}"{% end %};
   {% if content %}
     hw.tagUrl = '{{ nav_url(host=True, username=content.username, section='search') }}?q=%23';
@@ -102,7 +102,7 @@
     _&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <u>{{ _('underline') }}</u><br>
     @&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= {{ _('mention person') }}<br>
     #&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= {{ _('tag') }}<br>
-    paste&nbsp;&nbsp;= {{ _('urls and embed codes will be auto generated!') }}<br>
+    paste&nbsp;&nbsp;= {{ _('urls will be automatically converted into rich media!') }}<br>
     tab&nbsp;&nbsp;&nbsp;&nbsp;= {{ _('list') }}<br>
     ---&nbsp;&nbsp;&nbsp;&nbsp;= {{ _('separator') }}<br>
     -more- = {{ _('blog jump') }}<br>
@@ -179,21 +179,6 @@
   </div>
 </form>
 {% if individual_content %}
-<div class="hw-anchor-editor">
-  <header onmousedown="hw.dragElementStart(event, this)">{{ _('link editor') }}</header>
-  <input class="hw-anchor-link" name="hw-anchor-link" type="text" placeholder="{{ _('http://') }}" onchange="hw.changeAnchorLink(this)">
-  <a class="hw-anchor-visit" href="#" target="_blank">{{ _('visit') }}</a>
-  <a class="hw-anchor-remove" href="#removeLink" onclick='hw.wysiwyg(event, "createLink")'>{{ _('remove') }}</a><br>
-  <input type="radio" class="" name="hw-anchor-type" value="web" onclick="hw.changeAnchorType(this)"><label onclick="hw.changeAnchorType(this.previousSibling)">{{ _('web') }}</label>
-  <input type="radio" name="hw-anchor-type" value="email" onclick="hw.changeAnchorType(this)"><label onclick="hw.changeAnchorType(this.previousSibling)">{{ _('email') }}</label>
-</div>
-<div class="hw-image-options">
-  <header onmousedown="hw.dragElementStart(event, this)">{{ _('image options') }}</header>
-  <input type="radio" name="hw-image-align" value="none" onclick="hw.changeImageAlign(this)"><label onclick="hw.changeImageAlign(this.previousSibling)">{{ _('none') }}</label>
-  <input type="radio" name="hw-image-align" value="left" onclick="hw.changeImageAlign(this)"><label onclick="hw.changeImageAlign(this.previousSibling)">{{ _('left') }}</label>
-  <input type="radio" name="hw-image-align" value="right" onclick="hw.changeImageAlign(this)"><label onclick="hw.changeImageAlign(this.previousSibling)">{{ _('right') }}</label>
-  <!--<a href="#edit-image" class="hw-edit-image" onclick="hw.editImage(event, this)">{{ _('edit image') }}</a>-->
-</div>
 <div class="hw-image-editor hw-closed">
   <header onmousedown="hw.dragElementStart(event, this)">{{ _('image editor') }}</header>
   <a href="#close-editor" class="hw-image-close hw-button hw-button-delete" onclick="hw.editImageClose(event)">x</a>

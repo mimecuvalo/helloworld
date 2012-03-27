@@ -113,14 +113,14 @@ class BaseHandler(tornado.web.RequestHandler):
       self.current_user["username"]  = user.username  if user else None
       self.current_user["author"]    = user.author    if user else 0
       self.current_user["superuser"] = user.superuser if user else 0
-      self.display["username"] = self.current_user["username"]
-      self.display["userid"] = self.current_user["userid"]
-      self.display["is_author"] = self.current_user["author"]
+      self.display["username"]     = self.current_user["username"]
+      self.display["userid"]       = self.current_user["userid"]
+      self.display["is_author"]    = self.current_user["author"]
       self.display["is_superuser"] = self.current_user["superuser"]
     else:
-      self.display["username"] = None
-      self.display["userid"] = None
-      self.display["is_author"] = False
+      self.display["username"]     = None
+      self.display["userid"]       = None
+      self.display["is_author"]    = False
       self.display["is_superuser"] = False
 
   def get_user_by_hostname(self):

@@ -607,6 +607,13 @@ ul.hw-comments img {
   width: 42px;
   height: 42px;
 }
+.hw-comment-input img,
+ul.hw-comments .hw-comment-text img {
+  width: auto;
+  height: auto;
+  max-width: 300px;
+  max-height: 300px;
+}
 
 .hw-comment-header {
   float: left;
@@ -616,10 +623,121 @@ ul.hw-comments img {
 form.hw-comment-form {
   margin: 1em 0;
 }
-textarea.hw-comment-input {
-  width: 300px;
+.hw-comment-input {
+  width: 630px;
+  min-height: 50px;
+  z-index: 2;
+  float: left;
+  outline: 0;
+}
+.hw-comment-form .hw-button-save {
+  float: right;
+}
+.hw-comment-options-wrapper {
   float: left;
 }
+
+div.hw-comment-help {
+  height: 130px;
+  background-color: white;
+  /*-moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -o-border-radius: 5px;
+  -ms-border-radius: 5px;
+  border-radius: 5px;*/
+}
+div.hw-comment-help.hw-open {
+  margin: 39px 3px 5px 0;
+  padding: 10px;
+}
+
+div.hw-anchor-editor,
+div.hw-image-options,
+div.hw-user-autocomplete {
+  position: absolute;
+  top: -10000px;
+  left: -10000px;
+  z-index: 1000;
+  width: 275px;
+  border: 1px solid black;
+  background-color: white;
+  padding: 0 5px 5px 5px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -o-border-radius: 3px;
+  -ms-border-radius: 3px;
+  border-radius: 3px;
+  font-family: courier new, monospace;
+}
+a.hw-anchor-remove {
+  margin-left: 5px;
+}
+
+a.hw-anchor-remove {
+  vertical-align: middle;
+  font-size: 10px;
+}
+
+div.hw-anchor-editor header,
+div.hw-image-options header,
+div.hw-image-editor header {
+  font-size: 11px;
+  background-color: #eef;
+  border-bottom: 1px solid #ccc;
+  cursor: move;
+  margin: 0 -5px 5px -5px;
+  padding: 1px 5px;
+}
+div.hw-image-editor header {
+  margin: 0 -10px 10px -10px;
+}
+
+div.hw-anchor-editor label,
+div.hw-image-options label {
+  cursor: hand;
+  cursor: pointer;
+  font-size: 10px;
+  vertical-align: middle;
+  padding: 3px 0 0 3px;
+}
+
+div.hw-anchor-editor input,
+div.hw-image-options input,
+div.hw-anchor-editor a {
+  vertical-align: middle;
+}
+
+input[name=hw-anchor-type],
+input[name=hw-image-align] {
+  margin-top: 5px;
+}
+
+a.hw-button-media {
+  text-decoration: none;
+  overflow: hidden;
+}
+
+a.hw-button-media input {
+  left: auto !important;
+}
+
+a.hw-button-media + progress.hw-shown {
+  height: 12px;
+  width: 82px;
+  margin: 5px 0 0 5px;
+  float: left;
+  display: block;
+}
+.hw-media-result {
+  float: left;
+  margin: 3px 0 0 5px;
+  display: block;
+}
+
+div.hw-paste-area {
+  position: absolute;
+}
+
 .hw-remote-actions {
   float: right;
 }

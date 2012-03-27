@@ -59,6 +59,12 @@
   {% if is_owner_viewing %}
     <script src="{{ static_url('js/all_create.js', 'js/all_create.inc') }}"></script>
   {% end %}
+  <script>
+    hw.xsrf = '{% raw xsrf_form_html() %}';
+    hw.uploadUrl = '{{ nav_url(section='upload') }}';
+    hw.setMsg('uploading', "{% raw js_escape(_('uploading...')) %}");
+    hw.setMsg('image-info', "{% raw js_escape(_('caption')) %}");
+  </script>
 
   {% raw section_code %}
   {% raw album_code %}

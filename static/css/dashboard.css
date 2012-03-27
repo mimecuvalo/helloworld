@@ -214,12 +214,12 @@
 #hw-absorb .hw-remote img[align=left],
 #hw-absorb .hw-remote img.alignleft {  /* boing boing wp */
   float: left;
-  margin: 0 22px 11px 0;
+  margin: 10px;
 }
 #hw-absorb .hw-remote img[align=right],
 #hw-absorb .hw-remote img.alignright { /* boing boing wp */
   float: right;
-  margin: 0 0 11px 22px;
+  margin: 10px;
 }
 
 #hw-absorb-options {

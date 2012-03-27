@@ -31,6 +31,10 @@ hw.login = function(event, el) {
 };
 
 hw.keyNavigation = function(event) {
+  if (document.activeElement && document.activeElement.hasAttribute('contenteditable')) {
+    return;
+  }
+
   var key = event.which ? event.which : event.keyCode;
 
   if (event.target && (event.target.nodeName == 'TEXTAREA' || event.target.nodeName == 'INPUT')) {
@@ -133,6 +137,8 @@ hw.swapContent = function(url, event) {
       hw.loadedContent[url] = preloadedContent || (xhr ? xhr.responseText : '');
       hw.removeClass(hw.$('hw-content'), 'hw-invisible');
       hw.preloadNextLogicalContent();
+
+      hw.commentUploadButton();
     };
     setTimeout(fn, 100);
   };
@@ -294,59 +300,4 @@ hw.loadMore.prototype = {
           onError: badTrip });
     }
   }
-};
-
-hw.commentSubmit = function() {
-  var form = hw.$c('hw-comment-form');
-  var comment = hw.$c('hw-comment-input');
-  var localId = comment.getAttribute('data-local-id');
-  var thread = comment.hasAttribute('data-thread') ? comment.getAttribute('data-thread') : '';
-  var threadUser = comment.hasAttribute('data-thread-user') ? comment.getAttribute('data-thread-user') : '';
-
-  var callback = function(xhr) {
-    comment.value = '';
-    window.location.reload();
-  };
-
-  var badTrip = function(xhr) {
-    alert(form.getAttribute('data-error'));
-  };
-
-  new hw.ajax(hw.baseUri() + 'api',
-    { method: 'post',
-      postBody: 'op='         + encodeURIComponent('comment')
-             + '&local_id='   + encodeURIComponent(localId)
-             + '&thread='     + encodeURIComponent(thread)
-             + '&thread_user=' + encodeURIComponent(threadUser)
-             + '&comment='    + encodeURIComponent(comment.value),
-      headers: { 'X-Xsrftoken' : form['_xsrf'].value },
-      onSuccess: callback,
-      onError: badTrip });
-};
-
-hw.postTopic = function(topic) {
-  var form = hw.$c('hw-post-form');
-  var username = topic.getAttribute('data-username');
-  var section = topic.getAttribute('data-section');
-  var album = topic.getAttribute('data-album');
-
-  var callback = function(xhr) {
-    topic.value = '';
-    window.location.href = xhr.getResponseHeader('Location');
-  };
-
-  var badTrip = function(xhr) {
-    alert(form.getAttribute('data-error'));
-  };
-
-  new hw.ajax(hw.baseUri() + 'api',
-    { method: 'post',
-      postBody: 'op='        + encodeURIComponent('topic')
-             + '&username='  + encodeURIComponent(username)
-             + '&section='   + encodeURIComponent(section)
-             + '&album='     + encodeURIComponent(album)
-             + '&topic='     + encodeURIComponent(topic.value),
-      headers: { 'X-Xsrftoken' : form['_xsrf'].value },
-      onSuccess: callback,
-      onError: badTrip });
 };

@@ -24,6 +24,7 @@ h1 {
   margin: 0;
 }
 
+.hw-comment-help,
 .hw-help {
   font: 13px Courier New, monospace;
 }
@@ -118,6 +119,7 @@ div.hw-media-creator {
 }
 
 #hw-following,
+.hw-comment-help,
 .hw-help,
 .hw-options {
   border: 1px solid #0c0;

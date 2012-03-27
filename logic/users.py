@@ -18,6 +18,9 @@ import pubsubhubbub_subscribe
 import salmoning
 
 def create_user(handler, username, email):
+  if username == 'remote':
+    raise tornado.web.HTTPError(400)
+
   user = handler.models.users()
   user.username = username
   user.name = username

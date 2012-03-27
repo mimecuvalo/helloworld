@@ -191,14 +191,17 @@ class Feed(tornado.web.UIModule):
       content_options = { 'username': self.handler.breadcrumbs["profile"],
                           'section': self.handler.breadcrumbs["section"],
                           'album': self.handler.breadcrumbs["name"],
+                          'forum': False,
                           'redirect': False, }
     elif self.handler.breadcrumbs["name"] != 'home':
       content_options = { 'username': self.handler.breadcrumbs["profile"],
                           'section': self.handler.breadcrumbs["name"],
+                          'forum': False,
                           'redirect': False, }
     else:
       content_options = { 'username': self.handler.breadcrumbs["profile"],
                           #'section !=' : 'comments',
+                          'forum': False,
                           'redirect': False, }
 
     if not is_owner_viewing:
