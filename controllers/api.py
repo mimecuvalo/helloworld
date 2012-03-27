@@ -101,6 +101,9 @@ class ApiHandler(BaseHandler):
 
       remote_title, remote_thumb, remote_html = content_remote.get_remote_title_and_thumb(url, 'text/html')
 
+      if remote_title:
+        self.set_header('X-Helloworld-Title', remote_title)
+
       if remote_thumb:
         self.set_header('X-Helloworld-Thumbnail', remote_thumb)
 

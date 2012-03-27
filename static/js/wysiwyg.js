@@ -376,15 +376,21 @@ hw.getEmbedHtml = function(link) {
   var sel = window.getSelection();
 
   var callback = function(xhr) {
-    var isEmbed = xhr.responseText.search(/&lt;(embed|object|iframe)\s/ig) == 0;
+  log(xhr.responseText)
+    var isEmbed = xhr.responseText.search(/<(embed|object|iframe|img)\s/ig) != -1;
     document.execCommand("insertHTML", false, xhr.responseText + (isEmbed ? "<br><br>" : ""));
     if (isEmbed) {
-      sel.modify("move", "forward", "character");
+      sel.modify("move", "forward", "line");
     }
 
     if (!createForm['hw-id'].value && xhr.getResponseHeader('X-Helloworld-Thumbnail') && !createForm['hw-thumb'].value) {
       createForm['hw-thumb'].value = xhr.getResponseHeader('X-Helloworld-Thumbnail');
       hw.changeThumbPreview();
+    }
+    var newTitle = hw.$('hw-new-title');
+    if (!createForm['hw-id'].value && xhr.getResponseHeader('X-Helloworld-Title') && newTitle && newTitle.textContent == hw.getMsg('untitled')) {
+      newTitle.innerHTML = xhr.getResponseHeader('X-Helloworld-Title');
+      createForm['hw-title'].value = xhr.getResponseHeader('X-Helloworld-Title');
     }
   };
   new hw.ajax(hw.baseUri() + 'api',

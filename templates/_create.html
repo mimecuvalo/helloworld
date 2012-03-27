@@ -234,7 +234,7 @@
   hw.resetCreateForm();
 
   if (window.location.hash) {
-    var reblog = hw.getArgument(window.location.hash.substring(1), 'reblog');
+    var reblog = hw.getArgument('?' + window.location.hash.substring(1), 'reblog');
     if (reblog) {
       hw.getEmbedHtml(reblog);
       window.location.hash = '';
