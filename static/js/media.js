@@ -162,7 +162,7 @@ hw.mediaSelectHelper = function(allMedia, position, insertAsSlideshow, slideshow
         + '</div>';
       var wysiwyg = parent.hw.$c('hw-wysiwyg');
       wysiwyg.focus();
-      parent.document.execCommand("insertHTML", false, slideshowHTML + '<br><br>');
+      parent.hw.insertHTML(slideshowHTML + '<br><br>');
     }
     return;
   }
@@ -181,7 +181,7 @@ hw.mediaSelectHelper = function(allMedia, position, insertAsSlideshow, slideshow
     } else {
       var wysiwyg = parent.hw.$c('hw-wysiwyg');
       wysiwyg.focus();
-      parent.document.execCommand("insertHTML", false, mediaHTML + '<br><br>');
+      parent.hw.insertHTML(mediaHTML + '<br><br>');
     }
     parent.hw.htmlPreview();
     hw.mediaSelectHelper(allMedia, position + 1, insertAsSlideshow, slideshowHTML);

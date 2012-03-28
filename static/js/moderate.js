@@ -50,7 +50,7 @@ hw.showUserAutocomplete = function() {
     }
 
     hw.wysiwygLastKeys = "";
-    document.execCommand("insertHTML", false, '<a href="' + user['profile_url'] + '">@' + user['username'] + '</a>&nbsp;');
+    hw.insertHTML('<a href="' + user['profile_url'] + '">@' + user['username'] + '</a>&nbsp;');
     hw.saveSelection();
   }
 

@@ -1,3 +1,12 @@
+hw.insertHTML = function(html) {
+  if (hw.isIE) {
+    var range = document.selection.createRange();
+    range.pasteHTML(html);
+  } else {
+    document.execCommand("insertHTML", false, html);
+  }
+};
+
 hw.commentSubmit = function() {
   var form = hw.$c('hw-comment-form');
   var comment = hw.$c('hw-comment-input');
@@ -201,7 +210,7 @@ hw.wysiwygKeys = function(event) {
           for (var x = 0; x < 2; ++x) {
             sel.modify("extend", "backward", "character");
           }
-          document.execCommand("insertHTML", false, '<hr>');
+          hw.insertHTML('<hr>');
           hw.wysiwygLastKeys = "";
         } else if (hw.wysiwygLastKeys.slice(-5) == "-more") {
           hw.preventDefault(event);
@@ -209,7 +218,7 @@ hw.wysiwygKeys = function(event) {
           for (var x = 0; x < 5; ++x) {
             sel.modify("extend", "backward", "character");
           }
-          document.execCommand("insertHTML", false, '<img class="hw-read-more" src="/helloworld/static/img/pixel.gif?v=df3e5">');
+          hw.insertHTML('<img class="hw-read-more" src="/helloworld/static/img/pixel.gif?v=df3e5">');
           hw.wysiwygLastKeys = "";
         } else {
           hw.wysiwygLastKeys += String.fromCharCode(key);
@@ -338,7 +347,7 @@ hw.paste = function(event) {
         pastedContent = pastedContent.replace(/\s(?!(href))[^<>=]*=('([^']*)'|"([^"]*)")/ig, ""); // remove all but whitelisted attributes
       }
 
-      document.execCommand("insertHTML", false, pastedContent);
+      hw.insertHTML(pastedContent);
     }
   };
 
@@ -355,7 +364,7 @@ hw.getEmbedHtml = function(link) {
 
   var callback = function(xhr) {
     var isEmbed = xhr.responseText.search(/<(embed|object|iframe|img)\s/ig) != -1;
-    document.execCommand("insertHTML", false, xhr.responseText + (isEmbed ? "<br><br>" : ""));
+    hw.insertHTML(xhr.responseText + (isEmbed ? "<br><br>" : ""));
     if (isEmbed) {
       sel.modify("move", "forward", "line");
     }
@@ -671,6 +680,8 @@ hw.dragMouseUp = function(event) {
 Event.observe(document, 'mousemove', hw.dragMouseMove, false);
 Event.observe(document, 'mouseup', hw.dragMouseUp, false);
 
+
+
 hw.processFiles = function(json) {
   var wysiwygResult = hw.getCurrentWysiwyg();
   var isComment = wysiwygResult['isComment'];
@@ -678,7 +689,7 @@ hw.processFiles = function(json) {
   var createForm = isComment ? hw.$c('hw-comment-form') : hw.$c('hw-create');
   wysiwyg.focus();
 
-  document.execCommand("insertHTML", false, json['html'] + "<br><br>");
+  hw.insertHTML(json['html'] + "<br><br>");
   var sel = window.getSelection();
   sel.modify("move", "forward", "line");
 
