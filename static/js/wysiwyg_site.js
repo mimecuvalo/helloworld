@@ -76,7 +76,7 @@ hw.getCurrentWysiwyg = function() {
   if (document.activeElement && document.activeElement.hasAttribute('contenteditable') && !hw.hasClass(document.activeElement, 'hw-paste-area')) {
     wysiwyg = document.activeElement;
   } else {
-    wysiwyg = hw.lastActiveWysiwyg || hw.$c('hw-wysiwyg') || hw.$c('hw-comment-input');
+    wysiwyg = hw.lastActiveWysiwyg || (hw.hasClass('hw-container', 'hw-editing') && hw.$c('hw-wysiwyg')) || hw.$c('hw-comment-input');
   }
   hw.lastActiveWysiwyg = wysiwyg;
   var isComment = hw.hasClass(wysiwyg, 'hw-comment-input');
