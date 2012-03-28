@@ -90,17 +90,22 @@ class BaseHandler(tornado.web.RequestHandler):
   def check_version(self):
     try:
       version_path = os.path.join(os.path.dirname(self.application.settings["app_path"]), 'mod_time')
+      if self.constants['use_mod_rails']:
+        touched_path = self.application.settings["restart_path"]
+      else:
+        touched_path = self.application.settings["app_path"]
+      touched_time = str(os.stat(touched_path).st_mtime)
       helloworld_changed = False
       if os.path.exists(version_path):
         f = open(version_path, 'r')
         cache_mod_time = f.read()
         f.close()
-        helloworld_changed = cache_mod_time != str(os.stat(self.application.settings["app_path"]).st_mtime)
+        helloworld_changed = cache_mod_time != touched_time
         if (helloworld_changed):
           cache.invalidate(self.application.settings["cache_path"])
 
       f = open(version_path, 'w')
-      f.write(str(os.stat(self.application.settings["app_path"]).st_mtime))
+      f.write(touched_time)
       f.close()
     except:
       pass
