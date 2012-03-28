@@ -540,12 +540,15 @@ hw.showImageOptions = function(image) {
       caption = captions[0];
     }
   }
+  var anchorPosition = hw.$c('hw-anchor-editor').getBoundingClientRect();
+  var anchorEditorShown = anchorPosition.top >= 0;
   hw.$c('hw-image-options')['imageTag'] = imageTag;
   hw.$c('hw-image-options')['captionTag'] = caption;
   var imagePosition = imageTag.getBoundingClientRect();
   var contentPosition = hw.$('hw-content') ? hw.$('hw-content').getBoundingClientRect() : document.body.getBoundingClientRect();
-  hw.$c('hw-image-options').style.top = (window.pageYOffset + imagePosition.top
-      + hw.$c('hw-anchor-editor').getBoundingClientRect().height + 110) + 'px';
+  hw.$c('hw-image-options').style.top = (window.pageYOffset
+      + (anchorEditorShown ? anchorPosition.top + anchorPosition.height + 25 : imagePosition.top + 110))
+      + 'px';
   hw.$c('hw-image-options').style.left = (imagePosition.left + 5 - contentPosition.left) + 'px';
   hw.$$('[name=hw-image-align]')[0].checked = imageTag.style.cssFloat == '' || imageTag.style.cssFloat == 'none';
   hw.$$('[name=hw-image-align]')[1].checked = imageTag.style.cssFloat == 'left';
