@@ -40,8 +40,6 @@
       </ul>
     </div>
 
-    {% block more_sidebar %}{% end %}
-
     <div id="hw-tools">
       <h2>{{ _('tools') }}</h2><br>
       <ul>
@@ -49,6 +47,8 @@
         <li><a href="{{ nav_url(section='data_liberation') }}">{{ _('data liberation') }}</a></li>
       </ul>
     </div>
+    
+    {% block more_sidebar %}{% end %}
   </aside>
 
   <div id="hw-backend-content">

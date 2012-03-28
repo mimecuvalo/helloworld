@@ -18,9 +18,10 @@ class CustomizeHandler(BaseHandler):
 
     self.display['themes'] = os.listdir(global_themes_directory)
     self.display['themes'] = [ os.path.join('css/themes', theme) for theme in self.display['themes'] if not theme.startswith('.') and theme.endswith('.css') ]
-    local_themes = os.listdir(local_themes_directory)
-    local_themes = [ os.path.join(local_themes_stem, theme) for theme in local_themes if not theme.startswith('.') and theme.endswith('.css') ]
-    self.display['themes'] += local_themes
+    if os.path.exists(local_themes_directory):
+      local_themes = os.listdir(local_themes_directory)
+      local_themes = [ os.path.join(local_themes_stem, theme) for theme in local_themes if not theme.startswith('.') and theme.endswith('.css') ]
+      self.display['themes'] += local_themes
     self.display['currencies'] = [ "AUD", "CAD", "CZK", "DKK", "EUR", "HKD", "HUF", "ILS", "JPY", "MXN", "NOK", "NZD", "PLN", "GBP", "SGD", "SEK", "CHF", "THB", "USD", ]
 
     self.fill_template("customize.html")

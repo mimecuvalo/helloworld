@@ -93,7 +93,5 @@
 {% end %}
 
 {% block more_sidebar %}
-  <aside>
-    <a id="hw-delete-account" class="hw-button hw-button-delete" href="#deleteAccount" onclick="hw.deleteAccount(event, '{{ user.username }}')">{{ _('delete account') }}</a>
-  </aside>
+  <a id="hw-delete-account" class="hw-button hw-button-delete" href="#deleteAccount" onclick="hw.deleteAccount(event, '{{ user.username }}')">{{ _('delete account') }}</a>
 {% end %}
