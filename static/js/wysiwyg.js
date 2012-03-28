@@ -209,6 +209,7 @@ hw.html = function(event, el, close) {
   var openHTML = close != undefined ? !close : hw.isHidden(htmlWrapper);
   var createForm = hw.$c('hw-create');
   hw.setClass(createForm, 'hw-html-open', openHTML);
+  hw.setClass(hw.$('hw-container'), 'hw-html-open', openHTML);
   hw.display(htmlWrapper, openHTML);
   hw.htmlPreview();
   var fn = function() { hw.createOnScroll(); };
