@@ -25,9 +25,9 @@ from logic import url_factory
 class BaseHandler(tornado.web.RequestHandler):
   def initialize(self):
     self.display = { }
+    self.constants = self.application.settings["constants"]
     self.check_version()
 
-    self.constants = self.application.settings["constants"]
     try:
       self.get_db_connection()
     except:
