@@ -79,6 +79,10 @@ hw.getCurrentWysiwyg = function() {
     wysiwyg = hw.lastActiveWysiwyg || (hw.hasClass('hw-container', 'hw-editing') && hw.$c('hw-wysiwyg')) || hw.$c('hw-comment-input');
   }
   hw.lastActiveWysiwyg = wysiwyg;
+  if (!wysiwyg) {
+    return null;
+  }
+
   var isComment = hw.hasClass(wysiwyg, 'hw-comment-input');
   return { 'isComment': isComment, 'wysiwyg': isComment ? hw.$c('hw-comment-input') : hw.$c('hw-wysiwyg') };
 };
@@ -239,6 +243,11 @@ hw.wysiwygKeys = function(event) {
 
 hw.selection = 0;
 hw.saveSelection = function() {
+  var wysiwygResult = hw.getCurrentWysiwyg();
+  if (!wysiwygResult) {
+    return;
+  }
+
   if (window.getSelection) {
     var sel = window.getSelection();
     if (sel.getRangeAt && sel.rangeCount) {
