@@ -121,7 +121,7 @@ hw.save = function() {
       hw.addToFeed(xhr.responseText);
     }
 
-    if (createForm['hw-section-album'].value == '_new_') {
+    if (createForm['hw-section-album'] && createForm['hw-section-album'].value == '_new_') {
       createForm['hw-section-album'].value = '';
       window.location.reload();
     }

@@ -123,10 +123,16 @@ hw.albumClick = function(event, el) {
     return;
   }
 
-  if (el.parentNode.getAttribute('data-is-album') == 'false') {
-    hw.preventDefault(event);  // stop regular links from continuing
-    hw.navigate(event, el.getAttribute('href'), el.getAttribute('title'));
+  if (!hw.supportsHistory()) {
+    return;
   }
+
+  if (el.parentNode.getAttribute('data-is-album') == 'true' || el.parentNode.getAttribute('data-disallow-magic')) {
+    return;
+  }
+
+  hw.preventDefault(event);  // stop regular links from continuing
+  hw.navigate(event, el.getAttribute('href'), el.getAttribute('title'));
 };
 
 hw.swapContent = function(url, event) {
