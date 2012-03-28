@@ -58,7 +58,7 @@ def dashboard_feed(profile, begin, page_size, sort_type, read_all_mode, specific
 
   local_query = """(SELECT `id`, `username`, `title`, `view`, `date_created`, `favorited`, `is_spam`, `deleted`,
                               `count`, `count_robot`, `date_updated`, `hidden`, `date_start`, `date_end`, `date_repeats`, `section`, `name`, `thumb`, `thread`,
-                              '' as `creator`, '' as `type`, '' as `from_user`, '' as `post_id`, '' as `link`, '' as `read`
+                              '' as `creator`, '' as `type`, '' as `from_user`, '' as `post_id`, '' as `link`, 0 as `read`
                          FROM `content`
                          WHERE `username` = %s """ \
                     +      content_local_restrict \
