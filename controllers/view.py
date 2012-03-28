@@ -228,7 +228,7 @@ class ViewHandler(BaseHandler):
       else:
         rendered_content = self.fill_template("view.html")
 
-    if not is_owner_viewing:
+    if not self.current_user["username"]:
       cache.add(self, content, rendered_content)
       
   def post(self):
