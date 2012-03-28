@@ -67,7 +67,7 @@
         <dt><label for="hw-license-type">{{ _('license:') }}</label></dt>
         <dd>
           <input id="hw-license-type" name="license" type="url" value="{{ user.license }}">
-          <label>Common licenses:</label>
+          <label>&nbsp;{{ _('Common licenses:') }}</label>
           <select id="licenses" onchange="hw.$('hw-license-type').value = this.value">
             <option value=""></option>
             {% for license in sorted(licenses.iterkeys(), reverse=True) %}
@@ -80,11 +80,15 @@
         <dt><label for="hw-tipjar">{{ _('tipjar:') }}</label><div class="clear"></div><span>{{ _('(javascript or link)') }}</span></dt>
         <dd><textarea id="hw-tipjar" name="tipjar" type="text">{{ user.tipjar }}</textarea></dd>
         <dt><label for="hw-sidebar-ad">{{ _('sidebar ad:') }}</label><div class="clear"></div><span>(javascript)</span></dt>
-        <dd><textarea id="hw-title" name="sidebar_ad" type="text">{{ user.sidebar_ad }}</textarea></dd>
+        <dd><textarea id="hw-sidebar-ad" name="sidebar_ad" type="text">{{ user.sidebar_ad }}</textarea></dd>
         <dt><label for="hw-newsletter-endpoint">{{ _('newsletter hookup:') }}</label><div class="clear"></div><span>{{ _('(signup url)') }}</span></dt>
         <dd><textarea id="hw-newsletter-endpoint" name="newsletter_endpoint" type="text">{{ user.newsletter_endpoint }}</textarea></dd>
         <dt><label for="hw-adult-content">{{ _('adult content:') }}</label></dt>
         <dd><input id="hw-adult-content" name="adult_content" type="checkbox" {% if user.adult_content %}checked="checked"{% end %}></dd>
+        <dt><label for="hw-extra-code-top">{{ _('extra code in <head>:') }}</label><div class="clear"></div><span>(javascript/css)</span></dt>
+        <dd><textarea id="hw-extra-code-top" name="extra_code_top" type="text">{{ user.extra_code_top }}</textarea></dd>
+        <dt><label for="hw-extra-code-bottom">{{ _('extra code before </body>:') }}</label><div class="clear"></div><span>(javascript/css)</span></dt>
+        <dd><textarea id="hw-extra-code-bottom" name="extra_code_bottom" type="text">{{ user.extra_code_bottom }}</textarea></dd>
         <dt></dt>
         <dd><input id="hw-customize-save" class="hw-button hw-button-save" data-save="{{ _("save") }}" data-saving="{{ _("saving") }}" type="submit" value="{{ _("save") }}"></dd>
       </dl>

@@ -112,6 +112,8 @@ class users(Model):
                 'theme': '',
                 'logo': '',
                 'magic_key': '',
+                'extra_code_top': '',
+                'extra_code_bottom': '',
                 'adult_content': 0,}
     validations = {'username': (custom_validators.UnicodeString(1, 255), custom_validators.Alphanumeric()),
                    'name': custom_validators.UnicodeString(0, 255),

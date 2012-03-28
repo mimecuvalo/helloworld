@@ -352,13 +352,13 @@ section {
 #customize label,
 #setup label {
   margin-right: 5px;
-  margin-top: 3px;
   vertical-align: top;
   display: inline-block;
 }
 
 #customize textarea {
   width: 400px;
+  float: left;
 }
 
 #customize input,
@@ -378,6 +378,8 @@ section {
 #customize dt {
   display: inline-block;
   width: 175px;
+  vertical-align: top;
+  margin-top: 5px;
 }
 
 #customize dt label {
@@ -389,6 +391,8 @@ section {
 #customize dd {
   display: inline-block;
   width: 525px;
+  vertical-align: top;
+  margin-top: 5px;
 }
 
 #customize dd input,

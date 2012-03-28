@@ -71,6 +71,10 @@
   {% raw content.code %}
 {% end %}
 
+{% block extra_code_top %}
+  {% raw content_owner.extra_code_top %}
+{% end %}
+
 {% block title %}
   {% if content_owner.title %}
   {{ content_owner.title }}
@@ -113,4 +117,8 @@
       hw.updateCartCount();
     </script>
   {% end %}
+{% end %}
+
+{% block extra_code_bottom %}
+  {% raw content_owner.extra_code_bottom %}
 {% end %}
