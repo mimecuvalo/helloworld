@@ -1,4 +1,8 @@
 hw.saveUser = function(event, el) {
+  if (hw.hasClass(el, 'hw-button-save')) {
+    el.disabled = true;
+  }
+
   var row = el.parentNode.parentNode;
   var inputs = row.getElementsByTagName('INPUT');
 
@@ -21,6 +25,10 @@ hw.saveUser = function(event, el) {
   }
 
   var callback = function(xhr) {
+    if (hw.hasClass(el, 'hw-button-save')) {
+      el.disabled = false;
+    }
+
     if (id == "") {
       window.location.href = hw.baseUri() + 'users';
     } else {
@@ -35,6 +43,9 @@ hw.saveUser = function(event, el) {
   };
 
   var badTrip = function(xhr) {
+    if (hw.hasClass(el, 'hw-button-save')) {
+      el.disabled = false;
+    }
     hw.removeClass(row, 'normal');
     hw.addClass(row, 'bad');
     var callback = function() {

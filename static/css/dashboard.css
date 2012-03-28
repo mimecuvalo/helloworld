@@ -171,7 +171,8 @@
   font-weight: bold;
 }
 
-#hw-following-button[disabled] {
+#hw-following-button[disabled],
+.hw-button-save[disabled] {
   cursor: wait;
 }
 

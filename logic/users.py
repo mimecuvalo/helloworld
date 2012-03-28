@@ -13,6 +13,7 @@ from Crypto.Util import number
 import tornado.escape
 import tornado.web
 
+import content_remote
 import magicsig
 import pubsubhubbub_subscribe
 import salmoning
@@ -48,6 +49,15 @@ def create_user(handler, username, email):
 
   os.makedirs(os.path.join(handler.application.settings["private_path"], username))
   os.makedirs(os.path.join(os.path.join(handler.application.settings["resource_path"], username), 'themes'))
+
+  # give a blog to follow
+  user_remote = get_remote_user_info(handler, "http://boingboing.net", username)
+  user_remote.following = 1
+  user_remote.save()
+
+  # get some content, yo
+  feed_response = urllib2.urlopen(user_remote.feed_url)
+  content_remote.parse_feed(handler.models, user_remote, feed_response.read(), max_days_old=handler.constants['feed_max_days_old'])
 
   return user
 
