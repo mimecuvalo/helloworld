@@ -719,6 +719,7 @@ a.hw-button-media {
 }
 
 a.hw-button-media input {
+  top: -4px !important;
   left: auto !important;
 }
 

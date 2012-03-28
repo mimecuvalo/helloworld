@@ -268,6 +268,7 @@ div.hw-wysiwyg-controls {
 .hw-editing div.hw-wysiwyg {
   margin-top: 39px;  /* height of the toolbar */
 }
+.hw-editing.hw-html-open div.hw-wysiwyg,
 .hw-editing.hw-media-library-open div.hw-wysiwyg,
 .hw-editing.hw-media-open div.hw-wysiwyg {
   margin-top: 0;
@@ -596,7 +597,7 @@ div.hw-preview img {
 }
 .CodeMirror-scroll {
   height: 190px;
-  border: 1px solid gray;
+  border: 1px solid black;
 }
 
 .hw-edit-image {
