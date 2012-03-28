@@ -26,7 +26,10 @@ class UploadHandler(BaseHandler):
 
     self.get_common_parameters()
 
-    if not safe_user:
+    if safe_user:
+      if not media.detect_media_type(self.base_leafname):
+        raise tornado.web.HTTPError(400, "i call shenanigans")
+    else:
       if media.detect_media_type(self.base_leafname) != 'image':
         raise tornado.web.HTTPError(400, "i call shenanigans")
 

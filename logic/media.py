@@ -23,6 +23,8 @@ def detect_media_type(filename):
     return 'image'
   elif mimetype.find('audio/') == 0:
     return 'audio'
+  elif mimetype in ('application/javascript', 'text/css', 'text/html'):
+    return 'web'
   else:
     return None
 
