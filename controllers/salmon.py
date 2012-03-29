@@ -154,9 +154,14 @@ class SalmonHandler(BaseHandler):
           logging.error(ex)
 
       replies = salmon_doc.find('thr:replies')
+      comments_count = 0
+      comments_updated = None
       if replies:
-        import logging
-        logging.error('replies working...' + replies['href'])
+        if 'count' in replies:
+          comments_count = replies['count']
+        if 'updated' in replies:
+          comments_updated = replies['updated']
+        # replies['href']
 
       mentioned = salmon_doc.findAll('atom:link', rel='mentioned')
       if not mentioned:
@@ -183,6 +188,9 @@ class SalmonHandler(BaseHandler):
       post_remote.username = user_remote.username
       post_remote.avatar = user_remote.avatar
       post_remote.date_created = datetime.datetime.strptime(salmon_doc.find('atom:updated').string[:-6], '%Y-%m-%dT%H:%M:%S')
+      post_remote.comments_count = comments_count
+      if comments_updated:
+        post_remote.comments_updated = datetime.datetime.strptime(comments_updated.string[:-6], '%Y-%m-%dT%H:%M:%S')
       if is_spam:
         post_remote.is_spam = True
       else:

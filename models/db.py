@@ -58,7 +58,7 @@ def dashboard_feed(profile, begin, page_size, sort_type, read_all_mode, specific
 
   local_query = """(SELECT `id`, `username`, `title`, `view`, `date_created`, `favorited`, `is_spam`, `deleted`,
                               `count`, `count_robot`, `date_updated`, `hidden`, `date_start`, `date_end`, `date_repeats`, `section`, `name`, `thumb`, `thread`,
-                              '' as `creator`, '' as `type`, '' as `from_user`, '' as `post_id`, '' as `link`, 0 as `read`
+                              '' as `creator`, '' as `type`, '' as `from_user`, '' as `post_id`, '' as `link`, 0 as `read`, 0 as `comments_count`
                          FROM `content`
                          WHERE `username` = %s """ \
                     +      content_local_restrict \
@@ -68,7 +68,7 @@ def dashboard_feed(profile, begin, page_size, sort_type, read_all_mode, specific
 
   remote_query = """ (SELECT `id`, `username`, `title`, `view`, `date_created`, `favorited`, `is_spam`, `deleted`,
                               0 as `count`, 0 as `count_robot`, `date_updated`, 0 as `hidden`, now() as `date_start`, now() as `date_end`, 0 as `date_repeats`, '' as `section`, '' as `name`, '' as `thumb`, '' as `thread`,
-                              `creator`, `type`, `from_user`, `post_id`, `link`, `read`
+                              `creator`, `type`, `from_user`, `post_id`, `link`, `read`, `comments_count`
                          FROM `content_remote`
                          WHERE `to_username` = %s """ \
                     +      content_remote_restrict \

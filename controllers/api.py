@@ -378,7 +378,7 @@ class ApiHandler(BaseHandler):
         content.is_spam = True
       else:
         spam.train_ham(comment, self.application.settings["private_path"], profile.username)
-      content.avatar = profile.logo
+      content.avatar = profile.logo if profile.logo else profile.favicon
       content.title = 'comment'
       content.thread = thread_url
       content.thread_user = self.get_argument('thread_user', None)

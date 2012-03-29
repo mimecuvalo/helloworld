@@ -101,6 +101,8 @@ CREATE TABLE IF NOT EXISTS `content_remote` (
   `link` text NOT NULL,
   `date_created` datetime NOT NULL,
   `date_updated` datetime default NULL,
+  `comments_updated` datetime default NULL,
+  `comments_count` int(11) NOT NULL default '0',
   `type` varchar(255) NOT NULL,
   `favorited` tinyint(1) NOT NULL,
   `read` tinyint(1) NOT NULL,

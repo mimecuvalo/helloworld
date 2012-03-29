@@ -66,6 +66,7 @@ class content_remote(Model):
                 'is_spam': 0,
                 'favorited': 0,
                 'deleted': 0,
+                'comments_count': 0,
                 'avatar': '',
                 'link': '',
                 'view': '',}
@@ -74,6 +75,7 @@ class content_remote(Model):
                    'type': validators.String(),
                    'date_created': custom_validators.Datetime(),
                    'date_updated': custom_validators.DatetimeOrNull(),
+                   'comments_updated': custom_validators.DatetimeOrNull(),
                   }
 
 class content_access(Model):
