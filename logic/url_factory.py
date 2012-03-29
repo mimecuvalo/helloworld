@@ -4,7 +4,6 @@ import re
 import urllib
 
 import tornado.escape
-from BeautifulSoup import BeautifulSoup
 
 def load_basic_parameters(handler, prefix="", url=""):
   uri = url if url else handler.request.uri

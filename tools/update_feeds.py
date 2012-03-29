@@ -10,7 +10,6 @@ import urllib2
 sys.path.insert(0, os.path.normpath(os.path.realpath(__file__) + '/../../'))
 sys.path.insert(0, os.path.normpath(os.path.realpath(__file__) + '/../../packages'))
 
-from BeautifulSoup import BeautifulSoup
 from logic import constants as constants_module
 from logic import content_remote
 

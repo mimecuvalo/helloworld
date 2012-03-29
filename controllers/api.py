@@ -17,7 +17,6 @@ from logic import spam
 from logic import url_factory
 from logic import users
 
-from BeautifulSoup import BeautifulSoup
 import tornado.web
 
 class ApiHandler(BaseHandler):

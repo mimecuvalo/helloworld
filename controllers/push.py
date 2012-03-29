@@ -1,6 +1,5 @@
 from base import BaseHandler
 
-from BeautifulSoup import BeautifulSoup
 import feedparser
 import tornado.web
 
