@@ -50,11 +50,11 @@
       <entry>
         <title>{{ item.title }}</title>
         {% if item.is_remote %}
-          <link href="{{ content_url(item, host=True) }}" />
-          <id>tag:{{ handler.request.host }},{{ tag_date }}:{{ urllib.quote(content_url(item).encode("utf-8")) }}</id>
-        {% else %}
           <link href="{{ item.link }}" />
           <id>{{ item.post_id }}</id>
+        {% else %}
+          <link href="{{ content_url(item, host=True) }}" />
+          <id>tag:{{ handler.request.host }},{{ tag_date }}:{{ urllib.quote(content_url(item).encode("utf-8")) }}</id>
         {% end %}
         <content type="html">
           {{ add_base_uris(item.view) }}
