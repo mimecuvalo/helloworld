@@ -37,6 +37,47 @@ hw.commentSubmit = function() {
       onError: badTrip });
 };
 
+hw.reply = function(event, el) {
+  if (event) {
+    hw.preventDefault(event);
+  }
+
+  var username = el.parentNode.getAttribute('data-username');
+  var user = el.parentNode.getAttribute('data-user');
+
+  var wysiwygResult = hw.getCurrentWysiwyg();
+  var isComment = wysiwygResult['isComment'];
+  var wysiwyg = wysiwygResult['wysiwyg'];
+
+  if (document.body.parentNode.scrollTop) {
+    document.body.parentNode.scrollTop = wysiwyg.getBoundingClientRect().top - 100;
+  } else {
+    document.body.scrollTop = wysiwyg.getBoundingClientRect().top - 100;
+  }
+
+  wysiwyg.innerHTML = '<a href="' + user + '">@' + username + '</a>&nbsp;';
+  wysiwyg.focus();
+
+  // move to end of doc...TODO make simpler? use modify?
+  if (document.createRange) {
+    var range = document.createRange();
+    range.selectNodeContents(wysiwyg);
+    range.collapse(false);
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  } else if (document.selection) {
+    var range = document.body.createTextRange();
+    range.moveToElementText(wysiwyg);
+    range.collapse(false);
+    range.select();
+  }
+
+  if (hw.$c('hw-thread')) {
+    hw.$c('hw-thread').value = el.parentNode.getAttribute('data-post-id');
+  }
+};
+
 hw.postTopic = function(topic) {
   var form     = hw.$c('hw-post-form');
   var username = topic.getAttribute('data-username');
