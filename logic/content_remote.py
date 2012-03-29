@@ -21,8 +21,25 @@ def parse_feed(models, user, feed=None, parsed_feed=None, max_days_old=30):
   for entry in feed_doc.entries:
     entry_id = entry.id if entry.has_key('id') else entry.link
     exists = models.content_remote.get(to_username=user.local_username, post_id=entry_id)[0]
+
+    comments_count = 0
+    comments_updated = None
+    if 'links' in entry:
+      for link in entry.links:
+        if link['rel'] == 'replies':
+          if 'thr:count' in link:
+            comments_count = int(link['thr:count'])
+          if 'thr:updated' in link:
+            comments_updated = datetime.datetime.fromtimestamp(mktime(link['thr:updated']))
+          break
+
+    date_updated = None
+    if entry.has_key('updated_parsed'):
+      date_updated = datetime.datetime.fromtimestamp(mktime(entry.updated_parsed))
+
     if exists:
-      if entry.has_key('updated_parsed') and datetime.datetime.fromtimestamp(mktime(entry.updated_parsed)) != exists.date_updated:
+      if date_updated and date_updated != exists.date_updated \
+          or (comments_updated and comments_updated != exists.comments_updated):
         new_entry = exists
       else:
         continue
@@ -39,31 +56,16 @@ def parse_feed(models, user, feed=None, parsed_feed=None, max_days_old=30):
     else:
       parsed_date = datetime.datetime.now()
 
-    if entry.has_key('updated_parsed'):
-      updated_date = datetime.datetime.fromtimestamp(mktime(entry.updated_parsed))
-    else:
-      updated_date = parsed_date
-
     # we don't keep items that are over 30 days old
     if parsed_date < datetime.datetime.utcnow() - datetime.timedelta(days=max_days_old):
       continue
 
-    comments_count = 0
-    comments_updated = None
-    if 'links' in entry:
-      for link in entry.links:
-        if link['rel'] == 'replies':
-          if 'thr:count' in link:
-            comments_count = int(link['thr:count'])
-          if 'thr:updated' in link:
-            comments_updated = link['thr:updated']
-          break
-
     new_entry.date_created = parsed_date
-    new_entry.date_updated = updated_date
+    if date_updated:
+      new_entry.date_updated = date_updated
     new_entry.comments_count = comments_count
     if comments_updated:
-      new_entry.comments_updated = datetime.datetime.fromtimestamp(mktime(comments_updated))
+      new_entry.comments_updated = comments_updated
     new_entry.type = 'post'
     if entry.has_key('author'):
       new_entry.creator = entry.author
