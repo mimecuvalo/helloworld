@@ -70,7 +70,11 @@ a.hw-button[href]:hover {
   text-align: center;
   padding: 4px 0;
   float: right;
-  width: 335px;
+  /*width: 335px;*/
+  position: absolute;
+  top: 0;
+  left: 310px;
+  white-space: nowrap;
 }
 .hw-editing #hw-content nav.hw-neighbors {
   display: none;
