@@ -284,6 +284,12 @@ hw.read = function(event, el, listMode, special, query, readAllMode) {
       hw.loadMoreObject.url = hw.baseUri() + 'dashboard';
     }
 
+    if (document.body.parentNode.scrollTop) {
+      document.body.parentNode.scrollTop = document.body.parentNode.scrollTop + hw.$('hw-feed').getBoundingClientRect().top - 50;
+    } else {
+      document.body.scrollTop = document.body.scrollTop + hw.$('hw-feed').getBoundingClientRect().top - 50;
+    }
+
     if (badTrip) {
       hw.$('hw-feed').innerHTML = hw.$('hw-following-list').getAttribute('data-error');
     } else {

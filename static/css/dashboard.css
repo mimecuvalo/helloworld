@@ -255,6 +255,9 @@
 #hw-feed.hw-list-mode section {
   padding: 0px 5px 5px 5px;
 }
+#hw-feed.hw-list-mode .hw-list-open header {
+  margin-bottom: 10px;
+}
 #hw-feed.hw-list-mode h1 {
   font-size: 110%;
 }
