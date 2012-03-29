@@ -275,7 +275,7 @@ hw.followingDragDrop = function(event, el) {
   var insertBeforeElement = el.nextSibling;
   insertedElement = el.parentNode.insertBefore(draggedElement, insertBeforeElement);
 
-  var position = -2;  // we have 'read all' and 'your feed' in front
+  var position = -4;  // we have 'read all'/'your feed'/'favorites'/'comments' in front
   var sectionEl = insertedElement.parentNode.firstChild;
   while (sectionEl) {
     if (sectionEl.nodeName != "LI") {
