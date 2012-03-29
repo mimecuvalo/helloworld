@@ -20,8 +20,8 @@ class FeedHandler(BaseHandler):
     comments = self.get_argument('comments', '')
 
     if comments:
-      content_url = url_factory.load_basic_parameters(handler, url=url)
-      content = handler.models.content.get(username=content_url["profile"], section=content_url["section"], name=content_url["name"])[0]
+      content_url = url_factory.load_basic_parameters(self, url=url)
+      content = self.models.content.get(username=content_url["profile"], section=content_url["section"], name=content_url["name"])[0]
 
       # TODO this should be consolidated with uimodules.py
       remote_comments = self.models.content_remote.get(to_username=content.username,
