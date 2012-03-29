@@ -86,6 +86,7 @@ class BaseHandler(tornado.web.RequestHandler):
     self.display["source_website"] = self.constants['source_website']
     self.display["licenses"] = self.constants['licenses']
     self.display["current_datetime"] = datetime.datetime.utcnow()
+    self.display["is_dashboard"] = False
 
   def check_version(self):
     try:
