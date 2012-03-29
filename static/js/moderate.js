@@ -648,7 +648,6 @@ hw.listOpen = function(event, el) {
     section.parentNode.replaceChild(div, section);
     var newSection = div.getElementsByTagName('SECTION')[0];
     hw.addClass(newSection, 'hw-list-open');
-    hw.markSectionAsRead(newSection);
   };
 
   var badTrip = function() {

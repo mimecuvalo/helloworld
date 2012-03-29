@@ -261,6 +261,9 @@
 #hw-feed.hw-list-mode h1 a {
   color: #333;
 }
+#hw-feed.hw-list-mode h1 a:hover {
+  text-decoration: none;
+}
 
 #hw-feed {
   font: 13px arial, sans-serif;
