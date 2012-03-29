@@ -427,7 +427,7 @@ class ViewHandler(BaseHandler):
     content.name         = self.get_unique_name(content, name, title)
     content.title        = title
     content.thumb        = thumb
-    content.template     = template
+    content.template     = template if not in ('album', 'events', 'feed', 'forum', 'slideshow', 'store') else ''
     content.sort_type    = self.get_argument('sort_type', "")
     content.price        = float(self.get_argument('price', 0))
     content.thread       = self.get_argument('thread', '')

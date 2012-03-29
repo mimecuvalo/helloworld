@@ -60,6 +60,7 @@ hw.resetCreateForm = function() {
   hw.$c('hw-wysiwyg').innerHTML = '<h1 id="hw-new-title">' + hw.getMsg('untitled') + '</h1><br>';
   createForm['hw-name'].value = '';
   createForm['hw-thumb'].value = '';
+  createForm['hw-template'].value = '';
   createForm['hw-save'].value = createForm['hw-save'].getAttribute('data-save');
   createForm['hw-save'].disabled = false;
   createForm['hw-separate'].checked = false;
