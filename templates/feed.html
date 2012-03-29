@@ -46,7 +46,7 @@
   <icon>{% if user.favicon %}{{ nav_url(host=True, section=user.favicon) }}{% else %}{{ static_url('favicon.ico', include_host=True) }}{% end %}</icon>
   {% if type(feed) is list %}
     {% for item in feed %}
-      {% if item.is_remote or not item.restricted %}
+      {% if comments_url or not item.restricted %}
       <entry>
         <title>{{ item.title }}</title>
         <link href="{{ content_url(item, host=True) }}" />

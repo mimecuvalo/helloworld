@@ -18,6 +18,7 @@ class FeedHandler(BaseHandler):
     section = self.get_argument('category', '')
     album = self.get_argument('album', '')
     comments_url = self.get_argument('comments', '')
+    self.display["comments_url"] = comments_url
 
     if comments_url:
       content_url = url_factory.load_basic_parameters(self, url=comments_url)
