@@ -153,6 +153,19 @@ class SalmonHandler(BaseHandler):
           logging.error("something wrong with thread")
           logging.error(ex)
 
+      mentioned = salmon_doc.findAll('atom:link', rel='mentioned')
+      if not mentioned:
+        mentioned = salmon_doc.findAll('atom:link', rel='ostatus:attention')
+
+      this_user_mentioned = False
+      if mentioned:
+        this_user_url = self.nav_url(host=True, username=self.display["user"].username)
+        for mentions in mentioned:
+          if mentions['href'] == this_user_url:
+            # hey, you've been mentioned. cool.
+            this_user_mentioned = True
+            break
+
       is_spam = spam.guess(atom_content, self.application.settings["private_path"], self.display["user"].username)
 
       if existing_content:
@@ -172,10 +185,10 @@ class SalmonHandler(BaseHandler):
       post_remote.type = 'comment' if ref else 'post'
       post_remote.title = salmon_doc.find('atom:title').string
       post_remote.post_id = salmon_doc.find('atom:id').string
-      post_remote.link = salmon_doc.find('atom:link')['href']
+      post_remote.link = salmon_doc.find('atom:link', rel='alternate')['href']
       post_remote.local_content_name = content.name if ref else ''
       post_remote.view = atom_content
       post_remote.save()
 
-      if ref:
-        smtp.comment(self, post_remote.username, commented_user.oauth, self.content_url(content, host=True))
+      if ref or this_user_mentioned:
+        smtp.comment(self, post_remote.username, commented_user.oauth, self.content_url(content, host=True), this_user_mentioned=True)

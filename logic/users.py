@@ -134,15 +134,15 @@ def salmon_reply(handler, user_remote, content, thread=None, mentioned_users=[])
   handler.display['atom_content'] = content.view
   object_type = 'comment' if content.section == 'comments' else 'note'
   handler.display['verb'] = 'http://activitystrea.ms/schema/1.0/post'
-  handler.display['activity_extra'] = ""
+  handler.display['activity_extra'] = """
+    <activity:object-type>http://activitystrea.ms/schema/1.0/%(object_type)s</activity:object-type>
+    <link href="%(content_url)s" rel="alternate" type="text/html" />""" % { 'object_type': object_type, 'content_url': handler.content_url(content, host=True), }
 
   for mentioned_user in mentioned_users:
     handler.display['activity_extra'] += """
-    <activity:object-type>http://activitystrea.ms/schema/1.0/%(object_type)s</activity:object-type>
-    <link href="%(content_url)s" rel="alternate" type="text/html" />
     <link href="%(profile_url)s" rel="ostatus:attention" />
     <link href="%(profile_url)s" rel="mentioned" />
-  """ % { 'object_type': object_type, 'content_url': handler.content_url(content, host=True), 'profile_url': mentioned_user.profile_url }
+  """ % { 'profile_url': mentioned_user.profile_url }
 
   thread = thread or content.thread
   if thread:
