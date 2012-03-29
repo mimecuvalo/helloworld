@@ -450,42 +450,21 @@ hw.reply = function(event, el) {
 
   var username = el.parentNode.getAttribute('data-username');
   var user = el.parentNode.getAttribute('data-user');
-  var commentForm = hw.$c('hw-comment-form');
 
-  if (commentForm) {
-    if (document.body.parentNode.scrollTop) {
-      document.body.parentNode.scrollTop = commentForm.getBoundingClientRect().top - 100;
-    } else {
-      document.body.scrollTop = commentForm.getBoundingClientRect().top - 100;
-    }
-
-    var input = hw.$c('hw-comment-input');
-    var str = '@' + username + (input.value ? ' ' : '') + input.value + ' ';
-    input.value = str;
-    if (el.parentNode.parentNode.hasAttribute('data-post-id')) {  // we go to <li> element
-      input.setAttribute('data-thread', el.parentNode.parentNode.getAttribute('data-post-id'));
-      input.setAttribute('data-thread-user', el.parentNode.parentNode.getAttribute('data-post-user'));
-    }
-    input.focus();
-    if (input.setSelectionRange) {
-      input.setSelectionRange(input.value.length, input.value.length);
-    } else {
-      input.value = input.value;
-    }
-
-    return;
-  }
+  var wysiwygResult = hw.getCurrentWysiwyg();
+  var isComment = wysiwygResult['isComment'];
+  var wysiwyg = wysiwygResult['wysiwyg'];
 
   if (document.body.parentNode.scrollTop) {
-    document.body.parentNode.scrollTop = hw.$c('hw-wysiwyg').getBoundingClientRect().top - 100;
+    document.body.parentNode.scrollTop = wysiwyg.getBoundingClientRect().top - 100;
   } else {
-    document.body.scrollTop = hw.$c('hw-wysiwyg').getBoundingClientRect().top - 100;
+    document.body.scrollTop = wysiwyg.getBoundingClientRect().top - 100;
   }
 
-  var wysiwyg = hw.$c('hw-wysiwyg');
   wysiwyg.innerHTML = '<a href="' + user + '">@' + username + '</a>&nbsp;';
   wysiwyg.focus();
 
+  // move to end of doc...TODO make simpler? use modify?
   if (document.createRange) {
     var range = document.createRange();
     range.selectNodeContents(wysiwyg);
@@ -500,7 +479,9 @@ hw.reply = function(event, el) {
     range.select();
   }
 
-  hw.$c('hw-thread').value = el.parentNode.getAttribute('data-post-id');
+  if (hw.$c('hw-thread')) {
+    hw.$c('hw-thread').value = el.parentNode.getAttribute('data-post-id');
+  }
 };
 
 hw.spam = function(event, el) {
