@@ -127,19 +127,23 @@ def salmon_favorite(handler, salmon_url, post_id, favorite=True):
   atom_html = handler.render_string("feed.html", **handler.display)
   salmon_send(handler, user, salmon_url, atom_html)
 
-def salmon_reply(handler, user_remote, content, thread=None):
+def salmon_reply(handler, user_remote, content, thread=None, mentioned_users=[]):
   user = salmon_common(handler)
   handler.display['id'] = handler.content_url(content)
   handler.display['title'] = content.title
   handler.display['atom_content'] = content.view
   object_type = 'comment' if content.section == 'comments' else 'note'
   handler.display['verb'] = 'http://activitystrea.ms/schema/1.0/post'
-  handler.display['activity_extra'] = """
-  <activity:object-type>http://activitystrea.ms/schema/1.0/%(object_type)s</activity:object-type>
-  <link href="%(content_url)s" rel="alternate" type="text/html" />
-  <link href="%(profile_url)s" rel="ostatus:attention" />
-  <link href="%(profile_url)s" rel="mentioned" />
-""" % { 'object_type': object_type, 'content_url': handler.content_url(content, host=True), 'profile_url': user_remote.profile_url }
+  handler.display['activity_extra'] = ""
+
+  for mentioned_user in mentioned_users:
+    handler.display['activity_extra'] += """
+    <activity:object-type>http://activitystrea.ms/schema/1.0/%(object_type)s</activity:object-type>
+    <link href="%(content_url)s" rel="alternate" type="text/html" />
+    <link href="%(profile_url)s" rel="ostatus:attention" />
+    <link href="%(profile_url)s" rel="mentioned" />
+  """ % { 'object_type': object_type, 'content_url': handler.content_url(content, host=True), 'profile_url': mentioned_user.profile_url }
+
   thread = thread or content.thread
   if thread:
     handler.display['activity_extra'] += """<thr:in-reply-to ref="%(thread)s" xmlns:thr="http://purl.org/syndication/thread/1.0" />""" % { 'thread': thread }

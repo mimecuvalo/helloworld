@@ -27,6 +27,7 @@ def reply(handler, content, mentions=None, thread=None):
 
   thread_user_remote = None
   users = []
+  mentioned_users = []
   if thread:
     thread_content = handler.models.content_remote.get(to_username=profile, post_id=thread)[0]
     if not thread_content:
@@ -35,6 +36,7 @@ def reply(handler, content, mentions=None, thread=None):
 
     if thread_user_remote and thread_user_remote.salmon_url:
       users.append(thread_user_remote)
+      mentioned_users.append(thread_user_remote)
 
   if mentions:
     for user in mentions:
@@ -45,6 +47,7 @@ def reply(handler, content, mentions=None, thread=None):
 
       if user_remote.salmon_url:
         users.append(user_remote)
+        mentioned_users.append(user_remote)
 
   for user in users:
-    user_logic.salmon_reply(handler, user, content, thread=thread)
+    user_logic.salmon_reply(handler, user, content, thread=thread, mentioned_users=mentioned_users)
