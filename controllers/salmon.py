@@ -191,6 +191,8 @@ class SalmonHandler(BaseHandler):
       post_remote.comments_count = comments_count
       if comments_updated:
         post_remote.comments_updated = datetime.datetime.strptime(comments_updated.string[:-6], '%Y-%m-%dT%H:%M:%S')
+      else:
+        post_remote.comments_updated = None
       if is_spam:
         post_remote.is_spam = True
       else:

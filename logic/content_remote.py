@@ -61,11 +61,9 @@ def parse_feed(models, user, feed=None, parsed_feed=None, max_days_old=30):
       continue
 
     new_entry.date_created = parsed_date
-    if date_updated:
-      new_entry.date_updated = date_updated
+    new_entry.date_updated = date_updated
     new_entry.comments_count = comments_count
-    if comments_updated:
-      new_entry.comments_updated = comments_updated
+    new_entry.comments_updated = comments_updated
     new_entry.type = 'post'
     if entry.has_key('author'):
       new_entry.creator = entry.author
