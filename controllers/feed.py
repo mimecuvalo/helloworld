@@ -39,7 +39,8 @@ class FeedHandler(BaseHandler):
       for comment in local_comments:
         comment.is_remote = 0
       comments = local_comments + remote_comments
-      self.handler.display['comments'].sort(key=lambda x: x.date_created, reverse=True)
+      comments.sort(key=lambda x: x.date_created, reverse=True)
+      self.display["feed"] = comments
     else:
       common_options = {}
       if not self.is_owner_viewing(self.breadcrumbs["profile"]):
