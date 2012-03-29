@@ -190,9 +190,7 @@
               <img src="{% if comment.avatar %}{{ comment.avatar }}{% else %}{{ static_url('img/pixel.gif') }}{% end %}" />
               {% raw _('%(profile_url)s') % { "profile_url": ('<a href="' + comment.from_user + '">' + comment.username + '</a>' if comment.from_user.startswith('http://') else comment.from_user.split('@')[0]) } %}
               <div class="hw-comment-text">{% raw comment.view %}</div>
-              {% if is_owner_viewing %}
                 {% module Moderate(comment) %}
-              {% end %}
               <div class="clear"></div>
             </li>
           {% else %}
@@ -200,9 +198,7 @@
               <img src="{% if comment.avatar %}{{ comment.avatar }}{% else %}{{ static_url('img/pixel.gif') }}{% end %}" />
               {% raw _('<a href="%(profile_url)s">%(name)s</a>') % { "profile_url": nav_url(username=comment.username), "name": comment.username } %}
               <div class="hw-comment-text">{% raw comment.view %}</div>
-              {% if is_owner_viewing %}
                 {% module Moderate(comment) %}
-              {% end %}
               <div class="clear"></div>
             </li>
           {% end %}
