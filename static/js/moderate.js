@@ -483,7 +483,7 @@ hw.reply = function(event, el) {
   }
 
   var wysiwyg = hw.$c('hw-wysiwyg');
-  wysiwyg.innerHTML = '<a href="' + user + '">@' + username + '</a>';
+  wysiwyg.innerHTML = '<a href="' + user + '">@' + username + '</a> ';
   wysiwyg.focus();
 
   if (document.createRange) {
