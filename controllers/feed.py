@@ -17,10 +17,10 @@ class FeedHandler(BaseHandler):
 
     section = self.get_argument('category', '')
     album = self.get_argument('album', '')
-    comments = self.get_argument('comments', '')
+    comments_url = self.get_argument('comments', '')
 
-    if comments:
-      content_url = url_factory.load_basic_parameters(self, url=url)
+    if comments_url:
+      content_url = url_factory.load_basic_parameters(self, url=comments_url)
       content = self.models.content.get(username=content_url["profile"], section=content_url["section"], name=content_url["name"])[0]
 
       # TODO this should be consolidated with uimodules.py
