@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS `content` (
   `favorites` int(11) NOT NULL,
   `shares` int(11) NOT NULL,
   `comments` int(11) NOT NULL,
+  `comments_updated` datetime default NULL,
   `price` float NOT NULL,
   `favorited` tinyint(1) NOT NULL,
   `is_spam` tinyint(1) NOT NULL,

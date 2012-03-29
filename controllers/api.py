@@ -386,6 +386,7 @@ class ApiHandler(BaseHandler):
       content.save()
 
       commented_content.comments += 1
+      commented_content.comments_updated = datetime.datetime.utcnow()
       commented_content.save()
 
       thread = self.get_argument('thread', None)
@@ -412,6 +413,7 @@ class ApiHandler(BaseHandler):
       post_remote.save()
 
       commented_content.comments += 1
+      commented_content.comments_updated = datetime.datetime.utcnow()
       commented_content.save()
 
     smtp.comment(self, from_username, commented_user.oauth, self.content_url(commented_content, host=True))

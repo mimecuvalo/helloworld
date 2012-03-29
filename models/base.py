@@ -13,6 +13,7 @@ class content(Model):
                 'favorites': 0,
                 'shares': 0,
                 'comments': 0,
+                'comments_updated': None,
                 'order': 0,
                 'album': '',
                 'thumb': '',
