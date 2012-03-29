@@ -22,7 +22,7 @@ def parse_feed(models, user, feed=None, parsed_feed=None, max_days_old=30):
     entry_id = entry.id if entry.has_key('id') else entry.link
     exists = models.content_remote.get(to_username=user.local_username, post_id=entry_id)[0]
     if exists:
-      if entry.has_key('updated_parsed') and datetime.datetime.fromtimestamp(mktime(entry.updated_parsed)) != new_entry.date_updated:
+      if entry.has_key('updated_parsed') and datetime.datetime.fromtimestamp(mktime(entry.updated_parsed)) != exists.date_updated:
         new_entry = exists
       else:
         continue
