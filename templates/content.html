@@ -128,7 +128,7 @@
             {{ item.username }}
           {% end %}
           {{ _("posted") }} <time pubdate>{{ locale.format_date(item.date_created) }}</time>
-          {% if not item.is_remote and item.date_updated != item.date_created %}
+          {% if item.date_updated and item.date_updated != item.date_created %}
             ({{ _("updated") }} <time>{{ locale.format_date(item.date_updated) }}</time>)
           {% end %}
           {% if item.is_remote %}
