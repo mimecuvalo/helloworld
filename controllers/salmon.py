@@ -128,11 +128,11 @@ class SalmonHandler(BaseHandler):
       pass
     elif (activity_verb == 'http://activitystrea.ms/schema/1.0/post'):
       atom_content = salmon_doc.find('atom:content').string
-      atom_content = content_remote.sanitize(tornado.escape.xhtml_unescape(atom_content))
+      sanitized_atom_content = content_remote.sanitize(tornado.escape.xhtml_unescape(atom_content))
 
       existing_content = self.models.content_remote.get(to_username=self.display["user"].username,
                                                       from_user=signer_uri,
-                                                      view=atom_content)[0]
+                                                      view=sanitized_atom_content)[0]
 
       thread = salmon_doc.find('thr:in-reply-to')
       ref = ''
@@ -202,10 +202,10 @@ class SalmonHandler(BaseHandler):
       post_remote.post_id = salmon_doc.find('atom:id').string
       post_remote.link = salmon_doc.find('atom:link', rel='alternate')['href']
       post_remote.local_content_name = content.name if ref else ''
-      post_remote.view = atom_content
+      post_remote.view = sanitized_atom_content
       post_remote.save()
 
       if ref:
-        smtp.comment(self, post_remote.username, self.display["user"].oauth, self.content_url(content, host=True))
+        smtp.comment(self, post_remote.username, self.display["user"].oauth, self.content_url(content, host=True), sanitized_atom_content)
       elif this_user_mentioned:
-        smtp.comment(self, post_remote.username, self.display["user"].oauth, post_remote.link, this_user_mentioned=True)
+        smtp.comment(self, post_remote.username, self.display["user"].oauth, post_remote.link, sanitized_atom_content, this_user_mentioned=True)

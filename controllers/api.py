@@ -359,6 +359,7 @@ class ApiHandler(BaseHandler):
     commented_content = self.models.content.get(username=self.get_argument('local_user'), name=self.get_argument('local_name'))[0]
     commented_user = self.models.users.get(username=commented_content.username)[0]
     comment = self.get_argument('comment')
+    sanitized_comment = content_remote.sanitize(comment)
     thread_url = 'tag:' + self.request.host + ',' + self.display["tag_date"] + ':' + self.content_url(commented_content)
 
     if self.current_user["user"]:
@@ -382,7 +383,7 @@ class ApiHandler(BaseHandler):
       content.title = 'comment'
       content.thread = thread_url
       content.thread_user = self.get_argument('thread_user', None)
-      content.view = content_remote.sanitize(comment)
+      content.view = sanitized_comment
       content.save()
 
       commented_content.comments += 1
@@ -409,7 +410,7 @@ class ApiHandler(BaseHandler):
         spam.train_ham(comment, self.application.settings["private_path"], commented_content.username)
       post_remote.type = 'comment'
       post_remote.local_content_name = commented_content.name
-      post_remote.view = content_remote.sanitize(comment)
+      post_remote.view = sanitized_comment
       post_remote.save()
 
       commented_content.comments += 1
@@ -417,7 +418,7 @@ class ApiHandler(BaseHandler):
       commented_content.save()
 
     socialize.socialize(self, commented_content)
-    smtp.comment(self, from_username, commented_user.oauth, self.content_url(commented_content, host=True))
+    smtp.comment(self, from_username, commented_user.oauth, self.content_url(commented_content, host=True), sanitized_comment)
 
   def topic(self):
     username = self.get_argument('username')
