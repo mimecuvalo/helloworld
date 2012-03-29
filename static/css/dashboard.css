@@ -113,12 +113,13 @@
   font-size: 11px;
   color: #666;
   display: inline-block;
-  width: 20px;
+  width: 30px;
+  cursor: pointer;
 }
 #hw-following .hw-following-username {
   display: inline-block;
-  max-width: 110px;
-  width: 110px;
+  max-width: 100px;
+  width: 100px;
   overflow: hidden;
   height: 16px;
   vertical-align: middle;

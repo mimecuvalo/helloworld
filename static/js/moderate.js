@@ -351,9 +351,9 @@ hw.updateCount = function(el, delta, opt_setCount) {
   if (opt_setCount != undefined) {
     newCount = opt_setCount;
   } else {
-    newCount = parseInt(el.innerHTML.slice(1, -1)) + delta;
+    newCount = parseInt(el.textContent.slice(2, -1)) + delta;
   }
-  el.innerHTML = '(' + newCount + ')';
+  el.innerHTML = '&nbsp;(' + newCount + ')';
 };
 
 hw.updateCounts = function() {
