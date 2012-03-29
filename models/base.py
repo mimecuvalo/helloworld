@@ -66,7 +66,9 @@ class content_remote(Model):
                 'is_spam': 0,
                 'favorited': 0,
                 'deleted': 0,
+                'date_updated': None,
                 'comments_count': 0,
+                'comments_updated': None,
                 'avatar': '',
                 'link': '',
                 'view': '',}
