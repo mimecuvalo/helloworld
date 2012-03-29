@@ -1,8 +1,9 @@
 import hashlib
 
-from base import BaseHandler
-
 import tornado.web
+
+from base import BaseHandler
+from logic import url_factory
 
 class FeedHandler(BaseHandler):
   def get(self):
@@ -16,25 +17,49 @@ class FeedHandler(BaseHandler):
 
     section = self.get_argument('category', '')
     album = self.get_argument('album', '')
+    comments = self.get_argument('comments', '')
 
-    common_options = {}
-    if not self.is_owner_viewing(self.breadcrumbs["profile"]):
-      common_options['hidden'] = False
+    if comments:
+      content_url = url_factory.load_basic_parameters(handler, url=url)
+      content = handler.models.content.get(username=content_url["profile"], section=content_url["section"], name=content_url["name"])[0]
 
-    content_options = { 'username': user.username,
-                        'redirect': 0,
-                        'forum': 0,
-                        'section !=': 'comments', }
-    if section:
-      content_options['section'] = section
-    if album:
-      content_options['album'] = album
+      # TODO this should be consolidated with uimodules.py
+      remote_comments = self.models.content_remote.get(to_username=content.username,
+                                                       local_content_name=content.name,
+                                                       type='comment',
+                                                       is_spam=False,
+                                                       deleted=False)[:]
+      for comment in remote_comments:
+        comment.is_remote = 1
+      thread_url = 'tag:' + self.request.host + ',' + self.display["tag_date"] + ':' + self.content_url(content)
+      local_comments = self.models.content.get(section='comments',
+                                               thread=thread_url,
+                                               is_spam=False,
+                                               deleted=False)[:]
+      for comment in local_comments:
+        comment.is_remote = 0
+      comments = local_comments + remote_comments
+      self.handler.display['comments'].sort(key=lambda x: x.date_created, reverse=True)
+    else:
+      common_options = {}
+      if not self.is_owner_viewing(self.breadcrumbs["profile"]):
+        common_options['hidden'] = False
 
-    content_options = dict(common_options.items() + content_options.items())
-    feed = self.models.content.get(**content_options).order_by('date_created', 'DESC')
+      content_options = { 'username': user.username,
+                          'redirect': 0,
+                          'forum': 0,
+                          'section !=': 'comments', }
+      if section:
+        content_options['section'] = section
+      if album:
+        content_options['album'] = album
 
-    self.display["feed"] = [ self.ui["modules"].Content(content) \
-        for content in feed[:20] if content.section != 'main' and content.album != 'main' ]  # todo, this should move to query really
+      content_options = dict(common_options.items() + content_options.items())
+      feed = self.models.content.get(**content_options).order_by('date_created', 'DESC')
+
+      self.display["feed"] = [ self.ui["modules"].Content(content) \
+          for content in feed[:20] if content.section != 'main' and content.album != 'main' ]  # todo, this should move to query really
+
     self.display["section"] = section
     self.display["album"] = album
 
