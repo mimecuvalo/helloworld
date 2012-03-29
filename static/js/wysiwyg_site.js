@@ -8,10 +8,11 @@ hw.insertHTML = function(html) {
 };
 
 hw.commentSubmit = function() {
-  var form = hw.$c('hw-comment-form');
-  var comment = hw.$c('hw-comment-input');
-  var localId = comment.getAttribute('data-local-id');
-  var thread = comment.hasAttribute('data-thread') ? comment.getAttribute('data-thread') : '';
+  var form       = hw.$c('hw-comment-form');
+  var comment    = hw.$c('hw-comment-input');
+  var localUser  = comment.getAttribute('data-local-username');
+  var localName  = comment.getAttribute('data-local-name');
+  var thread     = comment.hasAttribute('data-thread')      ? comment.getAttribute('data-thread')      : '';
   var threadUser = comment.hasAttribute('data-thread-user') ? comment.getAttribute('data-thread-user') : '';
 
   var callback = function(xhr) {
@@ -25,21 +26,22 @@ hw.commentSubmit = function() {
 
   new hw.ajax(hw.baseUri() + 'api',
     { method: 'post',
-      postBody: 'op='         + encodeURIComponent('comment')
-             + '&local_id='   + encodeURIComponent(localId)
-             + '&thread='     + encodeURIComponent(thread)
+      postBody: 'op='          + encodeURIComponent('comment')
+             + '&local_user='  + encodeURIComponent(localUser)
+             + '&local_name='  + encodeURIComponent(localName)
+             + '&thread='      + encodeURIComponent(thread)
              + '&thread_user=' + encodeURIComponent(threadUser)
-             + '&comment='    + encodeURIComponent(comment.innerHTML),
+             + '&comment='     + encodeURIComponent(comment.innerHTML),
       headers: { 'X-Xsrftoken' : form['_xsrf'].value },
       onSuccess: callback,
       onError: badTrip });
 };
 
 hw.postTopic = function(topic) {
-  var form = hw.$c('hw-post-form');
+  var form     = hw.$c('hw-post-form');
   var username = topic.getAttribute('data-username');
-  var section = topic.getAttribute('data-section');
-  var album = topic.getAttribute('data-album');
+  var section  = topic.getAttribute('data-section');
+  var album    = topic.getAttribute('data-album');
 
   var callback = function(xhr) {
     topic.value = '';

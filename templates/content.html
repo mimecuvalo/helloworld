@@ -167,7 +167,7 @@
               {{ _('typing in special letter twice, for example, ** will give you one * instead of bold') }}<br>
             </div>
             <button class="hw-button hw-button-save" type="button" onclick="hw.commentSubmit()">{% if section_template == 'forum' %}{{ _('submit') }}{% else %}{{ _('submit comment') }}{% end %}</button>
-            <div name="hw-comment-input" class="hw-comment-input" contenteditable type="text" data-local-id="{{ content.id }}"
+            <div name="hw-comment-input" class="hw-comment-input" contenteditable type="text" data-local-username="{{ content.username }}" data-local-name="{{ content.name }}"
                  onmouseup="hw.saveSelection()" onkeyup="hw.saveSelection()" onfocus="hw.restoreSelection()" onpaste="hw.paste(event)"></div>
             <script>
               Event.observe(hw.$c('hw-comment-input'), 'keypress', hw.wysiwygKeys, false);
