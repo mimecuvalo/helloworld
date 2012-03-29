@@ -509,8 +509,8 @@ hw.deletePost = function(event, el) {
 
 hw.markedAsRead = [];
 hw.markedAsUnread = [];
-hw.markSectionAsRead = function(section) {
-  if (hw.hasClass(section, 'hw-leave-unread') || section.getAttribute('data-unread') == 'false') {
+hw.markSectionAsRead = function(section, opt_force) {
+  if (!opt_force && (hw.hasClass('hw-feed', 'hw-list-mode') || hw.hasClass(section, 'hw-leave-unread') || section.getAttribute('data-unread') == 'false')) {
     return;
   }
 
@@ -652,6 +652,7 @@ hw.listOpen = function(event, el) {
     section.parentNode.replaceChild(div, section);
     var newSection = div.getElementsByTagName('SECTION')[0];
     hw.addClass(newSection, 'hw-list-open');
+    hw.markSectionAsRead(newSection, true);
   };
 
   var badTrip = function() {
