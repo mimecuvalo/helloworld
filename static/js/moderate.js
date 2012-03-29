@@ -261,11 +261,15 @@ hw.read = function(event, el, listMode, special, query, readAllMode) {
   } else {
     url = hw.loadMoreObject.url;
     var args = hw.parseArguments(url);
-    args['list_mode'] = listMode ? 1 : 0;
-    args['read_all_mode'] = readAllMode ? 1 : 0;
+    if (listMode != undefined) {
+      args['list_mode'] = listMode ? 1 : 0;
+      hw.setCookie('list_mode', listMode ? '1' : '0', -1, hw.basePath());
+    }
+    if (readAllMode != undefined) {
+      args['read_all_mode'] = readAllMode ? 1 : 0;
+      hw.setCookie('read_all_mode', readAllMode ? '1' : '0', -1, hw.basePath());
+    }
     url = url.split('?')[0] + hw.generateArgs(args);
-    hw.setCookie('list_mode', listMode ? '1' : '0', -1, hw.basePath());
-    hw.setCookie('read_all_mode', readAllMode ? '1' : '0', -1, hw.basePath());
   }
 
   var callback = function(xhr, badTrip) {
@@ -604,9 +608,9 @@ hw.markAllAsRead = function(event, el) {
 
   var user = el.getAttribute('data-user');
   var countEl = hw.$$('#hw-following li[data-user="' + user + '"] .hw-unread-count')[0];
-  var count = parseInt(countEl.innerHTML.slice(1, -1));
+  var count = parseInt(countEl.textContent.slice(2, -1));
   hw.updateCount(hw.$('hw-total-unread-count'), -1 * count);
-  countEl.innerHTML = '(0)';
+  hw.updateCount(countEl, 0, 0);
 
   var createForm = hw.$c('hw-create');
   new hw.ajax(hw.baseUri() + 'api',
