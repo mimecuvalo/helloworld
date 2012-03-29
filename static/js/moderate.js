@@ -539,13 +539,12 @@ hw.markReadOnScroll = function(event) {
   }
 
   var sections = document.getElementsByTagName('SECTION');
+  var windowPositionY = hw.thumbnailDelayLoad.getWindowScrollY() + 20;  //hw.thumbnailDelayLoad.getWindowSizeY();
 
   for (var x = 0; x < sections.length; ++x) {
     if (sections[x].getAttribute('data-remote-id') && sections[x].getAttribute('data-unread') == 'true') {
       // TODO shouldn't really be dependant on thumbnailDelayLoad...
       // get the position of the 'fold' line from the parameter or manually
-      windowPositionY = hw.thumbnailDelayLoad.getWindowScrollY() + 20;  //hw.thumbnailDelayLoad.getWindowSizeY();
-
       if (hw.thumbnailDelayLoad.getPositionY(sections[x]) <= windowPositionY) {
         hw.markSectionAsRead(sections[x]);
       }

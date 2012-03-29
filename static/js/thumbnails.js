@@ -63,7 +63,7 @@ hw.thumbnailDelayLoad.getScrollY = function(element) {
 hw.thumbnailDelayLoad.getOffsetY = function(element) {
   if (document.documentElement["getBoundingClientRect"]) {
     var bound = element.getBoundingClientRect(), html = document.documentElement;
-    return bound.top + html.scrollTop - html.clientTop;
+    return bound.top + (html.scrollTop || document.body.scrollTop) - html.clientTop;
   } else {
     // short-circuit other browsers (webkit, firefox 2) to keep the browser speedy as possible
     return 0;
