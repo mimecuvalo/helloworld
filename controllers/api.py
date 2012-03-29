@@ -359,6 +359,7 @@ class ApiHandler(BaseHandler):
     commented_content = self.models.content.get(username=self.get_argument('local_user'), name=self.get_argument('local_name'))[0]
     commented_user = self.models.users.get(username=commented_content.username)[0]
     comment = self.get_argument('comment')
+    thread_url = 'tag:' + self.request.host + ',' + self.display["tag_date"] + ':' + self.content_url(commented_content)
 
     if self.current_user["user"]:
       # local user
@@ -379,7 +380,6 @@ class ApiHandler(BaseHandler):
         spam.train_ham(comment, self.application.settings["private_path"], profile.username)
       content.avatar = profile.logo
       content.title = 'comment'
-      thread_url = 'tag:' + self.request.host + ',' + self.display["tag_date"] + ':' + self.content_url(commented_content)
       content.thread = thread_url
       content.thread_user = self.get_argument('thread_user', None)
       content.view = content_remote.sanitize(comment)
@@ -416,6 +416,7 @@ class ApiHandler(BaseHandler):
       commented_content.comments_updated = datetime.datetime.utcnow()
       commented_content.save()
 
+    socialize.reply(self, commented_content, thread=thread_url)
     smtp.comment(self, from_username, commented_user.oauth, self.content_url(commented_content, host=True))
 
   def topic(self):

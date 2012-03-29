@@ -153,6 +153,11 @@ class SalmonHandler(BaseHandler):
           logging.error("something wrong with thread")
           logging.error(ex)
 
+      replies = salmon_doc.find('thr:replies')
+      if replies:
+        import logging
+        logging.error('replies working...')
+
       mentioned = salmon_doc.findAll('atom:link', rel='mentioned')
       if not mentioned:
         mentioned = salmon_doc.findAll('atom:link', rel='ostatus:attention')
