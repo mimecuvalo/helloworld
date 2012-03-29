@@ -153,7 +153,7 @@ class SalmonHandler(BaseHandler):
           logging.error("something wrong with thread")
           logging.error(ex)
 
-      replies = salmon_doc.find('atom:link', rel='replies')
+      replies = salmon_doc.find('thr:replies')
       if replies:
         import logging
         logging.error('replies working...' + replies['href'])
