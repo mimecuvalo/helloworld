@@ -67,7 +67,7 @@ def dashboard_feed(profile, begin, page_size, sort_type, read_all_mode, specific
                          ORDER BY date_created """ + sort_query + """)"""
 
   remote_query = """ (SELECT `id`, `username`, `title`, `view`, `date_created`, `favorited`, `is_spam`, `deleted`,
-                              0 as `count`, 0 as `count_robot`, now() as `date_updated`, 0 as `hidden`, now() as `date_start`, now() as `date_end`, 0 as `date_repeats`, '' as `section`, '' as `name`, '' as `thumb`, '' as `thread`,
+                              0 as `count`, 0 as `count_robot`, `date_updated`, 0 as `hidden`, now() as `date_start`, now() as `date_end`, 0 as `date_repeats`, '' as `section`, '' as `name`, '' as `thumb`, '' as `thread`,
                               `creator`, `type`, `from_user`, `post_id`, `link`, `read`
                          FROM `content_remote`
                          WHERE `to_username` = %s """ \
