@@ -145,7 +145,6 @@ class SalmonHandler(BaseHandler):
           if not content:
             raise tornado.web.HTTPError(400)
           ref = content_url['name']
-          commented_user = self.models.users.get(username=content.username)[0]
           content.comments += 1
           content.save()
         except Exception as ex:
@@ -190,5 +189,7 @@ class SalmonHandler(BaseHandler):
       post_remote.view = atom_content
       post_remote.save()
 
-      if ref or this_user_mentioned:
-        smtp.comment(self, post_remote.username, commented_user.oauth, self.content_url(content, host=True), this_user_mentioned=True)
+      if ref:
+        smtp.comment(self, post_remote.username, self.display["user"].oauth, self.content_url(content, host=True))
+      elif this_user_mentioned:
+        smtp.comment(self, post_remote.username, self.display["user"].oauth, post_remote.link, this_user_mentioned=True)
