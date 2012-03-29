@@ -49,11 +49,18 @@
       {% if comments_url or not item.restricted %}
       <entry>
         <title>{{ item.title }}</title>
-        <link href="{{ content_url(item, host=True) }}" />
-        <id>tag:{{ handler.request.host }},{{ tag_date }}:{{ urllib.quote(content_url(item).encode("utf-8")) }}</id>
+        {% if item.is_remote %}
+          <link href="{{ content_url(item, host=True) }}" />
+          <id>tag:{{ handler.request.host }},{{ tag_date }}:{{ urllib.quote(content_url(item).encode("utf-8")) }}</id>
+        {% else %}
+          <link href="{{ item.link }}" />
+          <id>{{ item.post_id }}</id>
+        {% end %}
         <content type="html">
           {{ add_base_uris(item.view) }}
-          {{ '<img src="' + nav_url(host=True, section='stats', url=content_url(item)) + '">' }}
+          {% if not item.is_remote %}
+            {{ '<img src="' + nav_url(host=True, section='stats', url=content_url(item)) + '">' }}
+          {% end %}
         </content>
         {% if not item.is_remote %}
           <updated>{{ item.date_updated.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}</updated>
