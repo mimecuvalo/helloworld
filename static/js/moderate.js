@@ -524,6 +524,10 @@ hw.markSectionAsRead = function(section) {
   }
 };
 hw.markReadOnScroll = function(event) {
+  if (hw.hasClass('hw-feed', 'hw-list-mode')) {
+    return;
+  }
+
   var sections = document.getElementsByTagName('SECTION');
 
   for (var x = 0; x < sections.length; ++x) {
