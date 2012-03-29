@@ -19,12 +19,11 @@ class FeedHandler(BaseHandler):
     album = self.get_argument('album', '')
     comments_url = self.get_argument('comments', '')
     self.display["comments_url"] = comments_url
-    self.display["comments_item"] = None
+    self.display["thread_url"] = None
 
     if comments_url:
       content_url = url_factory.load_basic_parameters(self, url=comments_url)
       content = self.models.content.get(username=content_url["profile"], section=content_url["section"], name=content_url["name"])[0]
-      self.display["comments_item"] = content
 
       # TODO this should be consolidated with uimodules.py
       remote_comments = self.models.content_remote.get(to_username=content.username,
@@ -35,6 +34,7 @@ class FeedHandler(BaseHandler):
       for comment in remote_comments:
         comment.is_remote = 1
       thread_url = 'tag:' + self.request.host + ',' + self.display["tag_date"] + ':' + self.content_url(content)
+      self.display["thread_url"] = thread_url
       local_comments = self.models.content.get(section='comments',
                                                thread=thread_url,
                                                is_spam=False,
