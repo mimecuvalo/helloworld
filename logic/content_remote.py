@@ -30,7 +30,7 @@ def parse_feed(models, user, feed=None, parsed_feed=None, max_days_old=30):
           if 'thr:count' in link:
             comments_count = int(link['thr:count'])
           if 'thr:updated' in link:
-            comments_updated = datetime.datetime.strptime(link['thr:updated'].string[:-6], '%Y-%m-%dT%H:%M:%S')
+            comments_updated = datetime.datetime.strptime(link['thr:updated'][:-6], '%Y-%m-%dT%H:%M:%S')
           break
 
     date_updated = None
