@@ -49,9 +49,5 @@ def reply(handler, content, mentions=None, thread=None):
         users.append(user_remote)
         mentioned_users.append(user_remote)
 
-  salmon just have count for now of comments
-  TODO also check for users in comments - slap them too?
-  putcomment in email
-
   for user in users:
     user_logic.salmon_reply(handler, user, content, thread=thread, mentioned_users=mentioned_users)
