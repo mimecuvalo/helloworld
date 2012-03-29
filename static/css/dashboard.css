@@ -252,6 +252,15 @@
 #hw-feed section.hw-leave-unread .hw-mark-unread {
   font-weight: bold;
 }
+#hw-feed.hw-list-mode section {
+  padding: 0px 5px 5px 5px;
+}
+#hw-feed.hw-list-mode h1 {
+  font-size: 110%;
+}
+#hw-feed.hw-list-mode h1 a {
+  color: #333;
+}
 
 #hw-feed {
   font: 13px arial, sans-serif;

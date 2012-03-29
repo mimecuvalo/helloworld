@@ -33,7 +33,7 @@ def send(handler, subject, to, content):
   except Exception as ex:
     import logging
     logging.error("efail :(")
-    logging.error(ex)
+    logging.error(repr(ex))
 
 def comment(handler, from_username, to_email, content_url, comment, this_user_mentioned=False):
   if this_user_mentioned:
