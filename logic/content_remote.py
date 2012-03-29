@@ -48,8 +48,22 @@ def parse_feed(models, user, feed=None, parsed_feed=None, max_days_old=30):
     if parsed_date < datetime.datetime.utcnow() - datetime.timedelta(days=max_days_old):
       continue
 
+    comments_count = 0
+    comments_updated = None
+    if 'links' in entry:
+      for link in entry.links:
+        if link['rel'] == 'replies':
+          if 'thr:count' in link:
+            comments_count = int(link['thr:count'])
+          if 'thr:updated' in link:
+            comments_updated = link['thr:updated']
+          break
+
     new_entry.date_created = parsed_date
     new_entry.date_updated = updated_date
+    new_entry.comments_count = comments_count
+    if comments_updated:
+      new_entry.comments_updated = datetime.datetime.fromtimestamp(mktime(comments_updated))
     new_entry.type = 'post'
     if entry.has_key('author'):
       new_entry.creator = entry.author
