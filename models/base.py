@@ -73,6 +73,7 @@ class content_remote(Model):
                    'from_user': custom_validators.UnicodeString(),
                    'type': validators.String(),
                    'date_created': custom_validators.Datetime(),
+                   'date_updated': custom_validators.DatetimeOrNull(),
                   }
 
 class content_access(Model):

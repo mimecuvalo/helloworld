@@ -22,9 +22,13 @@ def parse_feed(models, user, feed=None, parsed_feed=None, max_days_old=30):
     entry_id = entry.id if entry.has_key('id') else entry.link
     exists = models.content_remote.get(to_username=user.local_username, post_id=entry_id)[0]
     if exists:
-      continue
+      if entry.has_key('updated_parsed') and datetime.datetime.fromtimestamp(mktime(entry.updated_parsed)) != new_entry.date_updated:
+        new_entry = exists
+      else:
+        continue
+    else:
+      new_entry = models.content_remote()
 
-    new_entry = models.content_remote()      
     new_entry.to_username = user.local_username
     new_entry.from_user = user.profile_url
     new_entry.username = user.username
@@ -35,11 +39,17 @@ def parse_feed(models, user, feed=None, parsed_feed=None, max_days_old=30):
     else:
       parsed_date = datetime.datetime.now()
 
+    if entry.has_key('updated_parsed'):
+      updated_date = datetime.datetime.fromtimestamp(mktime(entry.updated_parsed))
+    else:
+      updated_date = parsed_date
+
     # we don't keep items that are over 30 days old
     if parsed_date < datetime.datetime.utcnow() - datetime.timedelta(days=max_days_old):
       continue
 
     new_entry.date_created = parsed_date
+    new_entry.date_updated = updated_date
     new_entry.type = 'post'
     if entry.has_key('author'):
       new_entry.creator = entry.author
@@ -107,7 +117,7 @@ def get_remote_title_and_thumb(url, content_type=None):
       if is_youtube:  # they serve up hqdefault for some reason...too big
         image = 'http://i' + str(random.randint(1, 4)) + '.ytimg.com/vi/' + video_id + '/default.jpg'
     elif oembed_json:
-      # kickstarter, for example, only does json  
+      # kickstarter, for example, only does json
       opener = urllib2.build_opener()
       oembed = opener.open(oembed_json['href'])
       oembed_data = json.loads(oembed.read().decode('utf8'))

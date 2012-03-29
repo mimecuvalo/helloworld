@@ -416,7 +416,7 @@ class ApiHandler(BaseHandler):
       commented_content.comments_updated = datetime.datetime.utcnow()
       commented_content.save()
 
-    socialize.reply(self, commented_content, thread=thread_url)
+    socialize.socialize(self, commented_content)
     smtp.comment(self, from_username, commented_user.oauth, self.content_url(commented_content, host=True))
 
   def topic(self):

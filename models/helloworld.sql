@@ -100,6 +100,7 @@ CREATE TABLE IF NOT EXISTS `content_remote` (
   `post_id` text NOT NULL,
   `link` text NOT NULL,
   `date_created` datetime NOT NULL,
+  `date_updated` datetime default NULL,
   `type` varchar(255) NOT NULL,
   `favorited` tinyint(1) NOT NULL,
   `read` tinyint(1) NOT NULL,
