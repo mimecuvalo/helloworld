@@ -294,7 +294,7 @@ hw.wysiwygKeys = function(event) {
 };
 
 hw.selection = 0;
-hw.saveSelection = function() {
+hw.saveSelection = function(event) {
   var wysiwygResult = hw.getCurrentWysiwyg();
   if (!wysiwygResult) {
     return;
@@ -312,6 +312,10 @@ hw.saveSelection = function() {
   }
 
   hw.wysiwygDetectState();
+
+  if (event) {
+    hw.wysiwygCheckImageClick(event);
+  }
 };
 
 hw.restoreSelection = function() {
@@ -522,6 +526,24 @@ hw.wysiwygDetectState = function() {
     hw.showImageOptions();
   } else {
     hw.hideImageOptions();
+  }
+};
+
+// XXX this worksaround Chrome not being able to select the image
+hw.wysiwygCheckImageClick = function(event) {
+  var wysiwygResult = hw.getCurrentWysiwyg();
+  var isComment = wysiwygResult['isComment'];
+  var wysiwyg = wysiwygResult['wysiwyg'];
+
+  if (!wysiwyg.hasAttribute('contenteditable') || !event.target) {
+    return;
+  }
+
+  if (event.target.parentNode.nodeName == 'A') {
+    hw.showAnchorEditor(event.target.parentNode);
+  }
+  if (event.target.nodeName == 'IMG') {
+    hw.showImageOptions(event.target);
   }
 };
 
