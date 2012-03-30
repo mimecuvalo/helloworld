@@ -15,7 +15,10 @@ hw.getLatestTypedUser = function() {
   var monkeyIndex = hw.wysiwygLastKeys.lastIndexOf('@');
   // yes, they call it 'monkey' in some countries. cute, eh?
   if (monkeyIndex == -1) {
-    return results;
+    monkeyIndex = hw.wysiwygLastKeys.lastIndexOf('+');
+    if (monkeyIndex == -1) {
+      return results;
+    }
   }
 
   var name = hw.wysiwygLastKeys.substring(monkeyIndex + 1);
@@ -42,6 +45,11 @@ hw.showUserAutocomplete = function() {
     wysiwyg.focus();
 
     var monkeyIndex = hw.wysiwygLastKeys.lastIndexOf('@');
+    var usingPlus = false;
+    if (monkeyIndex == -1) {
+      monkeyIndex = hw.wysiwygLastKeys.lastIndexOf('+');
+      usingPlus = true;
+    }
     var charsBack = hw.wysiwygLastKeys.length - monkeyIndex;
     var sel = window.getSelection();
 
@@ -50,7 +58,7 @@ hw.showUserAutocomplete = function() {
     }
 
     hw.wysiwygLastKeys = "";
-    hw.insertHTML('<a href="' + user['profile_url'] + '">@' + user['username'] + '</a>&nbsp;');
+    hw.insertHTML('<a href="' + user['profile_url'] + '">' + (usingPlus ? '+' : '@') + user['username'] + '</a>&nbsp;');
     hw.saveSelection();
   }
 
@@ -156,6 +164,9 @@ hw.showUserAutocomplete = function() {
 
     var completions = hw.getLatestTypedUser();
     var monkeyIndex = hw.wysiwygLastKeys.lastIndexOf('@');
+    if (monkeyIndex == -1) {
+      monkeyIndex = hw.wysiwygLastKeys.lastIndexOf('+');
+    }
     var name = "";
     if (monkeyIndex != -1) {
       name = hw.wysiwygLastKeys.substring(monkeyIndex + 1);

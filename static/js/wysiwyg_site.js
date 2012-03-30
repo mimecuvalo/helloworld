@@ -233,7 +233,8 @@ hw.wysiwygKeys = function(event) {
         }, 0);
         break;
 
-      case 64:    // @-symbol, autocomplete remote_user
+      case 43:
+      case 64:    // + or @, autocomplete remote_user
         if (isComment) {
           break;
         }
