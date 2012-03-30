@@ -18,14 +18,14 @@ hw.getLatestTypedUser = function() {
     return results;
   }
 
-  var charsBack = hw.wysiwygLastKeys.length - monkeyIndex;
   var name = hw.wysiwygLastKeys.substring(monkeyIndex + 1);
 
   for (var x = 0; x < hw.remoteUsers.length; ++x) {
     if (!hw.remoteUsers[x]['username'] || !hw.remoteUsers[x]['profile_url']) {
       continue;
     }
-    if (hw.remoteUsers[x]['username'].toLowerCase().indexOf(name.toLowerCase()) == 0) {
+    if (hw.remoteUsers[x]['username'].toLowerCase().indexOf(name.toLowerCase()) == 0
+        && name.length <= hw.remoteUsers[x]['username'].length) {
       results.push(hw.remoteUsers[x]);
     }
   }
@@ -69,17 +69,19 @@ hw.showUserAutocomplete = function() {
   function updateChoices() {
     var completions = hw.getLatestTypedUser();
     if (!completions.length) {
-      return [];
+      complete.style.opacity = '0';
+      return;
     }
+    complete.style.opacity = '1';
 
     // When there is only one completion, use it directly.
-    if (completions.length == 1) {
+    /*if (completions.length == 1) {
       insert(completions[0]);
       close();
       setTimeout(function(){
         wysiwyg.focus();
       }, 0);
-    }
+    }*/
 
     while (sel.firstChild) {
       sel.removeChild(sel.firstChild);
@@ -95,9 +97,9 @@ hw.showUserAutocomplete = function() {
     sel.size = Math.min(10, completions.length);
 
     // Hack to hide the scrollbar.
-    if (completions.length <= 10) {
+    /*if (completions.length <= 10) {
       complete.style.width = (sel.clientWidth - 1) + "px";
-    }
+    }*/
   }
 
   updateChoices();
@@ -152,16 +154,23 @@ hw.showUserAutocomplete = function() {
   Event.observe(sel, 'keydown', function(event) {
     var code = event.which || event.keyCode;
 
-    if (code == 13) { // Enter
+    var completions = hw.getLatestTypedUser();
+    var monkeyIndex = hw.wysiwygLastKeys.lastIndexOf('@');
+    var name = "";
+    if (monkeyIndex != -1) {
+      name = hw.wysiwygLastKeys.substring(monkeyIndex + 1);
+    }
+
+    if (code == 13 || (code == 32 && completions.length && name == completions[0]['username'])) { // Enter, Space
       hw.preventDefault(event);
       pick();
-    } else if (code == 27 || code == 32) {  // Escape, Space
+    } else if (code == 27 || code == 32 || monkeyIndex == -1) {  // Escape
       wysiwyg.focus();
       if (code == 27) {
         hw.preventDefault(event);
       }
       close();
-    } else if (code != 38 && code != 40) {
+    } else if (code != 38 && code != 40) {  // not up and not down
       wysiwyg.focus();
       setTimeout(function() {
         hw.saveSelection();

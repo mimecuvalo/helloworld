@@ -2,6 +2,7 @@ import re
 
 import tornado.web
 from base import BaseHandler
+from logic import content as content_logic
 from logic import url_factory
 
 class StatsHandler(BaseHandler):
@@ -20,8 +21,7 @@ class StatsStaticHandler(tornado.web.StaticFileHandler, BaseHandler):
     tornado.web.StaticFileHandler.get(self, 'img/pixel.gif')
 
 def increase_count(handler):
-  robots = re.compile(r'bot|spider|crawl|slurp|ia_archiver', re.M | re.U | re.I)
-  is_robot = "User-Agent" in handler.request.headers and robots.search(handler.request.headers["User-Agent"])
+  is_robot = content_logic.is_viewed_by_robot(self)
 
   url = handler.get_argument('url', '')
   if url:

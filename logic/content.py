@@ -24,3 +24,9 @@ def get_thumbnail(handler, content):
     return content_owner.logo
 
   return None
+
+def is_viewed_by_robot(handler):
+  robots = re.compile(r'bot|spider|crawl|slurp|ia_archiver', re.M | re.U | re.I)
+  is_robot = "User-Agent" in handler.request.headers and robots.search(handler.request.headers["User-Agent"])
+
+  return is_robot

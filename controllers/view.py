@@ -200,6 +200,11 @@ class ViewHandler(BaseHandler):
     #  content.count = content.count + 1
     #  content.save()
 
+    is_robot = content_logic.is_viewed_by_robot(self)
+    if is_robot:  # human views are handled by the stats image
+      content.count_robot = content.count_robot + 1
+      content.save()
+
     if is_owner_viewing:  # otherwise, when restarting browser, it shows old data and freaks you out!
       self.prevent_caching()
 
