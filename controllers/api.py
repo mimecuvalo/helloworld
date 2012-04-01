@@ -86,7 +86,7 @@ class ApiHandler(BaseHandler):
       url = self.get_argument('url')
       media_type = media.detect_media_type(url)
 
-      if media_type:
+      if media_type in ('video', 'image', 'audio', 'web'):
         parent_url = self.resource_url('remote')
         parent_directory = self.resource_directory('remote')
         leafname = os.path.basename(url)
