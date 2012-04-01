@@ -188,12 +188,11 @@ def get_remote_user_info(handler, user_url, profile):
   magic_key = ''
   alias = ''
   webfinger_doc = None
-  user_doc = None
+
+  user_response = urllib2.urlopen(user_url)
+  user_doc = BeautifulSoup(user_response.read())
 
   if not lrdd_link:
-    user_response = urllib2.urlopen(user_url)
-    user_doc = BeautifulSoup(user_response.read())
-
     atom_url = user_doc.find('link', rel='alternate', type='application/atom+xml')
     rss_url = user_doc.find('link', rel='alternate', type='application/rss+xml')
 
@@ -260,9 +259,8 @@ def get_remote_user_info(handler, user_url, profile):
     user_remote = handler.models.users_remote()
 
   favicon = None
-  if user_doc:
-    favicon = user_doc.find('link', rel='shortcut icon')
-  if user_doc and favicon:
+  favicon = user_doc.find('link', rel='shortcut icon')
+  if favicon:
     if favicon['href'].startswith('http://') or favicon['href'].startswith('https://'):
       favicon = favicon['href']
     else:

@@ -105,6 +105,9 @@ div.hw-options select {
   display: block;
   float: left;
 }
+div.hw-options input[type=checkbox] {
+  margin-top: 5px;
+}
 div.hw-options .hw-media-result {
   margin: 3px 0 0 5px;
 }

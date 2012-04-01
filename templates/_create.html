@@ -151,7 +151,7 @@
       {% end %}
       <dt><label>{{ _("hidden:") }}</label></dt><dd><input name="hw-hidden" type="checkbox" {% if content and content.hidden %}checked="checked"{% end %}></dd>
       {% if not content %}
-      <dt><label>{{ _("insert as separate posts:") }}</label></dt><dd><input class="hw-separate-checkbox" name="hw-separate" type="checkbox" onclick="hw.separate(this)"></dd>
+      <dt><label>{{ _("insert media as separate posts:") }}</label></dt><dd><input class="hw-separate-checkbox" name="hw-separate" type="checkbox" onclick="hw.separate(this)"></dd>
       {% else %}
       <input class="hw-separate-checkbox" name="hw-separate" type="hidden" value="0">
       {% end %}
