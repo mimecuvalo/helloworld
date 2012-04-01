@@ -22,6 +22,8 @@ class StatsStaticHandler(tornado.web.StaticFileHandler, BaseHandler):
 
 def increase_count(handler):
   is_robot = content_logic.is_viewed_by_robot(self)
+  if is_robot:
+    return
 
   url = handler.get_argument('url', '')
   if url:
@@ -32,9 +34,6 @@ def increase_count(handler):
 
       if content:
         if not handler.is_owner_viewing(content.username):
-          if is_robot:
-            content.count_robot = content.count_robot + 1
-          else:
-            content.count = content.count + 1
+          content.count = content.count + 1
 
           content.save()
