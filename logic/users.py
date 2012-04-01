@@ -259,6 +259,21 @@ def get_remote_user_info(handler, user_url, profile):
   if not user_remote:
     user_remote = handler.models.users_remote()
 
+  favicon = None
+  if user_doc:
+    favicon = user_doc.find('link', rel='shortcut icon')
+  if user_doc and favicon:
+    if favicon['href'].startswith('http://') or favicon['href'].startswith('https://'):
+      favicon = favicon['href']
+    else:
+      if base_url:
+        favicon = base_url + favicon['href']
+      else:
+        favicon = parsed_url.scheme + '://' + parsed_url.hostname + ('' if favicon['href'].startswith('/') else '/') + favicon['href']
+  else:
+    favicon = parsed_url.scheme + '://' + parsed_url.hostname + '/favicon.ico'
+  user_remote.favicon = favicon
+
   user_remote.local_username = profile
   logo = feed_doc.find('logo')
   if logo and logo.parent.name == 'source':
@@ -271,18 +286,8 @@ def get_remote_user_info(handler, user_url, profile):
     url = image.find('url')
     user_remote.avatar = url.string
   else:
-    if user_doc:
-      favicon = user_doc.find('link', rel='shortcut icon')
-    if user_doc and favicon:
-      if favicon['href'].startswith('http://') or favicon['href'].startswith('https://'):
-        user_remote.avatar = favicon['href']
-      else:
-        if base_url:
-          user_remote.avatar = base_url + favicon['href']
-        else:
-          user_remote.avatar = parsed_url.scheme + '://' + parsed_url.hostname + ('' if favicon['href'].startswith('/') else '/') + favicon['href']
-    else:
-      user_remote.avatar = parsed_url.scheme + '://' + parsed_url.hostname + '/favicon.ico'
+    user_remote.avatar = favicon
+
   preferred_username = None
   display_name = None
   if author:

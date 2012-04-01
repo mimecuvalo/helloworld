@@ -139,6 +139,7 @@ class users_remote(Model):
                 'order': 0,
                 'magic_key': '',
                 'avatar': '',
+                'favicon': '',
                 'salmon_url': '',
                 'hub_url': '',
                 'feed_url': '',

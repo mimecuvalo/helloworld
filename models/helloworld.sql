@@ -183,6 +183,7 @@ CREATE TABLE IF NOT EXISTS `users_remote` (
   `follower` tinyint(1) NOT NULL,
   `following` tinyint(1) NOT NULL,
   `avatar` text NOT NULL,
+  `favicon` text NOT NULL,
   `order` int(11) NOT NULL,
   `sort_type` varchar(255) NOT NULL,
   PRIMARY KEY  (`id`),
