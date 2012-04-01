@@ -27,7 +27,7 @@ autumn_db.conn.connect('mysql', host=constants['mysql_host'], user=constants['my
 from models import base as models
 
 
-remote_users = models.users_remote.get()[:]
+remote_users = models.users_remote.get(following=1)[:]
 
 for remote_user in remote_users:
   try:
