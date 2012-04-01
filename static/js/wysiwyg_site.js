@@ -319,6 +319,22 @@ hw.saveSelection = function(event) {
   }
 };
 
+hw.mainSaveSelection = function() {
+  if (!hw.hasClass('hw-container', 'hw-editing')) {
+    return;
+  }
+
+  hw.saveSelection();
+};
+
+hw.mainRestoreSelection = function() {
+  if (!hw.hasClass('hw-container', 'hw-editing')) {
+    return;
+  }
+
+  hw.restoreSelection();
+};
+
 hw.restoreSelection = function() {
   if (hw.selection) {
     if (window.getSelection) {

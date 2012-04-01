@@ -210,7 +210,7 @@
 <div class="hw-view {% if not individual_content %}hw-closed{% end %}">
   <div class="hw-wysiwyg {% if not content and individual_content %}hw-new{% end %} {% if section_template %}hw-template-{{ section_template }}{% end %}" tabindex="2"
     {% if not content %}contenteditable{% end %}
-    onmouseup="hw.saveSelection(event)" onkeyup="hw.saveSelection()" onfocus="hw.restoreSelection()" onpaste="hw.paste(event)">{% if content and individual_content %}{% if content.redirect %}{% raw _('This page redirects to: <a href="%(refers_to)s">%(refers_to)s</a>.') % { "refers_to": refers_to } %}{% else %}{% raw content.view %}{% end %}{% elif not content %}<h1 id="hw-new-title">{{ _('untitled') }}</h1><br>{% end %}</div>
+    onmouseup="hw.mainSaveSelection(event)" onkeyup="hw.mainSaveSelection()" onfocus="hw.mainRestoreSelection()" onpaste="hw.paste(event)">{% if content and individual_content %}{% if content.redirect %}{% raw _('This page redirects to: <a href="%(refers_to)s">%(refers_to)s</a>.') % { "refers_to": refers_to } %}{% else %}{% raw content.view %}{% end %}{% elif not content %}<h1 id="hw-new-title">{{ _('untitled') }}</h1><br>{% end %}</div>
   <div class="clear"></div>
 </div>
 
