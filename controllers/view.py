@@ -252,8 +252,9 @@ class ViewHandler(BaseHandler):
       cache.remove(self, self.nav_url(username=content.username, section=content.section, name=content.album))
     cache.remove(self, self.nav_url(username=content.username, section=content.section))
 
-    socialize.socialize(self, content)
-    self.sup_ping(content)
+    if not content.hidden:
+      socialize.socialize(self, content)
+      self.sup_ping(content)
 
     self.set_header('Location', self.content_url(content))
     content.restricted = False
@@ -338,7 +339,8 @@ class ViewHandler(BaseHandler):
     if content.name != old_name or content.section != old_section:
       self.set_header('Location', self.content_url(content))
 
-    socialize.socialize(self, content)
+    if not content.hidden:
+      socialize.socialize(self, content)
 
     self.set_status(204)
 
