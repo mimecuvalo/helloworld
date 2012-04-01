@@ -649,6 +649,9 @@ class BaseHandler(tornado.web.RequestHandler):
     return new_name
 
   def create_redirect(self, original, old_section, old_name):
+    if original.hidden:
+      return
+
     redirect_content = self.models.content()
     redirect_content.redirect = original.id
     redirect_content.username = original.username
