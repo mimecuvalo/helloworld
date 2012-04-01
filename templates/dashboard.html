@@ -93,7 +93,7 @@
         {% end %}
         <li id="hw-following-{{ follower.id }}" data-user="{{ follower.profile_url }}" data-sort-type="{{ follower.sort_type }}" draggable="true" ondragstart="hw.followingDragStart(event, this)" ondragover="hw.followingDragOver(event, this)" ondragenter="hw.followingDragOver(event, this)" ondragleave="hw.followingDragLeave(event, this)" ondrop="hw.followingDragDrop(event, this)">
           <a href="#read" onclick="hw.read(event, this)" title="{{ name }}">
-            <img height="16" width="16" src="{{ follower.avatar }}" onerror="this.src='{{ static_url('img/pixel.gif') }}';this.style.border='1px solid black';this.style.width='14px';this.style.height='14px'" />
+            <img height="16" width="16" src="{% if follower.favicon %}{{ follower.favicon }}{% else %}{{ follower.avatar }}{% end %}" onerror="this.src='{{ static_url('img/pixel.gif') }}';this.style.border='1px solid black';this.style.width='14px';this.style.height='14px'" />
           </a>
           <a href="#read" onclick="hw.read(event, this)" title="{{ name }}" class="hw-following-username">{{ name }}<span class="hw-overflow-shadow"></span></a><span class="hw-unread-count" onclick="hw.read(event, this)">&nbsp;({{ follower.unread_entries }})</span>
           <span class="hw-button-group">

@@ -288,6 +288,9 @@ def get_remote_user_info(handler, user_url, profile):
   else:
     user_remote.avatar = favicon
 
+  if not favicon:
+    user_remote.favicon = user_remote.avatar
+
   preferred_username = None
   display_name = None
   if author:
