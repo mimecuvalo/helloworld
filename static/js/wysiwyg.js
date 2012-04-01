@@ -122,6 +122,15 @@ hw.options = function(open) {
   hw.setClass(hw.$c('hw-more-options'), 'hw-selected', openOptions);
   hw.setClass(createForm, 'hw-options-open', openOptions);
   hw.display(options, openOptions);
+
+  if (openOptions) {
+    if (document.body.parentNode.scrollTop) {
+      document.body.parentNode.scrollTop = document.body.parentNode.scrollTop + options.getBoundingClientRect().top - 100;
+    } else {
+      document.body.scrollTop = document.body.scrollTop + options.getBoundingClientRect().top - 100;
+    }
+  }
+
   return false;
 };
 

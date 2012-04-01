@@ -28,33 +28,21 @@
     <div id="hw-navigation">
       <ul>
         <li><strong><a href="{{ nav_url(username=username) }}">{{ _('view site') }}</a></strong></li>
-        <li><a href="{{ nav_url(section='dashboard') }}" class="{% if handler.request.uri == nav_url(section='dashboard') %} hw-selected{% end %}">{{ _('dashboard') }}</a></li>
-        <li><a href="{{ nav_url(section='customize') }}" class="{% if handler.request.uri == nav_url(section='customize') %} hw-selected {% end %}">{{ _('customize') }}</a></li>
+        {% if handler.request.uri == nav_url(section='dashboard') %}
+        <li><a href="{{ nav_url(section='customize') }}">{{ _('customize') }}</a></li>
+        {% elif handler.request.uri == nav_url(section='customize') %}
+        <li><a href="{{ nav_url(section='dashboard') }}">{{ _('dashboard') }}</a></li>
+        {% end %}
         {% block more_tools %}{% end %}
         <li><hr></li>
         <li><a href="javascript:window.location.href='{{ nav_url(host=True, section='api') }}?op=follow&amp;user='+encodeURIComponent(window.location.href)">{{ _('follow bookmarklet') }}</a> <span data-tooltip="{{ _('drag this link to your bookmarks and then use it on websites you want to follow!') }}">[?]</span></li>
         <li><a href="javascript:window.location.href='{{ nav_url(host=True, section='dashboard') }}#reblog='+encodeURIComponent(window.location.href)">{{ _('reblog bookmarklet') }}</a> <span data-tooltip="{{ _('drag this link to your bookmarks and then use it on websites you want to reblog!') }}">[?]</span></li>
-        {% if is_superuser %}
-          <li><hr></li>
-          <li><a href="{{ nav_url(section='users') }}">{{ _('user admin') }}</a></li>
-          <li><a href="{{ nav_url(section='restart', next=handler.request.uri) }}">{{ _('restart server') }}</a></li>
-        {% end %}
         <li><hr></li>
         <li><a href="{{ nav_url(section='logout', next=nav_url(username=username)) }}">{{ _('logout') }}</a></li>
       </ul>
     </div>
 
     {% block more_sidebar %}{% end %}
-
-    <div id="hw-tools">
-      <h2>{{ _('tools') }}</h2><br>
-      <ul>
-        <li><a href="{{ nav_url(section='check_broken_links') }}">{{ _('check broken links') }}</a></li>
-        <li><a href="{{ nav_url(section='data_liberation') }}">{{ _('data liberation') }}</a></li>
-      </ul>
-    </div>
-
-    {% block even_more_sidebar %}{% end %}
 
   </aside>
 

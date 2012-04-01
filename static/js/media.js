@@ -80,6 +80,14 @@ hw.mediaLibrary = function(event, el, close) {
   if (mediaWrapper.src == 'about:blank' && !close) {
     mediaWrapper.src = hw.baseUri() + 'media?embedded=true';
   }
+
+  if (openMedia) {
+    if (document.body.parentNode.scrollTop) {
+      document.body.parentNode.scrollTop = document.body.parentNode.scrollTop + mediaWrapper.getBoundingClientRect().top - 100;
+    } else {
+      document.body.scrollTop = document.body.scrollTop + mediaWrapper.getBoundingClientRect().top - 100;
+    }
+  }
 };
 
 hw.mediaEmbedded = false;

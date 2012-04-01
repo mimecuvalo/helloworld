@@ -50,7 +50,7 @@ hw.reply = function(event, el) {
   var wysiwyg = wysiwygResult['wysiwyg'];
 
   if (document.body.parentNode.scrollTop) {
-    document.body.parentNode.scrollTop = document.body.scrollTop + wysiwyg.getBoundingClientRect().top - 100;
+    document.body.parentNode.scrollTop = document.body.parentNode.scrollTop + wysiwyg.getBoundingClientRect().top - 100;
   } else {
     document.body.scrollTop = document.body.scrollTop + wysiwyg.getBoundingClientRect().top - 100;
   }
