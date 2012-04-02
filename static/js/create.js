@@ -73,8 +73,8 @@ hw.resetCreateForm = function() {
   hw.changeThumbPreview();
   hw.htmlPreview();
   hw.$c('hw-wysiwyg').focus();
-  window.getSelection().modify("move", "forward", "line");
-  window.getSelection().modify("move", "forward", "line");
+  hw.modify("move", "forward", "line");
+  hw.modify("move", "forward", "line");
   hw.saveSelection();
 };
 

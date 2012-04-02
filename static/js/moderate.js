@@ -3,9 +3,9 @@ hw.cursorCoords = function() {
   wysiwyg.focus();
 
   var sel = window.getSelection();
-  sel.modify("extend", "backward", "character");
+  hw.modify("extend", "backward", "character");
   var range = sel.getRangeAt(0);
-  sel.modify("move", "forward", "character");
+  hw.modify("move", "forward", "character");
 
   return range.getBoundingClientRect();
 };
@@ -54,7 +54,7 @@ hw.showUserAutocomplete = function() {
     var sel = window.getSelection();
 
     for (var x = 0; x < charsBack; ++x) {
-      sel.modify("extend", "backward", "character");
+      hw.modify("extend", "backward", "character");
     }
 
     hw.wysiwygLastKeys = "";

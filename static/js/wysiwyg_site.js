@@ -7,6 +7,16 @@ hw.insertHTML = function(html) {
   }
 };
 
+hw.modify = function(alter, direction, granularity) {
+  if (document.selection && document.selection.createRange) {
+    var range = document.selection.createRange();
+    range.move(granularity, direction == 'forward' ? 1 : -1)
+  } else if (window.getSelection) {
+    var sel = window.getSelection();
+    sel.modify(alter, direction, granularity);
+  }
+};
+
 hw.commentSubmit = function() {
   var form       = hw.$c('hw-comment-form');
   var comment    = hw.$c('hw-comment-input');
@@ -216,18 +226,17 @@ hw.wysiwygKeys = function(event) {
             return;
           }
 
-          var sel = window.getSelection();
           var charsBack = hw.wysiwygLastKeys.length - hashIndex;
-          sel.modify("move", "backward", "character");
+          hw.modify("move", "backward", "character");
           for (var x = 0; x < charsBack; ++x) {
-            sel.modify("extend", "backward", "character");
+            hw.modify("extend", "backward", "character");
           }
           var tag = hw.wysiwygLastKeys.substring(hashIndex + 1);
 
           document.execCommand("createLink", false, hw.tagUrl + tag);
 
-          sel.modify("move", "forward", "character");
-          sel.modify("move", "forward", "character");
+          hw.modify("move", "forward", "character");
+          hw.modify("move", "forward", "character");
 
           hw.wysiwygLastKeys = "";
         }, 0);
@@ -250,17 +259,15 @@ hw.wysiwygKeys = function(event) {
       case 45: // -
         if (hw.wysiwygLastKeys.slice(-2) == "--") {
           hw.preventDefault(event);
-          var sel = window.getSelection();
           for (var x = 0; x < 2; ++x) {
-            sel.modify("extend", "backward", "character");
+            hw.modify("extend", "backward", "character");
           }
           hw.insertHTML('<hr>');
           hw.wysiwygLastKeys = "";
         } else if (hw.wysiwygLastKeys.slice(-5) == "-more") {
           hw.preventDefault(event);
-          var sel = window.getSelection();
           for (var x = 0; x < 5; ++x) {
-            sel.modify("extend", "backward", "character");
+            hw.modify("extend", "backward", "character");
           }
           hw.insertHTML('<img class="hw-read-more" src="/helloworld/static/img/pixel.gif?v=df3e5">');
           hw.wysiwygLastKeys = "";
@@ -365,6 +372,10 @@ hw.getSelectionStartNode = function(allowTextNodes) {
   }
 };
 
+hw.onbeforepaste = function(event) {
+  hw.preventDefault(event);
+};
+
 hw.paste = function(event) {
   var wysiwygResult = hw.getCurrentWysiwyg();
   var isComment = wysiwygResult['isComment'];
@@ -392,6 +403,10 @@ hw.paste = function(event) {
     var createForm = isComment ? hw.$c('hw-comment-form') : hw.$c('hw-create');
     var pastedContent = pasteArea.innerHTML;
     createForm.removeChild(pasteArea);
+
+    if (window.clipboardData) {
+      pastedContent = window.clipboardData.getData("Text");
+    }
 
     if (pastedContent) {
       if (pastedContent.search(/https?:\/\/maps.google.com/ig) == 0) {
@@ -424,13 +439,12 @@ hw.getEmbedHtml = function(link) {
   var wysiwyg = wysiwygResult['wysiwyg'];
 
   var createForm = isComment ? hw.$c('hw-comment-form') : hw.$c('hw-create');
-  var sel = window.getSelection();
 
   var callback = function(xhr) {
     var isEmbed = xhr.responseText.search(/<(embed|object|iframe|img)\s/ig) != -1;
     hw.insertHTML(xhr.responseText + (isEmbed ? "<br><br>" : ""));
     if (isEmbed) {
-      sel.modify("move", "forward", "line");
+      hw.modify("move", "forward", "line");
     }
 
     if (isComment) {
@@ -772,8 +786,7 @@ hw.processFiles = function(json) {
   wysiwyg.focus();
 
   hw.insertHTML(json['html'] + "<br><br>");
-  var sel = window.getSelection();
-  sel.modify("move", "forward", "line");
+  hw.modify("move", "forward", "line");
 
   if (isComment) {
     return;

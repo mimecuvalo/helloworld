@@ -171,7 +171,7 @@
             </div>
             <button class="hw-button hw-button-save" type="button" onclick="hw.commentSubmit()">{% if section_template == 'forum' %}{{ _('submit') }}{% else %}{{ _('submit comment') }}{% end %}</button>
             <div name="hw-comment-input" class="hw-comment-input" contenteditable type="text" data-local-username="{{ content.username }}" data-local-name="{{ content.name }}"
-                 onmouseup="hw.saveSelection(event)" onkeyup="hw.saveSelection()" onfocus="hw.restoreSelection()" onpaste="hw.paste(event)"></div>
+                 onmouseup="hw.saveSelection(event)" onkeyup="hw.saveSelection()" onfocus="hw.restoreSelection()" onbeforepaste="hw.onbeforepaste(event)" onpaste="hw.paste(event)"></div>
             <script>
               Event.observe(hw.$c('hw-comment-input'), 'keypress', hw.wysiwygKeys, false);
             </script>
