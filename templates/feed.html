@@ -20,7 +20,7 @@
       <rights>{{ licenses[user.license]["name"] }}: {{ user.license }}</rights>
     {% end %}
   {% end %}
-  <updated>{% if type(feed) is list and len(feed) %}{{ feed[0].date_updated.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}{% end %}</updated>
+  <updated>{% if type(feed) is list and len(feed) and not feed[0].is_remote %}{{ feed[0].date_updated.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}{% end %}</updated>
   {% end %}
   <author>
     <activity:object-type>http://activitystrea.ms/schema/1.0/person</activity:object-type>
