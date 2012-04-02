@@ -124,10 +124,28 @@
     <h2>{{ _('followers') }}</h2><br>
     <ul>
       {% for follower in followers %}
-        <li>
-          <a href="{{ follower.profile_url }}" title="{% if follower.name %}{{ follower.name }}{% else %}{{ follower.username }}{% end %}">
-            <img height="16" width="16" src="{{ follower.avatar }}" onerror="this.src='{{ static_url('img/pixel.gif') }}';this.style.border='1px solid black';this.style.width='15px';this.style.height='15px'" />
+        {% if follower.name %}
+          {% set name = follower.name %}
+        {% else %}
+          {% set name = follower.username %}
+        {% end %}
+        <li data-user="{{ follower.profile_url }}">
+          <a href="{{ follower.profile_url }}" target="_blank" title="{{ name }}">
+            <img height="16" width="16" src="{% if follower.favicon %}{{ follower.favicon }}{% else %}{{ follower.avatar }}{% end %}" onerror="this.src='{{ static_url('img/pixel.gif') }}';this.style.border='1px solid black';this.style.width='14px';this.style.height='14px'" />
           </a>
+          <a href="{{ follower.profile_url }}" target="_blank" title="{{ name }}" class="hw-following-username">{{ name }}<span class="hw-overflow-shadow"></span></a>
+          <span class="hw-button-group">
+            <button class="hw-menu-button" onclick="hw.menu(event, this)" type="button">
+              <span class="hw-arrow-button"></span>
+            </button>
+            <div class="hw-menu hw-{% if follower.sort_type == 'oldest' %}sort-oldest{% else %}sort-newest{% end %}">
+              {% if follower.following %}
+                <span>{{ _('you are following this person.') }}</span>
+              {% else %}
+                <a href="#follow" data-user="{{ follower.profile_url }}" onclick="hw.followViaFollower(event, this)">{{ _('follow') }}</a>
+              {% end %}
+            </div>
+          </span>
         </li>
       {% end %}
     </ul>

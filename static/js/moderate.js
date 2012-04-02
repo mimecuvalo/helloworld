@@ -238,6 +238,11 @@ hw.follow = function(event, el) {
       onError: badTrip });
 };
 
+hw.followViaFollower = function(event, el) {
+  hw.$('hw-following-new').value = el.getAttribute('data-user');
+  hw.follow(event);
+}
+
 hw.readCurrent = null;
 hw.read = function(event, el, listMode, special, query, readAllMode) {
   if (event) {

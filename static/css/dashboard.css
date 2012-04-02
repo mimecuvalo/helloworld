@@ -93,15 +93,13 @@
   margin-top: 5px;
 }
 
-#hw-followers li {
-  display: inline-block;
-}
-
+#hw-followers li,
 #hw-following li {
   margin: 3px 0;
   border: 1px solid transparent;
   padding: 1px;
 }
+#hw-followers li:hover,
 #hw-following li:hover {
   border: 1px solid #999;
 }
@@ -116,6 +114,7 @@
   width: 30px;
   cursor: pointer;
 }
+#hw-followers .hw-following-username,
 #hw-following .hw-following-username {
   display: inline-block;
   max-width: 100px;
@@ -125,6 +124,10 @@
   vertical-align: middle;
   white-space: nowrap;
   position: relative;
+}
+#hw-followers .hw-following-username {
+  max-width: 130px;
+  width: 130px;
 }
 .hw-overflow-shadow {
   display: inline-block;
@@ -139,6 +142,7 @@
   background-image: -ms-radial-gradient(right center, ellipse farthest-side, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6));
   background-image: radial-gradient(right center, ellipse farthest-side, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6));
 }
+#hw-followers a:hover,
 #hw-following a:hover {
   text-decoration: none;
 }
@@ -152,9 +156,12 @@
 #hw-following #hw-following-spam {
   margin-top: 20px;
 }
+#hw-followers li .hw-menu-button,
 #hw-following li .hw-menu-button {
   visibility: hidden;
 }
+#hw-followers li:hover .hw-menu-button,
+#hw-followers li.hw-active .hw-menu-button,
 #hw-following li:hover .hw-menu-button,
 #hw-following li.hw-active .hw-menu-button {
   visibility: visible;
