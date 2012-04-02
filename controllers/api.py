@@ -402,7 +402,9 @@ class ApiHandler(BaseHandler):
       post_remote.to_username = commented_content.username
       post_remote.from_user = self.current_user["email"]
       post_remote.username = self.current_user["email"].split('@')[0]
-      post_remote.post_id = 'tag:' + self.request.host + ',' + self.display["tag_date"] + ':' + '/' + commented_content.username + '/remote-comments/comment-' + str(uuid.uuid4())
+      local_url = '/' + commented_content.username + '/remote-comments/comment-' + str(uuid.uuid4())
+      post_remote.post_id = 'tag:' + self.request.host + ',' + self.display["tag_date"] + ':' + local_url
+      post_remote.link = 'http://' + self.request.host + local_url
       from_username = post_remote.username
       post_remote.avatar = 'http://www.gravatar.com/avatar/' + hashlib.md5(self.current_user["email"].lower()).hexdigest()
       post_remote.date_created = datetime.datetime.utcnow()
