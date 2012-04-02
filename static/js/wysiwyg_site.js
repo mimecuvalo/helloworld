@@ -65,7 +65,11 @@ hw.reply = function(event, el) {
     document.body.scrollTop = document.body.scrollTop + wysiwyg.getBoundingClientRect().top - 100;
   }
 
-  wysiwyg.innerHTML = '<a href="' + user + '">@' + username + '</a>&nbsp;';
+  if (user) {
+    wysiwyg.innerHTML = '<a href="' + user + '">@' + username + '</a>&nbsp;';
+  } else {
+    wysiwyg.innerHTML = '@' + username + '&nbsp;';
+  }
   wysiwyg.focus();
 
   // move to end of doc...TODO make simpler? use modify?
