@@ -290,8 +290,9 @@ class ViewHandler(BaseHandler):
       raise tornado.web.HTTPError(400, "i call shenanigans")
 
     old_section = content.section
-    old_album = content.album
-    old_name = content.name
+    old_album   = content.album
+    old_name    = content.name
+    old_hidden  = content.hidden
 
     # remove old cached content
     if content.album:
@@ -301,6 +302,23 @@ class ViewHandler(BaseHandler):
 
     section = self.get_argument('section') if self.get_argument('section') else content_url["section"]
     name = self.get_argument('name') if self.get_argument('name', "") else content_url["name"]
+    hidden = int(self.get_argument('hidden', 0))
+
+    if content.section == 'main' and old_hidden != hidden:
+      collection = self.models.content.get(username=content.username,
+                                           section=old_name)[:]
+      for item in collection:
+        item.hidden = hidden
+        item.save()
+
+    if content.album == 'main' and old_hidden != hidden:
+      collection = self.models.content.get(username=content.username,
+                                           section=old_section,
+                                           album=old_name)[:]
+      for item in collection:
+        item.hidden = hidden
+        item.save()
+
     did_redirect = False
     if content.section == 'main' and old_name != name:
       did_redirect = True
@@ -308,7 +326,7 @@ class ViewHandler(BaseHandler):
 
     if content.album == 'main' and old_name != name:
       did_redirect = True
-      new_album = self.rename_album(content.section, old_name, name, content.title)
+      new_album = self.rename_album(content.section, old_name, name, content.title)     
 
     try:
       self.save_content(content, content_url, new=False)
