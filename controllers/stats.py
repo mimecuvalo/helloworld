@@ -21,7 +21,7 @@ class StatsStaticHandler(tornado.web.StaticFileHandler, BaseHandler):
     tornado.web.StaticFileHandler.get(self, 'img/pixel.gif')
 
 def increase_count(handler):
-  is_robot = content_logic.is_viewed_by_robot(self)
+  is_robot = content_logic.is_viewed_by_robot(handler)
   if is_robot:
     return
 
