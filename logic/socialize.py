@@ -50,5 +50,26 @@ def reply(handler, content, mentions=None, thread=None):
         users.append(user_remote)
         mentioned_users.append(user_remote)
 
+  # XXX todo, combine with uimodule code
+  if content.comments:
+    remote_comments = handler.models.content_remote.get(to_username=content.username,
+                                                        local_content_name=content.name,
+                                                        type='comment',
+                                                        is_spam=False,
+                                                        deleted=False)[:]
+    for comment in remote_comments:
+      user_remote = handler.models.users_remote.get(local_username=profile, username=comment.from_user)[0]
+      if user_remote:
+        users.append(user_remote)
+    thread_url = 'tag:' + handler.request.host + ',' + handler.display["tag_date"] + ':' + handler.content_url(content)
+    # XXX todo, actually, we should eventually stop looking at local comments this way
+    local_comments = handler.models.content.get(section='comments',
+                                                thread=thread_url,
+                                                is_spam=False,
+                                                deleted=False)[:]
+    for comment in local_comments:
+      user_local = handler.models.users.get(username=comment.username)[0]
+      users.append(user_local)
+
   for user in users:
     user_logic.salmon_reply(handler, user, content, thread=thread, mentioned_users=mentioned_users)
