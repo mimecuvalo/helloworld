@@ -361,65 +361,35 @@ class ApiHandler(BaseHandler):
     commented_user = self.models.users.get(username=commented_content.username)[0]
     comment = self.get_argument('comment')
     sanitized_comment = content_remote.sanitize(comment)
-    thread_url = 'tag:' + self.request.host + ',' + self.display["tag_date"] + ':' + self.content_url(commented_content)
 
+    is_spam = spam.guess(comment, self.application.settings["private_path"], commented_content.username)
+
+    post_remote = self.models.content_remote()
+    post_remote.to_username = commented_content.username
+    post_remote.from_user = self.current_user["email"]
+    post_remote.username = self.current_user["email"].split('@')[0]
+    local_url = '/' + commented_content.username + '/remote-comments/comment-' + str(uuid.uuid4())
+    post_remote.post_id = 'tag:' + self.request.host + ',' + self.display["tag_date"] + ':' + local_url
+    post_remote.link = 'http://' + self.request.host + local_url
+    from_username = post_remote.username
     if self.current_user["user"]:
-      # local user
       profile = self.get_author_user()
-
-      is_spam = spam.guess(comment, self.application.settings["private_path"], profile.username)
-
-      content = self.models.content()
-      content.username = profile.username
-      from_username = content.username
-      content.section  = 'comments'
-      content.name     = self.get_unique_name(content, title='comment')
-      content.date_created = datetime.datetime.utcnow()
-      content.date_updated = datetime.datetime.utcnow()
-      if is_spam:
-        content.is_spam = True
-      else:
-        spam.train_ham(comment, self.application.settings["private_path"], profile.username)
-      content.avatar = profile.logo if profile.logo else profile.favicon
-      content.title = 'comment'
-      content.thread = thread_url
-      content.thread_user = self.get_argument('thread_user', None)
-      content.view = sanitized_comment
-      content.save()
-
-      commented_content.comments += 1
-      commented_content.comments_updated = datetime.datetime.utcnow()
-      commented_content.save()
-
-      thread = self.get_argument('thread', None)
-      if thread:
-        socialize.reply(self, content, thread=thread)
+      post_remote.avatar = profile.logo if profile.logo else profile.favicon
     else:
-      # remote user
-      is_spam = spam.guess(comment, self.application.settings["private_path"], commented_content.username)
-
-      post_remote = self.models.content_remote()
-      post_remote.to_username = commented_content.username
-      post_remote.from_user = self.current_user["email"]
-      post_remote.username = self.current_user["email"].split('@')[0]
-      local_url = '/' + commented_content.username + '/remote-comments/comment-' + str(uuid.uuid4())
-      post_remote.post_id = 'tag:' + self.request.host + ',' + self.display["tag_date"] + ':' + local_url
-      post_remote.link = 'http://' + self.request.host + local_url
-      from_username = post_remote.username
       post_remote.avatar = 'http://www.gravatar.com/avatar/' + hashlib.md5(self.current_user["email"].lower()).hexdigest()
-      post_remote.date_created = datetime.datetime.utcnow()
-      if is_spam:
-        post_remote.is_spam = True
-      else:
-        spam.train_ham(comment, self.application.settings["private_path"], commented_content.username)
-      post_remote.type = 'comment'
-      post_remote.local_content_name = commented_content.name
-      post_remote.view = sanitized_comment
-      post_remote.save()
+    post_remote.date_created = datetime.datetime.utcnow()
+    if is_spam:
+      post_remote.is_spam = True
+    else:
+      spam.train_ham(comment, self.application.settings["private_path"], commented_content.username)
+    post_remote.type = 'comment'
+    post_remote.local_content_name = commented_content.name
+    post_remote.view = sanitized_comment
+    post_remote.save()
 
-      commented_content.comments += 1
-      commented_content.comments_updated = datetime.datetime.utcnow()
-      commented_content.save()
+    commented_content.comments += 1
+    commented_content.comments_updated = datetime.datetime.utcnow()
+    commented_content.save()
 
     socialize.socialize(self, commented_content)
     smtp.comment(self, from_username, commented_user.oauth, self.content_url(commented_content, host=True), sanitized_comment)
