@@ -138,6 +138,9 @@
             {% end %}
             • <a href="#markAsUnread" onclick="hw.markAsUnread(event, this)" class="hw-mark-unread">{{ _('keep unread') }}</a>
           {% else %}
+            {% if item.comments %}
+              ({{ _("%(comments_count)s comment", "%(comments_count)s comments", item.comments) % { "comments_count": locale.friendly_number(item.comments) } }})
+            {% end %}
             • {{ _("%(count)s human view", "%(count)s human views", item.count) % { "count": locale.friendly_number(item.count) } }}
             • {{ _("%(count)s robot view", "%(count)s robot views", item.count_robot) % { "count": locale.friendly_number(item.count_robot) } }}
             {% if item.thread %}
@@ -184,7 +187,12 @@
         {% end %}
 
         <ul class="hw-comments">
-        {% for comment in comments %}
+        {% if individual_content %}
+          {% set comment_list = comments %}
+        {% else %}
+          {% set comment_list = comments_list %}
+        {% end %}
+        {% for comment in comment_list %}
           {% if comment.is_remote %}
             <li data-post-id="{{ comment.post_id }}" data-post-user="{% if comment.from_user.startswith('http://') %}{{ comment.from_user }}{% end %}">
               <img src="{% if comment.avatar %}{{ comment.avatar }}{% else %}{{ static_url('img/pixel.gif') }}{% end %}" />

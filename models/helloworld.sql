@@ -103,6 +103,7 @@ CREATE TABLE IF NOT EXISTS `content_remote` (
   `date_updated` datetime default NULL,
   `comments_updated` datetime default NULL,
   `comments_count` int(11) NOT NULL default '0',
+  `thread` text NOT NULL,
   `type` varchar(255) NOT NULL,
   `favorited` tinyint(1) NOT NULL,
   `read` tinyint(1) NOT NULL,
@@ -113,6 +114,7 @@ CREATE TABLE IF NOT EXISTS `content_remote` (
   KEY `to_username` (`to_username`),
   KEY `from_user` (`from_user`(255)),
   KEY `to_username_2` (`to_username`,`from_user`(255))
+  KEY `thread` (`thread`(255))
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------

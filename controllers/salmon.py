@@ -1,8 +1,12 @@
 import datetime
 import re
-import urllib
-import urllib2
 import urlparse
+
+from BeautifulSoup import BeautifulSoup
+import magicsig
+import salmoning
+import tornado.escape
+import tornado.web
 
 from base import BaseHandler
 from logic import content_remote
@@ -10,12 +14,6 @@ from logic import smtp
 from logic import spam
 from logic import url_factory
 from logic import users
-
-from BeautifulSoup import BeautifulSoup
-import magicsig
-import salmoning
-import tornado.escape
-import tornado.web
 
 class SalmonHandler(BaseHandler):
   class MockKeyRetriever(magicsig.KeyRetriever):
@@ -161,7 +159,8 @@ class SalmonHandler(BaseHandler):
           comments_count = replies['count']
         if 'updated' in replies:
           comments_updated = replies['updated']
-        # replies['href']
+        comments_response = urllib2.urlopen(replies['href'])
+        content_remote.parse_feed(self.models, self.display["user"], comments_response, remote_comments=True)
 
       mentioned = salmon_doc.findAll('atom:link', rel='mentioned')
       if not mentioned:

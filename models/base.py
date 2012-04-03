@@ -69,6 +69,7 @@ class content_remote(Model):
                 'date_updated': None,
                 'comments_count': 0,
                 'comments_updated': None,
+                'thread': None,
                 'avatar': '',
                 'link': '',
                 'view': '',}

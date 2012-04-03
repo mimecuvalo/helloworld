@@ -15,7 +15,7 @@ from logic import users
 # monkeypatch
 feedparser._HTMLSanitizer.acceptable_elements = feedparser._HTMLSanitizer.acceptable_elements + ['iframe']
 
-def parse_feed(models, user, feed=None, parsed_feed=None, max_days_old=30):
+def parse_feed(models, user, feed=None, parsed_feed=None, max_days_old=30, remote_comments=True):
   feed_doc = feedparser.parse(parsed_feed or feed)
 
   for entry in feed_doc.entries:
@@ -64,7 +64,9 @@ def parse_feed(models, user, feed=None, parsed_feed=None, max_days_old=30):
     new_entry.date_updated = date_updated
     new_entry.comments_count = comments_count
     new_entry.comments_updated = comments_updated
-    new_entry.type = 'post'
+    new_entry.type = 'remote-comment' if remote_comments else 'post'
+    if remote_comments:
+      new_entry.thread = entry['thr_in-reply-to']['ref']
     if entry.has_key('author'):
       new_entry.creator = entry.author
     new_entry.title = entry.title

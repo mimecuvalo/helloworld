@@ -5,7 +5,7 @@
   <id>{{ nav_url(host=True, username=user.username, section='feed') }}</id>
   <title type="html">{{ user.title }}</title>
   <subtitle>{{ _('a hello world site.') }}</subtitle>
-  <link rel="self" href="{{ nav_url(host=True, username=user.username, section='feed', category=section, album=album) }}" />
+  <link rel="self" href="{{ nav_url(host=True, username=user.username, section='feed', category=section, album=album, comments=comments) }}" />
   <link rel="alternate" type="text/html" href="{{ nav_url(host=True, username=user.username) }}" />
   <link rel="hub" href="{{ push_hub }}" />
   <link rel="http://api.friendfeed.com/2008/03#sup" href="http://friendfeed.com/api/public-sup.json#{{ sup_id }}" type="application/json" />
@@ -77,6 +77,9 @@
             <link rel="ostatus:attention" href="{{ item.thread_user }}"/>
             <link rel="mentioned" href="{{ item.thread_user }}"/>
           {% end %}
+        {% elif item.is_remote and thread_url %}
+          <activity:object-type>http://activitystrea.ms/schema/1.0/comment</activity:object-type>
+        {% end %}
         {% else %}
           <activity:object-type>http://activitystrea.ms/schema/1.0/article</activity:object-type>
         {% end %}

@@ -84,6 +84,14 @@ class RemoteContent(tornado.web.UIModule):
     content.restricted = False
     content.is_remote = True
 
+    if content.comments_count:
+      content.comments_list = self.handler.models.content_remote.get(to_username=content.to_username,
+                                                                thread=content.post_id,
+                                                                type='remote-comment')[:]
+      content.comments_list.sort(key=lambda x: x.date_created, reverse=True)
+    else:
+      content.comments_list = []
+
     return content
 
 class ContentView(tornado.web.UIModule):
@@ -92,8 +100,13 @@ class ContentView(tornado.web.UIModule):
     self.handler.display["referrer"] = self.handler.get_argument('referrer', "")
 
     self.handler.display['favorites'] = []
-    self.handler.display['comments'] = []
     self.handler.display['list_mode'] = list_mode
+
+    content.comments_list = []
+    if content.comments:
+      content.comments_list = content_remote.get_comments(self.handler, content)
+      is_forum = self.handler.display["section_template"] == 'forum'
+      content.comments_list.sort(key=lambda x: x.date_created, reverse=(not is_forum))
 
     if not self.handler.display["individual_content"]:
       self.handler.display["feed"] = content
@@ -112,10 +125,6 @@ class ContentView(tornado.web.UIModule):
         self.handler.display['favorites'] = self.handler.models.content_remote.get(to_username=content.username,
                                                                                    local_content_name=content.name,
                                                                                    type='favorite')[:]
-      if content.comments:
-        self.handler.display['comments'] = content_remote.get_comments(self.handler, content)
-        is_forum = self.handler.display["section_template"] == 'forum'
-        self.handler.display['comments'].sort(key=lambda x: x.date_created, reverse=(not is_forum))
 
     return self.render_string("content.html", **self.handler.display)
 
