@@ -9,6 +9,7 @@ import urlparse
 import uuid
 
 from base import BaseHandler
+from logic import content as content_logic
 from logic import content_remote
 from logic import media
 from logic import pubsubhubbub_subscribe
@@ -88,8 +89,8 @@ class ApiHandler(BaseHandler):
       media_type = media.detect_media_type(url)
 
       if media_type in ('video', 'image', 'audio', 'web'):
-        parent_url = self.resource_url('remote')
-        parent_directory = self.resource_directory('remote')
+        parent_url = url_factory.resource_url(self, 'remote')
+        parent_directory = url_factory.resource_directory(self, 'remote')
         leafname = os.path.basename(url)
         full_path = os.path.join(parent_directory, leafname)
         url_factory.check_legit_filename(full_path)
@@ -175,16 +176,16 @@ class ApiHandler(BaseHandler):
         return
       else:
         section_album = section_album.split('_')
-        collection, common_options = self.get_collection(profile=profile, section=section_album[0], name=section_album[1])[:]
+        collection, common_options = content_logic.get_collection(self, profile=profile, section=section_album[0], name=section_album[1])[:]
     elif op_type == 'section':
       name = dragged
-      collection = self.get_main_sections(profile=profile)
+      collection = content_logic.get_main_sections(self, profile=profile)
     else:
       section_album = dragged.split('_')
       name = section_album[1]
 
       if not new_section:
-        collection = self.get_albums(profile=profile, section=section_album[0])
+        collection = content_logic.get_albums(self, profile=profile, section=section_album[0])
       else:
         album_items = self.models.content.get(username=profile,
                                               album=name)[:]
@@ -197,7 +198,7 @@ class ApiHandler(BaseHandler):
         album_item.section = new_section
         album_item.save()
 
-        collection = self.get_albums(profile=profile, section=new_section)
+        collection = content_logic.get_albums(self, profile=profile, section=new_section)
 
     counter = 0
     inserted = False
@@ -243,9 +244,9 @@ class ApiHandler(BaseHandler):
     old_name = old_id[11:]  # remove hw-sitemap_
 
     if op_type == 'section':
-      self.rename_section(old_name, new_name, new_title)
+      content_logic.rename_section(self, old_name, new_name, new_title)
     else:
-      self.rename_album(section_album[0], section_album[1], new_name, new_title)
+      content_logic.rename_album(self, section_album[0], section_album[1], new_name, new_title)
 
   def follow(self):
     user_url = self.get_argument('user').strip()
@@ -420,7 +421,7 @@ class ApiHandler(BaseHandler):
     content.section      = section
     content.album        = album
     content.title        = topic
-    content.name         = self.get_unique_name(content, "_", topic)
+    content.name         = content_logic.get_unique_name(self, content, "_", topic)
     content.forum        = True
     current_datetime     = datetime.datetime.utcnow()
     content.date_created = current_datetime

@@ -148,9 +148,9 @@ class ViewHandler(BaseHandler):
                           'name': None, }
 
     if not content.hidden:
-      collection, common_options = self.get_collection(profile=content_options['username'],
-                                                       section=content_options['section'],
-                                                       name=content_options['name'])
+      collection, common_options = content_logic.get_collection(self, profile=content_options['username'],
+                                                                section=content_options['section'],
+                                                                name=content_options['name'])
 
       index = -1
       for i, p in enumerate(collection):
@@ -322,11 +322,11 @@ class ViewHandler(BaseHandler):
     did_redirect = False
     if content.section == 'main' and old_name != name:
       did_redirect = True
-      new_section = self.rename_section(old_name, name, content.title)
+      new_section = content_logic.rename_section(self, old_name, name, content.title)
 
     if content.album == 'main' and old_name != name:
       did_redirect = True
-      new_album = self.rename_album(content.section, old_name, name, content.title)     
+      new_album = content_logic.rename_album(self, content.section, old_name, name, content.title)     
 
     try:
       self.save_content(content, content_url, new=False)
@@ -352,7 +352,7 @@ class ViewHandler(BaseHandler):
         item.save()
 
     if content.name != old_name and not did_redirect:
-      self.create_redirect(content, old_section, old_name)
+      content_logic.create_redirect(self, content, old_section, old_name)
 
     if content.name != old_name or content.section != old_section:
       self.set_header('Location', self.content_url(content))
@@ -426,7 +426,7 @@ class ViewHandler(BaseHandler):
                                                  name=content.section)[0].template
 
     section         = self.get_argument('section') if self.get_argument('section') else content_url["section"]
-    content.section = self.create_section(content.username, section, parent_template)
+    content.section = content_logic.create_section(self, content.username, section, parent_template)
 
     # secondary things to be changed by user, filled in by default
     current_datetime = datetime.datetime.utcnow()
@@ -443,13 +443,13 @@ class ViewHandler(BaseHandler):
                                                  name=content.album)[0]
         if original_album:
           album_template = original_album.template
-      content.album    = self.create_album(content.username, content.section, album, album_template)
+      content.album    = content_logic.create_album(self, content.username, content.section, album, album_template)
 
     title = self.get_argument('title', "")
     thumb = self.get_argument('thumb', "")
     name = self.get_argument('name') if self.get_argument('name', "") else content_url["name"]
 
-    content.name         = self.get_unique_name(content, name, title)
+    content.name         = content_logic.get_unique_name(self, content, name, title)
     content.title        = title
     content.thumb        = thumb
     if content.section == 'main' or content.album == 'main' or template not in ('album', 'events', 'feed', 'forum', 'slideshow', 'store'):

@@ -20,11 +20,11 @@ class MediaHandler(BaseHandler):
 
     self.display["user"] = self.get_author_user()
 
-    parent_directory = self.resource_directory()
+    parent_directory = url_factory.resource_directory(self)
     self.display["files"] = os.walk(parent_directory)
     self.display["initial_section"] = None
     initial_section_check = self.get_argument('initial_section', None)
-    if initial_section_check and os.path.exists(os.path.join(self.resource_directory(), initial_section_check)):
+    if initial_section_check and os.path.exists(os.path.join(url_factory.resource_directory(self), initial_section_check)):
       self.display["initial_section"] = initial_section_check
 
     self.display["basename"] = os.path.basename
@@ -39,7 +39,7 @@ class MediaHandler(BaseHandler):
         uploaded_file_check = url_factory.clean_filename(uploaded_file_check)
         uploaded_file_check = os.path.join(self.application.settings["base_path"], uploaded_file_check)
 
-        if not uploaded_file_check.startswith(self.resource_directory()):
+        if not uploaded_file_check.startswith(url_factory.resource_directory(self)):
           raise tornado.web.HTTPError(400, "i call shenanigans")
 
         if os.path.exists(uploaded_file_check):
@@ -80,7 +80,7 @@ class MediaHandler(BaseHandler):
 
     for f in files:
       f = url_factory.clean_filename(f).replace(parent_leading_path + '/', '')
-      filename = os.path.join(self.resource_directory(), f)
+      filename = os.path.join(url_factory.resource_directory(self), f)
 
       if os.path.isdir(filename):
         shutil.rmtree(filename)

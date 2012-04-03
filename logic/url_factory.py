@@ -124,3 +124,91 @@ def clean_filename(name):
   if name.startswith('/'):  # get rid of leading /
     name = name[1:]
   return re.compile(r'[\\\/]\.\.|\.\.[\\\/]', re.M | re.U).sub('', name)
+
+def content_url(handler, item, host=False, **arguments):
+  url = ""
+
+  if host:
+    url += handler.request.protocol + "://" + handler.request.host
+
+  if not handler.constants['http_hide_prefix']:
+    url += handler.prefix
+
+  if not handler.constants['single_user_site'] and not handler.hostname_user:
+    url += '/' + item.username
+
+  if item.section != 'main':
+    url += '/' + item.section
+
+  if item.name != 'home' and item.name != 'main':
+    url += '/' + item.name
+  elif item.name == 'home' and handler.hostname_user:
+    url += '/'
+
+  if arguments:
+    for arg in arguments:
+      arguments[arg] = arguments[arg].encode('utf-8')
+    url += '?' + urllib.urlencode(arguments)
+
+  return href(url)
+
+def nav_url(handler, host=False, username="", section="", name="", page=None, **arguments):
+  url = ""
+
+  if host:
+    url += handler.request.protocol + "://" + handler.request.host
+
+  if not handler.constants['http_hide_prefix']:
+    url += handler.prefix
+
+  if not handler.constants['single_user_site'] and not handler.hostname_user and username:
+    url += '/' + username
+
+  if section:
+    url += '/' + section
+    if name:
+      url += '/' + name
+
+  if page:
+    url += '/page/' + str(page)
+
+  args = ""
+  if arguments:
+    for arg in arguments:
+      arguments[arg] = arguments[arg].encode('utf-8')
+    args = '?' + urllib.urlencode(arguments)
+
+  return (href(url) + args) or "/"
+
+def resource_directory(handler, section="", album=""):
+  path = handler.application.settings["resource_path"]
+
+  path = os.path.join(path, handler.get_author_username())
+
+  if section:
+    path += '/' + section
+
+  if album:
+    path += '/' + album
+
+  return path
+
+def resource_url(handler, section="", album="", resource="", filename=""):
+  if filename:
+    return handler.application.settings["resource_url"] \
+         + filename.replace(handler.application.settings["resource_path"], '')
+
+  path = handler.application.settings["resource_url"] + '/'
+
+  path += handler.get_author_username()
+
+  if section:
+    path += '/' + section + '/'
+
+  if album:
+    path += album + '/'
+
+  if resource:
+    path += resource + '/'
+
+  return path

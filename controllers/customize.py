@@ -13,7 +13,7 @@ class CustomizeHandler(BaseHandler):
 
     static_path             = self.application.settings["static_path"]
     global_themes_directory = os.path.join(static_path, 'css/themes')
-    local_themes_directory  = self.resource_directory('themes')
+    local_themes_directory  = url_factory.resource_directory(self, 'themes')
     local_themes_stem       = local_themes_directory[len(static_path) + 1:]
 
     self.display['themes'] = os.listdir(global_themes_directory)

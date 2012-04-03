@@ -36,10 +36,10 @@ class UploadHandler(BaseHandler):
     uploaded_file = self.request.files['file'][0]
     if safe_user:
       self.media_section = url_factory.clean_filename(self.get_argument('section'))
-      if self.media_section.startswith(self.resource_url()):
-        self.media_section = self.media_section[len(self.resource_url()) + 1:]
-      self.parent_directory = self.resource_directory(self.media_section)
-      self.parent_url = self.resource_url(self.media_section)
+      if self.media_section.startswith(url_factory.resource_url(self)):
+        self.media_section = self.media_section[len(url_factory.resource_url(self)) + 1:]
+      self.parent_directory = url_factory.resource_directory(self, self.media_section)
+      self.parent_url = url_factory.resource_url(self, self.media_section)
     else:
       self.parent_directory = os.path.join(self.application.settings["resource_path"], 'remote')
       self.parent_url = os.path.join(self.application.settings["resource_url"], 'remote')

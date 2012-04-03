@@ -4,6 +4,7 @@ import tornado.template
 import tornado.web
 import urllib
 
+from logic import content as content_logic
 from logic import content_remote
 from logic import url_factory
 
@@ -14,7 +15,7 @@ class Create(tornado.web.UIModule):
     self.handler.display["edit"] = self.handler.get_argument('edit', False)
     self.handler.display["default_username"] = self.handler.get_author_username()
     self.handler.display["remote_users"] = self.handler.models.users_remote.get(local_username=self.handler.display["default_username"])[:]
-    self.handler.display["sections"] = self.handler.get_sections_with_albums(profile=self.handler.display["default_username"])
+    self.handler.display["sections"] = content_logic.get_sections_with_albums(self.handler, profile=self.handler.display["default_username"])
     self.handler.display["section_template"] = self.handler.get_argument('section_template', None)
     self.handler.display["templates"] = self.handler.constants['templates']
     self.handler.display["section_cookie"] = self.handler.get_cookie("section")
@@ -29,7 +30,22 @@ class Moderate(tornado.web.UIModule):
 
 class SiteMap(tornado.web.UIModule):
   def render(self, content_owner, content=None, query=None):
-    self.handler.display["sitemap"] = self.handler.generate_sitemap(content)
+    if type(content) is list and len(content):
+      content = content[0]
+
+    if content and content.section != 'main':
+      profile = content.username
+      section = content.section
+      if content.album == 'main':
+        album = content.name
+      else:
+        album = content.album
+    else:
+      profile = self.handler.breadcrumbs["profile"]
+      section = self.handler.breadcrumbs["name"]
+      album = None
+
+    self.handler.display["sitemap"] = content_logic.get_sections_with_albums(self.handler, profile=profile, section=section, album=album)
     self.handler.display["content_owner"] = content_owner
     self.handler.display["content"] = content
     self.handler.display["query"] = query
@@ -111,7 +127,7 @@ class SimpleTemplate(tornado.web.UIModule):
     if self.handler.breadcrumbs["name"] == 'main':
       raise tornado.web.HTTPError(404)
 
-    collection, common_options = self.handler.get_collection()
+    collection, common_options = content_logic.get_collection(self.handler)
 
     if collection and self.template_type == 'slideshow':
       collection.reverse()

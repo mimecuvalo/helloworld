@@ -6,6 +6,7 @@ from autumn.db.query import Query
 import tornado.web
 
 from base import BaseHandler
+from logic import url_factory
 
 class DataLiberationHandler(BaseHandler):
   def get(self):
@@ -45,11 +46,11 @@ class DataLiberationHandler(BaseHandler):
     zf.writestr('content_data', repr(content_data))
 
     # files
-    files = os.walk(self.resource_directory())
+    files = os.walk(url_factory.resource_directory(self))
     for f in files:
       for filename in f[2]:
         path = os.path.join(f[0], filename)
-        arcname = path[len(self.resource_directory()) - len(username):]
+        arcname = path[len(url_factory.resource_directory(self)) - len(username):]
         zf.write(path, arcname)
 
     zf.close()
