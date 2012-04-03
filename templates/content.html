@@ -187,12 +187,7 @@
         {% end %}
 
         <ul class="hw-comments">
-        {% if individual_content %}
-          {% set comment_list = comments %}
-        {% else %}
-          {% set comment_list = comments_list %}
-        {% end %}
-        {% for comment in comment_list %}
+        {% for comment in item.comments_list %}
           {% if comment.is_remote %}
             <li data-post-id="{{ comment.post_id }}" data-post-user="{% if comment.from_user.startswith('http://') %}{{ comment.from_user }}{% end %}">
               <img src="{% if comment.avatar %}{{ comment.avatar }}{% else %}{{ static_url('img/pixel.gif') }}{% end %}" />

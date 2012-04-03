@@ -57,6 +57,12 @@ class Content(tornado.web.UIModule):
     content.restricted = False
     content.is_remote = False
 
+    content.comments_list = []
+    if content.comments:
+      content.comments_list = content_remote.get_comments(self.handler, content)
+      is_forum = self.handler.display["section_template"] == 'forum'
+      content.comments_list.sort(key=lambda x: x.date_created, reverse=(not is_forum))
+
     try:
       if not self.handler.authenticate(content=content, auto_login=(not simple)):
         if simple:
@@ -101,12 +107,6 @@ class ContentView(tornado.web.UIModule):
 
     self.handler.display['favorites'] = []
     self.handler.display['list_mode'] = list_mode
-
-    content.comments_list = []
-    if content.comments:
-      content.comments_list = content_remote.get_comments(self.handler, content)
-      is_forum = self.handler.display["section_template"] == 'forum'
-      content.comments_list.sort(key=lambda x: x.date_created, reverse=(not is_forum))
 
     if not self.handler.display["individual_content"]:
       self.handler.display["feed"] = content
