@@ -143,3 +143,13 @@ def get_remote_title_and_thumb(url, content_type=None):
     pass
 
   return ('', '', '')
+
+def get_comments(handler, content):
+  remote_comments = handler.models.content_remote.get(to_username=content.username,
+                                                      local_content_name=content.name,
+                                                      type='comment',
+                                                      is_spam=False,
+                                                      deleted=False)[:]
+  for comment in remote_comments:
+    comment.is_remote = 1
+  return remote_comments

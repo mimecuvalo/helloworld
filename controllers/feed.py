@@ -3,6 +3,7 @@ import hashlib
 import tornado.web
 
 from base import BaseHandler
+from logic import content_remote
 from logic import url_factory
 
 class FeedHandler(BaseHandler):
@@ -25,23 +26,9 @@ class FeedHandler(BaseHandler):
       content_url = url_factory.load_basic_parameters(self, url=comments_url)
       content = self.models.content.get(username=content_url["profile"], section=content_url["section"], name=content_url["name"])[0]
 
-      # TODO this should be consolidated with uimodules.py
-      remote_comments = self.models.content_remote.get(to_username=content.username,
-                                                       local_content_name=content.name,
-                                                       type='comment',
-                                                       is_spam=False,
-                                                       deleted=False)[:]
-      for comment in remote_comments:
-        comment.is_remote = 1
+      comments = content_remote.get_comments(self, content)
       thread_url = 'tag:' + self.request.host + ',' + self.display["tag_date"] + ':' + self.content_url(content)
       self.display["thread_url"] = thread_url
-      local_comments = self.models.content.get(section='comments',
-                                               thread=thread_url,
-                                               is_spam=False,
-                                               deleted=False)[:]
-      for comment in local_comments:
-        comment.is_remote = 0
-      comments = local_comments + remote_comments
       comments.sort(key=lambda x: x.date_created, reverse=True)
       self.display["feed"] = comments
     else:

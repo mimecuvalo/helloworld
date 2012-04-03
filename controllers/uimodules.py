@@ -97,21 +97,7 @@ class ContentView(tornado.web.UIModule):
                                                                                    local_content_name=content.name,
                                                                                    type='favorite')[:]
       if content.comments:
-        remote_comments = self.handler.models.content_remote.get(to_username=content.username,
-                                                                 local_content_name=content.name,
-                                                                 type='comment',
-                                                                 is_spam=False,
-                                                                 deleted=False)[:]
-        for comment in remote_comments:
-          comment.is_remote = 1
-        thread_url = 'tag:' + self.handler.request.host + ',' + self.handler.display["tag_date"] + ':' + self.handler.content_url(content)
-        local_comments = self.handler.models.content.get(section='comments',
-                                                         thread=thread_url,
-                                                         is_spam=False,
-                                                         deleted=False)[:]
-        for comment in local_comments:
-          comment.is_remote = 0
-        self.handler.display['comments'] = local_comments + remote_comments
+        self.handler.display['comments'] = content_remote.get_comments(self.handler, content)
         is_forum = self.handler.display["section_template"] == 'forum'
         self.handler.display['comments'].sort(key=lambda x: x.date_created, reverse=(not is_forum))
 
