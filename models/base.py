@@ -57,6 +57,7 @@ class content(Model):
 class content_remote(Model):
   class Meta:
     defaults = {'type': '',
+                'from_user': '',
                 'local_content_name': '',
                 'username': '',
                 'creator': '',
