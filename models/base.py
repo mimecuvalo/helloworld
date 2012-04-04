@@ -75,7 +75,6 @@ class content_remote(Model):
                 'link': '',
                 'view': '',}
     validations = {'to_username': (custom_validators.UnicodeString(1, 255), custom_validators.Alphanumeric()),
-                   'from_user': custom_validators.UnicodeString(),
                    'type': validators.String(),
                    'date_created': custom_validators.Datetime(),
                    'date_updated': custom_validators.DatetimeOrNull(),
