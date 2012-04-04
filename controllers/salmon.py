@@ -33,7 +33,7 @@ class SalmonHandler(BaseHandler):
 
         if not lrdd_link:
           raise tornado.web.HTTPError(400)
-/
+
         # get webfinger
         webfinger_doc = users.get_webfinger(lrdd_link, signer_uri)
         magic_key = webfinger_doc.find('link', rel='magic-public-key')['href'].replace('data:application/magic-public-key,', '')
