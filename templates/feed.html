@@ -54,7 +54,9 @@
           <id>{{ item.post_id }}</id>
           <author>
             <name>{{ item.username }}</name>
-            <uri>{{ item.from_user }}</uri>
+            {% if item.from_user.startswith('http://') %}
+              <uri>{{ item.from_user }}</uri>
+            {% end %}
             <poco:photos>
               <poco:value>{{ item.avatar }}</poco:value>
               <poco:type>thumbnail</poco:type>

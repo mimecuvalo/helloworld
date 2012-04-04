@@ -49,14 +49,17 @@ def parse_feed(models, user, feed=None, parsed_feed=None, max_days_old=30, remot
     new_entry.to_username = user.local_username
     if remote_comments and entry.has_key('author'):
       new_entry.username = entry.author
+      entry_doc = BeautifulSoup(feed)
+      author = entry_doc.find('author')
+      uri = author.find('uri')
+      avatar = author.find('poco:photos')
+      if uri:
+        new_entry.from_user = uri.string
+      if avatar:
+        new_entry.avatar = avatar.find('poco:value').string
     else:
       new_entry.username = user.username
-    if remote_comments and entry.has_key('uri'):
-      new_entry.from_user = entry.uri
-    else:
       new_entry.from_user = user.profile_url
-    if remote_comments and entry.has_key('avatar'):
-      new_entry.avatar = entry.avatar
 
     if entry.has_key('published_parsed'):
       parsed_date = datetime.datetime.fromtimestamp(mktime(entry.published_parsed))
