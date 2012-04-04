@@ -5,7 +5,7 @@
   <id>{{ nav_url(host=True, username=user.username, section='feed') }}</id>
   <title type="html">{{ user.title }}</title>
   <subtitle>{{ _('a hello world site.') }}</subtitle>
-  <link rel="self" href="{{ nav_url(host=True, username=user.username, section='feed', category=section, album=album, comments=comments) }}" />
+  <link rel="self" href="{{ nav_url(host=True, username=user.username, section='feed', category=section, album=album, comments=comments_url) }}" />
   <link rel="alternate" type="text/html" href="{{ nav_url(host=True, username=user.username) }}" />
   <link rel="hub" href="{{ push_hub }}" />
   <link rel="http://api.friendfeed.com/2008/03#sup" href="http://friendfeed.com/api/public-sup.json#{{ sup_id }}" type="application/json" />
