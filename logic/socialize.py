@@ -24,7 +24,7 @@ def publish(handler, content):
     pass
 
 def reply(handler, content, mentions=None, thread=None):
-  profile = handler.get_author_username()
+  profile = content.username
   thread = thread or content.thread # XXX this is pretty damn confusing...'thread' used for local comments, content.thread for remote
 
   thread_user_remote = None
