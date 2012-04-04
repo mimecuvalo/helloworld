@@ -90,9 +90,12 @@ def get_webfinger(lrdd, uri):
   return BeautifulSoup(webfinger_response.read())
 
 def salmon_common(handler):
-  user = handler.get_author_user()
+  if handler.display.has_key('user'):
+    user = handler.display["user"]
+  else:
+    user = handler.get_author_user()
+    handler.display["user"] = user
   handler.display['feed'] = None
-  handler.display["user"] = user
   handler.display["push_hub"] = handler.constants['push_hub']
   handler.display['utcnow'] = datetime.datetime.utcnow()
   handler.display["section"] = None
