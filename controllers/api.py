@@ -359,7 +359,7 @@ class ApiHandler(BaseHandler):
 
   def comment(self):
     commented_content = self.models.content.get(username=self.get_argument('local_user'), name=self.get_argument('local_name'))[0]
-    commented_user = self.models.users.get(username=commented_content.username)[0]
+    self.display["user"] = commented_user = self.models.users.get(username=commented_content.username)[0]
     comment = self.get_argument('comment')
     sanitized_comment = content_remote.sanitize(comment)
 
