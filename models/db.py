@@ -49,6 +49,9 @@ def dashboard_feed(profile, begin, page_size, sort_type, read_all_mode, specific
     just_remote_feed = True
     content_remote_restrict += """ AND `type` = %s """
     parameters.append('comment')
+  else:
+    content_remote_restrict += """ AND `type` = %s """
+    parameters.append('post')
   if query:
     just_remote_feed = True
     content_remote_restrict += """ AND (`title` LIKE %s or `view` LIKE %s)"""
