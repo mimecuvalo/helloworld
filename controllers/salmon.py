@@ -162,7 +162,7 @@ class SalmonHandler(BaseHandler):
         if 'updated' in replies:
           comments_updated = replies['updated']
         comments_response = urllib2.urlopen(replies['href'])
-        content_remote.parse_feed(self.models, user_remote, comments_response, remote_comments=True)
+        content_remote.parse_feed(self.models, user_remote, comments_response.read(), remote_comments=True)
 
       mentioned = salmon_doc.findAll('atom:link', rel='mentioned')
       if not mentioned:
