@@ -100,7 +100,7 @@ class DashboardHandler(BaseHandler):
 
     total_count = 0
     for profile in self.display['following']:
-      profile_count = self.models.content_remote.get(to_username=user.username, from_user=profile.profile_url, read=0, is_spam=0, deleted=0).count()
+      profile_count = self.models.content_remote.get(to_username=user.username, from_user=profile.profile_url, type='post', read=0, is_spam=0, deleted=0).count()
       profile.unread_entries = profile_count
       total_count += profile_count
 
