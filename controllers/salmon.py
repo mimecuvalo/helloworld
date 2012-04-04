@@ -1,5 +1,6 @@
 import datetime
 import re
+import urllib2
 import urlparse
 
 from BeautifulSoup import BeautifulSoup
