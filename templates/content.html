@@ -79,7 +79,7 @@
     <header>
       <h1 class="hw-content-title">
         {% if item.is_remote %}
-        <a href="{{ item.link }}" target="_blank" data-remote-id="{{ item.id }}" data-list-mode="{{ list_mode }}" onclick="hw.listOpen(event, this)">{% if item.is_spam %}<strong>[{{ _('spam') }}]</strong>{% end %}{% if item.type != 'post' %}<strong>{{ item.type }}</strong>{% end %} {{ item.username }}: {% if item.title %}{{ item.title }}{% else %}{{ _('(untitled)') }}{% end %}</a>
+        <a href="{{ item.link }}" target="_blank" data-remote-id="{{ item.id }}" data-list-mode="{{ list_mode }}" onclick="hw.listOpen(event, this)">{% if item.is_spam %}<strong>[{{ _('spam') }}]</strong>{% end %}{% if item.type != 'post' %}<strong>{{ item.type }}:</strong>{% end %} {{ item.username }}: {% if item.title %}{{ item.title }}{% else %}{{ _('(untitled)') }}{% end %}</a>
         {% else %}
         <a href="{{ content_url(item) }}" {% if is_owner_viewing and item.hidden %}class="hw-content-hidden"{% end %} data-contentname="{{ item.name }}" data-local-id="{{ item.id }}" {% if list_mode %}data-list-mode="{{ list_mode }}" onclick="hw.listOpen(event, this)"){% end %}>{% if item.title %}{{ item.title }}{% else %}{{ _('(untitled)') }}{% end %}</a>
         {% end %}
