@@ -11,8 +11,7 @@ def socialize(handler, content):
   mentions  = re.findall(r'@(\w+)', content.view, re.M | re.U)
   mentions += re.findall(r'\+(\w+)', content.view, re.M | re.U)
 
-  if content.thread or mentions:
-    reply(handler, content, mentions)
+  reply(handler, content, mentions)
 
   publish(handler, content)
 

@@ -96,8 +96,8 @@
     <title type="html">{{ title }}</title>
     <id>tag:{{ handler.request.host }},{{ tag_date }}:{{ urllib.quote(id.encode("utf-8")) }}</id>
     <content type="html">{{ atom_content }}</content>
-    <updated>{{ utcnow.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}</updated>
-    <published>{{ utcnow.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}</published>
+    <published>{% if date_created %}{{ date_created.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}{% else %}{{ utcnow.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}{% end %}</published>
+    <updated>{% if date_updated %}{{ date_updated.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}{% else %}{{ utcnow.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}{% end %}</updated>
     <activity:verb>{{ verb }}</activity:verb>
     {% if activity_object %}
       <activity:object>{% raw activity_object %}</activity:object>

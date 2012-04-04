@@ -99,6 +99,8 @@ def salmon_common(handler):
   handler.display["push_hub"] = handler.constants['push_hub']
   handler.display['utcnow'] = datetime.datetime.utcnow()
   handler.display["section"] = None
+  handler.display["date_created"] = None
+  handler.display["date_updated"] = None
   handler.display['activity_object'] = ''
   handler.display['activity_extra'] = ''
   handler.display['id'] = str(datetime.datetime.utcnow()).replace(' ', ':')
@@ -135,6 +137,8 @@ def salmon_reply(handler, user_remote, content, thread=None, mentioned_users=[])
   handler.display['id'] = handler.content_url(content)
   handler.display['title'] = content.title
   handler.display['atom_content'] = content.view
+  handler.display["date_created"] = content.date_created
+  handler.display["date_updated"] = content.date_updated
   object_type = 'comment' if content.section == 'comments' else 'note'
   handler.display['verb'] = 'http://activitystrea.ms/schema/1.0/post'
   handler.display['activity_extra'] = """

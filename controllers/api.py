@@ -253,6 +253,11 @@ class ApiHandler(BaseHandler):
     user_url = self.get_argument('user').strip()
     profile = self.get_author_username()
     user = users.get_remote_user_info(self, user_url, profile)
+
+    # don't subscribe to yourself
+    if user.profile_url == self.nav_url(host=True, username=profile):
+      return
+
     user.following = 1
     user.save()
 
