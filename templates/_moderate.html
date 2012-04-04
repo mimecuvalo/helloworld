@@ -21,9 +21,9 @@
   </div>
 {% else %}
   <div class="hw-remote-actions" data-username="{{ item.username }}"
-      {% if item.is_remote %}
+    {% if item.is_remote %}
       data-user="{% if item.from_user.startswith('http://') %}{{ item.from_user }}{% end %}" data-post-id="{{ item.post_id }}"
-      {% end %}>
+    {% end %}>
     <a href="#reply" onclick="hw.reply(event, this)">{{ _('reply') }}</a>
   </div>
 {% end %}

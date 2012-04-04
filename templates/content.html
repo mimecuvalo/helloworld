@@ -185,7 +185,7 @@
 
         <ul class="hw-comments">
         {% for comment in item.comments_list %}
-          {% if True %} {# comment.is_remote #}
+          {% if comment.is_remote %}
             <li data-post-id="{{ comment.post_id }}" data-post-user="{% if comment.from_user.startswith('http://') %}{{ comment.from_user }}{% end %}">
               <img src="{% if comment.avatar %}{{ comment.avatar }}{% else %}{{ static_url('img/pixel.gif') }}{% end %}" />
               {% raw _('%(profile_url)s') % { "profile_url": ('<a href="' + comment.from_user + '">' + comment.username + '</a>' if comment.from_user.startswith('http://') else comment.from_user.split('@')[0]) } %}
