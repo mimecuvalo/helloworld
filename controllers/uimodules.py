@@ -92,8 +92,8 @@ class RemoteContent(tornado.web.UIModule):
 
     if content.comments_count:
       content.comments_list = self.handler.models.content_remote.get(to_username=content.to_username,
-                                                                thread=content.post_id,
-                                                                type='remote-comment')[:]
+                                                                     thread=content.post_id,
+                                                                     type='remote-comment')[:]
       content.comments_list.sort(key=lambda x: x.date_created, reverse=True)
     else:
       content.comments_list = []
