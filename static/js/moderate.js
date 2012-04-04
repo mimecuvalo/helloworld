@@ -182,8 +182,12 @@ hw.showUserAutocomplete = function() {
       }
       close();
     } else if (code != 38 && code != 40) {  // not up and not down
+      var currentLastKeys = hw.wysiwygLastKeys;
       wysiwyg.focus();
       setTimeout(function() {
+        if (code == 8 && currentLastKeys == hw.wysiwygLastKeys) {  // hmm, backspace doesn't pass through for some reason in chrome...
+          hw.wysiwygKeys(event);
+        }
         hw.saveSelection();
         sel.focus();
         updateChoices();
