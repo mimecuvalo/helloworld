@@ -63,6 +63,9 @@ def reply(handler, content, mentions=None, thread=None):
     for comment in comments:
       user_remote = handler.models.users_remote.get(local_username=profile, username=comment.from_user)[0]
 
+      if not user_remote:
+        continue
+
       if user_remote.profile_url in users_profile:
         continue
 
