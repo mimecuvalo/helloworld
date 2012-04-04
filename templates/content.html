@@ -188,7 +188,11 @@
           {% if comment.is_remote %}
             <li data-post-id="{{ comment.post_id }}" data-post-user="{% if comment.from_user.startswith('http://') %}{{ comment.from_user }}{% end %}">
               <img src="{% if comment.avatar %}{{ comment.avatar }}{% else %}{{ static_url('img/pixel.gif') }}{% end %}" />
-              {% raw _('%(profile_url)s') % { "profile_url": ('<a href="' + comment.from_user + '">' + comment.username + '</a>' if comment.from_user.startswith('http://') else comment.from_user.split('@')[0]) } %}
+              {% if comment.from_user.startswith('http://') %}
+                <a href="{{ comment.from_user }}">{{ comment.username }}</a>
+              {% else %}
+                {{ comment.from_user.split('@')[0] }}
+              {% end %}
               <div class="hw-comment-text">{% raw comment.view %}</div>
                 {% module Moderate(comment) %}
               <div class="clear"></div>
@@ -197,7 +201,7 @@
             {# XXX can't get here anymore currently... #}
             <li data-post-id="tag:{{ handler.request.host }},{{ tag_date }}:{{ content_url(comment) }}" data-post-user="{{ nav_url(username=comment.username) }}">
               <img src="{% if comment.avatar %}{{ comment.avatar }}{% else %}{{ static_url('img/pixel.gif') }}{% end %}" />
-              {% raw _('<a href="%(profile_url)s">%(name)s</a>') % { "profile_url": nav_url(username=comment.username), "name": comment.username } %}
+              <a href="{{ nav_url(username=comment.username) }}">{{ comment.username }}</a>
               <div class="hw-comment-text">{% raw comment.view %}</div>
                 {% module Moderate(comment) %}
               <div class="clear"></div>

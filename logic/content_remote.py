@@ -47,8 +47,17 @@ def parse_feed(models, user, feed=None, parsed_feed=None, max_days_old=30, remot
       new_entry = models.content_remote()
 
     new_entry.to_username = user.local_username
-    new_entry.from_user = user.profile_url
-    new_entry.username = user.username
+    if remote_comments and entry.has_key('author'):
+      new_entry.username = entry.author
+    else:
+      new_entry.username = user.username
+    if remote_comments and entry.has_key('uri'):
+      new_entry.from_user = entry.uri
+    else:
+      new_entry.from_user = user.profile_url
+    if remote_comments and entry.has_key('avatar'):
+      new_entry.avatar = entry.avatar
+
     if entry.has_key('published_parsed'):
       parsed_date = datetime.datetime.fromtimestamp(mktime(entry.published_parsed))
     elif entry.has_key('updated_parsed'):
@@ -64,7 +73,7 @@ def parse_feed(models, user, feed=None, parsed_feed=None, max_days_old=30, remot
     new_entry.date_updated = date_updated
     new_entry.comments_count = comments_count
     new_entry.comments_updated = comments_updated
-    new_entry.type = 'comment' if remote_comments else 'post'
+    new_entry.type = 'remote-comment' if remote_comments else 'post'
     if entry.has_key('thr_in-reply-to') and remote_comments:
       new_entry.thread = entry['thr_in-reply-to']['ref']
     if entry.has_key('author'):
