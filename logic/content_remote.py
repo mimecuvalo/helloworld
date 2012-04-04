@@ -16,9 +16,12 @@ from logic import users
 feedparser._HTMLSanitizer.acceptable_elements = feedparser._HTMLSanitizer.acceptable_elements + ['iframe']
 
 def parse_feed(models, user, feed=None, parsed_feed=None, max_days_old=30, remote_comments=False):
+  if remote_comments:
+    bs_feed_doc = BeautifulSoup(feed)
+    bs_entries = bs_feed_doc.findAll('entry')
   feed_doc = feedparser.parse(parsed_feed or feed)
 
-  for entry in feed_doc.entries:
+  for index, entry in enumerate(feed_doc.entries):
     entry_id = entry.id if entry.has_key('id') else entry.link
     exists = models.content_remote.get(to_username=user.local_username, post_id=entry_id)[0]
 
@@ -49,8 +52,7 @@ def parse_feed(models, user, feed=None, parsed_feed=None, max_days_old=30, remot
     new_entry.to_username = user.local_username
     if remote_comments and entry.has_key('author'):
       new_entry.username = entry.author
-      entry_doc = BeautifulSoup(feed)
-      author = entry_doc.find('author')
+      author = bs_entries[index].find('author')
       uri = author.find('uri')
       avatar = author.find('poco:photos')
       if uri:
