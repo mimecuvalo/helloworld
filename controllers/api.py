@@ -9,6 +9,7 @@ import urlparse
 import uuid
 
 from base import BaseHandler
+from logic import cache
 from logic import content as content_logic
 from logic import content_remote
 from logic import media
@@ -392,6 +393,7 @@ class ApiHandler(BaseHandler):
     commented_content.comments_updated = datetime.datetime.utcnow()
     commented_content.save()
 
+    cache.remove(self, self.content_url(commented_content))
     socialize.socialize(self, commented_content)
     smtp.comment(self, from_username, commented_user.oauth, self.content_url(commented_content, host=True), sanitized_comment)
 
