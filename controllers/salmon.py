@@ -33,7 +33,7 @@ class SalmonHandler(BaseHandler):
 
         if not lrdd_link:
           raise tornado.web.HTTPError(400)
-
+/
         # get webfinger
         webfinger_doc = users.get_webfinger(lrdd_link, signer_uri)
         magic_key = webfinger_doc.find('link', rel='magic-public-key')['href'].replace('data:application/magic-public-key,', '')
@@ -161,7 +161,7 @@ class SalmonHandler(BaseHandler):
         if 'updated' in replies:
           comments_updated = replies['updated']
         comments_response = urllib2.urlopen(replies['href'])
-        content_remote.parse_feed(self.models, self.display["user"], comments_response, remote_comments=True)
+        content_remote.parse_feed(self.models, user_remote, comments_response, remote_comments=True)
 
       mentioned = salmon_doc.findAll('atom:link', rel='mentioned')
       if not mentioned:
