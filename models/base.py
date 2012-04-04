@@ -49,7 +49,7 @@ class content(Model):
                    'count_robot': validators.Number(),
                    'favorites': validators.Number(),
                    'shares': validators.Number(),
-                   'comments': validators.Number(),
+                   'comments_count': validators.Number(),
                    'price': validators.Number(),
                    'hidden': custom_validators.Boolean(),
                   }
@@ -78,6 +78,7 @@ class content_remote(Model):
                    'type': validators.String(),
                    'date_created': custom_validators.Datetime(),
                    'date_updated': custom_validators.DatetimeOrNull(),
+                   'comments_count': validators.Number(),
                    'comments_updated': custom_validators.DatetimeOrNull(),
                   }
 
