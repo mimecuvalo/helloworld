@@ -64,7 +64,7 @@ def parse_feed(models, user, feed=None, parsed_feed=None, max_days_old=30, remot
     new_entry.date_updated = date_updated
     new_entry.comments_count = comments_count
     new_entry.comments_updated = comments_updated
-    new_entry.type = 'remote-comment' if remote_comments else 'post'
+    new_entry.type = 'comment' if remote_comments else 'post'
     if entry.has_key('thr_in-reply-to') and remote_comments:
       new_entry.thread = entry['thr_in-reply-to']['ref']
     if entry.has_key('author'):
