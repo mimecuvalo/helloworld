@@ -8,7 +8,7 @@ def socialize(handler, content):
   if content.hidden:
     return
 
-  mentions = re.findall(r'@(\w+)', content.view, re.M | re.U)
+  mentions  = re.findall(r'@(\w+)', content.view, re.M | re.U)
   mentions += re.findall(r'\+(\w+)', content.view, re.M | re.U)
 
   if content.thread or mentions:
@@ -23,16 +23,15 @@ def publish(handler, content):
     # do nothing for now
     pass
 
-def reply(handler, content, mentions=None, thread=None):
+def reply(handler, content, mentions=None):
   profile = content.username
-  thread = thread or content.thread # XXX this is pretty damn confusing...'thread' used for local comments, content.thread for remote
 
   thread_user_remote = None
   users = []
   users_profile = []
   mentioned_users = []
-  if thread:
-    thread_content = handler.models.content_remote.get(to_username=profile, post_id=thread)[0]
+  if content.thread:
+    thread_content = handler.models.content_remote.get(to_username=profile, post_id=content.thread)[0]
     if not thread_content:
       return
     thread_user_remote = handler.models.users_remote.get(local_username=profile, profile_url=thread_content.from_user)[0]
@@ -74,4 +73,4 @@ def reply(handler, content, mentions=None, thread=None):
         users_profile.append(user_remote.profile_url)
 
   for user in users:
-    user_logic.salmon_reply(handler, user, content, thread=thread, mentioned_users=mentioned_users)
+    user_logic.salmon_reply(handler, user, content, thread=content.thread, mentioned_users=mentioned_users)
