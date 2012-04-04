@@ -12,6 +12,7 @@ import tornado.web
 from base import BaseHandler
 from logic import content_remote
 from logic import smtp
+from logic import socialize
 from logic import spam
 from logic import url_factory
 from logic import users
@@ -204,6 +205,9 @@ class SalmonHandler(BaseHandler):
       post_remote.local_content_name = content.name if ref else ''
       post_remote.view = sanitized_atom_content
       post_remote.save()
+
+      if ref:
+        socialize.socialize(self, content)
 
       if ref:
         smtp.comment(self, post_remote.username, self.display["user"].oauth, self.content_url(content, host=True), sanitized_atom_content)

@@ -172,7 +172,8 @@ hw.showUserAutocomplete = function() {
       name = hw.wysiwygLastKeys.substring(monkeyIndex + 1);
     }
 
-    if (code == 13 || (code == 32 && completions.length && name == completions[0]['username'])) { // Enter, Space
+    // XXX todo, why won't this prevent default for tab in Firefox??
+    if (code == 13 || code == 9 || (code == 32 && completions.length && name == completions[0]['username'])) { // Enter, Space, Tab
       hw.preventDefault(event);
       pick();
     } else if (code == 27 || code == 32 || monkeyIndex == -1) {  // Escape
