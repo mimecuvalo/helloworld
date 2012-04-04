@@ -58,7 +58,7 @@ class Content(tornado.web.UIModule):
     content.is_remote = False
 
     content.comments_list = []
-    if content.comments:
+    if content.comments_count:
       content.comments_list = content_remote.get_comments(self.handler, content)
       is_forum = self.handler.display["section_template"] == 'forum'
       content.comments_list.sort(key=lambda x: x.date_created, reverse=(not is_forum))

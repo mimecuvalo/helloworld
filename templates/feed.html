@@ -86,9 +86,9 @@
         {% if item.is_remote and thread_url %}
           <thr:in-reply-to ref="{{ thread_url }}"></thr:in-reply-to>
         {% end %}
-        {% if not item.is_remote and item.comments %}
+        {% if not item.is_remote and item.comments_count %}
           <link rel="replies" type="application/atom+xml" href="{{ nav_url(host=True, username=user.username, section='feed', comments=content_url(item)) }}"
-                thr:count="{{ item.comments }}" thr:updated="{{ item.comments_updated.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}" />
+                thr:count="{{ item.comments_count }}" thr:updated="{{ item.comments_updated.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}" />
         {% end %}
       </entry>
       {% end %}

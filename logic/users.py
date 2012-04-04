@@ -148,9 +148,9 @@ def salmon_reply(handler, user_remote, content, thread=None, mentioned_users=[])
   if thread:
     handler.display['activity_extra'] += """<thr:in-reply-to ref="%(thread)s" xmlns:thr="http://purl.org/syndication/thread/1.0" />""" % { 'thread': thread }
     #handler.display['activity_extra'] += """<link rel="related" href="%(content_url)s"/>""" % { 'content_url': handler.content_url(content, host=True) }
-  if content.comments:
+  if content.comments_count:
     handler.display['activity_extra'] += """<thr:replies type="application/atom+xml" href="%(url)s"
-count="%(count)s" updated="%(updated)s" xmlns:thr="http://purl.org/syndication/thread/1.0" />""" % { 'url': handler.nav_url(host=True, username=content.username, section='feed', comments=handler.content_url(content)), 'count': content.comments, 'updated': content.comments_updated.strftime('%Y-%m-%dT%H:%M:%S+00:00') }
+count="%(count)s" updated="%(updated)s" xmlns:thr="http://purl.org/syndication/thread/1.0" />""" % { 'url': handler.nav_url(host=True, username=content.username, section='feed', comments=handler.content_url(content)), 'count': content.comments_count, 'updated': content.comments_updated.strftime('%Y-%m-%dT%H:%M:%S+00:00') }
   atom_html = handler.render_string("feed.html", **handler.display)
   salmon_send(handler, user, user_remote.salmon_url, atom_html)
 

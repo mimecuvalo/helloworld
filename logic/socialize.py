@@ -57,7 +57,7 @@ def reply(handler, content, mentions=None, thread=None):
         users_profile.append(user_remote.profile_url)
         mentioned_users.append(user_remote)
 
-  if content.comments:
+  if content.comments_count:
     comments = content_remote.get_comments(handler, content)
 
     for comment in comments:

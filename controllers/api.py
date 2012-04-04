@@ -388,7 +388,7 @@ class ApiHandler(BaseHandler):
     post_remote.view = sanitized_comment
     post_remote.save()
 
-    commented_content.comments += 1
+    commented_content.comments_count += 1
     commented_content.comments_updated = datetime.datetime.utcnow()
     commented_content.save()
 

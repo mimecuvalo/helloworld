@@ -143,7 +143,7 @@ class SalmonHandler(BaseHandler):
           if not content:
             raise tornado.web.HTTPError(400)
           ref = content_url['name']
-          content.comments += 1
+          content.comments_count += 1
           content.comments_updated = datetime.datetime.utcnow()
           content.save()
         except Exception as ex:

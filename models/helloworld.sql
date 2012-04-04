@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `content` (
   `count_robot` int(11) NOT NULL default '0',
   `favorites` int(11) NOT NULL,
   `shares` int(11) NOT NULL,
-  `comments` int(11) NOT NULL,
+  `comments_count` int(11) NOT NULL,
   `comments_updated` datetime default NULL,
   `price` float NOT NULL,
   `favorited` tinyint(1) NOT NULL,
