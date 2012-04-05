@@ -9,7 +9,7 @@
     <link id="hw-stylesheet" rel="stylesheet" type="text/css" media="Screen" href="{{ static_url('css/all.css', 'css/all.inc') }}">
     <link rel="stylesheet" type="text/css" media="only screen and (max-device-width: 800px)" href="{{ static_url('css/mobile.css') }}">
     {% block favicon %}
-    <link rel="shortcut icon" href="{{ static_url('favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ static_url('favicon.ico', include_host=True) }}">
     {% end %}
     <link rel="source-code" type="text/html" href="{{ source_website }}" title="Hello, world." />
     <link rel="author" type="text/plain" href="{{ nav_url(section='humans.txt') }}" />
