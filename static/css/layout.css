@@ -590,7 +590,7 @@ ul.hw-comments {
   margin-top: 6px;
 }
 
-ul.hw-comments li {
+#hw-container ul.hw-comments li {
   list-style-type: none;
   margin-bottom: 5px;
   padding: 3px;

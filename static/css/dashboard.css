@@ -192,6 +192,9 @@
   display: inline-block;
   margin: 0 5px;
 }
+.hw-remote-actions a:last-child {
+  margin-right: 0;
+}
 
 #hw-following-new-wrapper {
   margin: 5px 0;
