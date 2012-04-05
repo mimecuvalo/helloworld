@@ -43,7 +43,7 @@ def comment(handler, from_username, to_email, content_url, comment, this_user_me
   else:
     send(handler, handler.locale.translate('%(user)s made a comment on your post.') % { "user": from_username }, to_email, handler.locale.translate("""
       %(comment)s<br><a href="%(url)s">View the post here!</a>
-    """) % { "comment": comment, "url": content_url })
+    """) % { "comment": comment.decode('utf-8').replace(u"\xa0", u" ").encode('utf-8'), "url": content_url })
 
 def follow(handler, from_username, to_email, blog):
   follow = handler.nav_url(host=True, section='api') + '?op=follow&amp;from_email=1&amp;user=' + tornado.escape.url_escape(blog)
