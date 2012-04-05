@@ -158,7 +158,7 @@ class SalmonHandler(BaseHandler):
       comments_updated = None
       if replies:
         if replies.has_key('count'):
-          comments_count = replies['count']
+          comments_count = int(replies['count'])
         if replies.has_key('updated'):
           comments_updated = replies['updated']
         comments_response = urllib2.urlopen(replies['href'])
