@@ -150,3 +150,10 @@ span[data-tooltip]:hover:after {
 span[data-tooltip]:hover:after {
   right: -50px;
 }
+
+.hw-comments {
+  font-size: 11px;
+}
+.hw-comment-username {
+  text-decoration: underline;
+}
