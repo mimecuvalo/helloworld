@@ -157,9 +157,9 @@ class SalmonHandler(BaseHandler):
       comments_count = 0
       comments_updated = None
       if replies:
-        if 'count' in replies:
+        if replies.has_key('count'):
           comments_count = replies['count']
-        if 'updated' in replies:
+        if replies.has_key('updated'):
           comments_updated = replies['updated']
         comments_response = urllib2.urlopen(replies['href'])
         content_remote.parse_feed(self.models, user_remote, comments_response.read(), remote_comments=True)
