@@ -187,6 +187,7 @@
 .hw-remote-actions {
   float: right;
   font-size: 11px;
+  margin-right: -4px;
 }
 .hw-remote-actions a {
   display: inline-block;
