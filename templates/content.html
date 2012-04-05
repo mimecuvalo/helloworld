@@ -191,7 +191,7 @@
               {% if comment.from_user.startswith('http://') %}
                 <a href="{{ comment.from_user }}">{{ comment.username }}</a>
               {% else %}
-                {{ comment.from_user.split('@')[0] }}
+                {{ comment.username }}
               {% end %}
               <div class="hw-comment-text">{% raw comment.view %}</div>
                 {% module Moderate(comment) %}
