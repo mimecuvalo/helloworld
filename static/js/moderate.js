@@ -550,17 +550,28 @@ hw.deletePost = function(event, el) {
 hw.markedAsRead = [];
 hw.markedAsUnread = [];
 hw.markSectionAsRead = function(section, opt_force) {
-  if (!opt_force && (hw.hasClass('hw-feed', 'hw-list-mode') || hw.hasClass(section, 'hw-leave-unread') || section.getAttribute('data-unread') == 'false')) {
-    return;
-  }
+  var sections = hw.$('hw-feed').getElementsByTagName('SECTION');
+  for (var x = 0; x < sections.length; ++x) {
+    if (!opt_force && (hw.hasClass('hw-feed', 'hw-list-mode') || hw.hasClass(sections[x], 'hw-leave-unread') || sections[x].getAttribute('data-unread') == 'false')) {
+      if (sections[x] == section) {
+        break;
+      } else {
+        continue;
+      }
+    }
 
-  // section is above the fold, mark as read
-  hw.markedAsRead.push(section.getAttribute('data-remote-id'));
-  section.setAttribute('data-unread', 'false');
-  hw.updateCount(hw.$('hw-total-unread-count'), -1);
-  var countEl = hw.$$('#hw-following li[data-user="' + section.getAttribute('data-remote-profile-url') + '"] .hw-unread-count')[0];
-  if (countEl) {
-    hw.updateCount(countEl, -1);
+    // section is above the fold, mark as read
+    hw.markedAsRead.push(sections[x].getAttribute('data-remote-id'));
+    sections[x].setAttribute('data-unread', 'false');
+    hw.updateCount(hw.$('hw-total-unread-count'), -1);
+    var countEl = hw.$$('#hw-following li[data-user="' + sections[x].getAttribute('data-remote-profile-url') + '"] .hw-unread-count')[0];
+    if (countEl) {
+      hw.updateCount(countEl, -1);
+    }
+
+    if (sections[x] == section) {
+      break;
+    }
   }
 };
 hw.markReadOnScroll = function(event) {
