@@ -49,7 +49,7 @@ def dashboard_feed(profile, begin, page_size, sort_type, read_all_mode, specific
     just_remote_feed = True
     content_remote_restrict += """ AND `type` = %s """
     parameters.append('comment')
-  else:
+  elif not just_local_feed and not local_entry:
     content_remote_restrict += """ AND `type` = %s """
     parameters.append('post')
   if query:
