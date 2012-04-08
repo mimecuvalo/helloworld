@@ -39,6 +39,8 @@
     hw.setMsg('uploading', "{% raw js_escape(_('uploading...')) %}");
     hw.xsrf = '{% raw xsrf_form_html() %}';
     hw.uploadUrl = '{{ nav_url(section='upload') }}';
+    Event.observe(document, 'DOMContentLoaded', hw.customSetupFields, false);
+    Event.observe(window, 'load', hw.customSetupFields, false);
   </script>
 {% end %}
 

@@ -90,6 +90,11 @@
 {% end %}
 
 {% block content %}
+  <header id="hw-header">
+    <h1 id="hw-main-title">{{ content_owner.title }}</h1>
+    <h2 id="hw-main-description">{{ content_owner.description }}</h2>
+  </header>
+
   {% module SiteMap(content_owner=content_owner, content=content) %}
 
   <article id="hw-content" class="hw-invisible-transition {% if is_owner_viewing %}hw-owner-viewing{% end %}">
@@ -100,6 +105,10 @@
     {% end %}
     {% block user_content %}{% end %}
   </article>
+
+  <footer id="hw-footer">
+    <span id="hw-helloworld">{{ _('powered by') }}<br><a href="http://www.helloworldprogram.com" rel="generator">Hello, world.</a></span>
+  </footer>
 {% end %}
 
 {% block end_content %}

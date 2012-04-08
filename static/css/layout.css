@@ -35,8 +35,7 @@ strong {
 .hw-button {
   padding: 0 7px;
   margin: 0 3px 6px 3px;
-  display: block;
-  float: left;
+  display: inline-block;
   -moz-transition: all 0.03s linear 0.1s;
   -webkit-transition: all 0.03s linear 0.1s;
   -o-transition: all 0.03s linear 0.1s;
@@ -57,10 +56,26 @@ a.hw-button[href]:hover {
   position: relative;
 }
 
-#hw-content {
+#hw-header {
   width: 650px;
   position: absolute;
   top: 6px;
+  padding: 0 3px 3px 3px;
+  left: 182px;
+  padding-bottom: 10px;
+}
+
+#hw-footer {
+  clear: both;
+  text-align: center;
+  width: 182px;
+  padding-top: 10px;
+}
+
+#hw-content {
+  width: 650px;
+  position: absolute;
+  top: 60px;
   padding: 0 3px 3px 3px;
   left: 182px;
   padding-bottom: 10px;
@@ -216,6 +231,10 @@ div.hw-view embed {
   right: 6px;
 }
 
+#hw-user .hw-button {
+  float: left;
+}
+
 #hw-user > .hw-selected {
   font-weight: bold;
 }
@@ -225,9 +244,8 @@ form#hw-login-form {
 }
 
 #hw-sitemap {
-  position: absolute;
-  top: 6px;
-  left: 6px;
+  float: left;
+  margin: 6px;
   width: 155px;
   padding: 6px;
   background-color: white;
@@ -269,8 +287,7 @@ form#hw-login-form {
 #hw-sidebar-newsletter,
 #hw-sidebar-tipjar,
 #hw-sidebar-ad,
-#hw-sidebar-license,
-#hw-sidebar-helloworld {
+#hw-sidebar-license {
   margin-top: .5em;
   padding-top: .5em;
 }
@@ -294,7 +311,7 @@ form#hw-login-form {
   font-size: 12px;
 }
 
-#hw-sidebar-helloworld {
+#hw-helloworld {
   font-size: 11px;
   text-align: center;
 }
@@ -633,6 +650,9 @@ form.hw-comment-form {
   z-index: 2;
   float: left;
   outline: 0;
+}
+.hw-comment-form .hw-button {
+  float: left;
 }
 .hw-comment-form .hw-button-save {
   float: right;

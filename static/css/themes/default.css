@@ -8,6 +8,13 @@ option {
   font: 13px Courier New, monospace;
 }
 
+#hw-header {
+  display: none;
+}
+#hw-content {
+  top: 6px;
+}
+
 .hw-button,
 .hw-button:visited {
   background-color: #eff;

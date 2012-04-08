@@ -440,8 +440,8 @@ section {
 }
 #hw-customize .hw-field {
   float: right;
-  max-width: 140px;
-  width: 140px;
+  max-width: 135px;
+  width: 135px;
   font-size: 12px;
   display: inline-block;
 }

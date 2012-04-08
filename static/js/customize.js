@@ -1,3 +1,16 @@
+hw.setupFields = false;
+hw.customSetupFields = function() {
+  if (hw.setupFields) {
+    return;
+  }
+  hw.setupFields = true;
+
+  var fields = hw.$$('.hw-field');
+  for (var x = 0; x < fields.length; ++x) {
+    Event.observe(fields[x], 'focus', function() { hw.customChangeBeforeUnloadState(); }, false);
+  }
+};
+
 hw.customChangeBeforeUnloadState = function(allowPageChange) {
   window.onbeforeunload = allowPageChange ? null : function() { return "" };
 };
@@ -11,7 +24,7 @@ hw.customResetSaveState = function() {
   saveButton.value = saveButton.getAttribute('data-save');
   saveButton.disabled = false;
 
-  hw.changeBeforeUnloadState(true);
+  hw.customChangeBeforeUnloadState(true);
 };
 
 hw.customSave = function(event, el) {
