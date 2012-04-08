@@ -5,6 +5,7 @@ import zipfile
 
 import Image
 from PIL.ExifTags import TAGS
+import tornado.web
 
 from logic import content as content_logic
 from logic import url_factory
@@ -25,6 +26,8 @@ def detect_media_type(filename):
     return 'audio'
   elif mimetype in ('application/javascript', 'text/css', 'text/html', 'application/json', 'application/xml', 'application/xhtml+xml', 'application/rss+xml', 'application/atom+xml', 'application/vnd.ms-fontobject', 'font/opentype', 'application/x-font-ttf', 'text/plain', 'text/xml', 'text/x-component'):
     return 'web'
+  elif mimetype == 'application/zip':
+    return 'zip'
   else:
     return None
 
@@ -164,10 +167,13 @@ def save_locally(parent_url, full_path, data, skip_write=False, disallow_zip=Fal
     if os.path.splitext(full_path)[1] == '.zip' and not disallow_zip:
       z = zipfile.ZipFile(full_path)
       for f in z.namelist():
+        filename = url_factory.clean_filename(f)
+        if detect_media_type(filename) not in ('video', 'image', 'audio', 'web', 'zip'):
+          raise tornado.web.HTTPError(400, "i call shenanigans")
         if f.endswith('/'):
-          os.makedirs(os.path.join(os.path.dirname(full_path), url_factory.clean_filename(f)))
+          os.makedirs(os.path.join(os.path.dirname(full_path), filename))
         else:
-          z.extract(url_factory.clean_filename(f), os.path.dirname(full_path))
+          z.extract(filename, os.path.dirname(full_path))
 
   return original_size_url, url, thumb_url
 

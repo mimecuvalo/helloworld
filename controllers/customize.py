@@ -44,14 +44,12 @@ class CustomizeHandler(BaseHandler):
     user.background          = url_factory.clean_filename(self.get_argument('background', ''))
     user.logo                = url_factory.clean_filename(self.get_argument('logo', ''))
     user.google_analytics    = self.get_argument('google_analytics', '')
-    user.adult_content       = self.get_argument('adult_content', 0) == 'on'
+    user.adult_content       = int(self.get_argument('adult_content', 0))
     user.tipjar              = self.get_argument('tipjar', '')
     user.sidebar_ad          = self.get_argument('sidebar_ad', '')
     user.newsletter_endpoint = self.get_argument('newsletter_endpoint', '')
     user.license             = self.get_argument('license', '')
-    user.extra_code_top      = self.get_argument('extra_code_top', '')
-    user.extra_code_bottom   = self.get_argument('extra_code_bottom', '')
 
     user.save()
 
-    self.redirect(self.nav_url(section='dashboard'))
+    self.set_status(204)

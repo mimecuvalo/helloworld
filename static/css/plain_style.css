@@ -105,7 +105,7 @@ h1 {
 
 #hw-sitemap,
 #hw-setup-form,
-#hw-customize-form {
+#hw-customize .hw-fields {
   border: 1px solid #0cf;
 }
 #hw-logo img {

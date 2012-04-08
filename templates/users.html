@@ -5,6 +5,10 @@
     #hw-sidebar {
       display: none;
     }
+    #hw-backend-content {
+      left: 50%;
+      margin-left: -420px;
+    }
   </style>
 {% end %}
 
@@ -23,7 +27,7 @@
 {% end %}
 
 {% block backend_content %}
-  <div id="users">
+  <div id="hw-users">
     <h1>{{ _('User Administration') }}</h1>
     <form method="post" action="{{ nav_url(section='users') }}" onsubmit="return false">
       {% raw xsrf_form_html() %}

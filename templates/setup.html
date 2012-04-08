@@ -9,21 +9,6 @@
     body {
       text-align: center;
     }
-    #setup {
-      width: 600px;
-      margin: 5em auto;
-      text-align: left;
-    }
-
-    #setup dt {
-      display: inline-block;
-      width: 175px;
-    }
-
-    #setup dd {
-      display: inline-block;
-      width: 375px;
-    }
   </style>
 {% end %}
 
@@ -39,7 +24,7 @@
 {% end %}
 
 {% block content %}
-  <div id="setup">
+  <div id="hw-setup">
     <h1>{{ _('Setup Site') }}</h1>
     <form id="hw-setup-form" method="post" action="{{ prefix }}/" onsubmit="return false;">
       <dl>

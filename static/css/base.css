@@ -136,3 +136,24 @@
   background-color: #eef;
   text-decoration: none;
 }
+
+/* html5 <details> shim
+ * also: useful for fieldset/legend combo */
+details, summary,
+fieldset, legend {
+  display: block;
+}
+details:not([open]) > *,
+fieldset:not([open]) > * {
+  display: none !important;
+}
+details[open] > summary,
+details:not([open]) > summary,
+fieldset[open] > legend,
+fieldset:not([open]) > legend {
+  display: block !important;
+}
+summary,
+legend {
+  cursor: pointer;
+}

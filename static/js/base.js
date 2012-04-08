@@ -540,3 +540,17 @@ hw.closeMenu = function(event) {
   hw.menuActive = null;
 };
 Event.observe(document, 'click', hw.closeMenu, false);
+
+hw.details = function(el) {
+  while (el) {
+    if (el.nodeName == 'DETAILS' || el.nodeName == 'FIELDSET') {
+      if (el.hasAttribute('open')) {
+        el.removeAttribute('open');
+      } else {
+        el.setAttribute('open', '');
+      }
+      break;
+    }
+    el = el.parentNode;
+  }
+};

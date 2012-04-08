@@ -146,7 +146,7 @@ option {
 
 #hw-sitemap,
 #hw-setup-form,
-#hw-customize-form {
+#hw-customize .hw-fields {
   border: 1px solid #0cf;
   -moz-box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf;
   -webkit-box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf;
