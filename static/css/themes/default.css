@@ -17,6 +17,7 @@ option {
 
 .hw-button,
 .hw-button:visited {
+  padding: 0 7px;
   background-color: #eff;
   border: 1px solid #0c0;
   color: #060;

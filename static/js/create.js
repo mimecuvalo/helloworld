@@ -398,4 +398,12 @@ hw.help = function(event) {
   var openHelp = hw.isHidden(help);
   hw.setClass(hw.$c('hw-help-button'), 'hw-selected', openHelp);
   hw.display(help, openHelp);
+
+  if (openHelp) {
+    if (document.body.parentNode.scrollTop) {
+      document.body.parentNode.scrollTop = document.body.parentNode.scrollTop + help.getBoundingClientRect().top - 100;
+    } else {
+      document.body.scrollTop = document.body.scrollTop + help.getBoundingClientRect().top - 100;
+    }
+  }
 };
