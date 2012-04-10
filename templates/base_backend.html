@@ -5,8 +5,6 @@
   <link rel="stylesheet" type="text/css" href="{{ static_url('css/dashboard.css') }}">
   {% if user.theme %}
     <link id="hw-stylesheet-create-theme" rel="stylesheet" type="text/css" href="{{ static_url(user.theme) }}">
-  {% else %}
-    <link id="hw-stylesheet-create-theme" rel="stylesheet" type="text/css" href="{{ static_url('css/themes/default.css') }}">
   {% end %}
   {% block even_more_css %}{% end %}
 {% end %}

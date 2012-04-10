@@ -4,8 +4,6 @@
 <link id="hw-stylesheet-create" rel="stylesheet" type="text/css" href="{{ static_url('css/create.css') }}">
 {% if user.theme %}
   <link id="hw-stylesheet-create-theme" rel="stylesheet" type="text/css" href="{{ static_url(user.theme) }}">
-{% else %}
-  <link id="hw-stylesheet-create-theme" rel="stylesheet" type="text/css" href="{{ static_url('css/themes/default.css') }}">
 {% end %}
 <style>
   form.hw-create {

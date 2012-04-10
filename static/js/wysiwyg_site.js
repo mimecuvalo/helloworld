@@ -132,7 +132,7 @@ hw.wysiwygKeymap = {
   9:  'insertUnorderedList',  // tab
   33: 'createLink',   // !
   42: 'bold',         // *
-  //47: 'italic',       // /
+  47: 'italic',       // /
   95: 'underline'     // _
 };
 
@@ -168,7 +168,7 @@ hw.wysiwygKeys = function(event) {
       case 9:   // tab
       case 33:  // !
       case 42:  // *
-      //case 47:  // /
+      case 47:  // /
       case 95:  // _
         var action = hw.wysiwygKeymap[key];
 
@@ -812,7 +812,7 @@ hw.uploadButton = function(callback, section, opt_drop, opt_isComment, opt_attac
   section = section || "";
   var buttonHtml = '<a name="hw-button-media" class="hw-button hw-button-media" data-section="' + section + '">+</a>'
                  + '<progress value="0" max="100" class="hw-hidden">0%</progress>'
-                 + '<span class="hw-media-result hw-hidden"></span>';
+                 + '<span class="hw-media-result hw-invisible hw-invisible-transition"></span>';
   if (opt_attachToWrapper) {
     if (!hw.$c('hw-comment-upload-wrapper')) {
       return;
@@ -826,6 +826,16 @@ hw.uploadButton = function(callback, section, opt_drop, opt_isComment, opt_attac
   var progress = button.nextSibling;
   var result = progress.nextSibling;
   var xsrf = hw.$$('input[name=_xsrf]')[0].value;
+
+  function displayResponse(good, msg) {
+    hw.show(result);
+    hw.setClass(result, 'hw-bad', !good);
+    result.innerHTML = msg;
+    var callback = function() {
+      hw.hide(result);
+    };
+    setTimeout(callback, 3000);
+  };
 
   if (!opt_isComment) {
     var r = new Resumable({
@@ -860,11 +870,9 @@ hw.uploadButton = function(callback, section, opt_drop, opt_isComment, opt_attac
       }
 
       if (bad) {
-        result.innerHTML = hw.getMsg('error');
-        hw.show(result);
+        displayResponse(false, hw.getMsg('error'));
       } else {
-        result.innerHTML = hw.getMsg('saved');
-        hw.show(result);
+        displayResponse(true, hw.getMsg('saved'));
         callback(json);
       }
 
@@ -884,7 +892,6 @@ hw.uploadButton = function(callback, section, opt_drop, opt_isComment, opt_attac
       Event.observe(iframe, 'load', onUpload, false);
 
       hw.show(button);
-      hw.hide(result);
       result.innerHTML = "";
 
       var clickFunc = function() {
@@ -930,8 +937,7 @@ hw.uploadButton = function(callback, section, opt_drop, opt_isComment, opt_attac
     hw.hide(progress);
     progress.setAttribute('value', '0');
     progress.innerHTML = '0%';
-    result.innerHTML = hw.getMsg('saved');
-    hw.show(result);
+    displayResponse(true, hw.getMsg('saved'));
   });
   r.on('error', function(message, file) {
     resumableObj.files = [];
@@ -939,8 +945,7 @@ hw.uploadButton = function(callback, section, opt_drop, opt_isComment, opt_attac
     hw.hide(progress);
     progress.setAttribute('value', '0');
     progress.innerHTML = '0%';
-    result.innerHTML = hw.getMsg('error');
-    hw.show(result);
+    displayResponse(false, hw.getMsg('error'));
   });
   r.on('progress', function() {
     if (!resumableObj) {

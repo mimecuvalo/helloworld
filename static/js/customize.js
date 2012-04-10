@@ -89,3 +89,56 @@ hw.deleteAccount = function(event, username) {
       onSuccess: callback,
       onError: badTrip });
 };
+
+hw.customSetupIframe = function(iframe) {
+  var doc = iframe.contentDocument;
+  var body = doc.body;
+  var img = doc.createElement('IMG');
+  img.src = hw.pixelSrc;
+  img.style.height = '100%';
+  img.style.width = '100%';
+  img.style.position = 'absolute';
+  img.style.top = '0';
+  img.style.left = '0';
+  img.style.right = '0';
+  img.style.bottom = '0';
+  img.style.zIndex = '1000';
+  body.appendChild(img);
+};
+
+hw.customizeUpdatePreview = function() {
+  setTimeout(function() {
+    var iframe = hw.$('hw-customize-preview');
+    var doc = iframe.contentDocument;
+    var body = doc.body;
+
+    doc.getElementById('hw-main-title').innerHTML = hw.$('hw-title').value;
+    doc.getElementById('hw-main-description').innerHTML = hw.$('hw-description').value;
+
+    var logo = doc.getElementById('hw-logo-image');
+    if (logo) {
+      logo.src = hw.$('hw-customize-logo').value || hw.pixelSrc;
+      hw.display(doc.getElementById('hw-logo'), hw.$('hw-customize-logo').value);
+    }
+
+    var head = document.getElementsByTagName('head')[0];
+    var link = document.createElement('link'),
+    oldLink = document.getElementById('dynamic-favicon');
+    link.id = 'dynamic-favicon';
+    link.rel = 'shortcut icon';
+    link.href = hw.$('hw-favicon').value || hw.faviconDefault;
+    if (oldLink) {
+      head.removeChild(oldLink);
+    }
+    head.appendChild(link);
+
+    body.style.backgroundImage = 'url(' + (hw.$('hw-background').value || hw.pixelSrc) + ')';
+  }, 0);
+};
+
+hw.customizeClear = function(event, el) {
+  hw.preventDefault(event);
+
+  hw.$(el).value = '';
+  hw.customizeUpdatePreview();
+};

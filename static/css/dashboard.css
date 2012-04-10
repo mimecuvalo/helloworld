@@ -449,7 +449,10 @@ section {
   max-width: none;
   width: auto;
 }
-#hw-customize a.hw-button-media {
+#hw-customize a.hw-button-media,
+#hw-customize a.hw-button-media + progress.hw-shown,
+#hw-customize .hw-media-result,
+.hw-customize-clear {
   float: right;
 }
 
@@ -483,8 +486,14 @@ section {
   overflow: hidden;
   height: 35px;
 }
+#hw-customize select.hw-field {
+  text-align: left;
+}
 #hw-customize .hw-field:focus {
   border: 1px solid #aaf;
+}
+#hw-customize #hw-currency {
+  width: 50px;
 }
 
 #hw-customize legend {
@@ -541,4 +550,13 @@ section {
   margin-top: 0;
   width: 110px;
   display: inline-block;
+}
+
+#hw-customize-preview,
+#hw-customize-preview-prevent-click {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
 }

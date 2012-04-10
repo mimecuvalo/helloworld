@@ -1,6 +1,7 @@
 import json
 import os
 import os.path
+import shutil
 
 import tornado.web
 
@@ -40,6 +41,14 @@ class UploadHandler(BaseHandler):
         self.media_section = self.media_section[len(url_factory.resource_url(self)) + 1:]
       self.parent_directory = url_factory.resource_directory(self, self.media_section)
       self.parent_url = url_factory.resource_url(self, self.media_section)
+
+      if self.media_section == 'themes':
+        test_zip_path_name = os.path.join(self.parent_directory, self.base_leafname)
+        split_path = os.path.splitext(test_zip_path_name)
+        if os.path.exists(test_zip_path_name):
+          os.remove(test_zip_path_name)
+        if os.path.exists(split_path[0]) and os.path.isdir(split_path[0]):
+          shutil.rmtree(split_path[0])
     else:
       self.parent_directory = os.path.join(self.application.settings["resource_path"], 'remote')
       self.parent_url = os.path.join(self.application.settings["resource_url"], 'remote')

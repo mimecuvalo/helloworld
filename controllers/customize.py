@@ -16,15 +16,24 @@ class CustomizeHandler(BaseHandler):
     local_themes_directory  = url_factory.resource_directory(self, 'themes')
     local_themes_stem       = local_themes_directory[len(static_path) + 1:]
 
-    self.display['themes'] = os.listdir(global_themes_directory)
-    self.display['themes'] = [ os.path.join('css/themes', theme) for theme in self.display['themes'] if not theme.startswith('.') and theme.endswith('.css') ]
-
+    self.display['themes'] = []
     if os.path.exists(local_themes_directory):
       local_themes = os.listdir(local_themes_directory)
-      local_themes = [ os.path.join(local_themes_stem, theme) for theme in local_themes if not theme.startswith('.') and theme.endswith('.css') ]
-      self.display['themes'] += local_themes
+      for theme in local_themes:
+        theme_path = os.path.join(local_themes_directory, theme)
+        css_path = os.path.join(theme_path, theme + '.css')
+        if not theme.startswith('.') and os.path.isdir(theme_path) and os.path.exists(css_path):
+          self.display['themes'].append(os.path.join(local_themes_stem, os.path.join(theme, theme + '.css')))
 
-    self.display['currencies'] = [ "AUD", "CAD", "CZK", "DKK", "EUR", "HKD", "HUF", "ILS", "JPY", "MXN", "NOK", "NZD", "PLN", "GBP", "SGD", "SEK", "CHF", "THB", "USD", ]
+    local_themes = os.listdir(global_themes_directory)
+    for theme in local_themes:
+      theme_path = os.path.join(global_themes_directory, theme)
+      css_path = os.path.join(theme_path, theme + '.css')
+      if not theme.startswith('.') and os.path.isdir(theme_path) and os.path.exists(css_path):
+        self.display['themes'].append(os.path.join('css/themes', os.path.join(theme, theme + '.css')))
+
+    self.display['currencies'] = [ "AUD", "CAD", "CZK", "DKK", "EUR", "HKD", "HUF", "ILS", "JPY", \
+                                   "MXN", "NOK", "NZD", "PLN", "GBP", "SGD", "SEK", "CHF", "THB", "USD", ]
 
     self.fill_template("customize.html")
 

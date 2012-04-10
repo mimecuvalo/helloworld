@@ -41,8 +41,6 @@
 
   {% if content_owner.theme %}
     <link id="hw-stylesheet-create-theme" rel="stylesheet" type="text/css" href="{{ static_url(content_owner.theme) }}">
-  {% else %}
-    <link id="hw-stylesheet-create-theme" rel="stylesheet" type="text/css" href="{{ static_url('css/themes/default.css') }}">
   {% end %}
 
   {% if content_owner.background %}

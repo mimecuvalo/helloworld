@@ -164,16 +164,18 @@ def save_locally(parent_url, full_path, data, skip_write=False, disallow_zip=Fal
       f.write(data)
       f.close()
 
-    if os.path.splitext(full_path)[1] == '.zip' and not disallow_zip:
+    split_path = os.path.splitext(full_path)
+    if split_path[1] == '.zip' and not disallow_zip:
       z = zipfile.ZipFile(full_path)
+      dir_path = os.path.join(os.path.dirname(full_path), split_path[0])
       for f in z.namelist():
         filename = url_factory.clean_filename(f)
-        if detect_media_type(filename) not in ('video', 'image', 'audio', 'web', 'zip'):
-          raise tornado.web.HTTPError(400, "i call shenanigans")
         if f.endswith('/'):
-          os.makedirs(os.path.join(os.path.dirname(full_path), filename))
+          os.makedirs(os.path.join(dir_path, filename))
         else:
-          z.extract(filename, os.path.dirname(full_path))
+          if detect_media_type(filename) not in ('video', 'image', 'audio', 'web', 'zip'):
+            raise tornado.web.HTTPError(400, "i call shenanigans")
+          z.extract(filename, dir_path)
 
   return original_size_url, url, thumb_url
 

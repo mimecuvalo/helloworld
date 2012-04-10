@@ -130,7 +130,10 @@ hw.hasClass = function(el, className) {
 
 hw.show = function(el) {
   el = hw.$(el);
-  if (hw.hasClass(el, 'hw-open') || hw.hasClass(el, 'hw-closed')) {
+  if (hw.hasClass(el, 'hw-visible') || hw.hasClass(el, 'hw-invisible')) {
+    hw.removeClass(el, 'hw-invisible');
+    hw.addClass(el, 'hw-visible');
+  } else if (hw.hasClass(el, 'hw-open') || hw.hasClass(el, 'hw-closed')) {
     hw.removeClass(el, 'hw-closed');
     hw.addClass(el, 'hw-open');
   } else {
@@ -141,7 +144,10 @@ hw.show = function(el) {
 
 hw.hide = function(el) {
   el = hw.$(el);
-  if (hw.hasClass(el, 'hw-open') || hw.hasClass(el, 'hw-closed')) {
+  if (hw.hasClass(el, 'hw-visible') || hw.hasClass(el, 'hw-invisible')) {
+    hw.removeClass(el, 'hw-visible');
+    hw.addClass(el, 'hw-invisible');
+  } else if (hw.hasClass(el, 'hw-open') || hw.hasClass(el, 'hw-closed')) {
     hw.removeClass(el, 'hw-open');
     hw.addClass(el, 'hw-closed');
   } else {
@@ -152,7 +158,7 @@ hw.hide = function(el) {
 
 hw.isHidden = function(el) {
   el = hw.$(el);
-  return hw.hasClass(el, 'hw-hidden') || hw.hasClass(el, 'hw-closed');
+  return hw.hasClass(el, 'hw-hidden') || hw.hasClass(el, 'hw-closed') || hw.hasClass(el, 'hw-invisible');
 };
 
 hw.display = function(el, condition) {

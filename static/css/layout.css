@@ -818,6 +818,11 @@ a.hw-button-media + progress.hw-shown {
   margin: 3px 0 0 5px;
   display: block;
 }
+.hw-media-result.hw-bad {
+  color: white;
+  background-color: #f33;
+  padding: 0 5px;
+}
 
 div.hw-paste-area {
   position: absolute;

@@ -2,6 +2,9 @@
 
 {% block even_more_css %}
   <style>
+    #hw-container {
+      position: static;
+    }
     #hw-user {
       display: none;
     }
@@ -22,7 +25,7 @@
       top: 45px;
     }
     #hw-backend-content {
-      margin-left: 340px;
+      margin-left: 296px;
     }
   </style>
 {% end %}
@@ -37,6 +40,8 @@
     hw.setMsg('error', "{% raw js_escape(_('no good, mate.')) %}");
     hw.setMsg('saved', "{% raw js_escape(_('saved!')) %}");
     hw.setMsg('uploading', "{% raw js_escape(_('uploading...')) %}");
+    hw.pixelSrc = '{{ static_url('img/pixel.gif') }}';
+    hw.faviconDefault = '{{ static_url('favicon.ico') }}';
     hw.xsrf = '{% raw xsrf_form_html() %}';
     hw.uploadUrl = '{{ nav_url(section='upload') }}';
     Event.observe(document, 'DOMContentLoaded', hw.customSetupFields, false);
@@ -57,7 +62,7 @@
 {% end %}
 
 {% block sidebar %}
-  <form id="hw-customize" onsubmit="return false;">
+  <form id="hw-customize" onsubmit="return false;" autocomplete="off">
     {% raw xsrf_form_html() %}
 
     <fieldset open>
@@ -66,8 +71,9 @@
           <span class="hw-label">{{ _('theme:') }}</span>
           <script>hw.uploadButton(window.location.reload, 'themes');</script>
           <select class="hw-field" name="theme" id="hw-themes">
-            {% for theme in sorted(themes) %}
-              <option value="{{ theme }}" {% if (user.theme == theme) or (not user.theme and theme == 'static/css/themes/default.css') %}selected{% end %}>{{ theme }}</option>
+            <option value="" {% if not user.theme %}selected{% end %}>{{ _('(default)') }}</option>
+            {% for theme in themes %}
+              <option value="{{ theme }}" {% if (user.theme == theme) %}selected{% end %}>{{ theme }}</option>
             {% end %}
           </select>
         </label>
@@ -79,21 +85,23 @@
       <div class="hw-fields">
         <label for="hw-title">
           <span class="hw-label">{{ _('title') }}</span>
-          <input id="hw-title" class="hw-field" name="title" maxlength="255" type="text" placeholder="{{ _('title') }}" value="{{ user.title }}">
+          <input id="hw-title" class="hw-field" name="title" maxlength="255" type="text" placeholder="{{ _('title') }}" value="{{ user.title }}" onkeypress="hw.customizeUpdatePreview()">
         </label>
         <label for="hw-description">
           <span class="hw-label">{{ _('description') }}</span>
-          <textarea id="hw-description" class="hw-field" name="description" maxlength="255" type="text">{{ user.description }}</textarea>
+          <textarea id="hw-description" class="hw-field" name="description" maxlength="255" type="text" onkeypress="hw.customizeUpdatePreview()">{{ user.description }}</textarea>
         </label>
         <label for="hw-customize-logo">
           <span class="hw-label">{{ _('logo') }}</span>
-          <script>hw.uploadButton(function(json) { hw.$('hw-customize-logo').value = json['url']; });</script>
-          <input id="hw-customize-logo" class="hw-field" name="logo" type="text" placeholder="{{ _('logo') }}" value="{{ user.logo }}">
+          <a class="hw-button hw-customize-clear" href="#clear" class="hw-button" onclick="hw.customizeClear(event, 'hw-customize-logo')">{{ _('clear') }}</a>
+          <script>hw.uploadButton(function(json) { hw.customChangeBeforeUnloadState(); hw.$('hw-customize-logo').value = json['url']; hw.customizeUpdatePreview(); });</script>
+          <input id="hw-customize-logo" class="hw-field" name="logo" type="hidden" placeholder="{{ _('logo') }}" value="{{ user.logo }}">
         </label>
         <label for="hw-favicon">
           <span class="hw-label">{{ _('favicon') }}</span>
-          <script>hw.uploadButton(function(json) { hw.$('hw-favicon').value = json['url']; });</script>
-          <input id="hw-favicon" class="hw-field" name="favicon" type="text" placeholder="{{ _('favicon') }}" value="{{ user.favicon }}">
+          <a class="hw-button hw-customize-clear" href="#clear" class="hw-button" onclick="hw.customizeClear(event, 'hw-favicon')">{{ _('clear') }}</a>
+          <script>hw.uploadButton(function(json) { hw.customChangeBeforeUnloadState(); hw.$('hw-favicon').value = json['url']; hw.customizeUpdatePreview(); });</script>
+          <input id="hw-favicon" class="hw-field" name="favicon" type="hidden" placeholder="{{ _('favicon') }}" value="{{ user.favicon }}">
         </label>
       </div>
     </fieldset>
@@ -103,8 +111,9 @@
       <div class="hw-fields">
         <label for="hw-background">
           <span class="hw-label">{{ _('background') }}</span>
-          <script>hw.uploadButton(function(json) { hw.$('hw-background').value = json['url']; });</script>
-          <input id="hw-background" class="hw-field" name="background" type="text" placeholder="{{ _('background') }}" value="{{ user.background }}">
+          <a class="hw-button hw-customize-clear" href="#clear" onclick="hw.customizeClear(event, 'hw-background')">{{ _('clear') }}</a>
+          <script>hw.uploadButton(function(json) { hw.customChangeBeforeUnloadState(); hw.$('hw-background').value = json['url']; hw.customizeUpdatePreview(); });</script>
+          <input id="hw-background" class="hw-field" name="background" type="hidden" placeholder="{{ _('background') }}" value="{{ user.background }}">
         </label>
       </div>
     </fieldset>
@@ -184,4 +193,8 @@
       </div>
     </fieldset>
   </form>
+{% end %}
+
+{% block backend_content %}
+  <iframe id="hw-customize-preview" src="{{ nav_url(username=user.username) }}" onload="hw.customSetupIframe(this)"></iframe>
 {% end %}
