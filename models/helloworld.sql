@@ -161,6 +161,10 @@ CREATE TABLE IF NOT EXISTS `users` (
   `private_key` text NOT NULL,
   `extra_code_top` text NOT NULL,
   `extra_code_bottom` text NOT NULL,
+  `theme_title` varchar(255) NOT NULL,
+  `theme_link` text NOT NULL,
+  `theme_author` varchar(255) NOT NULL,
+  `theme_author_link` text NOT NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `oauth` (`oauth`)

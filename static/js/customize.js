@@ -91,6 +91,9 @@ hw.deleteAccount = function(event, username) {
 };
 
 hw.customSetupIframe = function(iframe) {
+  return;
+  // turn off for now
+
   var doc = iframe.contentDocument;
   var body = doc.body;
   var img = doc.createElement('IMG');
@@ -140,5 +143,35 @@ hw.customizeClear = function(event, el) {
   hw.preventDefault(event);
 
   hw.$(el).value = '';
+  hw.customizeUpdatePreview();
+};
+
+hw.customizeEdit = function(event) {
+  hw.preventDefault(event);
+
+
+};
+
+hw.customizeSelectThemes = function(event, close) {
+  if (event) {
+    hw.preventDefault(event);
+  }
+
+  hw.display('hw-customize-themes', !close);
+  hw.display('hw-customize-select-theme-close', !close);
+};
+
+hw.customizeSelectTheme = function(el) {
+  hw.customizeSelectThemes(null, true);
+  hw.hide('hw-customize-themes');
+  var customForm = hw.$('hw-customize');
+
+  customForm['theme'].value              = el.getAttribute('data-path');
+  hw.$('hw-theme-thumb').src             = el.getAttribute('data-thumb');
+  hw.$('hw-theme-title').innerHTML       = el.getAttribute('data-title');
+  //hw.$('hw-theme-link').innerHTML        = el.getAttribute('data-link');
+  hw.display(hw.$('hw-theme-author'), el.getAttribute('data-author'));
+  hw.$('hw-theme-author-name').innerHTML = el.getAttribute('data-author');
+  hw.$('hw-theme-author-link').href      = el.getAttribute('data-author-link');
   hw.customizeUpdatePreview();
 };

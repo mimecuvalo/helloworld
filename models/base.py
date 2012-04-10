@@ -122,6 +122,10 @@ class users(Model):
                 'magic_key': '',
                 'extra_code_top': '',
                 'extra_code_bottom': '',
+                'theme_title': '',
+                'theme_link': '',
+                'theme_author': '',
+                'theme_author_link': '',
                 'adult_content': 0,}
     validations = {'username': (custom_validators.UnicodeString(1, 255), custom_validators.Alphanumeric()),
                    'name': custom_validators.UnicodeString(0, 255),

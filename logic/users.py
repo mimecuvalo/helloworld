@@ -28,6 +28,11 @@ def create_user(handler, username, email):
   user.oauth = email
   user.superuser = False
   user.author = False
+  user.theme = 'css/themes/pixel/pixel.css'
+  user.theme_title = 'pixel'
+  user.theme_link = 'http://nightlight.ws'
+  user.theme_author = 'nightlight'
+  user.theme_author_link = 'http://nightlight.ws'
 
   key = RSA.generate(1024, os.urandom)
   n = base64.urlsafe_b64encode(number.long_to_bytes(key.n))

@@ -1,4 +1,11 @@
-/* default pixel theme */
+/* Pixel theme for Hello, world.
+ *
+ * theme: pixel (http://nightlight.ws)
+ * designed_by: nightlight (http://nightlight.ws)
+ * extra_head_html: """ """
+ * extra_body_end_html: """ """
+ *
+ * */
 
 body,
 button,

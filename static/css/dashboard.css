@@ -411,7 +411,7 @@ section {
 }
 
 #hw-customize fieldset {
-  margin-bottom: 10px;
+  margin: 20px 0;
 }
 
 #hw-customize label {
@@ -523,7 +523,8 @@ section {
 }
 
 #hw-customize-save,
-#hw-customize-close {
+#hw-customize-close,
+#hw-customize-edit {
   float: right;
 }
 #hw-customize-close {
@@ -559,4 +560,60 @@ section {
   top: 0;
   width: 100%;
   height: 100%;
+}
+
+#hw-customize #hw-theme-thumb,
+#hw-customize .hw-theme-thumb {
+  display: block;
+  width: 250px;
+  height: 166px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -o-border-radius: 3px;
+  -ms-border-radius: 3px;
+  border-radius: 3px;
+  margin: 0 0 10px 10px;
+  background-color: #aaa;
+  -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 255, 255, 0.2) inset;
+  -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 255, 255, 0.2) inset;
+  -ms-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 255, 255, 0.2) inset;
+  -o-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 255, 255, 0.2) inset;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 255, 255, 0.2) inset;
+}
+
+#hw-customize #hw-theme-info {
+  float: left;
+  margin-left: 10px;
+}
+#hw-customize .hw-theme-info {
+  margin-left: 10px;
+}
+#hw-customize .hw-theme-thumb {
+  margin: 20px 10px 10px 10px;
+  cursor: pointer;
+}
+#hw-customize .hw-theme-thumb:first-child {
+  margin-top: 0;
+}
+
+#hw-customize #hw-theme-title,
+#hw-customize .hw-theme-title {
+  font-size: 14px;
+  font-weight: bold;
+}
+#hw-customize #hw-theme-author,
+#hw-customize #hw-theme-author a,
+#hw-customize .hw-theme-author,
+#hw-customize .hw-theme-author a {
+  color: #666;
+  font-weight: bold;
+}
+
+#hw-customize-select-theme {
+  margin: 0 0 20px 10px;
+}
+#hw-customize-themes.hw-shown {
+  padding-bottom: 20px;
+  margin-bottom: 40px;
+  border-bottom: 1px solid #ccc;
 }

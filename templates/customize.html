@@ -10,6 +10,7 @@
     }
     #hw-sidebar {
       width: 295px;
+      background: white;
     }
     #hw-sidebar-static {
       display: block;
@@ -65,22 +66,36 @@
   <form id="hw-customize" onsubmit="return false;" autocomplete="off">
     {% raw xsrf_form_html() %}
 
-    <fieldset open>
-      <div class="hw-fields">
-        <label for="hw-themes">
-          <span class="hw-label">{{ _('theme:') }}</span>
-          <script>hw.uploadButton(window.location.reload, 'themes');</script>
-          <select class="hw-field" name="theme" id="hw-themes">
-            <option value="" {% if not user.theme %}selected{% end %}>{{ _('(default)') }}</option>
-            {% for theme in themes %}
-              <option value="{{ theme }}" {% if (user.theme == theme) %}selected{% end %}>{{ theme }}</option>
-            {% end %}
-          </select>
-        </label>
-      </div>
-    </fieldset>
+    <a id="hw-customize-select-theme" href="#select-theme" class="hw-button" onclick="hw.customizeSelectThemes(event)">{{ _('choose new theme') }}</a>
+    <a id="hw-customize-select-theme-close" href="#close-themes" class="hw-button hw-hidden" onclick="hw.customizeSelectThemes(event, true)">{{ _('close') }}</a>
 
-    <fieldset open>
+    <div id="hw-customize-themes" class="hw-hidden">
+      {% for theme in themes %}
+        <img class="hw-theme-thumb"
+             data-path="{{ theme['path'] }}" data-thumb="{{ static_url(theme['thumb']) }}"
+             data-title="{{ theme['title'] }}" data-link="{{ theme['link'] }}"
+             data-author="{{ theme['author'] }}" data-author-link="{{ theme['author_link'] }}"
+             src="{{ static_url(theme['thumb']) }}" onerror="this.src='{{ static_url('img/pixel.gif') }}'"
+             onclick="hw.customizeSelectTheme(this)">
+        <div class="hw-theme-info">
+          <span class="hw-theme-title">{{ theme['title'] }}</span>
+          <span class="hw-theme-author">{% if theme['author'] %}{% if theme['author_link'] %}<a href="{{ theme['author_link'] }}" target="_blank">{% end %}{{ _('by %(author)s') % { 'author': theme['author'] } }}{% if theme['author_link'] %}</a>{% end %}{% end %}</span>
+        </div>
+      {% end %}
+    </div>
+
+    <img id="hw-theme-thumb" src="{% if user.theme %}{{ static_url(user_theme_thumb) }}{% else %}{{ static_url('img/pixel.gif') }}{% end %}" onerror="this.src='{{ static_url('img/pixel.gif') }}'">
+    <div id="hw-theme-info">
+      <span id="hw-theme-title">{{ user.theme_title }}</span><br>
+      <span id="hw-theme-author" class="{% if not user.theme_author %}hw-hidden{% end %}"><a id="hw-theme-author-link" href="{{ user.theme_author_link }}" target="_blank">{{ _('by') }} <span id="hw-theme-author-name">{{ user.theme_author }}</span></a></span>
+    </div>
+    <input id="hw-customize-theme" class="hw-field" name="theme" type="hidden" placeholder="{{ _('theme') }}" value="{{ user.theme }}">
+    <a id="hw-customize-edit" href="#edit-theme" class="hw-button" onclick="hw.customizeEdit(event)">{{ _('edit theme') }}</a>
+    <script>hw.uploadButton(window.location.reload, 'themes');</script>
+
+    <div class="clear"></div>
+
+    <fieldset id="hw-customize-basic" open>
       <legend onclick="hw.details(this)"><span class="hw-arrow"></span>{{ _('Basic') }}</legend>
       <div class="hw-fields">
         <label for="hw-title">
@@ -106,7 +121,7 @@
       </div>
     </fieldset>
 
-    <fieldset>
+    <fieldset open>
       <legend onclick="hw.details(this)"><span class="hw-arrow"></span>{{ _('Appearance') }}</legend>
       <div class="hw-fields">
         <label for="hw-background">
