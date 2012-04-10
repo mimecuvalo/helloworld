@@ -17,8 +17,8 @@
   {% end %}
 {% end %}
 
-{% block extra_code_top %}
-  {% raw user.extra_code_top %}
+{% block extra_head_html %}
+  {% raw user.extra_head_html %}
 {% end %}
 
 {% block content %}
@@ -56,6 +56,6 @@
   </div>
 {% end %}
 
-{% block extra_code_bottom %}
-  {% raw user.extra_code_bottom %}
+{% block extra_body_end_html %}
+  {% raw user.extra_body_end_html %}
 {% end %}

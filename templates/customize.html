@@ -89,7 +89,13 @@
       <span id="hw-theme-title">{{ user.theme_title }}</span><br>
       <span id="hw-theme-author" class="{% if not user.theme_author %}hw-hidden{% end %}"><a id="hw-theme-author-link" href="{{ user.theme_author_link }}" target="_blank">{{ _('by') }} <span id="hw-theme-author-name">{{ user.theme_author }}</span></a></span>
     </div>
-    <input id="hw-customize-theme" class="hw-field" name="theme" type="hidden" placeholder="{{ _('theme') }}" value="{{ user.theme }}">
+
+    <input id="hw-customize-theme" class="hw-field" name="theme" type="hidden" value="{{ user.theme }}">
+    <input name="theme_title" type="hidden" value="{{ user.theme_title }}">
+    <input name="theme_link" type="hidden" value="{{ user.theme_link }}">
+    <input name="theme_author" type="hidden" value="{{ user.theme_author }}">
+    <input name="theme_author_link" type="hidden" value="{{ user.theme_author_link }}">
+
     <a id="hw-customize-edit" href="#edit-theme" class="hw-button" onclick="hw.customizeEdit(event)">{{ _('edit theme') }}</a>
     <script>hw.uploadButton(window.location.reload, 'themes');</script>
 

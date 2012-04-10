@@ -73,8 +73,8 @@
   {% raw content.code %}
 {% end %}
 
-{% block extra_code_top %}
-  {% raw content_owner.extra_code_top %}
+{% block extra_head_html %}
+  {% raw content_owner.extra_head_html %}
 {% end %}
 
 {% block title %}
@@ -106,6 +106,26 @@
 
   <footer id="hw-footer">
     <span id="hw-helloworld">{{ _('powered by') }}<br><a href="http://www.helloworldprogram.com" rel="generator">Hello, world.</a></span>
+    {% if content_owner.theme_title != 'default' %}
+      <span id="hw-theme">
+        <span id="hw-theme-title">
+          {% if content_owner.theme_link %}
+            {% raw _('<a href="%(link)s">%(title)s</a> design') % { 'link': content_owner.theme_link, 'title': content_owner.theme_title } %}
+          {% else %}
+            {{ _('%(title)s design') % { 'title': content_owner.theme_title } }}
+          {% end %}
+        </span>
+        <span id="hw-theme-author">
+          {% if content_owner.theme_author %}
+            {% if content_owner.theme_author_link %}
+              {% raw _('by <a href="%(link)s">%(author)s</a>') % { 'link': content_owner.theme_author_link, 'author': content_owner.theme_author } %}
+            {% else %}
+              {{ _('by %(author)s') % { 'author': content_owner.theme_author } }}
+            {% end %}
+          {% end %}
+        </span>
+      </span>
+    {% end %}
   </footer>
 {% end %}
 
@@ -130,6 +150,6 @@
   {% end %}
 {% end %}
 
-{% block extra_code_bottom %}
-  {% raw content_owner.extra_code_bottom %}
+{% block extra_body_end_html %}
+  {% raw content_owner.extra_body_end_html %}
 {% end %}

@@ -55,6 +55,10 @@ hw.customSave = function(event, el) {
              + '&favicon='             + encodeURIComponent(customForm['favicon'].value)
              + '&currency='            + encodeURIComponent(customForm['currency'].value)
              + '&theme='               + encodeURIComponent(customForm['theme'].value)
+             + '&theme_title='         + encodeURIComponent(customForm['theme_title'].value)
+             + '&theme_link='          + encodeURIComponent(customForm['theme_link'].value)
+             + '&theme_author='        + encodeURIComponent(customForm['theme_author'].value)
+             + '&theme_author_link='   + encodeURIComponent(customForm['theme_author_link'].value)
              + '&background='          + encodeURIComponent(customForm['background'].value)
              + '&logo='                + encodeURIComponent(customForm['logo'].value)
              + '&google_analytics='    + encodeURIComponent(customForm['google_analytics'].value)
@@ -167,6 +171,11 @@ hw.customizeSelectTheme = function(el) {
   var customForm = hw.$('hw-customize');
 
   customForm['theme'].value              = el.getAttribute('data-path');
+  customForm['theme_title'].value        = el.getAttribute('data-title');
+  customForm['theme_link'].value         = el.getAttribute('data-link');
+  customForm['theme_author'].value       = el.getAttribute('data-author');
+  customForm['theme_author_link'].value  = el.getAttribute('data-author-link');
+
   hw.$('hw-theme-thumb').src             = el.getAttribute('data-thumb');
   hw.$('hw-theme-title').innerHTML       = el.getAttribute('data-title');
   //hw.$('hw-theme-link').innerHTML        = el.getAttribute('data-link');

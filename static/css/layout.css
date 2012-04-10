@@ -366,9 +366,18 @@ form#hw-login-form {
   font-size: 12px;
 }
 
-#hw-helloworld {
+#hw-helloworld,
+#hw-theme {
   font-size: 11px;
   text-align: center;
+}
+#hw-theme {
+  display: block;
+  margin-top: 10px;
+}
+#hw-theme-title,
+#hw-theme-author {
+  display: block;
 }
 
 #hw-content footer {

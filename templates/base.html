@@ -28,7 +28,7 @@
     {% end %}
     <script src="{{ static_url('js/all.js', 'js/all.inc') }}"></script>
     {% block extra_js %}{% end %}
-    {% block extra_code_top %}{% end %}
+    {% block extra_head_html %}{% end %}
     <title>{% block title %}{{ _("Hello, world.") }}{% end %}</title>
   </head>
   <body>
@@ -68,7 +68,7 @@
     {% end %}
     {% block extra_js_end %}
     {% end %}
-    {% block extra_code_bottom %}{% end %}
+    {% block extra_body_end_html %}{% end %}
   </body>
 </html>
 {% if show_debug and debug_info %}
