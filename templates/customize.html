@@ -73,14 +73,15 @@
 
     <div id="hw-customize-themes" class="hw-hidden">
       {% for theme in themes %}
-        <img class="hw-theme-thumb"
-             data-path="{{ theme['path'] }}" data-thumb="{{ static_url(theme['thumb']) }}"
+        <img class="hw-theme-thumb {% if theme['path'] == user_theme['path'] and user_theme_custom %}hw-hidden{% end %}"
+             data-static-url="{{ theme['static_url'] }}" data-path="{{ theme['path'] }}" data-thumb="{{ static_url(theme['thumb']) }}"
              data-title="{{ theme['title'] }}" data-link="{{ theme['link'] }}"
              data-author="{{ theme['author'] }}" data-author-link="{{ theme['author_link'] }}"
              data-extra-head-html="{{ theme['extra_head_html'] }}" data-extra-body-end-html="{{ theme['extra_body_end_html'] }}"
              src="{{ static_url(theme['thumb']) }}" onerror="this.src='{{ static_url('img/pixel.gif') }}'"
              onclick="hw.customizeSelectTheme(this)"
              {% if theme['path'] == user_theme['path'] %}data-selected{% end %}
+             {% if theme['path'] == user_theme['path'] and user_theme_compiled %}data-compiled="{{ user_theme_compiled }}"{% end %}
              {% set counter = 0 %}
              {% set hasAttribute = ('option_' + str(counter)) in theme %}
              {% while hasAttribute %}
@@ -88,7 +89,7 @@
                {% set counter += 1 %}
                {% set hasAttribute = ('option_' + str(counter)) in theme %}
              {% end %}>
-        <div class="hw-theme-info">
+        <div class="hw-theme-info {% if theme['path'] == user_theme['path'] and user_theme_custom %}hw-hidden{% end %}">
           <span class="hw-theme-title">{{ theme['title'] }}</span>
           <span class="hw-theme-author">{% if theme['author'] %}{% if theme['author_link'] %}<a href="{{ theme['author_link'] }}" target="_blank">{% end %}{{ _('by %(author)s') % { 'author': theme['author'] } }}{% if theme['author_link'] %}</a>{% end %}{% end %}</span>
         </div>
@@ -144,6 +145,7 @@
       <legend onclick="hw.details(this)"><span class="hw-arrow"></span>{{ _('Appearance') }}</legend>
       <div id="hw-customize-appearance" class="hw-fields">
       </div>
+      <a id="hw-custom-reset" href="#reset" onclick="hw.customReset(event)">{{ _('Reset fields') }}</a>
     </fieldset>
 
     <fieldset>

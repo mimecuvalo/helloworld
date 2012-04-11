@@ -1,6 +1,7 @@
 import os
 import os.path
 import re
+import shutil
 
 from base import BaseHandler
 from logic import url_factory
@@ -33,6 +34,11 @@ class CustomizeHandler(BaseHandler):
       if not theme.startswith('.') and os.path.isdir(theme_path) and os.path.exists(css_path):
         self.display['themes'].append({ 'path': os.path.join('css/themes', os.path.join(theme, theme + '.css')) })
 
+    if self.display["user"].theme.find('_current_theme') != -1:
+      current_theme_path       = os.path.join(local_themes_stem, '_current_theme')
+      default_stylesheet_path  = os.path.join(current_theme_path, '_default_.css')
+      self.display['themes'].append({ 'path': default_stylesheet_path })
+
     for theme in self.display['themes']:
       f = open(os.path.join(static_path, theme['path']))
       theme_data = f.read()
@@ -45,6 +51,7 @@ class CustomizeHandler(BaseHandler):
       author_link = re.search(r'\* designed_by: .*\((.*)\)', theme_data)
       theme['author_link'] = author_link.group(1) if author_link and len(author_link.groups()) > 0 else ''
       theme['thumb'] = os.path.join(os.path.dirname(theme['path']), 'thumb.png')
+      theme['static_url'] = self.application.settings["static_url"]
 
       options = re.findall(r'\* ((?:color|font|image|if|text).*)', theme_data, re.M)
       for index, option in enumerate(options):
@@ -55,8 +62,14 @@ class CustomizeHandler(BaseHandler):
       extra_body_end_html = re.search(r'\* extra_body_end_html: """(.*?)"""', theme_data, re.M | re.DOTALL)
       theme['extra_body_end_html'] = extra_body_end_html.group(1).replace('\n', '\\n') if extra_body_end_html and len(extra_body_end_html.groups()) > 0 else ''
 
-      if self.display["user"].theme.replace('_compiled_', '') == theme['path']:
+      if ((self.display["user"].theme.find('_current_theme') != -1 and theme['path'].find('_current_theme') != -1)
+          or self.display["user"].theme.replace('_compiled_', '') == theme['path']):
         self.display['user_theme'] = theme
+        if re.search('_compiled_', self.display["user"].theme):
+          self.display['user_theme_compiled'] = self.display["user"].theme
+        else:
+          self.display['user_theme_compiled'] = None
+        self.display['user_theme_custom'] = self.display["user"].theme.find('_current_theme') != -1
 
       f.close()
 
@@ -77,7 +90,6 @@ class CustomizeHandler(BaseHandler):
     user.name                = self.get_argument('name', '')
     user.favicon             = url_factory.clean_filename(self.get_argument('favicon', ''))
     user.currency            = self.get_argument('currency', '')
-    user.theme               = url_factory.clean_filename(self.get_argument('theme', ''))
     user.theme_title         = self.get_argument('theme_title', '')
     user.theme_link          = self.get_argument('theme_link', '')
     user.theme_author        = self.get_argument('theme_author', '')
@@ -91,6 +103,31 @@ class CustomizeHandler(BaseHandler):
     user.sidebar_ad          = self.get_argument('sidebar_ad', '')
     user.newsletter_endpoint = self.get_argument('newsletter_endpoint', '')
     user.license             = self.get_argument('license', '')
+
+    default_stylesheet = self.get_argument('default_stylesheet', '')
+    stylesheet = self.get_argument('stylesheet', '')
+    theme = url_factory.clean_filename(self.get_argument('theme', ''))
+    static_path = self.application.settings["static_path"]
+    theme = os.path.join(static_path, os.path.dirname(theme))
+
+    user_path                = os.path.join(self.application.settings["resource_path"], user.username)
+    theme_path               = os.path.join(user_path, 'themes')
+    current_theme_path       = os.path.join(theme_path, '_current_theme')
+    compiled_stylesheet_path = os.path.join(current_theme_path, '_compiled_.css')
+    default_stylesheet_path  = os.path.join(current_theme_path, '_default_.css')
+
+    if theme != current_theme_path:
+      if os.path.exists(current_theme_path):
+        shutil.rmtree(current_theme_path)
+      shutil.copytree(theme, current_theme_path)
+
+    f = open(compiled_stylesheet_path, 'w')
+    f.write(stylesheet)
+    f.close()
+    f = open(default_stylesheet_path, 'w')
+    f.write(default_stylesheet)
+    f.close()
+    user.theme = compiled_stylesheet_path[len(self.application.settings["static_path"]) + 1:]
 
     user.save()
 

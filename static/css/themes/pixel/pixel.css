@@ -35,8 +35,7 @@ option {
 }
 
 body {
-  background-color: {color:Background};
-  background-image: url({image:Background}) repeat fixed 0 0 transparent;
+  background: url({image:Background}) repeat fixed 0 0 {color:Background};
 }
 
 #hw-header {
@@ -46,7 +45,7 @@ body {
   top: 6px;
 }
 #hw-logo {
-  {ifnot:ShowLogo}display: none;{/ifnot}
+  {ifnot:Show Logo}display: none;{/ifnot}
 }
 
 .hw-button,

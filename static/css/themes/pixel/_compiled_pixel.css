@@ -3,7 +3,7 @@
  * theme: pixel (http://nightlight.ws)
  * designed_by: nightlight (http://nightlight.ws)
  *
- * color:Background:#fff
+ * color:Background:transparent
  * font:Body:Courier New, monospace
  * image:Background:
  * if:Show Logo:1
@@ -35,8 +35,7 @@ option {
 }
 
 body {
-  background-color: #fff;
-  background-image: url() repeat fixed 0 0 transparent;
+  background: url() repeat fixed 0 0 #fff;
 }
 
 #hw-header {

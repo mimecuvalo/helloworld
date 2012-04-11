@@ -63,6 +63,7 @@ settings = {
   "app_path": os.path.realpath(__file__),
   "resource_url": "static/resource",
   "static_path": os.path.join(os.path.dirname(os.path.realpath(__file__)), "static"),
+  "static_url": "static",
   "config_path": config_path,
   "login_url": "/login",
   "xsrf_cookies": True,

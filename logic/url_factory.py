@@ -112,7 +112,8 @@ def clean_name(name):
 
 def check_legit_filename(full_path):
   leafname = os.path.basename(full_path)
-  if leafname in ('crossdomain.xml', 'clientaccesspolicy.xml', '.htaccess', '.htpasswd'):
+  # _current_theme is used internally for themes
+  if leafname in ('crossdomain.xml', 'clientaccesspolicy.xml', '.htaccess', '.htpasswd', '_current_theme'):
     raise tornado.web.HTTPError(400, "i call shenanigans")
 
 def clean_filename(name):

@@ -4,7 +4,7 @@
   <link id="hw-stylesheet-create" rel="stylesheet" type="text/css" href="{{ static_url('css/all_create.css', 'css/all_create.inc') }}">
   <link rel="stylesheet" type="text/css" href="{{ static_url('css/dashboard.css') }}">
   {% if user.theme %}
-    <link id="hw-stylesheet-create-theme" rel="stylesheet" type="text/css" href="{{ static_url(user.theme) }}">
+    <link id="hw-stylesheet-theme" rel="stylesheet" type="text/css" href="{{ static_url(user.theme) }}">
   {% end %}
   {% block even_more_css %}{% end %}
 {% end %}

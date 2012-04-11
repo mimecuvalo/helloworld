@@ -680,3 +680,8 @@ section {
   width: 18px;
   font-family: "Helvetica Neue",Arial,sans-serif;
 }
+
+#hw-custom-reset {
+  display: inline-block;
+  margin-top: 5px;
+}

@@ -3,7 +3,7 @@
 {% block extra_css %}
 <link id="hw-stylesheet-create" rel="stylesheet" type="text/css" href="{{ static_url('css/create.css') }}">
 {% if user.theme %}
-  <link id="hw-stylesheet-create-theme" rel="stylesheet" type="text/css" href="{{ static_url(user.theme) }}">
+  <link id="hw-stylesheet-theme" rel="stylesheet" type="text/css" href="{{ static_url(user.theme) }}">
 {% end %}
 <style>
   form.hw-create {
