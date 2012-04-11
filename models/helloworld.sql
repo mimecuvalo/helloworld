@@ -154,7 +154,6 @@ CREATE TABLE IF NOT EXISTS `users` (
   `google_analytics` varchar(255) NOT NULL,
   `favicon` text NOT NULL,
   `logo` text NOT NULL,
-  `background` text NOT NULL,
   `theme` varchar(255) NOT NULL,
   `currency` varchar(3) NOT NULL,
   `magic_key` text NOT NULL,

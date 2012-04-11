@@ -600,6 +600,7 @@ section {
 #hw-customize .hw-theme-title {
   font-size: 14px;
   font-weight: bold;
+  display: inline;
 }
 #hw-customize #hw-theme-author,
 #hw-customize #hw-theme-author a,
@@ -616,4 +617,66 @@ section {
   padding-bottom: 20px;
   margin-bottom: 40px;
   border-bottom: 1px solid #ccc;
+}
+
+#hw-customize .hw-color-picker {
+  width: 50px;
+  height: 20px;
+  border: 1px solid #ccc;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -o-border-radius: 3px;
+  -ms-border-radius: 3px;
+  border-radius: 3px;
+}
+
+#hw-color-picker-wrapper {
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.75);
+  position: relative;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 128px;
+  height: 128px;
+  border: 1px solid #000;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -o-border-radius: 3px;
+  -ms-border-radius: 3px;
+  border-radius: 3px;
+}
+
+#hw-color-picker {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  cursor: crosshair;
+}
+
+#hw-color-picker-close {
+  background-color: black;
+  border: 2px solid white;
+  -moz-border-radius: 20px;
+  -webkit-border-radius: 20px;
+  -o-border-radius: 20px;
+  -ms-border-radius: 20px;
+  border-radius: 20px;
+  -webkit-box-shadow: 2px 3px 10px #000000, 0 1px 0 rgba(255, 255, 255, 0.3) inset;
+  -moz-box-shadow: 2px 3px 10px #000000, 0 1px 0 rgba(255, 255, 255, 0.3) inset;
+  -ms-box-shadow: 2px 3px 10px #000000, 0 1px 0 rgba(255, 255, 255, 0.3) inset;
+  -o-box-shadow: 2px 3px 10px #000000, 0 1px 0 rgba(255, 255, 255, 0.3) inset;
+  box-shadow: 2px 3px 10px #000000, 0 1px 0 rgba(255, 255, 255, 0.3) inset;
+  color: white;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  height: 18px;
+  left: -15px;
+  line-height: 13px;
+  position: absolute;
+  text-align: center;
+  top: -15px;
+  width: 18px;
+  font-family: "Helvetica Neue",Arial,sans-serif;
 }

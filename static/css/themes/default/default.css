@@ -2,7 +2,25 @@
  *
  * theme: default (http://nightlight.ws)
  * designed_by: nightlight (http://nightlight.ws)
+ *
+ * color:Background:#fff
+ * font:Body:Arial, Helvetica, sans-serif
+ * image:Background:
+ *
  * extra_head_html: """ """
  * extra_body_end_html: """ """
  *
  * */
+
+body,
+button,
+input,
+select,
+option {
+  font: 13px {font:Body};
+}
+
+body {
+  background-color: {color:Background};
+  background-image: url({image:Background}) repeat fixed 0 0 transparent;
+}

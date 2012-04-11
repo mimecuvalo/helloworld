@@ -805,7 +805,7 @@ hw.processFiles = function(json) {
 };
 
 hw.commentUploadButton = function() {
-  hw.uploadButton(function(json) { hw.processFiles(json); }, null, false, true, true);
+  hw.uploadButton(function(json) { hw.processFiles(json); }, null, false, true, hw.$c('hw-comment-upload-wrapper'));
 };
 
 hw.uploadButton = function(callback, section, opt_drop, opt_isComment, opt_attachToWrapper) {
@@ -814,10 +814,7 @@ hw.uploadButton = function(callback, section, opt_drop, opt_isComment, opt_attac
                  + '<progress value="0" max="100" class="hw-hidden">0%</progress>'
                  + '<span class="hw-media-result hw-invisible hw-invisible-transition"></span>';
   if (opt_attachToWrapper) {
-    if (!hw.$c('hw-comment-upload-wrapper')) {
-      return;
-    }
-    hw.$c('hw-comment-upload-wrapper').innerHTML = buttonHtml;
+    opt_attachToWrapper.innerHTML = buttonHtml;
   } else {
     document.write(buttonHtml);
   }

@@ -45,13 +45,23 @@ class CustomizeHandler(BaseHandler):
       author_link = re.search(r'\* designed_by: .*\((.*)\)', theme_data)
       theme['author_link'] = author_link.group(1) if author_link and len(author_link.groups()) > 0 else ''
       theme['thumb'] = os.path.join(os.path.dirname(theme['path']), 'thumb.png')
+
+      options = re.findall(r'\* ((?:color|font|image|if|text).*)', theme_data, re.M)
+      for index, option in enumerate(options):
+        theme['option_' + str(index)] = option
+
+      extra_head_html = re.search(r'\* extra_head_html: """(.*?)"""', theme_data, re.M | re.DOTALL)
+      theme['extra_head_html'] = extra_head_html.group(1).replace('\n', '\\n') if extra_head_html and len(extra_head_html.groups()) > 0 else ''
+      extra_body_end_html = re.search(r'\* extra_body_end_html: """(.*?)"""', theme_data, re.M | re.DOTALL)
+      theme['extra_body_end_html'] = extra_body_end_html.group(1).replace('\n', '\\n') if extra_body_end_html and len(extra_body_end_html.groups()) > 0 else ''
+
+      if self.display["user"].theme.replace('_compiled_', '') == theme['path']:
+        self.display['user_theme'] = theme
+
       f.close()
 
     self.display['currencies'] = [ "AUD", "CAD", "CZK", "DKK", "EUR", "HKD", "HUF", "ILS", "JPY", \
                                    "MXN", "NOK", "NZD", "PLN", "GBP", "SGD", "SEK", "CHF", "THB", "USD", ]
-
-    if self.display["user"].theme:
-      self.display['user_theme_thumb'] = os.path.join(os.path.dirname(self.display["user"].theme), 'thumb.png')
 
     self.fill_template("customize.html")
 
@@ -72,7 +82,8 @@ class CustomizeHandler(BaseHandler):
     user.theme_link          = self.get_argument('theme_link', '')
     user.theme_author        = self.get_argument('theme_author', '')
     user.theme_author_link   = self.get_argument('theme_author_link', '')
-    user.background          = url_factory.clean_filename(self.get_argument('background', ''))
+    user.extra_head_html     = self.get_argument('extra_head_html', '').replace('\\n', '\n')
+    user.extra_body_end_html = self.get_argument('extra_body_end_html', '').replace('\\n', '\n')
     user.logo                = url_factory.clean_filename(self.get_argument('logo', ''))
     user.google_analytics    = self.get_argument('google_analytics', '')
     user.adult_content       = int(self.get_argument('adult_content', 0))

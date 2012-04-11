@@ -43,14 +43,6 @@
     <link id="hw-stylesheet-create-theme" rel="stylesheet" type="text/css" href="{{ static_url(content_owner.theme) }}">
   {% end %}
 
-  {% if content_owner.background %}
-    <style>
-      body {
-        background: url({{ content_owner.background }}) repeat fixed 0 0 transparent;
-      }
-    </style>
-  {% end %}
-
   {% raw section_style %}
   {% raw album_style %}
   {% raw content.style.replace("<style", '<style id="hw-content-style"', 1) %}

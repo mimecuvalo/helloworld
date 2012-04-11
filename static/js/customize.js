@@ -1,4 +1,5 @@
 hw.setupFields = false;
+hw.currentColorPickerEl = null;
 hw.customSetupFields = function() {
   if (hw.setupFields) {
     return;
@@ -9,6 +10,11 @@ hw.customSetupFields = function() {
   for (var x = 0; x < fields.length; ++x) {
     Event.observe(fields[x], 'focus', function() { hw.customChangeBeforeUnloadState(); }, false);
   }
+
+  hw.setupColorPicker(function(color) {
+    hw.currentColorPickerEl.style.backgroundColor = color;
+  });
+  hw.customAppearance();
 };
 
 hw.customChangeBeforeUnloadState = function(allowPageChange) {
@@ -59,7 +65,8 @@ hw.customSave = function(event, el) {
              + '&theme_link='          + encodeURIComponent(customForm['theme_link'].value)
              + '&theme_author='        + encodeURIComponent(customForm['theme_author'].value)
              + '&theme_author_link='   + encodeURIComponent(customForm['theme_author_link'].value)
-             + '&background='          + encodeURIComponent(customForm['background'].value)
+             + '&extra_head_html='     + encodeURIComponent(customForm['extra_head_html'].value)
+             + '&extra_body_end_html=' + encodeURIComponent(customForm['extra_body_end_html'].value)
              + '&logo='                + encodeURIComponent(customForm['logo'].value)
              + '&google_analytics='    + encodeURIComponent(customForm['google_analytics'].value)
              + '&adult_content='       + encodeURIComponent(customForm['adult_content'].checked ? 1 : 0)
@@ -138,8 +145,6 @@ hw.customizeUpdatePreview = function() {
       head.removeChild(oldLink);
     }
     head.appendChild(link);
-
-    body.style.backgroundImage = 'url(' + (hw.$('hw-background').value || hw.pixelSrc) + ')';
   }, 0);
 };
 
@@ -170,11 +175,13 @@ hw.customizeSelectTheme = function(el) {
   hw.hide('hw-customize-themes');
   var customForm = hw.$('hw-customize');
 
-  customForm['theme'].value              = el.getAttribute('data-path');
-  customForm['theme_title'].value        = el.getAttribute('data-title');
-  customForm['theme_link'].value         = el.getAttribute('data-link');
-  customForm['theme_author'].value       = el.getAttribute('data-author');
-  customForm['theme_author_link'].value  = el.getAttribute('data-author-link');
+  customForm['theme'].value               = el.getAttribute('data-path');
+  customForm['theme_title'].value         = el.getAttribute('data-title');
+  customForm['theme_link'].value          = el.getAttribute('data-link');
+  customForm['theme_author'].value        = el.getAttribute('data-author');
+  customForm['theme_author_link'].value   = el.getAttribute('data-author-link');
+  customForm['extra_head_html'].value     = el.getAttribute('data-extra-head-html');
+  customForm['extra_body_end_html'].value = el.getAttribute('data-extra-body-end-html');
 
   hw.$('hw-theme-thumb').src             = el.getAttribute('data-thumb');
   hw.$('hw-theme-title').innerHTML       = el.getAttribute('data-title');
@@ -182,5 +189,134 @@ hw.customizeSelectTheme = function(el) {
   hw.display(hw.$('hw-theme-author'), el.getAttribute('data-author'));
   hw.$('hw-theme-author-name').innerHTML = el.getAttribute('data-author');
   hw.$('hw-theme-author-link').href      = el.getAttribute('data-author-link');
+
+  var theme = hw.customGetCurrentTheme();
+  theme.removeAttribute('data-selected');
+  el.setAttribute('data-selected', '');
+
+  hw.customAppearance();
+};
+
+hw.customGetCurrentTheme = function() {
+  var themes = hw.$('hw-customize-themes').getElementsByTagName('IMG');
+  for (var x = 0; x < themes.length; ++x) {
+    if (themes[x].hasAttribute('data-selected')) {
+      return themes[x];
+    }
+  }
+};
+
+hw.customAppearance = function() {
+  var theme = hw.customGetCurrentTheme();
+
+  var html = '';
+  var counter = 0;
+  var option = theme.hasAttribute('data-option-' + counter);
+  var uploadButtons = [];
+
+  while (option) {
+    var data = theme.getAttribute('data-option-' + counter).split(':');
+    html += '<label for="hw-option-' + counter + '">'
+         +  '<span class="hw-label">' + data[1] + '</span>';
+    if (data.length > 2) {
+      for (var x = 3; x < data.length; ++x) {
+        data[2] += ':' + data[x];
+      }
+    }
+
+    if (data[0] == 'color') {
+      html += '<div id="hw-option-' + counter + '" class="hw-field hw-color-picker" style="background-color:' + data[2] + '" onclick="hw.colorPicker(event, this)"></div>';
+    } else if (data[0] == 'font') {
+      html += '<select id="hw-option-' + counter + '" class="hw-field">';
+      var fonts = ['Arial', 'Arial Black', 'Baskerville', 'Century Gothic', 'Cooperlate Light',
+                   'Courier New', 'Futura', 'Garamond', 'Geneva', 'Georgia', 'Helvetica', 'Helvetica Neue',
+                   'Impact', 'Lucida Sans', 'Trebuchet MS', 'Verdana'];
+      var found = false;
+      for (var x = 0; x < fonts.length; ++x) {
+        html += '<option style="font-family:' + fonts[x] + '" ' + (data[2].indexOf(fonts[x]) == 0 ? 'selected' : '') + '>' + fonts[x] + '</option>';
+        if (data[2].indexOf(fonts[x])) {
+          found = true;
+        }
+      }
+      if (!found) {
+        html += '<option style="font-family:' + data[2] + '" selected>' + data[2] + '</option>';
+      }
+      html += '</select>';
+    } else if (data[0] == 'image') {
+      html += '<a class="hw-button hw-customize-clear" href="#clear" class="hw-button" onclick="hw.customizeClear(event, \'hw-option-' + counter + '-wrapper\')">' + hw.getMsg('clear') + '</a>';
+      html += '<span id="hw-option-' + counter + '-wrapper"></span>';
+      uploadButtons.push('hw-option-' + counter + '-wrapper');
+    } else if (data[0] == 'if') {
+      html += '<input id="hw-option-' + counter + '" class="hw-field" type="checkbox" ' + (data[2] == '1' ? checked="checked" : '') + '>';
+    } else if (data[0] == 'text') {
+      html += '<input id="hw-option-' + counter + '" class="hw-field" value="' + data[2] + '">';
+    }
+
+    html += '</label>';
+
+    ++counter;
+    option = theme.hasAttribute('data-option-' + counter);
+  }
+
+  hw.$('hw-customize-appearance').innerHTML = html;
+
+  for (var x = 0; x < uploadButtons.length; ++x) {
+    hw.uploadButton(function(json) { hw.customChangeBeforeUnloadState(); hw.customizeUpdatePreview(); }, null, false, false, hw.$(uploadButtons[x]));
+  }
+
   hw.customizeUpdatePreview();
+};
+
+hw.colorPicker = function(event, el) {
+  var colorPicker = hw.$('hw-color-picker-wrapper');
+  var pos = hw.getEventPos(event);
+  colorPicker.style.top = pos[1] + 'px';
+  colorPicker.style.left = (pos[0] + 100) + 'px';
+  hw.currentColorPickerEl = el;
+  hw.show(colorPicker);
+};
+
+// from http://www.html5canvastutorials.com/labs/html5-canvas-color-picker/
+// by Eric Rowell
+hw.setupColorPicker = function(callback) {
+  var imageObj = new Image();
+  imageObj.onload = function() {
+    var size      = 128;
+    var canvas    = hw.$('hw-color-picker');
+    var context   = canvas.getContext("2d");
+    var mouseDown = false;
+
+    context.drawImage(imageObj, 0, 0, size, size);
+    var imageData = context.getImageData(0, 0, size, size);
+    var data = imageData.data;
+
+    function getColor(event) {
+      var eventPos = hw.getEventPos(event);
+      var mousePos = { x: eventPos[0] - canvas.getBoundingClientRect().left,
+                       y: eventPos[1] - canvas.getBoundingClientRect().top };
+
+      if (mouseDown && mousePos.x >= 0 && mousePos.y >= 0 && mousePos.x < size && mousePos.y < size) {
+        var x = mousePos.x;
+        var y = mousePos.y;
+        var red = data[((size * y) + x) * 4];
+        var green = data[((size * y) + x) * 4 + 1];
+        var blue = data[((size * y) + x) * 4 + 2];
+        return "rgb(" + red + "," + green + "," + blue + ")";
+      }
+    }
+
+    canvas.addEventListener("mousedown", function() {
+      mouseDown = true;
+    }, false);
+
+    canvas.addEventListener("mouseup", function(event) {
+      callback(getColor(event));
+      mouseDown = false;
+    }, false);
+
+    canvas.addEventListener("mousemove", function(event){
+      callback(getColor(event));
+    }, false);
+  };
+  imageObj.src = hw.colorPickerImage;
 };

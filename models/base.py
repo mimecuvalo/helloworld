@@ -116,7 +116,6 @@ class users(Model):
                 'currency': '',
                 'newsletter_endpoint': '',
                 'favicon': '',
-                'background': '',
                 'theme': '',
                 'logo': '',
                 'magic_key': '',

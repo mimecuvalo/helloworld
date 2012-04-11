@@ -41,7 +41,9 @@
     hw.setMsg('error', "{% raw js_escape(_('no good, mate.')) %}");
     hw.setMsg('saved', "{% raw js_escape(_('saved!')) %}");
     hw.setMsg('uploading', "{% raw js_escape(_('uploading...')) %}");
+    hw.setMsg('clear', "{% raw js_escape(_('clear')) %}");
     hw.pixelSrc = '{{ static_url('img/pixel.gif') }}';
+    hw.colorPickerImage = '{{ static_url('img/color_picker.png') }}';
     hw.faviconDefault = '{{ static_url('favicon.ico') }}';
     hw.xsrf = '{% raw xsrf_form_html() %}';
     hw.uploadUrl = '{{ nav_url(section='upload') }}';
@@ -75,8 +77,17 @@
              data-path="{{ theme['path'] }}" data-thumb="{{ static_url(theme['thumb']) }}"
              data-title="{{ theme['title'] }}" data-link="{{ theme['link'] }}"
              data-author="{{ theme['author'] }}" data-author-link="{{ theme['author_link'] }}"
+             data-extra-head-html="{{ theme['extra_head_html'] }}" data-extra-body-end-html="{{ theme['extra_body_end_html'] }}"
              src="{{ static_url(theme['thumb']) }}" onerror="this.src='{{ static_url('img/pixel.gif') }}'"
-             onclick="hw.customizeSelectTheme(this)">
+             onclick="hw.customizeSelectTheme(this)"
+             {% if theme['path'] == user_theme['path'] %}data-selected{% end %}
+             {% set counter = 0 %}
+             {% set hasAttribute = ('option_' + str(counter)) in theme %}
+             {% while hasAttribute %}
+               data-option-{{ counter }}="{{ theme['option_' + str(counter)] }}"
+               {% set counter += 1 %}
+               {% set hasAttribute = ('option_' + str(counter)) in theme %}
+             {% end %}>
         <div class="hw-theme-info">
           <span class="hw-theme-title">{{ theme['title'] }}</span>
           <span class="hw-theme-author">{% if theme['author'] %}{% if theme['author_link'] %}<a href="{{ theme['author_link'] }}" target="_blank">{% end %}{{ _('by %(author)s') % { 'author': theme['author'] } }}{% if theme['author_link'] %}</a>{% end %}{% end %}</span>
@@ -84,7 +95,7 @@
       {% end %}
     </div>
 
-    <img id="hw-theme-thumb" src="{% if user.theme %}{{ static_url(user_theme_thumb) }}{% else %}{{ static_url('img/pixel.gif') }}{% end %}" onerror="this.src='{{ static_url('img/pixel.gif') }}'">
+    <img id="hw-theme-thumb" src="{% if user.theme %}{{ static_url(user_theme['thumb']) }}{% else %}{{ static_url('img/pixel.gif') }}{% end %}" onerror="this.src='{{ static_url('img/pixel.gif') }}'">
     <div id="hw-theme-info">
       <span id="hw-theme-title">{{ user.theme_title }}</span><br>
       <span id="hw-theme-author" class="{% if not user.theme_author %}hw-hidden{% end %}"><a id="hw-theme-author-link" href="{{ user.theme_author_link }}" target="_blank">{{ _('by') }} <span id="hw-theme-author-name">{{ user.theme_author }}</span></a></span>
@@ -95,6 +106,8 @@
     <input name="theme_link" type="hidden" value="{{ user.theme_link }}">
     <input name="theme_author" type="hidden" value="{{ user.theme_author }}">
     <input name="theme_author_link" type="hidden" value="{{ user.theme_author_link }}">
+    <input name="extra_head_html" type="hidden" value="{{ user.extra_head_html }}">
+    <input name="extra_body_end_html" type="hidden" value="{{ user.extra_body_end_html }}">
 
     <a id="hw-customize-edit" href="#edit-theme" class="hw-button" onclick="hw.customizeEdit(event)">{{ _('edit theme') }}</a>
     <script>hw.uploadButton(window.location.reload, 'themes');</script>
@@ -129,13 +142,7 @@
 
     <fieldset open>
       <legend onclick="hw.details(this)"><span class="hw-arrow"></span>{{ _('Appearance') }}</legend>
-      <div class="hw-fields">
-        <label for="hw-background">
-          <span class="hw-label">{{ _('background') }}</span>
-          <a class="hw-button hw-customize-clear" href="#clear" onclick="hw.customizeClear(event, 'hw-background')">{{ _('clear') }}</a>
-          <script>hw.uploadButton(function(json) { hw.customChangeBeforeUnloadState(); hw.$('hw-background').value = json['url']; hw.customizeUpdatePreview(); });</script>
-          <input id="hw-background" class="hw-field" name="background" type="hidden" placeholder="{{ _('background') }}" value="{{ user.background }}">
-        </label>
+      <div id="hw-customize-appearance" class="hw-fields">
       </div>
     </fieldset>
 
@@ -214,6 +221,13 @@
       </div>
     </fieldset>
   </form>
+{% end %}
+
+{% block end_content %}
+  <div id="hw-color-picker-wrapper" class="hw-hidden">
+    <span id="hw-color-picker-close" onclick="hw.hide(hw.$('hw-color-picker-wrapper'))">×</span>
+    <canvas id="hw-color-picker" class="hw-hdden" width="128" height="128"></canvas>
+  </div>
 {% end %}
 
 {% block backend_content %}

@@ -28,7 +28,7 @@ def create_user(handler, username, email):
   user.oauth = email
   user.superuser = False
   user.author = False
-  user.theme = 'css/themes/pixel/pixel.css'
+  user.theme = 'css/themes/pixel/_compiled_pixel.css'
   user.theme_title = 'pixel'
   user.theme_link = 'http://nightlight.ws'
   user.theme_author = 'nightlight'

@@ -21,7 +21,7 @@
     this is the way the web ends
     this is the way the web ends
     this is the way the web ends
-    not with a bang but with a {text:Easter Egg}
+    not with a bang but with a OMGWTFBBQ
 -->"""
  *
  * */
@@ -31,12 +31,12 @@ button,
 input,
 select,
 option {
-  font: 13px {font:Body};
+  font: 13px Courier New, monospace;
 }
 
 body {
-  background-color: {color:Background};
-  background-image: url({image:Background}) repeat fixed 0 0 transparent;
+  background-color: #fff;
+  background-image: url() repeat fixed 0 0 transparent;
 }
 
 #hw-header {
@@ -46,7 +46,7 @@ body {
   top: 6px;
 }
 #hw-logo {
-  {ifnot:ShowLogo}display: none;{/ifnot}
+  
 }
 
 .hw-button,
