@@ -1,6 +1,7 @@
 import base64
 import httplib
 import logging
+import urllib
 import urllib2
 import urlparse
 
