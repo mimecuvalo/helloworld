@@ -120,6 +120,16 @@
     </ul>
   </div>
 
+  <div>
+    under construction<br>
+    <a href="">connect facebook</a><br>
+    <form method="post" action="https://twitter.com/oauth/request_token">
+      <input type="hidden" name="oauth_callback" value="{{ nav_url(section='twitter_auth') }}">
+      <input type="submit" value="connect twitter">
+    </form><br>
+    <a href="">connect google+</a><br>
+  </div>
+
   <div id="hw-followers">
     <h2>{{ _('followers') }}</h2><br>
     <ul>

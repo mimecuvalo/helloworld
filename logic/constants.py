@@ -9,6 +9,8 @@ defaults = {
   'mysql_user' : '',
   'mysql_password' : '',
   'smtp_password' : '',
+  'twitter_consumer_key' : '',
+  'twitter_consumer_secret' : '',
 
   'debug' : 0,
   'port' : 8282,

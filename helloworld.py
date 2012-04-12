@@ -72,6 +72,8 @@ settings = {
   "cookie_secret": constants['xsrf_secret'],
   "template_loader": tornado.template.Loader(os.path.join(os.path.dirname(os.path.realpath(__file__)), "templates")),
   "db_lock": threading.Lock(),
+  "twitter_consumer_key": constants['twitter_consumer_key'],
+  "twitter_consumer_secret": constants['twitter_consumer_secret'],
 }
 
 prefix = r"(?:" + tornado.escape.url_escape(constants['https_prefix']).replace('%2F', '/') + r")?"
@@ -111,6 +113,7 @@ else:
     (prefix + r"/salmon(?:$|/.*)", "controllers.salmon.SalmonHandler"),
     (prefix + r"(?:/[^/]+)?/search(?:$|/.*)", "controllers.search.SearchHandler"),
     (prefix + r"/stats", "controllers.stats.StatsStaticHandler", {"path": "./static"}),
+    (prefix + r"/twitter_auth", "controllers.twitter.TwitterAuthHandler"),
     (prefix + r"/upload", "controllers.upload.UploadHandler"),
     (prefix + r"/users(?:$|/.*)", "controllers.users.UsersHandler"),
     (prefix + r"/webfinger(?:$|/.*)", "controllers.webfinger.WebfingerHandler"),
