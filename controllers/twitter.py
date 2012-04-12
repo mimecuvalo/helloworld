@@ -1,3 +1,4 @@
+import base64
 import httplib
 import logging
 import urllib2
