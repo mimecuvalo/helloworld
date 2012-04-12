@@ -43,6 +43,8 @@ h1 {
 
 .hw-button-save,
 .hw-button-save:visited,
+#hw-customize-update-preview,
+#hw-customize-update-preview:visited,
 .hw-last,
 .hw-last:visited,
 #hw-dashboard,
@@ -54,6 +56,7 @@ h1 {
   color: #06f;
 }
 .hw-button-save:hover,
+#hw-customize-update-preview:hover,
 .hw-last:hover,
 #hw-dashboard:hover,
 #hw-follow:hover {

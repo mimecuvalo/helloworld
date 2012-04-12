@@ -21,6 +21,8 @@ hw.customSetupFields = function() {
     hw.customizeUpdatePreview();
   });
 
+  hw.customSetupCodeMirror();
+
   hw.customAppearance(true);
 };
 
@@ -67,8 +69,10 @@ hw.customSave = function(event, el) {
     var defaultOption = options[x].getAttribute('data-default');
     var currentOption = options[x].getAttribute('data-value');
 
-    var regex = new RegExp(" * " + type + ":" + name + ":.*", "ig");
+    var regex = new RegExp(" \\* " + type + ":" + name + ":.*", "ig");
     hw.customDefaultStyleSheet = hw.customDefaultStyleSheet.replace(regex, " * " + type + ":" + name + ":" + currentOption);
+    hw.$('hw-theme-editor').value = hw.customDefaultStyleSheet;
+    hw.customCm.setValue(hw.customDefaultStyleSheet);
   }
 
   new hw.ajax(hw.baseUri() + 'customize',
@@ -141,7 +145,11 @@ hw.customSetupIframe = function(iframe) {
   body.appendChild(img);
 };
 
-hw.customizeUpdatePreview = function() {
+hw.customizeUpdatePreview = function(event) {
+  if (event) {
+    hw.preventDefault(event);
+  }
+
   setTimeout(function() {
     var iframe = hw.$('hw-customize-preview');
     var doc = iframe.contentDocument;
@@ -217,10 +225,23 @@ hw.customizeClear = function(event, el) {
   hw.customizeUpdatePreview();
 };
 
-hw.customizeEdit = function(event) {
-  hw.preventDefault(event);
+hw.customizeEdit = function(event, close) {
+  if (event) {
+    hw.preventDefault(event);
+  }
 
+  if (!hw.customDefaultStyleSheet || !hw.customCurrentStyleSheet) {
+    // not ready yet
+    setTimeout(hw.customizeEdit, 1000);
+    return;
+  }
 
+  hw.customChangeBeforeUnloadState();
+  hw.setClass(hw.$('hw-container'), 'editing-theme', !close);
+
+  if (close) {
+    hw.customizeUpdatePreview();
+  }
 };
 
 hw.customizeSelectThemes = function(event, close) {
@@ -274,6 +295,8 @@ hw.customGetCurrentTheme = function() {
       if (!hw.customDefaultStyleSheet) {
         var callback = function(xhr) {
           hw.customDefaultStyleSheet = xhr.responseText;
+          hw.$('hw-theme-editor').value = xhr.responseText;
+          hw.customCm.setValue(xhr.responseText);
           if (!themes[x].hasAttribute('data-compiled')) {
             hw.customCurrentStyleSheet = xhr.responseText;
           }
@@ -478,4 +501,18 @@ hw.setupColorPicker = function(callback) {
     }, false);
   };
   imageObj.src = hw.colorPickerImage;
+};
+
+hw.customCm = null;
+hw.customSetupCodeMirror = function() {
+  var onChange = function(editor) {
+    editor.save();
+    hw.customDefaultStyleSheet = hw.$('hw-theme-editor').value;
+  };
+
+  hw.customCm = CodeMirror.fromTextArea(hw.$('hw-theme-editor'), { mode: "css", lineNumbers: true, matchBrackets: true, onChange: onChange });
+  hw.customCm.getWrapperElement().setAttribute('name', 'hw-theme-editor');
+  hw.addClass(hw.customCm.getWrapperElement(), 'hw-theme-editor');
+  hw.addClass(hw.customCm.getWrapperElement(), 'hw-all-transition');
+  hw.customCm.getWrapperElement().cm = hw.customCm;
 };

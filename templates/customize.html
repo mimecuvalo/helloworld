@@ -22,8 +22,10 @@
       -o-box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1) inset;
       box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1) inset;
     }
-    #hw-sidebar-scroll {
+    #hw-sidebar-scroll,
+    .hw-theme-editor {
       top: 45px;
+      width: 276px;
     }
     #hw-backend-content {
       margin-left: 296px;
@@ -61,11 +63,15 @@
         data-bad="{{ _("no good, mate.") }}">&nbsp;</span>
   <a id="hw-customize-close" href="{{ nav_url(section='dashboard') }}" class="hw-button">{{ _('close') }}</a>
   <a id="hw-customize-save" href="#save" data-save="{{ _("save") }}" data-saving="{{ _("saving") }}" class="hw-button hw-button-save" onclick="hw.customSave(event, this)">{{ _('save') }}</a>
+
+  <a id="hw-customize-close-editor" href="#done-editing" class="hw-button" onclick="hw.customizeEdit(event, true)">{{ _('done editing') }}</a>
+  <a id="hw-customize-update-preview" href="#update-preview" class="hw-button" onclick="hw.customizeUpdatePreview(event)">{{ _('update preview') }}</a>
+
   <div class="clear"></div>
 {% end %}
 
 {% block sidebar %}
-  <form id="hw-customize" onsubmit="return false;" autocomplete="off">
+  <form id="hw-customize" onsubmit="return false;" autocomplete="off" class="hw-all-transition">
     {% raw xsrf_form_html() %}
 
     <a id="hw-customize-select-theme" href="#select-theme" class="hw-button" onclick="hw.customizeSelectThemes(event)">{{ _('choose new theme') }}</a>
@@ -223,6 +229,10 @@
       </div>
     </fieldset>
   </form>
+{% end %}
+
+{% block custom_editor %}
+  <textarea id="hw-theme-editor"></textarea>
 {% end %}
 
 {% block end_content %}

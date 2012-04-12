@@ -72,6 +72,8 @@ body {
 
 .hw-button-save,
 .hw-button-save:visited,
+#hw-customize-update-preview,
+#hw-customize-update-preview:visited,
 .hw-last,
 .hw-last:visited,
 #hw-dashboard,
@@ -88,6 +90,7 @@ body {
   box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf, 4px 4px #333, 4px 3px #333, 3px 4px #333;
 }
 .hw-button-save:hover,
+#hw-customize-update-preview:hover,
 .hw-last:hover,
 #hw-dashboard:hover,
 #hw-follow:hover {

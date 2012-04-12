@@ -23,7 +23,8 @@
 #hw-sidebar-static {
   display: none;
 }
-#hw-sidebar-scroll {
+#hw-sidebar-scroll,
+.hw-theme-editor {
   position: absolute;
   top: 0;
   left: 0;
@@ -31,6 +32,33 @@
   overflow-y: hidden;
   overflow-x: hidden;
 }
+#hw-sidebar .hw-theme-editor {
+  top: 43px;
+  left: 305px;
+  padding: 0;
+  width: 600px;
+}
+.hw-theme-editor .CodeMirror-scroll {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: auto;
+}
+
+.editing-theme #hw-sidebar {
+  width: 600px;
+}
+.editing-theme #hw-backend-content {
+  margin-left: 601px;
+}
+
+.editing-theme #hw-sidebar-scroll,
+.editing-theme .hw-theme-editor {
+  margin-left: -305px;
+}
+
 #hw-sidebar-scroll:hover {
   overflow-y: scroll;
 }
@@ -92,6 +120,8 @@
   left: 0;
   right: 0;
   margin-left: 250px;
+  z-index: 10;
+  background-color: #fff;;
 }
 
 #hw-feed,
@@ -524,11 +554,27 @@ section {
 
 #hw-customize-save,
 #hw-customize-close,
-#hw-customize-edit {
+#hw-customize-edit,
+#hw-customize-update-preview {
   float: right;
 }
 #hw-customize-close {
   margin-right: 6px;
+}
+#hw-customize-close-editor {
+  float: left;
+}
+#hw-customize-close-editor,
+#hw-customize-update-preview {
+  display: none;
+}
+.editing-theme #hw-customize-close-editor,
+.editing-theme #hw-customize-update-preview {
+  display: block;
+}
+.editing-theme #hw-customize-save,
+.editing-theme #hw-customize-close {
+  display: none;
 }
 
 #hw-customize #hw-license-label {

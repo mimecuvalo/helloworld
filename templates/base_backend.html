@@ -27,7 +27,7 @@
       {% block sidebar_static %}
       {% end %}
     </div>
-    <div id="hw-sidebar-scroll">
+    <div id="hw-sidebar-scroll" class="hw-all-transition">
       {% block sidebar %}
         <div id="hw-navigation">
           <ul>
@@ -49,9 +49,10 @@
         {% block more_sidebar %}{% end %}
       {% end %}
     </div>
+    {% block custom_editor %}{% end %}
   </aside>
 
-  <div id="hw-backend-content">
+  <div id="hw-backend-content" class="hw-all-transition">
     {% block backend_content %}{% end %}
   </div>
 {% end %}
