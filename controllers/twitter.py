@@ -30,26 +30,10 @@ class TwitterAuthHandler(BaseHandler,
       raise Exception("This service does not support oauth_callback")
 
     if getattr(self, "_OAUTH_VERSION", "1.0a") == "1.0a":
-      url = urlparse.urlparse(self._oauth_request_token_url(callback_uri=callback_uri, extra_params=extra_params))
-      conn = httplib.HTTPConnection(url.netloc)
-      conn.request("GET", url.path + '?' + url.query)
-      class Response:
-        def __init__(self, response):
-          self.error = False
-          self.body = response.read()
-      response = Response(conn.getresponse())
-      conn.close()
+      response = get_url(self._oauth_request_token_url(callback_uri=callback_uri, extra_params=extra_params))
       self._on_request_token(self._OAUTH_AUTHORIZE_URL, callback_uri, response)
     else:
-      url = urlparse.urlparse(self._oauth_request_token_url())
-      conn = httplib.HTTPConnection(url.netloc)
-      conn.request("GET", url.path + '?' + url.query)
-      class Response:
-        def __init__(self, response):
-          self.error = False
-          self.body = response.read()
-      response = Response(conn.getresponse())
-      conn.close()
+      response = get_url(self._oauth_request_token_url())
       self._on_request_token(self._OAUTH_AUTHORIZE_URL, callback_uri, response)
 
   def get_sync_authenticated_user(self, callback, http_client=None):
@@ -81,15 +65,7 @@ class TwitterAuthHandler(BaseHandler,
     if oauth_verifier:
       token["verifier"] = oauth_verifier
 
-    url = urlparse.urlparse(self._oauth_access_token_url(token))
-    conn = httplib.HTTPConnection(url.netloc)
-    conn.request("GET", url.path + '?' + url.query)
-    class Response:
-      def __init__(self, response):
-        self.error = False
-        self.body = response.read()
-    response = Response(conn.getresponse())
-    conn.close()
+    response = get_url(self._oauth_access_token_url(token))
     self._on_access_token(callback, response)
 
   def get(self):
@@ -98,9 +74,89 @@ class TwitterAuthHandler(BaseHandler,
       return
     self.authorize_redirect()
 
+  def twitter_request(self, path, callback, access_token=None,
+                      post_args=None, **args):
+    """Fetches the given API path, e.g., "/statuses/user_timeline/btaylor"
+
+    The path should not include the format (we automatically append
+    ".json" and parse the JSON output).
+
+    If the request is a POST, post_args should be provided. Query
+    string arguments should be given as keyword arguments.
+
+    All the Twitter methods are documented at
+    http://apiwiki.twitter.com/Twitter-API-Documentation.
+
+    Many methods require an OAuth access token which you can obtain
+    through authorize_redirect() and get_authenticated_user(). The
+    user returned through that process includes an 'access_token'
+    attribute that can be used to make authenticated requests via
+    this method. Example usage::
+
+        class MainHandler(tornado.web.RequestHandler,
+                          tornado.auth.TwitterMixin):
+            @tornado.web.authenticated
+            @tornado.web.asynchronous
+            def get(self):
+                self.twitter_request(
+                    "/statuses/update",
+                    post_args={"status": "Testing Tornado Web Server"},
+                    access_token=user["access_token"],
+                    callback=self.async_callback(self._on_post))
+
+            def _on_post(self, new_entry):
+                if not new_entry:
+                    # Call failed; perhaps missing permission?
+                    self.authorize_redirect()
+                    return
+                self.finish("Posted a message!")
+
+    """
+    if path.startswith('http:') or path.startswith('https:'):
+      # Raw urls are useful for e.g. search which doesn't follow the
+      # usual pattern: http://search.twitter.com/search.json
+      url = path
+    else:
+      url = "http://api.twitter.com/1" + path + ".json"
+    # Add the OAuth resource request signature if we have credentials
+    if access_token:
+      all_args = {}
+      all_args.update(args)
+      all_args.update(post_args or {})
+      method = "POST" if post_args is not None else "GET"
+      oauth = self._oauth_request_parameters(
+          url, access_token, all_args, method=method)
+      args.update(oauth)
+    if args:
+      url += "?" + urllib.urlencode(args)
+
+    if post_args is not None:
+      pass
+      # XXX doesn't work right now
+      #response = get_url(self._oauth_access_token_url(token))
+      #self._on_twitter_request(callback, response)
+      #http.fetch(url, method="POST", body=urllib.urlencode(post_args),
+      #           callback=callback)
+    else:
+      response = get_url(url)
+      self._on_twitter_request(callback, response)
+
   def _on_auth(self, user):
     if not user:
       raise tornado.web.HTTPError(500, "Twitter auth failed")
     import logging
     logging.error(repr(user))
     # Save the user using, e.g., set_secure_cookie()
+
+def get_url(url):
+  url = urlparse.urlparse(url)
+  conn = httplib.HTTPConnection(url.netloc)
+  conn.request("GET", url.path + '?' + url.query)
+  class Response:
+    def __init__(self, response):
+      self.error = False
+      self.body = response.read()
+  response = Response(conn.getresponse())
+  conn.close()
+
+  return response
