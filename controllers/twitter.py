@@ -7,7 +7,9 @@ import tornado.auth
 import tornado.escape
 import tornado.web
 
-class TwitterAuthHandler(tornado.web.RequestHandler,
+from base import BaseHandler
+
+class TwitterAuthHandler(BaseHandler,
                          tornado.auth.TwitterMixin):
   def authorize_redirect(self, callback_uri=None, extra_params=None,
                          http_client=None):
@@ -29,7 +31,7 @@ class TwitterAuthHandler(tornado.web.RequestHandler,
     if getattr(self, "_OAUTH_VERSION", "1.0a") == "1.0a":
       url = urlparse.urlparse(self._oauth_request_token_url(callback_uri=callback_uri, extra_params=extra_params))
       conn = httplib.HTTPConnection(url.netloc)
-      conn.request("GET", url.path)
+      conn.request("GET", url.path + '?' + url.query)
       class Response:
         def __init__(self, response):
           self.error = False
@@ -40,7 +42,7 @@ class TwitterAuthHandler(tornado.web.RequestHandler,
     else:
       url = urlparse.urlparse(self._oauth_request_token_url())
       conn = httplib.HTTPConnection(url.netloc)
-      conn.request("GET", url.path)
+      conn.request("GET", url.path + '?' + url.query)
       class Response:
         def __init__(self, response):
           self.error = False
@@ -80,7 +82,7 @@ class TwitterAuthHandler(tornado.web.RequestHandler,
 
     url = urlparse.urlparse(self._oauth_access_token_url(token))
     conn = httplib.HTTPConnection(url.netloc)
-    conn.request("GET", url.path)
+    conn.request("GET", url.path + '?' + url.query)
     class Response:
       def __init__(self, response):
         self.error = False
