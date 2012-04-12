@@ -70,7 +70,7 @@
   <input type="radio" name="hw-image-align" value="none" onclick="hw.changeImageAlign(this)"><label onclick="hw.changeImageAlign(this.previousSibling)">{{ _('none') }}</label>
   <input type="radio" name="hw-image-align" value="left" onclick="hw.changeImageAlign(this)"><label onclick="hw.changeImageAlign(this.previousSibling)">{{ _('left') }}</label>
   <input type="radio" name="hw-image-align" value="right" onclick="hw.changeImageAlign(this)"><label onclick="hw.changeImageAlign(this.previousSibling)">{{ _('right') }}</label>
-  <!--<a href="#edit-image" class="hw-edit-image" onclick="hw.editImage(event, this)">{{ _('edit image') }}</a>-->
+  {% if username %}<a href="#edit-image" class="hw-edit-image" onclick="hw.editImage(event, this)">{{ _('edit image') }}</a>{% end %}
 </div>
 
 {% for item in content_list %}

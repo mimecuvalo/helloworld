@@ -200,7 +200,7 @@
       <li><label>{{ _('contrast') }}</label><input class="hw-image-contrast" name="hw-image-contrast" type="range" min="-1" max="3" step="0.1" value="0" onchange="hw.editImageContrast(this)" onmousedown="hw.rangeStart(event, this)" onmousemove="hw.rangeMove(event, this)" onmouseup="hw.rangeEnd(event, this)" onmouseout="hw.rangeEnd(event, this)"></li>
       <li><br><input class="hw-image-preview" name="hw-image-preview" type="checkbox" onchange="hw.editImagePreview(this)" checked><label>{{ _('preview') }}</label></li>
       <li><hr/></li>
-      <li><button type="button" onclick="hw.editImageRevert()" class="hw-button hw-button-delete">{{ _('revert') }}</button> <button type="button" class="hw-button hw-button-save" onclick="hw.editImageSave()">{{ _('save') }}</button></li>
+      <li><button type="button" onclick="hw.editImageRevert()" class="hw-button hw-button-delete">{{ _('revert') }}</button> <button type="button" disabled class="hw-button hw-button-save" onclick="hw.editImageSave()">{{ _('save [busted right now, sorry]') }}</button></li>
     </ul>
     <br>
   </div>

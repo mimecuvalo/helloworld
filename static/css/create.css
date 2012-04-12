@@ -475,7 +475,7 @@ div.hw-image-editor {
   width: 900px;
   height: 525px;
   background-color: white;
-  z-index: 1000;
+  z-index: 2000;
 }
 div.hw-image-editor.hw-editing img,
 div.hw-image-editor.hw-editing canvas {
