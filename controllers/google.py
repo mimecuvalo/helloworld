@@ -54,7 +54,8 @@ class GoogleHandler(BaseHandler,
       callback(None)
       return
 
-    access_token = tornado.auth._oauth_parse_response(response.body)
+    args = tornado.escape.parse_qs_bytes(tornado.escape.native_str(response.body))
+    access_token = args["access_token"][-1]
     callback(access_token)
 
   def _on_auth(self, access_token):
