@@ -174,7 +174,7 @@ def get_comments(handler, content):
 
 def get_url(url, post=False):
   url = urlparse.urlparse(url)
-  conn = httplib.HTTPSConnection(url.netloc) if url['scheme'] == 'https' else httplib.HTTPConnection(url.netloc)
+  conn = httplib.HTTPSConnection(url.netloc) if url.scheme == 'https' else httplib.HTTPConnection(url.netloc)
   if post:
     headers = {"Content-type": "application/x-www-form-urlencoded"}
     conn.request("POST", url.path, url.query, headers)
