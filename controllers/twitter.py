@@ -41,9 +41,9 @@ class TwitterHandler(BaseHandler,
         new_tweet = self.models.content_remote()
 
       new_tweet.to_username = self.user.username
-      new_tweet.username = tweet['screen_name']
-      new_tweet.from_user = 'http://twitter.com/' + tweet['screen_name']
-      new_tweet.avatar = tweet['profile_image_url']
+      new_tweet.username = tweet['user']['screen_name']
+      new_tweet.from_user = 'http://twitter.com/' + tweet['user']['screen_name']
+      new_tweet.avatar = tweet['user']['profile_image_url']
 
       parsed_date = re.compile(r'\+.....').sub('', tweet['created_at'])
       parsed_date = datetime.datetime.strptime(parsed_date, '%a %b %d %H:%M:%S %Y')
@@ -59,7 +59,7 @@ class TwitterHandler(BaseHandler,
       new_tweet.type = 'twitter'
       new_tweet.title = ''
       new_tweet.post_id = tweet['id']
-      new_tweet.link = 'http://twitter.com/' + tweet['screen_name'] + '/status/' + tweet['id']
+      new_tweet.link = 'http://twitter.com/' + tweet['user']['screen_name'] + '/status/' + tweet['id']
       new_tweet.view = tweet['text']
       new_tweet.save()
 
