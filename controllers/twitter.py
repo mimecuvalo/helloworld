@@ -21,7 +21,7 @@ class TwitterHandler(BaseHandler,
       access_token = json.loads(self.get_author_user().twitter)
       self.twitter_request(
             "statuses/home_timeline",
-            callback=self.timeline_result,
+            self.timeline_result,
             access_token=access_token)
       return
     elif self.get_argument("oauth_token", None):
