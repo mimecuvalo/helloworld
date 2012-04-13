@@ -14,12 +14,13 @@ class GoogleHandler(BaseHandler,
   _OAUTH_REQUEST_TOKEN_URL = 'https://accounts.google.com/o/oauth2/token'
   _OAUTH_ACCESS_TOKEN_URL = 'https://accounts.google.com/o/oauth2/token'
   _OAUTH_AUTHORIZE_URL = 'https://accounts.google.com/o/oauth2/auth'
+  _OAUTH_SCOPE_URL = 'https://www.googleapis.com/auth/plus.me'
 
   def get(self):
     if not self.authenticate(author=True):
       return
 
-    if self.get_argument("oauth_token", False):
+    if self.get_argument("code", False):
         self.get_sync_authenticated_user(
           redirect_uri=self.nav_url(host=True, section='google'),
           client_id=self.settings["google_api_key"],
@@ -30,39 +31,26 @@ class GoogleHandler(BaseHandler,
         return
     self.authorize_redirect(redirect_uri=self.nav_url(host=True, section='google'),
                             client_id=self.settings["google_api_key"],
-                            extra_params={"scope": "https://www.googleapis.com/auth/plus",
+                            extra_params={"scope": _OAUTH_SCOPE_URL,
                                           "response_type": "code", })
 
-  def get_sync_authenticated_user(self, callback, http_client=None):
-    """Gets the OAuth authorized user and access token on callback.
+  def get_sync_authenticated_user(self, redirect_uri, client_id, client_secret,
+                                  code, callback, extra_fields=None):
+    args = {
+      "grant_type": 'authorization_code',
+      "client_id": client_id,
+      "client_secret": client_secret,
+      "code": code,
+      "redirect_uri": redirect_uri,
+      "scope": _OAUTH_SCOPE_URL,
+    }
 
-    This method should be called from the handler for your registered
-    OAuth Callback URL to complete the registration process. We call
-    callback with the authenticated user, which in addition to standard
-    attributes like 'name' includes the 'access_key' attribute, which
-    contains the OAuth access you can use to make authorized requests
-    to this service on behalf of the user.
+    fields = set(['id', 'name', 'first_name', 'last_name',
+                  'locale', 'picture', 'link'])
+    if extra_fields:
+      fields.update(extra_fields)
 
-    """
-    request_key = tornado.escape.utf8(self.get_argument("oauth_token"))
-    oauth_verifier = self.get_argument("oauth_verifier", None)
-    request_cookie = self.get_cookie("_oauth_request_token")
-    if not request_cookie:
-      logging.warning("Missing OAuth request token cookie")
-      callback(None)
-      return
-    self.clear_cookie("_oauth_request_token")
-    cookie_key, cookie_secret = [base64.b64decode(tornado.escape.utf8(i)) for i in request_cookie.split("|")]
-    if cookie_key != request_key:
-      logging.info((cookie_key, request_key, request_cookie))
-      logging.warning("Request token does not match cookie")
-      callback(None)
-      return
-    token = dict(key=cookie_key, secret=cookie_secret)
-    if oauth_verifier:
-      token["verifier"] = oauth_verifier
-
-    response = content_remote.get_url(self._oauth_access_token_url(token))
+    response = content_remote.get_url(self._oauth_access_token_url(**args))
     self._on_access_token(callback, response)
 
   def _on_access_token(self, callback, response):
