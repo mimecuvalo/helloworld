@@ -1,4 +1,5 @@
 import base64
+import datetime
 import json
 import logging
 import re
@@ -33,7 +34,7 @@ class TwitterHandler(BaseHandler,
 
   def timeline_result(self, tweets):
     for tweet in tweets:
-      exists = self.models.content_remote.get(to_username=self.user.username, post_id=tweet['id'])[0]
+      exists = self.models.content_remote.get(to_username=self.user.username, type='twitter', post_id=tweet['id'])[0]
 
       if exists:
         continue
