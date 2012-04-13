@@ -21,14 +21,14 @@ class GoogleHandler(BaseHandler,
       return
 
     if self.get_argument("code", False):
-        self.get_sync_authenticated_user(
-          redirect_uri=self.nav_url(host=True, section='google'),
-          client_id=self.settings["google_api_key"],
-          client_secret=self.settings["google_secret"],
-          code=self.get_argument("oauth_token"),
-          callback=self.async_callback(
-            self._on_auth))
-        return
+      self.get_sync_authenticated_user(
+        redirect_uri=self.nav_url(host=True, section='google'),
+        client_id=self.settings["google_api_key"],
+        client_secret=self.settings["google_secret"],
+        code=self.get_argument("oauth_token"),
+        callback=self.async_callback(
+          self._on_auth))
+      return
     self.authorize_redirect(redirect_uri=self.nav_url(host=True, section='google'),
                             client_id=self.settings["google_api_key"],
                             extra_params={"scope": _OAUTH_SCOPE_URL,
