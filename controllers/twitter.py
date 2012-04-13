@@ -33,7 +33,7 @@ class TwitterHandler(BaseHandler,
     logging.error('twitter')
     logging.error(repr(response))
 
-  def twitter_request(path, callback, access_token=None,
+  def twitter_request(self, path, callback, access_token=None,
                       post_args=None, **args):
     """Fetches the given API path, e.g., "/statuses/user_timeline/btaylor"
 
