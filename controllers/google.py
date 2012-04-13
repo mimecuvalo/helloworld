@@ -31,7 +31,7 @@ class GoogleHandler(BaseHandler,
       return
     self.authorize_redirect(redirect_uri=self.nav_url(host=True, section='google'),
                             client_id=self.settings["google_api_key"],
-                            extra_params={"scope": _OAUTH_SCOPE_URL,
+                            extra_params={"scope": self._OAUTH_SCOPE_URL,
                                           "response_type": "code", })
 
   def get_sync_authenticated_user(self, redirect_uri, client_id, client_secret,
@@ -42,7 +42,7 @@ class GoogleHandler(BaseHandler,
       "client_secret": client_secret,
       "code": code,
       "redirect_uri": redirect_uri,
-      "scope": _OAUTH_SCOPE_URL,
+      "scope": self._OAUTH_SCOPE_URL,
     }
 
     fields = set(['id', 'name', 'first_name', 'last_name',
