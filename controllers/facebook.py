@@ -19,7 +19,8 @@ class FacebookHandler(BaseHandler,
       return
 
     if self.get_argument("get_feed", None):
-      access_token = self.get_author_user().facebook
+      self.user = self.get_author_user()
+      access_token = self.user.facebook
       self.facebook_request(
             "/me/home",
             access_token=access_token, callback=self.timeline_result)
