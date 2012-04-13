@@ -65,8 +65,7 @@ class TwitterHandler(BaseHandler,
       new_tweet.save()
 
     count = self.models.content_remote.get(to_username=self.user.username, type='twitter', deleted=False).count()
-    json = json.dumps({ 'count': count })
-    self.write(json)
+    self.write(json.dumps({ 'count': count }))
 
   def twitter_request(self, path, callback, access_token=None,
                       post_args=None, **args):
