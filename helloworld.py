@@ -74,6 +74,10 @@ settings = {
   "db_lock": threading.Lock(),
   "twitter_consumer_key": constants['twitter_consumer_key'],
   "twitter_consumer_secret": constants['twitter_consumer_secret'],
+  "google_api_key": constants['google_api_key'],
+  "google_secret": constants['google_secret'],
+  "facebook_api_key": constants['facebook_api_key'],
+  "facebook_secret": constants['facebook_secret'],
 }
 
 prefix = r"(?:" + tornado.escape.url_escape(constants['https_prefix']).replace('%2F', '/') + r")?"
