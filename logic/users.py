@@ -25,7 +25,7 @@ def create_user(handler, username, email):
   user = handler.models.users()
   user.username = username
   user.name = username
-  user.oauth = email
+  user.email = email
   user.superuser = False
   user.author = False
   user.theme = 'css/themes/pixel/_compiled_pixel.css'

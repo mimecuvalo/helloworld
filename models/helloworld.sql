@@ -140,7 +140,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL auto_increment,
   `username` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `oauth` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
   `author` tinyint(1) NOT NULL default '0',
   `superuser` tinyint(1) NOT NULL default '0',
   `title` varchar(255) NOT NULL,
@@ -164,6 +164,9 @@ CREATE TABLE IF NOT EXISTS `users` (
   `theme_link` text NOT NULL,
   `theme_author` varchar(255) NOT NULL,
   `theme_author_link` text NOT NULL,
+  `twitter` text NOT NULL,
+  `facebook` text NOT NULL,
+  `google` text NOT NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `oauth` (`oauth`)

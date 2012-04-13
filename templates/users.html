@@ -36,7 +36,7 @@
           <th>{{ _('id') }}</th>
           <th>{{ _('username') }}</th>
           <th>{{ _('name') }}</th>
-          <th>{{ _('oauth') }}</th>
+          <th>{{ _('email') }}</th>
           <th>{{ _('author') }}</th>
           <th>{{ _('superuser') }}</th>
           <th>{{ _('hostname') }}</th>
@@ -51,7 +51,7 @@
               <input name="username" type="hidden" value="{{ one_user.username }}">
             </td>
             <td><input name="name" type="text" value="{{ one_user.name }}" onblur="hw.saveUser(event, this)"></td>
-            <td><input name="oauth" type="email" value="{{ one_user.oauth }}" onblur="hw.saveUser(event, this)"></td>
+            <td><input name="email" type="email" value="{{ one_user.email }}" onblur="hw.saveUser(event, this)"></td>
             <td><input name="author" type="checkbox" {% if one_user.author %}checked="checked"{% end %} onclick="hw.saveUser(event, this)"></td>
             <td><input name="superuser" type="checkbox" {% if one_user.superuser %}checked="checked"{% end %} onclick="hw.saveUser(event, this)"></td>
             <td><input name="hostname" type="text" value="{{ one_user.hostname }}" onblur="hw.saveUser(event, this)"></td>
@@ -62,7 +62,7 @@
             <td>{{ _('new') }}</td>
             <td><input name="username" pattern="\w+" maxlength="255" type="text" placeholder="{{ _('username') }}" required></td>
             <td><input name="name" maxlength="255" type="text" placeholder="name"></td>
-            <td><input name="oauth" type="email" placeholder="oauth" required></td>
+            <td><input name="email" type="email" placeholder="email" required></td>
             <td><input name="author" type="checkbox"></td>
             <td><input name="superuser" type="checkbox"></td>
             <td><input name="hostname" maxlength="255" type="text" placeholder="hostname"></td>

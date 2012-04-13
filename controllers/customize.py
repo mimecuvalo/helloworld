@@ -86,7 +86,7 @@ class CustomizeHandler(BaseHandler):
 
     user.title               = self.get_argument('title', '')
     user.description         = self.get_argument('description', '')
-    user.oauth               = self.get_argument('oauth')
+    user.email               = self.get_argument('email')
     user.name                = self.get_argument('name', '')
     user.favicon             = url_factory.clean_filename(self.get_argument('favicon', ''))
     user.currency            = self.get_argument('currency', '')

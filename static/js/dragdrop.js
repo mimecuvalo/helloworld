@@ -275,7 +275,16 @@ hw.followingDragDrop = function(event, el) {
   var insertBeforeElement = el.nextSibling;
   insertedElement = el.parentNode.insertBefore(draggedElement, insertBeforeElement);
 
-  var position = -4;  // we have 'read all'/'your feed'/'favorites'/'comments' in front
+  var position = 0;  // we have read all/your feed/favorites/comments/twitter/fb/goog in front
+  var followingList = hw.$('hw-following-list');
+  var followingListLis = followingList.getElementsByTagName('LI');
+  for (var x = 0; x < followingListLis.length; ++x) {
+    if (followingListLis[x].hasAttribute('draggable')) {
+      break;
+    }
+    --position;
+  }
+
   var sectionEl = insertedElement.parentNode.firstChild;
   while (sectionEl) {
     if (sectionEl.nodeName != "LI") {

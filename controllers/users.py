@@ -15,7 +15,7 @@ class UsersHandler(BaseHandler):
     if self.get_argument('login_as', None):
       content_url = url_factory.load_basic_parameters(self, prefix="/users")
       user = self.models.users.get(username=content_url["profile"])[0]
-      response = { 'email': user.oauth }
+      response = { 'email': user.email }
       self.set_secure_cookie("user", tornado.escape.json_encode(response), path=self.base_path, HttpOnly=True)
       self.redirect(self.nav_url(username=content_url["profile"]))
       return
@@ -31,7 +31,7 @@ class UsersHandler(BaseHandler):
 
     content_url = url_factory.load_basic_parameters(self, prefix="/users")
 
-    user = users.create_user(self, content_url["profile"], self.get_argument('oauth'))
+    user = users.create_user(self, content_url["profile"], self.get_argument('email'))
 
     self.save_user(user)
     self.set_status(204)
@@ -76,7 +76,7 @@ class UsersHandler(BaseHandler):
     self.set_status(204)
 
   def save_user(self, user):
-    user.oauth     = self.get_argument('oauth')
+    user.email     = self.get_argument('email')
     user.name      = self.get_argument('name', '')
     user.author    = int(self.get_argument('author'))
     user.superuser = int(self.get_argument('superuser'))

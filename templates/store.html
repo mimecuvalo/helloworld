@@ -35,8 +35,8 @@
         {% if not content_owner.currency or content_owner.currency == 'USD' %}${% end %}<span id="hw-cart-total"></span>
         {% if content_owner.currency and content_owner.currency != 'USD' %}{{ content_owner.currency }}{% end %}
       </strong>
-      <button type="button" onclick='hw.checkoutPaypal("{% raw js_in_html_escape(content_owner.oauth) %}", "{% raw js_in_html_escape(content_owner.currency) %}")'>{{ _('checkout with paypal') }}</button>
-      <button type="button" onclick='hw.checkoutBarter("{% raw js_in_html_escape(content_owner.oauth) %}", "{% raw js_in_html_escape(_("Hello, I'd like to make a barter!")) %}")'>{{ _('checkout via email/barter') }}</button>
+      <button type="button" onclick='hw.checkoutPaypal("{% raw js_in_html_escape(content_owner.email) %}", "{% raw js_in_html_escape(content_owner.currency) %}")'>{{ _('checkout with paypal') }}</button>
+      <button type="button" onclick='hw.checkoutBarter("{% raw js_in_html_escape(content_owner.email) %}", "{% raw js_in_html_escape(_("Hello, I'd like to make a barter!")) %}")'>{{ _('checkout via email/barter') }}</button>
     </div>
   </div>
 {% end %}

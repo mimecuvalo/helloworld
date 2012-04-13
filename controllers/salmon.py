@@ -88,7 +88,7 @@ class SalmonHandler(BaseHandler):
       user = users.get_remote_user_info(self, signer_uri, user_remote.local_username)
       user.follower = 1
       user.save()
-      smtp.follow(self, user.username, self.display["user"].oauth, user.profile_url)
+      smtp.follow(self, user.username, self.display["user"].email, user.profile_url)
     elif (activity_verb == 'http://ostatus.org/schema/1.0/unfollow' or activity_verb == 'http://activitystrea.ms/schema/1.0/stop-following'):
       user_remote.follower = 0
       user_remote.save()
@@ -211,6 +211,6 @@ class SalmonHandler(BaseHandler):
         socialize.socialize(self, content)
 
       if ref:
-        smtp.comment(self, post_remote.username, self.display["user"].oauth, self.content_url(content, host=True), sanitized_atom_content)
+        smtp.comment(self, post_remote.username, self.display["user"].email, self.content_url(content, host=True), sanitized_atom_content)
       elif this_user_mentioned:
-        smtp.comment(self, post_remote.username, self.display["user"].oauth, post_remote.link, sanitized_atom_content, this_user_mentioned=True)
+        smtp.comment(self, post_remote.username, self.display["user"].email, post_remote.link, sanitized_atom_content, this_user_mentioned=True)

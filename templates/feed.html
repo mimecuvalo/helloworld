@@ -26,11 +26,11 @@
     <activity:object-type>http://activitystrea.ms/schema/1.0/person</activity:object-type>
     <name>{{ user.name }}</name>
     <uri>{{ nav_url(host=True, username=user.username) }}</uri>
-    <email>{{ user.oauth }}</email>
+    <email>{{ user.email }}</email>
     <poco:preferredUsername>{{ user.username }}</poco:preferredUsername>
     <poco:displayName>{{ user.name }}</poco:displayName>
     <poco:emails>
-      <poco:value>{{ user.oauth }}</poco:value>
+      <poco:value>{{ user.email }}</poco:value>
       <poco:type>home</poco:type>
       <poco:primary>true</poco:primary>
     </poco:emails>

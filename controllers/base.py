@@ -114,7 +114,7 @@ class BaseHandler(tornado.web.RequestHandler):
 
   def get_user_information(self):
     if self.current_user:
-      user = self.models.users.get(oauth=self.current_user["email"])[0]
+      user = self.models.users.get(email=self.current_user["email"])[0]
       self.current_user["user"]      = user           if user else None
       self.current_user["userid"]    = user.id        if user else None
       self.current_user["username"]  = user.username  if user else None

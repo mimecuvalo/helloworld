@@ -208,9 +208,9 @@
           <span class="hw-label">{{ _('name') }}</span>
           <input id="hw-name" class="hw-field" name="name" maxlength="255" type="text" placeholder="{{ _('name') }}" value="{{ user.name }}">
         </label>
-        <label for="hw-oauth">
+        <label for="hw-email">
           <span class="hw-label">{{ _('email') }}</span>
-          <input id="hw-oauth" class="hw-field" name="oauth" maxlength="255" type="text" data-default="{{ user.oauth }}" placeholder="{{ _('email') }}" value="{{ user.oauth }}" onchange="if (!confirm('{{ js_escape(_('double check your address - you won\'t be able to login again if it\'s wrong. is this correct? ')) }}' + this.value)) this.value=this.getAttribute('data-default')">
+          <input id="hw-email" class="hw-field" name="email" maxlength="255" type="text" data-default="{{ user.email }}" placeholder="{{ _('email') }}" value="{{ user.email }}" onchange="if (!confirm('{{ js_escape(_('double check your address - you won\'t be able to login again if it\'s wrong. is this correct? ')) }}' + this.value)) this.value=this.getAttribute('data-default')">
         </label>
       </div>
     </fieldset>

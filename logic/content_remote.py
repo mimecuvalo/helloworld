@@ -1,4 +1,5 @@
 import datetime
+import httplib
 import json
 import random
 import re
@@ -169,3 +170,16 @@ def get_comments(handler, content):
   for comment in remote_comments:
     comment.is_remote = 1
   return remote_comments
+
+def get_url(url):
+  url = urlparse.urlparse(url)
+  conn = httplib.HTTPConnection(url.netloc)
+  conn.request("GET", url.path + '?' + url.query)
+  class Response:
+    def __init__(self, response):
+      self.error = False
+      self.body = response.read()
+  response = Response(conn.getresponse())
+  conn.close()
+
+  return response

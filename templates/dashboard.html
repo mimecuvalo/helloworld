@@ -85,6 +85,47 @@
         </a>
         <a href="#comments" class="hw-following-username" onclick="hw.read(event, this, null, 'comments')">{{ _('comments') }}</a><a href="#comments" class="hw-unread-count" onclick="hw.read(event, this, null, 'comments')">&nbsp;({{ comments_count }})</a>
       </li>
+
+      <li id="hw-following-twitter" data-user="">
+        {% if user.twitter %}
+          <a href="#twitter" onclick="hw.read(event, this, null, 'twitter')" title="{{ _('Twitter') }}">
+            <img height="16" width="16" src="http://twitter.com/favicon.ico" />
+          </a>
+          <a href="#twitter" class="hw-following-username" onclick="hw.read(event, this, null, 'twitter')">{{ _('twitter') }}</a><a href="#twitter" class="hw-unread-count" onclick="hw.read(event, this, null, 'twitter')">&nbsp;({{ twitter_count }})</a>
+        {% else %}
+          <a href="{{ nav_url(section='twitter') }}" title="{{ _('connect to twitter') }}">
+            <img height="16" width="16" src="http://twitter.com/favicon.ico" />
+          </a>
+          <a href="{{ nav_url(section='twitter') }}">{{ _('connect to twitter') }}</a>
+        {% end %}
+      </li>
+      <li id="hw-following-facebook" data-user="">
+        {% if user.facebook %}
+          <a href="#facebook" onclick="hw.read(event, this, null, 'facebook')" title="{{ _('Facebook') }}">
+            <img height="16" width="16" src="http://facebook.com/favicon.ico" />
+          </a>
+          <a href="#facebook" class="hw-following-username" onclick="hw.read(event, this, null, 'facebook')">{{ _('facebook') }}</a><a href="#facebook" class="hw-unread-count" onclick="hw.read(event, this, null, 'facebook')">&nbsp;({{ facebook_count }})</a>
+        {% else %}
+          <a href="{{ nav_url(section='facebook') }}" title="{{ _('connect to facebook') }}">
+            <img height="16" width="16" src="http://facebook.com/favicon.ico" />
+          </a>
+          <a href="{{ nav_url(section='facebook') }}">{{ _('connect to facebook') }}</a>
+        {% end %}
+      </li>
+      <li id="hw-following-google" data-user="">
+        {% if user.google %}
+          <a href="#google" onclick="hw.read(event, this, null, 'google')" title="{{ _('Google') }}">
+            <img height="16" width="16" src="http://plus.google.com/favicon.ico" />
+          </a>
+          <a href="#google" class="hw-following-username" onclick="hw.read(event, this, null, 'google')">{{ _('google') }}</a><a href="#google" class="hw-unread-count" onclick="hw.read(event, this, null, 'google')">&nbsp;({{ google_count }})</a>
+        {% else %}
+          <a href="{{ nav_url(section='google') }}" title="{{ _('connect to google') }}">
+            <img height="16" width="16" src="http://plus.google.com/favicon.ico" />
+          </a>
+          <a href="{{ nav_url(section='google') }}">{{ _('connect to google') }}</a>
+        {% end %}
+      </li>
+
       {% for follower in following %}
         {% if follower.name %}
           {% set name = follower.name %}
@@ -118,13 +159,6 @@
         <a href="#spam" onclick="hw.read(event, this, null, 'spam')">{{ _('review spam') }}</a><span class="hw-unread-count" onclick="hw.read(event, this, null, 'spam')">&nbsp;({{ spam_count }})</span>
       </li>
     </ul>
-  </div>
-
-  <div>
-    under construction<br>
-    <a href="">connect facebook</a><br>
-    <a href="{{ nav_url(section='twitter_auth') }}">connect twitter</a><br>
-    <a href="">connect google+</a><br>
   </div>
 
   <div id="hw-followers">

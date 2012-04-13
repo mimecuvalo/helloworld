@@ -79,7 +79,7 @@ hw.customSave = function(event, el) {
     { method: 'post',
       postBody: 'title='               + encodeURIComponent(customForm['title'].value)
              + '&description='         + encodeURIComponent(customForm['description'].value)
-             + '&oauth='               + encodeURIComponent(customForm['oauth'].value)
+             + '&email='               + encodeURIComponent(customForm['email'].value)
              + '&name='                + encodeURIComponent(customForm['name'].value)
              + '&favicon='             + encodeURIComponent(customForm['favicon'].value)
              + '&currency='            + encodeURIComponent(customForm['currency'].value)

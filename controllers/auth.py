@@ -9,7 +9,6 @@ from base import BaseHandler
 from logic import users
 
 # BrowserId: https://browserid.org/developers
-# or OAUTH
 class AuthHandler(BaseHandler, tornado.auth.GoogleMixin):
   def post(self):
     assertion = self.get_argument('assertion')
