@@ -21,16 +21,17 @@ class GoogleHandler(BaseHandler,
 
     if self.get_argument("oauth_token", False):
         self.get_sync_authenticated_user(
-          redirect_uri='/google',
+          redirect_uri=self.nav_url(section='google'),
           client_id=self.settings["google_api_key"],
           client_secret=self.settings["google_secret"],
           code=self.get_argument("oauth_token"),
           callback=self.async_callback(
             self._on_auth))
         return
-    self.authorize_redirect(redirect_uri='/google',
+    self.authorize_redirect(redirect_uri=self.nav_url(section='google'),
                             client_id=self.settings["google_api_key"],
-                            extra_params={"scope": "https://www.googleapis.com/auth/plus"})
+                            extra_params={"scope": "https://www.googleapis.com/auth/plus",
+                                          "response_type": "code", })
 
   def get_sync_authenticated_user(self, callback, http_client=None):
     """Gets the OAuth authorized user and access token on callback.
