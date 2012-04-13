@@ -37,20 +37,15 @@ class GoogleHandler(BaseHandler,
   def get_sync_authenticated_user(self, redirect_uri, client_id, client_secret,
                                   code, callback, extra_fields=None):
     args = {
-      "grant_type": 'authorization_code',
       "client_id": client_id,
       "client_secret": client_secret,
       "code": code,
       "redirect_uri": redirect_uri,
-      "scope": self._OAUTH_SCOPE_URL,
+      "extra_params": {"scope": self._OAUTH_SCOPE_URL,
+                       "grant_type": 'authorization_code', }
     }
 
-    fields = set(['id', 'name', 'first_name', 'last_name',
-                  'locale', 'picture', 'link'])
-    if extra_fields:
-      fields.update(extra_fields)
-
-    response = content_remote.get_url(self._oauth_access_token_url(**args))
+    response = content_remote.get_url(self._oauth_request_token_url(**args))
     self._on_access_token(callback, response)
 
   def _on_access_token(self, callback, response):
