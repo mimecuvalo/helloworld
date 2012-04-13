@@ -50,7 +50,7 @@ class TwitterHandler(BaseHandler,
       parsed_date = datetime.datetime.strptime(parsed_date, '%a %b %d %H:%M:%S %Y')
 
       # we don't keep items that are over 30 days old
-      if parsed_date < datetime.datetime.utcnow() - datetime.timedelta(days=max_days_old):
+      if parsed_date < datetime.datetime.utcnow() - datetime.timedelta(days=self.constants['feed_max_days_old']):
         continue
 
       new_tweet.date_created = parsed_date
