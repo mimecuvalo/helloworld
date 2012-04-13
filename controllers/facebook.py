@@ -1,3 +1,4 @@
+import datetime
 import json
 import logging
 import urllib
@@ -37,8 +38,55 @@ class FacebookHandler(BaseHandler,
                             extra_params={"scope": "read_stream,publish_stream" })
 
   def timeline_result(self, response):
-    logging.error('fb')
-    logging.error(repr(response))
+    posts = response['data']
+    for post in posts:
+      exists = self.models.content_remote.get(to_username=self.user.username, type='facebook', post_id=post['id'])[0]
+
+      date_updated = None
+      if post.has_key('updated_time'):
+        date_updated = datetime.datetime.strptime(post['updated_time'][:-5], '%Y-%m-%dT%H:%M:%S')
+
+      if exists:
+        if date_updated and date_updated != exists.date_updated:
+          new_post = exists
+        else:
+          continue
+      else:
+        new_post = self.models.content_remote()
+
+      new_post.to_username = self.user.username
+      new_post.username = post['from']['name']
+      new_post.from_user = post['actions'][0]['link']
+      #new_post.avatar = tweet['user']['profile_image_url']
+
+      parsed_date = datetime.datetime.strptime(post['created_time'][:-5], '%Y-%m-%dT%H:%M:%S')
+
+      # we don't keep items that are over 30 days old
+      if parsed_date < datetime.datetime.utcnow() - datetime.timedelta(days=self.constants['feed_max_days_old']):
+        continue
+
+      new_post.date_created = parsed_date
+      new_post.date_updated = date_updated
+      new_post.comments_count = 0
+      new_post.comments_updated = None
+      new_post.type = 'facebook'
+      new_post.title = ''
+      new_post.post_id = post['id']
+      new_post.link = post['actions'][0]['link']
+      view = ""
+      if post.has_key('picture'):
+        view += '<img src="' + post['picture'] + '">'
+      if post.has_key('message'):
+        view += post['message']
+      if post.has_key('caption'):
+        view += post['caption']
+      if post.has_key('description'):
+        view += post['description']
+      new_post.view = view
+      new_post.save()
+
+    count = self.models.content_remote.get(to_username=self.user.username, type='facebook', deleted=False).count()
+    self.write(json.dumps({ 'count': count }))
 
   def facebook_request(self, path, callback, access_token=None,
                        post_args=None, **args):
