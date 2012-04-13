@@ -34,7 +34,7 @@ class TwitterHandler(BaseHandler,
 
   def timeline_result(self, tweets):
     for tweet in tweets:
-      exists = self.models.content_remote.get(to_username=self.user.username, type='twitter', post_id=tweet['id'])[0]
+      exists = self.models.content_remote.get(to_username=self.user.username, type='twitter', post_id=str(tweet['id']))[0]
 
       if exists:
         continue
@@ -59,8 +59,8 @@ class TwitterHandler(BaseHandler,
       new_tweet.comments_updated = None
       new_tweet.type = 'twitter'
       new_tweet.title = ''
-      new_tweet.post_id = tweet['id']
-      new_tweet.link = 'http://twitter.com/' + tweet['user']['screen_name'] + '/status/' + tweet['id']
+      new_tweet.post_id = str(tweet['id'])
+      new_tweet.link = 'http://twitter.com/' + tweet['user']['screen_name'] + '/status/' + str(tweet['id'])
       new_tweet.view = tweet['text']
       new_tweet.save()
 
