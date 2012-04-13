@@ -143,7 +143,13 @@ class TwitterAuthHandler(BaseHandler,
     response = content_remote.get_url(self._oauth_access_token_url(token))
     self._on_access_token(callback, response)
 
-  def _oauth_get_user(self, access_token, callback):
+  def _on_access_token(self, callback, response):
+    if response.error:
+      logging.warning("Could not fetch access token")
+      callback(None)
+      return
+
+    access_token = tornado.auth._oauth_parse_response(response.body)
     callback(access_token)
 
   def _on_auth(self, access_token):
