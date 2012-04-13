@@ -38,30 +38,30 @@ class TwitterHandler(BaseHandler,
       if exists:
         continue
       else:
-        new_entry = self.models.content_remote()
+        new_tweet = self.models.content_remote()
 
-      new_entry.to_username = self.user.username
-      new_entry.username = entry['screen_name']
-      new_entry.from_user = 'http://twitter.com/' + entry['screen_name']
-      new_entry.avatar = entry['profile_image_url']
+      new_tweet.to_username = self.user.username
+      new_tweet.username = tweet['screen_name']
+      new_tweet.from_user = 'http://twitter.com/' + tweet['screen_name']
+      new_tweet.avatar = tweet['profile_image_url']
 
-      parsed_date = re.compile(r'\+.....').sub('', entry['created_at'])
+      parsed_date = re.compile(r'\+.....').sub('', tweet['created_at'])
       parsed_date = datetime.datetime.strptime(parsed_date, '%a %b %d %H:%M:%S %Y')
 
       # we don't keep items that are over 30 days old
       if parsed_date < datetime.datetime.utcnow() - datetime.timedelta(days=max_days_old):
         continue
 
-      new_entry.date_created = parsed_date
-      new_entry.date_updated = None
-      new_entry.comments_count = 0
-      new_entry.comments_updated = None
-      new_entry.type = 'twitter'
-      new_entry.title = ''
-      new_entry.post_id = entry['id']
-      new_entry.link = 'http://twitter.com/' + entry['screen_name'] + '/status/' + entry['id']
-      new_entry.view = entry['text']
-      new_entry.save()
+      new_tweet.date_created = parsed_date
+      new_tweet.date_updated = None
+      new_tweet.comments_count = 0
+      new_tweet.comments_updated = None
+      new_tweet.type = 'twitter'
+      new_tweet.title = ''
+      new_tweet.post_id = tweet['id']
+      new_tweet.link = 'http://twitter.com/' + tweet['screen_name'] + '/status/' + tweet['id']
+      new_tweet.view = tweet['text']
+      new_tweet.save()
 
     count = self.models.content_remote.get(to_username=user.username, type='twitter', deleted=False).count()
     json = json.dumps({ 'count': count })
