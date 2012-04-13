@@ -3,6 +3,7 @@ import httplib
 import json
 import random
 import re
+import urllib
 import urllib2
 import urlparse
 from time import mktime
@@ -171,10 +172,14 @@ def get_comments(handler, content):
     comment.is_remote = 1
   return remote_comments
 
-def get_url(url):
+def get_url(url, post=False):
   url = urlparse.urlparse(url)
-  conn = httplib.HTTPConnection(url.netloc)
-  conn.request("GET", url.path + '?' + url.query)
+  conn = httplib.HTTPSConnection(url.netloc) if url['scheme'] == 'https' else httplib.HTTPConnection(url.netloc)
+  if post:
+    headers = {"Content-type": "application/x-www-form-urlencoded"}
+    conn.request("POST", url.path, url.query, headers)
+  else:
+    conn.request("GET", url.path + '?' + url.query)
   class Response:
     def __init__(self, response):
       self.error = False

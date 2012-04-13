@@ -45,7 +45,7 @@ class GoogleHandler(BaseHandler,
                        "grant_type": 'authorization_code', }
     }
 
-    response = content_remote.get_url(self._oauth_request_token_url(**args))
+    response = content_remote.get_url(self._oauth_request_token_url(**args), post=True)
     self._on_access_token(callback, response)
 
   def _on_access_token(self, callback, response):
@@ -54,8 +54,7 @@ class GoogleHandler(BaseHandler,
       callback(None)
       return
 
-    args = tornado.escape.parse_qs_bytes(tornado.escape.native_str(response.body))
-    access_token = args["access_token"][-1]
+    access_token = tornado.auth._oauth_parse_response(response.body)
     callback(access_token)
 
   def _on_auth(self, access_token):
