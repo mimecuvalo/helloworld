@@ -9,8 +9,8 @@ import tornado.web
 from base import BaseHandler
 from logic import content_remote
 
-class TwitterHandler(BaseHandler,
-                     tornado.auth.TwitterMixin):
+class FacebookHandler(BaseHandler,
+                      tornado.auth.FacebookGraphMixin):
   def get(self):
     if not self.authenticate(author=True):
       return

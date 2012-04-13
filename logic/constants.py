@@ -11,6 +11,10 @@ defaults = {
   'smtp_password' : '',
   'twitter_consumer_key' : '',
   'twitter_consumer_secret' : '',
+  'google_api_key' : '',
+  'google_secret' : '',
+  'facebook_api_key' : '',
+  'facebook_secret' : '',
 
   'debug' : 0,
   'port' : 8282,
