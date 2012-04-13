@@ -8,6 +8,7 @@ import tornado.web
 from base import BaseHandler
 from logic import content_remote
 
+# This monkeypatches tornado to do sync instead of async
 class GoogleHandler(BaseHandler,
                     tornado.auth.OAuth2Mixin):
   _OAUTH_REQUEST_TOKEN_URL = 'https://accounts.google.com/o/oauth2/token'
@@ -19,7 +20,11 @@ class GoogleHandler(BaseHandler,
     if not self.authenticate(author=True):
       return
 
-    if self.get_argument("code", False):
+    if self.get_argument("get_feed", None):
+      # XXX google has no news feed api?
+      self.set_status(400)
+      return
+    elif self.get_argument("code", False):
       self.get_sync_authenticated_user(
         redirect_uri=self.nav_url(host=True, section='google'),
         client_id=self.settings["google_api_key"],
@@ -32,6 +37,35 @@ class GoogleHandler(BaseHandler,
                             client_id=self.settings["google_api_key"],
                             extra_params={"scope": self._OAUTH_SCOPE_URL,
                                           "response_type": "code", })
+
+  def timeline_result(response):
+    logging.error('google')
+    logging.error(repr(response))
+
+  def google_request(self, path, callback, access_token=None,
+                       post_args=None, **args):
+    url = "https://www.googleapis.com/plus/v1" + path
+    if access_token:
+      all_args = {}
+      all_args.update(args)
+      all_args.update(post_args or {})
+      method = "POST" if post_args is not None else "GET"
+      oauth = self._oauth_request_parameters(
+          url, access_token, all_args, method=method)
+      args.update(oauth)
+    if args:
+      url += "?" + urllib.urlencode(args)
+
+    response = content_remote.get_url(url, post=(post_args is not None))
+    self._on_google_request(callback, response)
+
+  def _on_google_request(self, callback, response):
+    if response.error:
+      logging.warning("Error response %s fetching %s", response.error,
+                      response.request.url)
+      callback(None)
+      return
+    callback(tornado.escape.json_decode(response.body))
 
   def get_sync_authenticated_user(self, redirect_uri, client_id, client_secret,
                                   code, callback, extra_fields=None):

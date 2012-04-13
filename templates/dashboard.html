@@ -47,6 +47,7 @@
 
     window.setInterval(hw.sendMarkedAsRead, 500);
     window.setInterval(hw.updateCounts, 30000);
+    hw.updateCounts();
   </script>
 {% end %}
 
@@ -86,7 +87,7 @@
         <a href="#comments" class="hw-following-username" onclick="hw.read(event, this, null, 'comments')">{{ _('comments') }}</a><a href="#comments" class="hw-unread-count" onclick="hw.read(event, this, null, 'comments')">&nbsp;({{ comments_count }})</a>
       </li>
 
-      <li id="hw-following-twitter" data-user="">
+      <li id="hw-following-twitter" data-user="" {% if user.twitter %}data-enabled{% end %}>
         {% if user.twitter %}
           <a href="#twitter" onclick="hw.read(event, this, null, 'twitter')" title="{{ _('Twitter') }}">
             <img height="16" width="16" src="http://twitter.com/favicon.ico" />
@@ -99,7 +100,7 @@
           <a href="{{ nav_url(section='twitter') }}">{{ _('connect to twitter') }}</a>
         {% end %}
       </li>
-      <li id="hw-following-facebook" data-user="">
+      <li id="hw-following-facebook" data-user="" {% if user.facebook %}data-enabled{% end %}>
         {% if user.facebook %}
           <a href="#facebook" onclick="hw.read(event, this, null, 'facebook')" title="{{ _('Facebook') }}">
             <img height="16" width="16" src="http://facebook.com/favicon.ico" />
@@ -112,7 +113,7 @@
           <a href="{{ nav_url(section='facebook') }}">{{ _('connect to facebook') }}</a>
         {% end %}
       </li>
-      <li id="hw-following-google" data-user="">
+      <li id="hw-following-google" data-user="" {% if user.google %}data-enabled{% end %}>
         {% if user.google %}
           <a href="#google" onclick="hw.read(event, this, null, 'google')" title="{{ _('Google') }}">
             <img height="16" width="16" src="http://plus.google.com/favicon.ico" />

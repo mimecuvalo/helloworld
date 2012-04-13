@@ -9,16 +9,27 @@ import tornado.web
 from base import BaseHandler
 from logic import content_remote
 
+# This monkeypatches tornado to do sync instead of async
 class TwitterHandler(BaseHandler,
                      tornado.auth.TwitterMixin):
   def get(self):
     if not self.authenticate(author=True):
       return
 
-    if self.get_argument("oauth_token", None):
+    if self.get_argument("get_feed", None):
+      access_token = json.loads(self.get_author_user().twitter)
+      self.twitter_request(
+            "statuses/home_timeline",
+            access_token=access_token, callback=self.timeline_result)
+      return
+    elif self.get_argument("oauth_token", None):
       self.get_sync_authenticated_user(self._on_auth)
       return
     self.authorize_redirect()
+
+  def timeline_result(response):
+    logging.error('twitter')
+    logging.error(repr(response))
 
   def twitter_request(path, callback, access_token=None,
                       post_args=None, **args):
@@ -76,16 +87,8 @@ class TwitterHandler(BaseHandler,
     if args:
       url += "?" + urllib.urlencode(args)
 
-    if post_args is not None:
-      pass
-      # XXX doesn't work right now
-      #response = content_remote.get_url(url)
-      #self._on_twitter_request(callback, response)
-      #http.fetch(url, method="POST", body=urllib.urlencode(post_args),
-      #           callback=callback)
-    else:
-      response = content_remote.get_url(url)
-      self._on_twitter_request(callback, response)
+    response = content_remote.get_url(url, post=(post_args is not None))
+    self._on_twitter_request(callback, response)
 
   def authorize_redirect(self, callback_uri=None, extra_params=None,
                          http_client=None):

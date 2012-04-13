@@ -403,6 +403,9 @@ hw.updateCounts = function() {
     hw.updateCount(hw.$$('#hw-following #hw-following-favorites .hw-unread-count')[0], null, json['favorites_count']);
     hw.updateCount(hw.$$('#hw-following #hw-following-comments .hw-unread-count')[0], null, json['comments_count']);
     hw.updateCount(hw.$$('#hw-following #hw-following-spam .hw-unread-count')[0], null, json['spam_count']);
+    hw.updateCount(hw.$$('#hw-following #hw-following-twitter .hw-unread-count')[0], null, json['twitter_count']);
+    hw.updateCount(hw.$$('#hw-following #hw-following-facebook .hw-unread-count')[0], null, json['facebook_count']);
+    hw.updateCount(hw.$$('#hw-following #hw-following-google .hw-unread-count')[0], null, json['google_count']);
 
     for (var user in json) {
       if (user.indexOf('http') == 0) {
@@ -417,6 +420,8 @@ hw.updateCounts = function() {
       headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
       onSuccess: callback,
       onError: function() {} });
+
+  hw.updateExternal();
 };
 
 hw.unfollow = function(event, el) {
@@ -736,3 +741,22 @@ hw.outgoingLink = function(event) {
     el = el.parentNode;
   }
 };
+
+hw.updateExternal = function() {
+  var externalSources = ['twitter', 'facebook', 'google'];
+  for (var x = 0; x < externalSources.length; ++x) {
+    if (hw.$('hw-following-' + externalSources[x]).hasAttribute('data-enabled')) {
+      new hw.ajax(hw.baseUri() + externalSources[x] + '?get_feed=1',
+        { method: 'get',
+          onSuccess: hw.updateExternalHelper(externalSources[x]),
+          onError: function() { } });
+    }
+  }
+};
+
+hw.updateExternalHelper = function(service) {
+  return function(xhr) {
+    var json = JSON.parse(xhr.responseText);
+    hw.updateCount(hw.$$('#hw-following #hw-following-' + service + ' .hw-unread-count')[0], null, json['count']);
+  }
+}
