@@ -26,12 +26,13 @@ from autumn.db.connection import autumn_db
 autumn_db.conn.connect('mysql', host=constants['mysql_host'], user=constants['mysql_user'], passwd=constants['mysql_password'], db=constants['mysql_database'], charset="utf8", use_unicode=True)
 from models import base as models
 
+types = ['post', 'twitter', 'facebook', 'google']
+for t in types:
+  content_remote = models.content_remote.get(type=t, favorited=False)[:]
 
-content_remote = models.content_remote.get(type='post', favorited=False)[:]
-
-for content in content_remote:
-  try:
-    if content.date_created < datetime.datetime.utcnow() - datetime.timedelta(days=constants['feed_max_days_old']):
-      content.delete()
-  except:
-    pass
+  for content in content_remote:
+    try:
+      if content.date_created < datetime.datetime.utcnow() - datetime.timedelta(days=constants['feed_max_days_old']):
+        content.delete()
+    except:
+      pass

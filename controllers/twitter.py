@@ -1,6 +1,7 @@
 import base64
 import json
 import logging
+import re
 import urllib
 
 import tornado.auth
@@ -18,7 +19,8 @@ class TwitterHandler(BaseHandler,
       return
 
     if self.get_argument("get_feed", None):
-      access_token = json.loads(self.get_author_user().twitter)
+      self.user = self.get_author_user()
+      access_token = json.loads(self.user.twitter)
       self.twitter_request(
             "/statuses/home_timeline",
             self.timeline_result,
@@ -29,9 +31,41 @@ class TwitterHandler(BaseHandler,
       return
     self.authorize_redirect()
 
-  def timeline_result(self, response):
-    logging.error('twitter')
-    logging.error(repr(response))
+  def timeline_result(self, tweets):
+    for tweet in tweets:
+      exists = models.content_remote.get(to_username=self.user.username, post_id=tweet['id'])[0]
+
+      if exists:
+        continue
+      else:
+        new_entry = models.content_remote()
+
+      new_entry.to_username = self.user.username
+      new_entry.username = entry['screen_name']
+      new_entry.from_user = 'http://twitter.com/' + entry['screen_name']
+      new_entry.avatar = entry['profile_image_url']
+
+      parsed_date = re.compile(r'\+.....').sub('', entry['created_at'])
+      parsed_date = datetime.datetime.strptime(parsed_date, '%a %b %d %H:%M:%S %Y')
+
+      # we don't keep items that are over 30 days old
+      if parsed_date < datetime.datetime.utcnow() - datetime.timedelta(days=max_days_old):
+        continue
+
+      new_entry.date_created = parsed_date
+      new_entry.date_updated = None
+      new_entry.comments_count = 0
+      new_entry.comments_updated = None
+      new_entry.type = 'twitter'
+      new_entry.title = ''
+      new_entry.post_id = entry['id']
+      new_entry.link = 'http://twitter.com/' + entry['screen_name'] + '/status/' + entry['id']
+      new_entry.view = entry['text']
+      new_entry.save()
+
+    count = self.models.content_remote.get(to_username=user.username, type='twitter', deleted=False).count()
+    json = json.dumps({ 'count': count })
+    self.write(json)
 
   def twitter_request(self, path, callback, access_token=None,
                       post_args=None, **args):

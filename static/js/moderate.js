@@ -746,10 +746,12 @@ hw.updateExternal = function() {
   var externalSources = ['twitter', 'facebook', 'google'];
   for (var x = 0; x < externalSources.length; ++x) {
     if (hw.$('hw-following-' + externalSources[x]).hasAttribute('data-enabled')) {
-      new hw.ajax(hw.baseUri() + externalSources[x] + '?get_feed=1',
-        { method: 'get',
-          onSuccess: hw.updateExternalHelper(externalSources[x]),
-          onError: function() { } });
+      setTimeout(function() {
+        new hw.ajax(hw.baseUri() + externalSources[x] + '?get_feed=1',
+          { method: 'get',
+            onSuccess: hw.updateExternalHelper(externalSources[x]),
+            onError: function() { } });
+      }, 0);
     }
   }
 };

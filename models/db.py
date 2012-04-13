@@ -18,7 +18,7 @@ def search(profile, query, begin, page_size):
 
 # this will work for now...
 def dashboard_feed(profile, begin, page_size, sort_type, read_all_mode, specific_feed, just_local_feed, local_entry=None, remote_entry=None, \
-                   spam=False, favorite=False, comments=False, query=None):
+                   spam=False, favorite=False, comments=False, twitter=False, facebook=False, google=False, query=None):
   content_local_restrict = ""
   content_remote_restrict = ""
   parameters = [profile, profile]
@@ -37,7 +37,7 @@ def dashboard_feed(profile, begin, page_size, sort_type, read_all_mode, specific
   if remote_entry:
     content_remote_restrict = """ AND `id` = %s """
     parameters.append(remote_entry)
-  elif not spam and not favorite and not comments and not query and read_all_mode == 0:
+  elif not spam and not favorite and not comments and not twitter and not facebook and not google and not query and read_all_mode == 0:
     content_remote_restrict += """ AND `read` = 0 """
   if spam:
     just_remote_feed = True
@@ -45,11 +45,23 @@ def dashboard_feed(profile, begin, page_size, sort_type, read_all_mode, specific
   if favorite:
     just_remote_feed = True
     content_remote_restrict += """ AND `favorited` = 1 """
+  if twitter:
+    just_remote_feed = True
+    content_remote_restrict += """ AND `type` = %s """
+    parameters.append('twitter')
+  if facebook:
+    just_remote_feed = True
+    content_remote_restrict += """ AND `type` = %s """
+    parameters.append('facebook')
+  if google:
+    just_remote_feed = True
+    content_remote_restrict += """ AND `type` = %s """
+    parameters.append('google')
   if comments:
     just_remote_feed = True
     content_remote_restrict += """ AND `type` = %s """
     parameters.append('comment')
-  elif not just_local_feed and not local_entry:
+  elif not just_local_feed and not local_entry and not twitter and not facebook and not google:
     content_remote_restrict += """ AND `type` = %s """
     parameters.append('post')
   if query:

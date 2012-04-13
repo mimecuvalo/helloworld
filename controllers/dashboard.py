@@ -47,6 +47,9 @@ class DashboardHandler(BaseHandler):
     self.display["read_spam"] = int(self.get_argument('read_spam', 0))
     self.display["read_favorites"] = int(self.get_argument('read_favorites', 0))
     self.display["read_comments"] = int(self.get_argument('read_comments', 0))
+    self.display["read_twitter"] = int(self.get_argument('read_twitter', 0))
+    self.display["read_facebook"] = int(self.get_argument('read_facebook', 0))
+    self.display["read_google"] = int(self.get_argument('read_google', 0))
     self.display["q"] = self.get_argument('q', None)
     self.display["specific_feed"] = self.get_argument('specific_feed', None)
     offset = int(self.breadcrumbs["modifier"]) if self.breadcrumbs["modifier"] else 1
@@ -68,6 +71,7 @@ class DashboardHandler(BaseHandler):
                                            self.display["specific_feed"], self.display["own_feed"], \
                                            self.display["local_entry"], self.display["remote_entry"], \
                                            self.display["read_spam"], self.display["read_favorites"], self.display["read_comments"], \
+                                           self.display["read_twitter"], self.display["read_facebook"], self.display["read_google"], \
                                            self.display["q"]) ]
 
     self.display['combined_feed'] = \
@@ -109,6 +113,6 @@ class DashboardHandler(BaseHandler):
     self.display['comments_count']  = self.models.content_remote.get(to_username=user.username, type='comment', deleted=False).count()
     self.display['spam_count']      = self.models.content_remote.get(to_username=user.username, is_spam=True, deleted=False).count()
 
-    self.display['twitter_count']  = total_count
-    self.display['facebook_count'] = total_count
-    self.display['google_count']   = total_count
+    self.display['twitter_count']  = self.models.content_remote.get(to_username=user.username, type='twitter', deleted=False).count()
+    self.display['facebook_count'] = self.models.content_remote.get(to_username=user.username, type='facebook', deleted=False).count()
+    self.display['google_count']   = self.models.content_remote.get(to_username=user.username, type='google', deleted=False).count()
