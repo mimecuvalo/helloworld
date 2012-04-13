@@ -36,7 +36,7 @@ class FacebookHandler(BaseHandler,
                             client_id=self.settings["facebook_api_key"],
                             extra_params={"scope": "read_stream,publish_stream" })
 
-  def timeline_result(response):
+  def timeline_result(self, response):
     logging.error('fb')
     logging.error(repr(response))
 

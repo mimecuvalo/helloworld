@@ -21,14 +21,15 @@ class TwitterHandler(BaseHandler,
       access_token = json.loads(self.get_author_user().twitter)
       self.twitter_request(
             "statuses/home_timeline",
-            access_token=access_token, callback=self.timeline_result)
+            callback=self.timeline_result,
+            access_token=access_token)
       return
     elif self.get_argument("oauth_token", None):
       self.get_sync_authenticated_user(self._on_auth)
       return
     self.authorize_redirect()
 
-  def timeline_result(response):
+  def timeline_result(self, response):
     logging.error('twitter')
     logging.error(repr(response))
 

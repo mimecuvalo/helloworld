@@ -39,7 +39,7 @@ class GoogleHandler(BaseHandler,
                             extra_params={"scope": self._OAUTH_SCOPE_URL,
                                           "response_type": "code", })
 
-  def timeline_result(response):
+  def timeline_result(self, response):
     logging.error('google')
     logging.error(repr(response))
 
