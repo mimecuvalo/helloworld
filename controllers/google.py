@@ -25,7 +25,7 @@ class GoogleHandler(BaseHandler,
         redirect_uri=self.nav_url(host=True, section='google'),
         client_id=self.settings["google_api_key"],
         client_secret=self.settings["google_secret"],
-        code=self.get_argument("oauth_token"),
+        code=self.get_argument("code"),
         callback=self.async_callback(
           self._on_auth))
       return
