@@ -33,12 +33,12 @@ class TwitterHandler(BaseHandler,
 
   def timeline_result(self, tweets):
     for tweet in tweets:
-      exists = models.content_remote.get(to_username=self.user.username, post_id=tweet['id'])[0]
+      exists = self.models.content_remote.get(to_username=self.user.username, post_id=tweet['id'])[0]
 
       if exists:
         continue
       else:
-        new_entry = models.content_remote()
+        new_entry = self.models.content_remote()
 
       new_entry.to_username = self.user.username
       new_entry.username = entry['screen_name']
