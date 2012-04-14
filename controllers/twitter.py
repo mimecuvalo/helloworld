@@ -47,7 +47,7 @@ class TwitterHandler(BaseHandler,
     self.user = self.get_author_user()
     access_token = json.loads(self.user.twitter)
     status =    content_logic.ellipsize(content_remote.strip_html(self.get_argument('title', '')), 18, including_dots=True) \
-        + (': ' if self.get_argument('view', '') else '') \
+        + (': ' if self.get_argument('title', '') and self.get_argument('view', '') else '') \
         + content_logic.ellipsize(content_remote.strip_html(self.get_argument('view', '')), 99, including_dots=True) \
         + ' ' + self.get_argument('url');
     self.twitter_request(

@@ -48,6 +48,7 @@ federated social web tumblr/blog/rss reader/wordpress-like app to be used on sha
 ## todo (hey, intrepid open source developer! check out all this stuff you could help work on! email me: mimecuvalo@gmail.com)
 - privacy
 - possibly: wiki
+- possibly: django port?
 - possibly: js "templating" - be able to add microformatting, creativeworks/recipes/person, schema.org
 - reduce/cache mysql calls
 - make oauth on the server so that external apps can plug in?

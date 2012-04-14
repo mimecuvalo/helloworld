@@ -805,7 +805,9 @@ hw.processFiles = function(json) {
 };
 
 hw.commentUploadButton = function() {
-  hw.uploadButton(function(json) { hw.processFiles(json); }, null, false, true, hw.$c('hw-comment-upload-wrapper'));
+  if (hw.$c('hw-comment-upload-wrapper')) {
+    hw.uploadButton(function(json) { hw.processFiles(json); }, null, false, true, hw.$c('hw-comment-upload-wrapper'));
+  }
 };
 
 hw.uploadButton = function(callback, section, opt_drop, opt_isComment, opt_attachToWrapper) {
