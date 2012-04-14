@@ -57,7 +57,8 @@ class FacebookHandler(BaseHandler,
 
       new_post.to_username = self.user.username
       new_post.username = post['from']['name']
-      new_post.from_user = post['actions'][0]['link']
+      if post.has_key('actions'):
+        new_post.from_user = post['actions'][0]['link']
       #new_post.avatar = tweet['user']['profile_image_url']
 
       parsed_date = datetime.datetime.strptime(post['created_time'][:-5], '%Y-%m-%dT%H:%M:%S')
@@ -73,7 +74,8 @@ class FacebookHandler(BaseHandler,
       new_post.type = 'facebook'
       new_post.title = ''
       new_post.post_id = post['id']
-      new_post.link = post['actions'][0]['link']
+      if post.has_key('actions'):
+        new_post.link = post['actions'][0]['link']
       view = ""
       if post.has_key('picture'):
         view += '<img src="' + post['picture'] + '">'
