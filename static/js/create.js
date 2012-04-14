@@ -109,6 +109,7 @@ hw.save = function() {
                       + '&title='               + encodeURIComponent(createForm['hw-title'].value)
                       + (hw.$c('hw-wysiwyg')    ? '&view=' + encodeURIComponent(finalHtml) : '')
                       + (createForm['hw-thumb'] ? '&thumb=' + encodeURIComponent(createForm['hw-thumb'].value) : ''),
+              headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
               onSuccess: function() { },
               onError: function() { } });
         }
