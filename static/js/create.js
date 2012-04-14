@@ -90,6 +90,7 @@ hw.addToFeed = function(html) {
 hw.save = function() {
   var createForm = hw.$c('hw-create');
   var response = hw.$c('hw-response');
+  var finalHtml = "";
 
   if (hw.isHidden(createForm)) {
     return;
@@ -106,7 +107,7 @@ hw.save = function() {
             { method: 'post',
               postBody: 'url='                  + encodeURIComponent(url)
                       + '&title='               + encodeURIComponent(createForm['hw-title'].value)
-                      + (hw.$c('hw-wysiwyg')    ? '&view=' + encodeURIComponent(html) : '')
+                      + (hw.$c('hw-wysiwyg')    ? '&view=' + encodeURIComponent(finalHtml) : '')
                       + (createForm['hw-thumb'] ? '&thumb=' + encodeURIComponent(createForm['hw-thumb'].value) : ''),
               onSuccess: function() { },
               onError: function() { } });
@@ -210,6 +211,8 @@ hw.save = function() {
     if (mediaHTML) {
       html = mediaHTML;
     }
+
+    finalHtml = html; // passed to external sources in callback
 
     new hw.ajax(createForm['hw-url'].value,
       { method: !createForm['hw-id'].value ? 'post' : 'put',
