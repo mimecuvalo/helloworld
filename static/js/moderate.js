@@ -387,6 +387,10 @@ hw.sort = function(event, el) {
 };
 
 hw.updateCount = function(el, delta, opt_setCount) {
+  if (!el) {
+    return;
+  }
+
   var newCount;
   if (opt_setCount != undefined) {
     newCount = opt_setCount;
@@ -759,4 +763,4 @@ hw.updateExternalHelper = function(service) {
     var json = JSON.parse(xhr.responseText);
     hw.updateCount(hw.$$('#hw-following #hw-following-' + service + ' .hw-unread-count')[0], null, json['count']);
   }
-}
+};

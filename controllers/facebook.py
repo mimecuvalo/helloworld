@@ -38,6 +38,22 @@ class FacebookHandler(BaseHandler,
                             client_id=self.settings["facebook_api_key"],
                             extra_params={"scope": "read_stream,publish_stream" })
 
+  def post(self):
+    if not self.authenticate(author=True):
+      return
+
+    self.user = self.get_author_user()
+    access_token = self.user.facebook
+    status = self.get_argument('title', '') + '\n' + self.get_argument('view', '') + '\n' + self.get_argument('url');
+    self.twitter_request(
+            "/me/feed",
+            self.status_update_result,
+            access_token=access_token,
+            post_args={"message": status},)
+
+  def status_update_result(self, response):
+    pass
+
   def timeline_result(self, response):
     posts = response['data']
     for post in posts:

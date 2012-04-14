@@ -731,3 +731,11 @@ section {
   display: inline-block;
   margin-top: 5px;
 }
+
+#hw-external-posts {
+  font-size: 11px;
+  margin-top: 5px;
+}
+#hw-external-posts-label {
+  font-weight: bold;
+}

@@ -96,6 +96,24 @@ hw.save = function() {
   }
 
   var callback = function(xhr) {
+    // XXX TODO if creating a new album/section we'll get a reload which messes this up...
+    if (!createForm['hw-id'].value) {
+      var url = /href="(.*?)"/.exec(xhr.responseText)[1];
+      var externalSources = ['twitter', 'facebook', 'google'];
+      for (var x = 0; x < externalSources.length; ++x) {
+        if (hw.$('hw-post-' + externalSources[x]).checked) {
+          new hw.ajax(hw.baseUri() + externalSources[x],
+            { method: 'post',
+              postBody: 'url='                  + encodeURIComponent(url)
+                      + '&title='               + encodeURIComponent(createForm['hw-title'].value)
+                      + (hw.$c('hw-wysiwyg')    ? '&view=' + encodeURIComponent(html) : '')
+                      + (createForm['hw-thumb'] ? '&thumb=' + encodeURIComponent(createForm['hw-thumb'].value) : ''),
+              onSuccess: function() { },
+              onError: function() { } });
+        }
+      }
+    }
+
     hw.resetSaveState();
 
     if (createForm['hw-id'].value && xhr.getResponseHeader('Location')) {
@@ -126,6 +144,7 @@ hw.save = function() {
       createForm['hw-section-album'].value = '';
       window.location.reload();
     }
+
   };
 
   var badTrip = function(xhr) {

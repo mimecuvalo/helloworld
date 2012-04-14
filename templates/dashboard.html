@@ -14,6 +14,18 @@
 {% block backend_content %}
   <div id="hw-create">
     {% module Create() %}
+    <div id="hw-external-posts">
+      <span id="hw-external-posts-label">{{ _('post to: ') }}</span>
+      {% if user.twitter or True %}
+        <label for="hw-post-twitter"><span>twitter</span><input id="hw-post-twitter" type="checkbox"></label>
+      {% end %}
+      {% if user.facebook or True  %}
+        <label for="hw-post-facebook"><span>facebook</span><input id="hw-post-facebook" type="checkbox"></label>
+      {% end %}
+      {% if user.google %}
+        <label for="hw-post-google"><span>google</span><input id="hw-post-google" type="checkbox"></label>
+      {% end %}
+    </div>
   </div>
 
   <div id="hw-absorb">

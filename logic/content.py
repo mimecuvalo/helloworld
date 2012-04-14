@@ -319,9 +319,11 @@ def strip_html(html):
   text = re.compile(r'<[^<]+?>|&.+?;', re.M | re.U).sub('', html)
   return re.compile(r'\s+').sub(' ', text)
 
-def ellipsize(text, max_length):
+def ellipsize(text, max_length, including_dots=False):
   if len(text) <= max_length:
     return text
+  if including_dots:
+    return text[:max_length - 3] + '...'
   return text[:max_length] + '...'
 
 def js_escape(string):

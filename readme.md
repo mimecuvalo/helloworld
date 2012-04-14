@@ -26,6 +26,7 @@ federated social web tumblr/blog/rss reader/wordpress-like app to be used on sha
 - api to follow/reblog content (pretty basic right now)
 - ability to add translations
 - caching (limited to disk caching for now; shared servers, mang!)
+- fb/google+/twitter mirroring (backwards compatibility ;)
 - other customization extras: newsletter, google analytics, basic ads, adult content age check, license
 
 ## setting up the repository
@@ -45,11 +46,11 @@ federated social web tumblr/blog/rss reader/wordpress-like app to be used on sha
 - be a good, easy-to-use alternative to what's out there!
 
 ## todo (hey, intrepid open source developer! check out all this stuff you could help work on! email me: mimecuvalo@gmail.com)
-- fb/google+/twitter mirroring?
 - privacy
 - possibly: wiki
 - possibly: js "templating" - be able to add microformatting, creativeworks/recipes/person, schema.org
 - reduce/cache mysql calls
+- make oauth on the server so that external apps can plug in?
 - mysql migrator
 - plugins?
 - translations (UI like [pontoon](https://github.com/mathjazz/pontoon))

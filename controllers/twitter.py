@@ -39,6 +39,24 @@ class TwitterHandler(BaseHandler,
       return
     self.authorize_redirect()
 
+  def post(self):
+    if not self.authenticate(author=True):
+      return
+
+    self.user = self.get_author_user()
+    access_token = json.loads(self.user.twitter)
+    status =    self.ellipsize(self.get_argument('title', ''), 19, including_dots=True)
+        + ':' + self.ellipsize(self.get_argument('view', ''), 99, including_dots=True)
+        + ':' + self.get_argument('url');
+    self.twitter_request(
+            "/statuses/update",
+            self.status_update_result,
+            access_token=access_token,
+            post_args={"status": status})
+
+  def status_update_result(self, response):
+    pass
+
   def timeline_result(self, tweets):
     for tweet in tweets:
       exists = self.models.content_remote.get(to_username=self.user.username, type='twitter', post_id=str(tweet['id']))[0]
