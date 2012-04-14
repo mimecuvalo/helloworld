@@ -47,7 +47,7 @@ class FacebookHandler(BaseHandler,
     status = content_remote.strip_html(self.get_argument('title', '')) + '\n' \
            + content_remote.strip_html(self.get_argument('view', '')) + '\n' \
            + self.get_argument('url');
-    self.twitter_request(
+    self.facebook_request(
             "/me/feed",
             self.status_update_result,
             access_token=access_token,
