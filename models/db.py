@@ -37,7 +37,7 @@ def dashboard_feed(profile, begin, page_size, sort_type, read_all_mode, specific
   if remote_entry:
     content_remote_restrict = """ AND `id` = %s """
     parameters.append(remote_entry)
-  elif not spam and not favorite and not comments and not twitter and not facebook and not google and not query and read_all_mode == 0:
+  elif not spam and not favorite and not comments and not query and read_all_mode == 0:
     content_remote_restrict += """ AND `read` = 0 """
   if spam:
     just_remote_feed = True
