@@ -188,3 +188,6 @@ def get_url(url, post=False):
   conn.close()
 
   return response
+
+def strip_html(html):
+  return re.compile(r'<.*?>', re.M | re.U).sub('', html)
