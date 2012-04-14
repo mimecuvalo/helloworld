@@ -103,7 +103,7 @@ hw.save = function() {
       var externalSources = ['twitter', 'facebook', 'google'];
       for (var x = 0; x < externalSources.length; ++x) {
         var sourceEl = hw.$('hw-post-' + externalSources[x]);
-        if (sourceEl.checked) {
+        if (sourceEl && sourceEl.checked) {
           new hw.ajax(hw.baseUri() + externalSources[x],
             { method: 'post',
               postBody: 'url='                  + encodeURIComponent(url)

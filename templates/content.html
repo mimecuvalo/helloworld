@@ -57,22 +57,6 @@
   <a href="{{ content_url(content, past=1) }}" style="float: right;">show past events</a><br>
 {% end %}
 
-<div class="hw-anchor-editor">
-  <header onmousedown="hw.dragElementStart(event, this)">{{ _('link editor') }}</header>
-  <input class="hw-anchor-link" name="hw-anchor-link" type="text" placeholder="{{ _('http://') }}" onchange="hw.changeAnchorLink(this)">
-  <a class="hw-anchor-visit" href="#" target="_blank">{{ _('visit') }}</a>
-  <a class="hw-anchor-remove" href="#removeLink" onclick='hw.wysiwyg(event, "createLink")'>{{ _('remove') }}</a><br>
-  <input type="radio" class="" name="hw-anchor-type" value="web" onclick="hw.changeAnchorType(this)"><label onclick="hw.changeAnchorType(this.previousSibling)">{{ _('web') }}</label>
-  <input type="radio" name="hw-anchor-type" value="email" onclick="hw.changeAnchorType(this)"><label onclick="hw.changeAnchorType(this.previousSibling)">{{ _('email') }}</label>
-</div>
-<div class="hw-image-options">
-  <header onmousedown="hw.dragElementStart(event, this)">{{ _('image options') }}</header>
-  <input type="radio" name="hw-image-align" value="none" onclick="hw.changeImageAlign(this)"><label onclick="hw.changeImageAlign(this.previousSibling)">{{ _('none') }}</label>
-  <input type="radio" name="hw-image-align" value="left" onclick="hw.changeImageAlign(this)"><label onclick="hw.changeImageAlign(this.previousSibling)">{{ _('left') }}</label>
-  <input type="radio" name="hw-image-align" value="right" onclick="hw.changeImageAlign(this)"><label onclick="hw.changeImageAlign(this.previousSibling)">{{ _('right') }}</label>
-  {% if username %}<a href="#edit-image" class="hw-edit-image" onclick="hw.editImage(event, this)">{{ _('edit image') }}</a>{% end %}
-</div>
-
 {% for item in content_list %}
 <section class="{% if individual_content %} hw-individual-content {% end %}{% if item.is_remote %} hw-remote {% end %} {% if section_template %}hw-template-{{ section_template }}{% end %}" {% if item.is_remote %}data-remote-profile-url="{{ item.from_user }}" data-remote-id="{{ item.id }}" data-unread="{% if item.is_remote and item.read %}false{% else %}true{% end %}" onclick="hw.markSectionAsRead(this)"{% end %}>
   {% if not item.restricted %}

@@ -103,7 +103,7 @@
         <span id="hw-theme-title">
           {% if content_owner.theme_link %}
             {% raw _('<a href="%(link)s">%(title)s</a> design') % { 'link': content_owner.theme_link, 'title': content_owner.theme_title } %}
-          {% else %}
+          {% elif content_owner.theme_title %}
             {{ _('%(title)s design') % { 'title': content_owner.theme_title } }}
           {% end %}
         </span>
@@ -111,7 +111,7 @@
           {% if content_owner.theme_author %}
             {% if content_owner.theme_author_link %}
               {% raw _('by <a href="%(link)s">%(author)s</a>') % { 'link': content_owner.theme_author_link, 'author': content_owner.theme_author } %}
-            {% else %}
+            {% elif content_owner.theme_author %}
               {{ _('by %(author)s') % { 'author': content_owner.theme_author } }}
             {% end %}
           {% end %}
