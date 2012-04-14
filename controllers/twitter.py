@@ -10,6 +10,7 @@ import tornado.escape
 import tornado.web
 
 from base import BaseHandler
+from logic import content as content_logic
 from logic import content_remote
 
 # This monkeypatches tornado to do sync instead of async
@@ -45,8 +46,8 @@ class TwitterHandler(BaseHandler,
 
     self.user = self.get_author_user()
     access_token = json.loads(self.user.twitter)
-    status =    self.ellipsize(content_remote.strip_html(self.get_argument('title', '')), 19, including_dots=True) \
-        + ':' + self.ellipsize(content_remote.strip_html(self.get_argument('view', '')), 99, including_dots=True) \
+    status =    content_logic.ellipsize(content_remote.strip_html(self.get_argument('title', '')), 19, including_dots=True) \
+        + ':' + content_logic.ellipsize(content_remote.strip_html(self.get_argument('view', '')), 99, including_dots=True) \
         + ':' + self.get_argument('url');
     self.twitter_request(
             "/statuses/update",
