@@ -146,6 +146,7 @@ class TwitterHandler(BaseHandler,
       oauth = self._oauth_request_parameters(
           url, access_token, all_args, method=method)
       args.update(oauth)
+      args.update(post_args)
     if args:
       url += "?" + urllib.urlencode(args)
 
