@@ -684,7 +684,7 @@ hw.markAllAsRead = function(event, el) {
   var user = el.getAttribute('data-user');
   var countEl;
   if (user == 'google' || user == 'facebook' || user == 'twitter') {
-    countEl = hw.$$('#hw-following hw-following-' + user + ' .hw-unread-count')[0];
+    countEl = hw.$$('#hw-following #hw-following-' + user + ' .hw-unread-count')[0];
   } else {
     countEl = hw.$$('#hw-following li[data-user="' + user + '"] .hw-unread-count')[0];
   }
