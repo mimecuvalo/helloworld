@@ -400,7 +400,7 @@ hw.updateCount = function(el, delta, opt_setCount) {
   el.innerHTML = '&nbsp;(' + newCount + ')';
 };
 
-hw.updateCounts = function() {
+hw.updateCounts = function(opt_skipExternal) {
   var callback = function(xhr) {
     var json = JSON.parse(xhr.responseText);
     hw.updateCount(hw.$('hw-total-unread-count'), null, json['total_count']);
@@ -425,7 +425,9 @@ hw.updateCounts = function() {
       onSuccess: callback,
       onError: function() {} });
 
-  hw.updateExternal();
+  if (!opt_skipExternal) {
+    hw.updateExternal();
+  }
 };
 
 hw.unfollow = function(event, el, opt_special) {
@@ -784,6 +786,6 @@ hw.updateExternal = function() {
 hw.updateExternalHelper = function(service) {
   return function(xhr) {
     var json = JSON.parse(xhr.responseText);
-    hw.updateCounts();
+    hw.updateCounts(true);
   }
 };
