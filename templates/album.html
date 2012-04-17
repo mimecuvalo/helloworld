@@ -23,8 +23,16 @@
       {% if is_owner_viewing %}
       <span class="hw-button hw-button-delete hw-content-delete" data-contenturl="{{ content_url(item) }}" onclick="hw.deleteContentViaCollection(event, this)">x</span>
       {% end %}
-      <a href="{{ content_url(item) }}" title="{{ item.title }}" data-contentname="{{ item.name }}" onclick="hw.albumClick(event, this)"><img src="{{ static_url('img/pixel.gif') }}" onload="hw.thumbnailDelayLoad.transition(this)" class="hw-invisible hw-invisible-slow-transition" data-thumb="{{ item.thumb }}"/></a>
-      <a class="hw-content-title {% if is_owner_viewing and item.hidden %}hw-content-hidden{% end %}" href="{{ content_url(item) }}" title="{{ item.title }}" data-contentname="{{ item.name }}" onclick="hw.albumClick(event, this)">{{ item.title }}</a>
+      {% set title = "" %}
+      {% if content_owner.title %}
+        {% set title = content_owner.title %}
+      {% end %}
+      {% if content_owner.title and item.title %}
+        {% set title += ' - ' %}
+      {% end %}
+      {% set title += item.title %}
+      <a href="{{ content_url(item) }}" title="{{ title }}" data-contentname="{{ item.name }}" onclick="hw.albumClick(event, this)"><img src="{{ static_url('img/pixel.gif') }}" onload="hw.thumbnailDelayLoad.transition(this)" class="hw-invisible hw-invisible-slow-transition" data-thumb="{{ item.thumb }}"/></a>
+      <a class="hw-content-title {% if is_owner_viewing and item.hidden %}hw-content-hidden{% end %}" href="{{ content_url(item) }}" title="{{ title }}" data-contentname="{{ item.name }}" onclick="hw.albumClick(event, this)">{{ item.title }}</a>
       {% if item.album != 'main' and template == 'store' %}
         {% module StoreButton(item, content_owner) %}
       {% end %}

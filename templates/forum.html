@@ -25,7 +25,15 @@
       {% if is_owner_viewing %}
       <span class="hw-button hw-button-delete hw-content-delete" data-contenturl="{{ content_url(item) }}" onclick="hw.deleteContentViaCollection(event, this)">x</span>
       {% end %}
-      <a class="hw-content-title {% if is_owner_viewing and item.hidden %}hw-content-hidden{% end %}" href="{{ content_url(item) }}" title="{{ item.title }}" data-contentname="{{ item.name }}" onclick="hw.albumClick(event, this)">{% if item.title %}{{ item.title }}{% else %}{{ _('untitled') }}{% end %}</a>
+      {% set title = "" %}
+      {% if content_owner.title %}
+        {% set title = content_owner.title %}
+      {% end %}
+      {% if content_owner.title and item.title %}
+        {% set title += ' - ' %}
+      {% end %}
+      {% set title += item.title %}
+      <a class="hw-content-title {% if is_owner_viewing and item.hidden %}hw-content-hidden{% end %}" href="{{ content_url(item) }}" title="{{ title }}" data-contentname="{{ item.name }}" onclick="hw.albumClick(event, this)">{% if item.title %}{{ item.title }}{% else %}{{ _('untitled') }}{% end %}</a>
     </li>{% end %}
   </ul>
 {% end %}

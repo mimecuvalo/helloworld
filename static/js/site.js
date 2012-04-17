@@ -100,7 +100,7 @@ hw.navigate = function(event, url, title) {
 
   if (!hw.addedFirstUrlToHistory) {
     var isAlbum = !!hw.$c('hw-album');
-    history.replaceState({ 'title': document.title, 'isAlbum': isAlbum }, document.title, window.location.href);
+    history.replaceState({ 'title': title, 'isAlbum': isAlbum }, title, window.location.href);
     hw.loadedContent[window.location.href] = hw.$('hw-content').innerHTML;
     hw.addedFirstUrlToHistory = true;
   }
