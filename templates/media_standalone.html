@@ -2,9 +2,7 @@
 
 {% block extra_css %}
 <link id="hw-stylesheet-create" rel="stylesheet" type="text/css" href="{{ static_url('css/create.css') }}">
-{% if user.theme %}
-  <link id="hw-stylesheet-theme" rel="stylesheet" type="text/css" href="{{ static_url(user.theme) }}">
-{% end %}
+<link id="hw-stylesheet-theme" rel="stylesheet" type="text/css" href="{{ static_url('css/themes/pixel/_compiled_pixel.css') }}">
 <style>
   form.hw-create {
     padding: 1em;

@@ -52,7 +52,6 @@ hw.edit = function(event) {
       wysiwyg.removeAttribute('contenteditable');
     }
   } else {
-    hw.options();
     setTimeout(hw.setupCodeMirror, 0);
   }
 
