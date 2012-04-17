@@ -211,6 +211,6 @@ class SalmonHandler(BaseHandler):
         socialize.socialize(self, content)
 
       if ref:
-        smtp.comment(self, post_remote.username, self.display["user"].email, self.content_url(content, host=True), sanitized_atom_content)
+        smtp.comment(self, post_remote.username, post_remote.from_user, self.display["user"].email, self.content_url(content, host=True), sanitized_atom_content)
       elif this_user_mentioned:
-        smtp.comment(self, post_remote.username, self.display["user"].email, post_remote.link, sanitized_atom_content, this_user_mentioned=True)
+        smtp.comment(self, post_remote.username, post_remote.from_user, self.display["user"].email, post_remote.link, sanitized_atom_content, this_user_mentioned=True)

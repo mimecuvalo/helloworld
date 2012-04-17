@@ -513,6 +513,8 @@ hw.customSetupCodeMirror = function() {
   hw.customCm = CodeMirror.fromTextArea(hw.$('hw-theme-editor'), { mode: "css", lineNumbers: true, matchBrackets: true, onChange: onChange });
   hw.customCm.getWrapperElement().setAttribute('name', 'hw-theme-editor');
   hw.addClass(hw.customCm.getWrapperElement(), 'hw-theme-editor');
-  hw.addClass(hw.customCm.getWrapperElement(), 'hw-all-transition');
+  setTimeout(function() {
+    hw.addClass(hw.customCm.getWrapperElement(), 'hw-all-transition');
+  }, 0);
   hw.customCm.getWrapperElement().cm = hw.customCm;
 };

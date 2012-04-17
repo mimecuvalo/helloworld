@@ -400,7 +400,7 @@ class ApiHandler(BaseHandler):
 
     cache.remove(self, self.content_url(commented_content))
     socialize.socialize(self, commented_content)
-    smtp.comment(self, from_username, commented_user.email, self.content_url(commented_content, host=True), sanitized_comment)
+    smtp.comment(self, from_username, post_remote.from_user, commented_user.email, self.content_url(commented_content, host=True), sanitized_comment)
 
   def topic(self):
     username = self.get_argument('username')

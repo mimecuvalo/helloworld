@@ -446,8 +446,13 @@ hw.getEmbedHtml = function(link) {
 
   var callback = function(xhr) {
     var isEmbed = xhr.responseText.search(/<(embed|object|iframe|img)\s/ig) != -1;
-    hw.insertHTML(xhr.responseText + (isEmbed ? "<br><br>" : ""));
+    hw.insertHTML(xhr.responseText + (isEmbed ? "<br>" : ""));
     if (isEmbed) {
+      var via = link.match(/:\/\/([^\.]*)\./)[1];
+      if (via == 'www') {
+        via = link.match(/:\/\/www.([^\.]*)\./)[1];
+      }
+      hw.insertHTML('<br>(' + hw.getMsg('via') + ' <a href="' + link + '">' + via + '</a>)<br><br><br>');
       hw.modify("move", "forward", "line");
     }
 

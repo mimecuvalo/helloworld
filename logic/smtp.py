@@ -10,7 +10,7 @@ except:
 
 import tornado.escape
 
-def send(handler, subject, to, content):
+def send(handler, subject, to, content, from_user=None):
   if not has_email_support or not handler.constants['smtp_password']:
     return
 
@@ -21,6 +21,8 @@ def send(handler, subject, to, content):
   msg['Subject'] = subject
   msg['From'] = '"Hello, world." <' + me + '>'
   msg['To'] = to
+  if from_user:
+    msg.add_header('reply-to', from_user)
 
   part1 = MIMEText(content, 'html')
   msg.attach(part1)
@@ -35,15 +37,18 @@ def send(handler, subject, to, content):
     logging.error("efail :(")
     logging.error(repr(ex))
 
-def comment(handler, from_username, to_email, content_url, comment, this_user_mentioned=False):
+def comment(handler, from_username, from_email, to_email, content_url, comment, this_user_mentioned=False):
+  if from_email.find('@') == -1:
+    from_email = None
+
   if this_user_mentioned:
     send(handler, handler.locale.translate('%(user)s made a post mentioning you in it!') % { "user": from_username }, to_email, handler.locale.translate("""
       <a href="%(url)s">View the post here!</a>
-    """) % { "url": content_url })
+    """) % { "url": content_url }, from_email)
   else:
     send(handler, handler.locale.translate('%(user)s made a comment on your post.') % { "user": from_username }, to_email, handler.locale.translate("""
       %(comment)s<br><a href="%(url)s">View the post here!</a>
-    """) % { "comment": comment.decode('utf-8').replace(u"\xa0", u" ").encode('utf-8'), "url": content_url })
+    """) % { "comment": comment.decode('utf-8').replace(u"\xa0", u" ").encode('utf-8'), "url": content_url }, from_email)
 
 def follow(handler, from_username, to_email, blog):
   follow = handler.nav_url(host=True, section='api') + '?op=follow&amp;from_email=1&amp;user=' + tornado.escape.url_escape(blog)
