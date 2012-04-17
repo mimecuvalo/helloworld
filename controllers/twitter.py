@@ -229,3 +229,10 @@ class TwitterHandler(BaseHandler,
     user.save()
 
     self.redirect(self.nav_url(section='dashboard'))
+
+  def delete(self):
+    if not self.authenticate(author=True):
+      return
+    user = self.get_author_user()
+    user.twitter = None
+    user.save()

@@ -107,6 +107,17 @@
             <img height="16" width="16" src="http://twitter.com/favicon.ico" />
           </a>
           <a href="#twitter" class="hw-following-username" onclick="hw.read(event, this, null, 'twitter')">{{ _('twitter') }}</a><a href="#twitter" class="hw-unread-count" onclick="hw.read(event, this, null, 'twitter')">&nbsp;({{ twitter_count }})</a>
+          <span class="hw-button-group">
+            <button class="hw-menu-button" onclick="hw.menu(event, this)" type="button">
+              <span class="hw-arrow-button"></span>
+            </button>
+            <div class="hw-menu">
+              <a href="http://twitter.com" target="_blank" class="hw-visit">{{ _('visit') }}</a>
+              <a href="#mark-all-as-read" data-user="twitter" onclick="hw.markAllAsRead(event, this)">{{ _('mark all as read') }}</a>
+              <!--<a href="#sort" data-user="{{ follower.profile_url }}" onclick="hw.sort(event, this)">{% raw _('sorting by <span class="hw-sort-oldest-label">oldest</span> / <span class="hw-sort-newest-label">newest</span>') %}</a>-->
+              <a href="#unfollow" data-user="twitter" onclick="hw.unfollow(event, this)" class="hw-unfollow">{{ _('unfollow') }}</a>
+            </div>
+          </span>
         {% else %}
           <a href="{{ nav_url(section='twitter') }}" title="{{ _('connect to twitter') }}">
             <img height="16" width="16" src="http://twitter.com/favicon.ico" />
@@ -120,6 +131,17 @@
             <img height="16" width="16" src="http://facebook.com/favicon.ico" />
           </a>
           <a href="#facebook" class="hw-following-username" onclick="hw.read(event, this, null, 'facebook')">{{ _('facebook') }}</a><a href="#facebook" class="hw-unread-count" onclick="hw.read(event, this, null, 'facebook')">&nbsp;({{ facebook_count }})</a>
+          <span class="hw-button-group">
+            <button class="hw-menu-button" onclick="hw.menu(event, this)" type="button">
+              <span class="hw-arrow-button"></span>
+            </button>
+            <div class="hw-menu">
+              <a href="http://facebook.com" target="_blank" class="hw-visit">{{ _('visit') }}</a>
+              <a href="#mark-all-as-read" data-user="facebook" onclick="hw.markAllAsRead(event, this)">{{ _('mark all as read') }}</a>
+              <!--<a href="#sort" data-user="{{ follower.profile_url }}" onclick="hw.sort(event, this)">{% raw _('sorting by <span class="hw-sort-oldest-label">oldest</span> / <span class="hw-sort-newest-label">newest</span>') %}</a>-->
+              <a href="#unfollow" data-user="facebook" onclick="hw.unfollow(event, this)" class="hw-unfollow">{{ _('unfollow') }}</a>
+            </div>
+          </span>
         {% else %}
           <a href="{{ nav_url(section='facebook') }}" title="{{ _('connect to facebook') }}">
             <img height="16" width="16" src="http://facebook.com/favicon.ico" />
@@ -133,6 +155,17 @@
             <img height="16" width="16" src="http://plus.google.com/favicon.ico" />
           </a>
           <a href="#google" class="hw-following-username" onclick="hw.read(event, this, null, 'google')">{{ _('google') }}</a><a href="#google" class="hw-unread-count" onclick="hw.read(event, this, null, 'google')">&nbsp;({{ google_count }})</a>
+          <span class="hw-button-group">
+            <button class="hw-menu-button" onclick="hw.menu(event, this)" type="button">
+              <span class="hw-arrow-button"></span>
+            </button>
+            <div class="hw-menu">
+              <a href="http://plus.google.com" target="_blank" class="hw-visit">{{ _('visit') }}</a>
+              <a href="#mark-all-as-read" data-user="google" onclick="hw.markAllAsRead(event, this)">{{ _('mark all as read') }}</a>
+              <!--<a href="#sort" data-user="{{ follower.profile_url }}" onclick="hw.sort(event, this)">{% raw _('sorting by <span class="hw-sort-oldest-label">oldest</span> / <span class="hw-sort-newest-label">newest</span>') %}</a>-->
+              <a href="#unfollow" data-user="google" onclick="hw.unfollow(event, this)" class="hw-unfollow">{{ _('unfollow') }}</a>
+            </div>
+          </span>
         {% else %}
           <a href="{{ nav_url(section='google') }}" title="{{ _('connect to google') }}">
             <img height="16" width="16" src="http://plus.google.com/favicon.ico" />
