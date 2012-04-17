@@ -112,9 +112,9 @@ class DashboardHandler(BaseHandler):
     self.display['comments_count']  = self.models.content_remote.get(to_username=user.username, type='comment', deleted=False).count()
     self.display['spam_count']      = self.models.content_remote.get(to_username=user.username, is_spam=True, deleted=False).count()
 
-    self.display['twitter_count']  = self.models.content_remote.get(to_username=user.username, type='twitter', deleted=False).count()
-    self.display['facebook_count'] = self.models.content_remote.get(to_username=user.username, type='facebook', deleted=False).count()
-    self.display['google_count']   = self.models.content_remote.get(to_username=user.username, type='google', deleted=False).count()
+    self.display['twitter_count']  = self.models.content_remote.get(to_username=user.username, type='twitter', read=0, is_spam=0, deleted=0).count()
+    self.display['facebook_count'] = self.models.content_remote.get(to_username=user.username, type='facebook', read=0, is_spam=0, deleted=0).count()
+    self.display['google_count']   = self.models.content_remote.get(to_username=user.username, type='google', read=0, is_spam=0, deleted=0).count()
 
     total_count += self.display['twitter_count'] + self.display['facebook_count'] + self.display['google_count']
     self.display['total_count']     = total_count
