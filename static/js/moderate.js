@@ -784,6 +784,6 @@ hw.updateExternal = function() {
 hw.updateExternalHelper = function(service) {
   return function(xhr) {
     var json = JSON.parse(xhr.responseText);
-    hw.updateCount(hw.$$('#hw-following #hw-following-' + service + ' .hw-unread-count')[0], null, json['count']);
+    hw.updateCounts();
   }
 };
