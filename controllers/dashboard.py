@@ -116,3 +116,5 @@ class DashboardHandler(BaseHandler):
     self.display['twitter_count']  = self.models.content_remote.get(to_username=user.username, type='twitter', deleted=False).count()
     self.display['facebook_count'] = self.models.content_remote.get(to_username=user.username, type='facebook', deleted=False).count()
     self.display['google_count']   = self.models.content_remote.get(to_username=user.username, type='google', deleted=False).count()
+
+    total_count += self.display['twitter_count'] + self.display['facebook_count'] + self.display['google_count']
