@@ -1,6 +1,7 @@
 import mimetypes
 import os
 import os.path
+import shutil
 import zipfile
 
 import Image
@@ -89,6 +90,7 @@ def save_locally(parent_url, full_path, data, skip_write=False, disallow_zip=Fal
 
   if media_type == 'image':
     split_path = os.path.split(full_path)
+    splitext_path = os.path.splitext(full_path)
     thumb_dir = os.path.join(split_path[0], 'thumbs')
     original_size_dir = os.path.join(split_path[0], 'original')
     leaf_name = os.path.split(full_path)[1]
@@ -110,64 +112,79 @@ def save_locally(parent_url, full_path, data, skip_write=False, disallow_zip=Fal
       f.write(data)
       f.close()
 
-    original_img = Image.open(original_size_filename)
-    try:
-      info = original_img._getexif()
-    except:
-      info = None
-    exif = {}
-    if info:
-      for tag, value in info.items():
-        decoded = TAGS.get(tag, tag)    
-        exif[decoded] = value
+    is_animated = False
+    if splitext_path[1] == '.gif':
+      gif = Image.open(original_size_filename)
 
-    if 'Orientation' in exif:
-      orientation = exif['Orientation']
-      changed = True
-      if orientation == 1:
-        changed = False
-      elif orientation == 2:
-        # Vertical Mirror
-        original_img = original_img.transpose(Image.FLIP_LEFT_RIGHT)
-      elif orientation == 3:
-        # Rotation 180
-        original_img = original_img.transpose(Image.ROTATE_180)
-      elif orientation == 4:
-        # Horizontal Mirror
-        original_img = original_img.transpose(Image.FLIP_TOP_BOTTOM)
-      elif orientation == 5:
-        # Horizontal Mirror + Rotation 270
-        original_img = original_img.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.ROTATE_270)
-      elif orientation == 6:
-        # Rotation 270
-        original_img = original_img.transpose(Image.ROTATE_270)
-      elif orientation == 7:
-        # Vertical Mirror + Rotation 270
-        original_img = original_img.transpose(Image.FLIP_LEFT_RIGHT).transpose(Image.ROTATE_270)
-      elif orientation == 8:
-        # Rotation 90
-        original_img = original_img.transpose(Image.ROTATE_90)
+      try:
+        gif.seek(1)
+      except EOFError:
+        is_animated = False
+      else:
+        is_animated = True
 
-      if changed:
-        original_img.save(original_size_filename, quality=95)
+    if not is_animated:
+      original_img = Image.open(original_size_filename)
+      try:
+        info = original_img._getexif()
+      except:
+        info = None
+      exif = {}
+      if info:
+        for tag, value in info.items():
+          decoded = TAGS.get(tag, tag)    
+          exif[decoded] = value
+
+      if 'Orientation' in exif:
+        orientation = exif['Orientation']
+        changed = True
+        if orientation == 1:
+          changed = False
+        elif orientation == 2:
+          # Vertical Mirror
+          original_img = original_img.transpose(Image.FLIP_LEFT_RIGHT)
+        elif orientation == 3:
+          # Rotation 180
+          original_img = original_img.transpose(Image.ROTATE_180)
+        elif orientation == 4:
+          # Horizontal Mirror
+          original_img = original_img.transpose(Image.FLIP_TOP_BOTTOM)
+        elif orientation == 5:
+          # Horizontal Mirror + Rotation 270
+          original_img = original_img.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.ROTATE_270)
+        elif orientation == 6:
+          # Rotation 270
+          original_img = original_img.transpose(Image.ROTATE_270)
+        elif orientation == 7:
+          # Vertical Mirror + Rotation 270
+          original_img = original_img.transpose(Image.FLIP_LEFT_RIGHT).transpose(Image.ROTATE_270)
+        elif orientation == 8:
+          # Rotation 90
+          original_img = original_img.transpose(Image.ROTATE_90)
+
+        if changed:
+          original_img.save(original_size_filename, quality=95)
 
     thumb = Image.open(original_size_filename)
     thumb.thumbnail((content_logic.THUMB_WIDTH, content_logic.THUMB_HEIGHT), Image.ANTIALIAS)
     thumb.save(thumb_filename, quality=95)
 
-    normal = Image.open(original_size_filename)
-    normal.thumbnail((content_logic.PHOTO_WIDTH, content_logic.PHOTO_HEIGHT), Image.ANTIALIAS)
-    normal.save(full_path, quality=95)
+    if not is_animated:
+      normal = Image.open(original_size_filename)
+      normal.thumbnail((content_logic.PHOTO_WIDTH, content_logic.PHOTO_HEIGHT), Image.ANTIALIAS)
+      normal.save(full_path, quality=95)
+    else:
+      shutil.copyfile(original_size_filename, full_path)
   else:
     if not skip_write:
       f = open(full_path, 'w')
       f.write(data)
       f.close()
 
-    split_path = os.path.splitext(full_path)
-    if split_path[1] == '.zip' and not disallow_zip:
+    splitext_path = os.path.splitext(full_path)
+    if splitext_path[1] == '.zip' and not disallow_zip:
       z = zipfile.ZipFile(full_path)
-      dir_path = os.path.join(os.path.dirname(full_path), split_path[0])
+      dir_path = os.path.join(os.path.dirname(full_path), splitext_path[0])
       for f in z.namelist():
         filename = url_factory.clean_filename(f)
         if f.endswith('/'):
