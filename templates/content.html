@@ -135,35 +135,41 @@
         <div class="clear"></div>
         {% if individual_content and not item.is_remote %}
           {% if current_user and current_user["email"] %}
-          <img class="hw-comment-avatar" src="{{ current_user["avatar"] }}" />
-          <span class="hw-comment-username">{{ current_user["username"] }}</span> {% if not is_author %}({{ _('your email will not be displayed.') }}){% end %}
-          <form class="hw-comment-form" method="post" action="/api" onsubmit="return false" data-error="{{ _('error submitting your comment. please try again.') }}">
-            {% raw xsrf_form_html() %}
+            {% if not is_author %}
+              <a href="http://gravatar.com" target="_blank">
+            {% end %}
+                <img class="hw-comment-avatar" src="{{ current_user["avatar"] }}" />
+            {% if not is_author %}
+              </a>
+            {% end %}
+            <span class="hw-comment-username">{{ current_user["username"] }}</span> {% if not is_author %}({{ _('your email will not be displayed.') }}){% end %}
+            <form class="hw-comment-form" method="post" action="/api" onsubmit="return false" data-error="{{ _('error submitting your comment. please try again.') }}">
+              {% raw xsrf_form_html() %}
 
-            <span class="hw-comment-options-wrapper">
-              <span class="hw-comment-upload-wrapper"></span>
-              <script>hw.uploadButton(function(json) { hw.processFiles(json); }, null, false, true);</script>
-              <a href="#help" class="hw-comment-help-button hw-button" onclick="hw.commentHelp(event)">?</a>
-            </span>
-            <div class="hw-comment-help hw-slide-transition hw-closed">
-              {# yeaaaah, how awesome is this?!? i iz l33t programm3r #}
-              *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <strong>{{ _('bold') }}</strong><br>
-              !&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= {{ _('link (highlight text first)') }}<br>
-              /&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <em>{{ _('italic') }}</em><br>
-              _&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <u>{{ _('underline') }}</u><br>
-              paste&nbsp;&nbsp;= {{ _('urls will be automatically converted into rich media!') }}<br>
-              tab&nbsp;&nbsp;&nbsp;&nbsp;= {{ _('list') }}<br>
-              ---&nbsp;&nbsp;&nbsp;&nbsp;= {{ _('separator') }}<br>
-              {{ _('typing in special letter twice, for example, ** will give you one * instead of bold') }}<br>
-            </div>
-            <button class="hw-button hw-button-save" type="button" onclick="hw.commentSubmit()">{% if section_template == 'forum' %}{{ _('submit') }}{% else %}{{ _('submit comment') }}{% end %}</button>
-            <div name="hw-comment-input" class="hw-comment-input" contenteditable type="text" data-local-username="{{ content.username }}" data-local-name="{{ content.name }}"
-                 onmouseup="hw.saveSelection(event)" onkeyup="hw.saveSelection()" onfocus="hw.restoreSelection()" onbeforepaste="hw.onbeforepaste(event)" onpaste="hw.paste(event)"></div>
-            <script>
-              Event.observe(hw.$c('hw-comment-input'), 'keypress', hw.wysiwygKeys, false);
-            </script>
-            <div class="clear"></div>
-          </form>
+              <span class="hw-comment-options-wrapper">
+                <span class="hw-comment-upload-wrapper"></span>
+                <script>hw.uploadButton(function(json) { hw.processFiles(json); }, null, false, true);</script>
+                <a href="#help" class="hw-comment-help-button hw-button" onclick="hw.commentHelp(event)">?</a>
+              </span>
+              <div class="hw-comment-help hw-slide-transition hw-closed">
+                {# yeaaaah, how awesome is this?!? i iz l33t programm3r #}
+                *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <strong>{{ _('bold') }}</strong><br>
+                !&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= {{ _('link (highlight text first)') }}<br>
+                /&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <em>{{ _('italic') }}</em><br>
+                _&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <u>{{ _('underline') }}</u><br>
+                paste&nbsp;&nbsp;= {{ _('urls will be automatically converted into rich media!') }}<br>
+                tab&nbsp;&nbsp;&nbsp;&nbsp;= {{ _('list') }}<br>
+                ---&nbsp;&nbsp;&nbsp;&nbsp;= {{ _('separator') }}<br>
+                {{ _('typing in special letter twice, for example, ** will give you one * instead of bold') }}<br>
+              </div>
+              <button class="hw-button hw-button-save" type="button" onclick="hw.commentSubmit()">{% if section_template == 'forum' %}{{ _('submit') }}{% else %}{{ _('submit comment') }}{% end %}</button>
+              <div name="hw-comment-input" class="hw-comment-input" contenteditable type="text" data-local-username="{{ content.username }}" data-local-name="{{ content.name }}"
+                   onmouseup="hw.saveSelection(event)" onkeyup="hw.saveSelection()" onfocus="hw.restoreSelection()" onbeforepaste="hw.onbeforepaste(event)" onpaste="hw.paste(event)"></div>
+              <script>
+                Event.observe(hw.$c('hw-comment-input'), 'keypress', hw.wysiwygKeys, false);
+              </script>
+              <div class="clear"></div>
+            </form>
           {% else %}
             <h2 class="hw-comment-header">{{ _('you need to be logged in to leave a comment.') }}</h2>
             <a class="hw-button hw-button-login" href="{{ nav_url(section='login', next=handler.request.uri) }}" data-logging-in="logging in..." data-failed="{{ _('login failed. try again.') }}" onclick="hw.login(event, this)">{{ _('login') }}</a>
