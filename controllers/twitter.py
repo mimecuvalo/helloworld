@@ -25,15 +25,15 @@ class TwitterHandler(BaseHandler,
       access_token = json.loads(self.user.twitter)
 
       count = self.models.content_remote.get(to_username=self.user.username, type='twitter').count()
-      since_id = None
+      args = {}
       if count:
         jump = self.models.content_remote.get(to_username=self.user.username, type='twitter')[count - 1:count]
-        since_id = jump[0].post_id
+        args['since_id'] = jump[0].post_id
 
       self.twitter_request(
             "/statuses/home_timeline",
             self.timeline_result,
-            access_token=access_token, since_id=since_id)
+            access_token=access_token, **args)
       return
     elif self.get_argument("oauth_token", None):
       self.get_sync_authenticated_user(self._on_auth)
