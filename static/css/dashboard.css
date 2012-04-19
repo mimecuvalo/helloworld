@@ -320,7 +320,7 @@
 }
 
 #hw-feed .hw-item-avatar,
-#hw-feed section[data-type="twitter"] .hw-view img {
+#hw-feed section[data-type="facebook"] .hw-view img {
   margin-right: 5px;
   float: left;
 }
