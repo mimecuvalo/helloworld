@@ -327,6 +327,10 @@ hw.read = function(event, el, listMode, special, query, readAllMode) {
       hw.loadMoreObject.url = hw.loadMoreObject.url.split('?')[0] + hw.generateArgs(args);
     }
 
+    if (hw.supportsHistory()) {
+      history.replaceState({ 'title': document.title }, document.title, hw.baseUri() + 'dashboard');
+    }
+
     if (document.body.parentNode.scrollTop) {
       document.body.parentNode.scrollTop = document.body.parentNode.scrollTop + hw.$('hw-feed').getBoundingClientRect().top - 50;
     } else {
@@ -487,7 +491,7 @@ hw.favorite = function(event, el) {
   }
 
   var user = el.parentNode.getAttribute('data-user');
-  var localId = el.parentNode.getAttribute('data-local-id');
+  var localId = el.parentNode.getAttribute('data-id');
   var postId = el.parentNode.getAttribute('data-post-id');
   var isFavorited = el.parentNode.getAttribute('data-is-favorited');
   var isRemote = el.parentNode.getAttribute('data-is-remote');
@@ -522,7 +526,7 @@ hw.spam = function(event, el) {
   }
 
   var user = el.parentNode.getAttribute('data-user');
-  var localId = el.parentNode.getAttribute('data-local-id');
+  var localId = el.parentNode.getAttribute('data-id');
   var isSpam = el.parentNode.getAttribute('data-is-spam');
   var isRemote = el.parentNode.getAttribute('data-is-remote');
 
@@ -554,7 +558,7 @@ hw.deletePost = function(event, el) {
   }
 
   var user = el.parentNode.getAttribute('data-user');
-  var localId = el.parentNode.getAttribute('data-local-id');
+  var localId = el.parentNode.getAttribute('data-id');
   var isDeleted = el.parentNode.getAttribute('data-is-deleted');
   var isRemote = el.parentNode.getAttribute('data-is-remote');
 
