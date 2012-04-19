@@ -120,7 +120,8 @@ class BaseHandler(tornado.web.RequestHandler):
       self.current_user["username"]  = user.username  if user else None
       self.current_user["author"]    = user.author    if user else 0
       self.current_user["superuser"] = user.superuser if user else 0
-      self.current_user["avatar"]    = user.logo      if user else hashlib.md5(self.current_user["email"].lower()).hexdigest()
+      self.current_user["avatar"]    = user.logo      if user else \
+          'http://www.gravatar.com/avatar/' + hashlib.md5(self.current_user["email"].lower()).hexdigest()
       self.display["username"]     = self.current_user["username"]
       self.display["userid"]       = self.current_user["userid"]
       self.display["is_author"]    = self.current_user["author"]
