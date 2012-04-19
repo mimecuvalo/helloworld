@@ -665,7 +665,17 @@ hw.markAsUnread = function(event, el) {
   hw.markedAsUnread.push(section.getAttribute('data-remote-id'));
   section.setAttribute('data-unread', 'true');
   hw.updateCount(hw.$('hw-total-unread-count'), 1);
-  var countEl = hw.$$('#hw-following li[data-user="' + section.getAttribute('data-remote-profile-url') + '"] .hw-unread-count')[0];
+
+  var type = section.getAttribute('data-type');
+  var countEl;
+  if (type == 'twitter' || type == 'facebook' || type == 'google') {
+    countEl = hw.$$('#hw-following #hw-following-' + type + ' .hw-unread-count')[0];
+  } else if (type == 'post') {
+    countEl = hw.$$('#hw-following li[data-user="' + section.getAttribute('data-remote-profile-url') + '"] .hw-unread-count')[0];
+  } else {
+    return;
+  }
+
   if (countEl) {
     hw.updateCount(countEl, 1);
   }
