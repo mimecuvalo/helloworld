@@ -24,7 +24,10 @@ class DashboardHandler(BaseHandler):
       result = { 'total_count' : self.display['total_count'],
                  'favorites_count' : self.display['favorites_count'],
                  'comments_count' : self.display['comments_count'],
-                 'spam_count' : self.display['spam_count'] }
+                 'spam_count' : self.display['spam_count'],
+                 'twitter_count' : self.display['twitter_count'],
+                 'facebook_count' : self.display['facebook_count'],
+                 'google_count' : self.display['google_count'], }
       for profile in self.display['following']:
         result[profile.profile_url] = profile.unread_entries
       self.prevent_caching()
