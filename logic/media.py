@@ -113,7 +113,9 @@ def save_locally(parent_url, full_path, data, skip_write=False, disallow_zip=Fal
       f.close()
 
     is_animated = False
-    if splitext_path[1] == '.gif':
+    if splitext_path[1] == '.apng':
+      is_animated = True
+    elif splitext_path[1] == '.gif':
       gif = Image.open(original_size_filename)
 
       try:

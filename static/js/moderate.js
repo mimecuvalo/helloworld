@@ -314,6 +314,19 @@ hw.read = function(event, el, listMode, special, query, readAllMode) {
       hw.loadMoreObject.url = hw.baseUri() + 'dashboard';
     }
 
+    if (!badTrip) {
+      var fromLocalId = /data-local-id="([^"]*)"/.exec(xhr.responseText);
+      var fromRemoteId = /data-remote-id="([^"]*)"/.exec(xhr.responseText);
+      var args = hw.parseArguments(hw.loadMoreObject.url);
+      if (fromLocalId && fromLocalId.length > 1) {
+        args['from_local_id'] = fromLocalId[1];
+      }
+      if (fromRemoteId && fromRemoteId.length > 1) {
+        args['from_remote_id'] = fromRemoteId[1];
+      }
+      hw.loadMoreObject.url = hw.loadMoreObject.url.split('?')[0] + hw.generateArgs(args);
+    }
+
     if (document.body.parentNode.scrollTop) {
       document.body.parentNode.scrollTop = document.body.parentNode.scrollTop + hw.$('hw-feed').getBoundingClientRect().top - 50;
     } else {
