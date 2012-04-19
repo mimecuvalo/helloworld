@@ -319,7 +319,8 @@
   text-decoration: none;
 }
 
-#hw-feed .hw-item-avatar {
+#hw-feed .hw-item-avatar,
+#hw-feed section[data-type="twitter"] .hw-view img {
   margin-right: 5px;
   float: left;
 }
