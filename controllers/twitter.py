@@ -88,7 +88,7 @@ class TwitterHandler(BaseHandler,
       new_tweet.title = ''
       new_tweet.post_id = str(tweet['id'])
       new_tweet.link = 'http://twitter.com/' + tweet['user']['screen_name'] + '/status/' + str(tweet['id'])
-      text = tweet['retweeted_status']['text'] if tweet['retweeted'] else tweet['text']
+      text = tweet['retweeted_status']['text'] if tweet.has_key('retweeted_status') else tweet['text']
       text = tornado.escape.linkify(text)
       text = re.compile(r'#(\w+)', re.M | re.U).sub(r'<a href="https://twitter.com/#!/search/%23\1" rel="tag">#\1</a>', text)
       text = re.compile(r'@(\w+)', re.M | re.U).sub(r'<a href="https://twitter.com/#!/\1">@\1</a>', text)
