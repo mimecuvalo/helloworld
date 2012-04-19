@@ -96,7 +96,7 @@ class FacebookHandler(BaseHandler,
         new_post.link = post['actions'][0]['link']
       view = ""
       if post.has_key('picture'):
-        view += '<img src="' + post['picture'] + '"><br>'
+        view += '<img src="' + post['picture'] + '">'
       if post.has_key('message'):
         view += post['message'] + "<br>"
       if post.has_key('caption'):
