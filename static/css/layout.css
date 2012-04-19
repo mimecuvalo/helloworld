@@ -686,11 +686,15 @@ ul.hw-comments li:hover {
   border: 1px solid #ccc;
 }
 
-ul.hw-comments img {
+ul.hw-comments img,
+.hw-comment-avatar {
   float: left;
   margin-right: 5px;
   width: 42px;
   height: 42px;
+}
+.hw-comment-avatar {
+  margin-left: 3px;
 }
 .hw-comment-input img,
 ul.hw-comments .hw-comment-text img {
@@ -709,7 +713,8 @@ form.hw-comment-form {
   margin: 1em 0;
 }
 .hw-comment-input {
-  width: 630px;
+  width: 580px;
+  margin-left: 50px;
   min-height: 50px;
   z-index: 2;
   float: left;

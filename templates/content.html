@@ -135,6 +135,8 @@
         <div class="clear"></div>
         {% if individual_content and not item.is_remote %}
           {% if current_user and current_user["email"] %}
+          <img class="hw-comment-avatar" src="{{ current_user["avatar"] }}" />
+          <span class="hw-comment-username">{{ current_user["username"] }}</span> {% if not is_author %}({{ _('your email will not be displayed.') }}){% end %}
           <form class="hw-comment-form" method="post" action="/api" onsubmit="return false" data-error="{{ _('error submitting your comment. please try again.') }}">
             {% raw xsrf_form_html() %}
 

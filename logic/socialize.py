@@ -8,6 +8,7 @@ def socialize(handler, content):
   if content.hidden:
     return
 
+  # TODO support @blah@blah.com
   mentions  = re.findall(r'@(\w+)', content.view, re.M | re.U)
   mentions += re.findall(r'\+(\w+)', content.view, re.M | re.U)
 

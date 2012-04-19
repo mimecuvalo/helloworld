@@ -176,7 +176,7 @@ hw.showUserAutocomplete = function() {
     if (code == 13 || code == 9 || (code == 32 && completions.length && name == completions[0]['username'])) { // Enter, Space, Tab
       hw.preventDefault(event);
       pick();
-    } else if (code == 27 || code == 32 || monkeyIndex == -1) {  // Escape
+    } else if (code == 27 || code == 32 || code == 50 || monkeyIndex == -1) {  // Escape, Space, @
       wysiwyg.focus();
       if (code == 27) {
         hw.preventDefault(event);
