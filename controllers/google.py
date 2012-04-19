@@ -23,6 +23,7 @@ class GoogleHandler(BaseHandler,
 
     if self.get_argument("get_feed", None):
       # XXX google has no news feed api?
+      # XXX todo, goog refreshes token sometimes
       self.set_status(400)
       return
     elif self.get_argument("code", False):

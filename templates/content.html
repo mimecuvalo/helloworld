@@ -132,7 +132,7 @@
         {% if not item.is_remote and not is_owner_viewing and username != item.username %}
           <img src="{{ nav_url(section='stats', url=content_url(item)) }}">
         {% end %}
-        <div class="clear"></div>
+        <div class="clear">&nbsp;</div>
         {% if individual_content and not item.is_remote %}
           {% if current_user and current_user["email"] %}
             {% if not is_author %}
@@ -142,13 +142,7 @@
             {% if not is_author %}
               </a>
             {% end %}
-            <span class="hw-comment-username">
-              {% if current_user["username"] %}
-                {{ current_user["username"] }}
-              {% else %}
-                {{ current_user["email"].split('@')[0] }}
-              {% end %}
-            </span>
+            <span class="hw-comment-username">{% if current_user["username"] %}{{ current_user["username"] }}{% else %}{{ current_user["email"].split('@')[0] }}{% end %}</span>
             {% if not is_author %}({{ _('your email will not be displayed.') }}){% end %}
             <form class="hw-comment-form" method="post" action="/api" onsubmit="return false" data-error="{{ _('error submitting your comment. please try again.') }}">
               {% raw xsrf_form_html() %}

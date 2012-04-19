@@ -6,12 +6,12 @@ hw.editImage = function(event, el) {
   }
 
   var editor = hw.$c('hw-image-editor');
+  hw.addClass(hw.$('hw-container'), 'hw-image-editing');
   editor.__hw_image = hw.$c('hw-image-options')['imageTag'];
 
   hw.show(editor);
-  editor.style.left = '50%';
-  editor.style.top = editor.getBoundingClientRect().top + 'px';
-  editor.style.marginLeft = '-' + (editor.getBoundingClientRect().width / 2) + 'px';
+  editor.style.left = (editor.getBoundingClientRect().left + 50) + 'px';
+  editor.style.top = Math.max(editor.getBoundingClientRect().top, 100) + 'px';
 
   var img = hw.$c('hw-image-scratch');
   if (!img) {
@@ -58,6 +58,7 @@ hw.editImageClose = function(event) {
     hw.preventDefault(event);
   }
   var editor = hw.$c('hw-image-editor');
+  hw.removeClass(hw.$('hw-container'), 'hw-image-editing');
   hw.hide(editor);
   editor.style.left = '50%';
   editor.style.top = '36px';

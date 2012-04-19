@@ -477,6 +477,9 @@ div.hw-image-editor {
   background-color: white;
   z-index: 2000;
 }
+.hw-image-editing #hw-backend-content {
+  z-index: 2000;
+}
 div.hw-image-editor.hw-editing img,
 div.hw-image-editor.hw-editing canvas {
   max-width: 650px; /* match upload resizing */
