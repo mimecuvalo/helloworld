@@ -139,7 +139,17 @@ hw.wysiwygKeymap = {
 hw.lastActiveWysiwyg = null;
 hw.getCurrentWysiwyg = function() {
   var wysiwyg;
-  if (document.activeElement && document.activeElement.hasAttribute('contenteditable') && !hw.hasClass(document.activeElement, 'hw-paste-area')) {
+  var dontAccessActiveElement = false;
+  try {
+    if (document.activeElement && document.activeElement.nodeName) {
+      // do nothing
+    }
+  } catch(ex) {
+    // XXX firefox throws error if activeElement is currently the upload button, post-uploading
+    dontAccessActiveElement = true;
+  }
+  if (!dontAccessActiveElement && document.activeElement && document.activeElement.nodeName == 'DIV'
+      && document.activeElement.hasAttribute('contenteditable') && !hw.hasClass(document.activeElement, 'hw-paste-area')) {
     wysiwyg = document.activeElement;
   } else {
     wysiwyg = hw.lastActiveWysiwyg || (hw.hasClass('hw-container', 'hw-editing') && hw.$c('hw-wysiwyg')) || hw.$c('hw-comment-input');
