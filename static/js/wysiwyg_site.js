@@ -9,8 +9,8 @@ hw.insertHTML = function(html) {
 
 hw.modify = function(alter, direction, granularity) {
   if (document.selection && document.selection.createRange) {
-    var range = document.selection.createRange();
-    range.move(granularity, direction == 'forward' ? 1 : -1)
+    //var range = document.selection.createRange();
+    //range.move(granularity, direction == 'forward' ? 1 : -1)
   } else if (window.getSelection) {
     var sel = window.getSelection();
     sel.modify(alter, direction, granularity);

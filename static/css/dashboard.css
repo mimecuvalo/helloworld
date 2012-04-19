@@ -319,6 +319,14 @@
   text-decoration: none;
 }
 
+#hw-feed .hw-item-avatar {
+  margin-right: 5px;
+  float: left;
+}
+#hw-feed section[data-type="twitter"] .hw-view {
+  clear: none;
+}
+
 #hw-feed {
   font: 13px arial, sans-serif;
 }
