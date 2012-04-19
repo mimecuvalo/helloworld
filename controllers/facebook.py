@@ -103,6 +103,8 @@ class FacebookHandler(BaseHandler,
         view += post['caption'] + "<br>"
       if post.has_key('description'):
         view += post['description'] + "<br>"
+      if post.has_key('story'):
+        view += post['story'] + "<br>"
       new_post.view = view
       new_post.save()
 
