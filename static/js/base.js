@@ -438,50 +438,6 @@ hw.getMsg = function(key) {
   return hw.msgs[key];
 };
 
-
-hw.workaroundPlaceholder = function(event, opt_doc) {
-  var doc = opt_doc || document;
-  if ('placeholder' in doc.createElement('input')) {
-    return;
-  }
-
-  var inputs = doc.getElementsByTagName('input');
-  for (var x = 0; x < inputs.length; ++x) {
-    var input = inputs[x];
-    if (input.hasAttribute('placeholder') && !input.value) {
-      input.value = input.getAttribute('placeholder');
-      var onchange = hw.workaroundPlaceholderHelper(input);
-      Event.observe(input, 'focus', onchange, false);
-      hw.addClass(input, 'hw-placeholder');
-    }
-  }
-};
-
-hw.workaroundPlaceholderHelper = function(input) {
-  var callback = function() {
-    input.value = '';
-    Event.stopObserving(input, 'change', callback, false);
-    hw.removeClass(input, 'hw-placeholder');
-  };
-  return callback;
-};
-Event.observe(window, 'load', hw.workaroundPlaceholder, false);
-
-hw.workaroundPlaceholderRemove = function() {
-  if ('placeholder' in document.createElement('input')) {
-    return;
-  }
-
-  var inputs = document.getElementsByTagName('input');
-  for (var x = 0; x < inputs.length; ++x) {
-    var input = inputs[x];
-    if (hw.hasClass(input, 'hw-placeholder')) {
-      input.value = '';
-    }
-  }
-};
-Event.observe(window, 'unload', hw.workaroundPlaceholderRemove, false);
-
 hw.audioError = function(source) {
   var object = document.createElement('object');
 
