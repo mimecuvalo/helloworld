@@ -66,7 +66,7 @@
     <header>
       <h1 class="hw-content-title">
         {% if item.is_remote %}
-        <a href="{{ item.link }}" target="_blank" data-remote-id="{{ item.id }}" data-list-mode="{{ list_mode }}" onclick="hw.listOpen(event, this)">{% end %} {{ item.username }}{% if item.title %}: {{ item.title }}{% end %}</a>
+        <a href="{{ item.link }}" target="_blank" data-remote-id="{{ item.id }}" data-list-mode="{{ list_mode }}" onclick="hw.listOpen(event, this)">{{ item.username }}{% if item.title %}: {{ item.title }}{% end %}</a>
         {% else %}
         <a href="{{ content_url(item) }}" {% if is_owner_viewing and item.hidden %}class="hw-content-hidden"{% end %} data-contentname="{{ item.name }}" {% if is_owner_viewing %}data-local-id="{{ item.id }}"{% end %} {% if list_mode %}data-list-mode="{{ list_mode }}" onclick="hw.listOpen(event, this)"){% end %}>{% if item.title %}{{ item.title }}{% else %}{{ _('(untitled)') }}{% end %}</a>
         {% end %}
