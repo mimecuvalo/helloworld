@@ -43,7 +43,9 @@ def parse_feed(models, user, feed=None, parsed_feed=None, max_days_old=30, remot
       date_updated = datetime.datetime.fromtimestamp(mktime(entry.updated_parsed))
 
     if exists:
-      if date_updated and date_updated != exists.date_updated \
+      if exists.type == 'comment':  # received via salmon before
+        continue
+      elif date_updated and date_updated != exists.date_updated \
           or (comments_updated and comments_updated != exists.comments_updated):
         new_entry = exists
       else:
