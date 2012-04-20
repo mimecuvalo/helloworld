@@ -491,7 +491,7 @@ section {
 #hw-customize a.hw-button-media,
 #hw-customize a.hw-button-media + progress.hw-shown,
 #hw-customize .hw-media-result,
-.hw-customize-clear {
+#hw-customize .hw-customize-clear {
   float: right;
 }
 
