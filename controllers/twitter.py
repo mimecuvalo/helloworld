@@ -90,7 +90,9 @@ class TwitterHandler(BaseHandler,
       new_tweet.link = 'http://twitter.com/' + tweet['user']['screen_name'] + '/status/' + str(tweet['id'])
       if tweet.has_key('retweeted_status'):
         text = tweet['retweeted_status']['text']
-        text += '<br><span class="hw-retweeted-by">' + self.locale.translate('retweeted by %(tweeter)s') % { 'tweeter':  } + '</span>'
+        text += '<br><span class="hw-retweeted-by">' + self.locale.translate('retweeted by %(tweeter)s') % { 'tweeter': tweet['user']['screen_name'] } + '</span>'
+        new_tweet.username = tweet['retweeted_status']['user']['screen_name']
+        new_tweet.from_user = 'http://twitter.com/' + tweet['retweeted_status']['user']['screen_name']
         new_tweet.avatar = tweet['retweeted_status']['user']['profile_image_url']
       else:
         text = tweet['text']
