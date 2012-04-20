@@ -114,27 +114,26 @@ class FacebookHandler(BaseHandler,
       new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(view))
       new_post.save()
 
+      # comments
+      if post['comments']['count']:
+        for comment in post['comments']['data']:
+          exists = self.models.content_remote.get(to_username=self.user.username, post_id=comment['id'])[0]
+          if exists:
+            continue
+          else:
+            new_comment = self.models.content_remote()
+
+          new_comment.to_username = self.user.username
+          new_comment.username = comment['from']['name']
+          new_comment.from_user = 'http://facebook.com/' + comment['from']['id']
+          date_created = datetime.datetime.strptime(comment['created_time'][:-5], '%Y-%m-%dT%H:%M:%S')
+          new_comment.date_created = date_created
+          new_comment.type = 'remote-comment'
+          new_comment.thread = post['id']
+          new_comment.view = comment['message']
+          new_comment.save()
+
     count = self.models.content_remote.get(to_username=self.user.username, type='facebook', deleted=False).count()
-
-    # comments
-    if post['comments']['count']:
-      for comment in post['comments']['data']:
-        exists = self.models.content_remote.get(to_username=self.user.username, post_id=comment['id'])[0]
-        if exists:
-          continue
-        else:
-          new_comment = self.models.content_remote()
-
-        new_comment.to_username = self.user.username
-        new_comment.username = comment['from']['name']
-        new_comment.from_user = 'http://facebook.com/' + comment['from']['id']
-        date_created = datetime.datetime.strptime(comment['created_time'][:-5], '%Y-%m-%dT%H:%M:%S')
-        new_comment.date_created = date_created
-        new_comment.type = 'remote-comment'
-        new_comment.thread = post['id']
-        new_comment.view = comment['message']
-        new_comment.save()
-
     self.write(json.dumps({ 'count': count }))
 
   def facebook_request(self, path, callback, access_token=None,
