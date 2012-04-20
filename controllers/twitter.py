@@ -72,7 +72,8 @@ class TwitterHandler(BaseHandler,
     self.twitter_request(
             "/favorites/" + operation + "/" + post_id,
             self.favorite_result,
-            access_token=access_token)
+            access_token=access_token,
+            post_args={})
 
   def status_update_result(self, response):
     pass
