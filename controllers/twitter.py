@@ -88,11 +88,16 @@ class TwitterHandler(BaseHandler,
       new_tweet.title = ''
       new_tweet.post_id = str(tweet['id'])
       new_tweet.link = 'http://twitter.com/' + tweet['user']['screen_name'] + '/status/' + str(tweet['id'])
-      text = tweet['retweeted_status']['text'] if tweet.has_key('retweeted_status') else tweet['text']
+      if tweet.has_key('retweeted_status'):
+        text = tweet['retweeted_status']['text']
+        text += '<br><span class="hw-retweeted-by">' + self.locale.translate('retweeted by %(tweeter)s') % { 'tweeter':  } + '</span>'
+        new_tweet.avatar = tweet['retweeted_status']['user']['profile_image_url']
+      else:
+        text = tweet['text']
       text = tornado.escape.linkify(text)
       text = re.compile(r'#(\w+)', re.M | re.U).sub(r'<a href="https://twitter.com/#!/search/%23\1" rel="tag">#\1</a>', text)
       text = re.compile(r'@(\w+)', re.M | re.U).sub(r'<a href="https://twitter.com/#!/\1">@\1</a>', text)
-      new_tweet.view = text
+      new_tweet.view = content_remote.sanitize(text)
       new_tweet.save()
 
     count = self.models.content_remote.get(to_username=self.user.username, type='twitter', deleted=False).count()

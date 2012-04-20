@@ -106,7 +106,7 @@ class FacebookHandler(BaseHandler,
       if post.has_key('story'):
         view += post['story'] + "<br>"
       view = tornado.escape.linkify(view)
-      new_post.view = view
+      new_post.view = content_remote.sanitize(view)
       new_post.save()
 
     count = self.models.content_remote.get(to_username=self.user.username, type='facebook', deleted=False).count()
