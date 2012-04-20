@@ -155,6 +155,8 @@ class FacebookHandler(BaseHandler,
           new_comment.type = 'remote-comment'
           new_comment.thread = post['id']
           new_comment.post_id = comment['id']
+          if post.has_key('actions'):
+            new_comment.link = post['actions'][0]['link']
           new_comment.view = comment['message']
           new_comment.save()
 

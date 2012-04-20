@@ -8,12 +8,18 @@
       data-is-deleted="{{ item.deleted }}" data-delete="{{ _('delete') }}" data-undelete="{{ _('undelete') }}"
       data-error="{{ _('error! try again...') }}">
     <a href="#favorite" onclick="hw.favorite(event, this)">{% if item.favorited %}{{ _('unfavorite') }}{% else %}{{ _('favorite') }}{% end %}</a>
-    {% if item.is_remote %}
-      <a href="{{ nav_url(host=True, section='dashboard') }}#{{ urlencode({ 'reblog': item.link.encode('utf-8') }) }}" target="_blank">{{ _('reblog') }}</a>
-    {% else %}
-      <a href="{{ nav_url(host=True, section='dashboard') }}#{{ urlencode({ 'reblog': content_url(item).encode('utf-8') }) }}" target="_blank">{{ _('reblog') }}</a>
+    {% if not item.is_remote or not (item.type == 'remote-comment' or item.type == 'facebook' or item.type == 'twitter) %}
+      {% if item.is_remote %}
+        <a href="{{ nav_url(host=True, section='dashboard') }}#{{ urlencode({ 'reblog': item.link.encode('utf-8') }) }}" target="_blank">{{ _('reblog') }}</a>
+      {% else %}
+        <a href="{{ nav_url(host=True, section='dashboard') }}#{{ urlencode({ 'reblog': content_url(item).encode('utf-8') }) }}" target="_blank">{{ _('reblog') }}</a>
+      {% end %}
     {% end %}
-    <a href="#reply" onclick="hw.reply(event, this)">{{ _('reply') }}</a>
+    {% if item.is_remote and item.type == 'facebook' or item.type == 'remote-comment' %}
+      <a href="{{ item.link }}" target="_blank">{{ _('reply') }}</a>
+    {% else %}
+      <a href="#reply" onclick="hw.reply(event, this)">{{ _('reply') }}</a>
+    {% end %}
     <a href="#spam" onclick="hw.spam(event, this)">{% if item.is_spam %}{{ _('not spam') }}{% else %}{{ _('spam') }}{% end %}</a>
     {% if not item.is_remote or item.type == 'post' or item.type == 'comment' %}
     <a href="#delete" onclick="hw.deletePost(event, this)">{% if item.deleted %}{{ _('undelete') }}{% else %}{{ _('delete') }}{% end %}</a>
