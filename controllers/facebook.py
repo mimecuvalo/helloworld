@@ -95,7 +95,7 @@ class FacebookHandler(BaseHandler,
       new_post.post_id = post['id']
       new_post.comments_count = post['comments']['count']
       if post['comments']['count']:
-        last_updated = post['comments']['data'][post['comments']['count'] - 1]['created_time']
+        last_updated = post['comments']['data'][len(post['comments']['data']) - 1]['created_time']
         new_post.comments_updated = datetime.datetime.strptime(last_updated[:-5], '%Y-%m-%dT%H:%M:%S')
       if post.has_key('actions'):
         new_post.link = post['actions'][0]['link']
