@@ -89,7 +89,7 @@ class TwitterHandler(BaseHandler,
       new_tweet.post_id = str(tweet['id'])
       new_tweet.link = 'http://twitter.com/' + tweet['user']['screen_name'] + '/status/' + str(tweet['id'])
       if tweet.has_key('retweeted_status'):
-        text = tweet['retweeted_status']['text']
+        text = tornado.escape.linkify(tweet['retweeted_status']['text'])
         text += '<br><span class="hw-retweeted-by">' \
                 + self.locale.translate('retweeted by <a href="%(link)s">%(tweeter)s</a>') \
                   % { 'link': 'http://twitter.com/' + tweet['user']['screen_name'], \
@@ -99,10 +99,9 @@ class TwitterHandler(BaseHandler,
         new_tweet.from_user = 'http://twitter.com/' + tweet['retweeted_status']['user']['screen_name']
         new_tweet.avatar = tweet['retweeted_status']['user']['profile_image_url']
       else:
-        text = tweet['text']
+        text = tornado.escape.linkify(tweet['text'])
       text = re.compile(r'#(\w+)', re.M | re.U).sub(r'<a href="https://twitter.com/#!/search/%23\1" rel="tag">#\1</a>', text)
       text = re.compile(r'@(\w+)', re.M | re.U).sub(r'<a href="https://twitter.com/#!/\1">@\1</a>', text)
-      text = tornado.escape.linkify(text)
       new_tweet.view = content_remote.sanitize(tornado.escape.xhtml_unescape(text))
       new_tweet.save()
 
