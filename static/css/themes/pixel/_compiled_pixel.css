@@ -50,6 +50,7 @@ body {
 
 .hw-button,
 .hw-button:visited {
+  float: left;
   padding: 0 7px;
   background-color: #eff;
   border: 1px solid #0c0;
