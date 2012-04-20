@@ -119,11 +119,11 @@ class FacebookHandler(BaseHandler,
     # comments
     if post['comments']['count']:
       for comment in post['comments']['data']:
-        exists = models.content_remote.get(to_username=self.user.username, post_id=comment['id'])[0]
+        exists = self.models.content_remote.get(to_username=self.user.username, post_id=comment['id'])[0]
         if exists:
           continue
         else:
-          new_comment = models.content_remote()
+          new_comment = self.models.content_remote()
 
         new_comment.to_username = self.user.username
         new_comment.username = comment['from']['name']
