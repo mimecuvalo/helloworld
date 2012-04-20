@@ -54,7 +54,7 @@
 {% end %}
 
 {% if 'content' in display and content and content.template == 'events' %}
-  <a href="{{ content_url(content, past=1) }}" style="float: right;">show past events</a><br>
+  <a href="{{ content_url(content, past='1') }}" style="float: right;">show past events</a><br>
 {% end %}
 
 {% for item in content_list %}

@@ -188,7 +188,7 @@ div.hw-events input {
 }
 form.hw-create.hw-template-events div.hw-events {
   display: block;
-  margin: 5px 0;
+  margin: 38px 0 -32px 0;
 }
 
 #hw-container.hw-editing > #hw-content > section.hw-individual-content > header {
