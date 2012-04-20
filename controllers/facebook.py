@@ -66,7 +66,8 @@ class FacebookHandler(BaseHandler,
         date_updated = datetime.datetime.strptime(post['updated_time'][:-5], '%Y-%m-%dT%H:%M:%S')
 
       if exists:
-        if date_updated and date_updated != exists.date_updated:
+        if date_updated and date_updated != exists.date_updated \
+            or post['comments']['count'] != exists.comments_count:
           new_post = exists
         else:
           continue
@@ -92,6 +93,10 @@ class FacebookHandler(BaseHandler,
       new_post.type = 'facebook'
       new_post.title = ''
       new_post.post_id = post['id']
+      new_post.comments_count = post['comments']['count']
+      if post['comments']['count']:
+        last_updated = post['comments']['data'][post['comments']['count'] - 1]['created_time']
+        new_post.comments_updated = datetime.datetime.strptime(last_updated[:-5], '%Y-%m-%dT%H:%M:%S')
       if post.has_key('actions'):
         new_post.link = post['actions'][0]['link']
       view = ""
@@ -103,13 +108,33 @@ class FacebookHandler(BaseHandler,
         view += post['description'] + "<br>"
       if post.has_key('story'):
         view += post['story'] + "<br>"
-      view = content_remote.sanitize(tornado.escape.xhtml_unescape(tornado.escape.linkify(view)))
+      view = tornado.escape.linkify(view)
       if post.has_key('picture'):
         view = '<img src="' + post['picture'] + '">' + view
-      new_post.view = view
+      new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(view))
       new_post.save()
 
     count = self.models.content_remote.get(to_username=self.user.username, type='facebook', deleted=False).count()
+
+    # comments
+    if post['comments']['count']:
+      for comment in post['comments']['data']:
+        exists = models.content_remote.get(to_username=self.user.username, post_id=comment['id'])[0]
+        if exists:
+          continue
+        else:
+          new_comment = models.content_remote()
+
+        new_comment.to_username = self.user.username
+        new_comment.username = comment['from']['name']
+        new_comment.from_user = 'http://facebook.com/' + comment['from']['id']
+        date_created = datetime.datetime.strptime(comment['created_time'][:-5], '%Y-%m-%dT%H:%M:%S')
+        new_comment.date_created = date_created
+        new_comment.type = 'remote-comment'
+        new_comment.thread = post['id']
+        new_comment.view = comment['message']
+        new_comment.save()
+
     self.write(json.dumps({ 'count': count }))
 
   def facebook_request(self, path, callback, access_token=None,

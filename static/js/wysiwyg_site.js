@@ -132,7 +132,7 @@ hw.wysiwygKeymap = {
   9:  'insertUnorderedList',  // tab
   33: 'createLink',   // !
   42: 'bold',         // *
-  47: 'italic',       // /
+  //47: 'italic',       // /
   95: 'underline'     // _
 };
 
@@ -178,7 +178,7 @@ hw.wysiwygKeys = function(event) {
       case 9:   // tab
       case 33:  // !
       case 42:  // *
-      case 47:  // /
+      //case 47:  // /
       case 95:  // _
         var action = hw.wysiwygKeymap[key];
 

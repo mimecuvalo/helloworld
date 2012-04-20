@@ -60,8 +60,13 @@ hw.edit = function(event) {
 
 hw.editScriptWorkaround = function() {
   var wysiwyg = hw.$c('hw-wysiwyg');
-  document.head.innerHTML = document.head.innerHTML.replace(/<style name="HWSCRIPTWORKAROUND"/g, '<script');
-  document.head.innerHTML = document.head.innerHTML.replace(/<\/style><!--HWSCRIPTWORKAROUND-->/g, '</script>');
+  try {
+    // XXX doesn't work in IE - this whole things is crap anyway...hmmm
+    document.head.innerHTML = document.head.innerHTML.replace(/<style name="HWSCRIPTWORKAROUND"/g, '<script');
+    document.head.innerHTML = document.head.innerHTML.replace(/<\/style><!--HWSCRIPTWORKAROUND-->/g, '</script>');
+  } catch(ex) {
+    // do nothing
+  }
   wysiwyg.innerHTML = wysiwyg.innerHTML.replace(/<style name="HWSCRIPTWORKAROUND"/g, '<script');
   wysiwyg.innerHTML = wysiwyg.innerHTML.replace(/<\/style><!--HWSCRIPTWORKAROUND-->/g, '</script>');
 };
