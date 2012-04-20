@@ -54,6 +54,7 @@ hw.reply = function(event, el) {
 
   var username = el.parentNode.getAttribute('data-username');
   var user = el.parentNode.getAttribute('data-user');
+  var type = el.parentNode.getAttribute('data-type');
 
   var wysiwygResult = hw.getCurrentWysiwyg();
   var isComment = wysiwygResult['isComment'];
@@ -63,6 +64,14 @@ hw.reply = function(event, el) {
     document.body.parentNode.scrollTop = document.body.parentNode.scrollTop + wysiwyg.getBoundingClientRect().top - 100;
   } else {
     document.body.scrollTop = document.body.scrollTop + wysiwyg.getBoundingClientRect().top - 100;
+  }
+
+  var externalSources = ['twitter', 'facebook', 'google'];
+  for (var x = 0; x < externalSources.length; ++x) {
+    var sourceEl = hw.$('hw-post-' + externalSources[x]);
+    if (sourceEl) {
+      sourceEl.checked = true;
+    }
   }
 
   if (user) {
