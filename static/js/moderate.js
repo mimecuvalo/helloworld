@@ -491,6 +491,7 @@ hw.favorite = function(event, el) {
   }
 
   var user = el.parentNode.getAttribute('data-user');
+  var type = el.parentNode.getAttribute('data-type');
   var localId = el.parentNode.getAttribute('data-id');
   var postId = el.parentNode.getAttribute('data-post-id');
   var isFavorited = el.parentNode.getAttribute('data-is-favorited');
@@ -518,6 +519,17 @@ hw.favorite = function(event, el) {
       headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
       onSuccess: callback,
       onError: badTrip });
+
+  if (type == 'twitter' || type == 'facebook' || type == 'google') {
+    new hw.ajax(hw.baseUri() + type,
+      { method: 'post',
+        postBody: 'op='       + encodeURIComponent('favorite')
+               + '&post_id='  + encodeURIComponent(postId)
+               + '&not_favorited='  + encodeURIComponent(isFavorited == '1' ? '1' : '0'),
+        headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
+        onSuccess: function() {},
+        onError: function() {} });
+  }
 };
 
 hw.spam = function(event, el) {

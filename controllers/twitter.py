@@ -44,6 +44,12 @@ class TwitterHandler(BaseHandler,
     if not self.authenticate(author=True):
       return
 
+    op = self.get_argument('op', None)
+
+    if op == 'favorite':
+      self.favorite()
+      return
+
     self.user = self.get_author_user()
     access_token = json.loads(self.user.twitter)
     status =    content_logic.ellipsize(content_remote.strip_html(self.get_argument('title', '')), 18, including_dots=True) \
@@ -56,7 +62,22 @@ class TwitterHandler(BaseHandler,
             access_token=access_token,
             post_args={"status": status})
 
+  def favorite(self):
+    not_favorited = self.get_argument('not_favorited')
+    operation = 'destroy' if not_favorited == '1' else 'create'
+    post_id = self.get_argument('post_id', '')
+
+    self.user = self.get_author_user()
+    access_token = json.loads(self.user.twitter)
+    self.twitter_request(
+            "/favorites/" + operation + "/" + post_id,
+            self.favorite_result,
+            access_token=access_token)
+
   def status_update_result(self, response):
+    pass
+
+  def favorite_result(self, response):
     pass
 
   def timeline_result(self, tweets):
