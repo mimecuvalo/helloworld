@@ -69,7 +69,7 @@ hw.reply = function(event, el) {
   var externalSources = ['twitter', 'facebook', 'google'];
   for (var x = 0; x < externalSources.length; ++x) {
     var sourceEl = hw.$('hw-post-' + externalSources[x]);
-    if (sourceEl) {
+    if (sourceEl && externalSources[x] == type) {
       sourceEl.checked = true;
     }
   }
