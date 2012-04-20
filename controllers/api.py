@@ -318,7 +318,10 @@ class ApiHandler(BaseHandler):
 
     not_favorited = self.get_argument('not_favorited')
     favorited = not int(not_favorited)
-    content.favorited += 1 if favorited else -1
+    if is_remote:
+      content.favorited = 1 if favorited else 0
+    else:
+      content.favorited += 1 if favorited else -1
     content.save()
 
     if is_remote:
