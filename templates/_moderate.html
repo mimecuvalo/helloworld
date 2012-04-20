@@ -15,7 +15,7 @@
         <a href="{{ nav_url(host=True, section='dashboard') }}#{{ urlencode({ 'reblog': content_url(item).encode('utf-8') }) }}" target="_blank">{{ _('reblog') }}</a>
       {% end %}
     {% end %}
-    {% if item.is_remote and item.type == 'facebook' or item.type == 'remote-comment' %}
+    {% if item.is_remote and (item.type == 'facebook' or item.type == 'remote-comment') %}
       <a href="{{ item.link }}" target="_blank">{{ _('reply') }}</a>
     {% else %}
       <a href="#reply" onclick="hw.reply(event, this)">{{ _('reply') }}</a>
