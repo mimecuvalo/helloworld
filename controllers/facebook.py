@@ -105,7 +105,7 @@ class FacebookHandler(BaseHandler,
         view += post['description'] + "<br>"
       if post.has_key('story'):
         view += post['story'] + "<br>"
-      view = tornado.escape.linkify(view)
+      view = tornado.escape.linkify(tornado.escape.xhtml_unescape(view))
       new_post.view = content_remote.sanitize(view)
       new_post.save()
 
