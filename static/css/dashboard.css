@@ -324,7 +324,7 @@
   margin-right: 5px;
   float: left;
 }
-#hw-feed section[data-type="twitter"] .hw-view {
+#hw-feed .hw-view {
   clear: none;
 }
 
