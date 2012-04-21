@@ -2,7 +2,7 @@
 
 ## description
 
-federated social web tumblr/blog/rss reader/wordpress-like app to be used on shared servers.  passes swat0(?) i think i'm missing one last step with comments.
+federated social web tumblr/blog/rss reader/wordpress-like app to be used on shared servers.  passes swat0!
 
 ## features
 - ostatus stack, PuSH/Salmon/Webfinger
