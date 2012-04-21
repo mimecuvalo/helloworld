@@ -240,7 +240,11 @@ hw.customizeEdit = function(event, close) {
   hw.setClass(hw.$('hw-container'), 'editing-theme', !close);
 
   if (close) {
-    hw.customizeUpdatePreview();
+    var extra_head     = /\* extra_head_html: """(.*?)"""/ig.exec(hw.customDefaultStyleSheet);
+    var extra_body_end = /\* extra_body_end_html: """(.*?)"""/ig.exec(hw.customDefaultStyleSheet);
+    customForm['extra_head_html'].value     = extra_head ? extra_head[1] : "";
+    customForm['extra_body_end_html'].value = extra_body_end ? extra_body_end[1] : "";
+    hw.customAppearance();
   }
 };
 
