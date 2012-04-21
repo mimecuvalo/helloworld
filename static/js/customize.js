@@ -71,11 +71,15 @@ hw.customSave = function(event, el) {
 
     var regex = new RegExp(" \\* " + type + ":" + name + ":.*", "ig");
     hw.customDefaultStyleSheet = hw.customDefaultStyleSheet.replace(regex, " * " + type + ":" + name + ":" + currentOption);
-    customForm['extra_head_html'].value = customForm['extra_head_html'].value.replace(regex, " * " + type + ":" + name + ":" + currentOption);
-    customForm['extra_body_end_html'].value = customForm['extra_body_end_html'].value.replace(regex, " * " + type + ":" + name + ":" + currentOption);
     hw.$('hw-theme-editor').value = hw.customDefaultStyleSheet;
     hw.customCm.setValue(hw.customDefaultStyleSheet);
   }
+
+  var customForm = hw.$('hw-customize');
+  var extraHead    = /\* extra_head_html: """([\S\s]*?)"""/ig.exec(hw.customCurrentStyleSheet);
+  var extraBodyEnd = /\* extra_body_end_html: """([\S\s]*?)"""/ig.exec(hw.customCurrentStyleSheet);
+  customForm['extra_head_html'].value     = extraHead ? extraHead[1] : "";
+  customForm['extra_body_end_html'].value = extraBodyEnd ? extraBodyEnd[1] : "";
 
   new hw.ajax(hw.baseUri() + 'customize',
     { method: 'post',
@@ -242,11 +246,6 @@ hw.customizeEdit = function(event, close) {
   hw.setClass(hw.$('hw-container'), 'editing-theme', !close);
 
   if (close) {
-    var customForm = hw.$('hw-customize');
-    var extraHead    = /\* extra_head_html: """([\S\s]*?)"""/ig.exec(hw.customDefaultStyleSheet);
-    var extraBodyEnd = /\* extra_body_end_html: """([\S\s]*?)"""/ig.exec(hw.customDefaultStyleSheet);
-    customForm['extra_head_html'].value     = extraHead ? extraHead[1] : "";
-    customForm['extra_body_end_html'].value = extraBodyEnd ? extraBodyEnd[1] : "";
     hw.customAppearance(false, true);
   }
 };
