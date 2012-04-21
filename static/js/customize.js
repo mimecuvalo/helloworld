@@ -71,6 +71,8 @@ hw.customSave = function(event, el) {
 
     var regex = new RegExp(" \\* " + type + ":" + name + ":.*", "ig");
     hw.customDefaultStyleSheet = hw.customDefaultStyleSheet.replace(regex, " * " + type + ":" + name + ":" + currentOption);
+    customForm['extra_head_html'].value = customForm['extra_head_html'].value.replace(regex, " * " + type + ":" + name + ":" + currentOption);
+    customForm['extra_body_end_html'].value = customForm['extra_body_end_html'].value.replace(regex, " * " + type + ":" + name + ":" + currentOption);
     hw.$('hw-theme-editor').value = hw.customDefaultStyleSheet;
     hw.customCm.setValue(hw.customDefaultStyleSheet);
   }
