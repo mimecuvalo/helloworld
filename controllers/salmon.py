@@ -199,7 +199,7 @@ class SalmonHandler(BaseHandler):
         post_remote.is_spam = True
       else:
         spam.train_ham(atom_content, self.application.settings["private_path"], self.display["user"].username)
-      post_remote.type = 'comment' if ref else 'post'
+      post_remote.type = 'comment' if ref or (existing_content and existing_content.type == 'comment') else 'post'
       post_remote.title = salmon_doc.find('atom:title').string
       post_remote.post_id = salmon_doc.find('atom:id').string
       post_remote.link = salmon_doc.find('atom:link', rel='alternate')['href']
