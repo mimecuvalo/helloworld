@@ -241,11 +241,11 @@ hw.customizeEdit = function(event, close) {
 
   if (close) {
     var customForm = hw.$('hw-customize');
-    var extra_head     = /\* extra_head_html: """(.*?)"""/ig.exec(hw.customDefaultStyleSheet);
-    var extra_body_end = /\* extra_body_end_html: """(.*?)"""/ig.exec(hw.customDefaultStyleSheet);
-    customForm['extra_head_html'].value     = extra_head ? extra_head[1] : "";
-    customForm['extra_body_end_html'].value = extra_body_end ? extra_body_end[1] : "";
-    hw.customAppearance();
+    var extraHead    = /\* extra_head_html: """([\S\s]*?)"""/ig.exec(hw.customDefaultStyleSheet);
+    var extraBodyEnd = /\* extra_body_end_html: """([\S\s]*?)"""/ig.exec(hw.customDefaultStyleSheet);
+    customForm['extra_head_html'].value     = extraHead ? extraHead[1] : "";
+    customForm['extra_body_end_html'].value = extraBodyEnd ? extraBodyEnd[1] : "";
+    hw.customAppearance(false, true);
   }
 };
 
@@ -331,16 +331,27 @@ hw.customGetCurrentTheme = function() {
   }
 };
 
-hw.customAppearance = function(init) {
+hw.customAppearance = function(init, opt_useCustom) {
   var theme = hw.customGetCurrentTheme();
 
   var html = '';
   var counter = 0;
-  var option = theme.hasAttribute('data-option-' + counter);
+  var option;
+  if (opt_useCustom) {
+    var re = new RegExp('\\* ((?:color|font|image|if|text).*)', 'ig');
+    option = re.exec(hw.customDefaultStyleSheet);
+  } else {
+    option = theme.hasAttribute('data-option-' + counter);
+  }
   var uploadButtons = [];
 
   while (option) {
-    var data = theme.getAttribute('data-option-' + counter).split(':');
+    var data;
+    if (opt_useCustom) {
+      data = option[1].split(':');
+    } else {
+      data = theme.getAttribute('data-option-' + counter).split(':');
+    }
     if (data.length > 2) {
       for (var x = 3; x < data.length; ++x) {
         data[2] += ':' + data[x];
@@ -381,7 +392,11 @@ hw.customAppearance = function(init) {
     html += '</label>';
 
     ++counter;
-    option = theme.hasAttribute('data-option-' + counter);
+    if (opt_useCustom) {
+      option = re.exec(hw.customDefaultStyleSheet);
+    } else {
+      option = theme.hasAttribute('data-option-' + counter);
+    }
   }
 
   hw.$('hw-customize-appearance').innerHTML = html;
