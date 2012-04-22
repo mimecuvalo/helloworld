@@ -228,7 +228,9 @@ class TwitterHandler(BaseHandler,
       msg = MIMEMultipart()
       for arg in post_args:
         if arg == 'media[]':
-          msg.attach(MIMEImage(post_args[arg]))
+          mime_image = MIMEImage(post_args[arg])
+          mime_image.add_header("Content-Disposition", "form-data", name="media[]", filename="media[]")
+          msg.attach(mime_image)
         else:
           msg[arg] = post_args[arg]
       body = msg.as_string()
