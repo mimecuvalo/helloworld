@@ -52,12 +52,33 @@ class FacebookHandler(BaseHandler,
     access_token = self.user.facebook
     status = content_remote.strip_html(self.get_argument('title', '')) + '\n' \
            + content_remote.strip_html(self.get_argument('view', '')) + '\n' \
-           + self.get_argument('url');
+           + self.get_argument('url')
+
+    thumb = self.get_argument('thumb', '')
+    picture = None
+    if thumb:
+      thumb = url_factory.clean_filename(thumb)
+      thumb = thumb[len(url_factory.resource_url(self)) + 1:]
+      thumb = url_factory.resource_directory(self, thumb)
+      picture = thumb
+
+      basename = os.path.basename(thumb)
+      dirname = os.path.dirname(thumb)
+      if os.path.basename(dirname) == 'thumbs':
+        parent_dir = os.path.dirname(dirname)
+        original_dir = os.path.join(parent_dir, 'original')
+        original_img = os.path.join(original_dir, basename)
+        if os.path.exists(original_img):
+          picture = original_img
+
+      picture = picture[len(self.application.settings["static_path"]) + 1:]
+      picture = self.static_url(picture, include_host=True)
+
     self.facebook_request(
             "/me/feed",
             self.status_update_result,
             access_token=access_token,
-            post_args={"message": status},)
+            post_args={"message": status, "picture": picture},)
 
   def favorite(self):
     not_favorited = self.get_argument('not_favorited')

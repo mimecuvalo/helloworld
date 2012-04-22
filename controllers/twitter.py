@@ -1,8 +1,11 @@
 import base64
 import datetime
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
 import json
 import logging
 import re
+import os.path
 import urllib
 
 import tornado.auth
@@ -12,10 +15,13 @@ import tornado.web
 from base import BaseHandler
 from logic import content as content_logic
 from logic import content_remote
+from logic import url_factory
 
 # This monkeypatches tornado to do sync instead of async
 class TwitterHandler(BaseHandler,
                      tornado.auth.TwitterMixin):
+  UPDATE_WITH_MEDIA_URL = "https://upload.twitter.com/1/statuses/update_with_media.json"
+
   def get(self):
     if not self.authenticate(author=True):
       return
@@ -55,12 +61,39 @@ class TwitterHandler(BaseHandler,
     status =    content_logic.ellipsize(content_remote.strip_html(self.get_argument('title', '')), 18, including_dots=True) \
         + (': ' if self.get_argument('title', '') and self.get_argument('view', '') else '') \
         + content_logic.ellipsize(content_remote.strip_html(self.get_argument('view', '')), 99, including_dots=True) \
-        + ' ' + self.get_argument('url');
-    self.twitter_request(
-            "/statuses/update",
-            self.status_update_result,
-            access_token=access_token,
-            post_args={"status": status})
+        + ' ' + self.get_argument('url')
+
+    thumb = self.get_argument('thumb', '')
+    if thumb:
+      thumb = url_factory.clean_filename(thumb)
+      thumb = thumb[len(url_factory.resource_url(self)) + 1:]
+      thumb = url_factory.resource_directory(self, thumb)
+      image = thumb
+
+      basename = os.path.basename(thumb)
+      dirname = os.path.dirname(thumb)
+      if os.path.basename(dirname) == 'thumbs':
+        parent_dir = os.path.dirname(dirname)
+        original_dir = os.path.join(parent_dir, 'original')
+        original_img = os.path.join(original_dir, basename)
+        if os.path.exists(original_img) and os.path.getsize(original_img) < 3145728:
+          image = original_img
+
+      f = open(image, 'r')
+      image_data = f.read()
+      f.close()
+
+      self.twitter_request(
+              self.UPDATE_WITH_MEDIA_URL,
+              self.status_update_result,
+              access_token=access_token,
+              post_args={"status": status, "media[]": image_data })
+    else:
+      self.twitter_request(
+              "/statuses/update",
+              self.status_update_result,
+              access_token=access_token,
+              post_args={"status": status})
 
   def favorite(self):
     not_favorited = self.get_argument('not_favorited')
@@ -183,12 +216,22 @@ class TwitterHandler(BaseHandler,
       oauth = self._oauth_request_parameters(
           url, access_token, all_args, method=method)
       args.update(oauth)
-      if post_args:
+      if post_args and path != self.UPDATE_WITH_MEDIA_URL:
         args.update(post_args)
     if args:
       url += "?" + urllib.urlencode(args)
 
-    response = content_remote.get_url(url, post=(post_args is not None))
+    body = None
+    if path == self.UPDATE_WITH_MEDIA_URL:
+      msg = MIMEMultipart()
+      for arg in post_args:
+        if arg == 'media[]':
+          msg.attach(MIMEImage(post_args[arg]))
+        else:
+          msg[arg] = post_args[arg]
+      body = msg.as_string()
+
+    response = content_remote.get_url(url, post=(post_args is not None), body=body)
     self._on_twitter_request(callback, response)
 
   def authorize_redirect(self, callback_uri=None, extra_params=None,

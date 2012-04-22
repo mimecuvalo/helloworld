@@ -175,12 +175,15 @@ def get_comments(handler, content):
     comment.is_remote = 1
   return remote_comments
 
-def get_url(url, post=False):
+def get_url(url, post=False, body=None):
   url = urlparse.urlparse(url)
   conn = httplib.HTTPSConnection(url.netloc) if url.scheme == 'https' else httplib.HTTPConnection(url.netloc)
   if post:
-    headers = {"Content-type": "application/x-www-form-urlencoded"}
-    conn.request("POST", url.path, url.query, headers)
+    if body:
+      headers = {"Content-type": "multipart/form-data"}
+    else:
+      headers = {"Content-type": "application/x-www-form-urlencoded"}
+    conn.request("POST", url.path + '?' + url.query, body, headers)
   else:
     conn.request("GET", url.path + '?' + url.query)
   class Response:
