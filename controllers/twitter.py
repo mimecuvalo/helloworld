@@ -58,12 +58,13 @@ class TwitterHandler(BaseHandler,
 
     self.user = self.get_author_user()
     access_token = json.loads(self.user.twitter)
+    thumb = self.get_argument('thumb', '')
+    text_length = 79 if thumb else 99
     status =    content_logic.ellipsize(content_remote.strip_html(self.get_argument('title', '')), 18, including_dots=True) \
         + (': ' if self.get_argument('title', '') and self.get_argument('view', '') else '') \
-        + content_logic.ellipsize(content_remote.strip_html(self.get_argument('view', '')), 99, including_dots=True) \
+        + content_logic.ellipsize(content_remote.strip_html(self.get_argument('view', '')), text_length, including_dots=True) \
         + ' ' + self.get_argument('url')
 
-    thumb = self.get_argument('thumb', '')
     if thumb:
       thumb = url_factory.clean_filename(thumb)
       thumb = thumb[len(url_factory.resource_url(self)) + 1:]
@@ -211,7 +212,8 @@ class TwitterHandler(BaseHandler,
     if access_token:
       all_args = {}
       all_args.update(args)
-      all_args.update(post_args or {})
+      if path != self.UPDATE_WITH_MEDIA_URL:
+        all_args.update(post_args or {})
       method = "POST" if post_args is not None else "GET"
       oauth = self._oauth_request_parameters(
           url, access_token, all_args, method=method)
