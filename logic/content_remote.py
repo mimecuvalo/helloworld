@@ -180,9 +180,10 @@ def get_url(url, post=False, body=None):
   conn = httplib.HTTPSConnection(url.netloc) if url.scheme == 'https' else httplib.HTTPConnection(url.netloc)
   if post:
     if body:
-      headers = {"Content-type": "multipart/form-data"}
+      headers = { "Content-type": "multipart/form-data", 
+                  "Content-length": str(len(body)) }
     else:
-      headers = {"Content-type": "application/x-www-form-urlencoded"}
+      headers = { "Content-type": "application/x-www-form-urlencoded" }
     conn.request("POST", url.path + '?' + url.query, body, headers)
   else:
     conn.request("GET", url.path + '?' + url.query)

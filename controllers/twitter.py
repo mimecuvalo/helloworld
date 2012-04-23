@@ -1,7 +1,9 @@
 import base64
 import datetime
+import email.encoders
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 import json
 import logging
 import re
@@ -63,7 +65,8 @@ class TwitterHandler(BaseHandler,
     status =    content_logic.ellipsize(content_remote.strip_html(self.get_argument('title', '')), 18, including_dots=True) \
         + (': ' if self.get_argument('title', '') and self.get_argument('view', '') else '') \
         + content_logic.ellipsize(content_remote.strip_html(self.get_argument('view', '')), text_length, including_dots=True) \
-        + ' ' + self.get_argument('url')
+        + (' ' if self.get_argument('title', '') and self.get_argument('view', '') else '') \
+        + self.get_argument('url')
 
     if thumb:
       thumb = url_factory.clean_filename(thumb)
@@ -228,11 +231,14 @@ class TwitterHandler(BaseHandler,
       msg = MIMEMultipart()
       for arg in post_args:
         if arg == 'media[]':
-          mime_image = MIMEImage(post_args[arg])
+          mime_image = MIMEImage(post_args[arg], _encoder = email.encoders.encode_noop)
           mime_image.add_header("Content-Disposition", "form-data", name="media[]", filename="media[]")
+          mime_image.add_header("Content-Length", str(len(post_args[arg])))
           msg.attach(mime_image)
         else:
-          msg[arg] = post_args[arg]
+          mime_text = MIMEText(post_args[arg])
+          mime_text.add_header("Content-Disposition", "form-data", name=arg)
+          msg.attach(mime_text)
       body = msg.as_string()
 
     response = content_remote.get_url(url, post=(post_args is not None), body=body)
