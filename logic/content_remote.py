@@ -183,10 +183,9 @@ def get_url(url, post=False, body=None):
       authorization = "OAuth "
       oauth_query = urlparse.parse_qsl(url.query)
       for entry in oauth_query:
-        authorization += entry[0] + '="' + entry[1] + '",'
+        authorization += entry[0] + '="' + urllib.quote(entry[1]) + '",'
       authorization = authorization[:-1]
-      headers = { "Content-type": "multipart/form-data", 
-                  "Content-length": str(len(body)),
+      headers = { "Content-length": str(len(body)),
                   "Authorization": authorization }
       conn.request("POST", url.path, body, headers)
     else:
