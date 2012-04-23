@@ -180,11 +180,18 @@ def get_url(url, post=False, body=None):
   conn = httplib.HTTPSConnection(url.netloc) if url.scheme == 'https' else httplib.HTTPConnection(url.netloc)
   if post:
     if body:
+      authorization = "OAuth "
+      oauth_query = urlparse.parse_qsl(url.query)
+      for entry in oauth_query:
+        authorization += entry[0] + '=' + entry[1] + ","
+      authorization = authorization[:-1]
       headers = { "Content-type": "multipart/form-data", 
-                  "Content-length": str(len(body)) }
+                  "Content-length": str(len(body)),
+                  "Authorization": authorization }
+      conn.request("POST", url.path, body, headers)
     else:
       headers = { "Content-type": "application/x-www-form-urlencoded" }
-    conn.request("POST", url.path + '?' + url.query, body, headers)
+      conn.request("POST", url.path + '?' + url.query, body, headers)
   else:
     conn.request("GET", url.path + '?' + url.query)
   class Response:
