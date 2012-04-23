@@ -228,7 +228,7 @@ class TwitterHandler(BaseHandler,
 
     body = None
     if path == self.UPDATE_WITH_MEDIA_URL:
-      msg = MIMEMultipart()
+      msg = MIMEMultipart("form-data")
       for arg in post_args:
         if arg == 'media[]':
           mime_image = MIMEImage(post_args[arg], _encoder = email.encoders.encode_noop)
@@ -238,6 +238,7 @@ class TwitterHandler(BaseHandler,
         else:
           mime_text = MIMEText(post_args[arg])
           mime_text.add_header("Content-Disposition", "form-data", name=arg)
+          mime_text.set_charset("utf-8")
           msg.attach(mime_text)
       body = msg.as_string()
 

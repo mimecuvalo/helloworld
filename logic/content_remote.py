@@ -185,9 +185,11 @@ def get_url(url, post=False, body=None):
       for entry in oauth_query:
         authorization += entry[0] + '="' + urllib.quote(entry[1]) + '",'
       authorization = authorization[:-1]
-      headers = { "Content-length": str(len(body)),
+      ctype, multipart = body.split("\n\n", 1)
+      headers = { "Content-length": str(len(multipart)),
+                  "Content-Type": ctype.split(": ", 1)[-1],
                   "Authorization": authorization }
-      conn.request("POST", url.path, body, headers)
+      conn.request("POST", url.path, multipart, headers)
     else:
       headers = { "Content-type": "application/x-www-form-urlencoded" }
       conn.request("POST", url.path + '?' + url.query, body, headers)
