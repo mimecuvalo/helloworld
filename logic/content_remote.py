@@ -186,8 +186,10 @@ def get_url(url, post=False, body=None):
         authorization += entry[0] + '="' + urllib.quote(entry[1]) + '",'
       authorization = authorization[:-1]
       ctype, multipart = body.split("\n\n", 1)
+      ctype = ctype.split(": ", 1)[-1]
+      ctype = ctype.replace('\n', '', 1)  # XXX why, oh, why python do you add a newline after multipart/form-data but not multipart/mixed
       headers = { "Content-length": str(len(multipart)),
-                  "Content-Type": ctype.split(": ", 1)[-1],
+                  "Content-Type": ctype,
                   "Authorization": authorization }
       conn.request("POST", url.path, multipart, headers)
     else:
