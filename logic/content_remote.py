@@ -43,7 +43,7 @@ def parse_feed(models, user, feed=None, parsed_feed=None, max_days_old=30, remot
       date_updated = datetime.datetime.fromtimestamp(mktime(entry.updated_parsed))
 
     if exists:
-      if exists.type == 'remote-comment':  # received via salmon before
+      if exists.type in ('comment', 'remote-comment'):  # received via salmon before
         continue
       elif (date_updated and date_updated != exists.date_updated) \
           or (comments_updated and comments_updated != exists.comments_updated) \
