@@ -1,6 +1,7 @@
 import datetime
 import json
 import logging
+import os.path
 import urllib
 
 import tornado.auth
@@ -9,6 +10,7 @@ import tornado.web
 
 from base import BaseHandler
 from logic import content_remote
+from logic import url_factory
 
 # This monkeypatches tornado to do sync instead of async
 class FacebookHandler(BaseHandler,
