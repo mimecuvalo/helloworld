@@ -60,7 +60,8 @@ class TwitterHandler(BaseHandler,
 
     self.user = self.get_author_user()
     access_token = json.loads(self.user.twitter)
-    thumb = self.get_argument('thumb', '')
+    #thumb = self.get_argument('thumb', '')
+    thumb = None # XXX TODO multipart doesn't work for some reason right now... arrrgh
     text_length = 79 if thumb else 99
     status =    content_logic.ellipsize(content_remote.strip_html(self.get_argument('title', '')), 18, including_dots=True) \
         + (': ' if self.get_argument('title', '') and self.get_argument('view', '') else '') \
