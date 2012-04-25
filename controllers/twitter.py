@@ -66,7 +66,7 @@ class TwitterHandler(BaseHandler,
     status =    content_logic.ellipsize(content_remote.strip_html(self.get_argument('title', '')), 18, including_dots=True) \
         + (': ' if self.get_argument('title', '') and self.get_argument('view', '') else '') \
         + content_logic.ellipsize(content_remote.strip_html(self.get_argument('view', '')), text_length, including_dots=True) \
-        + (' ' if self.get_argument('title', '') and self.get_argument('view', '') else '') \
+        + (' ' if self.get_argument('title', '') or self.get_argument('view', '') else '') \
         + self.get_argument('url')
 
     if thumb:
