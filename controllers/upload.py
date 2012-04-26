@@ -35,6 +35,8 @@ class UploadHandler(BaseHandler):
         raise tornado.web.HTTPError(400, "i call shenanigans")
 
     uploaded_file = self.request.files['file'][0]
+    overwrite = True if self.get_argument('overwrite', False) else False
+
     if safe_user:
       self.media_section = url_factory.clean_filename(self.get_argument('section'))
       if self.media_section.startswith(url_factory.resource_url(self)):
@@ -52,7 +54,9 @@ class UploadHandler(BaseHandler):
     else:
       self.parent_directory = os.path.join(self.application.settings["resource_path"], 'remote')
       self.parent_url = os.path.join(self.application.settings["resource_url"], 'remote')
-    self.full_path = media.get_unique_name(os.path.join(self.parent_directory, self.base_leafname))
+    self.full_path = os.path.join(self.parent_directory, self.base_leafname)
+    if not overwrite:
+      self.full_path = media.get_unique_name(self.full_path)
 
     if not os.path.isdir(self.parent_directory):
       os.makedirs(self.parent_directory)
@@ -78,11 +82,11 @@ class UploadHandler(BaseHandler):
             os.unlink(chunk_path)
         final_file.close()
 
-        original_size_url, url, thumb_url = media.save_locally(self.parent_url, self.full_path, None, skip_write=True)
+        original_size_url, url, thumb_url = media.save_locally(self.parent_url, self.full_path, None, skip_write=True, overwrite=overwrite)
       else:
         return
     else:
-      original_size_url, url, thumb_url = media.save_locally(self.parent_url, self.full_path, uploaded_file['body'], disallow_zip=(not safe_user))
+      original_size_url, url, thumb_url = media.save_locally(self.parent_url, self.full_path, uploaded_file['body'], disallow_zip=(not safe_user), overwrite=overwrite)
 
     media_html = media.generate_full_html(self, url, original_size_url)
     self.set_header("Content-Type", "text/plain; charset=UTF-8")

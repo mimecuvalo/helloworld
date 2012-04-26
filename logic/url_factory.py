@@ -194,12 +194,19 @@ def resource_directory(handler, section="", album=""):
 
   return path
 
-def resource_url(handler, section="", album="", resource="", filename=""):
+def resource_url(handler, section="", album="", resource="", filename="", host=False):
   if filename:
     return handler.application.settings["resource_url"] \
          + filename.replace(handler.application.settings["resource_path"], '')
 
-  path = handler.application.settings["resource_url"] + '/'
+  path = ""
+  if host:
+    path += handler.request.protocol + "://" + handler.request.host
+    if not handler.constants['http_hide_prefix']:
+      path += handler.prefix
+    path += '/'
+
+  path += handler.application.settings["resource_url"] + '/'
 
   path += handler.get_author_username()
 

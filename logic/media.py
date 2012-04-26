@@ -78,9 +78,9 @@ def generate_html(filename, alt_text=''):
   else:
     return filename
 
-def save_locally(parent_url, full_path, data, skip_write=False, disallow_zip=False):
+def save_locally(parent_url, full_path, data, skip_write=False, disallow_zip=False, overwrite=False):
   # check dupe
-  if not skip_write:
+  if not skip_write and not overwrite:
     full_path = get_unique_name(full_path)
 
   media_type = detect_media_type(full_path)
@@ -100,8 +100,12 @@ def save_locally(parent_url, full_path, data, skip_write=False, disallow_zip=Fal
     if not os.path.isdir(original_size_dir):
       os.makedirs(original_size_dir)
 
-    thumb_filename = get_unique_name(os.path.join(thumb_dir, leaf_name))
-    original_size_filename = get_unique_name(os.path.join(original_size_dir, leaf_name))
+    thumb_filename = os.path.join(thumb_dir, leaf_name)
+    if not overwrite:
+      thumb_filename = get_unique_name(thumb_filename)
+    original_size_filename = os.path.join(original_size_dir, leaf_name)
+    if not overwrite:
+      original_size_filename = get_unique_name(original_size_filename)
     thumb_url = os.path.join(os.path.join(parent_url, 'thumbs'), os.path.split(thumb_filename)[1])
     original_size_url = os.path.join(os.path.join(parent_url, 'original'), os.path.split(original_size_filename)[1])
 

@@ -6,12 +6,13 @@ hw.editImage = function(event, el) {
   }
 
   var editor = hw.$c('hw-image-editor');
+  var imageOptions = hw.$c('hw-image-options');
   hw.addClass(hw.$('hw-container'), 'hw-image-editing');
   editor.__hw_image = hw.$c('hw-image-options')['imageTag'];
 
   hw.show(editor);
-  editor.style.left = (editor.getBoundingClientRect().left + 50) + 'px';
-  editor.style.top = Math.max(editor.getBoundingClientRect().top, 100) + 'px';
+  editor.style.left = Math.max(imageOptions.getBoundingClientRect().left - 150, 100) + 'px';
+  editor.style.top = Math.max(imageOptions.getBoundingClientRect().top - 200, 100) + 'px';
 
   var img = hw.$c('hw-image-scratch');
   if (!img) {
@@ -34,24 +35,40 @@ hw.editImage = function(event, el) {
 hw.editImageCanvas = function() {
   return hw.$c('hw-image-editor').getElementsByTagName('canvas')[0];
 };
-// XXX doesn't work right now
+
 hw.editImageSave = function(event) {
+  var createForm = hw.$c('hw-create');
   var editor = hw.$c('hw-image-editor');
   var canvas = hw.editImageCanvas();
+  var button = hw.$c('hw-image-edit-save');
+  button.disabled = true;
 
-  var callback = function(json) {
-    alert(json.toSource())
+  var callback = function(xhr) {
+    var json = JSON.parse(xhr.responseText);
+    editor.__hw_image.src = json['url'] + '?r=' + Math.random() * 99999999;
+
+    button.disabled = false;
+    hw.editImageClose();
+  };
+  var badTrip = function(json) {
+    button.disabled = false;
   };
   var name = editor.__hw_image.src.substring(editor.__hw_image.src.lastIndexOf('/') + 1);
   var data = canvas.toBlob ? canvas.toBlob() : canvas.mozGetAsFile(name);
-  
-  var iframe = hw.$$('[name=hw-media-creator]')[0];
-var doc = iframe.contentWindow.document;
-        doc.getElementById('file')['file'] = data;
-        doc.getElementById('file').value = name;
-       // clickFunc();
+  var section = editor.__hw_image.src.substring(hw.getMsg('resource-url').length + 1, editor.__hw_image.src.lastIndexOf(name) - 1);
 
-  hw.editImageClose();
+  var fd = new FormData();
+  fd.append('section', section);
+  fd.append('overwrite', '1');
+  fd.append('file', data);
+
+  new hw.ajax(hw.baseUri() + 'upload',
+    { method: 'post',
+      postBody: fd,
+      headers: { 'X-Xsrftoken' : createForm['_xsrf'].value,
+                 'Content-type' : null },
+      onSuccess: callback,
+      onError: badTrip });
 };
 hw.editImageClose = function(event) {
   if (event) {
@@ -60,9 +77,6 @@ hw.editImageClose = function(event) {
   var editor = hw.$c('hw-image-editor');
   hw.removeClass(hw.$('hw-container'), 'hw-image-editing');
   hw.hide(editor);
-  editor.style.left = '50%';
-  editor.style.top = '36px';
-  editor.style.marginLeft = '-450px';
 };
 hw.editImageRotate = function(event) {
   var temp = hw.$c('hw-image-width').value;
