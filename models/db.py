@@ -71,7 +71,8 @@ def dashboard_feed(profile, begin, page_size, sort_type, read_all_mode, specific
     just_remote_feed = True
     content_remote_restrict += """ AND `type` = %s """
     parameters.append('comment')
-  elif not just_local_feed and not local_entry and not twitter and not facebook and not google \
+  elif not just_local_feed and not local_entry and not remote_entry \
+      and not twitter and not facebook and not google \
       and not favorite and not spam and not comments and not query:
     content_remote_restrict += """ AND `type` = %s """
     parameters.append('post')

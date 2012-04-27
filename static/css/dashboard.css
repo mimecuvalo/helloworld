@@ -324,6 +324,9 @@
   margin-right: 5px;
   float: left;
 }
+.hw-list-mode .hw-item-avatar {
+  display: none;
+}
 #hw-feed .hw-view {
   clear: none;
 }
