@@ -78,6 +78,8 @@ settings = {
   "google_secret": constants['google_secret'],
   "facebook_api_key": constants['facebook_api_key'],
   "facebook_secret": constants['facebook_secret'],
+  "tumblr_consumer_key": constants['tumblr_consumer_key'],
+  "tumblr_consumer_secret": constants['tumblr_consumer_secret'],
 }
 
 prefix = r"(?:" + tornado.escape.url_escape(constants['https_prefix']).replace('%2F', '/') + r")?"
@@ -119,6 +121,7 @@ else:
     (prefix + r"/salmon(?:$|/.*)", "controllers.salmon.SalmonHandler"),
     (prefix + r"(?:/[^/]+)?/search(?:$|/.*)", "controllers.search.SearchHandler"),
     (prefix + r"/stats", "controllers.stats.StatsStaticHandler", {"path": "./static"}),
+    (prefix + r"/tumblr", "controllers.tumblr.TumblrHandler"),
     (prefix + r"/twitter", "controllers.twitter.TwitterHandler"),
     (prefix + r"/upload", "controllers.upload.UploadHandler"),
     (prefix + r"/users(?:$|/.*)", "controllers.users.UsersHandler"),

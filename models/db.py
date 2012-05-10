@@ -18,7 +18,7 @@ def search(profile, query, begin, page_size):
 
 # this will work for now...
 def dashboard_feed(profile, begin, page_size, sort_type, read_all_mode, specific_feed, just_local_feed, local_entry=None, remote_entry=None, \
-                   spam=False, favorite=False, comments=False, twitter=False, facebook=False, google=False, query=None,
+                   spam=False, favorite=False, comments=False, twitter=False, facebook=False, google=False, tumblr=False, query=None,
                    from_local_id=None, from_remote_id=None):
   content_local_restrict = ""
   content_remote_restrict = ""
@@ -67,12 +67,16 @@ def dashboard_feed(profile, begin, page_size, sort_type, read_all_mode, specific
     just_remote_feed = True
     content_remote_restrict += """ AND `type` = %s """
     parameters.append('google')
+  if tumblr:
+    just_remote_feed = True
+    content_remote_restrict += """ AND `type` = %s """
+    parameters.append('tumblr')
   if comments:
     just_remote_feed = True
     content_remote_restrict += """ AND `type` = %s """
     parameters.append('comment')
   elif not just_local_feed and not local_entry and not remote_entry \
-      and not twitter and not facebook and not google \
+      and not twitter and not facebook and not google and not tumblr \
       and not favorite and not spam and not comments and not query:
     content_remote_restrict += """ AND `type` = %s """
     parameters.append('post')

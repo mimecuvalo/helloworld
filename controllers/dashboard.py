@@ -27,7 +27,8 @@ class DashboardHandler(BaseHandler):
                  'spam_count' : self.display['spam_count'],
                  'twitter_count' : self.display['twitter_count'],
                  'facebook_count' : self.display['facebook_count'],
-                 'google_count' : self.display['google_count'], }
+                 'google_count' : self.display['google_count'],
+                 'tumblr_count' : self.display['tumblr_count'], }
       for profile in self.display['following']:
         result[profile.profile_url] = profile.unread_entries
       self.prevent_caching()
@@ -53,6 +54,7 @@ class DashboardHandler(BaseHandler):
     self.display["read_twitter"] = int(self.get_argument('read_twitter', 0))
     self.display["read_facebook"] = int(self.get_argument('read_facebook', 0))
     self.display["read_google"] = int(self.get_argument('read_google', 0))
+    self.display["read_tumblr"] = int(self.get_argument('read_tumblr', 0))
     self.display["from_local_id"] = self.get_argument('from_local_id', None)
     self.display["from_remote_id"] = self.get_argument('from_remote_id', None)
     self.display["q"] = self.get_argument('q', None)
@@ -76,7 +78,7 @@ class DashboardHandler(BaseHandler):
                                            self.display["specific_feed"], self.display["own_feed"], \
                                            self.display["local_entry"], self.display["remote_entry"], \
                                            self.display["read_spam"], self.display["read_favorites"], self.display["read_comments"], \
-                                           self.display["read_twitter"], self.display["read_facebook"], self.display["read_google"], \
+                                           self.display["read_twitter"], self.display["read_facebook"], self.display["read_google"], self.display["read_tumblr"], \
                                            self.display["q"], self.display["from_local_id"], self.display["from_remote_id"]) ]
 
     self.display['combined_feed'] = \
@@ -120,6 +122,7 @@ class DashboardHandler(BaseHandler):
     self.display['twitter_count']  = self.models.content_remote.get(to_username=user.username, type='twitter', read=0, is_spam=0, deleted=0).count()
     self.display['facebook_count'] = self.models.content_remote.get(to_username=user.username, type='facebook', read=0, is_spam=0, deleted=0).count()
     self.display['google_count']   = self.models.content_remote.get(to_username=user.username, type='google', read=0, is_spam=0, deleted=0).count()
+    self.display['tumblr_count']  = self.models.content_remote.get(to_username=user.username, type='tumblr', read=0, is_spam=0, deleted=0).count()
 
-    total_count += self.display['twitter_count'] + self.display['facebook_count'] + self.display['google_count']
+    total_count += self.display['twitter_count'] + self.display['facebook_count'] + self.display['google_count'] + self.display['tumblr_count']
     self.display['total_count']     = total_count

@@ -8,7 +8,7 @@
       data-is-deleted="{{ item.deleted }}" data-delete="{{ _('delete') }}" data-undelete="{{ _('undelete') }}"
       data-error="{{ _('error! try again...') }}">
     <a href="#favorite" onclick="hw.favorite(event, this)">{% if item.favorited %}{{ _('unfavorite') }}{% else %}{{ _('favorite') }}{% end %}</a>
-    {% if not item.is_remote or not (item.type == 'remote-comment' or item.type == 'facebook' or item.type == 'twitter') %}
+    {% if not item.is_remote or not (item.type == 'remote-comment' or item.type == 'facebook' or item.type == 'twitter' or item.type == 'tumblr') %}
       {% if item.is_remote %}
         <a href="{{ nav_url(host=True, section='dashboard') }}#{{ urlencode({ 'reblog': item.link.encode('utf-8') }) }}" target="_blank">{{ _('reblog') }}</a>
       {% else %}

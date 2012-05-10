@@ -275,7 +275,7 @@ hw.followingDragDrop = function(event, el) {
   var insertBeforeElement = el.nextSibling;
   insertedElement = el.parentNode.insertBefore(draggedElement, insertBeforeElement);
 
-  var position = 0;  // we have read all/your feed/favorites/comments/twitter/fb/goog in front
+  var position = 0;  // we have read all/your feed/favorites/comments/twitter/fb/goog/tumblr in front
   var followingList = hw.$('hw-following-list');
   var followingListLis = followingList.getElementsByTagName('LI');
   for (var x = 0; x < followingListLis.length; ++x) {

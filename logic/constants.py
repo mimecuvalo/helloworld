@@ -15,6 +15,8 @@ defaults = {
   'google_secret' : '',
   'facebook_api_key' : '',
   'facebook_secret' : '',
+  'tumblr_consumer_key' : '',
+  'tumblr_consumer_secret' : '',
 
   'debug' : 0,
   'port' : 8282,
@@ -35,7 +37,7 @@ dictionary = {
                     'data_liberation', 'facebook', 'feed', 'foaf', 'google', 'host_meta', 'login', 'logout', 
                     'media', 'oembed', 'opensearch', 'page', 'private', 'push', 'remote',
                     'remote-comments', 'resource', 'restart', 'salmon', 'search',
-                    'setup', 'stats', 'themes', 'twitter', 'upload', 'users', 'webfinger'],
+                    'setup', 'stats', 'themes', 'tumblr', 'twitter', 'upload', 'users', 'webfinger'],
   'templates' : ['album', 'archive', 'blank', 'events', 'feed', 'first', 'forum', 'latest', 'redirect', 'slideshow', 'store',],
   'licenses' : {
     'http://creativecommons.org/licenses/by/3.0/':

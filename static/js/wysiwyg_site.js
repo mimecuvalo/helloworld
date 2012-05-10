@@ -66,7 +66,7 @@ hw.reply = function(event, el) {
     document.body.scrollTop = document.body.scrollTop + wysiwyg.getBoundingClientRect().top - 100;
   }
 
-  var externalSources = ['twitter', 'facebook', 'google'];
+  var externalSources = ['twitter', 'facebook', 'google', 'tumblr'];
   for (var x = 0; x < externalSources.length; ++x) {
     var sourceEl = hw.$('hw-post-' + externalSources[x]);
     if (sourceEl && externalSources[x] == type) {

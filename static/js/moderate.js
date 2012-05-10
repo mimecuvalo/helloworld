@@ -427,6 +427,7 @@ hw.updateCounts = function(opt_skipExternal) {
     hw.updateCount(hw.$$('#hw-following #hw-following-twitter .hw-unread-count')[0], null, json['twitter_count']);
     hw.updateCount(hw.$$('#hw-following #hw-following-facebook .hw-unread-count')[0], null, json['facebook_count']);
     hw.updateCount(hw.$$('#hw-following #hw-following-google .hw-unread-count')[0], null, json['google_count']);
+    hw.updateCount(hw.$$('#hw-following #hw-following-tumblr .hw-unread-count')[0], null, json['tumblr_count']);
 
     for (var user in json) {
       if (user.indexOf('http') == 0) {
@@ -468,7 +469,7 @@ hw.unfollow = function(event, el, opt_special) {
 
   var createForm = hw.$c('hw-create');
 
-  if (user == 'twitter' || user == 'facebook' || user == 'google') {
+  if (user == 'twitter' || user == 'facebook' || user == 'google' || user == 'tumblr') {
     new hw.ajax(hw.baseUri() + user,
       { method: 'delete',
         headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
@@ -520,7 +521,7 @@ hw.favorite = function(event, el) {
       onSuccess: callback,
       onError: badTrip });
 
-  if (type == 'twitter' || type == 'facebook' || type == 'google') {
+  if (type == 'twitter' || type == 'facebook' || type == 'google' || type == 'tumblr') {
     new hw.ajax(hw.baseUri() + type,
       { method: 'post',
         postBody: 'op='       + encodeURIComponent('favorite')
@@ -611,7 +612,7 @@ hw.markSectionAsRead = function(section, opt_force) {
 
     var type = sections[x].getAttribute('data-type');
     var countEl;
-    if (type == 'twitter' || type == 'facebook' || type == 'google') {
+    if (type == 'twitter' || type == 'facebook' || type == 'google' || type == 'tumblr') {
       countEl = hw.$$('#hw-following #hw-following-' + type + ' .hw-unread-count')[0];
     } else if (type == 'post') {
       countEl = hw.$$('#hw-following li[data-user="' + sections[x].getAttribute('data-remote-profile-url') + '"] .hw-unread-count')[0];
@@ -680,7 +681,7 @@ hw.markAsUnread = function(event, el) {
 
   var type = section.getAttribute('data-type');
   var countEl;
-  if (type == 'twitter' || type == 'facebook' || type == 'google') {
+  if (type == 'twitter' || type == 'facebook' || type == 'google' || type == 'tumblr') {
     countEl = hw.$$('#hw-following #hw-following-' + type + ' .hw-unread-count')[0];
   } else if (type == 'post') {
     countEl = hw.$$('#hw-following li[data-user="' + section.getAttribute('data-remote-profile-url') + '"] .hw-unread-count')[0];
@@ -722,7 +723,7 @@ hw.markAllAsRead = function(event, el) {
 
   var user = el.getAttribute('data-user');
   var countEl;
-  if (user == 'google' || user == 'facebook' || user == 'twitter') {
+  if (user == 'google' || user == 'facebook' || user == 'twitter' || user == 'tumblr') {
     countEl = hw.$$('#hw-following #hw-following-' + user + ' .hw-unread-count')[0];
   } else {
     countEl = hw.$$('#hw-following li[data-user="' + user + '"] .hw-unread-count')[0];
@@ -811,7 +812,7 @@ hw.outgoingLink = function(event) {
 };
 
 hw.updateExternal = function() {
-  var externalSources = ['twitter', 'facebook', 'google'];
+  var externalSources = ['twitter', 'facebook', 'google', 'tumblr'];
   for (var x = 0; x < externalSources.length; ++x) {
     if (hw.$('hw-following-' + externalSources[x]).hasAttribute('data-enabled')) {
       new hw.ajax(hw.baseUri() + externalSources[x] + '?get_feed=1',

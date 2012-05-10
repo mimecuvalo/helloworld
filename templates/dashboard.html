@@ -14,7 +14,7 @@
 {% block backend_content %}
   <div id="hw-create">
     {% module Create() %}
-    {% if user.twitter or user.facebook or user.google %}
+    {% if user.twitter or user.facebook or user.google or user.tumblr %}
       <div id="hw-external-posts">
         <span id="hw-external-posts-label">{{ _('post to: ') }}</span>
         {% if user.twitter %}
@@ -25,6 +25,9 @@
         {% end %}
         {% if user.google %}
           <label for="hw-post-google"><span>google</span><input id="hw-post-google" type="checkbox"></label>
+        {% end %}
+        {% if user.tumblr %}
+          <label for="hw-post-tumblr"><span>tumblr</span><input id="hw-post-tumblr" type="checkbox"></label>
         {% end %}
       </div>
     {% end %}
@@ -168,6 +171,29 @@
             <img height="16" width="16" src="http://plus.google.com/favicon.ico" />
           </a>
           <a href="{{ nav_url(section='google') }}">{{ _('connect to google') }}</a>
+        {% end %}
+      </li>
+      <li id="hw-following-tumblr" data-user="" {% if user.tumblr %}data-enabled{% end %}>
+        {% if user.tumblr %}
+          <a href="#tumblr" onclick="hw.read(event, this, null, 'tumblr')" title="{{ _('Tumblr') }}">
+            <img height="16" width="16" src="http://tumblr.com/favicon.ico" />
+          </a>
+          <a href="#tumblr" class="hw-following-username" onclick="hw.read(event, this, null, 'tumblr')">{{ _('tumblr') }}</a><a href="#tumblr" class="hw-unread-count" onclick="hw.read(event, this, null, 'tumblr')">&nbsp;({{ tumblr_count }})</a>
+          <span class="hw-button-group">
+            <button class="hw-menu-button" onclick="hw.menu(event, this)" type="button">
+              <span class="hw-arrow-button"></span>
+            </button>
+            <div class="hw-menu">
+              <a href="http://tumblr.com" target="_blank" class="hw-visit">{{ _('visit') }}</a>
+              <a href="#mark-all-as-read" data-user="tumblr" onclick="hw.markAllAsRead(event, this)">{{ _('mark all as read') }}</a>
+              <a href="#unfollow" data-user="tumblr" onclick="hw.unfollow(event, this)" class="hw-unfollow">{{ _('unfollow') }}</a>
+            </div>
+          </span>
+        {% else %}
+          <a href="{{ nav_url(section='tumblr') }}" title="{{ _('connect to tumblr') }}">
+            <img height="16" width="16" src="http://tumblr.com/favicon.ico" />
+          </a>
+          <a href="{{ nav_url(section='tumblr') }}">{{ _('connect to tumblr') }}</a>
         {% end %}
       </li>
 

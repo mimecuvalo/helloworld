@@ -128,7 +128,8 @@ class users(Model):
                 'adult_content': 0,
                 'twitter': '',
                 'facebook': '',
-                'google': '',}
+                'google': '',
+                'tumblr': '',}
     validations = {'username': (custom_validators.UnicodeString(1, 255), custom_validators.Alphanumeric()),
                    'name': custom_validators.UnicodeString(0, 255),
                    'email': validators.String(1, 255),

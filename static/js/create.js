@@ -100,7 +100,7 @@ hw.save = function() {
     // XXX TODO if creating a new album/section we'll get a reload which messes this up...
     if (!createForm['hw-id'].value) {
       var url = hw.baseUri() + /href="(.*?)"/.exec(xhr.responseText)[1].substring(1);
-      var externalSources = ['twitter', 'facebook', 'google'];
+      var externalSources = ['twitter', 'facebook', 'google', 'tumblr'];
       for (var x = 0; x < externalSources.length; ++x) {
         var sourceEl = hw.$('hw-post-' + externalSources[x]);
         if (sourceEl && sourceEl.checked) {
