@@ -58,7 +58,7 @@ class TumblrHandler(BaseHandler,
     access_token = self.user.tumblr
     title = content_remote.strip_html(self.get_argument('title', ''))
     body = content_remote.strip_html(self.get_argument('view', '')) \
-         + '\n'
+         + '\n' \
          + self.get_argument('url')
 
     # TODO, refactor out w FB logic
