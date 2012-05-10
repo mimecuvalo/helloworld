@@ -18,7 +18,10 @@ from logic import url_factory
 # This monkeypatches tornado to do sync instead of async
 class TumblrHandler(BaseHandler,
                     tornado.auth.TwitterMixin):
-                    # TODO: yeaaah, we should probably make a separate TumblrMixin but whatevs
+  # TODO: yeaaah, we should probably make a separate TumblrMixin but whatevs
+  _OAUTH_REQUEST_TOKEN_URL = "http://www.tumblr.com/oauth/request_token"
+  _OAUTH_ACCESS_TOKEN_URL = "http://www.tumblr.com/oauth/access_token"
+  _OAUTH_AUTHORIZE_URL = "http://www.tumblr.com/oauth/authorize"
 
   def get(self):
     if not self.authenticate(author=True):
