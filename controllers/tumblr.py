@@ -238,7 +238,7 @@ class TumblrHandler(BaseHandler,
                       response.request.url)
       callback(None)
       return
-    callback(escape.json_decode(response.body))
+    callback(tornado.escape.json_decode(response.body))
 
   def _oauth_consumer_token(self):
     self.require_setting("tumblr_consumer_key", "Tumblr OAuth")
