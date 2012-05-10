@@ -186,7 +186,7 @@
             <li data-post-id="{{ comment.post_id }}" data-post-user="{% if comment.from_user.startswith('http://') %}{{ comment.from_user }}{% end %}">
               <img src="{% if comment.avatar %}{{ comment.avatar }}{% else %}{{ static_url('img/pixel.gif') }}{% end %}" />
               {% if comment.from_user.startswith('http://') %}
-                <a href="{{ comment.from_user }}" class="hw-comment-username">{{ comment.username }}</a>
+                <a href="{{ comment.from_user }}" class="hw-comment-username" target="_blank">{{ comment.username }}</a>
               {% else %}
                 <span class="hw-comment-username">{{ comment.username }}</span>
               {% end %}
@@ -198,14 +198,14 @@
             {# XXX can't get here anymore currently... #}
             <li data-post-id="tag:{{ handler.request.host }},{{ tag_date }}:{{ content_url(comment) }}" data-post-user="{{ nav_url(username=comment.username) }}">
               <img src="{% if comment.avatar %}{{ comment.avatar }}{% else %}{{ static_url('img/pixel.gif') }}{% end %}" />
-              <a href="{{ nav_url(username=comment.username) }}" class="hw-comment-username">{{ comment.username }}</a>
+              <a href="{{ nav_url(username=comment.username) }}" class="hw-comment-username" target="_blank">{{ comment.username }}</a>
               <div class="hw-comment-text">{% raw comment.view %}</div>
                 {% module Moderate(comment) %}
               <div class="clear"></div>
             </li>
           {% end %}
         {% end %}
-        {% set phrases = ['<a href="%(profile_url)s">%(name)s</a> thinks this is the bee\'s knees.', 'this rocks <a href="%(profile_url)s">%(name)s</a>\'s socks off.', '<a href="%(profile_url)s">%(name)s</a> crapped their pants when they saw this.', '<a href="%(profile_url)s">%(name)s</a> wants to name their baby after this page.'] %}
+        {% set phrases = ['<a href="%(profile_url)s" target="_blank">%(name)s</a> thinks this is the bee\'s knees.', 'this rocks <a href="%(profile_url)s" target="_blank">%(name)s</a>\'s socks off.', '<a href="%(profile_url)s" target="_blank">%(name)s</a> crapped their pants when they saw this.', '<a href="%(profile_url)s" target="_blank">%(name)s</a> wants to name their baby after this page.'] %}
         {% for fave in favorites %}
           {% set phrase = phrases[random.randint(0, len(phrases) - 1)] %}
 

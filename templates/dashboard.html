@@ -147,7 +147,7 @@
           <a href="{{ nav_url(section='facebook') }}">{{ _('connect to facebook') }}</a>
         {% end %}
       </li>
-      <li id="hw-following-google" data-user="" {% if user.google %}data-enabled{% end %}>
+      <li id="hw-following-google" data-user="" {% if user.google %}data-enabled{% end %} style="display: none">
         {% if user.google %}
           <a href="#google" onclick="hw.read(event, this, null, 'google')" title="{{ _('Google') }}">
             <img height="16" width="16" src="http://plus.google.com/favicon.ico" />
