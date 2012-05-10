@@ -17,8 +17,7 @@ from logic import url_factory
 
 # This monkeypatches tornado to do sync instead of async
 class TumblrHandler(BaseHandler,
-                    tornado.auth.TwitterMixin):
-  # TODO: yeaaah, we should probably make a separate TumblrMixin but whatevs
+                    tornado.auth.OAuthMixin):
   _OAUTH_REQUEST_TOKEN_URL = "http://www.tumblr.com/oauth/request_token"
   _OAUTH_ACCESS_TOKEN_URL = "http://www.tumblr.com/oauth/access_token"
   _OAUTH_AUTHORIZE_URL = "http://www.tumblr.com/oauth/authorize"
@@ -123,7 +122,7 @@ class TumblrHandler(BaseHandler,
 
       new_post.to_username = self.user.username
       new_post.username = post['blog_name']
-      new_post.from_user = 'http://' + post['blog_name'] + 'twitter.com/'
+      new_post.from_user = 'http://' + post['blog_name']
       #new_post.avatar = post['user']['profile_image_url']
 
       parsed_date = datetime.datetime.utcfromtimestamp(post['timestamp'])
@@ -165,7 +164,7 @@ class TumblrHandler(BaseHandler,
       url += "?" + urllib.urlencode(args)
 
     response = content_remote.get_url(url, post=(post_args is not None))
-    self._on_twitter_request(callback, response)
+    self._on_tumblr_request(callback, response)
 
   def authorize_redirect(self, callback_uri=None, extra_params=None,
                          http_client=None):
@@ -231,6 +230,21 @@ class TumblrHandler(BaseHandler,
 
     access_token = tornado.auth._oauth_parse_response(response.body)
     callback(access_token)
+
+  def _on_tumblr_request(self, callback, response):
+    if response.error:
+      logging.warning("Error response %s fetching %s", response.error,
+                      response.request.url)
+      callback(None)
+      return
+    callback(escape.json_decode(response.body))
+
+  def _oauth_consumer_token(self):
+    self.require_setting("tumblr_consumer_key", "Tumblr OAuth")
+    self.require_setting("tumblr_consumer_secret", "Tumblr OAuth")
+    return dict(
+        key=self.settings["tumblr_consumer_key"],
+        secret=self.settings["tumblr_consumer_secret"])
 
   def _on_auth(self, access_token):
     if not access_token:
