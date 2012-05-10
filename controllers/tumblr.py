@@ -1,6 +1,8 @@
+import base64
 import datetime
 import json
 import logging
+import re
 import os.path
 import urllib
 
@@ -9,12 +11,14 @@ import tornado.escape
 import tornado.web
 
 from base import BaseHandler
+from logic import content as content_logic
 from logic import content_remote
 from logic import url_factory
 
 # This monkeypatches tornado to do sync instead of async
 class TumblrHandler(BaseHandler,
-                      tornado.auth.FacebookGraphMixin):
+                    tornado.auth.TwitterMixin):
+                    # TODO: yeaaah, we should probably make a separate TumblrMixin but whatevs
 
   def get(self):
     if not self.authenticate(author=True):
@@ -22,23 +26,23 @@ class TumblrHandler(BaseHandler,
 
     if self.get_argument("get_feed", None):
       self.user = self.get_author_user()
-      access_token = self.user.facebook
-      self.facebook_request(
-            "/me/home",
-            access_token=access_token, callback=self.timeline_result)
+      access_token = json.loads(self.user.tumblr)
+
+      count = self.models.content_remote.get(to_username=self.user.username, type='tumblr').count()
+      args = {}
+      if count:
+        jump = self.models.content_remote.get(to_username=self.user.username, type='tumblr')[count - 1:count]
+        args['since_id'] = jump[0].post_id
+
+      self.tumblr_request(
+            "http://api.tumblr.com/v2/user/dashboard",
+            self.timeline_result,
+            access_token=access_token, **args)
       return
-    elif self.get_argument("code", False):
-      self.get_sync_authenticated_user(
-        redirect_uri=self.nav_url(host=True, section='facebook'),
-        client_id=self.settings["facebook_api_key"],
-        client_secret=self.settings["facebook_secret"],
-        code=self.get_argument("code"),
-        callback=self.async_callback(
-          self._on_auth))
+    elif self.get_argument("oauth_token", None):
+      self.get_sync_authenticated_user(self._on_auth)
       return
-    self.authorize_redirect(redirect_uri=self.nav_url(host=True, section='facebook'),
-                            client_id=self.settings["facebook_api_key"],
-                            extra_params={"scope": "read_stream,publish_stream" })
+    self.authorize_redirect()
 
   def post(self):
     if not self.authenticate(author=True):
@@ -51,13 +55,13 @@ class TumblrHandler(BaseHandler,
       return
 
     self.user = self.get_author_user()
-    access_token = self.user.facebook
-    status = content_remote.strip_html(self.get_argument('title', '')) \
-           + ('\n' if self.get_argument('title', '') and self.get_argument('view', '') else '') \
-           + content_remote.strip_html(self.get_argument('view', '')) \
-           + ('\n' if self.get_argument('title', '') or self.get_argument('view', '') else '') \
-           + self.get_argument('url')
+    access_token = self.user.tumblr
+    title = content_remote.strip_html(self.get_argument('title', ''))
+    body = content_remote.strip_html(self.get_argument('view', '')) \
+         + '\n'
+         + self.get_argument('url')
 
+    # TODO, refactor out w FB logic
     thumb = self.get_argument('thumb', '')
     picture = None
     if thumb:
@@ -78,26 +82,25 @@ class TumblrHandler(BaseHandler,
       picture = picture[len(self.application.settings["static_path"]) + 1:]
       picture = self.static_url(picture, include_host=True)
 
-    self.facebook_request(
-            "/me/feed",
+    self.tumblr_request(
+            "http://api.tumblr.com/v2/blog/" + "" + "/post",
             self.status_update_result,
             access_token=access_token,
-            post_args={"message": status, "picture": picture},)
+            post_args={"type": "text", "title": title, "body": body},)
 
   def favorite(self):
+    # TODO, god this is confusing
     not_favorited = self.get_argument('not_favorited')
-    post_args = {}
-    if not_favorited == '1':
-      post_args['method'] = 'delete'
+    operation = 'unlike' if not_favorited == '1' else 'like'
     post_id = self.get_argument('post_id', '')
 
     self.user = self.get_author_user()
-    access_token = self.user.facebook
-    self.facebook_request(
-            "/" + post_id + "/likes",
+    access_token = json.loads(self.user.tumblr)
+    self.tumblr_request(
+            "http://api.tumblr.com/v2/user/" + operation,
             self.favorite_result,
             access_token=access_token,
-            post_args=post_args,)
+            post_args={ 'id': post_id })
 
   def status_update_result(self, response):
     pass
@@ -106,145 +109,115 @@ class TumblrHandler(BaseHandler,
     pass
 
   def timeline_result(self, response):
-    posts = response['data']
+    posts = response['response']['posts']
     for post in posts:
-      exists = self.models.content_remote.get(to_username=self.user.username, type='facebook', post_id=post['id'])[0]
-
-      date_updated = None
-      if post.has_key('updated_time'):
-        date_updated = datetime.datetime.strptime(post['updated_time'][:-5], '%Y-%m-%dT%H:%M:%S')
+      exists = self.models.content_remote.get(to_username=self.user.username, type='tumblr', post_id=str(post['id']))[0]
 
       if exists:
-        if date_updated and date_updated != exists.date_updated \
-            or post['comments']['count'] != exists.comments_count:
-          new_post = exists
-        else:
-          continue
+        continue
       else:
         new_post = self.models.content_remote()
 
       new_post.to_username = self.user.username
-      new_post.username = post['from']['name']
-      if post.has_key('actions'):
-        new_post.from_user = post['actions'][0]['link']
-      #new_post.avatar = tweet['user']['profile_image_url']
+      new_post.username = post['blog_name']
+      new_post.from_user = 'http://' + post['blog_name'] + 'twitter.com/'
+      #new_post.avatar = post['user']['profile_image_url']
 
-      parsed_date = datetime.datetime.strptime(post['created_time'][:-5], '%Y-%m-%dT%H:%M:%S')
+      parsed_date = datetime.datetime.utcfromtimestamp(post['timestamp'])
 
       # we don't keep items that are over 30 days old
       if parsed_date < datetime.datetime.utcnow() - datetime.timedelta(days=self.constants['feed_max_days_old']):
         continue
 
       new_post.date_created = parsed_date
-      new_post.date_updated = date_updated
-      new_post.comments_count = 0
+      new_post.date_updated = None
+      new_post.comments_count = post['note_count']
       new_post.comments_updated = None
-      new_post.type = 'facebook'
-      new_post.title = ''
-      new_post.post_id = post['id']
-      new_post.comments_count = post['comments']['count']
-      if post['comments']['count']:
-        last_updated = post['comments']['data'][len(post['comments']['data']) - 1]['created_time']
-        new_post.comments_updated = datetime.datetime.strptime(last_updated[:-5], '%Y-%m-%dT%H:%M:%S')
-      if post.has_key('actions'):
-        new_post.link = post['actions'][0]['link']
-      view = ""
-      if post.has_key('message'):
-        view += post['message'] + "<br>"
-      if post.has_key('caption'):
-        view += post['caption'] + "<br>"
-      if post.has_key('description'):
-        view += post['description'] + "<br>"
-      if post.has_key('story'):
-        view += post['story'] + "<br>"
-      view = tornado.escape.linkify(view)
-      if post.has_key('picture'):
-        view = '<img src="' + post['picture'] + '">' + view
-      new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(view))
+      new_post.type = 'tumblr'
+      new_post.title = post['title']
+      new_post.post_id = str(post['id'])
+      new_post.link = post['post_url']
+      new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(post['body']))
       new_post.save()
 
-      # comments
-      if post['comments']['count']:
-        for comment in post['comments']['data']:
-          exists = self.models.content_remote.get(to_username=self.user.username, post_id=comment['id'])[0]
-          if exists:
-            continue
-          else:
-            new_comment = self.models.content_remote()
-
-          new_comment.to_username = self.user.username
-          new_comment.username = comment['from']['name']
-          new_comment.from_user = 'http://facebook.com/' + comment['from']['id']
-          date_created = datetime.datetime.strptime(comment['created_time'][:-5], '%Y-%m-%dT%H:%M:%S')
-          new_comment.date_created = date_created
-          new_comment.type = 'remote-comment'
-          new_comment.thread = post['id']
-          new_comment.post_id = comment['id']
-          if post.has_key('actions'):
-            new_comment.link = post['actions'][0]['link']
-          new_comment.view = comment['message']
-          new_comment.save()
-
-    count = self.models.content_remote.get(to_username=self.user.username, type='facebook', deleted=False).count()
+    count = self.models.content_remote.get(to_username=self.user.username, type='tumblr', deleted=False).count()
     self.write(json.dumps({ 'count': count }))
 
-  def facebook_request(self, path, callback, access_token=None,
-                       post_args=None, **args):
-    """Fetches the given relative API path, e.g., "/btaylor/picture"
+  def tumblr_request(self, path, callback, access_token=None,
+                      post_args=None, **args):
+    #http://www.tumblr.com/docs/en/api/v2
 
-    If the request is a POST, post_args should be provided. Query
-    string arguments should be given as keyword arguments.
-
-    An introduction to the Facebook Graph API can be found at
-    http://developers.facebook.com/docs/api
-
-    Many methods require an OAuth access token which you can obtain
-    through authorize_redirect() and get_authenticated_user(). The
-    user returned through that process includes an 'access_token'
-    attribute that can be used to make authenticated requests via
-    this method. Example usage::
-
-        class MainHandler(tornado.web.RequestHandler,
-                          tornado.auth.FacebookGraphMixin):
-            @tornado.web.authenticated
-            @tornado.web.asynchronous
-            def get(self):
-                self.facebook_request(
-                    "/me/feed",
-                    post_args={"message": "I am posting from my Tornado application!"},
-                    access_token=self.current_user["access_token"],
-                    callback=self.async_callback(self._on_post))
-
-            def _on_post(self, new_entry):
-                if not new_entry:
-                    # Call failed; perhaps missing permission?
-                    self.authorize_redirect()
-                    return
-                self.finish("Posted a message!")
-
-    """
-    url = "https://graph.facebook.com" + path
-    all_args = {}
+    url = path
+    # Add the OAuth resource request signature if we have credentials
     if access_token:
-      all_args["access_token"] = access_token
+      all_args = {}
       all_args.update(args)
       all_args.update(post_args or {})
-    if all_args:
-      url += "?" + urllib.urlencode(all_args)
+      method = "POST" if post_args is not None else "GET"
+      oauth = self._oauth_request_parameters(
+          url, access_token, all_args, method=method)
+      args.update(oauth)
+      args.update(post_args)
+    if args:
+      url += "?" + urllib.urlencode(args)
 
     response = content_remote.get_url(url, post=(post_args is not None))
-    self._on_facebook_request(callback, response)
+    self._on_twitter_request(callback, response)
 
-  def get_sync_authenticated_user(self, redirect_uri, client_id, client_secret,
-                                  code, callback, extra_fields=None):
-    args = {
-      "client_id": client_id,
-      "client_secret": client_secret,
-      "code": code,
-      "redirect_uri": redirect_uri,
-    }
+  def authorize_redirect(self, callback_uri=None, extra_params=None,
+                         http_client=None):
+    """Redirects the user to obtain OAuth authorization for this service.
 
-    response = content_remote.get_url(self._oauth_request_token_url(**args), post=True)
+    Twitter and FriendFeed both require that you register a Callback
+    URL with your application. You should call this method to log the
+    user in, and then call get_authenticated_user() in the handler
+    you registered as your Callback URL to complete the authorization
+    process.
+
+    This method sets a cookie called _oauth_request_token which is
+    subsequently used (and cleared) in get_authenticated_user for
+    security purposes.
+    """
+    if callback_uri and getattr(self, "_OAUTH_NO_CALLBACKS", False):
+      raise Exception("This service does not support oauth_callback")
+
+    if getattr(self, "_OAUTH_VERSION", "1.0a") == "1.0a":
+      response = content_remote.get_url(self._oauth_request_token_url(callback_uri=callback_uri, extra_params=extra_params))
+      self._on_request_token(self._OAUTH_AUTHORIZE_URL, callback_uri, response)
+    else:
+      response = content_remote.get_url(self._oauth_request_token_url())
+      self._on_request_token(self._OAUTH_AUTHORIZE_URL, callback_uri, response)
+
+  def get_sync_authenticated_user(self, callback, http_client=None):
+    """Gets the OAuth authorized user and access token on callback.
+
+    This method should be called from the handler for your registered
+    OAuth Callback URL to complete the registration process. We call
+    callback with the authenticated user, which in addition to standard
+    attributes like 'name' includes the 'access_key' attribute, which
+    contains the OAuth access you can use to make authorized requests
+    to this service on behalf of the user.
+
+    """
+    request_key = tornado.escape.utf8(self.get_argument("oauth_token"))
+    oauth_verifier = self.get_argument("oauth_verifier", None)
+    request_cookie = self.get_cookie("_oauth_request_token")
+    if not request_cookie:
+      logging.warning("Missing OAuth request token cookie")
+      callback(None)
+      return
+    self.clear_cookie("_oauth_request_token")
+    cookie_key, cookie_secret = [base64.b64decode(tornado.escape.utf8(i)) for i in request_cookie.split("|")]
+    if cookie_key != request_key:
+      logging.info((cookie_key, request_key, request_cookie))
+      logging.warning("Request token does not match cookie")
+      callback(None)
+      return
+    token = dict(key=cookie_key, secret=cookie_secret)
+    if oauth_verifier:
+      token["verifier"] = oauth_verifier
+
+    response = content_remote.get_url(self._oauth_access_token_url(token))
     self._on_access_token(callback, response)
 
   def _on_access_token(self, callback, response):
@@ -253,16 +226,15 @@ class TumblrHandler(BaseHandler,
       callback(None)
       return
 
-    args = tornado.escape.parse_qs_bytes(tornado.escape.native_str(response.body))
-    access_token = args["access_token"][-1]
+    access_token = tornado.auth._oauth_parse_response(response.body)
     callback(access_token)
 
   def _on_auth(self, access_token):
     if not access_token:
-      raise tornado.web.HTTPError(500, "Facebook auth failed")
+      raise tornado.web.HTTPError(500, "Tumblr auth failed")
 
     user = self.get_author_user()
-    user.facebook = access_token
+    user.tumblr = json.dumps(access_token)
     user.save()
 
     self.redirect(self.nav_url(section='dashboard'))
@@ -271,5 +243,5 @@ class TumblrHandler(BaseHandler,
     if not self.authenticate(author=True):
       return
     user = self.get_author_user()
-    user.facebook = None
+    user.tumblr = None
     user.save()
