@@ -178,6 +178,9 @@ hw.shortcuts = function(event) {
   var key = event.which || event.keyCode;
 
   switch (key) {
+    case 9:
+      hw.wysiwygKeyDown(event);
+      break;
     case 83:   // ctrl-s, save  TODO report bug to ff, messed up with dvorak keyboard
       if (hw.testAccelKey(event)) {
         hw.preventDefault(event);

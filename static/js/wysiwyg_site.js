@@ -172,6 +172,11 @@ hw.getCurrentWysiwyg = function() {
   return { 'isComment': isComment, 'wysiwyg': isComment ? hw.$c('hw-comment-input') : hw.$c('hw-wysiwyg') };
 };
 
+hw.wysiwygKeyDown = function(event) {
+  hw.preventDefault(event);
+  hw.wysiwygKeys(event);
+};
+
 hw.wysiwygLastKeys = "";
 hw.wysiwygKeys = function(event) {
   var key = event.charCode || event.keyCode || event.which;

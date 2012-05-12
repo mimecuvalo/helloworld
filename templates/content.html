@@ -170,6 +170,7 @@
               <div name="hw-comment-input" class="hw-comment-input" contenteditable type="text" data-local-username="{{ content.username }}" data-local-name="{{ content.name }}"
                    onmouseup="hw.saveSelection(event)" onkeyup="hw.saveSelection()" onfocus="hw.restoreSelection()" onbeforepaste="hw.onbeforepaste(event)" onpaste="hw.paste(event)"></div>
               <script>
+                Event.observe(hw.$c('hw-comment-input'), 'keydown', hw.wysiwygKeyDown, false);
                 Event.observe(hw.$c('hw-comment-input'), 'keypress', hw.wysiwygKeys, false);
               </script>
               <div class="clear"></div>
