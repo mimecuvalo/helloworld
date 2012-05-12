@@ -39,6 +39,8 @@ hw.drop = function(event) {
 
 hw.dragChromeWorkaroundId = null; // XXX bite me Chrome, why can't you getData in dragOver and dragLeave??
 hw.dragStart = function(event, el) {
+  hw.stopPropagation(event);
+
   event.dataTransfer.setData('text/plain', el.id);
   hw.dragChromeWorkaroundId = el.id;
 
@@ -74,23 +76,27 @@ hw.dragLogic = function(event, el) {
   var draggedIsSitemap = id.indexOf('hw-sitemap') == 0;
   var dropIsSitemap = el.id.indexOf('hw-sitemap') == 0;
 
-  var draggedIsAlbum = draggedIsSitemap && id.indexOf('_', 11) != -1;
-  var dropIsAlbum = dropIsSitemap && el.id.indexOf('_', 11) != -1;
+  var draggedIsAlbum = draggedIsSitemap && draggedElement.getAttribute('data-sitemap-album');
+  var dropIsAlbum = dropIsSitemap && el.getAttribute('data-sitemap-album');
 
-  var draggedNextSibling = hw.nextSiblingNonText(draggedElement);
-  var draggedHasAlbum = draggedIsSitemap && draggedNextSibling && draggedNextSibling.firstChild && draggedNextSibling.firstChild.nodeName == 'UL';
-  var draggedAlbum;
+  var draggedIsContentAlbum = draggedElement.getAttribute('data-is-album') == 'true';
+
+  var draggedAlbum = draggedElement.getElementsByTagName('UL');
+  var draggedHasAlbum = draggedIsSitemap && draggedAlbum.length;
   if (draggedHasAlbum) {
-    draggedAlbum = draggedNextSibling;
+    draggedAlbum = draggedAlbum[0];
   }
-  var dropNextSibling = hw.nextSiblingNonText(el);
-  var dropHasAlbum = dropIsSitemap && dropNextSibling && dropNextSibling.firstChild && dropNextSibling.firstChild.nodeName == 'UL';
-  var dropAlbum;
+  var dropAlbum = el.getElementsByTagName('UL');
+  var dropHasAlbum = dropIsSitemap && dropAlbum.length;
   if (dropHasAlbum) {
-    dropAlbum = dropNextSibling;
+    dropAlbum = dropAlbum[0];
   }
 
-  if (draggedElement.getAttribute('data-is-album') == 'true' && dropIsSitemap) {
+  if (draggedIsContentAlbum && dropIsSitemap) {
+    return { 'dragAllowed': false };
+  }
+
+  if (draggedIsSitemap && !dropIsSitemap) {
     return { 'dragAllowed': false };
   }
 
@@ -108,6 +114,8 @@ hw.dragLogic = function(event, el) {
 
 hw.dragOver = function(event, el, album) {
   var dragInfo = hw.dragLogic(event, el);
+
+  hw.stopPropagation(event);
 
   if (!dragInfo['dragAllowed']) {
     return;
@@ -127,8 +135,6 @@ hw.dragOver = function(event, el, album) {
 
   if (!dragInfo['draggedIsSitemap']) {
     hw.addClass(el, 'hw-over-content');
-  } else if (!dragInfo['draggedIsAlbum'] && dragInfo['dropAlbum']) {
-    hw.addClass(hw.nextSiblingNonText(el), 'hw-over');
   } else {
     hw.addClass(el, 'hw-over');
   }
@@ -137,14 +143,14 @@ hw.dragOver = function(event, el, album) {
 hw.dragLeave = function(event, el) {
   var dragInfo = hw.dragLogic(event, el);
 
+  hw.stopPropagation(event);
+
   if (!dragInfo['dragAllowed']) {
     return;
   }
 
   if (!dragInfo['draggedIsSitemap']) {
     hw.removeClass(el, 'hw-over-content');
-  } else if (!dragInfo['draggedIsAlbum'] && dragInfo['dropAlbum']) {
-    hw.removeClass(hw.nextSiblingNonText(el), 'hw-over');
   } else {
     hw.removeClass(el, 'hw-over');
   }
@@ -152,6 +158,7 @@ hw.dragLeave = function(event, el) {
 
 hw.dragDrop = function(event, el) {
   hw.preventDefault(event);
+  hw.stopPropagation(event);
 
   var dragInfo = hw.dragLogic(event, el);
 
@@ -163,10 +170,12 @@ hw.dragDrop = function(event, el) {
 
   var newSection = dragInfo['draggedIsSitemap'] && el.id.split('_')[1] != draggedElement.id.split('_')[1] ? el.id.split('_')[1] : '';
 
+  // remove item from current position
   draggedElement = draggedElement.parentNode.removeChild(draggedElement);
 
   var insertedElement;
 
+  // move item into new place
   if (!dragInfo['draggedIsSitemap']) {
     hw.removeClass(el, 'hw-over-content');
     if (!dragInfo['dropIsSitemap']) {
@@ -176,43 +185,23 @@ hw.dragDrop = function(event, el) {
     hw.removeClass(el, 'hw-over');
 
     if (!dragInfo['dropIsAlbum'] && !dragInfo['dropAlbum']) {
-      var li = document.createElement('LI');
       var ul = document.createElement('UL');
-      li.appendChild(ul);
-      dragInfo['dropAlbum'] = el.parentNode.insertBefore(li, el.nextSibling);
+      dragInfo['dropAlbum'] = el.appendChild(ul);
     }
 
     if (dragInfo['dropIsAlbum']) {
       insertedElement = el.parentNode.insertBefore(draggedElement, el.nextSibling);
     } else {
-      insertedElement = dragInfo['dropAlbum'].firstChild.insertBefore(draggedElement, dragInfo['dropAlbum'].firstChild.firstChild);
+      insertedElement = dragInfo['dropAlbum'].insertBefore(draggedElement, dragInfo['dropAlbum'].firstChild);
     }
   } else {
-    hw.removeClass(dragInfo['dropAlbum'] ? hw.nextSiblingNonText(el) : el, 'hw-over');
-    var insertBeforeElement = dragInfo['dropAlbum'] ? hw.nextSiblingNonText(el).nextSibling : el.nextSibling;
-    var albumElement;
-    if (dragInfo['draggedAlbum']) {
-      albumElement = el.parentNode.insertBefore(dragInfo['draggedAlbum'], insertBeforeElement);
-    }
-    insertBeforeElement = albumElement ? albumElement : insertBeforeElement;
-    insertedElement = el.parentNode.insertBefore(draggedElement, insertBeforeElement);
+    hw.removeClass(el, 'hw-over');
+    insertedElement = el.parentNode.insertBefore(draggedElement, el.nextSibling);
   }
 
+  // calculate new position
   var position = 0;
-  if ((!dragInfo['dropIsSitemap'] && !dragInfo['draggedIsSitemap']) || dragInfo['draggedIsAlbum']) {
-    var albumEl = insertedElement.parentNode.firstChild;
-    while (albumEl) {
-      if (albumEl.nodeName != "LI") {
-        albumEl = albumEl.nextSibling;
-        continue;
-      }
-      if (albumEl.id == insertedElement.id) {
-        break;
-      }
-      ++position;
-      albumEl = albumEl.nextSibling;
-    }
-  } else if (dragInfo['draggedIsSitemap']) {
+  if (insertedElement) {
     var sectionEl = insertedElement.parentNode.firstChild;
     while (sectionEl) {
       if (sectionEl.nodeName != "LI" || !sectionEl.getAttribute('draggable')) {
@@ -227,6 +216,7 @@ hw.dragDrop = function(event, el) {
     }
   }
 
+  // send off to server
   var createForm = hw.$c('hw-create');
   var sectionAlbum = createForm['hw-section'].value + '_' + createForm['hw-name'].value;
   new hw.ajax(hw.baseUri() + 'api',
