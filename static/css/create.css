@@ -123,6 +123,9 @@ img.hw-thumb-preview {
 select.hw-section-album {
   margin-left: 10px;
 }
+select.hw-section-album.hw-bad {
+  outline: 3px solid #f66;
+}
 
 select.hw-section-album option[data-hidden=true] {
   font-style: italic;

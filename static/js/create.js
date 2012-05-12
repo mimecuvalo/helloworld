@@ -150,7 +150,7 @@ hw.save = function() {
 
   };
 
-  var badTrip = function(xhr) {
+  var badTrip = function(xhr, message) {
     createForm['hw-save'].value = createForm['hw-save'].getAttribute('data-save');
     createForm['hw-save'].disabled = false;
 
@@ -161,14 +161,20 @@ hw.save = function() {
       createForm['hw-' + elName].select();
       hw.displayResponse(false, response.getAttribute('data-duplicate'));
     } else {
-      hw.displayResponse(false, response.getAttribute('data-bad'));
+      hw.displayResponse(false, message || response.getAttribute('data-bad'));
     }
   };
 
   if (!createForm['hw-section'].value || createForm['hw-section'].value == '_new_') {
-    badTrip();
-    hw.options(true);
-    createForm['hw-section'].focus();
+    //hw.options(true);
+    var sectionAlbum = hw.$c('hw-section-album');
+    badTrip(null, sectionAlbum.getAttribute('data-bad'));
+    sectionAlbum.focus();
+    hw.addClass(sectionAlbum, 'hw-bad');
+    var callback = function() {
+      hw.removeClass(sectionAlbum, 'hw-bad');
+    };
+    setTimeout(callback, 3000);
     return;
   }
 

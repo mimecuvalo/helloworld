@@ -48,7 +48,7 @@
       {% if individual_content %}
         {% set found_cookie = None %}
         {% set option_counter = 2 %}
-        <select name="hw-section-album" class="hw-section-album" onclick="" onchange="hw.sectionChange(this)">
+        <select name="hw-section-album" class="hw-section-album" onclick="" onchange="hw.sectionChange(this)" data-bad="{{ _('please choose a section.') }}">
           <option value="_new_">{{ _('new section/album...') }}</option>
           <option value="" {% if len(sections) == 0 or (not content and not section_cookie) %}selected{% end %}>{{ _('(choose section)') }}</option>
           <option value="main" {% if content and content.section == 'main' %}selected{% end %} data-hidden="false">{{ _('main (top-level page)') }}</option>
