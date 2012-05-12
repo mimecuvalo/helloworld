@@ -173,8 +173,13 @@ hw.getCurrentWysiwyg = function() {
 };
 
 hw.wysiwygKeyDown = function(event) {
+  if (!hw.hasClass('hw-container', 'hw-editing')) {
+    return;
+  }
+
   var key = event.which || event.keyCode;
 
+  log(key)
   switch (key) {
     case 9: // tab
       hw.preventDefault(event);
@@ -187,20 +192,32 @@ hw.wysiwygKeyDown = function(event) {
     case 40:  // down
       hw.wysiwygLastKeys = "";
       break;
+    case 66:   // ctrl-b, bold
+      if (hw.testAccelKey(event)) {
+        hw.preventDefault(event);
+        hw.wysiwygKeys(event, 42);
+      }
+      break;
+    case 85:   // ctrl-u, underline
+      if (hw.testAccelKey(event)) {
+        hw.preventDefault(event);
+        hw.wysiwygKeys(event, 95);
+      }
+      break;
     case 83:   // ctrl-s, save  TODO report bug to ff, messed up with dvorak keyboard
-      if (hw.hasClass('hw-container', 'hw-editing') && hw.testAccelKey(event)) {
+      if (hw.testAccelKey(event)) {
         hw.preventDefault(event);
         hw.save();
-        return;
       }
+      break;
     default:
       break;
   }
 };
 
 hw.wysiwygLastKeys = "";
-hw.wysiwygKeys = function(event) {
-  var key = event.charCode || event.keyCode || event.which;
+hw.wysiwygKeys = function(event, opt_key) {
+  var key = opt_key || event.charCode || event.keyCode || event.which;
   var wysiwygResult = hw.getCurrentWysiwyg();
   var isComment = wysiwygResult['isComment'];
   var wysiwyg = wysiwygResult['wysiwyg'];
