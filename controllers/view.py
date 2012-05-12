@@ -99,6 +99,9 @@ class ViewHandler(BaseHandler):
         self.display["section_sort_type"] = content_section.sort_type
         self.display["is_store"] = self.display["is_store"] or content_section.template == 'store'
         self.display["is_events"] = self.display["is_events"] or content_section.template == 'events'
+    else:
+      self.display["section_template"] = content.template
+      self.display["section_sort_type"] = content.sort_type
 
     self.display["main_section_title"] = content_section.title if content.section != 'main' else content.title
     self.display["main_section_name"] = content.section if content.section != 'main' else content.name
