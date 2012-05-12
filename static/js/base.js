@@ -206,6 +206,7 @@ hw.ajax = function(url, options) {
   this.headers = options.headers || {};
   this.upload = options.upload || null;
   this.onProgress = options.onProgress || null;
+  this.usingFormData = options.usingFormData || null;
 
   if (!this.upload || (this.upload && this.transport.upload)) {
     this.request(url);
@@ -219,7 +220,9 @@ hw.ajax.prototype = {
       self.onStateChange();
     };
     if (!this.upload && (this.method == 'post' || this.method == 'put' || this.method == 'delete')) {
-      this.transport.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      if (!this.usingFormData) {
+        this.transport.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      }
       if (this.transport.overrideMimeType) this.transport.setRequestHeader('Connection', 'close');
     }
     this.transport.setRequestHeader('X-Requested-With', 'XMLHttpRequest');

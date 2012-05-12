@@ -34,7 +34,10 @@ class UploadHandler(BaseHandler):
       if media.detect_media_type(self.base_leafname) != 'image':
         raise tornado.web.HTTPError(400, "i call shenanigans")
 
-    uploaded_file = self.request.files['file'][0]
+    if self.get_argument('canvasImage', None):
+      uploaded_file = self.get_argument('canvasImage')
+    else:
+      uploaded_file = self.request.files['file'][0]
     overwrite = True if self.get_argument('overwrite', False) else False
 
     if safe_user:
@@ -98,7 +101,10 @@ class UploadHandler(BaseHandler):
   def get_common_parameters(self):
     self.chunked_upload = True
     if not self.get_argument('resumableChunkSize', None):
-      self.base_leafname = self.request.files['file'][0]['filename']
+      if self.get_argument('canvasName', None):
+        self.base_leafname = self.get_argument('canvasName')
+      else:
+        self.base_leafname = self.request.files['file'][0]['filename']
       self.chunked_upload = False
       return
 

@@ -54,22 +54,68 @@ hw.editImageSave = function(event) {
     button.disabled = false;
   };
   var name = editor.__hw_image.src.substring(editor.__hw_image.src.lastIndexOf('/') + 1);
-  var data = canvas.toBlob ? canvas.toBlob() : canvas.mozGetAsFile(name);
+  var data;
+  if (canvas.mozGetAsFile) {
+    data = canvas.mozGetAsFile(name);
+  } else {
+    data = canvas.toDataURL('image/jpeg', 0.9);
+    data = hw.dataURItoBlob(data);
+  }
   var section = editor.__hw_image.src.substring(hw.getMsg('resource-url').length + 1, editor.__hw_image.src.lastIndexOf(name) - 1);
 
   var fd = new FormData();
   fd.append('section', section);
   fd.append('overwrite', '1');
-  fd.append('file', data);
+  if (!canvas.mozGetAsFile) {
+    fd.append('canvasName', name);
+    fd.append('canvasImage', data);
+    // TODO XXX wtf chrome.  adding the blob doesn't upload any data...arrgh.
+  } else {
+    fd.append('file', data);
+  }
 
   new hw.ajax(hw.baseUri() + 'upload',
     { method: 'post',
       postBody: fd,
-      headers: { 'X-Xsrftoken' : createForm['_xsrf'].value,
-                 'Content-type' : null },
+      headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
+      usingFormData: true,
       onSuccess: callback,
       onError: badTrip });
 };
+
+/**
+* http://stackoverflow.com/questions/4998908/convert-data-uri-to-file-then-append-to-formdata/5100158
+*
+*
+*/
+hw.dataURItoBlob = function(dataURI) {
+  // convert base64 to raw binary data held in a string
+  // doesn't handle URLEncoded DataURIs
+
+  var byteString;
+  if (dataURI.split(',')[0].indexOf('base64') >= 0) {
+    byteString = atob(dataURI.split(',')[1]);
+  } else {
+    byteString = unescape(dataURI.split(',')[1]);
+  }
+
+  // separate out the mime component
+  var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+  // write the bytes of the string to an ArrayBuffer
+  var ab = new ArrayBuffer(byteString.length);
+  var ia = new Uint8Array(ab);
+  for (var i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+
+  // write the ArrayBuffer to a blob, and you're done
+  var BlobBuilder = window.WebKitBlobBuilder || window.MozBlobBuilder;
+  var bb = new BlobBuilder();
+  bb.append(ab);
+  return bb.getBlob(mimeString);
+};
+
 hw.editImageClose = function(event) {
   if (event) {
     hw.preventDefault(event);
