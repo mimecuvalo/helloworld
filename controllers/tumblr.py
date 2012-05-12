@@ -5,6 +5,7 @@ import logging
 import re
 import os.path
 import urllib
+import urlparse
 
 import tornado.auth
 import tornado.escape
@@ -28,7 +29,7 @@ class TumblrHandler(BaseHandler,
 
     if self.get_argument("get_feed", None):
       self.user = self.get_author_user()
-      access_token = json.loads(self.user.tumblr)
+      access_token, tumblr_info = self.get_tumblr_info()
 
       count = self.models.content_remote.get(to_username=self.user.username, type='tumblr').count()
       args = {}
@@ -56,8 +57,7 @@ class TumblrHandler(BaseHandler,
       self.favorite()
       return
 
-    self.user = self.get_author_user()
-    access_token = self.user.tumblr
+    access_token, tumblr_info = self.get_tumblr_info()
     title = content_remote.strip_html(self.get_argument('title', ''))
     body = content_remote.strip_html(self.get_argument('view', '')) \
          + '\n' \
@@ -85,7 +85,7 @@ class TumblrHandler(BaseHandler,
       picture = self.static_url(picture, include_host=True)
 
     self.tumblr_request(
-            "http://api.tumblr.com/v2/blog/" + "" + "/post",
+            "http://api.tumblr.com/v2/blog/" + tumblr_info['primary_blog'] + "/post",
             self.status_update_result,
             access_token=access_token,
             post_args={"type": "text", "title": title, "body": body},)
@@ -96,13 +96,22 @@ class TumblrHandler(BaseHandler,
     operation = 'unlike' if not_favorited == '1' else 'like'
     post_id = self.get_argument('post_id', '')
 
-    self.user = self.get_author_user()
-    access_token = json.loads(self.user.tumblr)
+    access_token, tumblr_info = self.get_tumblr_info()
     self.tumblr_request(
             "http://api.tumblr.com/v2/user/" + operation,
             self.favorite_result,
             access_token=access_token,
             post_args={ 'id': post_id })
+
+  def get_tumblr_info(self):
+    self.user = self.get_author_user()
+    tumblr_info = json.loads(self.user.tumblr)
+    access_token = {
+      'key': tumblr_info['key'],
+      'secret': tumblr_info['secret'],
+    }
+
+    return access_token, tumblr_info
 
   def status_update_result(self, response):
     pass
@@ -136,10 +145,43 @@ class TumblrHandler(BaseHandler,
       new_post.comments_count = post['note_count']
       new_post.comments_updated = None
       new_post.type = 'tumblr'
-      new_post.title = post['title']
       new_post.post_id = str(post['id'])
       new_post.link = post['post_url']
-      new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(post['body']))
+      if post['type'] == 'text':
+        new_post.title = post['title']
+        new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(post['body']))
+      elif post['type'] == 'photo':
+        new_post.title = post['caption']
+        html = ""
+        for photo in post['photos']:
+          chosen_photo = None
+          for size in photo['alt_sizes']:
+            if not chosen_photo or (size['width'] <= 720 and chosen_photo['width'] < size['width']):
+              chosen_photo = size
+          html += '<img src="' + content_remote.sanitize(tornado.escape.xhtml_unescape(chosen_photo['url'])) + '">'
+        new_post.view = html
+      elif post['type'] == 'quote':
+        new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(post['text'] + '<br>' + post['source']))
+      elif post['type'] == 'link':
+        new_post.title = post['title']
+        new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape('<a href="' + post['url'] + '">' + post['url'] + '</a><br>' + post['description']))
+      elif post['type'] == 'chat':
+        new_post.title = post['title']
+        new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(post['body'].replace('\r\n', '<br>')))
+      elif post['type'] == 'audio':
+        new_post.title = post['caption']
+        # TODO XXX probably needs to be carefully escaped
+        new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(post['player']))
+      elif post['type'] == 'video':
+        new_post.title = post['caption']
+        chosen_video = None
+        for video in post['player']:
+          if not chosen_photo or (video['width'] <= 720 and chosen_video['width'] < video['width']):
+            chosen_video = video
+        new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(chosen_video['embed_code']))
+      elif post['type'] == 'answer':
+        new_post.title = post['question']
+        new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(post['answer']))
       new_post.save()
 
     count = self.models.content_remote.get(to_username=self.user.username, type='tumblr', deleted=False).count()
@@ -255,7 +297,23 @@ class TumblrHandler(BaseHandler,
     user.tumblr = json.dumps(access_token)
     user.save()
 
+    self.tumblr_request(
+          "http://api.tumblr.com/v2/user/info",
+          self.info_result,
+          access_token=access_token)
+
     self.redirect(self.nav_url(section='dashboard'))
+
+  def info_result(self, response):
+    blogs = response['blogs']
+    for blog in blogs:
+      if blog['primary']:
+        user = self.get_author_user()
+        access_token = json.loads(user.tumblr)
+        access_token['primary_blog'] = urlparse.urlparse(blog['url']).netloc
+        user.tumblr = json.dumps(access_token)
+        user.save()
+        break
 
   def delete(self):
     if not self.authenticate(author=True):
