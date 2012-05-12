@@ -196,7 +196,7 @@ hw.save = function() {
   var sortType = createForm['hw-sort-type'] ? createForm['hw-sort-type'].value : "";
   var separate = createForm['hw-separate'].checked;
 
-  var sendContent = function(mediaHTML, opt_title, opt_extraCallback) {
+  var sendContent = function(mediaHTML, opt_title, opt_thumb, opt_extraCallback) {
     var html = hw.$c('hw-wysiwyg').innerHTML;
     if (!createForm['hw-id'].value) {
       var newTitle = hw.$('hw-new-title');
@@ -236,7 +236,7 @@ hw.save = function() {
                + '&code='         + encodeURIComponent(createForm['hw-code'].value)
                + (hw.$c('hw-wysiwyg') ? '&view=' + encodeURIComponent(html) : '')
                + '&name='         + encodeURIComponent(separate ? '' : createForm['hw-name'].value)
-               + (createForm['hw-thumb'] ? '&thumb=' + encodeURIComponent(createForm['hw-thumb'].value) : '')
+               + (createForm['hw-thumb'] || opt_thumb ? '&thumb=' + encodeURIComponent(opt_thumb || createForm['hw-thumb'].value) : '')
                + '&template='     + encodeURIComponent(createForm['hw-template'].value)
                + '&sort_type='    + encodeURIComponent(sortType)
                + '&section_template=' + encodeURIComponent(createForm['hw-section-template'].value)

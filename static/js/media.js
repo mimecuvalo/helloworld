@@ -10,12 +10,14 @@ hw.prepareFilesAndSendOff = function(callback, figures) {
   var figure = figures.pop();
   var caption = figure.match(/<figcaption>.*?<\/figcaption>/ig);
   var title = caption ? caption[0].replace(/<\/?.*?>/ig, '') : hw.getMsg('untitled');
+  var src = /src="(.*?)"/ig.exec(figure);
+  var thumb = src ? src[1] : "";
 
   var separateCallback = function(xhr) {
     hw.addToFeed(xhr.responseText);
     hw.prepareFilesAndSendOff(callback, figures);
   };
-  callback(figure, title, separateCallback);
+  callback(figure, title, thumb, separateCallback);
 };
 
 /*
