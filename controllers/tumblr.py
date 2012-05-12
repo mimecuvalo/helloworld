@@ -302,10 +302,8 @@ class TumblrHandler(BaseHandler,
           self.info_result,
           access_token=access_token)
 
-    self.redirect(self.nav_url(section='dashboard'))
-
   def info_result(self, response):
-    blogs = response['blogs']
+    blogs = response['user']['blogs']
     for blog in blogs:
       if blog['primary']:
         user = self.get_author_user()
@@ -313,6 +311,8 @@ class TumblrHandler(BaseHandler,
         access_token['primary_blog'] = urlparse.urlparse(blog['url']).netloc
         user.tumblr = json.dumps(access_token)
         user.save()
+
+        self.redirect(self.nav_url(section='dashboard'))
         break
 
   def delete(self):
