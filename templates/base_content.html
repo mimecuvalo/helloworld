@@ -88,7 +88,7 @@
 
   {% module SiteMap(content_owner=content_owner, content=content) %}
 
-  <article id="hw-content" class="hw-invisible-transition {% if is_owner_viewing %}hw-owner-viewing{% end %}">
+  <article id="hw-content" class="hw-invisible-transition {% if is_owner_viewing %}hw-owner-viewing{% end %} {% if section_template %}hw-template-{{ section_template }}{% end %}">
     {% block create %}
       {% if is_owner_viewing %}
         {% module Create(content, individual_content=False) %}
