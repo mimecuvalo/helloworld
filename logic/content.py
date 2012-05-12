@@ -325,8 +325,8 @@ def ellipsize(text, max_length, including_dots=False):
   if len(text) <= max_length:
     return text
   if including_dots:
-    return text[:max_length - 1] + u'…'
-  return text[:max_length] + u'…'
+    return text[:max_length - 3] + '...'
+  return text[:max_length] + '...'
 
 def js_escape(string):
   return string.replace("'", "\\'").replace('"', '\\"')
