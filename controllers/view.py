@@ -348,7 +348,9 @@ class ViewHandler(BaseHandler):
       album_items = self.models.content.get(username=content.username,
                                             album=album_name)[:]
       for item in album_items:
-        item.section = content.section
+        item.section = album_name if content.section == 'main' else content.section
+        if content.section == 'main':
+          item.album = ""
         item.save()
 
     if content.name != old_name and not did_redirect:
