@@ -194,7 +194,7 @@ def get_url(url, post=False, body=None):
       conn.request("POST", url.path, multipart, headers)
     else:
       headers = { "Content-type": "application/x-www-form-urlencoded" }
-      conn.request("POST", url.path + '?' + url.query, body, headers)
+      conn.request("POST", url.path, url.query, headers)
   else:
     conn.request("GET", url.path + '?' + url.query)
   class Response:
