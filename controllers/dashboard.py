@@ -18,6 +18,7 @@ class DashboardHandler(BaseHandler):
 
     self.display["user"] = user = self.get_author_user()
     self.display["is_dashboard"] = True
+    self.display["is_owner_viewing"] = True    
 
     if self.get_argument('get_counts', None):
       self.get_latest_counts(user)

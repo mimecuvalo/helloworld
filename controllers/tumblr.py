@@ -90,6 +90,7 @@ class TumblrHandler(BaseHandler,
             access_token=access_token,
             post_args={"type": "text", "title": title, "body": body},)
 
+  # TODO XXX favoriting busted right now, need reblog key
   def favorite(self):
     # TODO, god this is confusing
     not_favorited = self.get_argument('not_favorited')
