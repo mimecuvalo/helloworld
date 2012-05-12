@@ -303,7 +303,7 @@ class TumblrHandler(BaseHandler,
           access_token=access_token)
 
   def info_result(self, response):
-    blogs = response['user']['blogs']
+    blogs = response['response']['user']['blogs']
     for blog in blogs:
       if blog['primary']:
         user = self.get_author_user()
