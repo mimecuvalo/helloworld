@@ -107,8 +107,8 @@ body {
 .hw-button-media:visited,
 .hw-next,
 .hw-next:visited,
-#hw-customize,
-#hw-customize:visited,
+#hw-customize-button,
+#hw-customize-button:visited,
 .hw-image-crop,
 .hw-image-crop:visited {
   background-color: #ffe;
@@ -122,7 +122,7 @@ body {
 }
 .hw-button-media:hover,
 .hw-next:hover,
-.hw-customize:hover,
+.hw-customize-button:hover,
 .hw-image-crop:hover {
   border: 1px solid #f60;
   color: #f30;

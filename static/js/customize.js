@@ -162,8 +162,12 @@ hw.customizeUpdatePreview = function(event) {
     var head = doc.getElementsByTagName('head')[0];
     var body = doc.body;
 
-    doc.getElementById('hw-main-title').innerHTML = hw.$('hw-title').value;
-    doc.getElementById('hw-main-description').innerHTML = hw.$('hw-description').value;
+    if (doc.getElementById('hw-main-title')) {
+      doc.getElementById('hw-main-title').innerHTML = hw.$('hw-title').value;
+    }
+    if (doc.getElementById('hw-main-description')) {
+      doc.getElementById('hw-main-description').innerHTML = hw.$('hw-description').value;
+    }
 
     var logo = doc.getElementById('hw-logo-image');
     if (logo) {
