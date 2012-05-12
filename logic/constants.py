@@ -34,11 +34,12 @@ defaults = {
 
 dictionary = {
   'reserved_names' : ['admin', 'api', 'auth', 'check_broken_links', 'comments', 'customize', 'dashboard',
-                    'data_liberation', 'facebook', 'feed', 'foaf', 'google', 'host_meta', 'login', 'logout', 
+                    'data_liberation', 'feed', 'foaf', 'host_meta', 'login', 'logout', 
                     'media', 'oembed', 'opensearch', 'page', 'private', 'push', 'remote',
                     'remote-comments', 'resource', 'restart', 'salmon', 'search',
-                    'setup', 'stats', 'themes', 'tumblr', 'twitter', 'upload', 'users', 'webfinger'],
+                    'setup', 'stats', 'themes', 'upload', 'users', 'webfinger'],
   'templates' : ['album', 'archive', 'blank', 'events', 'feed', 'first', 'forum', 'latest', 'redirect', 'slideshow', 'store',],
+  'external_sources': ['twitter', 'facebook', 'google', 'tumblr',],
   'licenses' : {
     'http://creativecommons.org/licenses/by/3.0/':
         { 'name': 'Creative Commons Attribution 3.0 Unported License',
@@ -68,3 +69,5 @@ dictionary = {
   },
 
 }
+
+dictionary['reserved_names'] += dictionary['external_sources']

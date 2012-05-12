@@ -94,7 +94,11 @@ if setup:
   ]
   settings["xsrf_cookies"] = False
 else:
-  handlers = [
+  handlers = [ ]
+  for source in constants['external_sources']:
+    handlers += [ (prefix + source, "controllers." + source + "." + source.capitalize() + "Handler") ]
+
+  handlers += [
     (prefix + r"/\.well-known/host-meta", "controllers.host_meta.HostMetaHandler"),
     (prefix + r"/admin(?:$|/.*)", "controllers.dashboard.DashboardHandler"), # for WP users :P
     (prefix + r"/api", "controllers.api.ApiHandler"),
@@ -103,11 +107,9 @@ else:
     (prefix + r"/dashboard(?:$|/.*)", "controllers.dashboard.DashboardHandler"),
     (prefix + r"/data_liberation", "controllers.data_liberation.DataLiberationHandler"),
     (prefix + r"/data_liberation\.zip", "controllers.data_liberation.DataLiberationDownloadHandler", {"path": "/tmp"}),
-    (prefix + r"/facebook", "controllers.facebook.FacebookHandler"),
     (prefix + r"/(favicon\.ico)", tornado.web.StaticFileHandler, {"path": settings['static_path']}),
     (prefix + r"(?:/[^/]+)?/feed", "controllers.feed.FeedHandler"),
     (prefix + r"(?:/[^/]+)?/foaf", "controllers.foaf.FoafHandler"),
-    (prefix + r"/google", "controllers.google.GoogleHandler"),
     (prefix + r"/(humans\.txt)", "controllers.humans.HumansTxtHandler", {"path": settings['static_path']}),
     (prefix + r"/login", "controllers.auth.AuthHandler"),
     (prefix + r"/logout", "controllers.auth.AuthLogoutHandler"),
@@ -121,8 +123,6 @@ else:
     (prefix + r"/salmon(?:$|/.*)", "controllers.salmon.SalmonHandler"),
     (prefix + r"(?:/[^/]+)?/search(?:$|/.*)", "controllers.search.SearchHandler"),
     (prefix + r"/stats", "controllers.stats.StatsStaticHandler", {"path": "./static"}),
-    (prefix + r"/tumblr", "controllers.tumblr.TumblrHandler"),
-    (prefix + r"/twitter", "controllers.twitter.TwitterHandler"),
     (prefix + r"/upload", "controllers.upload.UploadHandler"),
     (prefix + r"/users(?:$|/.*)", "controllers.users.UsersHandler"),
     (prefix + r"/webfinger(?:$|/.*)", "controllers.webfinger.WebfingerHandler"),

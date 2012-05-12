@@ -519,3 +519,12 @@ hw.details = function(el) {
     el = el.parentNode;
   }
 };
+
+hw.inArray = function(query, arr) {
+  for (var x = 0; x < arr.length; ++x) {
+    if (arr[x] == query) {
+      return true;
+    }
+  }
+  return false;
+};

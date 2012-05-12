@@ -143,7 +143,7 @@ class ApiHandler(BaseHandler):
   def read_all(self):
     user = self.get_argument('user')
     profile = self.get_author_username()
-    if user in ('twitter', 'facebook', 'google', 'tumblr'):
+    if user in self.constants['external_sources']:
       content = self.models.content_remote.get(to_username=profile, type=user)[:]
     else:
       content = self.models.content_remote.get(to_username=profile, from_user=user)[:]

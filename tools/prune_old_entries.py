@@ -26,7 +26,7 @@ from autumn.db.connection import autumn_db
 autumn_db.conn.connect('mysql', host=constants['mysql_host'], user=constants['mysql_user'], passwd=constants['mysql_password'], db=constants['mysql_database'], charset="utf8", use_unicode=True)
 from models import base as models
 
-types = ['post', 'twitter', 'facebook', 'google', 'tumblr']
+types = ['post'] + constants['external_sources']
 for t in types:
   content_remote = models.content_remote.get(type=t, favorited=False)[:]
 

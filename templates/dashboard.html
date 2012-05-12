@@ -4,6 +4,7 @@
   <script src="{{ static_url('js/all_create.js', 'js/all_create.inc') }}"></script>
   <script>
     hw.disableHistory = true; {# disable popstate events #}
+    hw.externalSources = {{ repr(external_sources) }};
   </script>
 {% end block %}
 
@@ -14,20 +15,13 @@
 {% block backend_content %}
   <div id="hw-create">
     {% module Create() %}
-    {% if user.twitter or user.facebook or user.google or user.tumblr %}
+    {% if has_external %}
       <div id="hw-external-posts">
         <span id="hw-external-posts-label">{{ _('post to: ') }}</span>
-        {% if user.twitter %}
-          <label for="hw-post-twitter"><span>twitter</span><input id="hw-post-twitter" type="checkbox"></label>
-        {% end %}
-        {% if user.facebook %}
-          <label for="hw-post-facebook"><span>facebook</span><input id="hw-post-facebook" type="checkbox"></label>
-        {% end %}
-        {% if user.google %}
-          <label for="hw-post-google"><span>google</span><input id="hw-post-google" type="checkbox"></label>
-        {% end %}
-        {% if user.tumblr %}
-          <label for="hw-post-tumblr"><span>tumblr</span><input id="hw-post-tumblr" type="checkbox"></label>
+        {% for source in external_sources %}
+          {% if getattr(user, source) %}
+            <label for="hw-post-{{ source }}"><span>{{ source }}</span><input id="hw-post-{{ source }}" type="checkbox"></label>
+          {% end %}
         {% end %}
       </div>
     {% end %}
@@ -104,98 +98,31 @@
         <a href="#comments" class="hw-following-username" onclick="hw.read(event, this, null, 'comments')">{{ _('comments') }}</a><a href="#comments" class="hw-unread-count" onclick="hw.read(event, this, null, 'comments')">&nbsp;({{ comments_count }})</a>
       </li>
 
-      <li id="hw-following-twitter" data-user="" {% if user.twitter %}data-enabled{% end %}>
-        {% if user.twitter %}
-          <a href="#twitter" onclick="hw.read(event, this, null, 'twitter')" title="{{ _('Twitter') }}">
-            <img height="16" width="16" src="http://twitter.com/favicon.ico" />
-          </a>
-          <a href="#twitter" class="hw-following-username" onclick="hw.read(event, this, null, 'twitter')">{{ _('twitter') }}</a><a href="#twitter" class="hw-unread-count" onclick="hw.read(event, this, null, 'twitter')">&nbsp;({{ twitter_count }})</a>
-          <span class="hw-button-group">
-            <button class="hw-menu-button" onclick="hw.menu(event, this)" type="button">
-              <span class="hw-arrow-button"></span>
-            </button>
-            <div class="hw-menu">
-              <a href="http://twitter.com" target="_blank" class="hw-visit">{{ _('visit') }}</a>
-              <a href="#mark-all-as-read" data-user="twitter" onclick="hw.markAllAsRead(event, this)">{{ _('mark all as read') }}</a>
-              <a href="#unfollow" data-user="twitter" onclick="hw.unfollow(event, this)" class="hw-unfollow">{{ _('unfollow') }}</a>
-            </div>
-          </span>
-        {% else %}
-          <a href="{{ nav_url(section='twitter') }}" title="{{ _('connect to twitter') }}">
-            <img height="16" width="16" src="http://twitter.com/favicon.ico" />
-          </a>
-          <a href="{{ nav_url(section='twitter') }}">{{ _('connect to twitter') }}</a>
-        {% end %}
-      </li>
-      <li id="hw-following-facebook" data-user="" {% if user.facebook %}data-enabled{% end %}>
-        {% if user.facebook %}
-          <a href="#facebook" onclick="hw.read(event, this, null, 'facebook')" title="{{ _('Facebook') }}">
-            <img height="16" width="16" src="http://facebook.com/favicon.ico" />
-          </a>
-          <a href="#facebook" class="hw-following-username" onclick="hw.read(event, this, null, 'facebook')">{{ _('facebook') }}</a><a href="#facebook" class="hw-unread-count" onclick="hw.read(event, this, null, 'facebook')">&nbsp;({{ facebook_count }})</a>
-          <span class="hw-button-group">
-            <button class="hw-menu-button" onclick="hw.menu(event, this)" type="button">
-              <span class="hw-arrow-button"></span>
-            </button>
-            <div class="hw-menu">
-              <a href="http://facebook.com" target="_blank" class="hw-visit">{{ _('visit') }}</a>
-              <a href="#mark-all-as-read" data-user="facebook" onclick="hw.markAllAsRead(event, this)">{{ _('mark all as read') }}</a>
-              <a href="#unfollow" data-user="facebook" onclick="hw.unfollow(event, this)" class="hw-unfollow">{{ _('unfollow') }}</a>
-            </div>
-          </span>
-        {% else %}
-          <a href="{{ nav_url(section='facebook') }}" title="{{ _('connect to facebook') }}">
-            <img height="16" width="16" src="http://facebook.com/favicon.ico" />
-          </a>
-          <a href="{{ nav_url(section='facebook') }}">{{ _('connect to facebook') }}</a>
-        {% end %}
-      </li>
-      <li id="hw-following-google" data-user="" {% if user.google %}data-enabled{% end %} style="display: none">
-        {% if user.google %}
-          <a href="#google" onclick="hw.read(event, this, null, 'google')" title="{{ _('Google') }}">
-            <img height="16" width="16" src="http://plus.google.com/favicon.ico" />
-          </a>
-          <a href="#google" class="hw-following-username" onclick="hw.read(event, this, null, 'google')">{{ _('google') }}</a><a href="#google" class="hw-unread-count" onclick="hw.read(event, this, null, 'google')">&nbsp;({{ google_count }})</a>
-          <span class="hw-button-group">
-            <button class="hw-menu-button" onclick="hw.menu(event, this)" type="button">
-              <span class="hw-arrow-button"></span>
-            </button>
-            <div class="hw-menu">
-              <a href="http://plus.google.com" target="_blank" class="hw-visit">{{ _('visit') }}</a>
-              <a href="#mark-all-as-read" data-user="google" onclick="hw.markAllAsRead(event, this)">{{ _('mark all as read') }}</a>
-              <a href="#unfollow" data-user="google" onclick="hw.unfollow(event, this)" class="hw-unfollow">{{ _('unfollow') }}</a>
-            </div>
-          </span>
-        {% else %}
-          <a href="{{ nav_url(section='google') }}" title="{{ _('connect to google') }}">
-            <img height="16" width="16" src="http://plus.google.com/favicon.ico" />
-          </a>
-          <a href="{{ nav_url(section='google') }}">{{ _('connect to google') }}</a>
-        {% end %}
-      </li>
-      <li id="hw-following-tumblr" data-user="" {% if user.tumblr %}data-enabled{% end %}>
-        {% if user.tumblr %}
-          <a href="#tumblr" onclick="hw.read(event, this, null, 'tumblr')" title="{{ _('Tumblr') }}">
-            <img height="16" width="16" src="http://tumblr.com/favicon.ico" />
-          </a>
-          <a href="#tumblr" class="hw-following-username" onclick="hw.read(event, this, null, 'tumblr')">{{ _('tumblr') }}</a><a href="#tumblr" class="hw-unread-count" onclick="hw.read(event, this, null, 'tumblr')">&nbsp;({{ tumblr_count }})</a>
-          <span class="hw-button-group">
-            <button class="hw-menu-button" onclick="hw.menu(event, this)" type="button">
-              <span class="hw-arrow-button"></span>
-            </button>
-            <div class="hw-menu">
-              <a href="http://tumblr.com" target="_blank" class="hw-visit">{{ _('visit') }}</a>
-              <a href="#mark-all-as-read" data-user="tumblr" onclick="hw.markAllAsRead(event, this)">{{ _('mark all as read') }}</a>
-              <a href="#unfollow" data-user="tumblr" onclick="hw.unfollow(event, this)" class="hw-unfollow">{{ _('unfollow') }}</a>
-            </div>
-          </span>
-        {% else %}
-          <a href="{{ nav_url(section='tumblr') }}" title="{{ _('connect to tumblr') }}">
-            <img height="16" width="16" src="http://tumblr.com/favicon.ico" />
-          </a>
-          <a href="{{ nav_url(section='tumblr') }}">{{ _('connect to tumblr') }}</a>
-        {% end %}
-      </li>
+      {% for source in external_sources %}
+        <li id="hw-following-{{ source }}" data-user="" {% if getattr(user, source) %}data-enabled{% end %} {% if source == 'google' %}style="display: none"{% end %}>
+          {% if getattr(user, source) %}
+            <a href="#{{ source }}" onclick="hw.read(event, this, null, '{{ source }}')" title="{{ source.capitalize() }}">
+              <img height="16" width="16" src="{% if source == 'google' %}http://plus.google.com{% else %}http://{{ source }}.com{% end %}/favicon.ico" />
+            </a>
+            <a href="#{{ source }}" class="hw-following-username" onclick="hw.read(event, this, null, '{{ source }}')">{{ source }}</a><a href="#{{ source }}" class="hw-unread-count" onclick="hw.read(event, this, null, '{{ source }}')">&nbsp;({{ handler.display[source + '_count'] }})</a>
+            <span class="hw-button-group">
+              <button class="hw-menu-button" onclick="hw.menu(event, this)" type="button">
+                <span class="hw-arrow-button"></span>
+              </button>
+              <div class="hw-menu">
+                <a href="{% if source == 'google' %}http://plus.google.com{% else %}http://{{ source }}.com{% end %}" target="_blank" class="hw-visit">{{ _('visit') }}</a>
+                <a href="#mark-all-as-read" data-user="{{ source }}" onclick="hw.markAllAsRead(event, this)">{{ _('mark all as read') }}</a>
+                <a href="#unfollow" data-user="{{ source }}" onclick="hw.unfollow(event, this)" class="hw-unfollow">{{ _('unfollow') }}</a>
+              </div>
+            </span>
+          {% else %}
+            <a href="{{ nav_url(section=source) }}" title="{{ _('connect to %(source)s' % { 'source': source } ) }}">
+              <img height="16" width="16" src="http://{{ source }}.com/favicon.ico" />
+            </a>
+            <a href="{{ nav_url(section=source) }}">{{ _('connect to %(source)s' % { 'source': source }) }}</a>
+          {% end %}
+        </li>
+      {% end %}
 
       {% for follower in following %}
         {% if follower.name %}
