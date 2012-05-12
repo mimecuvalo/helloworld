@@ -801,6 +801,16 @@ div.hw-anchor-editor a {
   vertical-align: middle;
 }
 
+#hw-image-crop-rect:after {
+  content: attr(width) "x" attr(height);
+  background-color: white;
+  -moz-border-radius: 1px;
+  -webkit-border-radius: 1px;
+  -o-border-radius: 1px;
+  -ms-border-radius: 1px;
+  border-radius: 1px;
+}
+
 input[name=hw-anchor-type],
 input[name=hw-image-align] {
   margin-top: 5px;

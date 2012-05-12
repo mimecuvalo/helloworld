@@ -141,6 +141,8 @@ hw.editImageCrop = function() {
     Event.observe(canvas, 'mousedown', hw.cropMouseDown, false);
     Event.observe(editor, 'mousemove', hw.cropMouseMove, false);
     Event.observe(canvas, 'mouseup', hw.cropMouseUp, false);
+    Event.observe(canvas, 'keydown', hw.cropKeyDown, false);
+    Event.observe(canvas, 'keyup', hw.cropKeyUp, false);
     hw.$c('hw-image-crop').innerHTML = hw.$c('hw-image-crop').getAttribute('data-select-area');
   } else {
     Event.stopObserving(canvas, 'mousedown', hw.cropMouseDown, false);
@@ -158,6 +160,8 @@ hw.cropMouseDown = function(event) {
   div.style.position = 'absolute';
   div.style.height = '1px';
   div.style.width = '1px';
+  div.setAttribute('width', '1');
+  div.setAttribute('height', '1');
   div.style.top = (event.clientY - editor.getBoundingClientRect().top) + 'px';
   div.style.left = (event.clientX- editor.getBoundingClientRect().left) + 'px';
   div.style.border = '1px dotted gray';
@@ -167,9 +171,27 @@ hw.cropMouseDown = function(event) {
 hw.cropMouseMove = function(event) {
   if (hw.editImageCropStart) {
     var canvas = hw.editImageCanvas();
-    hw.$('hw-image-crop-rect').style.width = (event.clientX - hw.editImageCropStart.left - canvas.getBoundingClientRect().left - 5) + 'px';
-    hw.$('hw-image-crop-rect').style.height = (event.clientY - hw.editImageCropStart.top - canvas.getBoundingClientRect().top - 5) + 'px';
+    var width = (event.clientX - hw.editImageCropStart.left - canvas.getBoundingClientRect().left - 5);
+    var height = (event.clientY - hw.editImageCropStart.top - canvas.getBoundingClientRect().top - 5);
+    if (hw.cropShiftEnabled) {
+      var square = Math.max(width, height);
+      width = square;
+      height = square;
+    }
+    hw.$('hw-image-crop-rect').style.width = width + 'px';
+    hw.$('hw-image-crop-rect').style.height = height + 'px';
+    hw.$('hw-image-crop-rect').setAttribute('width', width);
+    hw.$('hw-image-crop-rect').setAttribute('height', height);
   }
+};
+hw.cropShiftEnabled = false;
+hw.cropKeyDown = function(event) {
+  if (event.shiftKey) {
+    hw.cropShiftEnabled = true;
+  }
+};
+hw.cropKeyUp = function(event) {
+  hw.cropShiftEnabled = false;
 };
 hw.cropMouseUp = function(event) {
   if (!hw.editImageCropStart) {
@@ -182,9 +204,15 @@ hw.cropMouseUp = function(event) {
   }
 
   var canvas = hw.editImageCanvas();
+  var width = event.clientX - hw.editImageCropStart.left - canvas.getBoundingClientRect().left;
+  var height = event.clientY - hw.editImageCropStart.top - canvas.getBoundingClientRect().top;
+  if (hw.cropShiftEnabled) {
+    var square = Math.max(width, height);
+    width = square;
+    height = square;
+  }
   var options = { rect: { top: hw.editImageCropStart.top, left: hw.editImageCropStart.left,
-                          height: event.clientY - hw.editImageCropStart.top - canvas.getBoundingClientRect().top,
-                          width: event.clientX - hw.editImageCropStart.left - canvas.getBoundingClientRect().left } };
+                          width: width, height: height } };
                           
   hw.removeClass(hw.$c('hw-image-editor'), 'hw-editing');
   Pixastic.process(canvas, "crop", options);
