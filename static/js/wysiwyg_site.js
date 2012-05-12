@@ -173,8 +173,29 @@ hw.getCurrentWysiwyg = function() {
 };
 
 hw.wysiwygKeyDown = function(event) {
-  hw.preventDefault(event);
-  hw.wysiwygKeys(event);
+  var key = event.which || event.keyCode;
+
+  switch (key) {
+    case 9: // tab
+      hw.preventDefault(event);
+      hw.wysiwygKeys(event);
+      break;
+    case 8:   // delete
+    case 37:  // left
+    case 38:  // up
+    case 39:  // right
+    case 40:  // down
+      hw.wysiwygLastKeys = "";
+      break;
+    case 83:   // ctrl-s, save  TODO report bug to ff, messed up with dvorak keyboard
+      if (hw.hasClass('hw-container', 'hw-editing') && hw.testAccelKey(event)) {
+        hw.preventDefault(event);
+        hw.save();
+        return;
+      }
+    default:
+      break;
+  }
 };
 
 hw.wysiwygLastKeys = "";
