@@ -254,6 +254,8 @@ class ApiHandler(BaseHandler):
 
   def follow(self):
     user_url = self.get_argument('user').strip()
+    if not user_url.startswith('http://'):
+      user_url = 'http://' + user_url
     profile = self.get_author_username()
     user = users.get_remote_user_info(self, user_url, profile)
 
