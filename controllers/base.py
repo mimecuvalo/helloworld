@@ -178,10 +178,11 @@ class BaseHandler(tornado.web.RequestHandler):
       access_granted = True
 
     if content or private_resource:
-      if content:
-        access_table = self.models.content_access.get(content=content.id)
-      else:
-        access_table = self.models.resource_access.get(url=private_resource)
+      #if content:
+      #  access_table = self.models.content_access.get(content=content.id)
+      #else:
+      #  access_table = self.models.resource_access.get(url=private_resource)
+      access_table = []
 
       if len(access_table):
         if not self.current_user:

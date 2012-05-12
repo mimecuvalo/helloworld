@@ -82,6 +82,7 @@ class content_remote(Model):
                    'comments_updated': custom_validators.DatetimeOrNull(),
                   }
 
+"""
 class content_access(Model):
   content = ForeignKey('content')
   user = ForeignKey('users')
@@ -102,6 +103,7 @@ class resource_access(Model):
                    'user': validators.Number(),
                    'has_access': validators.Number(),
                   }
+"""
 
 class users(Model):
   class Meta:

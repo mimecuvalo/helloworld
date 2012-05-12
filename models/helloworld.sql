@@ -71,20 +71,6 @@ CREATE TABLE IF NOT EXISTS `content` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `content_access`
---
-
-CREATE TABLE IF NOT EXISTS `content_access` (
-  `content` bigint(20) unsigned NOT NULL,
-  `user` int(11) NOT NULL,
-  `has_access` tinyint(1) NOT NULL default '0',
-  KEY `user` (`user`),
-  KEY `content` (`content`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `content_remote`
 --
 
@@ -116,19 +102,6 @@ CREATE TABLE IF NOT EXISTS `content_remote` (
   KEY `to_username_2` (`to_username`,`from_user`(255))
   KEY `thread` (`thread`(255))
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `resource_access`
---
-
-CREATE TABLE IF NOT EXISTS `resource_access` (
-  `url` text NOT NULL,
-  `user` int(11) NOT NULL,
-  `has_access` tinyint(1) NOT NULL default '0',
-  KEY `user` (`user`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
