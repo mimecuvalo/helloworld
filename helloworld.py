@@ -96,7 +96,7 @@ if setup:
 else:
   handlers = [ ]
   for source in constants['external_sources']:
-    handlers += [ (prefix + source, "controllers." + source + "." + source.capitalize() + "Handler") ]
+    handlers += [ (prefix + "/" + source, "controllers." + source + "." + source.capitalize() + "Handler") ]
 
   handlers += [
     (prefix + r"/\.well-known/host-meta", "controllers.host_meta.HostMetaHandler"),
