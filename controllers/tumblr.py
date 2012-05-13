@@ -59,7 +59,7 @@ class TumblrHandler(BaseHandler,
 
     access_token, tumblr_info = self.get_tumblr_info()
     title = content_remote.strip_html(self.get_argument('title', ''))
-    body = content_remote.strip_html(self.get_argument('view', '')) \
+    body = self.get_argument('view', '') \
          + '\n' \
          + self.get_argument('url')
 
