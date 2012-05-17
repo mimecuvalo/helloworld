@@ -84,11 +84,19 @@ class TumblrHandler(BaseHandler,
       picture = picture[len(self.application.settings["static_path"]) + 1:]
       picture = self.static_url(picture, include_host=True)
 
+    post_args = {"type": "text", "title": title, "body": body}
+    video = re.search(r'<iframe[^>]*(youtube|vimeo)[^>]*></iframe>', body)
+    if video:
+      video = video.group(0)
+      post_args["embed"] = video
+      post_args["caption"] = body.replace(video, '<br>')
+      post_args["type"] = "video"
+
     self.tumblr_request(
             "http://api.tumblr.com/v2/blog/" + tumblr_info['primary_blog'] + "/post",
             self.status_update_result,
             access_token=access_token,
-            post_args={"type": "text", "title": title, "body": body},)
+            post_args=post_args,)
 
   # TODO XXX favoriting busted right now, need reblog key
   def favorite(self):

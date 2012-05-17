@@ -150,8 +150,9 @@ def get_remote_title_and_thumb(url, content_type=None):
       if image:
         image = image.string
       raw_html = oembed_doc.find('html').string
-      raw_html = raw_html.replace('&lt;![CDATA[', '').replace(']]&gt;', '')
-      html = tornado.escape.xhtml_unescape(raw_html)
+      if raw_html:
+        raw_html = raw_html.replace('&lt;![CDATA[', '').replace(']]&gt;', '')
+        html = tornado.escape.xhtml_unescape(raw_html)
 
       if is_youtube:  # they serve up hqdefault for some reason...too big
         image = 'http://i' + str(random.randint(1, 4)) + '.ytimg.com/vi/' + video_id + '/default.jpg'
