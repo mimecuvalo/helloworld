@@ -4,7 +4,7 @@
   <version>1.0</version>
   <provider_url>{{ nav_url(host=True) }}</provider_url>
   <title>{{ content.title }}</title>
-  <html>
+  <html><![CDATA[
     <a href="{{ content_url(content, host=True) }}">
       {% if content_thumb %}
       <img src="{{ nav_url(host=True, section=content_thumb) }}" />
@@ -12,7 +12,7 @@
       {{ content.title }}
       {% end %}
     </a>
-  </html>
+  ]]></html>
   {% if content_thumb %}
   <width>{{ thumb_width }}</width>
   <height>{{ thumb_height }}</height>
