@@ -185,7 +185,7 @@ class TumblrHandler(BaseHandler,
         new_post.title = post['caption']
         chosen_video = None
         for video in post['player']:
-          if not chosen_photo or (video['width'] <= 720 and chosen_video['width'] < video['width']):
+          if not chosen_video or (video['width'] <= 720 and chosen_video['width'] < video['width']):
             chosen_video = video
         new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(chosen_video['embed_code']))
       elif post['type'] == 'answer':
