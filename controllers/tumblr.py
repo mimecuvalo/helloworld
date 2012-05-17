@@ -160,7 +160,6 @@ class TumblrHandler(BaseHandler,
         new_post.title = post['title']
         new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(post['body']))
       elif post['type'] == 'photo':
-        new_post.title = post['caption']
         html = ""
         for photo in post['photos']:
           chosen_photo = None
@@ -168,6 +167,7 @@ class TumblrHandler(BaseHandler,
             if not chosen_photo or (size['width'] <= 720 and chosen_photo['width'] < size['width']):
               chosen_photo = size
           html += '<img src="' + content_remote.sanitize(tornado.escape.xhtml_unescape(chosen_photo['url'])) + '">'
+        html += content_remote.sanitize(tornado.escape.xhtml_unescape(post['caption']))
         new_post.view = html
       elif post['type'] == 'quote':
         new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(post['text'] + '<br>' + post['source']))
@@ -178,16 +178,19 @@ class TumblrHandler(BaseHandler,
         new_post.title = post['title']
         new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(post['body'].replace('\r\n', '<br>')))
       elif post['type'] == 'audio':
-        new_post.title = post['caption']
-        # TODO XXX probably needs to be carefully escaped
-        new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(post['player']))
+        html = ""
+        html += content_remote.sanitize(tornado.escape.xhtml_unescape(post['caption']))
+        html += content_remote.sanitize(tornado.escape.xhtml_unescape(post['player']))
+        new_post.view = html
       elif post['type'] == 'video':
-        new_post.title = post['caption']
         chosen_video = None
         for video in post['player']:
           if not chosen_video or (video['width'] <= 720 and chosen_video['width'] < video['width']):
             chosen_video = video
-        new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(chosen_video['embed_code']))
+        html = ""
+        html += content_remote.sanitize(tornado.escape.xhtml_unescape(post['caption']))
+        html += content_remote.sanitize(tornado.escape.xhtml_unescape(chosen_video['embed_code']))
+        new_post.view = 
       elif post['type'] == 'answer':
         new_post.title = post['question']
         new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(post['answer']))
