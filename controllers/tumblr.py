@@ -179,8 +179,8 @@ class TumblrHandler(BaseHandler,
         new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(post['body'].replace('\r\n', '<br>')))
       elif post['type'] == 'audio':
         html = ""
-        html += content_remote.sanitize(tornado.escape.xhtml_unescape(post['caption']))
         html += content_remote.sanitize(tornado.escape.xhtml_unescape(post['player']))
+        html += content_remote.sanitize(tornado.escape.xhtml_unescape(post['caption']))
         new_post.view = html
       elif post['type'] == 'video':
         chosen_video = None
@@ -188,8 +188,8 @@ class TumblrHandler(BaseHandler,
           if not chosen_video or (video['width'] <= 720 and chosen_video['width'] < video['width']):
             chosen_video = video
         html = ""
-        html += content_remote.sanitize(tornado.escape.xhtml_unescape(post['caption']))
         html += content_remote.sanitize(tornado.escape.xhtml_unescape(chosen_video['embed_code']))
+        html += content_remote.sanitize(tornado.escape.xhtml_unescape(post['caption']))
         new_post.view = html
       elif post['type'] == 'answer':
         new_post.title = post['question']
