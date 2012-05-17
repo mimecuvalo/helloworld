@@ -190,7 +190,7 @@ class TumblrHandler(BaseHandler,
         html = ""
         html += content_remote.sanitize(tornado.escape.xhtml_unescape(post['caption']))
         html += content_remote.sanitize(tornado.escape.xhtml_unescape(chosen_video['embed_code']))
-        new_post.view = 
+        new_post.view = html
       elif post['type'] == 'answer':
         new_post.title = post['question']
         new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(post['answer']))
