@@ -602,7 +602,7 @@ hw.markedAsUnread = [];
 hw.markSectionAsRead = function(section, opt_force) {
   var sections = hw.$('hw-feed').getElementsByTagName('SECTION');
   for (var x = 0; x < sections.length; ++x) {
-    if (!opt_force && (hw.hasClass('hw-feed', 'hw-list-mode') || hw.hasClass(sections[x], 'hw-leave-unread') || sections[x].getAttribute('data-unread') == 'false')) {
+    if ((!opt_force && hw.hasClass('hw-feed', 'hw-list-mode')) || hw.hasClass(sections[x], 'hw-leave-unread') || sections[x].getAttribute('data-unread') == 'false') {
       if (sections[x] == section) {
         break;
       } else {
