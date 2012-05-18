@@ -78,11 +78,24 @@ class FacebookHandler(BaseHandler,
       picture = picture[len(self.application.settings["static_path"]) + 1:]
       picture = self.static_url(picture, include_host=True)
 
+    post_args = {"message": status, "picture": picture}
+    video = re.search(r'<iframe[^>]*(youtube|vimeo)[^>]*></iframe>', status)
+    if video:
+      video = video.group(0)
+      is_youtube = re.search(r'<iframe[^>]*(youtube)[^>]*></iframe>', body)
+      if is_youtube:
+        video_id = re.search(r'<iframe[^>]*youtube.com/embed/([^\?]*)[^>]*></iframe>', body).group(1)
+        source = 'http://www.youtube.com/e/' + video_id
+      else:
+        video_id = re.search(r'<iframe[^>]*vimeo.com/video/([^\?"]*)[^>]*></iframe>', body).group(1)
+        source = 'https://secure.vimeo.com/moogaloop.swf?clip_id=' + video_id + '&autoplay=1'
+      post_args['source'] = source
+
     self.facebook_request(
             "/me/feed",
             self.status_update_result,
             access_token=access_token,
-            post_args={"message": status, "picture": picture},)
+            post_args=post_args,)
 
   def favorite(self):
     not_favorited = self.get_argument('not_favorited')
@@ -148,6 +161,8 @@ class FacebookHandler(BaseHandler,
         new_post.comments_updated = datetime.datetime.strptime(last_updated[:-5], '%Y-%m-%dT%H:%M:%S')
       if post.has_key('actions'):
         new_post.link = post['actions'][0]['link']
+      elif post.has_key('link'):
+        new_post.link = post['link']
       view = ""
       if post.has_key('message'):
         view += post['message'] + "<br>"
