@@ -90,6 +90,7 @@ class FacebookHandler(BaseHandler,
       else:
         video_id = re.search(r'<iframe[^>]*vimeo.com/video/([^\?"]*)[^>]*></iframe>', body).group(1)
         source = 'https://secure.vimeo.com/moogaloop.swf?clip_id=' + video_id + '&autoplay=1'
+      post_args["message"] = status.replace(video, '')
       post_args['source'] = source
 
     self.facebook_request(

@@ -89,7 +89,7 @@ class TumblrHandler(BaseHandler,
     if video:
       video = video.group(0)
       post_args["embed"] = video
-      post_args["caption"] = body.replace(video, '<br>')
+      post_args["caption"] = body.replace(video, '')
       post_args["type"] = "video"
 
     self.tumblr_request(
