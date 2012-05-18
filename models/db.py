@@ -19,7 +19,7 @@ def search(profile, query, begin, page_size):
 # this will work for now...
 def dashboard_feed(profile, begin, page_size, sort_type, read_all_mode, specific_feed, just_local_feed, local_entry=None, remote_entry=None, \
                    spam=False, favorite=False, comments=False, external=None, query=None,
-                   from_local_id=None, from_remote_id=None):
+                   from_local_date=None, from_remote_date=None):
   content_local_restrict = ""
   content_remote_restrict = ""
   parameters = [profile, profile]
@@ -41,12 +41,12 @@ def dashboard_feed(profile, begin, page_size, sort_type, read_all_mode, specific
   elif begin != 0:
     # TODO should also limit lower limit when sorting by newest
     comparison = '>=' if sort_type == 'oldest' else '<='
-    if from_local_id:
-      content_local_restrict += """ AND `id` """ + comparison + """ %s """
-      parameters.append(from_local_id)
-    if from_remote_id:
-      content_remote_restrict += """ AND `id` """ + comparison + """ %s """
-      parameters.append(from_remote_id)
+    if from_local_date:
+      content_local_restrict += """ AND `date_created` """ + comparison + """ %s """
+      parameters.append(from_local_date)
+    if from_remote_date:
+      content_remote_restrict += """ AND `date_created` """ + comparison + """ %s """
+      parameters.append(from_remote_date)
   elif not spam and not favorite and not comments and not query and read_all_mode == 0:
     content_remote_restrict += """ AND `read` = 0 """
   if spam:

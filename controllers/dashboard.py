@@ -81,6 +81,13 @@ class DashboardHandler(BaseHandler):
         external = source
         break
 
+    local_date = None
+    remote_date = None
+    if self.display["from_local_id"]:
+      local_date = self.models.content.get(self.display["from_local_id"]).date_created
+    if self.display["from_remote_id"]:
+      remote_date = self.models.content_remote.get(self.display["from_remote_id"]).date_created
+
     dashboard_objects = \
         [ self.models.content_remote(**content) \
           if content['post_id'] else \
@@ -90,7 +97,7 @@ class DashboardHandler(BaseHandler):
                                            self.display["local_entry"], self.display["remote_entry"], \
                                            self.display["read_spam"], self.display["read_favorites"], self.display["read_comments"], \
                                            external, \
-                                           self.display["q"], self.display["from_local_id"], self.display["from_remote_id"]) ]
+                                           self.display["q"], local_date, remote_date) ]
 
     self.display['combined_feed'] = \
         [ self.ui["modules"].RemoteContent(content) \
