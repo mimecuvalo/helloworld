@@ -2,6 +2,7 @@ import datetime
 import json
 import logging
 import os.path
+import re
 import urllib
 
 import tornado.auth
