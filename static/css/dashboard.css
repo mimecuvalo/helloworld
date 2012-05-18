@@ -112,6 +112,9 @@
   float: left;
   width: 740px;
 }
+#hw-absorb {
+  margin-bottom: 250px;
+}
 
 #hw-backend-content {
   position: absolute;

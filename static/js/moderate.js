@@ -693,8 +693,10 @@ hw.markAsUnread = function(event, el) {
     hw.updateCount(countEl, 1);
   }
 };
+hw.updateCountTimeout = null;
 hw.sendMarkedAsRead = function() {
   var createForm = hw.$c('hw-create');
+  var pendingChange = hw.markedAsRead.length || hw.markedAsUnread.length;
 
   if (hw.markedAsRead.length) {
     new hw.ajax(hw.baseUri() + 'api',
@@ -716,6 +718,11 @@ hw.sendMarkedAsRead = function() {
         onSuccess: function() {},
         onError: function() {} });
     hw.markedAsUnread = [];
+  }
+
+  if (pendingChange) {
+    clearTimeout(hw.updateCountTimeout);
+    hw.updateCountTimeout = setTimeout(hw.updateCounts, 10000);
   }
 };
 hw.markAllAsRead = function(event, el) {

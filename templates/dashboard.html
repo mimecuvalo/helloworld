@@ -50,14 +50,13 @@
   <script>
     hw.loadMoreObject = new hw.loadMore('{{ nav_url(section='dashboard') }}', {{ offset }}, 'hw-feed');
     hw.setMsg('loading', "{% raw js_escape(_('loading...')) %}");
-    Event.observe(window, 'scroll', function() { hw.loadMoreObject.onScroll(hw.updateCounts) }, false);
+    Event.observe(window, 'scroll', function() { hw.loadMoreObject.onScroll() }, false);
 
     Event.observe(window, 'scroll', hw.markReadOnScroll, false);
     Event.observe(window, 'resize', hw.markReadOnScroll, false);
     Event.observe(hw.$('hw-feed'), 'click', hw.outgoingLink, false);
 
     window.setInterval(hw.sendMarkedAsRead, 500);
-    window.setInterval(hw.updateCounts, 30000);
     hw.updateCounts();
   </script>
 {% end %}
