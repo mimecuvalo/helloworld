@@ -291,7 +291,7 @@ hw.loadMore.prototype = {
     if (!this.done && !this.processing && this.offset != 0 &&
         (document.height || document.body.parentNode.scrollHeight) -
         (document.body.parentNode.scrollTop || document.body.scrollTop) < (document.body.parentNode.clientHeight || document.body.clientHeight) * 3
-        && !hw.$('hw-feed-page-' + this.offset + 1)) {
+        && !hw.$('hw-feed-page-' + (this.offset + 1))) {
       this.processing = true;
       this.feed.innerHTML += '<div id="hw-loading">' + hw.getMsg('loading') + '</div>';
       var a = document.body.offsetWidth;  // XXX workaround https://bugzilla.mozilla.org/show_bug.cgi?id=693219#c33 
