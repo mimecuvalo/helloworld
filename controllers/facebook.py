@@ -80,15 +80,15 @@ class FacebookHandler(BaseHandler,
       picture = self.static_url(picture, include_host=True)
 
     post_args = {"message": status, "picture": picture}
-    video = re.search(r'<iframe[^>]*(youtube|vimeo)[^>]*></iframe>', status)
+    video = re.compile(r'<iframe[^>]*(youtube|vimeo)[^>]*>.*?</iframe>', re.M | re.S).search(status)
     if video:
       video = video.group(0)
-      is_youtube = re.search(r'<iframe[^>]*(youtube)[^>]*></iframe>', body)
+      is_youtube = re.compile(r'<iframe[^>]*(youtube)[^>]*>', re.M).search(body)
       if is_youtube:
-        video_id = re.search(r'<iframe[^>]*youtube.com/embed/([^\?]*)[^>]*></iframe>', body).group(1)
+        video_id = re.compile(r'<iframe[^>]*youtube.com/embed/([^\?]*)[^>]*>', re.M).search(body).group(1)
         source = 'http://www.youtube.com/e/' + video_id
       else:
-        video_id = re.search(r'<iframe[^>]*vimeo.com/video/([^\?"]*)[^>]*></iframe>', body).group(1)
+        video_id = re.compile(r'<iframe[^>]*vimeo.com/video/([^\?"]*)[^>]*>', re.M).search(body).group(1)
         source = 'https://secure.vimeo.com/moogaloop.swf?clip_id=' + video_id + '&autoplay=1'
       post_args["message"] = status.replace(video, '')
       post_args['source'] = source

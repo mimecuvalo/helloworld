@@ -85,7 +85,7 @@ class TumblrHandler(BaseHandler,
       picture = self.static_url(picture, include_host=True)
 
     post_args = {"type": "text", "title": title, "body": body}
-    video = re.search(r'<iframe[^>]*(youtube|vimeo)[^>]*></iframe>', body)
+    video = re.compile(r'<iframe[^>]*(youtube|vimeo)[^>]*>.*?</iframe>', re.M | re.S).search(body)
     if video:
       video = video.group(0)
       post_args["embed"] = video
