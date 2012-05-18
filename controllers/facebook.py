@@ -90,7 +90,7 @@ class FacebookHandler(BaseHandler,
       is_youtube = re.compile(r'<iframe[^>]*(youtube)[^>]*>', re.M).search(view)
       if is_youtube:
         video_id = re.compile(r'<iframe[^>]*youtube.com/embed/([^\?]*)[^>]*>', re.M).search(view).group(1)
-        source = 'http://www.youtube.com/e/' + video_id
+        source = 'http://www.youtube.com/e/' + video_id + '?autoplay=1'
       else:
         video_id = re.compile(r'<iframe[^>]*vimeo.com/video/([^\?"]*)[^>]*>', re.M).search(view).group(1)
         source = 'https://secure.vimeo.com/moogaloop.swf?clip_id=' + video_id + '&autoplay=1'
