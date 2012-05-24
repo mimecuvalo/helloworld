@@ -85,7 +85,7 @@ class TumblrHandler(BaseHandler,
             picture = original_img
 
         picture = picture[len(self.application.settings["static_path"]) + 1:]
-        picture = self.static_url(picture, include_host=True)
+        picture = self.static_url(picture, include_host=True, include_sig=False)
       else:
         picture = thumb
 

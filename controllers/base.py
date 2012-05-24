@@ -271,7 +271,7 @@ class BaseHandler(tornado.web.RequestHandler):
         logging.error(output)
       self.fill_template("error.html")
 
-  def static_url(self, path, include_filename=None, include_host=False):
+  def static_url(self, path, include_filename=None, include_host=False, include_sig=True):
     """Returns a static URL for the given relative static file path.
 
     This method requires you set the 'static_path' setting in your
@@ -328,7 +328,7 @@ class BaseHandler(tornado.web.RequestHandler):
     if self.request.protocol == 'https' or not self.constants['http_hide_prefix']:
       base += self.prefix
     static_url_prefix = self.settings.get('static_url_prefix', '/static/')
-    if hashes.get(abs_path):
+    if hashes.get(abs_path) and include_sig:
       return base + static_url_prefix + path + "?v=" + hashes[abs_path][:5]
     else:
       return base + static_url_prefix + path
