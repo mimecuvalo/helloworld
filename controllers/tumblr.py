@@ -98,7 +98,7 @@ class TumblrHandler(BaseHandler,
 
     video = re.compile(r'<iframe[^>]*(youtube|vimeo)[^>]*>.*?</iframe>', re.M | re.S).search(body)
 
-    if picture and regular_picture and not video:
+    if picture and normal_picture and not video:
       post_args["source"] = picture
       post_args["link"] = self.get_argument('url')
       post_args["caption"] = re.compile(r'(<figure>.*?<img.*?src="' + normal_picture + r'".*?>.*?</figure>)', re.M | re.U | re.S).sub('', body)
