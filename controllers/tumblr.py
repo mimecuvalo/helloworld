@@ -68,6 +68,7 @@ class TumblrHandler(BaseHandler,
     # TODO, refactor out w FB logic
     thumb = self.get_argument('thumb', '')
     picture = None
+    normal_picture = None
     if thumb:
       if not thumb.startswith('http://'):
         thumb = url_factory.clean_filename(thumb)
@@ -84,6 +85,12 @@ class TumblrHandler(BaseHandler,
           if os.path.exists(original_img):
             picture = original_img
 
+          normal_path = os.path.join(parent_dir, basename)
+          if os.path.exists(normal_path):
+            normal_picture = normal_path
+            normal_picture = normal_picture[len(self.application.settings["static_path"]) + 1:]
+            normal_picture = self.static_url(normal_picture, include_host=True, include_sig=False)
+
         picture = picture[len(self.application.settings["static_path"]) + 1:]
         picture = self.static_url(picture, include_host=True, include_sig=False)
       else:
@@ -91,10 +98,10 @@ class TumblrHandler(BaseHandler,
 
     video = re.compile(r'<iframe[^>]*(youtube|vimeo)[^>]*>.*?</iframe>', re.M | re.S).search(body)
 
-    if picture and not video:
+    if picture and regular_picture and not video:
       post_args["source"] = picture
       post_args["link"] = self.get_argument('url')
-      post_args["caption"] = re.compile(r'(<figure>.*?<img.*?src="' + picture + '".*?>.*?</figure>)', re.M | re.U | re.S).sub('', body)
+      post_args["caption"] = re.compile(r'(<figure>.*?<img.*?src="' + normal_picture + r'".*?>.*?</figure>)', re.M | re.U | re.S).sub('', body)
       post_args["type"] = "photo"
 
     if video:
