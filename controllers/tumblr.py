@@ -95,7 +95,7 @@ class TumblrHandler(BaseHandler,
       post_args["caption"] = body.replace(video, '')
       post_args["type"] = "video"
 
-    tags = re.compile(r'#(\w+)(?![^<&]*(?:[>;]))', re.M | re.U).search(body)
+    tags = re.compile(r'#(\w+)(?![^<&]*(?:[>;]))', re.M | re.U).findall(body)
     if tags:
       post_args["tags"] = ','.join(tags)
 
