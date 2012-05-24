@@ -95,6 +95,10 @@ class TumblrHandler(BaseHandler,
       post_args["caption"] = body.replace(video, '')
       post_args["type"] = "video"
 
+    tags = re.compile(r'#(\w+)(?![^<&]*(?:[>;]))', re.M | re.U).search(body)
+    if tags:
+      post_args["tags"] = ','.join(tags)
+
     self.tumblr_request(
             "http://api.tumblr.com/v2/blog/" + tumblr_info['primary_blog'] + "/post",
             self.status_update_result,
