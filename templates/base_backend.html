@@ -29,7 +29,7 @@
       {% block sidebar %}
         <div id="hw-navigation">
           <ul>
-            <li><strong><a href="{{ nav_url(username=username) }}">{{ _('view site') }}</a></strong></li>
+            <li><strong><a href="{{ nav_url(username=username) }}" target="_blank">{{ _('view site') }}</a></strong></li>
             {% if handler.request.uri == nav_url(section='dashboard') %}
             <li><a href="{{ nav_url(section='customize') }}">{{ _('customize') }}</a></li>
             {% elif handler.request.uri == nav_url(section='customize') %}
