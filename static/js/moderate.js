@@ -729,6 +729,7 @@ hw.markAllAsRead = function(event, el) {
   hw.preventDefault(event);
 
   var user = el.getAttribute('data-user');
+  var type = el.getAttribute('data-type');
   var countEl;
   if (hw.inArray(type, hw.externalSources)) {
     countEl = hw.$$('#hw-following #hw-following-' + user + ' .hw-unread-count')[0];
