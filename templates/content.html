@@ -68,7 +68,7 @@
         {% if item.is_remote %}
         <a href="{{ item.link }}" target="_blank" data-remote-id="{{ item.id }}" data-list-mode="{{ list_mode }}" onclick="hw.listOpen(event, this)">{{ item.username }}{% if item.title %}: {{ item.title }}{% end %}</a>
         {% else %}
-        <a href="{{ content_url(item) }}" {% if is_owner_viewing and item.hidden %}class="hw-content-hidden"{% end %} data-contentname="{{ item.name }}" {% if is_owner_viewing %}data-local-id="{{ item.id }}"{% end %} {% if list_mode %}data-list-mode="{{ list_mode }}" onclick="hw.listOpen(event, this)"){% end %}>{% if item.title %}{{ item.title }}{% else %}{{ _('(untitled)') }}{% end %} {% if is_owner_viewing and item.hidden %}{{ _('(hidden)') }}{% end %}</a>
+        <a href="{{ content_url(item) }}" class="{% if is_owner_viewing and item.hidden %}hw-content-hidden {% if not individual_content and not item.title %}hw-hidden{% end %}{% end %}" data-contentname="{{ item.name }}" {% if is_owner_viewing %}data-local-id="{{ item.id }}"{% end %} {% if list_mode %}data-list-mode="{{ list_mode }}" onclick="hw.listOpen(event, this)"){% end %}>{% if item.title %}{{ item.title }}{% else %}{{ _('(untitled)') }}{% end %} {% if is_owner_viewing and item.hidden %}{{ _('(hidden)') }}{% end %}</a>
         {% end %}
         {% if individual_content and is_store %}
           {% module StoreButton(item, content_owner) %}
@@ -123,6 +123,10 @@
           {% end %}
           {% if item.is_remote %}
             • <a href="{{ item.link }}" target="_blank">{{ _('view post') }}</a>
+          {% else %}
+            • <a href="{{ content_url(item) }}" target="_blank">{{ _('view post') }}</a>
+          {% end %}
+          {% if item.is_remote %}
             • <a href="#markAsUnread" onclick="hw.markAsUnread(event, this)" class="hw-mark-unread">{{ _('keep unread') }}</a>
           {% else %}
             • {{ _("%(count)s human view", "%(count)s human views", item.count) % { "count": locale.friendly_number(item.count) } }}
