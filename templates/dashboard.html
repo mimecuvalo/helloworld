@@ -110,7 +110,7 @@
               </button>
               <div class="hw-menu">
                 <a href="{% if source == 'google' %}http://plus.google.com{% else %}http://{{ source }}.com{% end %}" target="_blank" class="hw-visit">{{ _('visit') }}</a>
-                <a href="#mark-all-as-read" data-user="{{ source }}" onclick="hw.markAllAsRead(event, this)">{{ _('mark all as read') }}</a>
+                <a href="#mark-all-as-read" data-user="{{ source }}" data-type="{{ source }}" onclick="hw.markAllAsRead(event, this)">{{ _('mark all as read') }}</a>
                 <a href="#unfollow" data-user="{{ source }}" onclick="hw.unfollow(event, this)" class="hw-unfollow">{{ _('unfollow') }}</a>
               </div>
             </span>
