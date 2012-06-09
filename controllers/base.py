@@ -266,7 +266,7 @@ class BaseHandler(tornado.web.RequestHandler):
       self.display["name"] = self.breadcrumbs["name"]
       self.fill_debug_info()
       if status_code in (404, 405):
-        logging.error(status_code + ': ' + self.display["original_uri"] + ' ' + self.request.headers["User-Agent"])
+        logging.error(status_code + ': ' + self.request.method + ' ' + self.display["original_uri"] + ' ' + self.request.headers["User-Agent"])
       else:
         logging.error(output)
       self.fill_template("error.html")
