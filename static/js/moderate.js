@@ -342,7 +342,6 @@ hw.read = function(event, el, listMode, special, query, readAllMode) {
     } else {
       hw.$('hw-feed').innerHTML = '<a id="hw-feed-page-1"></a>' + xhr.responseText;
     }
-    hw.updateCounts();
   };
 
   var badTrip = function(xhr) {
@@ -417,7 +416,7 @@ hw.updateCount = function(el, delta, opt_setCount) {
   el.innerHTML = '&nbsp;(' + newCount + ')';
 };
 
-hw.updateCounts = function(opt_skipExternal) {
+hw.updateCounts = function() {
   var callback = function(xhr) {
     var json = JSON.parse(xhr.responseText);
     hw.updateCount(hw.$('hw-total-unread-count'), null, json['total_count']);
@@ -443,9 +442,8 @@ hw.updateCounts = function(opt_skipExternal) {
       onSuccess: callback,
       onError: function() {} });
 
-  if (!opt_skipExternal) {
-    hw.updateExternal();
-  }
+  // TODO(mime): this needs to move somewhere else.
+  hw.updateExternal();
 };
 
 hw.unfollow = function(event, el, opt_special) {
@@ -693,7 +691,8 @@ hw.markAsUnread = function(event, el) {
     hw.updateCount(countEl, 1);
   }
 };
-hw.updateCountTimeout = null;
+
+hw.updateCountsInterval = null;
 hw.sendMarkedAsRead = function() {
   var createForm = hw.$c('hw-create');
   var pendingChange = hw.markedAsRead.length || hw.markedAsUnread.length;
@@ -721,10 +720,11 @@ hw.sendMarkedAsRead = function() {
   }
 
   if (pendingChange) {
-    clearTimeout(hw.updateCountTimeout);
-    hw.updateCountTimeout = setTimeout(hw.updateCounts, 10000);
+    clearInterval(hw.updateCountsInterval);
+    hw.updateCountsInterval = setInterval(hw.updateCounts, 30000);
   }
 };
+
 hw.markAllAsRead = function(event, el) {
   hw.preventDefault(event);
 
@@ -824,15 +824,8 @@ hw.updateExternal = function() {
     if (hw.$('hw-following-' + hw.externalSources[x]).hasAttribute('data-enabled')) {
       new hw.ajax(hw.baseUri() + hw.externalSources[x] + '?get_feed=1',
         { method: 'get',
-          onSuccess: hw.updateExternalHelper(hw.externalSources[x]),
-          onError: function() { } });
+          onSuccess: function() {},
+          onError: function() {} });
     }
-  }
-};
-
-hw.updateExternalHelper = function(service) {
-  return function(xhr) {
-    var json = JSON.parse(xhr.responseText);
-    hw.updateCounts(true);
   }
 };

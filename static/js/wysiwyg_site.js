@@ -298,6 +298,11 @@ hw.wysiwygKeys = function(event, opt_key) {
           }
 
           var charsBack = hw.wysiwygLastKeys.length - hashIndex;
+          if (charsBack <= 1) {
+            hw.wysiwygLastKeys = "";
+            return;
+          }
+
           hw.modify("move", "backward", "character");
           for (var x = 0; x < charsBack; ++x) {
             hw.modify("extend", "backward", "character");
