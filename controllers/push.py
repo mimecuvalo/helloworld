@@ -20,13 +20,13 @@ class PushHandler(BaseHandler):
     user = self.models.users.get(username=self.breadcrumbs["profile"])[0]
 
     if not user:
-      raise tornado.web.HTTPError(404)
+      return
 
     feed_doc = feedparser.parse(self.request.body)
     profile_url = feed_doc.feed['link']
     remote_user = self.models.users_remote.get(local_username=user.username, profile_url=profile_url)[0]
 
     if not remote_user:
-      raise tornado.web.HTTPError(404)
+      return
 
     content_remote.parse_feed(self.models, remote_user, parsed_feed=self.request.body, max_days_old=self.constants['feed_max_days_old'])
