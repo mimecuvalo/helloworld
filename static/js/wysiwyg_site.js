@@ -171,14 +171,16 @@ hw.getCurrentWysiwyg = function() {
   return { 'isComment': isComment, 'wysiwyg': isComment ? hw.$c('hw-comment-input') : hw.$c('hw-wysiwyg') };
 };
 
+hw.shiftKeyPressed = false;
 hw.wysiwygKeyDown = function(event) {
   if (!hw.hasClass('hw-container', 'hw-editing')) {
     return;
   }
 
+  hw.shiftKeyPressed = event.shiftKey;
+
   var key = event.which || event.keyCode;
 
-  log(key)
   switch (key) {
     case 9: // tab
       hw.preventDefault(event);
@@ -212,6 +214,10 @@ hw.wysiwygKeyDown = function(event) {
     default:
       break;
   }
+};
+
+hw.wysiwygKeyUp = function(event) {
+  hw.shiftKeyPressed = false;
 };
 
 hw.wysiwygLastKeys = "";
@@ -438,10 +444,18 @@ hw.getSelectionStartNode = function(allowTextNodes) {
 };
 
 hw.onbeforepaste = function(event) {
+  if (hw.shiftKeyPressed) {
+    return;
+  }
+
   hw.preventDefault(event);
 };
 
 hw.paste = function(event) {
+  if (hw.shiftKeyPressed) {
+    return;
+  }
+
   var wysiwygResult = hw.getCurrentWysiwyg();
   var isComment = wysiwygResult['isComment'];
   var wysiwyg = wysiwygResult['wysiwyg'];

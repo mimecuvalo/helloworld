@@ -221,6 +221,7 @@
 <script>
 {% if individual_content %}
   Event.observe(hw.$c('hw-wysiwyg'), 'keydown', hw.wysiwygKeyDown, false);
+  Event.observe(hw.$c('hw-wysiwyg'), 'keyup', hw.wysiwygKeyUp, false);
   Event.observe(hw.$c('hw-wysiwyg'), 'keypress', hw.wysiwygKeys, false);
 
   Event.observe(hw.$c('hw-title'), 'keyup', hw.changeBeforeUnloadState, false);
