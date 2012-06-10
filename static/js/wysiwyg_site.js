@@ -517,7 +517,7 @@ hw.paste = function(event) {
   setTimeout(postPaste, 0);
 };
 
-hw.getEmbedHtml = function(link) {
+hw.getEmbedHtml = function(link, opt_img) {
   var wysiwygResult = hw.getCurrentWysiwyg();
   var isComment = wysiwygResult['isComment'];
   var wysiwyg = wysiwygResult['wysiwyg'];
@@ -553,7 +553,7 @@ hw.getEmbedHtml = function(link) {
   new hw.ajax(hw.baseUri() + 'api',
     { method: 'post',
       postBody: 'op='   + encodeURIComponent('embed')
-             + '&url='  + encodeURIComponent(link),
+             + '&url='  + encodeURIComponent(opt_img || link),
       onSuccess: callback,
       headers: { 'X-Xsrftoken' : createForm['_xsrf'].value } });
 };

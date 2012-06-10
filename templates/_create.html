@@ -238,8 +238,9 @@
 
   if (window.location.hash) {
     var reblog = hw.getArgument('?' + window.location.hash.substring(1), 'reblog');
+    var img = hw.getArgument('?' + window.location.hash.substring(1), 'img');
     if (reblog) {
-      hw.getEmbedHtml(reblog);
+      hw.getEmbedHtml(reblog, img);
       window.location.hash = '';
     }
   }
