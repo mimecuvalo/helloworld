@@ -68,6 +68,9 @@
     };
     for (var x = 0; x < images.length; ++x) {
       images[x].style.maxHeight = '190px';
+      images[x].style.margin = '0';
+      images[x].style.padding = '0';
+      images[x].style.border = '0';
       images[x].style.marginRight = '10px';
       images[x].style.cursor = 'pointer';
       images[x].onmouseover = function() {
