@@ -120,6 +120,6 @@
     // send it off!
     window.location.href = host + 'dashboard#reblog=' + url;
   } else {
-    hw.findImages();
+    findImages();
   }
 })()
