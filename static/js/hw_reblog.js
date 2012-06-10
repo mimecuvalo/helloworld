@@ -8,20 +8,34 @@
       imageFinder.parentNode.removeChild(imageFinder);
     }
 
-    var images = document.getElementsByTagName('IMG');
     var imagesArray = [];
+
+    var iframes = document.getElementsByTagName('IFRAME');
+    var images = document.getElementsByTagName('IMG');
     var dupCache = {};
-    for (var x = 0; x < images.length; ++x) {
-      var img = document.createElement('IMG');
-      images[x].setAttribute('width', '');
-      images[x].setAttribute('height', '');
-      if (images[x].width * images[x].height > 16384
-          && !(images[x].src in dupCache) && images[x].style.display != 'none') {
-        img.src = images[x].src;
-        dupCache[img.src] = 1;
-        imagesArray.push(img);
+
+    function parseImages(images) {
+      for (var x = 0; x < images.length; ++x) {
+        var img = document.createElement('IMG');
+        images[x].setAttribute('width', '');
+        images[x].setAttribute('height', '');
+        if (images[x].width * images[x].height > 16384
+            && !(images[x].src in dupCache) && images[x].style.display != 'none') {
+          img.src = images[x].src;
+          dupCache[img.src] = 1;
+          imagesArray.push(img);
+        }
       }
     }
+    parseImages(images);
+    // tumblr does photosets in iframes
+    for (var x = 0; x < iframes.length; ++x) {
+      try {
+        var iframeImages = iframes[x].contentDocument.getElementsByTagName('IMG');
+        parseImages(iframeImages);
+      } catch(ex) { }
+    }
+
     images = imagesArray;
     images.sort(function(a, b) {
       var aArea = a.width * a.height;
