@@ -110,9 +110,16 @@ class TumblrHandler(BaseHandler,
       post_args["caption"] = body.replace(video, '')
       post_args["type"] = "video"
 
+    section = self.get_argument('section', '')
+    album = self.get_argument('album', '')
     tags = re.compile(r'#(\w+)(?![^<&]*(?:[>;]))', re.M | re.U).findall(body)
+    post_args["tags"] = ""
     if tags:
-      post_args["tags"] = ','.join(tags)
+      post_args["tags"] += ','.join(tags)
+    if section:
+      post_args["tags"] += "," + section
+    if album:
+      post_args["tags"] += "," + album
 
     self.tumblr_request(
             "http://api.tumblr.com/v2/blog/" + tumblr_info['primary_blog'] + "/post",

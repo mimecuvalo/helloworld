@@ -123,13 +123,13 @@
     {% end %}
     <dl>
       {% if individual_content or content.section != 'main' %}
-      <dt><label>{{ _("section:") }}</label></dt><dd><input class="hw-section" name="hw-section" maxlength="255" type="text" placeholder="{{ _("section") }}" {% if content %}value="{{ content.section }}"{% end %}></dd>
+      <dt><label>{{ _("section:") }}</label></dt><dd><input class="hw-section" name="hw-section" maxlength="255" type="text" onchange="hw.setNewSection()" placeholder="{{ _("section") }}" {% if content %}value="{{ content.section }}"{% end %}></dd>
       {% else %}
       <input class="hw-section" name="hw-section" type="hidden" value="{{ content.section }}">
       {% end %}
       <input name="hw-section-template" type="hidden" value="{{ section_template }}">
       {% if individual_content %}
-      <dt><label>{{ _("album:") }}</label></dt><dd><input name="hw-album" maxlength="255" type="text" placeholder="{{ _("album") }}" {% if content %}value="{{ content.album }}"{% end %}></dd>
+      <dt><label>{{ _("album:") }}</label></dt><dd><input name="hw-album" maxlength="255" type="text" onchange="hw.setNewSection()" placeholder="{{ _("album") }}" {% if content %}value="{{ content.album }}"{% end %}></dd>
       {% end %}
       <dt><label>{{ _("name:") }}</label></dt><dd><input name="hw-name" maxlength="255" type="text" placeholder="{{ _("name") }}" {% if content %}value="{{ content.name }}"{% end %}></dd>
       {% if individual_content %}

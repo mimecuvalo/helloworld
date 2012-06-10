@@ -107,6 +107,8 @@ hw.save = function() {
             { method: 'post',
               postBody: 'url='                  + encodeURIComponent(url)
                       + '&title='               + encodeURIComponent(createForm['hw-title'].value)
+                      + '&section='             + encodeURIComponent(createForm['hw-section'].value)
+                      + '&album='               + encodeURIComponent(createForm['hw-album'].value)
                       + (hw.$c('hw-wysiwyg')    ? '&view=' + encodeURIComponent(finalHtml) : '')
                       + (createForm['hw-thumb'] ? '&thumb=' + encodeURIComponent(createForm['hw-thumb'].value) : ''),
               headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
@@ -435,4 +437,8 @@ hw.help = function(event) {
       document.body.scrollTop = document.body.scrollTop + help.getBoundingClientRect().top - 100;
     }
   }
+};
+
+hw.setNewSection = function() {
+  hw.$c('hw-section-album').options[0].selected = true;
 };
