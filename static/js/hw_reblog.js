@@ -68,6 +68,7 @@
     };
     for (var x = 0; x < images.length; ++x) {
       images[x].style.maxHeight = '190px';
+      images[x].style.maxWidth = '190px';
       images[x].style.margin = '0';
       images[x].style.padding = '0';
       images[x].style.border = '0';
@@ -101,6 +102,7 @@
     close.onclick = function() {
       var imageFinder = document.getElementById('hw-image-finder');
       imageFinder.parentNode.removeChild(imageFinder);
+      return false;
     };
     wrapper.appendChild(close);
     document.body.appendChild(wrapper);
