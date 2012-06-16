@@ -1,4 +1,5 @@
 import datetime
+import math
 import re
 import tornado.template
 import tornado.web
@@ -193,11 +194,6 @@ class Feed(tornado.web.UIModule):
     if self.handler.breadcrumbs["name"] == 'main':
       raise tornado.web.HTTPError(404)
 
-    offset = int(self.handler.breadcrumbs["modifier"]) if self.handler.breadcrumbs["modifier"] else 1
-    offset -= 1
-    begin  = self.handler.constants['page_size'] * offset
-    end    = self.handler.constants['page_size'] * offset + self.handler.constants['page_size']
-
     is_owner_viewing = self.handler.is_owner_viewing(self.handler.breadcrumbs["profile"])
 
     if self.handler.breadcrumbs["section"] != 'main':
@@ -220,6 +216,18 @@ class Feed(tornado.web.UIModule):
     if not is_owner_viewing:
       content_options['hidden'] = False
 
+    is_reverse = False if self.template_type == 'events' else True
+    self.handler.display["is_reverse"] = 1 if is_reverse else 0
+    if is_reverse:
+      count = self.handler.models.content.get(**content_options).count()
+      default_offset = int(math.ceil(count / self.handler.constants['page_size']))
+    else:
+      default_offset = 1
+    offset = int(self.handler.breadcrumbs["modifier"]) if self.handler.breadcrumbs["modifier"] else default_offset
+    offset -= 1
+    begin  = self.handler.constants['page_size'] * offset
+    end    = self.handler.constants['page_size'] * offset + self.handler.constants['page_size']
+
     if self.template_type == 'events':
       if self.handler.get_argument('past', ''):
         content_options['date_end <'] = datetime.datetime.utcnow()
@@ -227,7 +235,7 @@ class Feed(tornado.web.UIModule):
         content_options['date_end >'] = datetime.datetime.utcnow()
       feed = self.handler.models.content.get(**content_options).order_by('date_start')[begin:end]
     else:
-      feed = self.handler.models.content.get(**content_options).order_by('date_created', 'DESC')[begin:end]
+      feed = self.handler.models.content.get(**content_options).order_by('date_created')[begin:end]
 
     if not feed and self.handler.request.headers.get("X-Requested-With") == "XMLHttpRequest":
       raise tornado.web.HTTPError(404)

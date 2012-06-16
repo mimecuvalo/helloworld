@@ -218,11 +218,13 @@ Event.observe(window, 'popstate', function(e) {
   }
 }, false);
 
-hw.loadMore = function(url, offset, opt_feed_id) {
+hw.loadMore = function(url, offset, opt_feed_id, opt_reverse) {
   this.url = url;
   this.url = this.url.lastIndexOf('/') == this.url.length - 1 ? this.url.substring(0, this.url.length - 1) : this.url;  // remove slash
   this.url = this.url.replace(/\/page\/\d+/g, '');
+  this.initialOffset = offset;
   this.offset = offset;
+  this.offsetModifier = opt_reverse ? -1 : 1;
   this.feed = opt_feed_id ? hw.$(opt_feed_id) : hw.$('hw-content');
 };
 hw.loadMore.prototype = {
@@ -233,25 +235,25 @@ hw.loadMore.prototype = {
     var currentOffset = this.offset;
 
     if (hw.supportsHistory()) {
-      while (hw.$('hw-feed-page-' + (this.offset + 1)) && hw.$('hw-feed-page-' + (this.offset + 1)).getBoundingClientRect().top < 0) {
-        ++this.offset;
+      while (hw.$('hw-feed-page-' + (this.offset + this.offsetModifier)) && hw.$('hw-feed-page-' + (this.offset + this.offsetModifier)).getBoundingClientRect().top < 0) {
+        this.offset += this.offsetModifier;
       }
       while (hw.$('hw-feed-page-' + this.offset) && hw.$('hw-feed-page-' + this.offset).getBoundingClientRect().top >= 0) {
-        --this.offset;
+        this.offset -= this.offsetModifier;
       }
 
       var parameterStart = this.url.indexOf('?');
       var pageUrl = this.url.substring(0, parameterStart == -1 ? this.url.length : parameterStart)
-                 + (this.offset == 1 ? '' : '/page/' + this.offset);
+                 + '/page/' + this.offset;
                  //+ this.url.substring(parameterStart == -1 ? this.url.length : parameterStart, this.url.length);
 
-      if (currentOffset != this.offset && this.offset != 0) {
+      if (currentOffset != this.offset && this.offset != (this.initialOffset - this.offsetModifier)) {
         history.replaceState({ 'title': document.title }, document.title, pageUrl);
       }
     }
 
     var self = this;
-    var nextOffset = this.offset + 1;
+    var nextOffset = this.offset + this.offsetModifier;
     var insertData = function(xhr) {
       self.offset = nextOffset;
 
@@ -288,17 +290,17 @@ hw.loadMore.prototype = {
       }
     };
 
-    if (!this.done && !this.processing && this.offset != 0 &&
+    if (!this.done && !this.processing && this.offset != (this.initialOffset - this.offsetModifier) &&
         (document.height || document.body.parentNode.scrollHeight) -
         (document.body.parentNode.scrollTop || document.body.scrollTop) < (document.body.parentNode.clientHeight || document.body.clientHeight) * 3
-        && !hw.$('hw-feed-page-' + (this.offset + 1))) {
+        && !hw.$('hw-feed-page-' + (this.offset + this.offsetModifier))) {
       this.processing = true;
       this.feed.innerHTML += '<div id="hw-loading">' + hw.getMsg('loading') + '</div>';
       var a = document.body.offsetWidth;  // XXX workaround https://bugzilla.mozilla.org/show_bug.cgi?id=693219#c33 
 
       var parameterStart = this.url.indexOf('?');
       var nextPageUrl = this.url.substring(0, parameterStart == -1 ? this.url.length : parameterStart)
-                      + '/page/' + (this.offset + 1)
+                      + '/page/' + (this.offset + this.offsetModifier)
                       + this.url.substring(parameterStart == -1 ? this.url.length : parameterStart, this.url.length);
 
       new hw.ajax(nextPageUrl,
