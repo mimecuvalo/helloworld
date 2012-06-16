@@ -88,13 +88,13 @@
     },
 
     observe: function(element, name, observer, useCapture) {
-      var element = hw.$(element);
+      var element = document.getElementById(element);
       useCapture = useCapture || false;
       this._observeAndCache(element, name, observer, useCapture);
     },
 
     stopObserving: function(element, name, observer, useCapture) {
-      var element = hw.$(element);
+      var element = document.getElementById(element);
       useCapture = useCapture || false;
 
       if (element.removeEventListener) {
