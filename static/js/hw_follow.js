@@ -3,7 +3,7 @@
   for (var x = 0; x < scripts.length; ++x) {
     if (scripts[x].src.indexOf('hw_follow.js') != -1) {
       var host = scripts[x].src.match(/.*:\/\/.*?\//)[0];
-      window.open(host + 'api?op=follow&user=' + encodeURIComponent(window.location.href), '_blank');
+      window.location.href = host + 'api?op=follow&user=' + encodeURIComponent(window.location.href);
       break;
     }
   }

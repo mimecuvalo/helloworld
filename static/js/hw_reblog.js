@@ -169,8 +169,8 @@
 
     var selectImage = function(img) {
       // send it off!
-      window.open(host + 'dashboard#reblog=' + url + '&img='
-          + encodeURIComponent(img.src), '_blank');
+      window.location.href = host + 'dashboard#reblog=' + url + '&img='
+          + encodeURIComponent(img.src);
     };
     for (var x = 0; x < images.length; ++x) {
       images[x].style.maxHeight = '190px';
@@ -252,7 +252,7 @@
 
   if (hasOembedOrOpenGraph) {
     // send it off!
-    window.open(host + 'dashboard#reblog=' + url, '_blank');
+    window.location.href = host + 'dashboard#reblog=' + url;
   } else {
     findImages();
   }
