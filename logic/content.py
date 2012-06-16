@@ -162,6 +162,10 @@ def create_album(handler, profile, section, album, original_template=""):
                                           section=section,
                                           album='main',
                                           name=album)[0]
+
+  parent_section = handler.models.content.get(username=profile,
+                                            section='main',
+                                            name=section)[0]
   if not album_item:
     new_album = handler.models.content()
     new_album.username = profile
@@ -170,6 +174,7 @@ def create_album(handler, profile, section, album, original_template=""):
     album = get_unique_name(handler, content=new_album, title=title)
     new_album.name     = album
     new_album.title    = title
+    new_album.hidden   = parent_section.hidden
     new_album.template = original_template
     new_album.date_created = datetime.datetime.utcnow()
     new_album.date_updated = datetime.datetime.utcnow()
