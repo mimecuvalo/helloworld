@@ -16,6 +16,31 @@ from logic import socialize
 from logic import url_factory
 
 class ViewHandler(BaseHandler):
+  def head(self):
+    # /profile/section/name
+    content = self.models.content.get(username=self.breadcrumbs["profile"],
+                                      section=self.breadcrumbs["section"],
+                                      name=self.breadcrumbs["name"])[0]
+
+    if not content:
+      # not found: see if the url maybe exists, and wasn't properly redirected
+      alternate = self.models.content.get(username=self.breadcrumbs["profile"],
+                                          name=self.breadcrumbs["name"])[0]
+      if alternate:
+        self.redirect(self.content_url(alternate, referrer=self.breadcrumbs['uri']), permanent=True)
+        return
+      raise tornado.web.HTTPError(404)
+    elif content.template:
+      pass
+    elif content.album == 'main':
+      # /profile/section/album
+      parent_content = self.models.content.get(username=self.breadcrumbs["profile"],
+                                               section="main",
+                                               name=self.breadcrumbs["section"])[0]
+
+      if not parent_content or parent_content.template == "":
+        raise tornado.web.HTTPError(404)
+
   def get(self):
     self.display["section_style"] = ""
     self.display["section_code"] = ""
