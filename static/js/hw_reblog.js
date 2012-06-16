@@ -209,7 +209,7 @@
     var closePicker = function() {
       var imageFinder = document.getElementById('hw-image-finder');
       imageFinder.parentNode.removeChild(imageFinder);
-      Event.stopObserving(document, 'keyup', closePicker, false);
+      Event.stopObserving(document.body, 'keyup', closePicker, false);
       return false;
     };
     var documentKeyUp = function(event) {
@@ -220,7 +220,7 @@
     close.onclick = closePicker;
     wrapper.appendChild(close);
     document.body.appendChild(wrapper);
-    Event.observe(document, 'keyup', closePicker, false);
+    Event.observe(document.body, 'keyup', closePicker, false);
   }
 
   var scripts = document.getElementsByTagName('SCRIPT');
