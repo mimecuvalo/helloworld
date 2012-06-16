@@ -237,7 +237,7 @@ hw.follow = function(event, el) {
   new hw.ajax(hw.baseUri() + 'api',
     { method: 'post',
       postBody: 'op='       + encodeURIComponent('follow')
-             + '&user='     + encodeURIComponent(user),
+             + '&user_url=' + encodeURIComponent(user),
       headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
       onSuccess: callback,
       onError: badTrip });

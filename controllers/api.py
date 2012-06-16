@@ -253,7 +253,7 @@ class ApiHandler(BaseHandler):
       content_logic.rename_album(self, section_album[0], section_album[1], new_name, new_title)
 
   def follow(self):
-    user_url = self.get_argument('user').strip()
+    user_url = self.get_argument('user_url').strip()
     if not user_url.startswith('http://'):
       user_url = 'http://' + user_url
     profile = self.get_author_username()
