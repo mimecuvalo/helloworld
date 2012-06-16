@@ -1,4 +1,112 @@
 (function() {
+  /*  Prototype JavaScript framework, version 1.7
+   *  (c) 2005-2010 Sam Stephenson
+   *
+   *  Prototype is freely distributable under the terms of an MIT-style license.
+   *  For details, see the Prototype web site: http://www.prototypejs.org/
+   *
+   *--------------------------------------------------------------------------*/
+
+  if (!window.Event) {
+    var Event = new Object();
+  }
+
+  Object.extend = function(destination, source) {
+    for (var property in source) {
+      destination[property] = source[property];
+    }
+    return destination;
+  };
+  Object.extend(Event, {
+    KEY_BACKSPACE: 8,
+    KEY_TAB:       9,
+    KEY_RETURN:   13,
+    KEY_ESC:      27,
+    KEY_LEFT:     37,
+    KEY_UP:       38,
+    KEY_RIGHT:    39,
+    KEY_DOWN:     40,
+    KEY_DELETE:   46,
+
+    element: function(event) {
+      return event.target || event.srcElement;
+    },
+
+    isLeftClick: function(event) {
+      return (((event.which) && (event.which == 1)) ||
+              ((event.button) && (event.button == 1)));
+    },
+
+    pointerX: function(event) {
+      return event.pageX || (event.clientX +
+        (document.documentElement.scrollLeft || document.body.scrollLeft));
+    },
+
+    pointerY: function(event) {
+      return event.pageY || (event.clientY +
+        (document.documentElement.scrollTop || document.body.scrollTop));
+    },
+
+    stop: function(event) {
+      if (event.preventDefault) {
+        event.preventDefault();
+        event.stopPropagation();
+      } else {
+        event.returnValue = false;
+        event.cancelBubble = true;
+      }
+    },
+
+    // find the first node with the given tagName, starting from the
+    // node the event was triggered on; traverses the DOM upwards
+    findElement: function(event, tagName) {
+      var element = Event.element(event);
+      while (element.parentNode && (!element.tagName ||
+          (element.tagName.toUpperCase() != tagName.toUpperCase())))
+        element = element.parentNode;
+      return element;
+    },
+
+    observers: false,
+
+    _observeAndCache: function(element, name, observer, useCapture) {
+      if (!this.observers) this.observers = [];
+      if (element.addEventListener) {
+        this.observers.push([element, name, observer, useCapture]);
+        element.addEventListener(name, observer, useCapture);
+      } else if (element.attachEvent) {
+        this.observers.push([element, name, observer, useCapture]);
+        element.attachEvent('on' + name, observer);
+      }
+    },
+
+    unloadCache: function() {
+      if (!Event.observers) return;
+      for (var i = 0; i < Event.observers.length; i++) {
+        Event.stopObserving.apply(this, Event.observers[i]);
+        Event.observers[i][0] = null;
+      }
+      Event.observers = false;
+    },
+
+    observe: function(element, name, observer, useCapture) {
+      var element = hw.$(element);
+      useCapture = useCapture || false;
+      this._observeAndCache(element, name, observer, useCapture);
+    },
+
+    stopObserving: function(element, name, observer, useCapture) {
+      var element = hw.$(element);
+      useCapture = useCapture || false;
+
+      if (element.removeEventListener) {
+        element.removeEventListener(name, observer, useCapture);
+      } else if (element.detachEvent) {
+        element.detachEvent('on' + name, observer);
+      }
+    }
+  });
+
   var host;
   var url = encodeURIComponent(window.location.href);
 
@@ -63,12 +171,12 @@
 
     var selectImage = function(img) {
       // send it off!
-      window.location.href = host + 'dashboard#reblog=' + url + '&img='
-          + encodeURIComponent(img.src);
+      window.open(host + 'dashboard#reblog=' + url + '&img='
+          + encodeURIComponent(img.src), '_blank');
     };
     for (var x = 0; x < images.length; ++x) {
       images[x].style.maxHeight = '190px';
-      images[x].style.maxWidth = '190px';
+      images[x].style.maxWidth = '270px';
       images[x].style.margin = '0';
       images[x].style.padding = '0';
       images[x].style.border = '0';
@@ -99,13 +207,22 @@
     close.style.backgroundColor = '#fff';
     close.style.border = '0';
     close.style.color = '#000';
-    close.onclick = function() {
+
+    var closePicker = function() {
       var imageFinder = document.getElementById('hw-image-finder');
       imageFinder.parentNode.removeChild(imageFinder);
+      Event.stopObserving(document, 'keyup', closePicker, false);
       return false;
     };
+    var documentKeyUp = function(event) {
+      if (event.keyCode == Event.KEY_ESC) {
+        closePicker();
+      }
+    };
+    close.onclick = closePicker;
     wrapper.appendChild(close);
     document.body.appendChild(wrapper);
+    Event.observe(document, 'keyup', closePicker, false);
   }
 
   var scripts = document.getElementsByTagName('SCRIPT');
@@ -137,7 +254,7 @@
 
   if (hasOembedOrOpenGraph) {
     // send it off!
-    window.location.href = host + 'dashboard#reblog=' + url;
+    window.open(host + 'dashboard#reblog=' + url, '_blank');
   } else {
     findImages();
   }
