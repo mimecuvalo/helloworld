@@ -63,7 +63,7 @@
     {% if item.is_remote and item.avatar %}
       <a href="{{ item.from_user }}" class="hw-item-avatar" target="_blank"><img src="{{ item.avatar }}" ></a>
     {% end %}
-    <header class="{% if not individual_content and not item.title and not item.is_remote %} hw-hidden {% end %}">
+    <header class="{% if not individual_content and not item.title and not item.is_remote and not item.hidden %} hw-hidden {% end %}">
       <h1 class="hw-content-title">
         {% if item.is_remote %}
         <a href="{{ item.link }}" target="_blank" data-remote-id="{{ item.id }}" data-list-mode="{{ list_mode }}" onclick="hw.listOpen(event, this)">{{ item.username }}{% if item.title %}: {{ item.title }}{% end %}</a>
