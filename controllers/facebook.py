@@ -161,7 +161,7 @@ class FacebookHandler(BaseHandler,
       new_post.title = ''
       new_post.post_id = post['id']
       new_post.comments_count = post['comments']['count']
-      if post['comments']['count']:
+      if post['comments']['count'] and post['comments']['data']:
         last_updated = post['comments']['data'][len(post['comments']['data']) - 1]['created_time']
         new_post.comments_updated = datetime.datetime.strptime(last_updated[:-5], '%Y-%m-%dT%H:%M:%S')
       if post.has_key('actions'):
