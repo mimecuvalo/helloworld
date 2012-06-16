@@ -105,7 +105,7 @@ class RemoteContent(tornado.web.UIModule):
 class ContentView(tornado.web.UIModule):
   def render(self, content, list_mode=False):
     self.handler.display["individual_content"] = type(content) is not list
-    self.handler.display["referrer"] = self.handler.get_argument('referrer', "")
+    self.handler.display["referrer"] = content_remote.sanitize(self.handler.get_argument('referrer', ""))
 
     self.handler.display['favorites'] = []
     self.handler.display['list_mode'] = list_mode
