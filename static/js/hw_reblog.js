@@ -7,9 +7,7 @@
    *
    *--------------------------------------------------------------------------*/
 
-  if (!window.Event) {
-    var Event = new Object();
-  }
+  var Event = new Object();
 
   Object.extend = function(destination, source) {
     for (var property in source) {
