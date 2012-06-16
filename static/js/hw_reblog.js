@@ -88,13 +88,13 @@
     },
 
     observe: function(element, name, observer, useCapture) {
-      var element = document.getElementById(element);
+      var element = element || document.getElementById(element);
       useCapture = useCapture || false;
       this._observeAndCache(element, name, observer, useCapture);
     },
 
     stopObserving: function(element, name, observer, useCapture) {
-      var element = document.getElementById(element);
+      var element = element || document.getElementById(element);
       useCapture = useCapture || false;
 
       if (element.removeEventListener) {
@@ -209,7 +209,7 @@
     var closePicker = function() {
       var imageFinder = document.getElementById('hw-image-finder');
       imageFinder.parentNode.removeChild(imageFinder);
-      Event.stopObserving(document.body, 'keyup', closePicker, false);
+      Event.stopObserving(document, 'keyup', closePicker, false);
       return false;
     };
     var documentKeyUp = function(event) {
@@ -220,7 +220,7 @@
     close.onclick = closePicker;
     wrapper.appendChild(close);
     document.body.appendChild(wrapper);
-    Event.observe(document.body, 'keyup', closePicker, false);
+    Event.observe(document, 'keyup', closePicker, false);
   }
 
   var scripts = document.getElementsByTagName('SCRIPT');
