@@ -4,11 +4,33 @@
   <ul class="hw-archive">
   {% for index, item in enumerate(collection) %}
     {% if item.name != content.name  %}
-      <li id="hw-collection_{{ item.name }}" class="hw-content-item {% if is_owner_viewing and item.hidden %} hw-content-hidden {% end %}" data-is-album="{% if item.album == 'main' %}true{% else %}false{% end %}" {% if is_owner_viewing %}draggable="true" ondragstart="hw.dragStart(event, this)" ondragover="hw.dragOver(event, this)" ondragenter="hw.dragOver(event, this)" ondragleave="hw.dragLeave(event, this)" ondrop="hw.dragDrop(event, this)"{% end %}>
+      <li id="hw-collection_{{ item.name }}"
+          class="hw-content-item
+            {% if is_owner_viewing and item.hidden %}
+              hw-content-hidden
+            {% end %}"
+          data-is-album="{% if item.album == 'main' %}true{% else %}false{% end %}"
+          {% if is_owner_viewing %}
+            draggable="true"
+            ondragstart="hw.dragStart(event, this)"
+            ondragover="hw.dragOver(event, this)"
+            ondragenter="hw.dragOver(event, this)"
+            ondragleave="hw.dragLeave(event, this)"
+            ondrop="hw.dragDrop(event, this)"
+          {% end %}>
         {% if is_owner_viewing %}
-        <span class="hw-button hw-button-delete hw-content-delete" data-contenturl="{{ content_url(item) }}" onclick="hw.deleteContentViaCollection(event, this)">x</span>
+          <span class="hw-button hw-button-delete hw-content-delete"
+                data-contenturl="{{ content_url(item) }}"
+                onclick="hw.deleteContentViaCollection(event, this)">
+            x
+          </span>
         {% end %}
-        <a href="{{ content_url(item) }}" data-contentname="{{ item.name }}" {% if is_owner_viewing %}onclick="hw.editContent(event, this)"{% end %}>{{ item.title }}</a>
+        <a href="{{ content_url(item) }}" data-contentname="{{ item.name }}"
+           {% if is_owner_viewing %}
+             onclick="hw.editContent(event, this)"
+           {% end %}>
+          {{ item.title }}
+        </a>
       </li>
     {% end %}
   {% end %}

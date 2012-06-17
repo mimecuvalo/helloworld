@@ -30,15 +30,23 @@ class SetupHandler(BaseHandler):
     else:
       self.constants['https_prefix'] = self.display['prefix']
 
-    self.prefix = self.constants['https_prefix'] if self.request.protocol == 'https' else self.constants['http_prefix']
-    self.request.uri = self.prefix + self.request.uri[len(tornado.escape.url_escape(self.prefix).replace('%2F', '/')):]
+    self.prefix = (self.constants['https_prefix'] if
+        self.request.protocol == 'https' else self.constants['http_prefix'])
+    self.request.uri = (self.prefix +
+        self.request.uri[len(tornado.escape.url_escape(
+        self.prefix).replace('%2F', '/')):])
 
     self.fill_template("setup.html")
 
   def post(self):
-    connection = MySQLdb.connect(host=self.get_argument('mysql_host'), user=self.get_argument('mysql_user'), passwd=self.get_argument('mysql_password'), db=self.get_argument('mysql_database'), charset="utf8", use_unicode=True)
+    connection = MySQLdb.connect(host=self.get_argument('mysql_host'),
+        user=self.get_argument('mysql_user'),
+        passwd=self.get_argument('mysql_password'),
+        db=self.get_argument('mysql_database'),
+        charset="utf8", use_unicode=True)
     cursor = connection.cursor()
-    initial_sql = open(os.path.normpath(os.path.realpath(__file__) + '/../../models/helloworld.sql'))
+    initial_sql = open(os.path.normpath(os.path.realpath(__file__) +
+        '/../../models/helloworld.sql'))
     cursor.execute(initial_sql.read())
     cursor.close()
 
@@ -52,12 +60,15 @@ class SetupHandler(BaseHandler):
     user = self.models.users.get(1)
 
     if not user:
-      user = users.create_user(self, self.get_argument('username'), self.get_argument('email'))
+      user = users.create_user(self, self.get_argument('username'),
+          self.get_argument('email'))
       user.author = True
       user.superuser = True
       user.save()
 
-    users.create_empty_content(self, user.username, 'main', 'main', "Hello, world.", view="This is a brand-spankin' new Hello, world site.")
+    users.create_empty_content(self, user.username, 'main', 'main',
+        "Hello, world.",
+        view="This is a brand-spankin' new Hello, world site.")
 
     # write site.cfg
     config = ConfigParser.RawConfigParser()
@@ -73,10 +84,12 @@ class SetupHandler(BaseHandler):
       config.set('general', 'https_prefix', self.get_argument('prefix'))
       config.set('general', 'http_prefix', '')
 
-    config.set('general', 'mysql_database', self.get_argument('mysql_database'))
+    config.set('general', 'mysql_database',
+        self.get_argument('mysql_database'))
     config.set('general', 'mysql_host', self.get_argument('mysql_host'))
     config.set('general', 'mysql_user', self.get_argument('mysql_user'))
-    config.set('general', 'mysql_password', self.get_argument('mysql_password'))    
+    config.set('general', 'mysql_password',
+        self.get_argument('mysql_password'))    
 
     xsrf_secret = ''.join([choice(string.letters) for i in range(50)])
     xsrf_secret = hashlib.sha256(xsrf_secret).hexdigest()

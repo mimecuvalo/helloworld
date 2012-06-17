@@ -17,7 +17,8 @@ class WebfingerHandler(BaseHandler):
       acct = acct[0].split('@')[0]
     else:
       parsed_url = urlparse.urlparse(acct[0])
-      content_url = url_factory.load_basic_parameters(self, url=parsed_url.path)
+      content_url = url_factory.load_basic_parameters(self,
+          url=parsed_url.path)
       acct = content_url['profile']
 
     self.display["acct"] = acct

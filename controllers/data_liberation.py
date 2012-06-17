@@ -50,12 +50,14 @@ class DataLiberationHandler(BaseHandler):
     for f in files:
       for filename in f[2]:
         path = os.path.join(f[0], filename)
-        arcname = path[len(url_factory.resource_directory(self)) - len(username):]
+        arcname = path[len(
+            url_factory.resource_directory(self)) - len(username):]
         zf.write(path, arcname)
 
     zf.close()
 
-class DataLiberationDownloadHandler(tornado.web.StaticFileHandler, DataLiberationHandler):
+class DataLiberationDownloadHandler(tornado.web.StaticFileHandler,
+    DataLiberationHandler):
   def get(self):
     BaseHandler.initialize(self)
 

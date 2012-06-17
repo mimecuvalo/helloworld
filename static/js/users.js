@@ -63,11 +63,13 @@ hw.saveUser = function(event, el) {
 
   new hw.ajax(hw.baseUri() + 'users/' + inputs['username'].value,
     { method: id == "" ? 'post' : 'put',
-      postBody:  'email='        + encodeURIComponent(inputs['email'].value)
-              + '&name='         + encodeURIComponent(inputs['name'].value)
-              + '&hostname='     + encodeURIComponent(inputs['hostname'].value)
-              + '&author='       + encodeURIComponent(inputs['author'].checked ? 1 : 0)
-              + '&superuser='    + encodeURIComponent(inputs['superuser'].checked ? 1 : 0),
+      postBody:  'email='    + encodeURIComponent(inputs['email'].value)
+              + '&name='     + encodeURIComponent(inputs['name'].value)
+              + '&hostname=' + encodeURIComponent(inputs['hostname'].value)
+              + '&author=' +
+                  encodeURIComponent(inputs['author'].checked ? 1 : 0)
+              + '&superuser=' +
+                  encodeURIComponent(inputs['superuser'].checked ? 1 : 0),
       headers: { 'X-Xsrftoken' : el.form['_xsrf'].value },
       onSuccess: callback,
       onError: badTrip });

@@ -1,5 +1,8 @@
 {% extends "base_content.html" %}
 
 {% block user_content %}
-  <div style="margin-top: 2em;">{{ _("This page currently redirects to:") }} <a href="{{ redirect }}">{{ redirect }}</a></div>
+  <div style="margin-top: 2em;">
+    {{ _("This page currently redirects to:") }}
+    <a href="{{ redirect }}">{{ redirect }}</a>
+  </div>
 {% end %}

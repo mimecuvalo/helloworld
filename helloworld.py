@@ -8,7 +8,8 @@ import ConfigParser
 import logging
 import threading
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "packages"))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)),
+    "packages"))
 
 import tornado.escape
 import tornado.httpserver
@@ -25,14 +26,17 @@ from logic import cache
 
 # setup site.cfg
 setup = False
-config_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "site.cfg")
+config_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+    "site.cfg")
 if not os.path.exists(config_path):
   setup = True
-  constants = dict(constants_module.dictionary.items() + constants_module.defaults.items())
+  constants = dict(constants_module.dictionary.items() +
+      constants_module.defaults.items())
 else:
   config = ConfigParser.ConfigParser()
   config.read(config_path)
-  constants = dict(constants_module.dictionary.items() + constants_module.defaults.items() + config.items('general'))
+  constants = dict(constants_module.dictionary.items() +
+      constants_module.defaults.items() + config.items('general'))
   for constant in constants:
     try:
       constants[constant] = int(constants[constant])
@@ -40,29 +44,43 @@ else:
       pass
 
 define("port", default=constants['port'], type=int, help="Port to listen on.")
-define("debug", default=constants['debug'], type=int, help="Run in debug mode.")
+define("debug", default=constants['debug'], type=int,
+    help="Run in debug mode.")
 
 if constants['debug']:
   logging_level = logging.DEBUG
 else:
   logging_level = logging.INFO
-logging.basicConfig(level=logging_level, format='%(asctime)s %(levelname)s %(message)s', filename=(os.path.join(os.path.dirname(os.path.realpath(__file__)), "server.log")))
+logging.basicConfig(level=logging_level,
+    format='%(asctime)s %(levelname)s %(message)s',
+    filename=(os.path.join(os.path.dirname(os.path.realpath(__file__)),
+        "server.log")))
 
 tornado.options.parse_command_line()
-tornado.locale.load_translations(os.path.join(os.path.dirname(__file__), "translations"))
+tornado.locale.load_translations(os.path.join(os.path.dirname(__file__),
+    "translations"))
 
 settings = {
   "constants": constants,
   "base_path": os.path.dirname(os.path.realpath(__file__)),
-  "private_path": os.path.join(os.path.dirname(os.path.realpath(__file__)), "private"),
-  "resource_path": os.path.join(os.path.dirname(os.path.realpath(__file__)), "static/resource"),
-  "cache_path": os.path.join(os.path.dirname(os.path.realpath(__file__)), "static/cache"),
-  "update_feeds_path": os.path.join(os.path.dirname(os.path.realpath(__file__)), "tools/update_feeds.py"),
-  "prune_entries_path": os.path.join(os.path.dirname(os.path.realpath(__file__)), "tools/prune_old_entries.py"),
-  "restart_path": os.path.join(os.path.dirname(os.path.realpath(__file__)), "tmp/restart.txt"),
+  "private_path": os.path.join(os.path.dirname(os.path.realpath(__file__)),
+      "private"),
+  "resource_path": os.path.join(os.path.dirname(os.path.realpath(__file__)),
+      "static/resource"),
+  "cache_path": os.path.join(os.path.dirname(os.path.realpath(__file__)),
+      "static/cache"),
+  "update_feeds_path":
+      os.path.join(os.path.dirname(os.path.realpath(__file__)),
+          "tools/update_feeds.py"),
+  "prune_entries_path":
+      os.path.join(os.path.dirname(os.path.realpath(__file__)),
+          "tools/prune_old_entries.py"),
+  "restart_path": os.path.join(os.path.dirname(os.path.realpath(__file__)),
+      "tmp/restart.txt"),
   "app_path": os.path.realpath(__file__),
   "resource_url": "static/resource",
-  "static_path": os.path.join(os.path.dirname(os.path.realpath(__file__)), "static"),
+  "static_path": os.path.join(os.path.dirname(os.path.realpath(__file__)),
+      "static"),
   "static_url": "static",
   "config_path": config_path,
   "login_url": "/login",
@@ -70,7 +88,9 @@ settings = {
   "debug": (options.debug == 1),
   "ui_modules": controllers.uimodules,
   "cookie_secret": constants['xsrf_secret'],
-  "template_loader": tornado.template.Loader(os.path.join(os.path.dirname(os.path.realpath(__file__)), "templates")),
+  "template_loader":
+      tornado.template.Loader(os.path.join(os.path.dirname(
+          os.path.realpath(__file__)), "templates")),
   "db_lock": threading.Lock(),
   "twitter_consumer_key": constants['twitter_consumer_key'],
   "twitter_consumer_secret": constants['twitter_consumer_secret'],
@@ -82,8 +102,10 @@ settings = {
   "tumblr_consumer_secret": constants['tumblr_consumer_secret'],
 }
 
-prefix = r"(?:" + tornado.escape.url_escape(constants['https_prefix']).replace('%2F', '/') + r")?"
-prefix += r"(?:" + tornado.escape.url_escape(constants['http_prefix']).replace('%2F', '/') + r")?"
+prefix = r"(?:" + tornado.escape.url_escape(
+    constants['https_prefix']).replace('%2F', '/') + r")?"
+prefix += r"(?:" + tornado.escape.url_escape(
+    constants['http_prefix']).replace('%2F', '/') + r")?"
 
 if not constants['ioloop'] and not constants['use_mod_rails']:
   prefix += r"/helloworld.py"
@@ -96,36 +118,52 @@ if setup:
 else:
   handlers = [ ]
   for source in constants['external_sources']:
-    handlers += [ (prefix + "/" + source, "controllers." + source + "." + source.capitalize() + "Handler") ]
+    handlers += [ (prefix + "/" + source, "controllers." + source + "." +
+        source.capitalize() + "Handler") ]
 
   handlers += [
-    (prefix + r"/\.well-known/host-meta", "controllers.host_meta.HostMetaHandler"),
-    (prefix + r"/admin(?:$|/.*)", "controllers.dashboard.DashboardHandler"), # for WP users :P
+    (prefix + r"/\.well-known/host-meta",
+        "controllers.host_meta.HostMetaHandler"),
+    (prefix + r"/admin(?:$|/.*)",
+        "controllers.dashboard.DashboardHandler"), # for WP users :P
     (prefix + r"/api", "controllers.api.ApiHandler"),
-    (prefix + r"/check_broken_links", "controllers.check_broken_links.CheckBrokenLinksHandler"),
+    (prefix + r"/check_broken_links",
+        "controllers.check_broken_links.CheckBrokenLinksHandler"),
     (prefix + r"/customize", "controllers.customize.CustomizeHandler"),
-    (prefix + r"/dashboard(?:$|/.*)", "controllers.dashboard.DashboardHandler"),
-    (prefix + r"/data_liberation", "controllers.data_liberation.DataLiberationHandler"),
-    (prefix + r"/data_liberation\.zip", "controllers.data_liberation.DataLiberationDownloadHandler", {"path": "/tmp"}),
-    (prefix + r"/(favicon\.ico)", tornado.web.StaticFileHandler, {"path": settings['static_path']}),
+    (prefix + r"/dashboard(?:$|/.*)",
+        "controllers.dashboard.DashboardHandler"),
+    (prefix + r"/data_liberation",
+        "controllers.data_liberation.DataLiberationHandler"),
+    (prefix + r"/data_liberation\.zip",
+        "controllers.data_liberation.DataLiberationDownloadHandler",
+        {"path": "/tmp"}),
+    (prefix + r"/(favicon\.ico)", tornado.web.StaticFileHandler,
+        {"path": settings['static_path']}),
     (prefix + r"(?:/[^/]+)?/feed", "controllers.feed.FeedHandler"),
     (prefix + r"(?:/[^/]+)?/foaf", "controllers.foaf.FoafHandler"),
-    (prefix + r"/(humans\.txt)", "controllers.humans.HumansTxtHandler", {"path": settings['static_path']}),
+    (prefix + r"/(humans\.txt)", "controllers.humans.HumansTxtHandler",
+        {"path": settings['static_path']}),
     (prefix + r"/login", "controllers.auth.AuthHandler"),
     (prefix + r"/logout", "controllers.auth.AuthLogoutHandler"),
     (prefix + r"/media", "controllers.media.MediaHandler"),
     (prefix + r"/oembed", "controllers.oembed.OembedHandler"),
-    (prefix + r"(?:/[^/]+)?/opensearch", "controllers.opensearch.OpenSearchHandler"),
-    (prefix + r"/private/(.*)", "controllers.private.PrivateResourceHandler", {"path": settings['private_path']}),
+    (prefix + r"(?:/[^/]+)?/opensearch",
+        "controllers.opensearch.OpenSearchHandler"),
+    (prefix + r"/private/(.*)", "controllers.private.PrivateResourceHandler",
+        {"path": settings['private_path']}),
     (prefix + r"(?:/[^/]+)?/push", "controllers.push.PushHandler"),
     (prefix + r"/restart", "controllers.restart.RestartHandler"),
-    (prefix + r"/(robots\.txt)", tornado.web.StaticFileHandler, {"path": settings['static_path']}),
+    (prefix + r"/(robots\.txt)", tornado.web.StaticFileHandler,
+        {"path": settings['static_path']}),
     (prefix + r"/salmon(?:$|/.*)", "controllers.salmon.SalmonHandler"),
-    (prefix + r"(?:/[^/]+)?/search(?:$|/.*)", "controllers.search.SearchHandler"),
-    (prefix + r"/stats", "controllers.stats.StatsStaticHandler", {"path": "./static"}),
+    (prefix + r"(?:/[^/]+)?/search(?:$|/.*)",
+        "controllers.search.SearchHandler"),
+    (prefix + r"/stats", "controllers.stats.StatsStaticHandler",
+        {"path": "./static"}),
     (prefix + r"/upload", "controllers.upload.UploadHandler"),
     (prefix + r"/users(?:$|/.*)", "controllers.users.UsersHandler"),
-    (prefix + r"/webfinger(?:$|/.*)", "controllers.webfinger.WebfingerHandler"),
+    (prefix + r"/webfinger(?:$|/.*)",
+        "controllers.webfinger.WebfingerHandler"),
     (r".*", "controllers.view.ViewHandler"),
   ]
 
@@ -159,4 +197,5 @@ else:
   application = tornado.wsgi.WSGIApplication(handlers, **settings)
   if not constants['use_mod_rails']:
     from tools import fastcgi
-    fastcgi.runfastcgi(application, method="threaded", pidfile="hello.pid", daemonize="false")
+    fastcgi.runfastcgi(application, method="threaded", pidfile="hello.pid",
+        daemonize="false")

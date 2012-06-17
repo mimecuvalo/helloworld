@@ -30,7 +30,9 @@ window.log = function f() {
 // make it safe to use console.log always
 (function(a) {
   function b() {}
-  var c = "assert,count,debug,dir,dirxml,error,exception,group,groupCollapsed,groupEnd,info,log,markTimeline,profile,profileEnd,time,timeEnd,trace,warn";
+  var c = "assert,count,debug,dir,dirxml,error,exception,group," +
+      "groupCollapsed,groupEnd,info,log,markTimeline,profile," +
+      "profileEnd,time,timeEnd,trace,warn";
   var d;
   for (c = c.split(","); !!(d = c.pop());) {
     a[d] = a[d] || b;
@@ -84,7 +86,8 @@ hw.$c = function(name, doc) {
 
 hw.firstChildNonText = function(el) {
   if (el.firstChild) {
-    return el.firstChild.nodeName == '#text' ? el.firstChild.nextSibling : el.firstChild;
+    return el.firstChild.nodeName == '#text' ? el.firstChild.nextSibling :
+        el.firstChild;
   } else {
     return null;
   }
@@ -92,7 +95,8 @@ hw.firstChildNonText = function(el) {
 
 hw.previousSiblingNonText = function(el) {
   if (el.previousSibling) {
-    return el.previousSibling.nodeName == '#text' ? el.previousSibling.previousSibling : el.previousSibling;
+    return el.previousSibling.nodeName == '#text' ?
+        el.previousSibling.previousSibling : el.previousSibling;
   } else {
     return null;
   }
@@ -100,7 +104,8 @@ hw.previousSiblingNonText = function(el) {
 
 hw.nextSiblingNonText = function(el) {
   if (el.nextSibling) {
-    return el.nextSibling.nodeName == '#text' ? el.nextSibling.nextSibling : el.nextSibling;
+    return el.nextSibling.nodeName == '#text' ?
+        el.nextSibling.nextSibling : el.nextSibling;
   } else {
     return null;
   }
@@ -192,7 +197,8 @@ hw.hide = function(el) {
 
 hw.isHidden = function(el) {
   el = hw.$(el);
-  return hw.hasClass(el, 'hw-hidden') || hw.hasClass(el, 'hw-closed') || hw.hasClass(el, 'hw-invisible');
+  return hw.hasClass(el, 'hw-hidden') || hw.hasClass(el, 'hw-closed') ||
+      hw.hasClass(el, 'hw-invisible');
 };
 
 hw.display = function(el, condition) {
@@ -253,11 +259,14 @@ hw.ajax.prototype = {
     this.transport.onreadystatechange = function() {
       self.onStateChange();
     };
-    if (!this.upload && (this.method == 'post' || this.method == 'put' || this.method == 'delete')) {
+    if (!this.upload && (this.method == 'post' || this.method == 'put' ||
+        this.method == 'delete')) {
       if (!this.usingFormData) {
-        this.transport.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        this.transport.setRequestHeader('Content-type',
+            'application/x-www-form-urlencoded');
       }
-      if (this.transport.overrideMimeType) this.transport.setRequestHeader('Connection', 'close');
+      if (this.transport.overrideMimeType)
+        this.transport.setRequestHeader('Connection', 'close');
     }
     this.transport.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     for (var header in this.headers) {
@@ -311,9 +320,12 @@ hw.ajax.prototype = {
   },
 
   getTransport: function() {
-    if (window.XMLHttpRequest) return new XMLHttpRequest();
-    else if (window.ActiveXObject) return new ActiveXObject('Microsoft.XMLHTTP');
-    else return false;
+    if (window.XMLHttpRequest)
+      return new XMLHttpRequest();
+    else if (window.ActiveXObject)
+      return new ActiveXObject('Microsoft.XMLHTTP');
+    else
+      return false;
   }
 };
 
@@ -453,7 +465,8 @@ hw.generateArgs = function(args) {
 
   var queryString = '';
   for (var key in args) {
-    queryString += (!queryString.length ? '?' : '&') + key + '=' + encodeURIComponent(args[key]);
+    queryString += (!queryString.length ? '?' : '&') + key + '=' +
+        encodeURIComponent(args[key]);
   }
 
   return queryString;
@@ -505,7 +518,8 @@ hw.menu = function(event, el) {
 
   var menu = el.nextSibling.nextSibling;
   var clonedMenu = menu.cloneNode(true);
-  clonedMenu.style.top = (hw.thumbnailDelayLoad.getWindowScrollY() + el.getBoundingClientRect().top) + 'px';
+  clonedMenu.style.top = (hw.thumbnailDelayLoad.getWindowScrollY() +
+      el.getBoundingClientRect().top) + 'px';
   clonedMenu.style.left = el.getBoundingClientRect().left + 'px';
   document.body.appendChild(clonedMenu);
   hw.addClass(clonedMenu, 'hw-active');

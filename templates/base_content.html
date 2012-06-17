@@ -1,29 +1,47 @@
 {% extends "base.html" %}
 
 {% block extra_meta %}
-  <link rel="alternate" type="application/atom+xml" title="{{ content_owner.title }}" href="{{ nav_url(username=content.username, section='feed') }}" />
+  <link rel="alternate" type="application/atom+xml"
+        title="{{ content_owner.title }}"
+        href="{{ nav_url(username=content.username, section='feed') }}" />
   {% if main_section_title and main_section_name != 'home' %}
-  <link rel="alternate" type="application/atom+xml" title="{{ content_owner.title }} - {{ main_section_title }}" href="{{ nav_url(username=content.username, section='feed', category=main_section_name) }}" />
+  <link rel="alternate" type="application/atom+xml"
+        title="{{ content_owner.title }} - {{ main_section_title }}"
+        href="{{ nav_url(username=content.username, section='feed',
+            category=main_section_name) }}" />
   {% end %}
   {% if main_album_title %}
-  <link rel="alternate" type="application/atom+xml" title="{{ content_owner.title }} - {{ main_album_title }}" href="{{ nav_url(username=content.username, section='feed', category=main_section_name, album=main_album_name) }}" />
+  <link rel="alternate" type="application/atom+xml"
+        title="{{ content_owner.title }} - {{ main_album_title }}"
+        href="{{ nav_url(username=content.username, section='feed',
+          category=main_section_name, album=main_album_name) }}" />
   {% end %}
-  <link rel="author" href="{{ nav_url(username=content.username, section='about') }}">
-  <link rel="search" href="{{ nav_url(username=content.username, section='opensearch') }}" type="application/opensearchdescription+xml" title="{{ content_owner.title }}">
+  <link rel="author" href="{{ nav_url(username=content.username,
+    section='about') }}">
+  <link rel="search" href="{{ nav_url(username=content.username,
+      section='opensearch') }}" type="application/opensearchdescription+xml"
+    title="{{ content_owner.title }}">
   {% if content_owner.description %}
     <meta name="description" content="{{ content_owner.description }}" />
   {% end %}
   <link rel="canonical" href="{{ content_url(content) }}">
-  <link rel="alternate" type="text/xml+oembed" href="{{ nav_url(section='oembed', url=content_url(content)) }}" title="{{ content.title }}">
+  <link rel="alternate" type="text/xml+oembed" href="{{ nav_url(
+      section='oembed', url=content_url(content)) }}"
+    title="{{ content.title }}">
   {% if content.comments_count %}
-    <link rel="replies" type="application/atom+xml" href="{{ nav_url(username=content.username, section='feed', comments=content_url(content)) }}"
-          thr:count="{{ content.comments_count }}" thr:updated="{{ content.comments_updated.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}" />
+    <link rel="replies" type="application/atom+xml"
+          href="{{ nav_url(username=content.username, section='feed',
+             comments=content_url(content)) }}"
+          thr:count="{{ content.comments_count }}"
+          thr:updated="{{ content.comments_updated.strftime(
+              '%Y-%m-%dT%H:%M:%S+00:00') }}" />
   {% end %}
 
   <meta property="og:url"   content="{{ content_url(content, host=True) }}">
   <meta property="og:title" content="{{ content.title }}">
   {% if content_thumb %}
-  <meta property="og:image" content="{{ nav_url(host=True, section=content_thumb) }}">
+  <meta property="og:image" content="{{ nav_url(host=True,
+      section=content_thumb) }}">
   {% end %}
   {% if content_owner.title %}
   <meta property="og:site_name" content="{{ content_owner.title }}">
@@ -31,16 +49,23 @@
 {% end %}
 
 {% block favicon %}
-  <link rel="shortcut icon" href="{% if content_owner.favicon %}/{{ content_owner.favicon }}{% else %}{{ static_url('favicon.ico') }}{% end %}">
+  <link rel="shortcut icon"
+        href="{% if content_owner.favicon %}
+                /{{ content_owner.favicon }}
+              {% else %}
+                {{ static_url('favicon.ico') }}
+              {% end %}">
 {% end %}
 
 {% block extra_css %}
   {% if is_owner_viewing %}
-    <link id="hw-stylesheet-create" rel="stylesheet" type="text/css" href="{{ static_url('css/all_create.css', 'css/all_create.inc') }}">
+    <link id="hw-stylesheet-create" rel="stylesheet" type="text/css"
+          href="{{ static_url('css/all_create.css', 'css/all_create.inc') }}">
   {% end %}
 
   {% if content_owner.theme %}
-    <link id="hw-stylesheet-theme" rel="stylesheet" type="text/css" href="{{ static_url(content_owner.theme) }}">
+    <link id="hw-stylesheet-theme" rel="stylesheet" type="text/css"
+          href="{{ static_url(content_owner.theme) }}">
   {% end %}
 
   {% raw section_style %}
@@ -51,7 +76,8 @@
 
 {% block extra_js %}
   {% if is_owner_viewing %}
-    <script src="{{ static_url('js/all_create.js', 'js/all_create.inc') }}"></script>
+    <script src="{{ static_url('js/all_create.js', 'js/all_create.inc') }}">
+    </script>
   {% end %}
   <script>
     hw.xsrf = '{% raw xsrf_form_html() %}';
@@ -88,7 +114,13 @@
 
   {% module SiteMap(content_owner=content_owner, content=content) %}
 
-  <article id="hw-content" class="hw-invisible-transition {% if is_owner_viewing %}hw-owner-viewing{% end %} {% if section_template %}hw-template-{{ section_template }}{% end %}">
+  <article id="hw-content" class="hw-invisible-transition
+       {% if is_owner_viewing %}
+         hw-owner-viewing
+       {% end %}
+       {% if section_template %}
+         hw-template-{{ section_template }}
+       {% end %}">
     {% block create %}
       {% if is_owner_viewing %}
         {% module Create(content, individual_content=False) %}
@@ -98,12 +130,18 @@
   </article>
 
   <footer id="hw-footer">
-    <span id="hw-helloworld">{{ _('powered by') }}<br><a href="http://www.helloworldprogram.com" rel="generator">Hello, world.</a></span>
+    <span id="hw-helloworld">{{ _('powered by') }}<br>
+      <a href="http://www.helloworldprogram.com" rel="generator">
+        Hello, world.
+      </a>
+    </span>
     {% if content_owner.theme_title != 'default' %}
       <span id="hw-theme">
         <span id="hw-theme-title">
           {% if content_owner.theme_link %}
-            {% raw _('<a href="%(link)s">%(title)s</a> design') % { 'link': content_owner.theme_link, 'title': content_owner.theme_title } %}
+            {% raw _('<a href="%(link)s">%(title)s</a> design') % \
+                { 'link': content_owner.theme_link,
+                  'title': content_owner.theme_title } %}
           {% elif content_owner.theme_title %}
             {{ _('%(title)s design') % { 'title': content_owner.theme_title } }}
           {% end %}
@@ -111,9 +149,12 @@
         <span id="hw-theme-author">
           {% if content_owner.theme_author %}
             {% if content_owner.theme_author_link %}
-              {% raw _('by <a href="%(link)s">%(author)s</a>') % { 'link': content_owner.theme_author_link, 'author': content_owner.theme_author } %}
+              {% raw _('by <a href="%(link)s">%(author)s</a>') % \
+                 { 'link': content_owner.theme_author_link,
+                   'author': content_owner.theme_author } %}
             {% elif content_owner.theme_author %}
-              {{ _('by %(author)s') % { 'author': content_owner.theme_author } }}
+              {{ _('by %(author)s') % \
+                  { 'author': content_owner.theme_author } }}
             {% end %}
           {% end %}
         </span>
@@ -125,12 +166,17 @@
 {% block end_content %}
   {% if content_owner.google_analytics %}
     <script>
-      var _gaq = [['_setAccount', '{{ content_owner.google_analytics }}'], ['_gat._anonymizeIp'], ['_trackPageview']];
+      var _gaq = [['_setAccount', '{{ content_owner.google_analytics }}'],
+          ['_gat._anonymizeIp'], ['_trackPageview']];
 
       (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        var ga = document.createElement('script');
+        ga.type = 'text/javascript';
+        ga.async = true;
+        ga.src = ('https:' == document.location.protocol ?
+            'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(ga, s);
       })();
     </script>
   {% end %}

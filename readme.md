@@ -2,7 +2,8 @@
 
 ## description
 
-federated social web tumblr/blog/rss reader/wordpress-like app to be used on shared servers.  passes swat0!
+federated social web tumblr/blog/rss reader/wordpress-like app to be used on
+shared servers.  passes swat0!
 
 ## features
 - ostatus stack, PuSH/Salmon/Webfinger
@@ -27,11 +28,14 @@ federated social web tumblr/blog/rss reader/wordpress-like app to be used on sha
 - ability to add translations
 - caching (limited to disk caching for now; shared servers, mang!)
 - fb/google+/twitter mirroring (backwards compatibility ;)
-- other customization extras: newsletter, google analytics, basic ads, adult content age check, license
+- other customization extras: newsletter, google analytics, basic ads, adult
+  content age check, license
 
 ## setting up the repository
 
-`Hello, world.` has a dependency on the [tornado](https://github.com/facebook/tornado) library so it's a couple more steps than just cloning.
+`Hello, world.` has a dependency on the
+[tornado](https://github.com/facebook/tornado) library so it's a couple more
+steps than just cloning.
 
     git clone git://github.com/mimecuvalo/helloworld.git
     git submodule init
@@ -39,17 +43,20 @@ federated social web tumblr/blog/rss reader/wordpress-like app to be used on sha
 
 
 ## goals
-- be able to run on shared servers (hence, use of mod\_rails/fcgi instead of ioloop)
+- be able to run on shared servers (hence, use of mod\_rails/fcgi instead of
+  ioloop)
 - pass swat0
 - open source
 - easy to install
 - be a good, easy-to-use alternative to what's out there!
 
-## todo (hey, intrepid open source developer! check out all this stuff you could help work on! email me: mimecuvalo@gmail.com)
+## todo (hey, intrepid open source developer! check out all this stuff you
+## could help work on! email me: mimecuvalo@gmail.com)
 - privacy
 - possibly: wiki
 - possibly: django port?
-- possibly: js "templating" - be able to add microformatting, creativeworks/recipes/person, schema.org
+- possibly: js "templating" - be able to add microformatting,
+  creativeworks/recipes/person, schema.org
 - reduce/cache mysql calls
 - make oauth on the server so that external apps can plug in?
 - mysql migrator

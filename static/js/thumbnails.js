@@ -1,5 +1,6 @@
 /**
- * @fileoverview Functions for the calculating positions of thumbs and whether to load them
+ * @fileoverview Functions for the calculating positions of thumbs and
+ * whether to load them
  * 
  * @author mimecuvalo@gmail.com (Mime Cuvalo)
  */
@@ -24,7 +25,8 @@ hw.thumbnailDelayLoad.isBody = function(element) {
  * 
  */
 hw.thumbnailDelayLoad.getWindowScrollY = function() {
-  var doc = (!document.compatMode || document.compatMode == 'CSS1Compat') ? hw.thumbnailDelayLoad.htmlElement : document.body;
+  var doc = (!document.compatMode || document.compatMode == 'CSS1Compat') ?
+      hw.thumbnailDelayLoad.htmlElement : document.body;
   return window.pageYOffset || doc.scrollTop;
 };
 
@@ -34,8 +36,10 @@ hw.thumbnailDelayLoad.getWindowScrollY = function() {
  * 
  */
 hw.thumbnailDelayLoad.getWindowSizeY = function() {
-  if (window.opera || (!window.ActiveXObject && !navigator.taintEnabled)) return window.innerHeight;
-  var doc = (!document.compatMode || document.compatMode == 'CSS1Compat') ? hw.thumbnailDelayLoad.htmlElement : document.body;
+  if (window.opera || (!window.ActiveXObject && !navigator.taintEnabled))
+    return window.innerHeight;
+  var doc = (!document.compatMode || document.compatMode == 'CSS1Compat') ?
+      hw.thumbnailDelayLoad.htmlElement : document.body;
   return doc.clientHeight;
 };
 
@@ -62,10 +66,13 @@ hw.thumbnailDelayLoad.getScrollY = function(element) {
  */
 hw.thumbnailDelayLoad.getOffsetY = function(element) {
   if (document.documentElement["getBoundingClientRect"]) {
-    var bound = element.getBoundingClientRect(), html = document.documentElement;
-    return bound.top + (html.scrollTop || document.body.scrollTop) - html.clientTop;
+    var bound = element.getBoundingClientRect(),
+        html = document.documentElement;
+    return bound.top + (html.scrollTop || document.body.scrollTop) -
+        html.clientTop;
   } else {
-    // short-circuit other browsers (webkit, firefox 2) to keep the browser speedy as possible
+    // short-circuit other browsers (webkit, firefox 2) to keep the browser
+    // speedy as possible
     return 0;
   }
 };
@@ -78,16 +85,18 @@ hw.thumbnailDelayLoad.getOffsetY = function(element) {
  */
 hw.thumbnailDelayLoad.getPositionY = function(element) {
   if (document.documentElement["getBoundingClientRect"]) {
-    var offsetY = hw.thumbnailDelayLoad.getOffsetY(element), scrollY = hw.thumbnailDelayLoad.getScrollY(element);
+    var offsetY = hw.thumbnailDelayLoad.getOffsetY(element),
+        scrollY = hw.thumbnailDelayLoad.getScrollY(element);
     return offsetY - scrollY;
   } else {
-    // short-circuit other browsers (webkit, firefox 2) to keep the browser speedy as possible
+    // short-circuit other browsers (webkit, firefox 2) to keep the browser
+    // speedy as possible
     return 0;
   }
 };
 
-
-hw.thumbnailDelayLoad.fudgeFactor = 175;    // load some images below the fold for quicker perceived time
+// load some images below the fold for quicker perceived time
+hw.thumbnailDelayLoad.fudgeFactor = 175;
 hw.thumbnailDelayLoad.loadAllAtOnce = false;
 
 
@@ -99,9 +108,13 @@ hw.thumbnailDelayLoad.loadAllAtOnce = false;
  */
 hw.thumbnailDelayLoad.testImage = function(img, windowPositionY) {
   // get the position of the 'fold' line from the parameter or manually
-  windowPositionY = windowPositionY || (hw.thumbnailDelayLoad.getWindowScrollY() + hw.thumbnailDelayLoad.getWindowSizeY());
+  windowPositionY = windowPositionY ||
+      (hw.thumbnailDelayLoad.getWindowScrollY() +
+      hw.thumbnailDelayLoad.getWindowSizeY());
 
-  if (hw.thumbnailDelayLoad.loadAllAtOnce || (hw.thumbnailDelayLoad.getPositionY(img) <= windowPositionY + hw.thumbnailDelayLoad.fudgeFactor)) {
+  if (hw.thumbnailDelayLoad.loadAllAtOnce ||
+      (hw.thumbnailDelayLoad.getPositionY(img) <= windowPositionY +
+      hw.thumbnailDelayLoad.fudgeFactor)) {
     // image is above the fold, load in the image
     img.src = img.getAttribute('data-thumb');
     img.removeAttribute('data-thumb');
@@ -116,7 +129,8 @@ hw.thumbnailDelayLoad.testImage = function(img, windowPositionY) {
 hw.thumbnailDelayLoad.loadImages = function() {
   var imgs = document.getElementsByTagName('IMG');
   // get the position of the fold line
-  var windowPositionY = hw.thumbnailDelayLoad.getWindowScrollY() + hw.thumbnailDelayLoad.getWindowSizeY();
+  var windowPositionY = hw.thumbnailDelayLoad.getWindowScrollY() +
+      hw.thumbnailDelayLoad.getWindowSizeY();
 
   for (var x = 0; x < imgs.length; ++x) {
     if (imgs[x].getAttribute('data-thumb')) {

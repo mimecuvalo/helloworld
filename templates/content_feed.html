@@ -2,9 +2,12 @@
 
 {% block user_content %}
   <script>
-    hw.loadMoreObject = new hw.loadMore('{{ content_url(content) }}', {{ offset }}, null, {{ is_reverse }});
+    hw.loadMoreObject = new hw.loadMore('{{ content_url(content) }}',
+        {{ offset }}, null, {{ is_reverse }});
     hw.setMsg('loading', "{% raw js_escape(_('loading...')) %}");
-    Event.observe(window, 'scroll', function() { hw.loadMoreObject.onScroll() }, false);
+    Event.observe(window, 'scroll', function() {
+      hw.loadMoreObject.onScroll()
+    }, false);
   </script>
 
   <a id="hw-feed-page-{{ offset }}"></a>

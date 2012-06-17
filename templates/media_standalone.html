@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 
 {% block extra_css %}
-<link id="hw-stylesheet-create" rel="stylesheet" type="text/css" href="{{ static_url('css/create.css') }}">
-<link id="hw-stylesheet-theme" rel="stylesheet" type="text/css" href="{{ static_url('css/themes/pixel/_compiled_pixel.css') }}">
+<link id="hw-stylesheet-create" rel="stylesheet" type="text/css"
+      href="{{ static_url('css/create.css') }}">
+<link id="hw-stylesheet-theme" rel="stylesheet" type="text/css"
+      href="{{ static_url('css/themes/pixel/_compiled_pixel.css') }}">
 <style>
   form.hw-create {
     padding: 1em;
@@ -11,7 +13,8 @@
 {% end %}
 
 {% block extra_js %}
-  <script src="{{ static_url('js/all_create.js', 'js/all_create.inc') }}"></script>
+  <script src="{{ static_url('js/all_create.js', 'js/all_create.inc') }}">
+  </script>
   <script>
     hw.setMsg('error', "{% raw js_escape(_('no good, mate.')) %}");
     hw.setMsg('saved', "{% raw js_escape(_('saved!')) %}");
@@ -19,7 +22,8 @@
     hw.xsrf = '{% raw xsrf_form_html() %}';
     hw.uploadUrl = '{{ nav_url(section='upload') }}';
 
-    hw.setMsg('confirm-delete', "{% raw js_escape(_('ya sure there, buddy?')) %}");
+    hw.setMsg('confirm-delete',
+        "{% raw js_escape(_('ya sure there, buddy?')) %}");
     hw.mediaEmbedded = {% if embedded %}true{% else %}false{% end %};
     {% if uploaded_file %}
       var mediaSelect = function() {
@@ -31,7 +35,8 @@
 {% end %}
 
 {% block content %}
-  <form method="post" enctype="multipart/form-data" class="hw-create hw-media-library-standalone">
+  <form method="post" enctype="multipart/form-data"
+        class="hw-create hw-media-library-standalone">
     {% raw xsrf_form_html() %}
     {% include 'media.html' %}
   </form>

@@ -100,7 +100,8 @@ class ApiHandler(BaseHandler):
           os.makedirs(parent_directory)
 
         response = urllib2.urlopen(url)
-        original_size_url, url, thumb_url = media.save_locally(parent_url, full_path, response.read())
+        original_size_url, url, thumb_url = media.save_locally(parent_url,
+            full_path, response.read())
 
         if thumb_url:
           self.set_header('X-Helloworld-Thumbnail', thumb_url)
@@ -108,7 +109,8 @@ class ApiHandler(BaseHandler):
         self.write(media.generate_full_html(self, url, original_size_url))
         return
 
-      remote_title, remote_thumb, remote_html = content_remote.get_remote_title_and_thumb(url, 'text/html')
+      remote_title, remote_thumb, remote_html = \
+          content_remote.get_remote_title_and_thumb(url, 'text/html')
 
       if remote_title:
         self.set_header('X-Helloworld-Title', remote_title)
@@ -121,7 +123,8 @@ class ApiHandler(BaseHandler):
         return
 
       if remote_thumb:
-        self.write('<a href="' + url + '" title="' + remote_title + '"><img src="' + remote_thumb + '"></a>')
+        self.write('<a href="' + url + '" title="' + remote_title +
+            '"><img src="' + remote_thumb + '"></a>')
         return
     except:
       pass
@@ -134,7 +137,8 @@ class ApiHandler(BaseHandler):
     for item in ids:
       remote_item = self.models.content_remote.get(int(item))
 
-      if not self.constants['single_user_site'] and remote_item.to_username != self.current_user["username"]:
+      if (not self.constants['single_user_site'] and
+          remote_item.to_username != self.current_user["username"]):
         raise tornado.web.HTTPError(400, "i call shenanigans")
 
       remote_item.read = read
@@ -144,9 +148,11 @@ class ApiHandler(BaseHandler):
     user = self.get_argument('user')
     profile = self.get_author_username()
     if user in self.constants['external_sources']:
-      content = self.models.content_remote.get(to_username=profile, type=user)[:]
+      content = self.models.content_remote.get(to_username=profile,
+          type=user)[:]
     else:
-      content = self.models.content_remote.get(to_username=profile, from_user=user)[:]
+      content = self.models.content_remote.get(to_username=profile,
+          from_user=user)[:]
 
     for item in content:
       item.read = True
@@ -180,7 +186,9 @@ class ApiHandler(BaseHandler):
         return
       else:
         section_album = section_album.split('_')
-        collection, common_options = content_logic.get_collection(self, profile=profile, section=section_album[0], name=section_album[1])[:]
+        collection, common_options = content_logic.get_collection(self,
+            profile=profile, section=section_album[0],
+            name=section_album[1])[:]
     elif op_type == 'section':
       name = dragged
       collection = content_logic.get_main_sections(self, profile=profile)
@@ -189,7 +197,8 @@ class ApiHandler(BaseHandler):
       name = section_album[1]
 
       if not new_section:
-        collection = content_logic.get_albums(self, profile=profile, section=section_album[0])
+        collection = content_logic.get_albums(self, profile=profile,
+            section=section_album[0])
       else:
         album_items = self.models.content.get(username=profile,
                                               album=name)[:]
@@ -202,7 +211,8 @@ class ApiHandler(BaseHandler):
         album_item.section = new_section
         album_item.save()
 
-        collection = content_logic.get_albums(self, profile=profile, section=new_section)
+        collection = content_logic.get_albums(self, profile=profile,
+            section=new_section)
 
     counter = 0
     inserted = False
@@ -222,7 +232,8 @@ class ApiHandler(BaseHandler):
     position = int(self.get_argument('position'))
 
     profile = self.get_author_username()
-    following = self.models.users_remote.get(local_username=profile, following=1).order_by('order,username')[:]
+    following = self.models.users_remote.get(local_username=profile,
+        following=1).order_by('order,username')[:]
     dragged_id = int(dragged[len('hw-following-'):])
 
     # TODO consolidate with above function?
@@ -250,7 +261,8 @@ class ApiHandler(BaseHandler):
     if op_type == 'section':
       content_logic.rename_section(self, old_name, new_name, new_title)
     else:
-      content_logic.rename_album(self, section_album[0], section_album[1], new_name, new_title)
+      content_logic.rename_album(self, section_album[0], section_album[1],
+          new_name, new_title)
 
   def follow(self):
     user_url = self.get_argument('user_url').strip()
@@ -271,22 +283,27 @@ class ApiHandler(BaseHandler):
 
     # get some content, yo
     feed_response = urllib2.urlopen(user.feed_url)
-    content_remote.parse_feed(self.models, user, feed_response.read(), max_days_old=self.constants['feed_max_days_old'])
+    content_remote.parse_feed(self.models, user, feed_response.read(),
+        max_days_old=self.constants['feed_max_days_old'])
 
   def unfollow(self):
     user_url = self.get_argument('user')
     profile = self.get_author_username()
 
-    content_remote = self.models.content_remote.get(to_username=profile, from_user=user_url)[:]
+    content_remote = self.models.content_remote.get(to_username=profile,
+        from_user=user_url)[:]
     for content in content_remote:
       content.delete()
 
-    user_remote = self.models.users_remote.get(local_username=profile, profile_url=user_url)[0]
+    user_remote = self.models.users_remote.get(local_username=profile,
+        profile_url=user_url)[0]
 
     if user_remote.hub_url:
       try:
-        callback_url = self.nav_url(host=True, username=profile, section='push')
-        pubsubhubbub_subscribe.subscribe_topic(user_remote.hub_url, user_remote.feed_url, callback_url, subscribe=False, verify="sync")
+        callback_url = self.nav_url(host=True, username=profile,
+            section='push')
+        pubsubhubbub_subscribe.subscribe_topic(user_remote.hub_url,
+            user_remote.feed_url, callback_url, subscribe=False, verify="sync")
       except:
         import logging
         logging.error("couldn't unsubscribe from hub!")
@@ -298,13 +315,16 @@ class ApiHandler(BaseHandler):
       user_remote.save()
 
   def check_ownership(self, content, is_remote):
-    if is_remote and not self.constants['single_user_site'] and content.to_username != self.current_user["username"]:
+    if (is_remote and not self.constants['single_user_site'] and
+        content.to_username != self.current_user["username"]):
       raise tornado.web.HTTPError(400, "i call shenanigans")
     if not is_remote:
       local_url = content.thread.split(':')[2]
       original_url = url_factory.load_basic_parameters(self, url=local_url)
-      original_content = self.models.content.get(username=original_url['profile'], name=original_url['name'])[0]
-      if not self.constants['single_user_site'] and original_content.username != self.current_user["username"]:
+      original_content = self.models.content.get(
+          username=original_url['profile'], name=original_url['name'])[0]
+      if (not self.constants['single_user_site'] and
+          original_content.username != self.current_user["username"]):
         raise tornado.web.HTTPError(400, "i call shenanigans")
 
   def favorite(self):
@@ -312,7 +332,8 @@ class ApiHandler(BaseHandler):
 
     local_id = self.get_argument('local_id')
     is_remote = int(self.get_argument('is_remote'))
-    content = self.models.content_remote.get(local_id) if is_remote else self.models.content.get(local_id)
+    content = (self.models.content_remote.get(local_id) if
+        is_remote else self.models.content.get(local_id))
     if not content:
       raise tornado.web.HTTPError(400)
 
@@ -329,20 +350,23 @@ class ApiHandler(BaseHandler):
     if is_remote:
       user = self.get_argument('user', '')
       if user:
-        user_remote = self.models.users_remote.get(local_username=profile, profile_url=user)[0]
+        user_remote = self.models.users_remote.get(local_username=profile,
+            profile_url=user)[0]
         if not user_remote:
           return
 
       post_id = self.get_argument('post_id', '')
       if post_id and user and user_remote.salmon_url:
-        users.salmon_favorite(self, user_remote.salmon_url, post_id, favorite=(favorited == 1))
+        users.salmon_favorite(self, user_remote.salmon_url, post_id,
+            favorite=(favorited == 1))
 
   def spam(self):
     local_id = self.get_argument('local_id')
     not_spam = self.get_argument('not_spam')
     is_remote = int(self.get_argument('is_remote'))
 
-    content = self.models.content_remote.get(local_id) if is_remote else self.models.content.get(local_id)
+    content = (self.models.content_remote.get(local_id) if
+        is_remote else self.models.content.get(local_id))
     if not content:
       raise tornado.web.HTTPError(400)
 
@@ -353,16 +377,19 @@ class ApiHandler(BaseHandler):
     content.save()
 
     if not_spam:
-      spam.train_ham(content.view, self.application.settings["private_path"], profile.username)
+      spam.train_ham(content.view, self.application.settings["private_path"],
+          profile.username)
     else:
-      spam.train_spam(content.view, self.application.settings["private_path"], profile.username)
+      spam.train_spam(content.view, self.application.settings["private_path"],
+          profile.username)
 
   def delete(self):
     local_id = self.get_argument('local_id')
     not_deleted = self.get_argument('not_deleted')
     is_remote = int(self.get_argument('is_remote'))
 
-    content = self.models.content_remote.get(local_id) if is_remote else self.models.content.get(local_id)
+    content = (self.models.content_remote.get(local_id) if
+        is_remote else self.models.content.get(local_id))
     if not content:
       raise tornado.web.HTTPError(400)
 
@@ -372,31 +399,39 @@ class ApiHandler(BaseHandler):
     content.save()
 
   def comment(self):
-    commented_content = self.models.content.get(username=self.get_argument('local_user'), name=self.get_argument('local_name'))[0]
-    self.display["user"] = commented_user = self.models.users.get(username=commented_content.username)[0]
+    commented_content = self.models.content.get(
+        username=self.get_argument('local_user'),
+        name=self.get_argument('local_name'))[0]
+    self.display["user"] = commented_user = self.models.users.get(
+        username=commented_content.username)[0]
     comment = self.get_argument('comment')
     sanitized_comment = content_remote.sanitize(comment)
 
-    is_spam = spam.guess(comment, self.application.settings["private_path"], commented_content.username)
+    is_spam = spam.guess(comment, self.application.settings["private_path"],
+        commented_content.username)
 
     post_remote = self.models.content_remote()
     post_remote.to_username = commented_content.username
     post_remote.from_user = self.current_user["email"]
     post_remote.username = self.current_user["email"].split('@')[0]
-    local_url = '/' + commented_content.username + '/remote-comments/comment-' + str(uuid.uuid4())
-    post_remote.post_id = 'tag:' + self.request.host + ',' + self.display["tag_date"] + ':' + local_url
+    local_url = ('/' + commented_content.username +
+        '/remote-comments/comment-' + str(uuid.uuid4()))
+    post_remote.post_id = ('tag:' + self.request.host + ',' +
+        self.display["tag_date"] + ':' + local_url)
     post_remote.link = 'http://' + self.request.host + local_url
     from_username = post_remote.username
     if self.current_user["user"]:
       profile = self.get_author_user()
       post_remote.avatar = profile.logo if profile.logo else profile.favicon
     else:
-      post_remote.avatar = 'http://www.gravatar.com/avatar/' + hashlib.md5(self.current_user["email"].lower()).hexdigest()
+      post_remote.avatar = ('http://www.gravatar.com/avatar/' +
+          hashlib.md5(self.current_user["email"].lower()).hexdigest())
     post_remote.date_created = datetime.datetime.utcnow()
     if is_spam:
       post_remote.is_spam = True
     else:
-      spam.train_ham(comment, self.application.settings["private_path"], commented_content.username)
+      spam.train_ham(comment, self.application.settings["private_path"],
+          commented_content.username)
     post_remote.type = 'comment'
     post_remote.local_content_name = commented_content.name
     post_remote.view = sanitized_comment
@@ -408,7 +443,9 @@ class ApiHandler(BaseHandler):
 
     cache.remove(self, self.content_url(commented_content))
     socialize.socialize(self, commented_content)
-    smtp.comment(self, from_username, post_remote.from_user, commented_user.email, self.content_url(commented_content, host=True), sanitized_comment)
+    smtp.comment(self, from_username, post_remote.from_user,
+        commented_user.email, self.content_url(commented_content, host=True),
+        sanitized_comment)
 
   def topic(self):
     username = self.get_argument('username')
@@ -436,7 +473,7 @@ class ApiHandler(BaseHandler):
     content.section      = section
     content.album        = album
     content.title        = topic
-    content.name         = content_logic.get_unique_name(self, content, "_", topic)
+    content.name = content_logic.get_unique_name(self, content, "_", topic)
     content.forum        = True
     current_datetime     = datetime.datetime.utcnow()
     content.date_created = current_datetime

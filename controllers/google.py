@@ -35,10 +35,11 @@ class GoogleHandler(BaseHandler,
         callback=self.async_callback(
           self._on_auth))
       return
-    self.authorize_redirect(redirect_uri=self.nav_url(host=True, section='google'),
-                            client_id=self.settings["google_api_key"],
-                            extra_params={"scope": self._OAUTH_SCOPE_URL,
-                                          "response_type": "code", })
+    self.authorize_redirect(redirect_uri=self.nav_url(host=True,
+        section='google'),
+        client_id=self.settings["google_api_key"],
+        extra_params={"scope": self._OAUTH_SCOPE_URL,
+                      "response_type": "code", })
 
   def timeline_result(self, response):
     logging.error('google')
@@ -80,7 +81,8 @@ class GoogleHandler(BaseHandler,
                        "grant_type": 'authorization_code', }
     }
 
-    response = content_remote.get_url(self._oauth_request_token_url(**args), post=True)
+    response = content_remote.get_url(self._oauth_request_token_url(**args),
+        post=True)
     self._on_access_token(callback, response)
 
   def _on_access_token(self, callback, response):

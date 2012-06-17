@@ -7,7 +7,8 @@ class PrivateResourceHandler(tornado.web.StaticFileHandler, BaseHandler):
     BaseHandler.initialize(self)
 
     try:
-      if not self.authenticate(private_resource=self.request.uri, auto_login=False):
+      if not self.authenticate(private_resource=self.request.uri,
+          auto_login=False):
         # 401, need to login
         self.set_status(401)
         self.prevent_caching()

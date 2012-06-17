@@ -22,13 +22,15 @@ hw.setup = function() {
 
   new hw.ajax(hw.$('hw-setup-form').action,
     { method: 'post',
-      postBody:  'prefix='         + encodeURIComponent(form['prefix'].value)
-              + '&username='       + encodeURIComponent(form['username'].value)
-              + '&email='          + encodeURIComponent(form['email'].value)
-              + '&mysql_host='     + encodeURIComponent(form['mysql_host'].value)
-              + '&mysql_database=' + encodeURIComponent(form['mysql_database'].value)
-              + '&mysql_user='     + encodeURIComponent(form['mysql_user'].value)
-              + '&mysql_password=' + encodeURIComponent(form['mysql_password'].value),
+      postBody:  'prefix='     + encodeURIComponent(form['prefix'].value)
+              + '&username='   + encodeURIComponent(form['username'].value)
+              + '&email='      + encodeURIComponent(form['email'].value)
+              + '&mysql_host=' + encodeURIComponent(form['mysql_host'].value)
+              + '&mysql_database=' +
+                  encodeURIComponent(form['mysql_database'].value)
+              + '&mysql_user=' + encodeURIComponent(form['mysql_user'].value)
+              + '&mysql_password=' +
+                  encodeURIComponent(form['mysql_password'].value),
       onSuccess: callback,
       onError: badTrip });
 };

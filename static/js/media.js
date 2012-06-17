@@ -1,5 +1,6 @@
 hw.prepareFilesAndSendOff = function(callback, figures) {
-  figures = figures || hw.$c('hw-wysiwyg').innerHTML.match(/<figure>.*?<\/figure>/ig);
+  figures = figures || hw.$c('hw-wysiwyg').innerHTML.match(
+      /<figure>.*?<\/figure>/ig);
 
   if (!figures.length) {
     hw.resetSaveState();
@@ -9,7 +10,8 @@ hw.prepareFilesAndSendOff = function(callback, figures) {
 
   var figure = figures.pop();
   var caption = figure.match(/<figcaption>.*?<\/figcaption>/ig);
-  var title = caption ? caption[0].replace(/<\/?.*?>/ig, '') : hw.getMsg('untitled');
+  var title = caption ? caption[0].replace(/<\/?.*?>/ig, '') :
+      hw.getMsg('untitled');
   var src = /src="(.*?)"/ig.exec(figure);
   var thumb = src ? src[1] : "";
 
@@ -27,16 +29,19 @@ hw.newMediaPreview = function(doc, remote, source) {
   var filename = source;
 
   if (!remote) {
-    if (source && ((window.URL && window.URL.createObjectURL) || (window.webkitURL && window.webkitURL.createObjectURL))) {
+    if (source && ((window.URL && window.URL.createObjectURL) ||
+        (window.webkitURL && window.webkitURL.createObjectURL))) {
       filename = source.name;
-      source = window.URL ? window.URL.createObjectURL(source) : window.webkitURL.createObjectURL(source);
+      source = window.URL ? window.URL.createObjectURL(source) :
+          window.webkitURL.createObjectURL(source);
     } else {
       hw.hide(previewWrapper);
       return;
     }
   }
 
-  var filetype = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
+  var filetype = filename.substring(filename.lastIndexOf('.') + 1).
+      toLowerCase();
   var isImage = false;
   var imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'apng', 'bmp', 'ico'];
   for (var x = 0; x < imageExtensions.length; ++x) {
@@ -85,9 +90,11 @@ hw.mediaLibrary = function(event, el, close) {
 
   if (openMedia) {
     if (document.body.parentNode.scrollTop) {
-      document.body.parentNode.scrollTop = document.body.parentNode.scrollTop + mediaWrapper.getBoundingClientRect().top - 100;
+      document.body.parentNode.scrollTop = document.body.parentNode.scrollTop +
+          mediaWrapper.getBoundingClientRect().top - 100;
     } else {
-      document.body.scrollTop = document.body.scrollTop + mediaWrapper.getBoundingClientRect().top - 100;
+      document.body.scrollTop = document.body.scrollTop + mediaWrapper.
+          getBoundingClientRect().top - 100;
     }
   }
 };
@@ -129,8 +136,10 @@ hw.mediaSelect = function(event, selectEl, opt_mediaValue) {
 
   if (media.hasAttribute('data-directory')) {
     hw.$$('[name=hw-media-directory]')[0].value = media.value;
-    hw.$$('[name=hw-button-media]')[0].setAttribute('data-section', media.value);
-    hw.show(hw.$$('[name=hw-files-' + media.value.replace(/\//g, '-') + ']')[0]);
+    hw.$$('[name=hw-button-media]')[0].setAttribute('data-section',
+        media.value);
+    hw.show(hw.$$('[name=hw-files-' + media.value.replace(/\//g, '-') +
+        ']')[0]);
     hw.hide(selectEl);
   } else {
     var allMedia = [];
@@ -142,7 +151,8 @@ hw.mediaSelect = function(event, selectEl, opt_mediaValue) {
 
     var insertAsSlideshow = false;
     var slideshowHTML = "";
-    if (allMedia.length > 1 && window.confirm(hw.getMsg('insert-as-slideshow'))) {
+    if (allMedia.length > 1 && window.confirm(
+        hw.getMsg('insert-as-slideshow'))) {
       insertAsSlideshow = true;
     }
 
@@ -160,7 +170,8 @@ hw.mediaGetCurrentSelectElement = function() {
   }
 };
 
-hw.mediaSelectHelper = function(allMedia, position, insertAsSlideshow, slideshowHTML) {
+hw.mediaSelectHelper = function(allMedia, position, insertAsSlideshow,
+    slideshowHTML) {
   if (position >= allMedia.length) {
     if (insertAsSlideshow) {
       slideshowHTML =
@@ -194,7 +205,8 @@ hw.mediaSelectHelper = function(allMedia, position, insertAsSlideshow, slideshow
       parent.hw.insertHTML(mediaHTML + '<br><br>');
     }
     parent.hw.htmlPreview();
-    hw.mediaSelectHelper(allMedia, position + 1, insertAsSlideshow, slideshowHTML);
+    hw.mediaSelectHelper(allMedia, position + 1, insertAsSlideshow,
+        slideshowHTML);
   };
   if (media.getAttribute('data-html')) {
     callback(null, media.getAttribute('data-html'));
@@ -240,7 +252,8 @@ hw.mediaDelete = function(event, form) {
   }
 
   var callback = function(xhr) {
-    window.location.href = window.location.href + '&uploaded_file=' + encodeURIComponent(form["hw-media-directory"].value);
+    window.location.href = window.location.href + '&uploaded_file=' +
+        encodeURIComponent(form["hw-media-directory"].value);
   };
 
   var createForm = hw.$c('hw-create');

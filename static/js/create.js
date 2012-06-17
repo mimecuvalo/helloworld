@@ -16,8 +16,10 @@ hw.changeBeforeUnloadState = function(event, allowPageChange) {
 
   var createForm = hw.$c('hw-create');
   var wysiwyg = hw.$c('hw-wysiwyg');
-  var noChange = wysiwyg.textContent.replace('\n', '') == hw.getMsg('untitled') || wysiwyg.textContent == '';
-  noChange = noChange && !createForm['hw-code'].value && !createForm['hw-style'].value;
+  var noChange = wysiwyg.textContent.replace('\n', '') == hw.getMsg('untitled')
+      || wysiwyg.textContent == '';
+  noChange = noChange && !createForm['hw-code'].value &&
+      !createForm['hw-style'].value;
   noChange = noChange && wysiwyg.innerHTML.search(/<(?!\/?(h1|br))/ig) == -1;
   allowPageChange = allowPageChange || noChange;
 
@@ -27,7 +29,8 @@ hw.changeBeforeUnloadState = function(event, allowPageChange) {
   var title = "";
   if (!createForm['hw-id'].value) {
     var newTitle = hw.$('hw-new-title');
-    title = newTitle && newTitle.textContent != hw.getMsg('untitled') ? newTitle.textContent : '(' + hw.getMsg('untitled') + ')';
+    title = newTitle && newTitle.textContent != hw.getMsg('untitled') ?
+        newTitle.textContent : '(' + hw.getMsg('untitled') + ')';
   } else {
     title = createForm['hw-title'].value || '(' + hw.getMsg('untitled') + ')';
   }
@@ -42,7 +45,8 @@ hw.resetSaveState = function() {
   var response = hw.$c('hw-response');
 
   hw.displayResponse(true, response.getAttribute('data-saved'));
-  createForm['hw-save'].value = createForm['hw-save'].getAttribute('data-save');
+  createForm['hw-save'].value = createForm['hw-save'].
+      getAttribute('data-save');
   createForm['hw-save'].disabled = false;
 
   hw.changeBeforeUnloadState(null, true);
@@ -57,17 +61,20 @@ hw.resetCreateForm = function() {
   createForm['hw-date-start'].value = '';
   createForm['hw-date-end'].value = '';
   createForm['hw-date-repeats'].value = '';
-  hw.$c('hw-wysiwyg').innerHTML = '<h1 id="hw-new-title">' + hw.getMsg('untitled') + '</h1><br>';
+  hw.$c('hw-wysiwyg').innerHTML = '<h1 id="hw-new-title">' +
+      hw.getMsg('untitled') + '</h1><br>';
   createForm['hw-name'].value = '';
   createForm['hw-thumb'].value = '';
   createForm['hw-template'].value = '';
-  createForm['hw-save'].value = createForm['hw-save'].getAttribute('data-save');
+  createForm['hw-save'].value = createForm['hw-save'].
+      getAttribute('data-save');
   createForm['hw-save'].disabled = false;
   createForm['hw-separate'].checked = false;
   hw.separate();
   var section = createForm['hw-section-album'];
   createForm['hw-hidden'].checked = section.value && section.value != '_new_'
-                                  ? section.options[section.selectedIndex].getAttribute('data-hidden') == 'true'
+                                  ? section.options[section.selectedIndex].
+                                      getAttribute('data-hidden') == 'true'
                                   : false;
 
   hw.changeThumbPreview();
@@ -97,20 +104,28 @@ hw.save = function() {
   }
 
   var callback = function(xhr) {
-    // XXX TODO if creating a new album/section we'll get a reload which messes this up...
+    // XXX TODO if creating a new album/section we'll get a reload
+    // which messes this up...
     if (!createForm['hw-id'].value) {
-      var url = hw.baseUri() + /href="(.*?)"/.exec(xhr.responseText)[1].substring(1);
+      var url = hw.baseUri() + /href="(.*?)"/.exec(xhr.responseText)[1].
+          substring(1);
       for (var x = 0; x < hw.externalSources.length; ++x) {
         var sourceEl = hw.$('hw-post-' + hw.externalSources[x]);
         if (sourceEl && sourceEl.checked) {
           new hw.ajax(hw.baseUri() + hw.externalSources[x],
             { method: 'post',
-              postBody: 'url='                  + encodeURIComponent(url)
-                      + '&title='               + encodeURIComponent(createForm['hw-title'].value)
-                      + '&section='             + encodeURIComponent(createForm['hw-section'].value)
-                      + '&album='               + encodeURIComponent(createForm['hw-album'].value)
-                      + (hw.$c('hw-wysiwyg')    ? '&view=' + encodeURIComponent(finalHtml) : '')
-                      + (createForm['hw-thumb'] ? '&thumb=' + encodeURIComponent(createForm['hw-thumb'].value) : ''),
+              postBody: 'url=' + encodeURIComponent(url)
+                      + '&title=' +
+                          encodeURIComponent(createForm['hw-title'].value)
+                      + '&section=' +
+                          encodeURIComponent(createForm['hw-section'].value)
+                      + '&album=' +
+                          encodeURIComponent(createForm['hw-album'].value)
+                      + (hw.$c('hw-wysiwyg') ? '&view=' +
+                          encodeURIComponent(finalHtml) : '')
+                      + (createForm['hw-thumb'] ? '&thumb=' +
+                          encodeURIComponent(createForm['hw-thumb'].value) :
+                          ''),
               headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
               onSuccess: function() { },
               onError: function() { } });
@@ -125,18 +140,24 @@ hw.save = function() {
       return;
     }
 
-    if (createForm['hw-id'].value && xhr.getResponseHeader('X-Helloworld-Thumbnail')) {
-      createForm['hw-thumb'].value = xhr.getResponseHeader('X-Helloworld-Thumbnail');
+    if (createForm['hw-id'].value &&
+        xhr.getResponseHeader('X-Helloworld-Thumbnail')) {
+      createForm['hw-thumb'].value =
+          xhr.getResponseHeader('X-Helloworld-Thumbnail');
       hw.changeThumbPreview();
     }
 
-    if (createForm['hw-id'].value && xhr.getResponseHeader('X-Helloworld-Title')) {
-      createForm['hw-title'].value = xhr.getResponseHeader('X-Helloworld-Title');
+    if (createForm['hw-id'].value &&
+        xhr.getResponseHeader('X-Helloworld-Title')) {
+      createForm['hw-title'].value =
+          xhr.getResponseHeader('X-Helloworld-Title');
     }
 
     if (!createForm['hw-id'].value) {
-      hw.setCookie('section', xhr.getResponseHeader('X-Helloworld-Section') || createForm['hw-section'].value, -1, hw.basePath());
-      hw.setCookie('album', xhr.getResponseHeader('X-Helloworld-Album') || createForm['hw-album'].value, -1, hw.basePath());
+      hw.setCookie('section', xhr.getResponseHeader('X-Helloworld-Section') ||
+          createForm['hw-section'].value, -1, hw.basePath());
+      hw.setCookie('album', xhr.getResponseHeader('X-Helloworld-Album') ||
+          createForm['hw-album'].value, -1, hw.basePath());
     }
 
     if (!createForm['hw-id'].value) {
@@ -144,7 +165,8 @@ hw.save = function() {
       hw.addToFeed(xhr.responseText);
     }
 
-    if (createForm['hw-section-album'] && createForm['hw-section-album'].value == '_new_') {
+    if (createForm['hw-section-album'] &&
+        createForm['hw-section-album'].value == '_new_') {
       createForm['hw-section-album'].value = '';
       window.location.reload();
     }
@@ -152,7 +174,8 @@ hw.save = function() {
   };
 
   var badTrip = function(xhr, message) {
-    createForm['hw-save'].value = createForm['hw-save'].getAttribute('data-save');
+    createForm['hw-save'].value = createForm['hw-save'].
+        getAttribute('data-save');
     createForm['hw-save'].disabled = false;
 
     if (xhr && xhr.responseText.indexOf('dup') == 0) {
@@ -166,7 +189,8 @@ hw.save = function() {
     }
   };
 
-  if (!createForm['hw-section'].value || createForm['hw-section'].value == '_new_') {
+  if (!createForm['hw-section'].value ||
+      createForm['hw-section'].value == '_new_') {
     //hw.options(true);
     var sectionAlbum = hw.$c('hw-section-album');
     badTrip(null, sectionAlbum.getAttribute('data-bad'));
@@ -179,7 +203,8 @@ hw.save = function() {
     return;
   }
 
-  createForm['hw-save'].value = createForm['hw-save'].getAttribute('data-saving');
+  createForm['hw-save'].value = createForm['hw-save'].
+      getAttribute('data-saving');
   createForm['hw-save'].disabled = true;
 
   var section = createForm['hw-section'].value;
@@ -192,23 +217,29 @@ hw.save = function() {
         + (createForm['hw-name'].value ? createForm['hw-name'].value : '_');
   }
 
-  var dateStart = createForm['hw-date-start'].value ? new Date(createForm['hw-date-start'].value).getTime() / 1000 : '';
-  var dateEnd = createForm['hw-date-end'].value ? new Date(createForm['hw-date-end'].value).getTime() / 1000 : '';
-  var sortType = createForm['hw-sort-type'] ? createForm['hw-sort-type'].value : "";
+  var dateStart = createForm['hw-date-start'].value ?
+      new Date(createForm['hw-date-start'].value).getTime() / 1000 : '';
+  var dateEnd = createForm['hw-date-end'].value ?
+      new Date(createForm['hw-date-end'].value).getTime() / 1000 : '';
+  var sortType = createForm['hw-sort-type'] ?
+      createForm['hw-sort-type'].value : "";
   var separate = createForm['hw-separate'].checked;
 
-  var sendContent = function(mediaHTML, opt_title, opt_thumb, opt_extraCallback) {
+  var sendContent = function(mediaHTML, opt_title, opt_thumb,
+      opt_extraCallback) {
     var html = hw.$c('hw-wysiwyg').innerHTML;
     if (!createForm['hw-id'].value) {
       var newTitle = hw.$('hw-new-title');
-      createForm['hw-title'].value = newTitle && newTitle.textContent != hw.getMsg('untitled') ? newTitle.textContent : '';
+      createForm['hw-title'].value = newTitle && newTitle.textContent !=
+          hw.getMsg('untitled') ? newTitle.textContent : '';
 
       if (newTitle) {
         var div = document.createElement('DIV');
         div.innerHTML = html;
         var titleInDiv = div.querySelector('#hw-new-title');
         if (titleInDiv) {
-          if (titleInDiv.nextSibling && titleInDiv.nextSibling.nodeName == 'BR') {
+          if (titleInDiv.nextSibling &&
+              titleInDiv.nextSibling.nodeName == 'BR') {
             titleInDiv.parentNode.removeChild(titleInDiv.nextSibling);
           }
           titleInDiv.parentNode.removeChild(titleInDiv);
@@ -227,21 +258,35 @@ hw.save = function() {
       { method: !createForm['hw-id'].value ? 'post' : 'put',
         postBody: 'section='      + encodeURIComponent(section)
                + '&album='        + encodeURIComponent(album)
-               + '&title='        + encodeURIComponent(opt_title || createForm['hw-title'].value)
-               + '&price='        + encodeURIComponent(createForm['hw-price'].value)
-               + '&thread='       + encodeURIComponent(createForm['hw-thread'].value)
+               + '&title=' +
+                  encodeURIComponent(opt_title || createForm['hw-title'].value)
+               + '&price='        +
+                  encodeURIComponent(createForm['hw-price'].value)
+               + '&thread='       +
+                  encodeURIComponent(createForm['hw-thread'].value)
                + '&date_start='   + encodeURIComponent(dateStart)
                + '&date_end='     + encodeURIComponent(dateEnd)
-               + '&date_repeats=' + encodeURIComponent(createForm['hw-date-repeats'].value)
-               + '&style='        + encodeURIComponent(createForm['hw-style'].value)
-               + '&code='         + encodeURIComponent(createForm['hw-code'].value)
-               + (hw.$c('hw-wysiwyg') ? '&view=' + encodeURIComponent(html) : '')
-               + '&name='         + encodeURIComponent(separate ? '' : createForm['hw-name'].value)
-               + (createForm['hw-thumb'] || opt_thumb ? '&thumb=' + encodeURIComponent(opt_thumb || createForm['hw-thumb'].value) : '')
-               + '&template='     + encodeURIComponent(createForm['hw-template'].value)
+               + '&date_repeats=' +
+                  encodeURIComponent(createForm['hw-date-repeats'].value)
+               + '&style='        +
+                  encodeURIComponent(createForm['hw-style'].value)
+               + '&code='         +
+                  encodeURIComponent(createForm['hw-code'].value)
+               + (hw.$c('hw-wysiwyg') ?
+                  '&view=' + encodeURIComponent(html) : '')
+               + '&name='         +
+                  encodeURIComponent(separate ? '' :
+                                     createForm['hw-name'].value)
+               + (createForm['hw-thumb'] || opt_thumb ? '&thumb=' +
+                  encodeURIComponent(opt_thumb ||
+                      createForm['hw-thumb'].value) : '')
+               + '&template='     +
+                  encodeURIComponent(createForm['hw-template'].value)
                + '&sort_type='    + encodeURIComponent(sortType)
-               + '&section_template=' + encodeURIComponent(createForm['hw-section-template'].value)
-               + '&hidden='       + encodeURIComponent(createForm['hw-hidden'].checked ? 1 : 0),
+               + '&section_template=' +
+                  encodeURIComponent(createForm['hw-section-template'].value)
+               + '&hidden='       +
+                  encodeURIComponent(createForm['hw-hidden'].checked ? 1 : 0),
         headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
         onSuccess: opt_extraCallback || callback,
         onError: badTrip });
@@ -370,7 +415,8 @@ hw.editContent = function(event, el) {
 
   hw.preventDefault(event);
 
-  var href = hw.sectionUrl + '/' + el.getAttribute('data-contentname') + '?edit=true';
+  var href = hw.sectionUrl + '/' + el.getAttribute('data-contentname') +
+      '?edit=true';
   if (hw.testAccelKey(event)) {
     window.open(href);
   } else {
@@ -382,7 +428,9 @@ hw.editContent = function(event, el) {
 
 hw.renameKeyUp = function(event, el, album) {
   if (event.keyCode == 13 || event.keyCode == 27) { // enter or escape
-    var fn = function() { hw.renameEnd(event, el, album, event.keyCode == 13); };
+    var fn = function() {
+      hw.renameEnd(event, el, album, event.keyCode == 13);
+    };
     setTimeout(fn, 0);
   }
 };
@@ -402,7 +450,8 @@ hw.renameEnd = function(event, el, album, accept) {
     el.href = el.href.substring(0, el.href.lastIndexOf('/')) + '/' + newName;
     el.setAttribute('data-original', el.textContent);
     var oldId = el.parentNode.id;
-    el.parentNode.id = el.parentNode.id.substring(0, el.parentNode.id.lastIndexOf('_')) + '_' + newName;
+    el.parentNode.id = el.parentNode.id.substring(0,
+        el.parentNode.id.lastIndexOf('_')) + '_' + newName;
 
     new hw.ajax(hw.baseUri() + 'api',
       { method: 'post',
@@ -419,7 +468,8 @@ hw.renameEnd = function(event, el, album, accept) {
 };
 
 hw.cleanName = function(name) {
-  return name.replace(/ /g, "_").replace(/-/g, "_").replace(/[\W]+/g, '').replace(/_/g, "-").substring(0, 255);
+  return name.replace(/ /g, "_").replace(/-/g, "_").replace(/[\W]+/g, '').
+      replace(/_/g, "-").substring(0, 255);
 };
 
 hw.help = function(event) {
@@ -432,9 +482,11 @@ hw.help = function(event) {
 
   if (openHelp) {
     if (document.body.parentNode.scrollTop) {
-      document.body.parentNode.scrollTop = document.body.parentNode.scrollTop + help.getBoundingClientRect().top - 100;
+      document.body.parentNode.scrollTop = document.body.parentNode.scrollTop +
+          help.getBoundingClientRect().top - 100;
     } else {
-      document.body.scrollTop = document.body.scrollTop + help.getBoundingClientRect().top - 100;
+      document.body.scrollTop = document.body.scrollTop +
+          help.getBoundingClientRect().top - 100;
     }
   }
 };

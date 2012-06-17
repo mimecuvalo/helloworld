@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 
 {% block extra_css %}
-  <link id="hw-stylesheet-create" rel="stylesheet" type="text/css" href="{{ static_url('css/all_create.css', 'css/all_create.inc') }}">
-  <link rel="stylesheet" type="text/css" href="{{ static_url('css/dashboard.css') }}">
-  <link id="hw-stylesheet-theme" rel="stylesheet" type="text/css" href="{{ static_url('css/themes/pixel/_compiled_pixel.css') }}">
+  <link id="hw-stylesheet-create" rel="stylesheet" type="text/css"
+        href="{{ static_url('css/all_create.css', 'css/all_create.inc') }}">
+  <link rel="stylesheet" type="text/css"
+        href="{{ static_url('css/dashboard.css') }}">
+  <link id="hw-stylesheet-theme" rel="stylesheet" type="text/css"
+        href="{{ static_url('css/themes/pixel/_compiled_pixel.css') }}">
   {% block even_more_css %}{% end %}
 {% end %}
 
@@ -29,18 +32,62 @@
       {% block sidebar %}
         <div id="hw-navigation">
           <ul>
-            <li><strong><a href="{{ nav_url(username=username) }}" target="_blank">{{ _('view site') }}</a></strong></li>
+            <li>
+              <strong>
+                <a href="{{ nav_url(username=username) }}"
+                   target="_blank">
+                  {{ _('view site') }}
+                </a>
+              </strong>
+            </li>
             {% if handler.request.uri == nav_url(section='dashboard') %}
-            <li><a href="{{ nav_url(section='customize') }}">{{ _('customize') }}</a></li>
+              <li>
+                <a href="{{ nav_url(section='customize') }}">
+                  {{ _('customize') }}
+                </a>
+              </li>
             {% elif handler.request.uri == nav_url(section='customize') %}
-            <li><a href="{{ nav_url(section='dashboard') }}">{{ _('dashboard') }}</a></li>
+              <li>
+                <a href="{{ nav_url(section='dashboard') }}">
+                  {{ _('dashboard') }}
+                </a>
+              </li>
             {% end %}
             {% block more_tools %}{% end %}
             <li><hr></li>
-            <li><a href="javascript:void((function(){var e=document.createElement('script');e.setAttribute('src','{{ static_url('js/hw_follow.js', include_host=True) }}?r='+Math.random()*99999999);document.body.appendChild(e)})())">{{ _('follow bookmarklet') }}</a> <span data-tooltip="{{ _('drag this link to your bookmarks and then use it on websites you want to follow!') }}">[?]</span></li>
-            <li><a href="javascript:void((function(){var e=document.createElement('script');e.setAttribute('src','{{ static_url('js/hw_reblog.js', include_host=True) }}?r='+Math.random()*99999999);document.body.appendChild(e)})())">{{ _('reblog bookmarklet') }}</a> <span data-tooltip="{{ _('drag this link to your bookmarks and then use it on websites you want to reblog!') }}">[?]</span></li>
+            <li>
+              <a href="javascript:void((function(){
+                   var e=document.createElement('script');
+                   e.setAttribute('src','{{ static_url('js/hw_follow.js',
+                       include_host=True) }}?r='+Math.random()*99999999);
+                   document.body.appendChild(e)})())">
+                {{ _('follow bookmarklet') }}
+              </a>
+              <span data-tooltip="{{ _('drag this link to your bookmarks and' +
+                  ' then use it on websites you want to follow!') }}">
+                [?]
+              </span>
+            </li>
+            <li>
+              <a href="javascript:void((function(){
+                   var e=document.createElement('script');
+                   e.setAttribute('src','{{ static_url('js/hw_reblog.js',
+                       include_host=True) }}?r='+Math.random()*99999999);
+                   document.body.appendChild(e)})())">
+                {{ _('reblog bookmarklet') }}
+              </a>
+              <span data-tooltip="{{ _('drag this link to your bookmarks and' +
+                  ' then use it on websites you want to reblog!') }}">
+                [?]
+              </span>
+            </li>
             <li><hr></li>
-            <li><a href="{{ nav_url(section='logout', next=nav_url(username=username)) }}">{{ _('logout') }}</a></li>
+            <li>
+              <a href="{{ nav_url(section='logout',
+                   next=nav_url(username=username)) }}">
+                {{ _('logout') }}
+              </a>
+            </li>
           </ul>
         </div>
 

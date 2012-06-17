@@ -15,7 +15,8 @@ class CheckBrokenLinksHandler(BaseHandler):
 
     self.display["user"] = self.get_author_user()
 
-    all_content = self.models.content.get(username=self.display["user"].username)
+    all_content = self.models.content.get(
+        username=self.display["user"].username)
 
     links = []
     for content in all_content:

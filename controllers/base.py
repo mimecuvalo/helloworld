@@ -38,18 +38,25 @@ class BaseHandler(tornado.web.RequestHandler):
     self.hostname_user = None
     self.display["original_uri"] = self.request.uri
     self.request.uri = self.request.uri.replace('/helloworld.py', '')
-    prefix_constant = self.constants['https_prefix'] if self.request.protocol == 'https' else self.constants['http_prefix']
-    if self.request.uri.startswith(tornado.escape.url_escape(prefix_constant).replace('%2F', '/')):
+    prefix_constant = (self.constants['https_prefix'] if
+        self.request.protocol == 'https' else self.constants['http_prefix'])
+    if self.request.uri.startswith(
+        tornado.escape.url_escape(prefix_constant).replace('%2F', '/')):
       self.prefix = prefix_constant
     else:
       self.prefix = ""
-    self.base_path = (self.prefix if not self.constants['http_hide_prefix'] else '')
+    self.base_path = (self.prefix if not
+        self.constants['http_hide_prefix'] else '')
     if self.base_path == '':
       self.base_path = '/'
-    self.base_uri = self.request.protocol + '://' + self.request.host + self.base_path
+    self.base_uri = (self.request.protocol + '://' +
+        self.request.host + self.base_path)
     if not self.base_uri.endswith('/'):
       self.base_uri += '/'
-    self.request.uri = (self.prefix if not self.constants['http_hide_prefix'] else '') + self.request.uri[len(tornado.escape.url_escape(self.prefix).replace('%2F', '/')):]
+    self.request.uri = ((self.prefix if not
+        self.constants['http_hide_prefix'] else '') +
+        self.request.uri[len(
+            tornado.escape.url_escape(self.prefix).replace('%2F', '/')):])
     self.breadcrumbs = url_factory.load_basic_parameters(self)
     self.template = None
     self.content = None
@@ -92,7 +99,8 @@ class BaseHandler(tornado.web.RequestHandler):
 
   def check_version(self):
     try:
-      version_path = os.path.join(os.path.dirname(self.application.settings["app_path"]), 'mod_time')
+      version_path = os.path.join(os.path.dirname(
+          self.application.settings["app_path"]), 'mod_time')
       if self.constants['use_mod_rails']:
         touched_path = self.application.settings["restart_path"]
       else:
@@ -122,7 +130,8 @@ class BaseHandler(tornado.web.RequestHandler):
       self.current_user["author"]    = user.author    if user else 0
       self.current_user["superuser"] = user.superuser if user else 0
       self.current_user["avatar"]    = user.logo      if user else \
-          'http://www.gravatar.com/avatar/' + hashlib.md5(self.current_user["email"].lower()).hexdigest()
+          'http://www.gravatar.com/avatar/' + hashlib.md5(
+          self.current_user["email"].lower()).hexdigest()
       self.display["username"]     = self.current_user["username"]
       self.display["userid"]       = self.current_user["userid"]
       self.display["is_author"]    = self.current_user["author"]
@@ -140,7 +149,8 @@ class BaseHandler(tornado.web.RequestHandler):
 
   def get_author_user(self):
     if not self.author_user:
-      self.author_user = self.models.users.get(1) if self.constants['single_user_site'] else self.current_user["user"]
+      self.author_user = (self.models.users.get(1) if
+          self.constants['single_user_site'] else self.current_user["user"])
 
     return self.author_user
 
@@ -154,7 +164,8 @@ class BaseHandler(tornado.web.RequestHandler):
     self.display["show_debug"] = self.constants['debug']
     self.display["debug_info"] = ""
     if self.constants['debug'] and self.display["is_superuser"]:
-      self.display["debug_info"] += repr(self.display).replace(',', ',\n').replace('<!--', '').replace('-->', '')
+      self.display["debug_info"] += repr(self.display).replace(
+          ',', ',\n').replace('<!--', '').replace('-->', '')
 
   def fill_template(self, template="view.html"):
     self.fill_debug_info()
@@ -162,7 +173,8 @@ class BaseHandler(tornado.web.RequestHandler):
     self.write(rendered_content)
     return rendered_content
 
-  def authenticate(self, author=False, superuser=False, content=None, private_resource=None, auto_login=True):
+  def authenticate(self, author=False, superuser=False, content=None,
+      private_resource=None, auto_login=True):
     access_granted = False
 
     if author or superuser:
@@ -195,7 +207,8 @@ class BaseHandler(tornado.web.RequestHandler):
 
         if self.current_user["userid"]:
           for access_entry in access_table:
-            if self.current_user["userid"] == access_entry.user and access_entry.has_access:
+            if (self.current_user["userid"] == access_entry.user and
+                access_entry.has_access):
               access_granted = True
               break
 
@@ -229,14 +242,18 @@ class BaseHandler(tornado.web.RequestHandler):
 
   def get_db_connection(self):
     from autumn.db.connection import autumn_db
-    autumn_db.conn.connect('mysql', host=self.constants['mysql_host'], user=self.constants['mysql_user'], passwd=self.constants['mysql_password'], db=self.constants['mysql_database'], charset="utf8", use_unicode=True)
+    autumn_db.conn.connect('mysql', host=self.constants['mysql_host'],
+        user=self.constants['mysql_user'],
+        passwd=self.constants['mysql_password'],
+        db=self.constants['mysql_database'], charset="utf8", use_unicode=True)
     self.db = autumn_db
 
     from models import base as models
     self.models = models
 
   def get_current_user(self):
-    if self.application.settings["cookie_secret"] and self.get_secure_cookie("user"):
+    if (self.application.settings["cookie_secret"] and
+        self.get_secure_cookie("user")):
       return tornado.escape.json_decode(self.get_secure_cookie("user"))
     else:
       return None
@@ -245,16 +262,17 @@ class BaseHandler(tornado.web.RequestHandler):
     output = ""
     for line in traceback.format_exception(*kwargs["exc_info"]):
       output += line
-    output += str(status_code) + "\n\n" \
-           +  httplib.responses[status_code] + "\n\n" \
-           +  tornado.escape.xhtml_escape(repr(self.display)).replace(',', ',\n')
+    output += (str(status_code) + "\n\n" +
+        httplib.responses[status_code] + "\n\n" +
+        tornado.escape.xhtml_escape(repr(self.display)).replace(',', ',\n'))
 
     if self.constants['debug']:
       self.display["debug_info"] = ""
       self.display["licenses"] = ""
       self.display["current_datetime"] = ""
       for key, item in self.display.items():
-        if isinstance(item, types.ModuleType) or isinstance(item, types.MethodType):
+        if (isinstance(item, types.ModuleType) or
+            isinstance(item, types.MethodType)):
           del self.display[key]
 
       self.set_header('Content-Type', 'text/plain')
@@ -266,12 +284,15 @@ class BaseHandler(tornado.web.RequestHandler):
       self.display["name"] = self.breadcrumbs["name"]
       self.fill_debug_info()
       if status_code in (404, 405):
-        logging.error(str(status_code) + ': ' + self.request.method + ' ' + self.display["original_uri"] + ' ' + self.request.headers["User-Agent"])
+        logging.error(str(status_code) + ': ' + self.request.method + ' ' +
+            self.display["original_uri"] + ' ' +
+            self.request.headers["User-Agent"])
       else:
         logging.error(output)
       self.fill_template("error.html")
 
-  def static_url(self, path, include_filename=None, include_host=False, include_sig=True):
+  def static_url(self, path, include_filename=None, include_host=False,
+      include_sig=True):
     """Returns a static URL for the given relative static file path.
 
     This method requires you set the 'static_path' setting in your
@@ -298,13 +319,14 @@ class BaseHandler(tornado.web.RequestHandler):
     if abs_path not in hashes:
       try:
         if include_filename:
-          include_file = open(os.path.join(self.application.settings["static_path"],
-                                           include_filename))
+          include_file = open(os.path.join(
+              self.application.settings["static_path"], include_filename))
           combined_file = ''
           lines = include_file.readlines()
           for dependency in lines:
-            file_abs_path = os.path.join(self.application.settings["static_path"],
-                                         dependency.replace('\n', ''))
+            file_abs_path = os.path.join(
+                self.application.settings["static_path"],
+                dependency.replace('\n', ''))
             f = open(file_abs_path)
             combined_file = combined_file + '\n' + f.read()
             f.close()
@@ -312,7 +334,8 @@ class BaseHandler(tornado.web.RequestHandler):
           # XXX too many problems with jspacker...
           #if is_js:
           #  packer = jspacker.JavaScriptPacker()
-          #  combined_file = packer.pack(combined_file, encoding=62, fastDecode=True)
+          #  combined_file = packer.pack(combined_file, encoding=62,
+          #      fastDecode=True)
           f = open(abs_path, 'w')
           f.write(combined_file)
           f.close()
@@ -325,7 +348,8 @@ class BaseHandler(tornado.web.RequestHandler):
         hashes[abs_path] = None
     base = self.request.protocol + "://" + self.request.host \
       if getattr(self, "include_host", False) or include_host else ""
-    if self.request.protocol == 'https' or not self.constants['http_hide_prefix']:
+    if (self.request.protocol == 'https' or not
+        self.constants['http_hide_prefix']):
       base += self.prefix
     static_url_prefix = self.settings.get('static_url_prefix', '/static/')
     if hashes.get(abs_path) and include_sig:
@@ -351,15 +375,18 @@ class BaseHandler(tornado.web.RequestHandler):
       if not token:
         token = binascii.b2a_hex(uuid.uuid4().bytes)
         expires_days = 30 if self.current_user else None
-        self.set_cookie("_xsrf", token, expires_days=expires_days, path=self.base_path)
+        self.set_cookie("_xsrf", token, expires_days=expires_days,
+            path=self.base_path)
       self._xsrf_token = token
     return self._xsrf_token
 
   def content_url(self, item, host=False, **arguments):
     return url_factory.content_url(self, item, host, **arguments)
 
-  def nav_url(self, host=False, username="", section="", name="", page=None, **arguments):
-    return url_factory.nav_url(self, host, username, section, name, page, **arguments)
+  def nav_url(self, host=False, username="", section="", name="", page=None,
+      **arguments):
+    return url_factory.nav_url(self, host, username, section, name, page,
+        **arguments)
 
   def add_base_uris(self, view):
     return url_factory.add_base_uris(self, view)
@@ -367,5 +394,6 @@ class BaseHandler(tornado.web.RequestHandler):
   def prevent_caching(self):
     self.set_header("Last-Modified", "Fri, 02 Jan 1970 14:19:41 GMT")
     self.set_header("Expires", "Fri, 02 Jan 1970 14:19:41 GMT")
-    self.set_header("Cache-Control", "no-store, no-cache, must-revalidate, post-check=0, pre-check=0")
+    self.set_header("Cache-Control",
+        "no-store, no-cache, must-revalidate, post-check=0, pre-check=0")
     self.set_header("Pragma", "no-cache")

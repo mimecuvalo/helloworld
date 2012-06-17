@@ -26,7 +26,8 @@ import urllib
 import urllib2
 
 
-def subscribe_topic(hub_url, topic_url, callback_url, subscribe=True, verify="async",
+def subscribe_topic(hub_url, topic_url, callback_url, subscribe=True,
+              verify="async",
               verify_token="", lease_seconds="", secret=""):
     """ Subscribes to a specified topic url given a known hub url. """
 

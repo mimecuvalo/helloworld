@@ -13,17 +13,21 @@
       {% for item in results %}
       <li>
         {% if item.thumb %}
-          <a class="hw-results-image" href="{{ content_url(item) }}"><img src="{{ item.thumb }}"></a>
+          <a class="hw-results-image" href="{{ content_url(item) }}">
+            <img src="{{ item.thumb }}">
+          </a>
         {% end %}
         <div class="hw-results-info">
-          {% if item.view.startswith('http://') and item.view.find(' ') == -1 %}
-            <a href="{{ item.view }}" class="hw-results-title">{{ item.title }}</a>
-          {% else %}
-            <a href="{{ content_url(item) }}" class="hw-results-title">{{ item.title }}</a>
-            <div class="hw-results-text">
-              {{ ellipsize(strip_html(item.view), 130) }}
-            </div>
-          {% end %}
+          <a href="{{ content_url(item) }}" class="hw-results-title">
+            {% if item.title %}
+              {{ item.title }}
+            {% else %}
+              {{ _('untitled') }}
+            {% end %}
+          </a>
+          <div class="hw-results-text">
+            {{ ellipsize(strip_html(item.view), 130) }}
+          </div>
         </div>
       </li>
       {% end %}
@@ -36,10 +40,19 @@
     {% else %}
       <div class="hw-pager">
         {% if len(results) == page_size %}
-          <a class="hw-button hw-button-pager hw-next" href="{{ nav_url(username=content_owner.username, section='search', page=(page + 1), q=query) }}">{{ _('next') }}</a>
+          <a class="hw-button hw-button-pager hw-next"
+             href="{{ nav_url(username=content_owner.username,
+                section='search', page=(page + 1), q=query) }}">
+            {{ _('next') }}
+          </a>
         {% end %}
         {% if page != 1 %}
-          <a class="hw-button hw-button-pager hw-prev" href="{{ nav_url(username=content_owner.username, section='search', page=(page - 1 if page != 2 else None), q=query) }}">{{ _('previous') }}</a>
+          <a class="hw-button hw-button-pager hw-prev"
+             href="{{ nav_url(username=content_owner.username,
+                section='search', page=(page - 1 if page != 2 else None),
+                q=query) }}">
+            {{ _('previous') }}
+          </a>
         {% end %}
       </div>
     {% end %}

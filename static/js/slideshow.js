@@ -193,6 +193,8 @@ hw.slideshowPause = function(event, forcePause) {
   } else {
     clearInterval(hw.slideshowInterval);
   }
-  hw.$('hw-slideshow-pause').innerHTML = hw.$('hw-slideshow-pause').getAttribute('data-' + (!forcePause && hw.slideshowPaused ? 'pause' : 'play'));
+  hw.$('hw-slideshow-pause').innerHTML = hw.$('hw-slideshow-pause').
+      getAttribute('data-' + (!forcePause && hw.slideshowPaused ?
+      'pause' : 'play'));
   hw.slideshowPaused = forcePause || !hw.slideshowPaused;
 };

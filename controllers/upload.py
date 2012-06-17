@@ -28,7 +28,8 @@ class UploadHandler(BaseHandler):
     self.get_common_parameters()
 
     if safe_user:
-      if media.detect_media_type(self.base_leafname) not in ('video', 'image', 'audio', 'web', 'zip'):
+      if media.detect_media_type(self.base_leafname) not in ('video',
+          'image', 'audio', 'web', 'zip'):
         raise tornado.web.HTTPError(400, "i call shenanigans")
     else:
       if media.detect_media_type(self.base_leafname) != 'image':
@@ -41,22 +42,28 @@ class UploadHandler(BaseHandler):
     overwrite = True if self.get_argument('overwrite', False) else False
 
     if safe_user:
-      self.media_section = url_factory.clean_filename(self.get_argument('section'))
+      self.media_section = url_factory.clean_filename(
+          self.get_argument('section'))
       if self.media_section.startswith(url_factory.resource_url(self)):
-        self.media_section = self.media_section[len(url_factory.resource_url(self)) + 1:]
-      self.parent_directory = url_factory.resource_directory(self, self.media_section)
+        self.media_section = self.media_section[len(
+            url_factory.resource_url(self)) + 1:]
+      self.parent_directory = url_factory.resource_directory(self,
+          self.media_section)
       self.parent_url = url_factory.resource_url(self, self.media_section)
 
       if self.media_section == 'themes':
-        test_zip_path_name = os.path.join(self.parent_directory, self.base_leafname)
+        test_zip_path_name = os.path.join(self.parent_directory,
+            self.base_leafname)
         split_path = os.path.splitext(test_zip_path_name)
         if os.path.exists(test_zip_path_name):
           os.remove(test_zip_path_name)
         if os.path.exists(split_path[0]) and os.path.isdir(split_path[0]):
           shutil.rmtree(split_path[0])
     else:
-      self.parent_directory = os.path.join(self.application.settings["resource_path"], 'remote')
-      self.parent_url = os.path.join(self.application.settings["resource_url"], 'remote')
+      self.parent_directory = os.path.join(
+          self.application.settings["resource_path"], 'remote')
+      self.parent_url = os.path.join(
+          self.application.settings["resource_url"], 'remote')
     self.full_path = os.path.join(self.parent_directory, self.base_leafname)
     if not overwrite:
       self.full_path = media.get_unique_name(self.full_path)
@@ -85,11 +92,15 @@ class UploadHandler(BaseHandler):
             os.unlink(chunk_path)
         final_file.close()
 
-        original_size_url, url, thumb_url = media.save_locally(self.parent_url, self.full_path, None, skip_write=True, overwrite=overwrite)
+        original_size_url, url, thumb_url = media.save_locally(
+            self.parent_url, self.full_path, None, skip_write=True,
+            overwrite=overwrite)
       else:
         return
     else:
-      original_size_url, url, thumb_url = media.save_locally(self.parent_url, self.full_path, uploaded_file['body'], disallow_zip=(not safe_user), overwrite=overwrite)
+      original_size_url, url, thumb_url = media.save_locally(
+          self.parent_url, self.full_path, uploaded_file['body'],
+          disallow_zip=(not safe_user), overwrite=overwrite)
 
     media_html = media.generate_full_html(self, url, original_size_url)
     self.set_header("Content-Type", "text/plain; charset=UTF-8")
@@ -111,15 +122,18 @@ class UploadHandler(BaseHandler):
     if not self.authenticate(author=True):
       raise tornado.web.HTTPError(400, "i call shenanigans")
 
-    self.chunk_number = url_factory.clean_filename(self.get_argument('resumableChunkNumber'))
+    self.chunk_number = url_factory.clean_filename(
+        self.get_argument('resumableChunkNumber'))
     self.chunk_size = int(self.get_argument('resumableChunkSize'))
     self.total_size = int(self.get_argument('resumableTotalSize'))
     self.identifier = self.get_argument('resumableIdentifier')
-    self.filename = url_factory.clean_filename(self.get_argument('resumableFilename'))
+    self.filename = url_factory.clean_filename(
+        self.get_argument('resumableFilename'))
 
     self.base_leafname = os.path.basename(self.filename)
     self.leafname = self.base_leafname + '_' + self.chunk_number.zfill(4)
-    self.private_path = os.path.join(self.application.settings["private_path"], self.get_author_username())
+    self.private_path = os.path.join(
+        self.application.settings["private_path"], self.get_author_username())
     self.tmp_dir = os.path.join(self.private_path, 'tmp')
     self.tmp_path = os.path.join(self.tmp_dir, self.leafname)
 

@@ -25,7 +25,8 @@ def get_thumbnail(handler, content):
                         'section'  : content.section,
                         'album'    : content.name, }
   if content.section == 'main' or content.album == 'main':
-    collection_item = handler.models.content.get(**content_options).order_by('order,date_created', 'DESC')[0]
+    collection_item = handler.models.content.get(**content_options).order_by(
+        'order,date_created', 'DESC')[0]
     if collection_item:
       return collection_item.thumb
 
@@ -36,8 +37,10 @@ def get_thumbnail(handler, content):
   return None
 
 def is_viewed_by_robot(handler):
-  robots = re.compile(r'bot|spider|crawl|slurp|ia_archiver', re.M | re.U | re.I)
-  is_robot = "User-Agent" in handler.request.headers and robots.search(handler.request.headers["User-Agent"])
+  robots = re.compile(r'bot|spider|crawl|slurp|ia_archiver',
+      re.M | re.U | re.I)
+  is_robot = ("User-Agent" in handler.request.headers and
+      robots.search(handler.request.headers["User-Agent"]))
 
   return is_robot
 
@@ -51,7 +54,8 @@ def get_main_sections(handler, profile):
   sections = handler.models.content.get(**content_options).order_by('order')[:]
   filtered_sections = []
   for section in sections:
-    if not (section.name == 'home' or section.name == 'main' or section.name == 'comments' or section.redirect):
+    if (not (section.name == 'home' or section.name == 'main' or
+        section.name == 'comments' or section.redirect)):
       filtered_sections.append(section)
 
   return filtered_sections
@@ -78,8 +82,10 @@ def get_sections_with_albums(handler, profile, section=None, album=None):
                  'title': main_album.title,
                  'hidden': main_album.hidden,
                  'template': main_album.template,
-                 'selected': main_album.name == album and main_section_name == section }
-               for main_album in get_albums(handler, profile=profile, section=main_section_name) if not main_album.redirect ]
+                 'selected': main_album.name == album and
+                 main_section_name == section }
+               for main_album in get_albums(handler, profile=profile,
+                  section=main_section_name) if not main_album.redirect ]
     sitemap.append({ 'username': profile,
                      'title': main_section_title,
                      'name': main_section_name,
@@ -228,8 +234,10 @@ def get_unique_name(handler, content, name="_", title=None):
   # check to see if name is unique
   if name and name != '_':
     name = url_factory.clean_name(name)
-    existing_content = handler.models.content.get(username=content.username, name=name)[0]
-    if (existing_content and existing_content.id != content.id) or name in handler.constants['reserved_names']:
+    existing_content = handler.models.content.get(username=content.username,
+        name=name)[0]
+    if ((existing_content and existing_content.id != content.id) or
+        name in handler.constants['reserved_names']):
       handler.set_status(400)
       handler.write("dup-name")
       raise tornado.web.HTTPError(400)
@@ -238,7 +246,8 @@ def get_unique_name(handler, content, name="_", title=None):
     new_name = name
     counter = 1
     options = { 'username': content.username, 'name like': new_name + '-%' }
-    highest_existing_name = handler.models.content.get(**options).order_by('id', 'DESC')[0]
+    highest_existing_name = handler.models.content.get(**options).order_by(
+        'id', 'DESC')[0]
     if highest_existing_name:
       existing_counter = highest_existing_name.name.split('-')[1]
       try:
@@ -247,7 +256,8 @@ def get_unique_name(handler, content, name="_", title=None):
       except:
         pass # if existing_counter is not a possible number
     while True:
-      existing_content = handler.models.content.get(username=content.username, name=new_name)[0]
+      existing_content = handler.models.content.get(username=content.username,
+          name=new_name)[0]
       if existing_content or new_name in handler.constants['reserved_names']:
         new_name = name + '-' + str(counter)
         counter += 1
@@ -267,9 +277,11 @@ def get_collection(handler, profile=None, section=None, name=None):
     common_options['hidden'] = False
 
   if section != 'main':
-    collection_entry = handler.models.content.get(username=profile, name=section)[0]
+    collection_entry = handler.models.content.get(username=profile,
+        name=section)[0]
   if section == 'main' or not collection_entry.sort_type:
-    collection_entry = handler.models.content.get(username=profile, name=name)[0]
+    collection_entry = handler.models.content.get(username=profile,
+        name=name)[0]
 
   sort_type, sort_direction = get_sort_directives(collection_entry.sort_type)
 
@@ -279,20 +291,24 @@ def get_collection(handler, profile=None, section=None, name=None):
                         'section' : section,
                         'album' : name, }
     content_options = dict(common_options.items() + content_options.items())
-    collection = handler.models.content.get(**content_options).order_by(sort_type, sort_direction)[:]
+    collection = handler.models.content.get(**content_options).order_by(
+        sort_type, sort_direction)[:]
 
   if not collection:
     content_options = { 'username' : profile,
                         'section' : name,
                         'album' : 'main', }
     content_options = dict(common_options.items() + content_options.items())
-    collection = handler.models.content.get(**content_options).order_by(sort_type, sort_direction)[:]
+    collection = handler.models.content.get(**content_options).order_by(
+        sort_type, sort_direction)[:]
 
     album_options = content_options
     for item in collection:
       album_options['album'] = item.name
-      album_sort_type, album_sort_direction = get_sort_directives(item.sort_type)
-      album_item = handler.models.content.get(**content_options).order_by(album_sort_type, album_sort_direction)[0]
+      album_sort_type, album_sort_direction = get_sort_directives(
+          item.sort_type)
+      album_item = handler.models.content.get(**content_options).order_by(
+          album_sort_type, album_sort_direction)[0]
       if album_item:
         item.thumb = album_item.thumb
 
@@ -300,13 +316,15 @@ def get_collection(handler, profile=None, section=None, name=None):
                         'section' : name,
                         'album' : '', }
     content_options = dict(common_options.items() + content_options.items())
-    collection += handler.models.content.get(**content_options).order_by(sort_type, sort_direction)[:]
+    collection += handler.models.content.get(**content_options).order_by(
+        sort_type, sort_direction)[:]
 
   if not collection and section != 'main':
     content_options = { 'username' : profile,
                         'section' : section, }
     content_options = dict(common_options.items() + content_options.items())
-    collection = handler.models.content.get(**content_options).order_by(sort_type, sort_direction)[:]
+    collection = handler.models.content.get(**content_options).order_by(
+        sort_type, sort_direction)[:]
 
   return collection, common_options
 
@@ -337,7 +355,8 @@ def js_escape(string):
   return string.replace("'", "\\'").replace('"', '\\"')
 
 def js_in_html_escape(string):
-  return tornado.escape.xhtml_escape(string).replace("'", "'").replace('"', '\\"').replace('&quot;', '\\"')
+  return tornado.escape.xhtml_escape(string).replace("'", "'").replace(
+      '"', '\\"').replace('&quot;', '\\"')
 
 def bidi(string):
   # modified from goog.i18n.bidi
@@ -358,4 +377,5 @@ def bidi(string):
   ltrChars_ = ur'A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02B8\u0300-\u0590\u0800-\u1FFF\u2C00-\uFB1C\uFE00-\uFE6F\uFEFD-\uFFFF';
   rtlDirCheckRe_ = ur'^[^' + ltrChars_ + ur']*[' + rtlChars_ + ur']'
   htmlSkipReg_ = ur'<[^>]*>|&[^;]+;'
-  return 'dir="rtl"' if re.search(rtlDirCheckRe_, re.sub(htmlSkipReg_, '', string)) else ''
+  return 'dir="rtl"' if re.search(rtlDirCheckRe_, re.sub(htmlSkipReg_, '',
+      string)) else ''

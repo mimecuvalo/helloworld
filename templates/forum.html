@@ -3,27 +3,68 @@
 {% block user_content %}
   <header>
     <h1 class="hw-content-title">
-      <a href="{{ content_url(content) }}">{% if content.title %}{{ content.title }}{% else %}{{ _('(untitled)') }}{% end %}</a>
+      <a href="{{ content_url(content) }}">
+        {% if content.title %}
+          {{ content.title }}
+        {% else %}
+          {{ _('(untitled)') }}
+        {% end %}
+      </a>
     </h1>
   </header>
 
   <ul class="hw-forum">
     {% if current_user and current_user["email"] %}
-      <form class="hw-post-form" method="post" action="/api" onsubmit="return false" data-error="{{ _('error submitting your post. please try again.') }}">
+      <form class="hw-post-form" method="post" action="/api"
+            onsubmit="return false"
+            data-error="{{ _('error submitting your post. please try again.') }}">
         {% raw xsrf_form_html() %}
-        <input name="hw-post-input" class="hw-post-input" type="text" placeholder="{{ _('start new topic') }}" data-username="{{ content.username }}" data-section="{% if content.section == 'main' %}{{ content.name }}{% else %}{{ content.section }}{% end %}" data-album="{% if content.album == 'main' %}{{ content.name }}{% else %}{{ content.album }}{% end %}" onkeypress="if (event.keyCode == 13) hw.postTopic(this)">
+        <input name="hw-post-input" class="hw-post-input" type="text"
+               placeholder="{{ _('start new topic') }}"
+               data-username="{{ content.username }}"
+               data-section="
+                 {% if content.section == 'main' %}
+                   {{ content.name }}
+                 {% else %}
+                   {{ content.section }}
+                 {% end %}"
+               data-album="
+                 {% if content.album == 'main' %}
+                   {{ content.name }}
+                 {% else %}
+                   {{ content.album }}
+                 {% end %}"
+               onkeypress="if (event.keyCode == 13) hw.postTopic(this)">
         <div class="clear"></div>
       </form>
     {% else %}
-      <a class="hw-button hw-button-login" href="{{ nav_url(section='login', next=handler.request.uri) }}" data-logging-in="logging in..." data-failed="{{ _('login failed. try again.') }}" onclick="hw.login(event, this)">{{ _('login to post.') }}</a>
+      <a class="hw-button hw-button-login"
+         href="{{ nav_url(section='login', next=handler.request.uri) }}"
+         data-logging-in="logging in..."
+         data-failed="{{ _('login failed. try again.') }}"
+         onclick="hw.login(event, this)">{{ _('login to post.') }}</a>
     {% end %}
 
     {% comment NOTE whitespace is important here %}
     {% set even = False %}
-    {% for index, item in enumerate(collection) %}<li id="hw-collection_{{ item.name }}" class="hw-content-item {% if even %}hw-even{% else %}hw-odd{% end %}" data-is-album="{% if item.album == 'main' %}true{% else %}false{% end %}" {% if is_owner_viewing %}draggable="true" ondragstart="hw.dragStart(event, this)" ondragover="hw.dragOver(event, this)" ondragenter="hw.dragOver(event, this)" ondragleave="hw.dragLeave(event, this)" ondrop="hw.dragDrop(event, this)"{% end %}>
+    {% for index, item in enumerate(collection) %}<li id="hw-collection_{{ item.name }}"
+        class="hw-content-item {% if even %}hw-even{% else %}hw-odd{% end %}"
+        data-is-album="{% if item.album == 'main' %}true{% else %}false{% end %}"
+        {% if is_owner_viewing %}
+          draggable="true"
+          ondragstart="hw.dragStart(event, this)"
+          ondragover="hw.dragOver(event, this)"
+          ondragenter="hw.dragOver(event, this)"
+          ondragleave="hw.dragLeave(event, this)"
+          ondrop="hw.dragDrop(event, this)"
+        {% end %}>
       {% set even = not even %}
       {% if is_owner_viewing %}
-      <span class="hw-button hw-button-delete hw-content-delete" data-contenturl="{{ content_url(item) }}" onclick="hw.deleteContentViaCollection(event, this)">x</span>
+        <span class="hw-button hw-button-delete hw-content-delete"
+              data-contenturl="{{ content_url(item) }}"
+              onclick="hw.deleteContentViaCollection(event, this)">
+          x
+        </span>
       {% end %}
       {% set title = "" %}
       {% if content_owner.title %}
@@ -33,7 +74,19 @@
         {% set title += ' - ' %}
       {% end %}
       {% set title += item.title %}
-      <a class="hw-content-title {% if is_owner_viewing and item.hidden %}hw-content-hidden{% end %}" href="{{ content_url(item) }}" title="{{ title }}" data-contentname="{{ item.name }}" onclick="hw.albumClick(event, this)">{% if item.title %}{{ item.title }}{% else %}{{ _('untitled') }}{% end %}</a>
+      <a class="hw-content-title
+         {% if is_owner_viewing and item.hidden %}
+           hw-content-hidden
+         {% end %}" 
+         href="{{ content_url(item) }}" title="{{ title }}"
+         data-contentname="{{ item.name }}"
+         onclick="hw.albumClick(event, this)">
+       {% if item.title %}
+         {{ item.title }}
+       {% else %}
+         {{ _('untitled') }}
+       {% end %}
+     </a>
     </li>{% end %}
   </ul>
 {% end %}

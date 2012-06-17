@@ -16,7 +16,8 @@ class UsersHandler(BaseHandler):
       content_url = url_factory.load_basic_parameters(self, prefix="/users")
       user = self.models.users.get(username=content_url["profile"])[0]
       response = { 'email': user.email }
-      self.set_secure_cookie("user", tornado.escape.json_encode(response), path=self.base_path, HttpOnly=True)
+      self.set_secure_cookie("user", tornado.escape.json_encode(response),
+          path=self.base_path, HttpOnly=True)
       self.redirect(self.nav_url(username=content_url["profile"]))
       return
 
@@ -31,7 +32,8 @@ class UsersHandler(BaseHandler):
 
     content_url = url_factory.load_basic_parameters(self, prefix="/users")
 
-    user = users.create_user(self, content_url["profile"], self.get_argument('email'))
+    user = users.create_user(self, content_url["profile"],
+        self.get_argument('email'))
 
     self.save_user(user)
     self.set_status(204)

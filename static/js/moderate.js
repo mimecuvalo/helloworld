@@ -27,7 +27,8 @@ hw.getLatestTypedUser = function() {
     if (!hw.remoteUsers[x]['username'] || !hw.remoteUsers[x]['profile_url']) {
       continue;
     }
-    if (hw.remoteUsers[x]['username'].toLowerCase().indexOf(name.toLowerCase()) == 0
+    if (hw.remoteUsers[x]['username'].toLowerCase().indexOf(
+        name.toLowerCase()) == 0
         && name.length <= hw.remoteUsers[x]['username'].length) {
       results.push(hw.remoteUsers[x]);
     }
@@ -58,7 +59,8 @@ hw.showUserAutocomplete = function() {
     }
 
     hw.wysiwygLastKeys = "";
-    hw.insertHTML('<a href="' + user['profile_url'] + '">' + (usingPlus ? '+' : '@') + user['username'] + '</a>&nbsp;');
+    hw.insertHTML('<a href="' + user['profile_url'] + '">' +
+        (usingPlus ? '+' : '@') + user['username'] + '</a>&nbsp;');
     hw.saveSelection();
   }
 
@@ -119,8 +121,10 @@ hw.showUserAutocomplete = function() {
   complete.style.top = (Math.abs(docRect.top) + pos.top + 20) + "px";
   document.body.appendChild(complete);
 
-  // If we're at the edge of the screen, then we want the menu to appear on the left of the cursor.
-  var winW = window.innerWidth || Math.max(document.body.offsetWidth, document.documentElement.offsetWidth);
+  // If we're at the edge of the screen, then we want the menu to appear
+  // on the left of the cursor.
+  var winW = window.innerWidth || Math.max(document.body.offsetWidth,
+      document.documentElement.offsetWidth);
   if (winW - pos.top < sel.clientWidth) {
     complete.style.left = (pos.top - sel.clientWidth) + "px";
   }
@@ -173,10 +177,12 @@ hw.showUserAutocomplete = function() {
     }
 
     // XXX todo, why won't this prevent default for tab in Firefox??
-    if (code == 13 || code == 9 || (code == 32 && completions.length && name == completions[0]['username'])) { // Enter, Space, Tab
+    if (code == 13 || code == 9 || (code == 32 && completions.length &&
+        name == completions[0]['username'])) { // Enter, Space, Tab
       hw.preventDefault(event);
       pick();
-    } else if (code == 27 || code == 32 || code == 50 || monkeyIndex == -1) {  // Escape, Space, @
+    } else if (code == 27 || code == 32 || code == 50 || monkeyIndex == -1) {
+      // Escape, Space, @
       wysiwyg.focus();
       if (code == 27) {
         hw.preventDefault(event);
@@ -186,7 +192,8 @@ hw.showUserAutocomplete = function() {
       var currentLastKeys = hw.wysiwygLastKeys;
       wysiwyg.focus();
       setTimeout(function() {
-        if (code == 8 && currentLastKeys == hw.wysiwygLastKeys) {  // hmm, backspace doesn't pass through for some reason in chrome...
+        if (code == 8 && currentLastKeys == hw.wysiwygLastKeys) {
+          // hmm, backspace doesn't pass through for some reason in chrome...
           hw.wysiwygKeys(event);
         }
         hw.saveSelection();
@@ -258,7 +265,8 @@ hw.read = function(event, el, listMode, special, query, readAllMode) {
   var ownFeed = false;
   var url;
 
-  hw.removeClass(hw.readCurrent || hw.$('hw-following-read-all'), 'hw-selected');
+  hw.removeClass(hw.readCurrent || hw.$('hw-following-read-all'),
+      'hw-selected');
 
   if (query) {
     url = hw.loadMoreObject.url;
@@ -283,10 +291,11 @@ hw.read = function(event, el, listMode, special, query, readAllMode) {
       hw.readCurrent = hw.$('hw-following-' + special);
       hw.addClass(hw.$('hw-following-' + special), 'hw-selected');
     } else {
-      url = hw.baseUri() + 'dashboard' + '?specific_feed=' + encodeURIComponent(user)
-                                       + '&own_feed=' + (ownFeed ? 1 : 0)
-                                       + '&sort_type=' + (sortType == 'oldest' ? 'oldest' : '')
-                                       + '&list_mode=' + (hw.hasClass('hw-feed', 'hw-list-mode') ? 1 : 0);
+      url = hw.baseUri() + 'dashboard' +
+          '?specific_feed=' + encodeURIComponent(user)
+          + '&own_feed=' + (ownFeed ? 1 : 0)
+          + '&sort_type=' + (sortType == 'oldest' ? 'oldest' : '')
+          + '&list_mode=' + (hw.hasClass('hw-feed', 'hw-list-mode') ? 1 : 0);
     }
   } else {
     url = hw.loadMoreObject.url;
@@ -308,7 +317,8 @@ hw.read = function(event, el, listMode, special, query, readAllMode) {
     if (listMode != undefined) {
       hw.setClass('hw-feed', 'hw-list-mode', listMode);
     }
-    if (user || ownFeed || listMode != undefined || readAllMode != undefined || special || query) {
+    if (user || ownFeed || listMode != undefined ||
+        readAllMode != undefined || special || query) {
       hw.loadMoreObject.url = url;
     } else if (!user) {
       hw.loadMoreObject.url = hw.baseUri() + 'dashboard';
@@ -324,23 +334,30 @@ hw.read = function(event, el, listMode, special, query, readAllMode) {
       if (fromRemoteId && fromRemoteId.length > 1) {
         args['from_remote_id'] = fromRemoteId[1];
       }
-      hw.loadMoreObject.url = hw.loadMoreObject.url.split('?')[0] + hw.generateArgs(args);
+      hw.loadMoreObject.url =
+          hw.loadMoreObject.url.split('?')[0] + hw.generateArgs(args);
     }
 
     if (hw.supportsHistory()) {
-      history.replaceState({ 'title': document.title }, document.title, hw.baseUri() + 'dashboard');
+      history.replaceState({ 'title': document.title },
+          document.title, hw.baseUri() + 'dashboard');
     }
 
     if (document.body.parentNode.scrollTop) {
-      document.body.parentNode.scrollTop = document.body.parentNode.scrollTop + hw.$('hw-feed').getBoundingClientRect().top - 50;
+      document.body.parentNode.scrollTop =
+          document.body.parentNode.scrollTop + hw.$('hw-feed').
+              getBoundingClientRect().top - 50;
     } else {
-      document.body.scrollTop = document.body.scrollTop + hw.$('hw-feed').getBoundingClientRect().top - 50;
+      document.body.scrollTop = document.body.scrollTop +
+          hw.$('hw-feed').getBoundingClientRect().top - 50;
     }
 
     if (badTrip) {
-      hw.$('hw-feed').innerHTML = hw.$('hw-following-list').getAttribute('data-error');
+      hw.$('hw-feed').innerHTML = hw.$('hw-following-list').
+          getAttribute('data-error');
     } else {
-      hw.$('hw-feed').innerHTML = '<a id="hw-feed-page-1"></a>' + xhr.responseText;
+      hw.$('hw-feed').innerHTML = '<a id="hw-feed-page-1"></a>' +
+          xhr.responseText;
     }
   };
 
@@ -398,7 +415,8 @@ hw.sort = function(event, el) {
     hw.addClass(hw.menuOriginal, 'hw-sort-newest');
   }
 
-  hw.menuButton.parentNode.parentNode.setAttribute('data-sort-type', newest ? 'oldest' : '');
+  hw.menuButton.parentNode.parentNode.setAttribute('data-sort-type',
+      newest ? 'oldest' : '');
   hw.read(event, hw.menuButton.parentNode);
 };
 
@@ -420,17 +438,27 @@ hw.updateCounts = function() {
   var callback = function(xhr) {
     var json = JSON.parse(xhr.responseText);
     hw.updateCount(hw.$('hw-total-unread-count'), null, json['total_count']);
-    hw.updateCount(hw.$$('#hw-following #hw-following-favorites .hw-unread-count')[0], null, json['favorites_count']);
-    hw.updateCount(hw.$$('#hw-following #hw-following-comments .hw-unread-count')[0], null, json['comments_count']);
-    hw.updateCount(hw.$$('#hw-following #hw-following-spam .hw-unread-count')[0], null, json['spam_count']);
+    hw.updateCount(hw.$$(
+        '#hw-following #hw-following-favorites .hw-unread-count')[0], null,
+        json['favorites_count']);
+    hw.updateCount(hw.$$(
+        '#hw-following #hw-following-comments .hw-unread-count')[0], null,
+        json['comments_count']);
+    hw.updateCount(hw.$$(
+        '#hw-following #hw-following-spam .hw-unread-count')[0], null,
+        json['spam_count']);
 
     for (var x = 0; x < hw.externalSources.length; ++x) {
-      hw.updateCount(hw.$$('#hw-following #hw-following-' + hw.externalSources[x] + ' .hw-unread-count')[0], null, json[hw.externalSources[x] + '_count']);
+      hw.updateCount(hw.$$('#hw-following #hw-following-' +
+          hw.externalSources[x] + ' .hw-unread-count')[0], null,
+          json[hw.externalSources[x] + '_count']);
     }
 
     for (var user in json) {
       if (user.indexOf('http') == 0) {
-        hw.updateCount(hw.$$('#hw-following li[data-user="' + user + '"] .hw-unread-count')[0], null, json[user]);
+        hw.updateCount(hw.$$(
+            '#hw-following li[data-user="' + user + '"] .hw-unread-count')[0],
+            null, json[user]);
       }
     }
   };
@@ -497,9 +525,14 @@ hw.favorite = function(event, el) {
   var isRemote = el.parentNode.getAttribute('data-is-remote');
 
   var callback = function(xhr) {
-    el.innerHTML = isFavorited == '1' ? el.parentNode.getAttribute('data-favorite') : el.parentNode.getAttribute('data-unfavorite');
-    el.parentNode.setAttribute('data-is-favorited', isFavorited == '1' ? '0' : '1');
-    hw.updateCount(hw.$$('#hw-following #hw-following-favorites .hw-unread-count')[0], isFavorited == '1' ? -1 : 1);
+    el.innerHTML = isFavorited == '1' ?
+        el.parentNode.getAttribute('data-favorite') :
+        el.parentNode.getAttribute('data-unfavorite');
+    el.parentNode.setAttribute('data-is-favorited',
+        isFavorited == '1' ? '0' : '1');
+    hw.updateCount(hw.$$(
+        '#hw-following #hw-following-favorites .hw-unread-count')[0],
+        isFavorited == '1' ? -1 : 1);
   };
 
   var badTrip = function(xhr) {
@@ -514,7 +547,8 @@ hw.favorite = function(event, el) {
              + '&post_id='  + encodeURIComponent(postId)
              + '&local_id='  + encodeURIComponent(localId)
              + '&is_remote=' + encodeURIComponent(isRemote)
-             + '&not_favorited='  + encodeURIComponent(isFavorited == '1' ? '1' : '0'),
+             + '&not_favorited='  +
+                encodeURIComponent(isFavorited == '1' ? '1' : '0'),
       headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
       onSuccess: callback,
       onError: badTrip });
@@ -524,7 +558,8 @@ hw.favorite = function(event, el) {
       { method: 'post',
         postBody: 'op='       + encodeURIComponent('favorite')
                + '&post_id='  + encodeURIComponent(postId)
-               + '&not_favorited='  + encodeURIComponent(isFavorited == '1' ? '1' : '0'),
+               + '&not_favorited='  +
+                  encodeURIComponent(isFavorited == '1' ? '1' : '0'),
         headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
         onSuccess: function() {},
         onError: function() {} });
@@ -542,7 +577,8 @@ hw.spam = function(event, el) {
   var isRemote = el.parentNode.getAttribute('data-is-remote');
 
   var callback = function(xhr) {
-    el.innerHTML = isSpam == '1' ? el.parentNode.getAttribute('data-spam') : el.parentNode.getAttribute('data-not-spam');
+    el.innerHTML = isSpam == '1' ? el.parentNode.getAttribute('data-spam') :
+        el.parentNode.getAttribute('data-not-spam');
     el.parentNode.setAttribute('data-is-spam', isSpam == '1' ? '0' : '1');
   };
 
@@ -574,7 +610,9 @@ hw.deletePost = function(event, el) {
   var isRemote = el.parentNode.getAttribute('data-is-remote');
 
   var callback = function(xhr) {
-    el.innerHTML = isDeleted == '1' ? el.parentNode.getAttribute('data-delete') : el.parentNode.getAttribute('data-undelete');
+    el.innerHTML = isDeleted == '1' ?
+        el.parentNode.getAttribute('data-delete') :
+        el.parentNode.getAttribute('data-undelete');
     el.parentNode.setAttribute('data-is-deleted', isDeleted == '1' ? '0' : '1');
   };
 
@@ -589,7 +627,8 @@ hw.deletePost = function(event, el) {
              + '&user='     + encodeURIComponent(user)
              + '&local_id='  + encodeURIComponent(localId)
              + '&is_remote='  + encodeURIComponent(isRemote)
-             + '&not_deleted='  + encodeURIComponent(isDeleted == '1' ? '1' : '0'),
+             + '&not_deleted='  +
+                encodeURIComponent(isDeleted == '1' ? '1' : '0'),
       headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
       onSuccess: callback,
       onError: badTrip });
@@ -600,7 +639,9 @@ hw.markedAsUnread = [];
 hw.markSectionAsRead = function(section, opt_force) {
   var sections = hw.$('hw-feed').getElementsByTagName('SECTION');
   for (var x = 0; x < sections.length; ++x) {
-    if ((!opt_force && hw.hasClass('hw-feed', 'hw-list-mode')) || hw.hasClass(sections[x], 'hw-leave-unread') || sections[x].getAttribute('data-unread') == 'false') {
+    if ((!opt_force && hw.hasClass('hw-feed', 'hw-list-mode')) ||
+        hw.hasClass(sections[x], 'hw-leave-unread') ||
+        sections[x].getAttribute('data-unread') == 'false') {
       if (sections[x] == section) {
         break;
       } else {
@@ -611,9 +652,12 @@ hw.markSectionAsRead = function(section, opt_force) {
     var type = sections[x].getAttribute('data-type');
     var countEl;
     if (hw.inArray(type, hw.externalSources)) {
-      countEl = hw.$$('#hw-following #hw-following-' + type + ' .hw-unread-count')[0];
+      countEl = hw.$$('#hw-following #hw-following-' +
+          type + ' .hw-unread-count')[0];
     } else if (type == 'post') {
-      countEl = hw.$$('#hw-following li[data-user="' + sections[x].getAttribute('data-remote-profile-url') + '"] .hw-unread-count')[0];
+      countEl = hw.$$('#hw-following li[data-user="' +
+          sections[x].getAttribute(
+              'data-remote-profile-url') + '"] .hw-unread-count')[0];
     } else {
       continue;
     }
@@ -637,10 +681,12 @@ hw.markReadOnScroll = function(event) {
   }
 
   var sections = document.getElementsByTagName('SECTION');
-  var windowPositionY = hw.thumbnailDelayLoad.getWindowScrollY() + 20;  //hw.thumbnailDelayLoad.getWindowSizeY();
+  var windowPositionY = hw.thumbnailDelayLoad.getWindowScrollY() + 20;
+      //hw.thumbnailDelayLoad.getWindowSizeY();
 
   for (var x = 0; x < sections.length; ++x) {
-    if (sections[x].getAttribute('data-remote-id') && sections[x].getAttribute('data-unread') == 'true') {
+    if (sections[x].getAttribute('data-remote-id') &&
+        sections[x].getAttribute('data-unread') == 'true') {
       // TODO shouldn't really be dependant on thumbnailDelayLoad...
       // get the position of the 'fold' line from the parameter or manually
       if (hw.thumbnailDelayLoad.getPositionY(sections[x]) <= windowPositionY) {
@@ -680,9 +726,12 @@ hw.markAsUnread = function(event, el) {
   var type = section.getAttribute('data-type');
   var countEl;
   if (hw.inArray(type, hw.externalSources)) {
-    countEl = hw.$$('#hw-following #hw-following-' + type + ' .hw-unread-count')[0];
+    countEl = hw.$$('#hw-following #hw-following-' + type +
+        ' .hw-unread-count')[0];
   } else if (type == 'post') {
-    countEl = hw.$$('#hw-following li[data-user="' + section.getAttribute('data-remote-profile-url') + '"] .hw-unread-count')[0];
+    countEl = hw.$$('#hw-following li[data-user="' +
+        section.getAttribute('data-remote-profile-url') +
+        '"] .hw-unread-count')[0];
   } else {
     return;
   }
@@ -712,7 +761,8 @@ hw.sendMarkedAsRead = function() {
     new hw.ajax(hw.baseUri() + 'api',
       { method: 'post',
         postBody: 'op='   + encodeURIComponent('unread')
-               + '&ids='  + encodeURIComponent(JSON.stringify(hw.markedAsUnread)),
+               + '&ids='  +
+                  encodeURIComponent(JSON.stringify(hw.markedAsUnread)),
         headers: { 'X-Xsrftoken' : createForm['_xsrf'].value },
         onSuccess: function() {},
         onError: function() {} });
@@ -732,9 +782,11 @@ hw.markAllAsRead = function(event, el) {
   var type = el.getAttribute('data-type');
   var countEl;
   if (hw.inArray(type, hw.externalSources)) {
-    countEl = hw.$$('#hw-following #hw-following-' + user + ' .hw-unread-count')[0];
+    countEl = hw.$$('#hw-following #hw-following-' + user +
+        ' .hw-unread-count')[0];
   } else {
-    countEl = hw.$$('#hw-following li[data-user="' + user + '"] .hw-unread-count')[0];
+    countEl = hw.$$('#hw-following li[data-user="' + user +
+        '"] .hw-unread-count')[0];
   }
   var count = parseInt(countEl.textContent.slice(2, -1));
   hw.updateCount(hw.$('hw-total-unread-count'), -1 * count);
@@ -791,8 +843,9 @@ hw.listOpen = function(event, el) {
     hw.displayResponse(false, hw.getMsg('error'));
   };
 
-  var url = hw.baseUri() + 'dashboard?' + (local_entry ? 'local' : 'remote') + '_entry='  + encodeURIComponent(entry)
-                                        + '&list_mode=0';
+  var url = hw.baseUri() + 'dashboard?'
+      + (local_entry ? 'local' : 'remote') + '_entry='  +
+      encodeURIComponent(entry) + '&list_mode=0';
 
   var createForm = hw.$c('hw-create');
   new hw.ajax(url,
@@ -821,7 +874,8 @@ hw.outgoingLink = function(event) {
 
 hw.updateExternal = function() {
   for (var x = 0; x < hw.externalSources.length; ++x) {
-    if (hw.$('hw-following-' + hw.externalSources[x]).hasAttribute('data-enabled')) {
+    if (hw.$('hw-following-' +
+        hw.externalSources[x]).hasAttribute('data-enabled')) {
       new hw.ajax(hw.baseUri() + hw.externalSources[x] + '?get_feed=1',
         { method: 'get',
           onSuccess: function() {},

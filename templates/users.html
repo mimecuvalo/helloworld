@@ -15,9 +15,12 @@
 {% block extra_js %}
   <script src="{{ static_url('js/users.js') }}"></script>
   <script>
-    hw.setMsg('confirm-delete', "{% raw js_escape(_('ya sure there, buddy?')) %}");
-    hw.setMsg('delete-failed', "{% raw js_escape(_("no good, mate.")) %}");
-    hw.setMsg('power', "{% raw js_escape(_('with great power, comes great responsibility...')) %}");
+    hw.setMsg('confirm-delete',
+        "{% raw js_escape(_('ya sure there, buddy?')) %}");
+    hw.setMsg('delete-failed',
+        "{% raw js_escape(_("no good, mate.")) %}");
+    hw.setMsg('power',
+        "{% raw js_escape(_('with great power, comes great responsibility...')) %}");
     var currentUserId = {{ userid }};
   </script>
 {% end %}
@@ -29,7 +32,8 @@
 {% block backend_content %}
   <div id="hw-users">
     <h1>{{ _('User Administration') }}</h1>
-    <form method="post" action="{{ nav_url(section='users') }}" onsubmit="return false">
+    <form method="post" action="{{ nav_url(section='users') }}"
+        onsubmit="return false">
       {% raw xsrf_form_html() %}
       <table>
         <tr>
@@ -44,29 +48,81 @@
         </tr>
         {% for one_user in users %}
           <tr>
-            <td>{{ one_user.id }}<input name="id" type="hidden" value="{{ one_user.id }}"></td>
             <td>
-              <a href="{{ nav_url(username=one_user.username) }}">{{ one_user.username }}</a>
-              <a href="{{ nav_url(section='users', name=one_user.username, login_as='1') }}" onclick="alert(hw.getMsg('power'))">(login as)</a>
-              <input name="username" type="hidden" value="{{ one_user.username }}">
+              {{ one_user.id }}
+              <input name="id" type="hidden" value="{{ one_user.id }}">
             </td>
-            <td><input name="name" type="text" value="{{ one_user.name }}" onblur="hw.saveUser(event, this)"></td>
-            <td><input name="email" type="email" value="{{ one_user.email }}" onblur="hw.saveUser(event, this)"></td>
-            <td><input name="author" type="checkbox" {% if one_user.author %}checked="checked"{% end %} onclick="hw.saveUser(event, this)"></td>
-            <td><input name="superuser" type="checkbox" {% if one_user.superuser %}checked="checked"{% end %} onclick="hw.saveUser(event, this)"></td>
-            <td><input name="hostname" type="text" value="{{ one_user.hostname }}" onblur="hw.saveUser(event, this)"></td>
-            <td><input class="hw-button hw-button-delete" data-delete="{{ _("delete") }}" data-deleting="{{ _("deleting") }}" type="button" value="{{ _("delete") }}" onclick="hw.deleteUser(this)"></td>
+            <td>
+              <a href="{{ nav_url(username=one_user.username) }}">
+                {{ one_user.username }}
+              </a>
+              <a href="{{ nav_url(section='users', name=one_user.username,
+                  login_as='1') }}"
+                 onclick="alert(hw.getMsg('power'))">(login as)</a>
+              <input name="username" type="hidden"
+                     value="{{ one_user.username }}">
+            </td>
+            <td>
+              <input name="name" type="text" value="{{ one_user.name }}"
+                     onblur="hw.saveUser(event, this)">
+            </td>
+            <td>
+              <input name="email" type="email" value="{{ one_user.email }}"
+                     onblur="hw.saveUser(event, this)">
+            </td>
+            <td>
+              <input name="author" type="checkbox"
+                     {% if one_user.author %}checked="checked"{% end %}
+                     onclick="hw.saveUser(event, this)">
+            </td>
+            <td>
+              <input name="superuser" type="checkbox"
+                     {% if one_user.superuser %}checked="checked"{% end %}
+                     onclick="hw.saveUser(event, this)">
+            </td>
+            <td>
+              <input name="hostname" type="text"
+                     value="{{ one_user.hostname }}"
+                     onblur="hw.saveUser(event, this)">
+            </td>
+            <td>
+              <input class="hw-button hw-button-delete"
+                     data-delete="{{ _("delete") }}"
+                     data-deleting="{{ _("deleting") }}" type="button"
+                     value="{{ _("delete") }}" onclick="hw.deleteUser(this)">
+            </td>
           </tr>
         {% end %}
           <tr>
             <td>{{ _('new') }}</td>
-            <td><input name="username" pattern="\w+" maxlength="255" type="text" placeholder="{{ _('username') }}" required></td>
-            <td><input name="name" maxlength="255" type="text" placeholder="name"></td>
-            <td><input name="email" type="email" placeholder="email" required></td>
-            <td><input name="author" type="checkbox"></td>
-            <td><input name="superuser" type="checkbox"></td>
-            <td><input name="hostname" maxlength="255" type="text" placeholder="hostname"></td>
-            <td><input class="hw-button hw-button-save" data-save="{{ _("save") }}" data-saving="{{ _("saving") }}" type="button" value="{{ _("save") }}" onclick="hw.saveUser(event, this)"></td>
+            <td>
+              <input name="username" pattern="\w+" maxlength="255"
+                     type="text" placeholder="{{ _('username') }}" required>
+            </td>
+            <td>
+              <input name="name" maxlength="255" type="text"
+                     placeholder="name">
+            </td>
+            <td>
+              <input name="email" type="email" placeholder="email" required>
+            </td>
+            <td>
+              <input name="author" type="checkbox">
+            </td>
+            <td>
+              <input name="superuser" type="checkbox">
+            </td>
+            <td>
+              <input name="hostname" maxlength="255" type="text"
+                     placeholder="hostname">
+            </td>
+            <td>
+              <input class="hw-button hw-button-save"
+                     data-save="{{ _("save") }}"
+                     data-saving="{{ _("saving") }}" type="button"
+                     value="{{ _("save") }}"
+                     onclick="hw.saveUser(event, this)">
+            </td>
           </tr>
       </table>
     </form>

@@ -24,7 +24,8 @@ class MediaHandler(BaseHandler):
     self.display["files"] = os.walk(parent_directory)
     self.display["initial_section"] = None
     initial_section_check = self.get_argument('initial_section', None)
-    if initial_section_check and os.path.exists(os.path.join(url_factory.resource_directory(self), initial_section_check)):
+    if initial_section_check and os.path.exists(os.path.join(
+        url_factory.resource_directory(self), initial_section_check)):
       self.display["initial_section"] = initial_section_check
 
     self.display["basename"] = os.path.basename
@@ -37,14 +38,18 @@ class MediaHandler(BaseHandler):
 
       if uploaded_file_check:
         uploaded_file_check = url_factory.clean_filename(uploaded_file_check)
-        uploaded_file_check = os.path.join(self.application.settings["base_path"], uploaded_file_check)
+        uploaded_file_check = os.path.join(
+            self.application.settings["base_path"], uploaded_file_check)
 
-        if not uploaded_file_check.startswith(url_factory.resource_directory(self)):
+        if not uploaded_file_check.startswith(
+            url_factory.resource_directory(self)):
           raise tornado.web.HTTPError(400, "i call shenanigans")
 
         if os.path.exists(uploaded_file_check):
-          self.display["uploaded_file"] = uploaded_file_check.replace(self.application.settings["base_path"] + '/', '')
-          self.display["initial_section"] = os.path.dirname(self.display["uploaded_file"])
+          self.display["uploaded_file"] = uploaded_file_check.replace(
+              self.application.settings["base_path"] + '/', '')
+          self.display["initial_section"] = os.path.dirname(
+              self.display["uploaded_file"])
 
     self.display["embedded"] = self.get_argument('embedded', '')
 
@@ -66,7 +71,8 @@ class MediaHandler(BaseHandler):
         html += self.locale.translate('download video:') + ' '
       else:
         html += self.locale.translate('download audio:') + ' '
-      html += '<a href="' + uri + '" target="_blank">' + uri[uri.rfind('/') + 1:] + '</a>'
+      html += ('<a href="' + uri + '" target="_blank">' +
+          uri[uri.rfind('/') + 1:] + '</a>')
 
     self.write(html)
 
@@ -76,7 +82,8 @@ class MediaHandler(BaseHandler):
 
     files = json.loads(self.get_argument('files'))
 
-    parent_leading_path = self.application.settings["resource_url"] + "/" + self.get_author_username()
+    parent_leading_path = (self.application.settings["resource_url"] + "/" +
+        self.get_author_username())
 
     for f in files:
       f = url_factory.clean_filename(f).replace(parent_leading_path + '/', '')

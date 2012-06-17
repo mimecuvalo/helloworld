@@ -4,15 +4,19 @@
   <script>
     function prepare() {
       hw.$('prepare').disabled = true;
-      hw.$('prepare').innerHTML = hw.$('prepare').getAttribute('data-preparing');
+      hw.$('prepare').innerHTML = hw.$('prepare').
+          getAttribute('data-preparing');
 
       var callback = function(xhr) {
         hw.hide(hw.$('prepare'));
-        hw.$('output').innerHTML += '<a href="' + hw.baseUri() + 'data_liberation.zip?download=1' + '">Download!</a>';
+        hw.$('output').innerHTML += '<a href="' + hw.baseUri() +
+            'data_liberation.zip?download=1' + '">Download!</a>';
       };
 
       var errorCallback = function() {
-        hw.$('output').innerHTML += "{% raw js_escape(_('Hmm, something went wrong :-/  Please contact your host\'s administrator')) %}";
+        hw.$('output').innerHTML += "{% raw js_escape(_(
+            'Hmm, something went wrong :-/  Please contact your host\'s ' +
+            'administrator')) %}";
       };
       
       new hw.ajax(hw.baseUri() + 'data_liberation?prepare=1',
@@ -29,8 +33,12 @@
 
 {% block backend_content %}
 <div id="admin">
-  {{ _('On this page you can download all the data you\'ve invested into this website, all posts, all photos, etc.') }}<br><br>
-  <button id="prepare" onclick="prepare()" type="button" data-preparing="{{ _('preparing') }}">{{ _('Prepare Files') }}</button>
+  {{ _('On this page you can download all the data you\'ve invested into ' +
+       'this website, all posts, all photos, etc.') }}<br><br>
+  <button id="prepare" onclick="prepare()" type="button"
+          data-preparing="{{ _('preparing') }}">
+    {{ _('Prepare Files') }}
+  </button>
 
   <output id="output"></output>
 

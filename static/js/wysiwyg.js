@@ -22,7 +22,8 @@ hw.edit = function(event) {
 
   hw.createAutoload = false;
 
-  // XXX, edge case: if you edit the page, then click 'edit' to close edit mode (without saving),
+  // XXX, edge case: if you edit the page, then click 'edit' to close
+  // edit mode (without saving),
   // then, navigate to a neighbor page (which uses html5 history) you don't get
   // the onbeforeunload call for the page you were editing.
   // therefore, show force onbeforeunload to show up
@@ -62,13 +63,17 @@ hw.editScriptWorkaround = function() {
   var wysiwyg = hw.$c('hw-wysiwyg');
   try {
     // XXX doesn't work in IE - this whole things is crap anyway...hmmm
-    document.head.innerHTML = document.head.innerHTML.replace(/<style name="HWSCRIPTWORKAROUND"/g, '<script');
-    document.head.innerHTML = document.head.innerHTML.replace(/<\/style><!--HWSCRIPTWORKAROUND-->/g, '</script>');
+    document.head.innerHTML = document.head.innerHTML.replace(
+        /<style name="HWSCRIPTWORKAROUND"/g, '<script');
+    document.head.innerHTML = document.head.innerHTML.replace(
+        /<\/style><!--HWSCRIPTWORKAROUND-->/g, '</script>');
   } catch(ex) {
     // do nothing
   }
-  wysiwyg.innerHTML = wysiwyg.innerHTML.replace(/<style name="HWSCRIPTWORKAROUND"/g, '<script');
-  wysiwyg.innerHTML = wysiwyg.innerHTML.replace(/<\/style><!--HWSCRIPTWORKAROUND-->/g, '</script>');
+  wysiwyg.innerHTML = wysiwyg.innerHTML.replace(
+      /<style name="HWSCRIPTWORKAROUND"/g, '<script');
+  wysiwyg.innerHTML = wysiwyg.innerHTML.replace(
+      /<\/style><!--HWSCRIPTWORKAROUND-->/g, '</script>');
 };
 
 // TODO: use ace editor? has wrapping at least...
@@ -85,7 +90,9 @@ hw.setupCodeMirror = function() {
     hw.htmlPreview(true, true);
   };
 
-  var cm = CodeMirror.fromTextArea(hw.$c('hw-style'), { mode: "css", lineNumbers: true, matchBrackets: true, onChange: onChange });
+  var cm = CodeMirror.fromTextArea(hw.$c('hw-style'),
+      { mode: "css", lineNumbers: true, matchBrackets: true,
+        onChange: onChange });
   cm.getWrapperElement().setAttribute('name', 'hw-style-cm');
   hw.addClass(cm.getWrapperElement(), 'hw-style-cm');
   cm.getWrapperElement().cm = cm;
@@ -94,7 +101,9 @@ hw.setupCodeMirror = function() {
   }
   Event.observe(hw.$c('hw-style-cm'), 'keydown', hw.shortcuts, false);
 
-  cm = CodeMirror.fromTextArea(hw.$c('hw-code'), { mode: "javascript", lineNumbers: true, matchBrackets: true, onChange: onChange });
+  cm = CodeMirror.fromTextArea(hw.$c('hw-code'),
+      { mode: "javascript", lineNumbers: true, matchBrackets: true,
+        onChange: onChange });
   cm.getWrapperElement().setAttribute('name', 'hw-code-cm');
   hw.addClass(cm.getWrapperElement(), 'hw-code-cm');
   cm.getWrapperElement().cm = cm;
@@ -102,8 +111,11 @@ hw.setupCodeMirror = function() {
   Event.observe(hw.$c('hw-code-cm'), 'keydown', hw.shortcuts, false);
 
   if (hw.createIndividualContent) {
-    hw.$c('hw-html').value = hw.$c('hw-html').value.replace(/>([^\n])/g, '>\n$1');
-    hw.cm = CodeMirror.fromTextArea(hw.$c('hw-html'), { mode: "text/html", lineNumbers: true, matchBrackets: true, onChange: onChange });
+    hw.$c('hw-html').value = hw.$c('hw-html').value.replace(
+        />([^\n])/g, '>\n$1');
+    hw.cm = CodeMirror.fromTextArea(hw.$c('hw-html'),
+        { mode: "text/html", lineNumbers: true, matchBrackets: true,
+          onChange: onChange });
     hw.cm.getWrapperElement().setAttribute('name', 'hw-html-cm');
     hw.addClass(hw.cm.getWrapperElement(), 'hw-html-cm');
     hw.cm.getWrapperElement().cm = hw.cm;
@@ -129,9 +141,11 @@ hw.options = function(open) {
 
   if (openOptions) {
     if (document.body.parentNode.scrollTop) {
-      document.body.parentNode.scrollTop = document.body.parentNode.scrollTop + options.getBoundingClientRect().top - 100;
+      document.body.parentNode.scrollTop = document.body.parentNode.scrollTop +
+          options.getBoundingClientRect().top - 100;
     } else {
-      document.body.scrollTop = document.body.scrollTop + options.getBoundingClientRect().top - 100;
+      document.body.scrollTop = document.body.scrollTop +
+          options.getBoundingClientRect().top - 100;
     }
   }
 
@@ -143,7 +157,8 @@ hw.sectionChange = function(section) {
 
   var oldTemplate = createForm['hw-section-template'].value;
   var newTemplate = '';
-  if (section.value == '_new_' || createForm['hw-section-album'].value == '_new_') {
+  if (section.value == '_new_' ||
+      createForm['hw-section-album'].value == '_new_') {
     hw.options(true);
     createForm['hw-section'].focus();
     createForm['hw-section'].select();
@@ -152,8 +167,11 @@ hw.sectionChange = function(section) {
     var values = createForm['hw-section-album'].value.split('|');
     createForm['hw-section'].value = values[0];
     createForm['hw-album'].value = values[1] ? values[1] : '';
-    createForm['hw-hidden'].checked = section.options[section.selectedIndex].getAttribute('data-hidden') == 'true';
-    createForm['hw-section-template'].value = values[3] ? values[3] : (values[2] ? values[2] : '');
+    createForm['hw-hidden'].checked =
+        section.options[section.selectedIndex].getAttribute(
+        'data-hidden') == 'true';
+    createForm['hw-section-template'].value = values[3] ?
+        values[3] : (values[2] ? values[2] : '');
     newTemplate = createForm['hw-section-template'].value;
   }
 
@@ -178,7 +196,8 @@ hw.shortcuts = function(event) {
   var key = event.which || event.keyCode;
 
   switch (key) {
-    case 83:   // ctrl-s, save  TODO report bug to ff, messed up with dvorak keyboard
+    // ctrl-s, save  TODO report bug to ff, messed up with dvorak keyboard
+    case 83:
       if (hw.testAccelKey(event)) {
         hw.preventDefault(event);
         hw.save();
@@ -203,8 +222,11 @@ hw.showUserAutocomplete = function() {
   }
   users.innerHTML = html;
 
-  var contentPosition = hw.$('hw-content') ? hw.$('hw-content').getBoundingClientRect() : hw.$c('hw-wysiwyg').getBoundingClientRect();
-  users.style.top = (window.pageYOffset + node.getBoundingClientRect().top + contentPosition.top) + 'px';
+  var contentPosition = hw.$('hw-content') ?
+      hw.$('hw-content').getBoundingClientRect() : hw.$c('hw-wysiwyg').
+          getBoundingClientRect();
+  users.style.top = (window.pageYOffset + node.getBoundingClientRect().top +
+      contentPosition.top) + 'px';
   users.style.left = (node.getBoundingClientRect().left + 5) + 'px';
 };
 
@@ -240,7 +262,8 @@ hw.htmlTab = function(el) {
       child = child.nextSibling;
       continue;
     }
-    hw.display(child, tabName.split('-')[1] == child.getAttribute('name').split('-')[1]);
+    hw.display(child, tabName.split('-')[1] ==
+        child.getAttribute('name').split('-')[1]);
     if (child.cm) {
      child.cm.refresh(); 
     }
@@ -262,13 +285,16 @@ hw.htmlPreview = function(force, codeMirror) {
   var createForm = hw.$c('hw-create');
   var html = hw.$c('hw-html');
   var htmlCM = hw.$c('hw-html-cm');
-  var htmlCMTextarea = htmlCM ? htmlCM.getElementsByTagName('textarea')[0] : null;
+  var htmlCMTextarea = htmlCM ?
+      htmlCM.getElementsByTagName('textarea')[0] : null;
   var style = hw.$c('hw-style');
   var styleCM = hw.$c('hw-style-cm');
-  var styleCMTextarea = styleCM ? styleCM.getElementsByTagName('textarea')[0] : null;
+  var styleCMTextarea = styleCM ?
+      styleCM.getElementsByTagName('textarea')[0] : null;
   var code = hw.$c('hw-code');
   var codeCM = hw.$c('hw-code-cm');
-  var codeCMTextarea = codeCM ? codeCM.getElementsByTagName('textarea')[0] : null;
+  var codeCMTextarea = codeCM ?
+      codeCM.getElementsByTagName('textarea')[0] : null;
   var wysiwyg = hw.$c('hw-wysiwyg');
   var htmlWrapper = hw.$c('hw-html-wrapper');
 
@@ -284,12 +310,15 @@ hw.htmlPreview = function(force, codeMirror) {
     return;
   }
 
-  if (document.activeElement == html || document.activeElement == htmlCMTextarea) {
+  if (document.activeElement == html ||
+      document.activeElement == htmlCMTextarea) {
     wysiwyg.innerHTML = html.value;
-  } else if (document.activeElement != styleCMTextarea && document.activeElement != codeCMTextarea) {
+  } else if (document.activeElement != styleCMTextarea &&
+      document.activeElement != codeCMTextarea) {
     if (html && !hw.isHidden(htmlWrapper)) {
       html.value = wysiwyg.innerHTML;
-      // hmm, this was supposed to help in formatting the html but it ends up being annoying...
+      // hmm, this was supposed to help in formatting the html but it
+      // ends up being annoying...
       // html.value.replace(/>([^\n])/g, '>\n$1')
       if (hw.cm) {
         hw.cm.setValue(html.value);
@@ -308,7 +337,8 @@ hw.htmlPreview = function(force, codeMirror) {
     document.getElementsByTagName('head')[0].appendChild(styleElement);
   }
 
-  var styleElement = hw.$('hw-content-style') ? hw.$('hw-content-style') : hw.$('hw-preview-style');
+  var styleElement = hw.$('hw-content-style') ? hw.$('hw-content-style') :
+      hw.$('hw-preview-style');
   if (styleElement.styleSheet) {
     styleElement.styleSheet.cssText = style.value;
    } else {
@@ -324,7 +354,8 @@ hw.htmlPreview = function(force, codeMirror) {
   if (jsExternalScripts) {
     for (var x = 0; x < jsExternalScripts.length; ++x) {
       var jsSource = jsExternalScripts[x].match(jsSingleRe)[1];
-      var existingRe = new RegExp("<script[^>]*src=['\"]" + jsSource + "['\"]></script>", "ig");
+      var existingRe = new RegExp("<script[^>]*src=['\"]" + jsSource +
+          "['\"]></script>", "ig");
       if (document.head.innerHTML.match(existingRe)) {
         continue;
       }
@@ -344,7 +375,8 @@ hw.htmlPreview = function(force, codeMirror) {
   }
 
   if (hw.$('hw-preview-script')) {
-    document.getElementsByTagName('head')[0].removeChild(hw.$('hw-preview-script'));
+    document.getElementsByTagName('head')[0].removeChild(
+        hw.$('hw-preview-script'));
   }
 
   var scriptElement = document.createElement('script');
@@ -355,8 +387,10 @@ hw.htmlPreview = function(force, codeMirror) {
 
 hw.createOnScroll = function(event) {
   var text = hw.$c('hw-wysiwyg-controls');
-  var makeTextFixed = hw.$c('hw-wysiwyg').getBoundingClientRect().top - text.getBoundingClientRect().height < 0
-               && text.getBoundingClientRect().height < hw.$c('hw-view').getBoundingClientRect().bottom;
+  var makeTextFixed = hw.$c('hw-wysiwyg').getBoundingClientRect().top -
+      text.getBoundingClientRect().height < 0
+               && text.getBoundingClientRect().height < hw.$c('hw-view').
+               getBoundingClientRect().bottom;
   hw.setClass(text, 'hw-fixed', makeTextFixed);
   /*var marginTop = 0;
   if (makeFixed) {

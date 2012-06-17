@@ -3,15 +3,6 @@ form.hw-create.hw-new,
   margin-top: -7px;
   padding-top: 2px;
 }
-/*#hw-container.hw-editing > #hw-content > section > form.hw-create {
-  height: 136px;
-}
-#hw-container.hw-editing > #hw-content > section > form.hw-create.hw-options-open,
-#hw-container.hw-editing > #hw-content > section > form.hw-create.hw-media-library-open,
-#hw-container.hw-editing > #hw-content > section > form.hw-create.hw-html-open,
-#hw-container.hw-editing > #hw-content > section > form.hw-create.hw-media-open {
-  height: auto;
-}*/
 
 form.hw-create.hw-media-library-open .hw-playground {
   clear: both;
@@ -194,7 +185,8 @@ form.hw-create.hw-template-events div.hw-events {
   margin: 38px 0 -32px 0;
 }
 
-#hw-container.hw-editing > #hw-content > section.hw-individual-content > header {
+#hw-container.hw-editing > #hw-content >
+    section.hw-individual-content > header {
   display: none;
 }
 
@@ -510,7 +502,8 @@ div.hw-image-editor .hw-image-close {
   float: right;
 }
 input[type=range] {
-  background: url("../img/slider-handle.gif") no-repeat scroll 0 2px transparent;
+  background: url("../img/slider-handle.gif") no-repeat scroll
+      0 2px transparent;
   border: 0;
   height: 21px;
   text-align: center;

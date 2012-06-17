@@ -1,29 +1,56 @@
 <?xml version="1.0"?>
-<{% if type(feed) is list %}feed{% else %}entry{% end %} xml:base="{{ base_uri }}" xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom" xmlns:activity="http://activitystrea.ms/spec/1.0/" xmlns:poco="http://portablecontacts.net/spec/1.0" xmlns:media="http://purl.org/syndication/atommedia" xmlns:thr="http://purl.org/syndication/thread/1.0">
+<{% if type(feed) is list %}feed{% else %}entry{% end %}
+    xml:base="{{ base_uri }}" xml:lang="en-US"
+    xmlns="http://www.w3.org/2005/Atom"
+    xmlns:activity="http://activitystrea.ms/spec/1.0/"
+    xmlns:poco="http://portablecontacts.net/spec/1.0"
+    xmlns:media="http://purl.org/syndication/atommedia"
+    xmlns:thr="http://purl.org/syndication/thread/1.0">
   {% if type(feed) is list %}
-  <generator uri="http://www.helloworldprogram.com" version="0.82beta">Hello, world.</generator>
+  <generator uri="http://www.helloworldprogram.com" version="0.82beta">
+    Hello, world.
+  </generator>
   <id>{{ nav_url(host=True, username=user.username, section='feed') }}</id>
   <title type="html">{{ user.title }}</title>
   <subtitle>{{ _('a hello world site.') }}</subtitle>
-  <link rel="self" href="{{ nav_url(host=True, username=user.username, section='feed', category=section, album=album, comments=comments_url) }}" />
-  <link rel="alternate" type="text/html" href="{{ nav_url(host=True, username=user.username) }}" />
+  <link rel="self" href="{{ nav_url(host=True, username=user.username,
+      section='feed', category=section, album=album,
+      comments=comments_url) }}" />
+  <link rel="alternate" type="text/html" href="{{ nav_url(host=True,
+      username=user.username) }}" />
   <link rel="hub" href="{{ push_hub }}" />
-  <link rel="http://api.friendfeed.com/2008/03#sup" href="http://friendfeed.com/api/public-sup.json#{{ sup_id }}" type="application/json" />
-  <link rel="salmon" href="{{ nav_url(host=True, section='salmon/', q='acct:' + user.username + '@' + handler.request.host) }}" />
-  <link rel="http://salmon-protocol.org/ns/salmon-replies" href="{{ nav_url(host=True, section='salmon/', q='acct:' + user.username + '@' + handler.request.host) }}" />
-  <link rel="http://salmon-protocol.org/ns/salmon-mention" href="{{ nav_url(host=True, section='salmon/', q='acct:' + user.username + '@' + handler.request.host) }}" />
+  <link rel="http://api.friendfeed.com/2008/03#sup"
+    href="http://friendfeed.com/api/public-sup.json#{{ sup_id }}"
+    type="application/json" />
+  <link rel="salmon" href="{{ nav_url(host=True, section='salmon/',
+    q='acct:' + user.username + '@' + handler.request.host) }}" />
+  <link rel="http://salmon-protocol.org/ns/salmon-replies"
+    href="{{ nav_url(host=True, section='salmon/',
+    q='acct:' + user.username + '@' + handler.request.host) }}" />
+  <link rel="http://salmon-protocol.org/ns/salmon-mention"
+    href="{{ nav_url(host=True, section='salmon/',
+    q='acct:' + user.username + '@' + handler.request.host) }}" />
   {% if user.license %}
     <link rel="license" href="{{ user.license }}"/>
     {% if user.license == 'http://purl.org/atompub/license#unspecified' %}
-      <rights>{{ _("Copyright %(date)s by %(name)s") % { "date": current_datetime.year, 'name': user.name } }}</rights>
+      <rights>
+        {{ _("Copyright %(date)s by %(name)s") %
+          { "date": current_datetime.year, 'name': user.name } }}
+      </rights>
     {% else %}
       <rights>{{ licenses[user.license]["name"] }}: {{ user.license }}</rights>
     {% end %}
   {% end %}
-  <updated>{% if type(feed) is list and len(feed) and not feed[0].is_remote %}{{ feed[0].date_updated.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}{% end %}</updated>
+  <updated>
+    {% if type(feed) is list and len(feed) and not feed[0].is_remote %}
+      {{ feed[0].date_updated.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}
+    {% end %}
+  </updated>
   {% end %}
   <author>
-    <activity:object-type>http://activitystrea.ms/schema/1.0/person</activity:object-type>
+    <activity:object-type>
+      http://activitystrea.ms/schema/1.0/person
+    </activity:object-type>
     <name>{{ user.name }}</name>
     <uri>{{ nav_url(host=True, username=user.username) }}</uri>
     <email>{{ user.email }}</email>
@@ -43,7 +70,13 @@
   {% if user.logo %}
   <logo>{{ nav_url(host=True, section=user.logo) }}</logo>
   {% end %}
-  <icon>{% if user.favicon %}{{ nav_url(host=True, section=user.favicon) }}{% else %}{{ static_url('favicon.ico', include_host=True) }}{% end %}</icon>
+  <icon>
+    {% if user.favicon %}
+      {{ nav_url(host=True, section=user.favicon) }}
+    {% else %}
+      {{ static_url('favicon.ico', include_host=True) }}
+    {% end %}
+  </icon>
   {% if type(feed) is list %}
     {% for item in feed %}
       {% if comments_url or not item.restricted %}
@@ -69,17 +102,24 @@
         <content type="html">
           {{ add_base_uris(item.view) }}
           {% if not item.is_remote %}
-            {{ '<img src="' + nav_url(host=True, section='stats', url=content_url(item)) + '">' }}
+            {{ '<img src="' + nav_url(host=True, section='stats',
+                url=content_url(item)) + '">' }}
           {% end %}
         </content>
         {% if not item.is_remote %}
-          <updated>{{ item.date_updated.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}</updated>
+          <updated>
+            {{ item.date_updated.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}
+          </updated>
         {% end %}
-        <published>{{ item.date_created.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}</published>
+        <published>
+          {{ item.date_created.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}
+        </published>
         <activity:verb>http://activitystrea.ms/schema/1.0/post</activity:verb>
         {% if not item.is_remote and item.section == 'comments' %}
           {# TODO maybe fix?? will never reach here right now  #}
-          <activity:object-type>http://activitystrea.ms/schema/1.0/comment</activity:object-type>
+          <activity:object-type>
+            http://activitystrea.ms/schema/1.0/comment
+          </activity:object-type>
           {% if item.thread %}
             <thr:in-reply-to ref="{{ item.thread }}"></thr:in-reply-to>
           {% end %}
@@ -88,16 +128,24 @@
             <link rel="mentioned" href="{{ item.thread_user }}"/>
           {% end %}
         {% elif item.is_remote and thread_url %}
-          <activity:object-type>http://activitystrea.ms/schema/1.0/comment</activity:object-type>
+          <activity:object-type>
+            http://activitystrea.ms/schema/1.0/comment
+          </activity:object-type>
         {% else %}
-          <activity:object-type>http://activitystrea.ms/schema/1.0/article</activity:object-type>
+          <activity:object-type>
+            http://activitystrea.ms/schema/1.0/article
+          </activity:object-type>
         {% end %}
         {% if item.is_remote and thread_url %}
           <thr:in-reply-to ref="{{ thread_url }}"></thr:in-reply-to>
         {% end %}
         {% if not item.is_remote and item.comments_count %}
-          <link rel="replies" type="application/atom+xml" href="{{ nav_url(host=True, username=user.username, section='feed', comments=content_url(item)) }}"
-                thr:count="{{ item.comments_count }}" thr:updated="{{ item.comments_updated.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}" />
+          <link rel="replies" type="application/atom+xml"
+            href="{{ nav_url(host=True, username=user.username,
+            section='feed', comments=content_url(item)) }}"
+            thr:count="{{ item.comments_count }}"
+            thr:updated="{{ item.comments_updated.strftime(
+                '%Y-%m-%dT%H:%M:%S+00:00') }}" />
         {% end %}
       </entry>
       {% end %}
@@ -106,8 +154,20 @@
     <title type="html">{{ title }}</title>
     <id>tag:{{ handler.request.host }},{{ tag_date }}:{{ urllib.quote(id.encode("utf-8")) }}</id>
     <content type="html">{{ atom_content }}</content>
-    <published>{% if date_created %}{{ date_created.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}{% else %}{{ utcnow.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}{% end %}</published>
-    <updated>{% if date_updated %}{{ date_updated.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}{% else %}{{ utcnow.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}{% end %}</updated>
+    <published>
+      {% if date_created %}
+        {{ date_created.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}
+      {% else %}
+        {{ utcnow.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}
+      {% end %}
+    </published>
+    <updated>
+      {% if date_updated %}
+        {{ date_updated.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}
+      {% else %}
+        {{ utcnow.strftime('%Y-%m-%dT%H:%M:%S+00:00') }}
+      {% end %}
+    </updated>
     <activity:verb>{{ verb }}</activity:verb>
     {% if activity_object %}
       <activity:object>{% raw activity_object %}</activity:object>

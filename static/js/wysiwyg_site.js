@@ -22,8 +22,10 @@ hw.commentSubmit = function() {
   var comment    = hw.$c('hw-comment-input');
   var localUser  = comment.getAttribute('data-local-username');
   var localName  = comment.getAttribute('data-local-name');
-  var thread     = comment.hasAttribute('data-thread')      ? comment.getAttribute('data-thread')      : '';
-  var threadUser = comment.hasAttribute('data-thread-user') ? comment.getAttribute('data-thread-user') : '';
+  var thread     = comment.hasAttribute('data-thread')      ?
+      comment.getAttribute('data-thread')      : '';
+  var threadUser = comment.hasAttribute('data-thread-user') ?
+      comment.getAttribute('data-thread-user') : '';
 
   var callback = function(xhr) {
     comment.innerHTML = '';
@@ -61,9 +63,11 @@ hw.reply = function(event, el) {
   var wysiwyg = wysiwygResult['wysiwyg'];
 
   if (document.body.parentNode.scrollTop) {
-    document.body.parentNode.scrollTop = document.body.parentNode.scrollTop + wysiwyg.getBoundingClientRect().top - 100;
+    document.body.parentNode.scrollTop = document.body.parentNode.scrollTop +
+        wysiwyg.getBoundingClientRect().top - 100;
   } else {
-    document.body.scrollTop = document.body.scrollTop + wysiwyg.getBoundingClientRect().top - 100;
+    document.body.scrollTop = document.body.scrollTop +
+        wysiwyg.getBoundingClientRect().top - 100;
   }
 
   for (var x = 0; x < hw.externalSources.length; ++x) {
@@ -153,14 +157,18 @@ hw.getCurrentWysiwyg = function() {
       // do nothing
     }
   } catch(ex) {
-    // XXX firefox throws error if activeElement is currently the upload button, post-uploading
+    // XXX firefox throws error if activeElement is currently the upload button,
+    // post-uploading
     dontAccessActiveElement = true;
   }
-  if (!dontAccessActiveElement && document.activeElement && document.activeElement.nodeName == 'DIV'
-      && document.activeElement.hasAttribute('contenteditable') && !hw.hasClass(document.activeElement, 'hw-paste-area')) {
+  if (!dontAccessActiveElement && document.activeElement &&
+      document.activeElement.nodeName == 'DIV'
+      && document.activeElement.hasAttribute('contenteditable') &&
+      !hw.hasClass(document.activeElement, 'hw-paste-area')) {
     wysiwyg = document.activeElement;
   } else {
-    wysiwyg = hw.lastActiveWysiwyg || (hw.hasClass('hw-container', 'hw-editing') && hw.$c('hw-wysiwyg')) || hw.$c('hw-comment-input');
+    wysiwyg = hw.lastActiveWysiwyg || (hw.hasClass('hw-container', 'hw-editing')
+    && hw.$c('hw-wysiwyg')) || hw.$c('hw-comment-input');
   }
   hw.lastActiveWysiwyg = wysiwyg;
   if (!wysiwyg) {
@@ -168,7 +176,8 @@ hw.getCurrentWysiwyg = function() {
   }
 
   var isComment = hw.hasClass(wysiwyg, 'hw-comment-input');
-  return { 'isComment': isComment, 'wysiwyg': isComment ? hw.$c('hw-comment-input') : hw.$c('hw-wysiwyg') };
+  return { 'isComment': isComment, 'wysiwyg': isComment ?
+      hw.$c('hw-comment-input') : hw.$c('hw-wysiwyg') };
 };
 
 hw.shiftKeyPressed = false;
@@ -205,7 +214,8 @@ hw.wysiwygKeyDown = function(event) {
         hw.wysiwygKeys(event, 95);
       }
       break;
-    case 83:   // ctrl-s, save  TODO report bug to ff, messed up with dvorak keyboard
+    case 83:
+      // ctrl-s, save  TODO report bug to ff, messed up with dvorak keyboard
       if (hw.testAccelKey(event)) {
         hw.preventDefault(event);
         hw.save();
@@ -230,7 +240,8 @@ hw.wysiwygKeys = function(event, opt_key) {
   if (document.activeElement == wysiwyg) {
     switch (key) {
       case 8:   // backspace
-        hw.wysiwygLastKeys = hw.wysiwygLastKeys.substring(0, hw.wysiwygLastKeys.length - 1);
+        hw.wysiwygLastKeys = hw.wysiwygLastKeys.substring(0,
+            hw.wysiwygLastKeys.length - 1);
         break;
       case 9:   // tab
       case 33:  // !
@@ -276,7 +287,8 @@ hw.wysiwygKeys = function(event, opt_key) {
 
         if (key == 9) {
           hw.preventDefault(event);
-        } else if (hw.wysiwygLastKeys[hw.wysiwygLastKeys.length - 1] == String.fromCharCode(key)) {
+        } else if (hw.wysiwygLastKeys[hw.wysiwygLastKeys.length - 1] ==
+            String.fromCharCode(key)) {
           hw.wysiwygLastKeys = "";
         } else {
           hw.preventDefault(event);
@@ -323,7 +335,8 @@ hw.wysiwygKeys = function(event, opt_key) {
         if (isComment) {
           break;
         }
-        if (hw.wysiwygLastKeys[hw.wysiwygLastKeys.length - 1] == String.fromCharCode(key)) {
+        if (hw.wysiwygLastKeys[hw.wysiwygLastKeys.length - 1] ==
+            String.fromCharCode(key)) {
           hw.wysiwygLastKeys = "";
         } else {
           hw.wysiwygLastKeys += String.fromCharCode(key);
@@ -367,7 +380,8 @@ hw.wysiwygKeys = function(event, opt_key) {
 
         // cache all other letters, up to 100 in the history
         hw.wysiwygLastKeys += String.fromCharCode(key);
-        hw.wysiwygLastKeys = hw.wysiwygLastKeys.slice(-100);  // don't keep everything in memory
+        hw.wysiwygLastKeys = hw.wysiwygLastKeys.slice(-100);
+        // don't keep everything in memory
         break;
     }
   }
@@ -438,13 +452,15 @@ hw.getSelectionStartNode = function(allowTextNodes) {
   }
   if (!node && document.selection) { // IE
     selection = document.selection;
-    var range = selection.getRangeAt ? selection.getRangeAt(0) : selection.createRange();
+    var range = selection.getRangeAt ? selection.getRangeAt(0) :
+        selection.createRange();
     node = range.commonAncestorContainer
               ? range.commonAncestorContainer
               : range.parentElement ? range.parentElement() : range.item(0);
   }
   if (node) {
-    return (node.nodeName == "#text" && !allowTextNodes ? node.parentNode : node);
+    return (node.nodeName == "#text" && !allowTextNodes ?
+        node.parentNode : node);
   }
 };
 
@@ -473,7 +489,8 @@ hw.paste = function(event) {
   var pasteArea = document.createElement('div');
   pasteArea.setAttribute('class', 'hw-paste-area');
   pasteArea.setAttribute('contenteditable', '');
-  pasteArea.style.top = (Math.abs(wysiwyg.getBoundingClientRect().top) + 45) + 'px';
+  pasteArea.style.top = (Math.abs(wysiwyg.getBoundingClientRect().top) + 45) +
+      'px';
   pasteArea.style.left = '10px';
   createForm.appendChild(pasteArea);
   pasteArea.focus();
@@ -494,20 +511,29 @@ hw.paste = function(event) {
 
     if (pastedContent) {
       if (pastedContent.search(/https?:\/\/maps.google.com/ig) == 0) {
-        pastedContent = '&lt;iframe width="425" height="350" src="' + pastedContent + '&output=embed" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;';
+        pastedContent = '&lt;iframe width="425" height="350" src="' +
+            pastedContent +
+            '&output=embed" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;';
       }
 
       if (pastedContent.search(/https?:\/\//ig) == 0) { // links
         hw.getEmbedHtml(pastedContent);
         pastedContent = " ";
-      } else if (!isComment && pastedContent.search(/&lt;(embed|object|iframe)\s/ig) == 0) { // embed code
-        pastedContent = pastedContent.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"");
+      } else if (!isComment && pastedContent.search(
+          /&lt;(embed|object|iframe)\s/ig) == 0) { // embed code
+        pastedContent = pastedContent.replace(/&amp;/g, "&").
+            replace(/&lt;/g, "<").replace(/&gt;/g, ">").
+            replace(/&quot;/g, "\"");
         pastedContent += '<br><br>';
       } else {
         // very simple html sanitizer, not meant for xss prevention
         // just to strip annoying styling when pasting
-        pastedContent = pastedContent.replace(/<(?!\/?(a|b|br|strong|em|div)(>|\s+[^>]+))[^>]*>/ig, ""); // remove all but whitelisted tags
-        pastedContent = pastedContent.replace(/\s(?!(href))[^<>=]*=('([^']*)'|"([^"]*)")/ig, ""); // remove all but whitelisted attributes
+        // remove all but whitelisted tags
+        pastedContent = pastedContent.replace(
+            /<(?!\/?(a|b|br|strong|em|div)(>|\s+[^>]+))[^>]*>/ig, "");
+        // remove all but whitelisted attributes
+        pastedContent = pastedContent.replace(
+            /\s(?!(href))[^<>=]*=('([^']*)'|"([^"]*)")/ig, "");
       }
 
       hw.insertHTML(pastedContent);
@@ -525,14 +551,16 @@ hw.getEmbedHtml = function(link, opt_img) {
   var createForm = isComment ? hw.$c('hw-comment-form') : hw.$c('hw-create');
 
   var callback = function(xhr) {
-    var isEmbed = xhr.responseText.search(/<(embed|object|iframe|img)\s/ig) != -1;
+    var isEmbed = xhr.responseText.search(
+        /<(embed|object|iframe|img)\s/ig) != -1;
     hw.insertHTML(xhr.responseText + (isEmbed ? "<br>" : ""));
     if (isEmbed) {
       var via = link.match(/:\/\/([^\.]*)\./)[1];
       if (via == 'www') {
         via = link.match(/:\/\/www.([^\.]*)\./)[1];
       }
-      hw.insertHTML('<br>(' + hw.getMsg('via') + ' <a href="' + link + '">' + via + '</a>)<br><br><br>');
+      hw.insertHTML('<br>(' + hw.getMsg('via') + ' <a href="' + link + '">' +
+          via + '</a>)<br><br><br>');
       hw.modify("move", "forward", "line");
     }
 
@@ -540,14 +568,19 @@ hw.getEmbedHtml = function(link, opt_img) {
       return;
     }
 
-    if (!createForm['hw-id'].value && xhr.getResponseHeader('X-Helloworld-Thumbnail') && !createForm['hw-thumb'].value) {
-      createForm['hw-thumb'].value = xhr.getResponseHeader('X-Helloworld-Thumbnail');
+    if (!createForm['hw-id'].value && xhr.getResponseHeader(
+        'X-Helloworld-Thumbnail') && !createForm['hw-thumb'].value) {
+      createForm['hw-thumb'].value = xhr.getResponseHeader(
+          'X-Helloworld-Thumbnail');
       hw.changeThumbPreview();
     }
     var newTitle = hw.$('hw-new-title');
-    if (!createForm['hw-id'].value && xhr.getResponseHeader('X-Helloworld-Title') && newTitle && newTitle.textContent == hw.getMsg('untitled')) {
+    if (!createForm['hw-id'].value && xhr.getResponseHeader(
+        'X-Helloworld-Title') && newTitle &&
+        newTitle.textContent == hw.getMsg('untitled')) {
       newTitle.innerHTML = xhr.getResponseHeader('X-Helloworld-Title');
-      createForm['hw-title'].value = xhr.getResponseHeader('X-Helloworld-Title');
+      createForm['hw-title'].value =
+          xhr.getResponseHeader('X-Helloworld-Title');
     }
   };
   new hw.ajax(hw.baseUri() + 'api',
@@ -641,7 +674,8 @@ hw.wysiwygDetectState = function() {
   }
 
   var images = hw.getSelectionStartNode().getElementsByTagName('IMG');
-  var isImage = images.length && images[0].parentNode == hw.getSelectionStartNode();  // only look at children, not descendants
+  var isImage = images.length && images[0].parentNode ==
+      hw.getSelectionStartNode();  // only look at children, not descendants
   if (isImage) {
     hw.showImageOptions();
   } else {
@@ -679,13 +713,19 @@ hw.showAnchorEditor = function(anchor) {
   }
   hw.$c('hw-anchor-link')['anchorTag'] = anchorTag;
   var anchorPosition = anchorTag.getBoundingClientRect();
-  var contentPosition = hw.$('hw-content') ? hw.$('hw-content').getBoundingClientRect() : document.body.getBoundingClientRect();
-  hw.$c('hw-anchor-editor').style.top = (window.pageYOffset + 15 + anchorPosition.top) + 'px';
-  hw.$c('hw-anchor-editor').style.left = (anchorPosition.left + 5 - contentPosition.left) + 'px';
+  var contentPosition = hw.$('hw-content') ?
+      hw.$('hw-content').getBoundingClientRect() :
+      document.body.getBoundingClientRect();
+  hw.$c('hw-anchor-editor').style.top =
+      (window.pageYOffset + 15 + anchorPosition.top) + 'px';
+  hw.$c('hw-anchor-editor').style.left =
+      (anchorPosition.left + 5 - contentPosition.left) + 'px';
   hw.$c('hw-anchor-link').value = anchorTag.href;
   hw.$c('hw-anchor-visit').href = anchorTag.href;
-  hw.$$('[name=hw-anchor-type]')[0].checked = anchorTag.href.indexOf('mailto:') != 0;
-  hw.$$('[name=hw-anchor-type]')[1].checked = anchorTag.href.indexOf('mailto:') == 0;
+  hw.$$('[name=hw-anchor-type]')[0].checked =
+      anchorTag.href.indexOf('mailto:') != 0;
+  hw.$$('[name=hw-anchor-type]')[1].checked =
+      anchorTag.href.indexOf('mailto:') == 0;
 };
 
 hw.hideAnchorEditor = function() {
@@ -728,14 +768,17 @@ hw.showImageOptions = function(image) {
   } else {
     imageTag = hw.getSelectionStartNode().getElementsByTagName('IMG')[0];
   }
-  var figureTag = imageTag.parentNode.nodeName == 'FIGURE' ? imageTag.parentNode
-                : (imageTag.parentNode.parentNode.nodeName == 'FIGURE' ? imageTag.parentNode.parentNode : null);
+  var figureTag = imageTag.parentNode.nodeName == 'FIGURE' ?
+      imageTag.parentNode :
+      (imageTag.parentNode.parentNode.nodeName == 'FIGURE' ?
+      imageTag.parentNode.parentNode : null);
   var caption = null;
   if (figureTag) {
     var captions = figureTag.getElementsByTagName('FIGCAPTION');
     if (!captions.length) {
       caption = document.createElement('FIGCAPTION');
-      var div = document.createElement('DIV'); // mozilla doesn't like editing in just the figcaption
+      var div = document.createElement('DIV');
+      // mozilla doesn't like editing in just the figcaption
       div.appendChild(document.createTextNode(hw.getMsg('image-info')));
       caption.appendChild(div);
       figureTag.appendChild(caption);
@@ -748,25 +791,35 @@ hw.showImageOptions = function(image) {
   hw.$c('hw-image-options')['imageTag'] = imageTag;
   hw.$c('hw-image-options')['captionTag'] = caption;
   var imagePosition = imageTag.getBoundingClientRect();
-  var contentPosition = hw.$('hw-content') ? hw.$('hw-content').getBoundingClientRect() : document.body.getBoundingClientRect();
+  var contentPosition = hw.$('hw-content') ?
+      hw.$('hw-content').getBoundingClientRect() :
+      document.body.getBoundingClientRect();
   hw.$c('hw-image-options').style.top = (window.pageYOffset
-      + (anchorEditorShown ? anchorPosition.top + anchorPosition.height + 25 : imagePosition.top + 110))
-      + 'px';
-  hw.$c('hw-image-options').style.left = (imagePosition.left + 5 - contentPosition.left) + 'px';
-  hw.$$('[name=hw-image-align]')[0].checked = imageTag.style.cssFloat == '' || imageTag.style.cssFloat == 'none';
-  hw.$$('[name=hw-image-align]')[1].checked = imageTag.style.cssFloat == 'left';
-  hw.$$('[name=hw-image-align]')[2].checked = imageTag.style.cssFloat == 'right';
+      + (anchorEditorShown ?
+      anchorPosition.top + anchorPosition.height + 25 :
+      imagePosition.top + 110)) + 'px';
+  hw.$c('hw-image-options').style.left =
+      (imagePosition.left + 5 - contentPosition.left) + 'px';
+  hw.$$('[name=hw-image-align]')[0].checked =
+      imageTag.style.cssFloat == '' || imageTag.style.cssFloat == 'none';
+  hw.$$('[name=hw-image-align]')[1].checked =
+      imageTag.style.cssFloat == 'left';
+  hw.$$('[name=hw-image-align]')[2].checked =
+      imageTag.style.cssFloat == 'right';
 };
 
 hw.hideImageOptions = function() {
   if (hw.$c('hw-image-options')) {
     if (hw.$c('hw-image-options')['captionTag']) {
       if (hw.getSelectionStartNode() == hw.$c('hw-image-options')['captionTag']
-          || hw.getSelectionStartNode() == hw.$c('hw-image-options')['captionTag'].firstChild) {
+          || hw.getSelectionStartNode() ==
+          hw.$c('hw-image-options')['captionTag'].firstChild) {
         return;
       }
-      if (hw.$c('hw-image-options')['captionTag'].textContent.replace(/\W/g, '') == hw.getMsg('image-info')) {
-        hw.$c('hw-image-options')['captionTag'].parentNode.removeChild(hw.$c('hw-image-options')['captionTag']);
+      if (hw.$c('hw-image-options')['captionTag'].
+          textContent.replace(/\W/g, '') == hw.getMsg('image-info')) {
+        hw.$c('hw-image-options')['captionTag'].parentNode.
+            removeChild(hw.$c('hw-image-options')['captionTag']);
         hw.$c('hw-image-options')['captionTag'] = null;
       }
     }
@@ -785,7 +838,8 @@ hw.changeImageAlign = function(el) {
   wysiwyg.focus();
   var imageTag = hw.$c('hw-image-options')['imageTag'];
   imageTag.style.cssFloat = el.value;
-  imageTag.style.margin = el.value == 'left' ? '10px' : (el.value == 'right' ? '10px' : '');
+  imageTag.style.margin = el.value == 'left' ? '10px' :
+      (el.value == 'right' ? '10px' : '');
 
   var highestElement = imageTag;
 
@@ -825,8 +879,10 @@ hw.getEventPos = function(event) {
     posx = event.pageX;
     posy = event.pageY;
   } else if (event.clientX || event.clientY) {
-    posx = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-    posy = event.clientY + document.body.scrollTop  + document.documentElement.scrollTop;
+    posx = event.clientX + document.body.scrollLeft +
+        document.documentElement.scrollLeft;
+    posy = event.clientY + document.body.scrollTop  +
+        document.documentElement.scrollTop;
   }
 
   return [posx, posy];
@@ -850,8 +906,10 @@ hw.dragElementStart = function(event, el) {
 hw.dragMouseMove = function(event) {
   if (hw.dragEl) {
     var pos = hw.getEventPos(event);
-    hw.dragEl.parentNode.style.left = (hw.dragOffsetX + pos[0] - hw.dragMouseX) + 'px';
-    hw.dragEl.parentNode.style.top  = (hw.dragOffsetY + pos[1] - hw.dragMouseY) + 'px';
+    hw.dragEl.parentNode.style.left =
+        (hw.dragOffsetX + pos[0] - hw.dragMouseX) + 'px';
+    hw.dragEl.parentNode.style.top  =
+        (hw.dragOffsetY + pos[1] - hw.dragMouseY) + 'px';
     if (document.selection) {
       document.selection.empty();
     } else {
@@ -891,15 +949,18 @@ hw.processFiles = function(json) {
 
 hw.commentUploadButton = function() {
   if (hw.$c('hw-comment-upload-wrapper')) {
-    hw.uploadButton(function(json) { hw.processFiles(json); }, null, false, true, hw.$c('hw-comment-upload-wrapper'));
+    hw.uploadButton(function(json) { hw.processFiles(json); }, null, false,
+        true, hw.$c('hw-comment-upload-wrapper'));
   }
 };
 
-hw.uploadButton = function(callback, section, opt_drop, opt_isComment, opt_attachToWrapper) {
+hw.uploadButton = function(callback, section, opt_drop, opt_isComment,
+    opt_attachToWrapper) {
   section = section || "";
-  var buttonHtml = '<a name="hw-button-media" class="hw-button hw-button-media" data-section="' + section + '">+</a>'
-                 + '<progress value="0" max="100" class="hw-hidden">0%</progress>'
-                 + '<span class="hw-media-result hw-invisible hw-invisible-transition"></span>';
+  var buttonHtml =
+      '<a name="hw-button-media" class="hw-button hw-button-media" data-section="' + section + '">+</a>'
+    + '<progress value="0" max="100" class="hw-hidden">0%</progress>'
+    + '<span class="hw-media-result hw-invisible hw-invisible-transition"></span>';
   if (opt_attachToWrapper) {
     opt_attachToWrapper.innerHTML = buttonHtml;
   } else {
@@ -966,9 +1027,11 @@ hw.uploadButton = function(callback, section, opt_drop, opt_isComment, opt_attac
     var fn = function() {
       var doc = iframe.contentWindow.document;
       var body = doc.body;
-      body.innerHTML = '<form id="form" method="post" action="' + hw.uploadUrl + '" enctype="multipart/form-data">'
+      body.innerHTML = '<form id="form" method="post" action="'
+          + hw.uploadUrl + '" enctype="multipart/form-data">'
           + hw.xsrf
-          + '<input id="section" type="hidden" name="section" value="' + section + '">'
+          + '<input id="section" type="hidden" name="section" value="'
+          + section + '">'
           + '<input id="file" name="file" type="file" multiple="multiple" onchange="this.form.submit()">'
           + '</form>';
 
@@ -979,7 +1042,8 @@ hw.uploadButton = function(callback, section, opt_drop, opt_isComment, opt_attac
       result.innerHTML = "";
 
       var clickFunc = function() {
-        doc.getElementById('section').value = button.getAttribute('data-section');
+        doc.getElementById('section').value =
+            button.getAttribute('data-section');
         doc.getElementById('file').click();
         //hw.hide(button);
         hw.show(result);

@@ -30,7 +30,8 @@ def increase_count(handler):
     content_url = url_factory.load_basic_parameters(handler, url=url)
 
     with handler.application.settings["db_lock"]:
-      content = handler.models.content.get(username=content_url["profile"], section=content_url["section"], name=content_url["name"])[0]
+      content = handler.models.content.get(username=content_url["profile"],
+          section=content_url["section"], name=content_url["name"])[0]
 
       if content:
         if not handler.is_owner_viewing(content.username):

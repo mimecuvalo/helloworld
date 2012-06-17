@@ -8,7 +8,9 @@ hw.customSetupFields = function() {
 
   var fields = hw.$$('.hw-field');
   for (var x = 0; x < fields.length; ++x) {
-    Event.observe(fields[x], 'focus', function() { hw.customChangeBeforeUnloadState(); }, false);
+    Event.observe(fields[x], 'focus', function() {
+      hw.customChangeBeforeUnloadState();
+    }, false);
   }
 
   hw.setupColorPicker(function(color) {
@@ -70,41 +72,66 @@ hw.customSave = function(event, el) {
     var currentOption = options[x].getAttribute('data-value');
 
     var regex = new RegExp(" \\* " + type + ":" + name + ":.*", "ig");
-    hw.customDefaultStyleSheet = hw.customDefaultStyleSheet.replace(regex, " * " + type + ":" + name + ":" + currentOption);
+    hw.customDefaultStyleSheet = hw.customDefaultStyleSheet.replace(regex,
+        " * " + type + ":" + name + ":" + currentOption);
     hw.$('hw-theme-editor').value = hw.customDefaultStyleSheet;
     hw.customCm.setValue(hw.customDefaultStyleSheet);
   }
 
   var customForm = hw.$('hw-customize');
-  var extraHead    = /\* extra_head_html: """([\S\s]*?)"""/ig.exec(hw.customCurrentStyleSheet);
-  var extraBodyEnd = /\* extra_body_end_html: """([\S\s]*?)"""/ig.exec(hw.customCurrentStyleSheet);
+  var extraHead    = /\* extra_head_html: """([\S\s]*?)"""/ig.exec(
+      hw.customCurrentStyleSheet);
+  var extraBodyEnd = /\* extra_body_end_html: """([\S\s]*?)"""/ig.exec(
+      hw.customCurrentStyleSheet);
   customForm['extra_head_html'].value     = extraHead ? extraHead[1] : "";
   customForm['extra_body_end_html'].value = extraBodyEnd ? extraBodyEnd[1] : "";
 
   new hw.ajax(hw.baseUri() + 'customize',
     { method: 'post',
-      postBody: 'title='               + encodeURIComponent(customForm['title'].value)
-             + '&description='         + encodeURIComponent(customForm['description'].value)
-             + '&email='               + encodeURIComponent(customForm['email'].value)
-             + '&name='                + encodeURIComponent(customForm['name'].value)
-             + '&favicon='             + encodeURIComponent(customForm['favicon'].value)
-             + '&currency='            + encodeURIComponent(customForm['currency'].value)
-             + '&theme='               + encodeURIComponent(customForm['theme'].value)
-             + '&theme_title='         + encodeURIComponent(customForm['theme_title'].value)
-             + '&theme_link='          + encodeURIComponent(customForm['theme_link'].value)
-             + '&theme_author='        + encodeURIComponent(customForm['theme_author'].value)
-             + '&theme_author_link='   + encodeURIComponent(customForm['theme_author_link'].value)
-             + '&extra_head_html='     + encodeURIComponent(customForm['extra_head_html'].value)
-             + '&extra_body_end_html=' + encodeURIComponent(customForm['extra_body_end_html'].value)
-             + '&logo='                + encodeURIComponent(customForm['logo'].value)
-             + '&google_analytics='    + encodeURIComponent(customForm['google_analytics'].value)
-             + '&adult_content='       + encodeURIComponent(customForm['adult_content'].checked ? 1 : 0)
-             + '&tipjar='              + encodeURIComponent(customForm['tipjar'].value)
-             + '&sidebar_ad='          + encodeURIComponent(customForm['sidebar_ad'].value)
-             + '&newsletter_endpoint=' + encodeURIComponent(customForm['newsletter_endpoint'].value)
-             + '&license='             + encodeURIComponent(customForm['license'].value)
-             + '&default_stylesheet='  + encodeURIComponent(hw.customDefaultStyleSheet)
-             + '&stylesheet='          + encodeURIComponent(hw.customCurrentStyleSheet),
+      postBody: 'title='               +
+                encodeURIComponent(customForm['title'].value)
+             + '&description='         +
+                encodeURIComponent(customForm['description'].value)
+             + '&email='               +
+                encodeURIComponent(customForm['email'].value)
+             + '&name='                +
+                encodeURIComponent(customForm['name'].value)
+             + '&favicon='             +
+                encodeURIComponent(customForm['favicon'].value)
+             + '&currency='            +
+                encodeURIComponent(customForm['currency'].value)
+             + '&theme='               +
+                encodeURIComponent(customForm['theme'].value)
+             + '&theme_title='         +
+                encodeURIComponent(customForm['theme_title'].value)
+             + '&theme_link='          +
+                encodeURIComponent(customForm['theme_link'].value)
+             + '&theme_author='        +
+                encodeURIComponent(customForm['theme_author'].value)
+             + '&theme_author_link='   +
+                encodeURIComponent(customForm['theme_author_link'].value)
+             + '&extra_head_html='     +
+                encodeURIComponent(customForm['extra_head_html'].value)
+             + '&extra_body_end_html=' +
+                encodeURIComponent(customForm['extra_body_end_html'].value)
+             + '&logo='                +
+                encodeURIComponent(customForm['logo'].value)
+             + '&google_analytics='    +
+                encodeURIComponent(customForm['google_analytics'].value)
+             + '&adult_content='       +
+                encodeURIComponent(customForm['adult_content'].checked ? 1 : 0)
+             + '&tipjar='              +
+                encodeURIComponent(customForm['tipjar'].value)
+             + '&sidebar_ad='          +
+                encodeURIComponent(customForm['sidebar_ad'].value)
+             + '&newsletter_endpoint=' +
+                encodeURIComponent(customForm['newsletter_endpoint'].value)
+             + '&license='             +
+                encodeURIComponent(customForm['license'].value)
+             + '&default_stylesheet='  +
+                encodeURIComponent(hw.customDefaultStyleSheet)
+             + '&stylesheet='          +
+                encodeURIComponent(hw.customCurrentStyleSheet),
       headers: { 'X-Xsrftoken' : customForm['_xsrf'].value },
       onSuccess: callback,
       onError: badTrip });
@@ -166,13 +193,15 @@ hw.customizeUpdatePreview = function(event) {
       doc.getElementById('hw-main-title').innerHTML = hw.$('hw-title').value;
     }
     if (doc.getElementById('hw-main-description')) {
-      doc.getElementById('hw-main-description').innerHTML = hw.$('hw-description').value;
+      doc.getElementById('hw-main-description').innerHTML =
+          hw.$('hw-description').value;
     }
 
     var logo = doc.getElementById('hw-logo-image');
     if (logo) {
       logo.src = hw.$('hw-customize-logo').value || hw.pixelSrc;
-      hw.display(doc.getElementById('hw-logo'), hw.$('hw-customize-logo').value);
+      hw.display(doc.getElementById('hw-logo'),
+          hw.$('hw-customize-logo').value);
     }
 
     var mainHead = document.getElementsByTagName('head')[0];
@@ -203,12 +232,17 @@ hw.customizeUpdatePreview = function(event) {
 
       if (type == 'if') {
         var ifRegex    = new RegExp("{if:" + name + "}([^{]*){/if}", "ig");
-        var ifNotRegex = new RegExp("{ifnot:" + name + "}([^{]*){/ifnot}", "ig");
-        hw.customCurrentStyleSheet = hw.customCurrentStyleSheet.replace(currentOption == "1" ? ifRegex    : ifNotRegex, "$1");
-        hw.customCurrentStyleSheet = hw.customCurrentStyleSheet.replace(currentOption == "1" ? ifNotRegex : ifRegex,    "");
+        var ifNotRegex =
+            new RegExp("{ifnot:" + name + "}([^{]*){/ifnot}", "ig");
+        hw.customCurrentStyleSheet =
+            hw.customCurrentStyleSheet.replace(currentOption == "1" ? ifRegex 
+                : ifNotRegex, "$1");
+        hw.customCurrentStyleSheet = hw.customCurrentStyleSheet.replace(
+            currentOption == "1" ? ifNotRegex : ifRegex,    "");
       } else {
         var regex = new RegExp("{" + type + ":" + name + "}", "ig");
-        hw.customCurrentStyleSheet = hw.customCurrentStyleSheet.replace(regex, currentOption);
+        hw.customCurrentStyleSheet = hw.customCurrentStyleSheet.replace(
+            regex, currentOption);
       }
     }
 
@@ -268,17 +302,18 @@ hw.customizeSelectTheme = function(el) {
   hw.hide('hw-customize-themes');
   var customForm = hw.$('hw-customize');
 
-  customForm['theme'].value               = el.getAttribute('data-path');
-  customForm['theme_title'].value         = el.getAttribute('data-title');
-  customForm['theme_link'].value          = el.getAttribute('data-link');
-  customForm['theme_author'].value        = el.getAttribute('data-author');
-  customForm['theme_author_link'].value   = el.getAttribute('data-author-link');
-  customForm['extra_head_html'].value     = el.getAttribute('data-extra-head-html');
-  customForm['extra_body_end_html'].value = el.getAttribute('data-extra-body-end-html');
+  customForm['theme'].value             = el.getAttribute('data-path');
+  customForm['theme_title'].value       = el.getAttribute('data-title');
+  customForm['theme_link'].value        = el.getAttribute('data-link');
+  customForm['theme_author'].value      = el.getAttribute('data-author');
+  customForm['theme_author_link'].value = el.getAttribute('data-author-link');
+  customForm['extra_head_html'].value = el.getAttribute('data-extra-head-html');
+  customForm['extra_body_end_html'].value =
+      el.getAttribute('data-extra-body-end-html');
 
   hw.$('hw-theme-thumb').src             = el.getAttribute('data-thumb');
   hw.$('hw-theme-title').innerHTML       = el.getAttribute('data-title');
-  //hw.$('hw-theme-link').innerHTML        = el.getAttribute('data-link');
+  //hw.$('hw-theme-link').innerHTML      = el.getAttribute('data-link');
   hw.display(hw.$('hw-theme-author'), el.getAttribute('data-author'));
   hw.$('hw-theme-author-name').innerHTML = el.getAttribute('data-author');
   hw.$('hw-theme-author-link').href      = el.getAttribute('data-author-link');
@@ -363,35 +398,49 @@ hw.customAppearance = function(init, opt_useCustom) {
       }
     }
 
-    html += '<label for="hw-option-' + counter + '" data-type="' + data[0] + '" data-name="' + data[1] + '" data-default="' + data[2] + '" data-value="' + data[2] + '">'
+    html += '<label for="hw-option-' + counter + '" data-type="' + data[0]
+         +'" data-name="' + data[1] + '" data-default="' + data[2]
+         + '" data-value="' + data[2] + '">'
          +  '<span class="hw-label">' + data[1] + '</span>';
 
     if (data[0] == 'color') {
-      html += '<div id="hw-option-' + counter + '" class="hw-field hw-color-picker" style="background-color:' + data[2] + '" onclick="hw.colorPicker(event, this)"></div>';
+      html += '<div id="hw-option-' + counter +
+           '" class="hw-field hw-color-picker" style="background-color:' +
+           data[2] + '" onclick="hw.colorPicker(event, this)"></div>';
     } else if (data[0] == 'font') {
-      html += '<select id="hw-option-' + counter + '" class="hw-field" onchange="hw.changeAppearance(this)">';
-      var fonts = ['Arial', 'Arial Black', 'Baskerville', 'Century Gothic', 'Cooperlate Light',
-                   'Courier New', 'Futura', 'Garamond', 'Geneva', 'Georgia', 'Helvetica', 'Helvetica Neue',
-                   'Impact', 'Lucida Sans', 'Trebuchet MS', 'Verdana'];
+      html += '<select id="hw-option-' + counter +
+          '" class="hw-field" onchange="hw.changeAppearance(this)">';
+      var fonts = ['Arial', 'Arial Black', 'Baskerville', 'Century Gothic',
+          'Cooperlate Light', 'Courier New', 'Futura', 'Garamond', 'Geneva',
+          'Georgia', 'Helvetica', 'Helvetica Neue', 'Impact', 'Lucida Sans',
+          'Trebuchet MS', 'Verdana'];
       var found = false;
       for (var x = 0; x < fonts.length; ++x) {
-        html += '<option style="font-family:' + fonts[x] + '" ' + (data[2].indexOf(fonts[x]) == 0 ? 'selected' : '') + '>' + fonts[x] + '</option>';
+        html += '<option style="font-family:' + fonts[x] + '" ' +
+            (data[2].indexOf(fonts[x]) == 0 ? 'selected' : '') + '>' +
+            fonts[x] + '</option>';
         if (data[2].indexOf(fonts[x])) {
           found = true;
         }
       }
       if (!found) {
-        html += '<option style="font-family:' + data[2] + '" selected>' + data[2] + '</option>';
+        html += '<option style="font-family:' + data[2] + '" selected>' +
+            data[2] + '</option>';
       }
       html += '</select>';
     } else if (data[0] == 'image') {
-      html += '<a class="hw-button hw-customize-clear" href="#clear" class="hw-button" onclick="hw.customizeClear(event, \'hw-option-' + counter + '-wrapper\')">' + hw.getMsg('clear') + '</a>';
+      html += '<a class="hw-button hw-customize-clear" href="#clear" ' +
+          'class="hw-button" onclick="hw.customizeClear(event, \'hw-option-' +
+          counter + '-wrapper\')">' + hw.getMsg('clear') + '</a>';
       html += '<span id="hw-option-' + counter + '-wrapper"></span>';
       uploadButtons.push('hw-option-' + counter + '-wrapper');
     } else if (data[0] == 'if') {
-      html += '<input id="hw-option-' + counter + '" class="hw-field" onchange="hw.changeAppearance(this)" type="checkbox" ' + (data[2] == '1' ? checked="checked" : '') + '>';
+      html += '<input id="hw-option-' + counter + '" class="hw-field" ' +
+          'onchange="hw.changeAppearance(this)" type="checkbox" ' +
+          (data[2] == '1' ? checked="checked" : '') + '>';
     } else if (data[0] == 'text') {
-      html += '<input id="hw-option-' + counter + '" class="hw-field" onkeypress="hw.changeAppearance(this)" value="' + data[2] + '">';
+      html += '<input id="hw-option-' + counter + '" class="hw-field" ' +
+          'onkeypress="hw.changeAppearance(this)" value="' + data[2] + '">';
     }
 
     html += '</label>';
@@ -407,7 +456,8 @@ hw.customAppearance = function(init, opt_useCustom) {
   hw.$('hw-customize-appearance').innerHTML = html;
 
   for (var x = 0; x < uploadButtons.length; ++x) {
-    hw.uploadButton(hw.uploadButtonHelper(uploadButtons[x]), null, false, false, hw.$(uploadButtons[x]));
+    hw.uploadButton(hw.uploadButtonHelper(uploadButtons[x]), null, false,
+        false, hw.$(uploadButtons[x]));
   }
 
   if (!init) {
@@ -500,13 +550,15 @@ hw.setupColorPicker = function(callback) {
       var mousePos = { x: eventPos[0] - canvas.getBoundingClientRect().left,
                        y: eventPos[1] - canvas.getBoundingClientRect().top };
 
-      if (mouseDown && mousePos.x >= 0 && mousePos.y >= 0 && mousePos.x < size && mousePos.y < size) {
+      if (mouseDown && mousePos.x >= 0 && mousePos.y >= 0 && mousePos.x < size
+          && mousePos.y < size) {
         var x = mousePos.x;
         var y = mousePos.y;
         var red = data[((size * y) + x) * 4];
         var green = data[((size * y) + x) * 4 + 1];
         var blue = data[((size * y) + x) * 4 + 2];
-        return "#" + ("0" + red.toString(16)).slice(-2) + ("0" + green.toString(16)).slice(-2) + ("0" + blue.toString(16)).slice(-2);
+        return "#" + ("0" + red.toString(16)).slice(-2) + ("0" +
+            green.toString(16)).slice(-2) + ("0" + blue.toString(16)).slice(-2);
       }
 
       return null;
@@ -535,7 +587,8 @@ hw.customSetupCodeMirror = function() {
     hw.customDefaultStyleSheet = hw.$('hw-theme-editor').value;
   };
 
-  hw.customCm = CodeMirror.fromTextArea(hw.$('hw-theme-editor'), { mode: "css", lineNumbers: true, matchBrackets: true, onChange: onChange });
+  hw.customCm = CodeMirror.fromTextArea(hw.$('hw-theme-editor'), { mode: "css",
+      lineNumbers: true, matchBrackets: true, onChange: onChange });
   hw.customCm.getWrapperElement().setAttribute('name', 'hw-theme-editor');
   hw.addClass(hw.customCm.getWrapperElement(), 'hw-theme-editor');
   setTimeout(function() {

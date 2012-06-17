@@ -13,9 +13,12 @@ class FoafHandler(BaseHandler):
 
     self.display["user"] = user
 
-    self.display['mbox_sha1sum'] = hashlib.sha1('mailto:' + user.email).hexdigest()
-    self.display['followers'] = self.models.users_remote.get(local_username=user.username, follower=1)[:]
-    self.display['following'] = self.models.users_remote.get(local_username=user.username, following=1)[:]
+    self.display['mbox_sha1sum'] = hashlib.sha1(
+        'mailto:' + user.email).hexdigest()
+    self.display['followers'] = self.models.users_remote.get(
+        local_username=user.username, follower=1)[:]
+    self.display['following'] = self.models.users_remote.get(
+        local_username=user.username, following=1)[:]
 
     self.set_header("Content-Type", "application/rdf+xml")
     self.fill_template("foaf.html")

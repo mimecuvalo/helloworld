@@ -11,17 +11,28 @@
 
   <ul class="hw-album">
     {% comment NOTE whitespace is important here %}
-    {% for index, item in enumerate(collection) %}<li id="hw-collection_{{ item.name }}" class="hw-content-item"
+    {% for index, item in enumerate(collection) %}<li id="hw-collection_{{ item.name }}"
+        class="hw-content-item"
         data-is-album="{% if item.album == 'main' %}true{% else %}false{% end %}"
-        {% if content.style or content.code or item.style or item.code or section_code or album_code %}
+        {% if (content.style or content.code or item.style or item.code or
+             section_code or album_code) %}
           data-disallow-magic="1"
         {% end %}
         {% if is_owner_viewing %}
-          draggable="true" ondragstart="hw.dragStart(event, this)" ondragover="hw.dragOver(event, this)" ondragenter="hw.dragOver(event, this)" ondragleave="hw.dragLeave(event, this)" ondrop="hw.dragDrop(event, this)"
+          draggable="true"
+          ondragstart="hw.dragStart(event, this)"
+          ondragover="hw.dragOver(event, this)"
+          ondragenter="hw.dragOver(event, this)"
+          ondragleave="hw.dragLeave(event, this)"
+          ondrop="hw.dragDrop(event, this)"
         {% end %}
         >
       {% if is_owner_viewing %}
-      <span class="hw-button hw-button-delete hw-content-delete" data-contenturl="{{ content_url(item) }}" onclick="hw.deleteContentViaCollection(event, this)">x</span>
+      <span class="hw-button hw-button-delete hw-content-delete"
+            data-contenturl="{{ content_url(item) }}"
+            onclick="hw.deleteContentViaCollection(event, this)">
+        x
+      </span>
       {% end %}
       {% set title = "" %}
       {% if content_owner.title %}
@@ -31,8 +42,24 @@
         {% set title += ' - ' %}
       {% end %}
       {% set title += item.title %}
-      <a href="{{ content_url(item) }}" title="{{ title }}" data-contentname="{{ item.name }}" onclick="hw.albumClick(event, this)"><img src="{{ static_url('img/pixel.gif') }}" onload="hw.thumbnailDelayLoad.transition(this)" class="hw-invisible hw-invisible-slow-transition" data-thumb="{{ item.thumb }}"/></a>
-      <a class="hw-content-title {% if is_owner_viewing and item.hidden %}hw-content-hidden{% end %}" href="{{ content_url(item) }}" title="{{ title }}" data-contentname="{{ item.name }}" onclick="hw.albumClick(event, this)">{{ item.title }}</a>
+      <a href="{{ content_url(item) }}" title="{{ title }}"
+         data-contentname="{{ item.name }}"
+         onclick="hw.albumClick(event, this)">
+        <img src="{{ static_url('img/pixel.gif') }}"
+             onload="hw.thumbnailDelayLoad.transition(this)"
+             class="hw-invisible hw-invisible-slow-transition"
+             data-thumb="{{ item.thumb }}"/>
+      </a>
+      <a class="hw-content-title
+         {% if is_owner_viewing and item.hidden %}
+           hw-content-hidden
+         {% end %}"
+         href="{{ content_url(item) }}"
+         title="{{ title }}"
+         data-contentname="{{ item.name }}"
+         onclick="hw.albumClick(event, this)">
+        {{ item.title }}
+      </a>
       {% if item.album != 'main' and template == 'store' %}
         {% module StoreButton(item, content_owner) %}
       {% end %}

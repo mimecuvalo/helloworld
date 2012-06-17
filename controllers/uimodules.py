@@ -14,10 +14,15 @@ class Create(tornado.web.UIModule):
     self.handler.display["individual_content"] = individual_content
     self.handler.display["content"] = content
     self.handler.display["edit"] = self.handler.get_argument('edit', False)
-    self.handler.display["default_username"] = self.handler.get_author_username()
-    self.handler.display["remote_users"] = self.handler.models.users_remote.get(local_username=self.handler.display["default_username"])[:]
-    self.handler.display["sections"] = content_logic.get_sections_with_albums(self.handler, profile=self.handler.display["default_username"])
-    self.handler.display["section_template"] = self.handler.get_argument('section_template', None)
+    self.handler.display["default_username"] = \
+        self.handler.get_author_username()
+    self.handler.display["remote_users"] = \
+        self.handler.models.users_remote.get(
+        local_username=self.handler.display["default_username"])[:]
+    self.handler.display["sections"] = content_logic.get_sections_with_albums(
+        self.handler, profile=self.handler.display["default_username"])
+    self.handler.display["section_template"] = self.handler.get_argument(
+        'section_template', None)
     self.handler.display["templates"] = self.handler.constants['templates']
     self.handler.display["section_cookie"] = self.handler.get_cookie("section")
     self.handler.display["album_cookie"] = self.handler.get_cookie("album")
@@ -46,7 +51,8 @@ class SiteMap(tornado.web.UIModule):
       section = self.handler.breadcrumbs["name"]
       album = None
 
-    self.handler.display["sitemap"] = content_logic.get_sections_with_albums(self.handler, profile=profile, section=section, album=album)
+    self.handler.display["sitemap"] = content_logic.get_sections_with_albums(
+        self.handler, profile=profile, section=section, album=album)
     self.handler.display["content_owner"] = content_owner
     self.handler.display["content"] = content
     self.handler.display["query"] = query
@@ -60,22 +66,28 @@ class Content(tornado.web.UIModule):
 
     content.comments_list = []
     if content.comments_count:
-      content.comments_list = content_remote.get_comments(self.handler, content)
+      content.comments_list = content_remote.get_comments(
+          self.handler, content)
       is_forum = self.handler.display["section_template"] == 'forum'
-      content.comments_list.sort(key=lambda x: x.date_created, reverse=(not is_forum))
+      content.comments_list.sort(key=lambda x: x.date_created, reverse=(
+          not is_forum))
 
     try:
-      if not self.handler.authenticate(content=content, auto_login=(not simple)):
+      if not self.handler.authenticate(content=content,
+          auto_login=(not simple)):
         if simple:
           content.restricted = True
-          content.view = '"You need to <a href="' + self.handler.nav_url(host=True, section="login") + '">login</a> to view this content.'
+          content.view = ('"You need to <a href="' +
+              self.handler.nav_url(host=True, section="login") +
+              '">login</a> to view this content.')
           return content
         else:
           raise tornado.web.HTTPError(401)
     except tornado.web.HTTPError as ex:
       if simple:
         content.restricted = True
-        content.view = '<span style="color:red">Sorry, you don\'t have access to view this content.</span>'
+        content.view = \
+            '<span style="color:red">Sorry, you don\'t have access to view this content.</span>'
         return content
       else:
         # re-raise
@@ -92,9 +104,10 @@ class RemoteContent(tornado.web.UIModule):
     content.is_remote = True
 
     if content.comments_count:
-      content.comments_list = self.handler.models.content_remote.get(to_username=content.to_username,
-                                                                     thread=content.post_id,
-                                                                     type='remote-comment')[:]
+      content.comments_list = self.handler.models.content_remote.get(
+          to_username=content.to_username,
+          thread=content.post_id,
+          type='remote-comment')[:]
       for comment in content.comments_list:
         comment.is_remote = 1
       content.comments_list.sort(key=lambda x: x.date_created, reverse=True)
@@ -106,7 +119,8 @@ class RemoteContent(tornado.web.UIModule):
 class ContentView(tornado.web.UIModule):
   def render(self, content, list_mode=False):
     self.handler.display["individual_content"] = type(content) is not list
-    self.handler.display["referrer"] = content_remote.sanitize(self.handler.get_argument('referrer', ""))
+    self.handler.display["referrer"] = content_remote.sanitize(
+        self.handler.get_argument('referrer', ""))
 
     self.handler.display['favorites'] = []
     self.handler.display['list_mode'] = list_mode
@@ -117,17 +131,20 @@ class ContentView(tornado.web.UIModule):
         if item.is_remote:
           continue
         item.view = re.sub(r'(<[^<]*class="hw-read-more".*)', \
-                              r'<a class="hw-read-more" href="' + self.handler.content_url(item) + r'">' \
-                                + self.locale.translate('read more...') \
-                            + r'</a>', \
-                              item.view)
+                              r'<a class="hw-read-more" href="' \
+                              + self.handler.content_url(item) + r'">' \
+                              + self.locale.translate('read more...') \
+                          + r'</a>', \
+                          item.view)
     else:
       self.handler.display["content"] = content
 
       if content.favorites:
-        self.handler.display['favorites'] = self.handler.models.content_remote.get(to_username=content.username,
-                                                                                   local_content_name=content.name,
-                                                                                   type='favorite')[:]
+        self.handler.display['favorites'] = \
+            self.handler.models.content_remote.get(
+              to_username=content.username,
+              local_content_name=content.name,
+              type='favorite')[:]
 
     return self.render_string("content.html", **self.handler.display)
 
@@ -144,7 +161,8 @@ class SimpleTemplate(tornado.web.UIModule):
     if collection and self.template_type == 'slideshow':
       collection.reverse()
 
-    self.handler.display["collection"] = [ self.handler.ui["modules"].Content(content, template_type=self.template_type) for content in collection ]
+    self.handler.display["collection"] = [ self.handler.ui["modules"].Content(
+        content, template_type=self.template_type) for content in collection ]
 
     if not collection:
       del common_options['redirect']
@@ -157,8 +175,10 @@ class SimpleTemplate(tornado.web.UIModule):
                           'name' : self.handler.breadcrumbs["name"], }
       section_options = dict(common_options.items() + section_options.items())
       album_options = dict(common_options.items() + album_options.items())
-      main_section = self.handler.models.content.get(**section_options).order_by('date_created', 'DESC')[:]
-      main_album = self.handler.models.content.get(**album_options).order_by('date_created', 'DESC')[:]
+      main_section = self.handler.models.content.get(
+          **section_options).order_by('date_created', 'DESC')[:]
+      main_album = self.handler.models.content.get(
+          **album_options).order_by('date_created', 'DESC')[:]
       if not main_album and not main_section:
         raise tornado.web.HTTPError(404)
 
@@ -179,7 +199,8 @@ class Forum(SimpleTemplate):
 class Archive(SimpleTemplate):
   template_type = "archive"
 
-# this template doesn't exist anymore, keep around class for backwards compatibility
+# this template doesn't exist anymore, keep around class for
+# backwards compatibility
 class Links(SimpleTemplate):
   template_type = "album"
 
@@ -194,7 +215,8 @@ class Feed(tornado.web.UIModule):
     if self.handler.breadcrumbs["name"] == 'main':
       raise tornado.web.HTTPError(404)
 
-    is_owner_viewing = self.handler.is_owner_viewing(self.handler.breadcrumbs["profile"])
+    is_owner_viewing = self.handler.is_owner_viewing(
+        self.handler.breadcrumbs["profile"])
 
     if self.handler.breadcrumbs["section"] != 'main':
       content_options = { 'username': self.handler.breadcrumbs["profile"],
@@ -220,34 +242,45 @@ class Feed(tornado.web.UIModule):
     self.handler.display["is_reverse"] = 1 if is_reverse else 0
     if is_reverse:
       count = self.handler.models.content.get(**content_options).count()
-      default_offset = int(math.ceil(count / self.handler.constants['page_size']))
+      default_offset = int(math.ceil(
+          count / self.handler.constants['page_size']))
     else:
       default_offset = 1
-    offset = int(self.handler.breadcrumbs["modifier"]) if self.handler.breadcrumbs["modifier"] else default_offset
+    offset = (int(self.handler.breadcrumbs["modifier"]) if
+        self.handler.breadcrumbs["modifier"] else default_offset)
     offset -= 1
     begin  = self.handler.constants['page_size'] * offset
-    end    = self.handler.constants['page_size'] * offset + self.handler.constants['page_size']
+    end    = (self.handler.constants['page_size'] * offset +
+        self.handler.constants['page_size'])
 
     if self.template_type == 'events':
       if self.handler.get_argument('past', ''):
         content_options['date_end <'] = datetime.datetime.utcnow()
       else:
         content_options['date_end >'] = datetime.datetime.utcnow()
-      feed = self.handler.models.content.get(**content_options).order_by('date_start')[begin:end]
+      feed = self.handler.models.content.get(**content_options).order_by(
+          'date_start')[begin:end]
     else:
-      feed = self.handler.models.content.get(**content_options).order_by('date_created')[begin:end]
+      feed = self.handler.models.content.get(**content_options).order_by(
+          'date_created')[begin:end]
 
-    if not feed and self.handler.request.headers.get("X-Requested-With") == "XMLHttpRequest":
+    if (not feed and self.handler.request.headers.get("X-Requested-With") ==
+        "XMLHttpRequest"):
       raise tornado.web.HTTPError(404)
 
-    self.handler.display["feed"] = [ self.handler.ui["modules"].Content(content) \
-        for content in feed if content.section != 'main' and content.album != 'main' ]  # todo, this should move to query really
+    # todo, this should move to query really
+    self.handler.display["feed"] = [ \
+        self.handler.ui["modules"].Content(content) for \
+        content in feed if content.section != 'main' and \
+        content.album != 'main' ]
     self.handler.display["offset"] = offset + 1
     self.handler.display["is_event"] = self.template_type == "events"
 
-    if self.handler.request.headers.get("X-Requested-With") == "XMLHttpRequest":
+    if (self.handler.request.headers.get("X-Requested-With") ==
+        "XMLHttpRequest"):
       self.handler.prevent_caching()
-      self.handler.write(self.handler.ui["modules"].ContentView(self.handler.display["feed"]))
+      self.handler.write(self.handler.ui["modules"].ContentView(
+          self.handler.display["feed"]))
     else:
       if not feed:
         # TODO merge with SimpleTemplate
@@ -262,8 +295,10 @@ class Feed(tornado.web.UIModule):
           section_options['hidden'] = False
           album_options['hidden'] = False
 
-        main_section = self.handler.models.content.get(**section_options).order_by('date_created', 'DESC')[:]
-        main_album = self.handler.models.content.get(**album_options).order_by('date_created', 'DESC')[:]
+        main_section = self.handler.models.content.get(
+            **section_options).order_by('date_created', 'DESC')[:]
+        main_album = self.handler.models.content.get(
+            **album_options).order_by('date_created', 'DESC')[:]
 
         if not main_album and not main_section:
           raise tornado.web.HTTPError(404)
@@ -282,7 +317,8 @@ class JumpTemplate(tornado.web.UIModule):
     if self.handler.get_argument('mode', None) == 'archive':
       return self.ui["modules"]['Archive']()
 
-    is_owner_viewing = self.handler.is_owner_viewing(self.handler.breadcrumbs["profile"])
+    is_owner_viewing = self.handler.is_owner_viewing(
+        self.handler.breadcrumbs["profile"])
     content_options = { 'username': self.handler.breadcrumbs["profile"],
                         'section': self.handler.breadcrumbs["name"],
                         'redirect': False, }
@@ -291,7 +327,8 @@ class JumpTemplate(tornado.web.UIModule):
 
     if self.template_type == "latest":
       count = self.handler.models.content.get(**content_options).count()
-      jump = self.handler.models.content.get(**content_options)[count - 1:count]
+      jump = self.handler.models.content.get(
+          **content_options)[count - 1:count]
     else:
       jump = self.handler.models.content.get(**content_options)[0:1]
 
@@ -318,7 +355,10 @@ class Blank(tornado.web.UIModule):
 
 class Redirect(tornado.web.UIModule):
   def render(self):
-    redirect = self.handler.models.content.get(username=self.handler.breadcrumbs["profile"], section=self.handler.breadcrumbs["section"], name=self.handler.breadcrumbs["name"])[0]
+    redirect = self.handler.models.content.get(
+        username=self.handler.breadcrumbs["profile"],
+        section=self.handler.breadcrumbs["section"],
+        name=self.handler.breadcrumbs["name"])[0]
 
     if self.handler.display["edit"]:
       self.handler.display['redirect'] = redirect.view

@@ -24,10 +24,12 @@ class FeedHandler(BaseHandler):
 
     if comments_url:
       content_url = url_factory.load_basic_parameters(self, url=comments_url)
-      content = self.models.content.get(username=content_url["profile"], section=content_url["section"], name=content_url["name"])[0]
+      content = self.models.content.get(username=content_url["profile"],
+          section=content_url["section"], name=content_url["name"])[0]
 
       comments = content_remote.get_comments(self, content)
-      thread_url = 'tag:' + self.request.host + ',' + self.display["tag_date"] + ':' + self.content_url(content)
+      thread_url = ('tag:' + self.request.host + ',' +
+          self.display["tag_date"] + ':' + self.content_url(content))
       self.display["thread_url"] = thread_url
       comments.sort(key=lambda x: x.date_created, reverse=True)
       self.display["feed"] = comments
@@ -46,16 +48,20 @@ class FeedHandler(BaseHandler):
         content_options['album'] = album
 
       content_options = dict(common_options.items() + content_options.items())
-      feed = self.models.content.get(**content_options).order_by('date_created', 'DESC')
+      feed = self.models.content.get(**content_options).order_by(
+          'date_created', 'DESC')
 
       self.display["feed"] = [ self.ui["modules"].Content(content) \
-          for content in feed[:100] if content.section != 'main' and content.album != 'main' ]  # todo, this should move to query really
+          for content in feed[:100] if content.section != 'main' and \
+          content.album != 'main' ]  # todo, this should move to query really
 
     self.display["section"] = section
     self.display["album"] = album
 
-    self.display['sup_id'] = hashlib.md5(self.nav_url(host=True, username=user.username, section='feed')).hexdigest()[:10]
+    self.display['sup_id'] = hashlib.md5(self.nav_url(host=True,
+        username=user.username, section='feed')).hexdigest()[:10]
 
     self.set_header("Content-Type", "application/atom+xml")
-    self.set_header("X-SUP-ID", "http://friendfeed.com/api/public-sup.json#" + self.display['sup_id'])
+    self.set_header("X-SUP-ID", "http://friendfeed.com/api/public-sup.json#" +
+        self.display['sup_id'])
     self.fill_template("feed.html")

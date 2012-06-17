@@ -37,9 +37,10 @@ class FacebookHandler(BaseHandler,
         callback=self.async_callback(
           self._on_auth))
       return
-    self.authorize_redirect(redirect_uri=self.nav_url(host=True, section='facebook'),
-                            client_id=self.settings["facebook_api_key"],
-                            extra_params={"scope": "read_stream,publish_stream" })
+    self.authorize_redirect(
+        redirect_uri=self.nav_url(host=True, section='facebook'),
+        client_id=self.settings["facebook_api_key"],
+        extra_params={"scope": "read_stream,publish_stream" })
 
   def post(self):
     if not self.authenticate(author=True):
@@ -54,11 +55,13 @@ class FacebookHandler(BaseHandler,
     self.user = self.get_author_user()
     access_token = self.user.facebook
     view = self.get_argument('view', '')
-    status = content_remote.strip_html(self.get_argument('title', '')) \
-           + ('\n' if self.get_argument('title', '') and self.get_argument('view', '') else '') \
-           + content_remote.strip_html(view) \
-           + ('\n' if self.get_argument('title', '') or self.get_argument('view', '') else '') \
-           + self.get_argument('url')
+    status = (content_remote.strip_html(self.get_argument('title', ''))
+        + ('\n' if self.get_argument('title', '') and
+            self.get_argument('view', '') else '')
+        + content_remote.strip_html(view)
+        + ('\n' if self.get_argument('title', '') or
+            self.get_argument('view', '') else '')
+        + self.get_argument('url'))
 
     thumb = self.get_argument('thumb', '')
     picture = None
@@ -84,16 +87,21 @@ class FacebookHandler(BaseHandler,
         picture = thumb
 
     post_args = {"message": status, "picture": picture}
-    video = re.compile(r'<iframe[^>]*(youtube|vimeo)[^>]*>.*?</iframe>', re.M | re.S).search(view)
+    video = re.compile(r'<iframe[^>]*(youtube|vimeo)[^>]*>.*?</iframe>',
+        re.M | re.S).search(view)
     if video:
       video = video.group(0)
-      is_youtube = re.compile(r'<iframe[^>]*(youtube)[^>]*>', re.M).search(view)
+      is_youtube = re.compile(r'<iframe[^>]*(youtube)[^>]*>', re.M).search(
+          view)
       if is_youtube:
-        video_id = re.compile(r'<iframe[^>]*youtube.com/embed/([^\?]*)[^>]*>', re.M).search(view).group(1)
+        video_id = re.compile(r'<iframe[^>]*youtube.com/embed/([^\?]*)[^>]*>',
+            re.M).search(view).group(1)
         source = 'http://www.youtube.com/e/' + video_id + '?autoplay=1'
       else:
-        video_id = re.compile(r'<iframe[^>]*vimeo.com/video/([^\?"]*)[^>]*>', re.M).search(view).group(1)
-        source = 'https://secure.vimeo.com/moogaloop.swf?clip_id=' + video_id + '&autoplay=1'
+        video_id = re.compile(r'<iframe[^>]*vimeo.com/video/([^\?"]*)[^>]*>',
+            re.M).search(view).group(1)
+        source = ('https://secure.vimeo.com/moogaloop.swf?clip_id=' +
+            video_id + '&autoplay=1')
       post_args['source'] = source
 
     self.facebook_request(
@@ -126,11 +134,13 @@ class FacebookHandler(BaseHandler,
   def timeline_result(self, response):
     posts = response['data']
     for post in posts:
-      exists = self.models.content_remote.get(to_username=self.user.username, type='facebook', post_id=post['id'])[0]
+      exists = self.models.content_remote.get(to_username=self.user.username,
+          type='facebook', post_id=post['id'])[0]
 
       date_updated = None
       if post.has_key('updated_time'):
-        date_updated = datetime.datetime.strptime(post['updated_time'][:-5], '%Y-%m-%dT%H:%M:%S')
+        date_updated = datetime.datetime.strptime(post['updated_time'][:-5],
+            '%Y-%m-%dT%H:%M:%S')
 
       if exists:
         if date_updated and date_updated != exists.date_updated \
@@ -147,10 +157,12 @@ class FacebookHandler(BaseHandler,
         new_post.from_user = post['actions'][0]['link']
       #new_post.avatar = tweet['user']['profile_image_url']
 
-      parsed_date = datetime.datetime.strptime(post['created_time'][:-5], '%Y-%m-%dT%H:%M:%S')
+      parsed_date = datetime.datetime.strptime(post['created_time'][:-5],
+          '%Y-%m-%dT%H:%M:%S')
 
       # we don't keep items that are over 30 days old
-      if parsed_date < datetime.datetime.utcnow() - datetime.timedelta(days=self.constants['feed_max_days_old']):
+      if parsed_date < datetime.datetime.utcnow() - datetime.timedelta(
+          days=self.constants['feed_max_days_old']):
         continue
 
       new_post.date_created = parsed_date
@@ -162,8 +174,10 @@ class FacebookHandler(BaseHandler,
       new_post.post_id = post['id']
       new_post.comments_count = post['comments']['count']
       if post['comments']['count'] and post['comments']['data']:
-        last_updated = post['comments']['data'][len(post['comments']['data']) - 1]['created_time']
-        new_post.comments_updated = datetime.datetime.strptime(last_updated[:-5], '%Y-%m-%dT%H:%M:%S')
+        last_updated = post['comments']['data'][len(
+            post['comments']['data']) - 1]['created_time']
+        new_post.comments_updated = datetime.datetime.strptime(
+            last_updated[:-5], '%Y-%m-%dT%H:%M:%S')
       if post.has_key('actions'):
         new_post.link = post['actions'][0]['link']
       elif post.has_key('link'):
@@ -180,13 +194,15 @@ class FacebookHandler(BaseHandler,
       view = tornado.escape.linkify(view)
       if post.has_key('picture'):
         view = '<img src="' + post['picture'] + '">' + view
-      new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(view))
+      new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(
+          view))
       new_post.save()
 
       # comments
       if post['comments']['count']:
         for comment in post['comments']['data']:
-          exists = self.models.content_remote.get(to_username=self.user.username, post_id=comment['id'])[0]
+          exists = self.models.content_remote.get(
+              to_username=self.user.username, post_id=comment['id'])[0]
           if exists:
             continue
           else:
@@ -194,8 +210,10 @@ class FacebookHandler(BaseHandler,
 
           new_comment.to_username = self.user.username
           new_comment.username = comment['from']['name']
-          new_comment.from_user = 'http://facebook.com/' + comment['from']['id']
-          date_created = datetime.datetime.strptime(comment['created_time'][:-5], '%Y-%m-%dT%H:%M:%S')
+          new_comment.from_user = ('http://facebook.com/' +
+              comment['from']['id'])
+          date_created = datetime.datetime.strptime(
+              comment['created_time'][:-5], '%Y-%m-%dT%H:%M:%S')
           new_comment.date_created = date_created
           new_comment.type = 'remote-comment'
           new_comment.thread = post['id']
@@ -205,7 +223,8 @@ class FacebookHandler(BaseHandler,
           new_comment.view = comment['message']
           new_comment.save()
 
-    count = self.models.content_remote.get(to_username=self.user.username, type='facebook', deleted=False).count()
+    count = self.models.content_remote.get(to_username=self.user.username,
+        type='facebook', deleted=False).count()
     self.write(json.dumps({ 'count': count }))
 
   def facebook_request(self, path, callback, access_token=None,
@@ -264,7 +283,8 @@ class FacebookHandler(BaseHandler,
       "redirect_uri": redirect_uri,
     }
 
-    response = content_remote.get_url(self._oauth_request_token_url(**args), post=True)
+    response = content_remote.get_url(self._oauth_request_token_url(**args),
+        post=True)
     self._on_access_token(callback, response)
 
   def _on_access_token(self, callback, response):
@@ -273,7 +293,8 @@ class FacebookHandler(BaseHandler,
       callback(None)
       return
 
-    args = tornado.escape.parse_qs_bytes(tornado.escape.native_str(response.body))
+    args = tornado.escape.parse_qs_bytes(
+        tornado.escape.native_str(response.body))
     access_token = args["access_token"][-1]
     callback(access_token)
 

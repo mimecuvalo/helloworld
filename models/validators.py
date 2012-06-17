@@ -24,12 +24,13 @@ class DatetimeOrNull(validators.Validator):
 
 class Boolean(validators.Validator):
   def __call__(self, boolean):
-    return (type(boolean) is int and (boolean == 0 or boolean == 1)) or type(boolean) is bool
+    return ((type(boolean) is int and (boolean == 0 or boolean == 1)) or
+        type(boolean) is bool)
 
 class UnicodeString(validators.Validator):
   def __init__(self, min_length=1, max_length=None):
     if max_length is not None:
-      assert max_length >= min_length, "max_length must be greater than or equal to min_length"
+      assert max_length >= min_length, "max_length must be >= to min_length"
     self.min_length = min_length
     self.max_length = max_length
         

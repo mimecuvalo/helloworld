@@ -22,7 +22,8 @@ from logic import url_factory
 # This monkeypatches tornado to do sync instead of async
 class TwitterHandler(BaseHandler,
                      tornado.auth.TwitterMixin):
-  UPDATE_WITH_MEDIA_URL = "https://upload.twitter.com/1/statuses/update_with_media.json"
+  UPDATE_WITH_MEDIA_URL = \
+      "https://upload.twitter.com/1/statuses/update_with_media.json"
 
   def get(self):
     if not self.authenticate(author=True):
@@ -32,10 +33,12 @@ class TwitterHandler(BaseHandler,
       self.user = self.get_author_user()
       access_token = json.loads(self.user.twitter)
 
-      count = self.models.content_remote.get(to_username=self.user.username, type='twitter').count()
+      count = self.models.content_remote.get(to_username=self.user.username,
+          type='twitter').count()
       args = {}
       if count:
-        jump = self.models.content_remote.get(to_username=self.user.username, type='twitter')[count - 1:count]
+        jump = self.models.content_remote.get(to_username=self.user.username,
+            type='twitter')[count - 1:count]
         args['since_id'] = jump[0].post_id
 
       self.twitter_request(
@@ -61,13 +64,18 @@ class TwitterHandler(BaseHandler,
     self.user = self.get_author_user()
     access_token = json.loads(self.user.twitter)
     #thumb = self.get_argument('thumb', '')
-    thumb = None # XXX TODO multipart doesn't work for some reason right now... arrrgh
+    # XXX TODO multipart doesn't work for some reason right now... arrrgh
+    thumb = None
     text_length = 79 if thumb else 99
-    status =    content_logic.ellipsize(content_remote.strip_html(self.get_argument('title', '')), 18, including_dots=True) \
-        + (': ' if self.get_argument('title', '') and self.get_argument('view', '') else '') \
-        + content_logic.ellipsize(content_remote.strip_html(self.get_argument('view', '')), text_length, including_dots=True) \
-        + (' ' if self.get_argument('title', '') or self.get_argument('view', '') else '') \
-        + self.get_argument('url')
+    status = (content_logic.ellipsize(content_remote.strip_html(
+        self.get_argument('title', '')), 18, including_dots=True) +
+        (': ' if self.get_argument('title', '') and
+            self.get_argument('view', '') else '') +
+        content_logic.ellipsize(content_remote.strip_html(
+            self.get_argument('view', '')), text_length, including_dots=True) +
+        (' ' if self.get_argument('title', '') or
+          self.get_argument('view', '') else '') +
+        self.get_argument('url'))
 
     if thumb:
       thumb = url_factory.clean_filename(thumb)
@@ -81,7 +89,8 @@ class TwitterHandler(BaseHandler,
         parent_dir = os.path.dirname(dirname)
         original_dir = os.path.join(parent_dir, 'original')
         original_img = os.path.join(original_dir, basename)
-        if os.path.exists(original_img) and os.path.getsize(original_img) < 3145728:
+        if (os.path.exists(original_img) and
+            os.path.getsize(original_img) < 3145728):
           image = original_img
 
       f = open(image, 'r')
@@ -121,7 +130,8 @@ class TwitterHandler(BaseHandler,
 
   def timeline_result(self, tweets):
     for tweet in tweets:
-      exists = self.models.content_remote.get(to_username=self.user.username, type='twitter', post_id=str(tweet['id']))[0]
+      exists = self.models.content_remote.get(to_username=self.user.username,
+          type='twitter', post_id=str(tweet['id']))[0]
 
       if exists:
         continue
@@ -130,14 +140,17 @@ class TwitterHandler(BaseHandler,
 
       new_tweet.to_username = self.user.username
       new_tweet.username = tweet['user']['screen_name']
-      new_tweet.from_user = 'http://twitter.com/' + tweet['user']['screen_name']
+      new_tweet.from_user = ('http://twitter.com/' +
+          tweet['user']['screen_name'])
       new_tweet.avatar = tweet['user']['profile_image_url']
 
       parsed_date = re.compile(r'\+.....').sub('', tweet['created_at'])
-      parsed_date = datetime.datetime.strptime(parsed_date, '%a %b %d %H:%M:%S %Y')
+      parsed_date = datetime.datetime.strptime(parsed_date,
+          '%a %b %d %H:%M:%S %Y')
 
       # we don't keep items that are over 30 days old
-      if parsed_date < datetime.datetime.utcnow() - datetime.timedelta(days=self.constants['feed_max_days_old']):
+      if parsed_date < datetime.datetime.utcnow() - datetime.timedelta(
+          days=self.constants['feed_max_days_old']):
         continue
 
       new_tweet.date_created = parsed_date
@@ -147,25 +160,34 @@ class TwitterHandler(BaseHandler,
       new_tweet.type = 'twitter'
       new_tweet.title = ''
       new_tweet.post_id = str(tweet['id'])
-      new_tweet.link = 'http://twitter.com/' + tweet['user']['screen_name'] + '/status/' + str(tweet['id'])
+      new_tweet.link = ('http://twitter.com/' + tweet['user']['screen_name'] +
+          '/status/' + str(tweet['id']))
       if tweet.has_key('retweeted_status'):
         text = tornado.escape.linkify(tweet['retweeted_status']['text'])
-        text += '<br><span class="hw-retweeted-by">' \
-                + self.locale.translate('retweeted by <a href="%(link)s">%(tweeter)s</a>') \
-                  % { 'link': 'http://twitter.com/' + tweet['user']['screen_name'], \
-                      'tweeter': tweet['user']['screen_name'] } \
-                + '</span>'
+        text += ('<br><span class="hw-retweeted-by">'
+            + self.locale.translate(
+              'retweeted by <a href="%(link)s">%(tweeter)s</a>')
+            % { 'link': 'http://twitter.com/' + tweet['user']['screen_name'],
+                'tweeter': tweet['user']['screen_name'] }
+            + '</span>')
         new_tweet.username = tweet['retweeted_status']['user']['screen_name']
-        new_tweet.from_user = 'http://twitter.com/' + tweet['retweeted_status']['user']['screen_name']
-        new_tweet.avatar = tweet['retweeted_status']['user']['profile_image_url']
+        new_tweet.from_user = ('http://twitter.com/' +
+            tweet['retweeted_status']['user']['screen_name'])
+        new_tweet.avatar = \
+            tweet['retweeted_status']['user']['profile_image_url']
       else:
         text = tornado.escape.linkify(tweet['text'])
-      text = re.compile(r'#(\w+)', re.M | re.U).sub(r'<a href="https://twitter.com/#!/search/%23\1" rel="tag">#\1</a>', text)
-      text = re.compile(r'@(\w+)', re.M | re.U).sub(r'<a href="https://twitter.com/#!/\1">@\1</a>', text)
-      new_tweet.view = content_remote.sanitize(tornado.escape.xhtml_unescape(text))
+      text = re.compile(r'#(\w+)', re.M | re.U).sub(
+          r'<a href="https://twitter.com/#!/search/%23\1" rel="tag">#\1</a>',
+          text)
+      text = re.compile(r'@(\w+)', re.M | re.U).sub(
+          r'<a href="https://twitter.com/#!/\1">@\1</a>', text)
+      new_tweet.view = content_remote.sanitize(
+          tornado.escape.xhtml_unescape(text))
       new_tweet.save()
 
-    count = self.models.content_remote.get(to_username=self.user.username, type='twitter', deleted=False).count()
+    count = self.models.content_remote.get(to_username=self.user.username,
+        type='twitter', deleted=False).count()
     self.write(json.dumps({ 'count': count }))
 
   def twitter_request(self, path, callback, access_token=None,
@@ -232,8 +254,10 @@ class TwitterHandler(BaseHandler,
       msg = MIMEMultipart("form-data")
       for arg in post_args:
         if arg == 'media[]':
-          mime_image = MIMEImage(post_args[arg], _encoder = email.encoders.encode_noop)
-          mime_image.add_header("Content-Disposition", "form-data", name="media[]", filename="media[]")
+          mime_image = MIMEImage(post_args[arg],
+              _encoder = email.encoders.encode_noop)
+          mime_image.add_header("Content-Disposition", "form-data",
+              name="media[]", filename="media[]")
           mime_image.add_header("Content-Length", str(len(post_args[arg])))
           msg.attach(mime_image)
         else:
@@ -243,7 +267,8 @@ class TwitterHandler(BaseHandler,
           msg.attach(mime_text)
       body = msg.as_string()
 
-    response = content_remote.get_url(url, post=(post_args is not None), body=body)
+    response = content_remote.get_url(url, post=(post_args is not None),
+        body=body)
     self._on_twitter_request(callback, response)
 
   def authorize_redirect(self, callback_uri=None, extra_params=None,
@@ -264,7 +289,8 @@ class TwitterHandler(BaseHandler,
       raise Exception("This service does not support oauth_callback")
 
     if getattr(self, "_OAUTH_VERSION", "1.0a") == "1.0a":
-      response = content_remote.get_url(self._oauth_request_token_url(callback_uri=callback_uri, extra_params=extra_params))
+      response = content_remote.get_url(self._oauth_request_token_url(
+          callback_uri=callback_uri, extra_params=extra_params))
       self._on_request_token(self._OAUTH_AUTHORIZE_URL, callback_uri, response)
     else:
       response = content_remote.get_url(self._oauth_request_token_url())
@@ -289,7 +315,8 @@ class TwitterHandler(BaseHandler,
       callback(None)
       return
     self.clear_cookie("_oauth_request_token")
-    cookie_key, cookie_secret = [base64.b64decode(tornado.escape.utf8(i)) for i in request_cookie.split("|")]
+    cookie_key, cookie_secret = [base64.b64decode(tornado.escape.utf8(i))
+        for i in request_cookie.split("|")]
     if cookie_key != request_key:
       logging.info((cookie_key, request_key, request_cookie))
       logging.warning("Request token does not match cookie")

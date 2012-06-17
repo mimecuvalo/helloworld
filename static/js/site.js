@@ -31,13 +31,15 @@ hw.login = function(event, el) {
 };
 
 hw.keyNavigation = function(event) {
-  if (document.activeElement && document.activeElement.hasAttribute('contenteditable')) {
+  if (document.activeElement &&
+      document.activeElement.hasAttribute('contenteditable')) {
     return;
   }
 
   var key = event.which ? event.which : event.keyCode;
 
-  if (event.target && (event.target.nodeName == 'TEXTAREA' || event.target.nodeName == 'INPUT')) {
+  if (event.target && (event.target.nodeName == 'TEXTAREA' ||
+      event.target.nodeName == 'INPUT')) {
     return;
   }
 
@@ -54,7 +56,8 @@ hw.keyNavigation = function(event) {
   }
   var reverse = hw.hasClass(neighbors, 'hw-reverse-sort');
 
-  if ((key == Event.KEY_RIGHT && !reverse) || (key == Event.KEY_LEFT && reverse)) {
+  if ((key == Event.KEY_RIGHT && !reverse) ||
+      (key == Event.KEY_LEFT && reverse)) {
     if (prev && prev.href) {
       if (prev.getAttribute('data-disallow-magic') || !hw.supportsHistory()) {
         window.location.href = prev.href;
@@ -62,7 +65,8 @@ hw.keyNavigation = function(event) {
         hw.navigate(null, prev.href, prev.title);
       }
     }
-  } else if ((key == Event.KEY_LEFT && !reverse) || (key == Event.KEY_RIGHT && reverse)) {
+  } else if ((key == Event.KEY_LEFT && !reverse) ||
+      (key == Event.KEY_RIGHT && reverse)) {
     if (next && next.href) {
       if (next.getAttribute('data-disallow-magic') || !hw.supportsHistory()) {
         window.location.href = next.href;
@@ -100,7 +104,8 @@ hw.navigate = function(event, url, title) {
 
   if (!hw.addedFirstUrlToHistory) {
     var isAlbum = !!hw.$c('hw-album');
-    history.replaceState({ 'title': title, 'isAlbum': isAlbum }, title, window.location.href);
+    history.replaceState({ 'title': title, 'isAlbum': isAlbum }, title,
+        window.location.href);
     hw.loadedContent[window.location.href] = hw.$('hw-content').innerHTML;
     hw.addedFirstUrlToHistory = true;
   }
@@ -127,7 +132,8 @@ hw.albumClick = function(event, el) {
     return;
   }
 
-  if (el.parentNode.getAttribute('data-is-album') == 'true' || el.parentNode.getAttribute('data-disallow-magic')) {
+  if (el.parentNode.getAttribute('data-is-album') == 'true' ||
+      el.parentNode.getAttribute('data-disallow-magic')) {
     return;
   }
 
@@ -139,7 +145,8 @@ hw.swapContent = function(url, event) {
   var onSuccess = function(xhr, preloadedContent) {
     hw.addClass(hw.$('hw-content'), 'hw-invisible');
     var fn = function() {
-      hw.$('hw-content').innerHTML = preloadedContent || (xhr ? xhr.responseText : '');
+      hw.$('hw-content').innerHTML = preloadedContent ||
+          (xhr ? xhr.responseText : '');
       hw.loadedContent[url] = preloadedContent || (xhr ? xhr.responseText : '');
       hw.removeClass(hw.$('hw-content'), 'hw-invisible');
       hw.preloadNextLogicalContent();
@@ -172,8 +179,10 @@ hw.preloadNextLogicalContent = function() {
     return;
   }
 
-  var nextContent = hw.hasClass(hw.$c('hw-neighbors'), 'hw-reverse-sort') ? hw.$c('hw-next') : hw.$c('hw-previous');
-  if (!hw.supportsHistory() || !nextContent || !nextContent.href || nextContent.getAttribute('data-disallow-magic')) {
+  var nextContent = hw.hasClass(hw.$c('hw-neighbors'), 'hw-reverse-sort') ?
+      hw.$c('hw-next') : hw.$c('hw-previous');
+  if (!hw.supportsHistory() || !nextContent || !nextContent.href ||
+      nextContent.getAttribute('data-disallow-magic')) {
     return;
   }
 
@@ -207,7 +216,8 @@ Event.observe(window, 'popstate', function(e) {
     return;
   }
 
-  if (hw.startUrl == window.location.href) { // XXX chrome sends a popstate event onload too
+  if (hw.startUrl == window.location.href) {
+    // XXX chrome sends a popstate event onload too
     hw.startUrl = null;
     return;
   }
@@ -220,7 +230,8 @@ Event.observe(window, 'popstate', function(e) {
 
 hw.loadMore = function(url, offset, opt_feed_id, opt_reverse) {
   this.url = url;
-  this.url = this.url.lastIndexOf('/') == this.url.length - 1 ? this.url.substring(0, this.url.length - 1) : this.url;  // remove slash
+  this.url = this.url.lastIndexOf('/') == this.url.length - 1 ?
+        this.url.substring(0, this.url.length - 1) : this.url;  // remove slash
   this.url = this.url.replace(/\/page\/\d+/g, '');
   this.initialOffset = offset;
   this.offset = offset;
@@ -235,20 +246,28 @@ hw.loadMore.prototype = {
     var currentOffset = this.offset;
 
     if (hw.supportsHistory()) {
-      while (hw.$('hw-feed-page-' + (this.offset + this.offsetModifier)) && hw.$('hw-feed-page-' + (this.offset + this.offsetModifier)).getBoundingClientRect().top < 0) {
+      while (hw.$('hw-feed-page-' + (this.offset + this.offsetModifier)) &&
+          hw.$('hw-feed-page-' + (this.offset + this.offsetModifier)).
+          getBoundingClientRect().top < 0) {
         this.offset += this.offsetModifier;
       }
-      while (hw.$('hw-feed-page-' + this.offset) && hw.$('hw-feed-page-' + this.offset).getBoundingClientRect().top >= 0) {
+      while (hw.$('hw-feed-page-' + this.offset) &&
+          hw.$('hw-feed-page-' + this.offset).
+          getBoundingClientRect().top >= 0) {
         this.offset -= this.offsetModifier;
       }
 
       var parameterStart = this.url.indexOf('?');
-      var pageUrl = this.url.substring(0, parameterStart == -1 ? this.url.length : parameterStart)
-                 + '/page/' + this.offset;
-                 //+ this.url.substring(parameterStart == -1 ? this.url.length : parameterStart, this.url.length);
+      var pageUrl = this.url.substring(0, parameterStart == -1 ?
+          this.url.length : parameterStart)
+          + '/page/' + this.offset;
+          //+ this.url.substring(parameterStart == -1 ?
+          //this.url.length : parameterStart, this.url.length);
 
-      if (currentOffset != this.offset && this.offset != (this.initialOffset - this.offsetModifier)) {
-        history.replaceState({ 'title': document.title }, document.title, pageUrl);
+      if (currentOffset != this.offset && this.offset !=
+          (this.initialOffset - this.offsetModifier)) {
+        history.replaceState({ 'title': document.title },
+            document.title, pageUrl);
       }
     }
 
@@ -263,16 +282,18 @@ hw.loadMore.prototype = {
       setTimeout(fn, 3000);
 
       hw.$('hw-loading').parentNode.removeChild(hw.$('hw-loading'));
-      self.feed.innerHTML += '<a id="hw-feed-page-' + nextOffset + '"></a>' + xhr.responseText;
-      var a = document.body.offsetWidth;  // XXX workaround https://bugzilla.mozilla.org/show_bug.cgi?id=693219#c33
+      self.feed.innerHTML += '<a id="hw-feed-page-' + nextOffset + '"></a>' +
+          xhr.responseText;
+      var a = document.body.offsetWidth;
+      // XXX workaround https://bugzilla.mozilla.org/show_bug.cgi?id=693219#c33
 
       if (opt_callback) {
         opt_callback();
       }
 
       //if (hw.supportsHistory()) {
-      //  var url = self.url + '/page/' + (self.offset);
-      //  history.replaceState({ 'title': document.title }, document.title, url);
+      // var url = self.url + '/page/' + (self.offset);
+      // history.replaceState({ 'title': document.title }, document.title, url);
       //}
     };
 
@@ -290,18 +311,25 @@ hw.loadMore.prototype = {
       }
     };
 
-    if (!this.done && !this.processing && this.offset != (this.initialOffset - this.offsetModifier) &&
+    if (!this.done && !this.processing &&
+        this.offset != (this.initialOffset - this.offsetModifier) &&
         (document.height || document.body.parentNode.scrollHeight) -
-        (document.body.parentNode.scrollTop || document.body.scrollTop) < (document.body.parentNode.clientHeight || document.body.clientHeight) * 3
+        (document.body.parentNode.scrollTop || document.body.scrollTop) <
+        (document.body.parentNode.clientHeight || document.body.clientHeight) *
+        3
         && !hw.$('hw-feed-page-' + (this.offset + this.offsetModifier))) {
       this.processing = true;
-      this.feed.innerHTML += '<div id="hw-loading">' + hw.getMsg('loading') + '</div>';
-      var a = document.body.offsetWidth;  // XXX workaround https://bugzilla.mozilla.org/show_bug.cgi?id=693219#c33 
+      this.feed.innerHTML += '<div id="hw-loading">' + hw.getMsg('loading') +
+          '</div>';
+      var a = document.body.offsetWidth;
+      // XXX workaround https://bugzilla.mozilla.org/show_bug.cgi?id=693219#c33 
 
       var parameterStart = this.url.indexOf('?');
-      var nextPageUrl = this.url.substring(0, parameterStart == -1 ? this.url.length : parameterStart)
-                      + '/page/' + (this.offset + this.offsetModifier)
-                      + this.url.substring(parameterStart == -1 ? this.url.length : parameterStart, this.url.length);
+      var nextPageUrl = this.url.substring(0, parameterStart == -1 ?
+          this.url.length : parameterStart)
+          + '/page/' + (this.offset + this.offsetModifier)
+          + this.url.substring(parameterStart == -1 ?
+          this.url.length : parameterStart, this.url.length);
 
       new hw.ajax(nextPageUrl,
         { method: 'get',

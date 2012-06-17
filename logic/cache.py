@@ -10,7 +10,8 @@ try:
 except ImportError:
     from cStringIO import StringIO as BytesIO  # python 2
 
-# USAGE NOTE: you'll notice that there's no 'get' function here, check out .htaccess for that!
+# USAGE NOTE: you'll notice that there's no 'get' function here, check out
+# .htaccess for that!
 
 EXTENSION = 'html'
 
@@ -21,7 +22,8 @@ def get_full_filename(handler, url=None):
     url = handler.prefix + url
   filename = url_factory.clean_filename(url)
   # TODO filename = handler.locale.code.replace('_', '-') + '/' + filename
-  path = os.path.join(handler.application.settings["cache_path"], filename + '.' + EXTENSION)
+  path = os.path.join(handler.application.settings["cache_path"], filename +
+      '.' + EXTENSION)
   parent_directory = os.path.dirname(path)
   if not os.path.isdir(parent_directory):
     os.makedirs(parent_directory)
@@ -56,7 +58,9 @@ def remove(handler, url=None):
     filename = get_full_filename(handler, url)
     os.remove(filename)
 
-    if os.path.isdir(filename[:-len(EXTENSION)]):  # check if filename is associated with a directory (get rid of .htmgz with the -6)
+    # check if filename is associated with a directory
+    # (get rid of .htmgz with the -6)
+    if os.path.isdir(filename[:-len(EXTENSION)]):
       invalidate(filename[:-len(EXTENSION)])
   except:
     pass

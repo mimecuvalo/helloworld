@@ -9,7 +9,8 @@
         'name': '{{ link['content'].name }}',
         'content_url': '{{ content_url(link['content']) }}',
         'url': '{{ url }}'
-      }{% if links_index < len(links) and index < len(link['urls']) %},{% end %}
+      }
+      {% if links_index < len(links) and index < len(link['urls']) %},{% end %}
     {% end %}
   {% end %}
   ];
@@ -27,8 +28,9 @@
 
     var linkBroken = function(xhr) {
       hw.$('output').innerHTML +=
-          '<a href="' + urls[index]['content_url'] + '">' + urls[index]['name'] + '</a>: '
-          + urls[index]['url'] + '<br>';
+          '<a href="' + urls[index]['content_url'] + '">' +
+          urls[index]['name'] + '</a>: ' +
+          urls[index]['url'] + '<br>';
       ++index;
       checkLink();
     };
@@ -44,7 +46,8 @@
 
     hw.$('current').innerHTML = urls[index]['name'] + ': ' + urls[index]['url']
 
-    new hw.ajax(hw.baseUri() + 'check_broken_links?url=' + encodeURIComponent(urls[index]['url']),
+    new hw.ajax(hw.baseUri() + 'check_broken_links?url=' +
+        encodeURIComponent(urls[index]['url']),
       { method: 'get',
         onSuccess: linkResponse,
         onError: linkBroken });
@@ -56,7 +59,8 @@
     paused = !paused;
     var button = hw.$('pause');
 
-    button.innerHTML = paused ? button.getAttribute('data-resume') : button.getAttribute('data-pause');
+    button.innerHTML = paused ? button.getAttribute('data-resume') :
+        button.getAttribute('data-pause');
 
     if (!paused) {
       checkLink();
@@ -97,10 +101,16 @@
 
 {% block backend_content %}
 <div id="admin">
-  <button id="pause" type="button" onclick="pause()" data-pause="{{ _('Pause') }}" data-resume="{{ _('Resume') }}">{{ _('Pause') }}</button>
+  <button id="pause" type="button" onclick="pause()"
+          data-pause="{{ _('Pause') }}"
+          data-resume="{{ _('Resume') }}">
+    {{ _('Pause') }}
+  </button>
 
-  <strong>{{ _('Progress:') }}</strong> <progress id="progress" value="0" max="100">%0</progress><br>
-  <strong>{{ _('Currently checking:') }}</strong> <div id="current"></div><br>
+  <strong>{{ _('Progress:') }}</strong>
+  <progress id="progress" value="0" max="100">%0</progress><br>
+  <strong>{{ _('Currently checking:') }}</strong>
+  <div id="current"></div><br>
   <h1>{{ _('Broken Links') }}</h1>
 
   <output id="output"></output>

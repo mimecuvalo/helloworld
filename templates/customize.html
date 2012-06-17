@@ -34,11 +34,13 @@
 {% end %}
 
 {% block extra_js %}
-  <script src="{{ static_url('js/all_create.js', 'js/all_create.inc') }}"></script>
+  <script src="{{ static_url('js/all_create.js', 'js/all_create.inc') }}">
+  </script>
   <script src="{{ static_url('js/customize.js') }}"></script>
 
   <script>
-    hw.setMsg('confirm-delete', "{% raw js_escape(_('ya sure there, buddy?')) %}");
+    hw.setMsg('confirm-delete',
+        "{% raw js_escape(_('ya sure there, buddy?')) %}");
     hw.setMsg('delete-failed', "{% raw js_escape(_("no good, mate.")) %}");
     hw.setMsg('error', "{% raw js_escape(_('no good, mate.')) %}");
     hw.setMsg('saved', "{% raw js_escape(_('saved!')) %}");
@@ -59,35 +61,73 @@
 {% end %}
 
 {% block sidebar_static %}
-  <span id="hw-customize-response" class="hw-response hw-hidden-transition hw-hidden" data-saved="{{ _("saved.") }}"
-        data-bad="{{ _("no good, mate.") }}">&nbsp;</span>
-  <a id="hw-customize-close" href="{{ nav_url(section='dashboard') }}" class="hw-button">{{ _('close') }}</a>
-  <a id="hw-customize-save" href="#save" data-save="{{ _("save") }}" data-saving="{{ _("saving") }}" class="hw-button hw-button-save" onclick="hw.customSave(event, this)">{{ _('save') }}</a>
+  <span id="hw-customize-response"
+        class="hw-response hw-hidden-transition hw-hidden"
+        data-saved="{{ _("saved.") }}"
+        data-bad="{{ _("no good, mate.") }}">
+    &nbsp;
+  </span>
+  <a id="hw-customize-close" href="{{ nav_url(section='dashboard') }}"
+     class="hw-button">
+    {{ _('close') }}
+  </a>
+  <a id="hw-customize-save" href="#save" data-save="{{ _("save") }}"
+     data-saving="{{ _("saving") }}" class="hw-button hw-button-save"
+     onclick="hw.customSave(event, this)">
+    {{ _('save') }}
+  </a>
 
-  <a id="hw-customize-close-editor" href="#done-editing" class="hw-button" onclick="hw.customizeEdit(event, true)">{{ _('done editing') }}</a>
-  <a id="hw-customize-update-preview" href="#update-preview" class="hw-button" onclick="hw.customizeUpdatePreview(event)">{{ _('update preview') }}</a>
+  <a id="hw-customize-close-editor" href="#done-editing" class="hw-button"
+     onclick="hw.customizeEdit(event, true)">
+    {{ _('done editing') }}
+  </a>
+  <a id="hw-customize-update-preview" href="#update-preview" class="hw-button"
+     onclick="hw.customizeUpdatePreview(event)">
+    {{ _('update preview') }}
+  </a>
 
   <div class="clear"></div>
 {% end %}
 
 {% block sidebar %}
-  <form id="hw-customize" onsubmit="return false;" autocomplete="off" class="hw-all-transition">
+  <form id="hw-customize" onsubmit="return false;" autocomplete="off"
+        class="hw-all-transition">
     {% raw xsrf_form_html() %}
 
-    <a id="hw-customize-select-theme" href="#select-theme" class="hw-button" onclick="hw.customizeSelectThemes(event)">{{ _('choose new theme') }}</a>
-    <a id="hw-customize-select-theme-close" href="#close-themes" class="hw-button hw-hidden" onclick="hw.customizeSelectThemes(event, true)">{{ _('close') }}</a>
+    <a id="hw-customize-select-theme" href="#select-theme" class="hw-button"
+       onclick="hw.customizeSelectThemes(event)">
+      {{ _('choose new theme') }}
+    </a>
+    <a id="hw-customize-select-theme-close" href="#close-themes"
+       class="hw-button hw-hidden"
+       onclick="hw.customizeSelectThemes(event, true)">
+      {{ _('close') }}
+    </a>
 
     <div id="hw-customize-themes" class="hw-hidden">
       {% for theme in themes %}
-        <img class="hw-theme-thumb {% if theme['path'] == user_theme['path'] and user_theme_custom %}hw-hidden{% end %}"
-             data-static-url="{{ theme['static_url'] }}" data-path="{{ theme['path'] }}" data-thumb="{{ static_url(theme['thumb']) }}"
-             data-title="{{ theme['title'] }}" data-link="{{ theme['link'] }}"
-             data-author="{{ theme['author'] }}" data-author-link="{{ theme['author_link'] }}"
-             data-extra-head-html="{{ theme['extra_head_html'] }}" data-extra-body-end-html="{{ theme['extra_body_end_html'] }}"
-             src="{{ static_url(theme['thumb']) }}" onerror="this.src='{{ static_url('img/pixel.gif') }}'"
+        <img class="hw-theme-thumb
+               {% if (theme['path'] == user_theme['path'] and
+                     user_theme_custom) %}
+                 hw-hidden
+               {% end %}"
+             data-static-url="{{ theme['static_url'] }}"
+             data-path="{{ theme['path'] }}"
+             data-thumb="{{ static_url(theme['thumb']) }}"
+             data-title="{{ theme['title'] }}"
+             data-link="{{ theme['link'] }}"
+             data-author="{{ theme['author'] }}"
+             data-author-link="{{ theme['author_link'] }}"
+             data-extra-head-html="{{ theme['extra_head_html'] }}"
+             data-extra-body-end-html="{{ theme['extra_body_end_html'] }}"
+             src="{{ static_url(theme['thumb']) }}"
+             onerror="this.src='{{ static_url('img/pixel.gif') }}'"
              onclick="hw.customizeSelectTheme(this)"
              {% if theme['path'] == user_theme['path'] %}data-selected{% end %}
-             {% if theme['path'] == user_theme['path'] and user_theme_compiled %}data-compiled="{{ user_theme_compiled }}"{% end %}
+             {% if (theme['path'] == user_theme['path'] and
+                   user_theme_compiled) %}
+               data-compiled="{{ user_theme_compiled }}"
+             {% end %}
              {% set counter = 0 %}
              {% set hasAttribute = ('option_' + str(counter)) in theme %}
              {% while hasAttribute %}
@@ -95,137 +135,255 @@
                {% set counter += 1 %}
                {% set hasAttribute = ('option_' + str(counter)) in theme %}
              {% end %}>
-        <div class="hw-theme-info {% if theme['path'] == user_theme['path'] and user_theme_custom %}hw-hidden{% end %}">
+        <div class="hw-theme-info
+          {% if (theme['path'] == user_theme['path'] and
+                user_theme_custom) %}
+            hw-hidden
+          {% end %}">
           <span class="hw-theme-title">{{ theme['title'] }}</span>
-          <span class="hw-theme-author">{% if theme['author'] %}{% if theme['author_link'] %}<a href="{{ theme['author_link'] }}" target="_blank">{% end %}{{ _('by %(author)s') % { 'author': theme['author'] } }}{% if theme['author_link'] %}</a>{% end %}{% end %}</span>
+          <span class="hw-theme-author">
+            {% if theme['author'] %}
+              {% if theme['author_link'] %}
+                <a href="{{ theme['author_link'] }}" target="_blank">
+              {% end %}
+              {{ _('by %(author)s') % { 'author': theme['author'] } }}
+              {% if theme['author_link'] %}
+                </a>
+              {% end %}
+            {% end %}
+          </span>
         </div>
       {% end %}
     </div>
 
-    <img id="hw-theme-thumb" src="{% if user.theme %}{{ static_url(user_theme['thumb']) }}{% else %}{{ static_url('img/pixel.gif') }}{% end %}" onerror="this.src='{{ static_url('img/pixel.gif') }}'">
+    <img id="hw-theme-thumb"
+         src="{% if user.theme %}
+                {{ static_url(user_theme['thumb']) }}
+              {% else %}
+                {{ static_url('img/pixel.gif') }}
+              {% end %}"
+         onerror="this.src='{{ static_url('img/pixel.gif') }}'">
     <div id="hw-theme-info">
       <span id="hw-theme-title">{{ user.theme_title }}</span><br>
-      <span id="hw-theme-author" class="{% if not user.theme_author %}hw-hidden{% end %}"><a id="hw-theme-author-link" href="{{ user.theme_author_link }}" target="_blank">{{ _('by') }} <span id="hw-theme-author-name">{{ user.theme_author }}</span></a></span>
+      <span id="hw-theme-author"
+            class="{% if not user.theme_author %}hw-hidden{% end %}">
+        <a id="hw-theme-author-link" href="{{ user.theme_author_link }}"
+           target="_blank">
+          {{ _('by') }}
+          <span id="hw-theme-author-name">
+            {{ user.theme_author }}
+          </span>
+        </a>
+      </span>
     </div>
 
-    <input id="hw-customize-theme" class="hw-field" name="theme" type="hidden" value="{{ user.theme }}">
+    <input id="hw-customize-theme" class="hw-field" name="theme" type="hidden"
+           value="{{ user.theme }}">
     <input name="theme_title" type="hidden" value="{{ user.theme_title }}">
     <input name="theme_link" type="hidden" value="{{ user.theme_link }}">
     <input name="theme_author" type="hidden" value="{{ user.theme_author }}">
-    <input name="theme_author_link" type="hidden" value="{{ user.theme_author_link }}">
-    <input name="extra_head_html" type="hidden" value="{{ user.extra_head_html }}">
-    <input name="extra_body_end_html" type="hidden" value="{{ user.extra_body_end_html }}">
+    <input name="theme_author_link" type="hidden"
+           value="{{ user.theme_author_link }}">
+    <input name="extra_head_html" type="hidden"
+           value="{{ user.extra_head_html }}">
+    <input name="extra_body_end_html" type="hidden"
+           value="{{ user.extra_body_end_html }}">
 
-    <a id="hw-customize-edit" href="#edit-theme" class="hw-button" onclick="hw.customizeEdit(event)">{{ _('edit theme') }}</a>
+    <a id="hw-customize-edit" href="#edit-theme" class="hw-button"
+       onclick="hw.customizeEdit(event)">{{ _('edit theme') }}</a>
     <script>hw.uploadButton(window.location.reload, 'themes');</script>
 
     <div class="clear"></div>
 
     <fieldset id="hw-customize-basic" open>
-      <legend onclick="hw.details(this)"><span class="hw-arrow"></span>{{ _('Basic') }}</legend>
+      <legend onclick="hw.details(this)">
+        <span class="hw-arrow"></span>{{ _('Basic') }}
+      </legend>
       <div class="hw-fields">
         <label for="hw-title">
           <span class="hw-label">{{ _('title') }}</span>
-          <input id="hw-title" class="hw-field" name="title" maxlength="255" type="text" placeholder="{{ _('title') }}" value="{{ user.title }}" onkeypress="hw.customizeUpdatePreview()">
+          <input id="hw-title" class="hw-field" name="title" maxlength="255"
+                 type="text" placeholder="{{ _('title') }}"
+                 value="{{ user.title }}"
+                 onkeypress="hw.customizeUpdatePreview()">
         </label>
         <label for="hw-description">
           <span class="hw-label">{{ _('description') }}</span>
-          <textarea id="hw-description" class="hw-field" name="description" maxlength="255" type="text" onkeypress="hw.customizeUpdatePreview()">{{ user.description }}</textarea>
+          <textarea id="hw-description" class="hw-field" name="description"
+                    maxlength="255" type="text"
+                    onkeypress="hw.customizeUpdatePreview()">{{ user.description }}</textarea>
         </label>
         <label for="hw-customize-logo">
           <span class="hw-label">{{ _('logo') }}</span>
-          <a class="hw-button hw-customize-clear" href="#clear" class="hw-button" onclick="hw.customizeClear(event, 'hw-customize-logo')">{{ _('clear') }}</a>
-          <script>hw.uploadButton(function(json) { hw.customChangeBeforeUnloadState(); hw.$('hw-customize-logo').value = json['url']; hw.customizeUpdatePreview(); });</script>
-          <input id="hw-customize-logo" class="hw-field" name="logo" type="hidden" placeholder="{{ _('logo') }}" value="{{ user.logo }}">
+          <a class="hw-button hw-customize-clear" href="#clear"
+             onclick="hw.customizeClear(event, 'hw-customize-logo')">
+            {{ _('clear') }}
+          </a>
+          <script>
+            hw.uploadButton(function(json) {
+              hw.customChangeBeforeUnloadState();
+              hw.$('hw-customize-logo').value = json['url'];
+              hw.customizeUpdatePreview();
+            });
+          </script>
+          <input id="hw-customize-logo" class="hw-field" name="logo"
+                 type="hidden" placeholder="{{ _('logo') }}"
+                 value="{{ user.logo }}">
         </label>
         <label for="hw-favicon">
           <span class="hw-label">{{ _('favicon') }}</span>
-          <a class="hw-button hw-customize-clear" href="#clear" class="hw-button" onclick="hw.customizeClear(event, 'hw-favicon')">{{ _('clear') }}</a>
-          <script>hw.uploadButton(function(json) { hw.customChangeBeforeUnloadState(); hw.$('hw-favicon').value = json['url']; hw.customizeUpdatePreview(); });</script>
-          <input id="hw-favicon" class="hw-field" name="favicon" type="hidden" placeholder="{{ _('favicon') }}" value="{{ user.favicon }}">
+          <a class="hw-button hw-customize-clear" href="#clear"
+             onclick="hw.customizeClear(event, 'hw-favicon')">
+            {{ _('clear') }}
+          </a>
+          <script>
+            hw.uploadButton(function(json) {
+              hw.customChangeBeforeUnloadState();
+              hw.$('hw-favicon').value = json['url'];
+              hw.customizeUpdatePreview();
+            });
+          </script>
+          <input id="hw-favicon" class="hw-field" name="favicon" type="hidden"
+                 placeholder="{{ _('favicon') }}" value="{{ user.favicon }}">
         </label>
       </div>
     </fieldset>
 
     <fieldset open>
-      <legend onclick="hw.details(this)"><span class="hw-arrow"></span>{{ _('Appearance') }}</legend>
+      <legend onclick="hw.details(this)">
+        <span class="hw-arrow"></span>{{ _('Appearance') }}
+      </legend>
       <div id="hw-customize-appearance" class="hw-fields">
       </div>
-      <a id="hw-custom-reset" href="#reset" onclick="hw.customReset(event)">{{ _('Reset fields') }}</a>
+      <a id="hw-custom-reset" href="#reset" onclick="hw.customReset(event)">
+        {{ _('Reset fields') }}
+      </a>
     </fieldset>
 
     <fieldset>
-      <legend onclick="hw.details(this)"><span class="hw-arrow"></span>{{ _('More Settings') }}</legend>
+      <legend onclick="hw.details(this)">
+        <span class="hw-arrow"></span>{{ _('More Settings') }}
+      </legend>
       <div class="hw-fields">
         <label for="hw-license-type" id="hw-license-label">
           <span class="hw-label">{{ _('license') }}</span>
-          <input id="hw-license-type" class="hw-field" name="license" type="url" value="{{ user.license }}">
+          <input id="hw-license-type" class="hw-field" name="license"
+                 type="url" value="{{ user.license }}">
         </label>
         <label>
           <span class="hw-label">{{ _('common licenses:') }}</span>
-          <select id="hw-licenses" class="hw-field" onchange="hw.$('hw-license-type').value = this.value">
+          <select id="hw-licenses" class="hw-field"
+                  onchange="hw.$('hw-license-type').value = this.value">
             <option value=""></option>
             {% for license in sorted(licenses.iterkeys(), reverse=True) %}
-              <option value="{{ license }}">{{ licenses[license]["name"] }}</option>
+              <option value="{{ license }}">
+                {{ licenses[license]["name"] }}
+              </option>
             {% end %}
           </select>
         </label>
         <label for="hw-google-analytics">
-          <span class="hw-label hw-label-textarea">{{ _('google analytics') }} {{ _('(e.g. UA-XXXXXX-X)') }}</span>
-          <input id="hw-google-analytics" class="hw-field" maxlength="255" name="google_analytics" type="text" placeholder="{{ _('google analytics id') }}" value="{{ user.google_analytics }}">
+          <span class="hw-label hw-label-textarea">
+            {{ _('google analytics') }} {{ _('(e.g. UA-XXXXXX-X)') }}
+          </span>
+          <input id="hw-google-analytics" class="hw-field" maxlength="255"
+                 name="google_analytics" type="text"
+                 placeholder="{{ _('google analytics id') }}"
+                 value="{{ user.google_analytics }}">
         </label>
         <label for="hw-tipjar">
-          <span class="hw-label hw-label-textarea">{{ _('tipjar') }} {{ _('(javascript or link)') }}</span>
-          <textarea id="hw-tipjar" class="hw-field" name="tipjar" type="text">{{ user.tipjar }}</textarea>
+          <span class="hw-label hw-label-textarea">
+            {{ _('tipjar') }} {{ _('(javascript or link)') }}
+          </span>
+          <textarea id="hw-tipjar" class="hw-field" name="tipjar"
+              type="text">{{ user.tipjar }}</textarea>
         </label>
         <label for="hw-sidebar-ad-input">
-          <span class="hw-label hw-label-textarea">{{ _('sidebar ad') }} (javascript)</span>
-          <textarea id="hw-sidebar-ad-input" class="hw-field" name="sidebar_ad" type="text">{{ user.sidebar_ad }}</textarea>
+          <span class="hw-label hw-label-textarea">
+            {{ _('sidebar ad') }} (javascript)
+          </span>
+          <textarea id="hw-sidebar-ad-input" class="hw-field"
+              name="sidebar_ad" type="text">{{ user.sidebar_ad }}</textarea>
         </label>
         <label for="hw-newsletter-endpoint">
-          <span class="hw-label hw-label-textarea">{{ _('newsletter hookup') }} {{ _('(signup url)') }}</span>
-          <textarea id="hw-newsletter-endpoint" class="hw-field" name="newsletter_endpoint" type="text">{{ user.newsletter_endpoint }}</textarea>
+          <span class="hw-label hw-label-textarea">
+            {{ _('newsletter hookup') }} {{ _('(signup url)') }}
+          </span>
+          <textarea id="hw-newsletter-endpoint" class="hw-field"
+              name="newsletter_endpoint"
+              type="text">{{ user.newsletter_endpoint }}</textarea>
         </label>
         <label for="hw-currency">
           <span class="hw-label">{{ _('currency') }}</span>
           <select class="hw-field" name="currency" id="hw-currency">
             {% for currency in sorted(currencies) %}
-              <option value="{{ currency }}" {% if user.currency == currency or (not user.currency and currency == 'USD') %}selected{% end %}>{{ currency }}</option>
+              <option value="{{ currency }}"
+                  {% if (user.currency == currency or
+                       (not user.currency and currency == 'USD')) %}
+                    selected
+                  {% end %}>
+                {{ currency }}
+              </option>
             {% end %}
           </select>
         </label>
         <label for="hw-adult-content">
           <span class="hw-label">{{ _('adult content') }}</span>
-          <input id="hw-adult-content" class="hw-field" name="adult_content" type="checkbox" {% if user.adult_content %}checked="checked"{% end %}>
+          <input id="hw-adult-content" class="hw-field" name="adult_content"
+                 type="checkbox"
+                 {% if user.adult_content %}checked="checked"{% end %}>
         </label>
       </div>
     </fieldset>
 
     <fieldset>
-      <legend onclick="hw.details(this)"><span class="hw-arrow"></span>{{ _('Personal') }}</legend>
+      <legend onclick="hw.details(this)">
+        <span class="hw-arrow"></span>{{ _('Personal') }}
+      </legend>
       <div class="hw-fields">
         <label for="hw-name">
           <span class="hw-label">{{ _('name') }}</span>
-          <input id="hw-name" class="hw-field" name="name" maxlength="255" type="text" placeholder="{{ _('name') }}" value="{{ user.name }}">
+          <input id="hw-name" class="hw-field" name="name" maxlength="255"
+                 type="text" placeholder="{{ _('name') }}"
+                 value="{{ user.name }}">
         </label>
         <label for="hw-email">
           <span class="hw-label">{{ _('email') }}</span>
-          <input id="hw-email" class="hw-field" name="email" maxlength="255" type="text" data-default="{{ user.email }}" placeholder="{{ _('email') }}" value="{{ user.email }}" onchange="if (!confirm('{{ js_escape(_('double check your address - you won\'t be able to login again if it\'s wrong. is this correct? ')) }}' + this.value)) this.value=this.getAttribute('data-default')">
+          <input id="hw-email" class="hw-field" name="email" maxlength="255"
+                 type="text" data-default="{{ user.email }}"
+                 placeholder="{{ _('email') }}" value="{{ user.email }}"
+                 onchange="if (!confirm('{{ js_escape(_('double check your' +
+                   ' address - you won\'t be able to login again if it\'s ' +
+                   'wrong. is this correct? ')) }}' + this.value))
+                   this.value=this.getAttribute('data-default')">
         </label>
       </div>
     </fieldset>
 
     <fieldset class="hw-customize-tools">
-      <legend onclick="hw.details(this)"><span class="hw-arrow"></span>{{ _('Tools') }}</legend>
+      <legend onclick="hw.details(this)">
+        <span class="hw-arrow"></span>{{ _('Tools') }}
+      </legend>
       <div class="hw-fields">
         {% if is_superuser %}
-          <a href="{{ nav_url(section='users') }}">{{ _('user admin') }}</a><br>
-          <a href="{{ nav_url(section='restart', next=handler.request.uri) }}">{{ _('restart server') }}</a><br>
+          <a href="{{ nav_url(section='users') }}">{{ _('user admin') }}</a>
+          <br>
+          <a href="{{ nav_url(section='restart', next=handler.request.uri) }}">
+            {{ _('restart server') }}
+          </a><br>
           <hr>
         {% end %}
-        <a href="{{ nav_url(section='check_broken_links') }}">{{ _('check broken links') }}</a><br>
-        <a href="{{ nav_url(section='data_liberation') }}">{{ _('data liberation') }}</a><br>
-        <a id="hw-delete-account" class="hw-button hw-button-delete" href="#deleteAccount" onclick="hw.deleteAccount(event, '{{ user.username }}')">{{ _('delete account') }}</a>
+        <a href="{{ nav_url(section='check_broken_links') }}">
+          {{ _('check broken links') }}
+        </a><br>
+        <a href="{{ nav_url(section='data_liberation') }}">
+          {{ _('data liberation') }}
+        </a><br>
+        <a id="hw-delete-account" class="hw-button hw-button-delete"
+           href="#deleteAccount"
+           onclick="hw.deleteAccount(event, '{{ user.username }}')">
+          {{ _('delete account') }}
+        </a>
       </div>
     </fieldset>
   </form>
@@ -237,11 +395,14 @@
 
 {% block end_content %}
   <div id="hw-color-picker-wrapper" class="hw-hidden">
-    <span id="hw-color-picker-close" onclick="hw.hide(hw.$('hw-color-picker-wrapper'))">×</span>
-    <canvas id="hw-color-picker" class="hw-hdden" width="128" height="128"></canvas>
+    <span id="hw-color-picker-close"
+          onclick="hw.hide(hw.$('hw-color-picker-wrapper'))">×</span>
+    <canvas id="hw-color-picker" class="hw-hdden" width="128" height="128">
+    </canvas>
   </div>
 {% end %}
 
 {% block backend_content %}
-  <iframe id="hw-customize-preview" src="{{ nav_url(username=user.username) }}" onload="hw.customSetupIframe(this)"></iframe>
+  <iframe id="hw-customize-preview" src="{{ nav_url(username=user.username) }}"
+          onload="hw.customSetupIframe(this)"></iframe>
 {% end %}

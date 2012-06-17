@@ -25,14 +25,19 @@ def detect_media_type(filename):
     return 'image'
   elif mimetype.find('audio/') == 0:
     return 'audio'
-  elif mimetype in ('application/javascript', 'text/css', 'text/html', 'application/json', 'application/xml', 'application/xhtml+xml', 'application/rss+xml', 'application/atom+xml', 'application/vnd.ms-fontobject', 'font/opentype', 'application/x-font-ttf', 'text/plain', 'text/xml', 'text/x-component'):
+  elif mimetype in ('application/javascript', 'text/css', 'text/html',
+      'application/json', 'application/xml', 'application/xhtml+xml',
+      'application/rss+xml', 'application/atom+xml',
+      'application/vnd.ms-fontobject', 'font/opentype',
+      'application/x-font-ttf', 'text/plain', 'text/xml', 'text/x-component'):
     return 'web'
   elif mimetype == 'application/zip':
     return 'zip'
   else:
     return None
 
-def generate_full_html(handler, url, original_size_url, full_caption='', alt_text=''):
+def generate_full_html(handler, url, original_size_url, full_caption='',
+    alt_text=''):
   media_type = detect_media_type(url)
   media_html = '<figure>'
   if media_type == 'image':
@@ -47,7 +52,8 @@ def generate_full_html(handler, url, original_size_url, full_caption='', alt_tex
       full_caption += handler.locale.translate('download video:') + ' '
     else:
       full_caption += handler.locale.translate('download audio:') + ' '
-    full_caption += '<a href="' + url + '">' + url[url.rfind('/') + 1:] + '</a>'
+    full_caption += ('<a href="' + url + '">' +
+        url[url.rfind('/') + 1:] + '</a>')
   else:
     media_html += '<a href="' + url + '">' + url[url.rfind('/') + 1:] + '</a>'
 
@@ -69,16 +75,19 @@ def generate_html(filename, alt_text=''):
     return '<img src="' + filename + '" alt="' + alt_text + '">'
   elif media_type == 'video':
     return '<video controls alt="' + alt_text + '" width="500">' \
-         +   '<source src="' + filename + '" type="' + mimetype + '" onerror="hw.videoError(this)" >' \
+         +   '<source src="' + filename + '" type="' + mimetype \
+         + '" onerror="hw.videoError(this)" >' \
          + '</video>'
   elif media_type == 'audio':
     return '<audio controls alt="' + alt_text + '">' \
-         +   '<source src="' + filename + '" type="' + mimetype + '" onerror="hw.audioError(this)" >' \
+         +   '<source src="' + filename + '" type="' + mimetype \
+         + '" onerror="hw.audioError(this)" >' \
          + '</audio>'
   else:
     return filename
 
-def save_locally(parent_url, full_path, data, skip_write=False, disallow_zip=False, overwrite=False):
+def save_locally(parent_url, full_path, data, skip_write=False,
+    disallow_zip=False, overwrite=False):
   # check dupe
   if not skip_write and not overwrite:
     full_path = get_unique_name(full_path)
@@ -106,8 +115,10 @@ def save_locally(parent_url, full_path, data, skip_write=False, disallow_zip=Fal
     original_size_filename = os.path.join(original_size_dir, leaf_name)
     if not overwrite:
       original_size_filename = get_unique_name(original_size_filename)
-    thumb_url = os.path.join(os.path.join(parent_url, 'thumbs'), os.path.split(thumb_filename)[1])
-    original_size_url = os.path.join(os.path.join(parent_url, 'original'), os.path.split(original_size_filename)[1])
+    thumb_url = os.path.join(os.path.join(parent_url, 'thumbs'),
+        os.path.split(thumb_filename)[1])
+    original_size_url = os.path.join(os.path.join(parent_url, 'original'),
+        os.path.split(original_size_filename)[1])
 
     if skip_write:
       os.rename(full_path, original_size_filename)
@@ -157,13 +168,15 @@ def save_locally(parent_url, full_path, data, skip_write=False, disallow_zip=Fal
           original_img = original_img.transpose(Image.FLIP_TOP_BOTTOM)
         elif orientation == 5:
           # Horizontal Mirror + Rotation 270
-          original_img = original_img.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.ROTATE_270)
+          original_img = original_img.transpose(
+              Image.FLIP_TOP_BOTTOM).transpose(Image.ROTATE_270)
         elif orientation == 6:
           # Rotation 270
           original_img = original_img.transpose(Image.ROTATE_270)
         elif orientation == 7:
           # Vertical Mirror + Rotation 270
-          original_img = original_img.transpose(Image.FLIP_LEFT_RIGHT).transpose(Image.ROTATE_270)
+          original_img = original_img.transpose(
+              Image.FLIP_LEFT_RIGHT).transpose(Image.ROTATE_270)
         elif orientation == 8:
           # Rotation 90
           original_img = original_img.transpose(Image.ROTATE_90)
@@ -172,12 +185,14 @@ def save_locally(parent_url, full_path, data, skip_write=False, disallow_zip=Fal
           original_img.save(original_size_filename, quality=95)
 
     thumb = Image.open(original_size_filename)
-    thumb.thumbnail((content_logic.THUMB_WIDTH, content_logic.THUMB_HEIGHT), Image.ANTIALIAS)
+    thumb.thumbnail((content_logic.THUMB_WIDTH, content_logic.THUMB_HEIGHT),
+        Image.ANTIALIAS)
     thumb.save(thumb_filename, quality=95)
 
     if not is_animated:
       normal = Image.open(original_size_filename)
-      normal.thumbnail((content_logic.PHOTO_WIDTH, content_logic.PHOTO_HEIGHT), Image.ANTIALIAS)
+      normal.thumbnail((content_logic.PHOTO_WIDTH, content_logic.PHOTO_HEIGHT),
+          Image.ANTIALIAS)
       normal.save(full_path, quality=95)
     else:
       shutil.copyfile(original_size_filename, full_path)
@@ -196,7 +211,8 @@ def save_locally(parent_url, full_path, data, skip_write=False, disallow_zip=Fal
         if f.endswith('/'):
           os.makedirs(os.path.join(dir_path, filename))
         else:
-          if detect_media_type(filename) not in ('video', 'image', 'audio', 'web', 'zip'):
+          if detect_media_type(filename) not in ('video', 'image', 'audio',
+              'web', 'zip'):
             raise tornado.web.HTTPError(400, "i call shenanigans")
           z.extract(filename, dir_path)
 

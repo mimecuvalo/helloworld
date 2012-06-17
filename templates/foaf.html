@@ -1,24 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:bio="http://purl.org/vocab/bio/0.1/" xmlns:sioc="http://rdfs.org/sioc/ns#" xmlns="http://xmlns.com/foaf/0.1/">
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+    xmlns:bio="http://purl.org/vocab/bio/0.1/"
+    xmlns:sioc="http://rdfs.org/sioc/ns#"
+    xmlns="http://xmlns.com/foaf/0.1/">
   <PersonalProfileDocument rdf:about="">
-    <maker rdf:resource="{{ nav_url(host=True, username=user.username) }}"></maker>
-    <primaryTopic rdf:resource="{{ nav_url(host=True, username=user.username) }}"></primaryTopic>
+    <maker rdf:resource="{{ nav_url(host=True, username=user.username) }}">
+    </maker>
+    <primaryTopic
+      rdf:resource="{{ nav_url(host=True, username=user.username) }}">
+    </primaryTopic>
   </PersonalProfileDocument>
 
   <Agent rdf:about="{{ nav_url(host=True, username=user.username) }}">
     <mbox_sha1sum>{{ mbox_sha1sum }}</mbox_sha1sum>
-    <weblog rdf:resource="{{ nav_url(host=True, username=user.username) }}"></weblog>
+    <weblog rdf:resource="{{ nav_url(host=True, username=user.username) }}">
+    </weblog>
     {% if user.logo %}
       <img>
         <Image rdf:about="{{ nav_url(host=True, section=user.logo) }}"></Image>
       </img>
     {% end %}
     <account>
-      <OnlineAccount rdf:about="{{ nav_url(host=True, username=user.username) }}#acct">
-        <accountServiceHomepage rdf:resource="{{ nav_url(host=True) }}"></accountServiceHomepage>
+      <OnlineAccount
+          rdf:about="{{ nav_url(host=True, username=user.username) }}#acct">
+        <accountServiceHomepage rdf:resource="{{ nav_url(host=True) }}">
+        </accountServiceHomepage>
         <accountName>{{ user.username }}</accountName>
-        <accountProfilePage rdf:resource="{{ nav_url(host=True, username=user.username) }}"></accountProfilePage>
-        <sioc:account_of rdf:resource="{{ nav_url(host=True, username=user.username) }}"></sioc:account_of>
+        <accountProfilePage
+          rdf:resource="{{ nav_url(host=True, username=user.username) }}">
+        </accountProfilePage>
+        <sioc:account_of
+          rdf:resource="{{ nav_url(host=True, username=user.username) }}">
+        </sioc:account_of>
         {% for f in following %}
           <sioc:follows rdf:resource="{{ f.profile_url }}#acct"></sioc:follows>
         {% end %}
@@ -34,14 +49,19 @@
   {% for f in followers %}
     <Agent rdf:about="{{ f.profile_url }}">
       {% if f.following %}
-        <knows rdf:resource="{{ nav_url(host=True, username=user.username) }}"></knows>
+        <knows rdf:resource="{{ nav_url(host=True, username=user.username) }}">
+        </knows>
       {% end %}
       <account>
         <OnlineAccount rdf:about="{{ f.profile_url }}#acct">
           <accountName>{{ f.username }}</accountName>
-          <accountProfilePage rdf:resource="{{ f.profile_url }}"></accountProfilePage>
-          <sioc:account_of rdf:resource="{{ f.profile_url }}"></sioc:account_of>
-          <sioc:follows rdf:resource="{{ nav_url(host=True, username=user.username) }}#acct"></sioc:follows>
+          <accountProfilePage rdf:resource="{{ f.profile_url }}">
+          </accountProfilePage>
+          <sioc:account_of rdf:resource="{{ f.profile_url }}">
+          </sioc:account_of>
+          <sioc:follows
+            rdf:resource="{{ nav_url(host=True, username=user.username) }}#acct">
+          </sioc:follows>
         </OnlineAccount>
       </account>
     </Agent>

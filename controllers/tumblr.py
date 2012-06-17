@@ -31,10 +31,12 @@ class TumblrHandler(BaseHandler,
       self.user = self.get_author_user()
       access_token, tumblr_info = self.get_tumblr_info()
 
-      count = self.models.content_remote.get(to_username=self.user.username, type='tumblr').count()
+      count = self.models.content_remote.get(to_username=self.user.username,
+          type='tumblr').count()
       args = {}
       if count:
-        jump = self.models.content_remote.get(to_username=self.user.username, type='tumblr')[count - 1:count]
+        jump = self.models.content_remote.get(to_username=self.user.username,
+            type='tumblr')[count - 1:count]
         args['since_id'] = jump[0].post_id
 
       self.tumblr_request(
@@ -88,20 +90,26 @@ class TumblrHandler(BaseHandler,
           normal_path = os.path.join(parent_dir, basename)
           if os.path.exists(normal_path):
             normal_picture = normal_path
-            normal_picture = normal_picture[len(self.application.settings["static_path"]) + 1:]
-            normal_picture = self.static_url(normal_picture, include_host=True, include_sig=False)
+            normal_picture = normal_picture[len(
+                self.application.settings["static_path"]) + 1:]
+            normal_picture = self.static_url(normal_picture, include_host=True,
+                include_sig=False)
 
         picture = picture[len(self.application.settings["static_path"]) + 1:]
-        picture = self.static_url(picture, include_host=True, include_sig=False)
+        picture = self.static_url(picture, include_host=True,
+            include_sig=False)
       else:
         picture = thumb
 
-    video = re.compile(r'<iframe[^>]*(youtube|vimeo)[^>]*>.*?</iframe>', re.M | re.S).search(body)
+    video = re.compile(r'<iframe[^>]*(youtube|vimeo)[^>]*>.*?</iframe>',
+        re.M | re.S).search(body)
 
     if picture and normal_picture and not video:
       post_args["source"] = picture
       post_args["link"] = self.get_argument('url')
-      post_args["caption"] = re.compile(r'(<figure>.*?<img.*?src="' + normal_picture + r'".*?>.*?</figure>)', re.M | re.U | re.S).sub('', body)
+      post_args["caption"] = re.compile(r'(<figure>.*?<img.*?src="' +
+          normal_picture + r'".*?>.*?</figure>)', re.M | re.U | re.S).sub(
+          '', body)
       post_args["type"] = "photo"
 
     if video:
@@ -122,10 +130,11 @@ class TumblrHandler(BaseHandler,
       post_args["tags"] += "," + album
 
     self.tumblr_request(
-            "http://api.tumblr.com/v2/blog/" + tumblr_info['primary_blog'] + "/post",
-            self.status_update_result,
-            access_token=access_token,
-            post_args=post_args,)
+        "http://api.tumblr.com/v2/blog/" + tumblr_info['primary_blog'] +
+        "/post",
+        self.status_update_result,
+        access_token=access_token,
+        post_args=post_args,)
 
   # TODO XXX favoriting busted right now, need reblog key
   def favorite(self):
@@ -160,7 +169,8 @@ class TumblrHandler(BaseHandler,
   def timeline_result(self, response):
     posts = response['response']['posts']
     for post in posts:
-      exists = self.models.content_remote.get(to_username=self.user.username, type='tumblr', post_id=str(post['id']))[0]
+      exists = self.models.content_remote.get(to_username=self.user.username,
+          type='tumblr', post_id=str(post['id']))[0]
 
       if exists:
         continue
@@ -175,7 +185,8 @@ class TumblrHandler(BaseHandler,
       parsed_date = datetime.datetime.utcfromtimestamp(post['timestamp'])
 
       # we don't keep items that are over 30 days old
-      if parsed_date < datetime.datetime.utcnow() - datetime.timedelta(days=self.constants['feed_max_days_old']):
+      if parsed_date < datetime.datetime.utcnow() - datetime.timedelta(
+          days=self.constants['feed_max_days_old']):
         continue
 
       new_post.date_created = parsed_date
@@ -187,45 +198,60 @@ class TumblrHandler(BaseHandler,
       new_post.link = post['post_url']
       if post['type'] == 'text':
         new_post.title = post['title']
-        new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(post['body']))
+        new_post.view = content_remote.sanitize(
+            tornado.escape.xhtml_unescape(post['body']))
       elif post['type'] == 'photo':
         html = ""
         for photo in post['photos']:
           chosen_photo = None
           for size in photo['alt_sizes']:
-            if not chosen_photo or (size['width'] <= 720 and chosen_photo['width'] < size['width']):
+            if (not chosen_photo or (size['width'] <= 720 and
+                chosen_photo['width'] < size['width'])):
               chosen_photo = size
-          html += '<img src="' + content_remote.sanitize(tornado.escape.xhtml_unescape(chosen_photo['url'])) + '">'
-        html += content_remote.sanitize(tornado.escape.xhtml_unescape(post['caption']))
+          html += '<img src="' + content_remote.sanitize(
+              tornado.escape.xhtml_unescape(chosen_photo['url'])) + '">'
+        html += content_remote.sanitize(tornado.escape.xhtml_unescape(
+            post['caption']))
         new_post.view = html
       elif post['type'] == 'quote':
-        new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(post['text'] + '<br>' + post['source']))
+        new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(
+            post['text'] + '<br>' + post['source']))
       elif post['type'] == 'link':
         new_post.title = post['title']
-        new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape('<a href="' + post['url'] + '">' + post['url'] + '</a><br>' + post['description']))
+        new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(
+            '<a href="' + post['url'] + '">' + post['url'] + '</a><br>' +
+            post['description']))
       elif post['type'] == 'chat':
         new_post.title = post['title']
-        new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(post['body'].replace('\r\n', '<br>')))
+        new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(
+            post['body'].replace('\r\n', '<br>')))
       elif post['type'] == 'audio':
         html = ""
-        html += content_remote.sanitize(tornado.escape.xhtml_unescape(post['player']))
-        html += content_remote.sanitize(tornado.escape.xhtml_unescape(post['caption']))
+        html += content_remote.sanitize(tornado.escape.xhtml_unescape(
+            post['player']))
+        html += content_remote.sanitize(tornado.escape.xhtml_unescape(
+            post['caption']))
         new_post.view = html
       elif post['type'] == 'video':
         chosen_video = None
         for video in post['player']:
-          if not chosen_video or (video['width'] <= 720 and chosen_video['width'] < video['width']):
+          if (not chosen_video or (video['width'] <= 720 and
+              chosen_video['width'] < video['width'])):
             chosen_video = video
         html = ""
-        html += content_remote.sanitize(tornado.escape.xhtml_unescape(chosen_video['embed_code']))
-        html += content_remote.sanitize(tornado.escape.xhtml_unescape(post['caption']))
+        html += content_remote.sanitize(tornado.escape.xhtml_unescape(
+            chosen_video['embed_code']))
+        html += content_remote.sanitize(tornado.escape.xhtml_unescape(
+            post['caption']))
         new_post.view = html
       elif post['type'] == 'answer':
         new_post.title = post['question']
-        new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(post['answer']))
+        new_post.view = content_remote.sanitize(tornado.escape.xhtml_unescape(
+            post['answer']))
       new_post.save()
 
-    count = self.models.content_remote.get(to_username=self.user.username, type='tumblr', deleted=False).count()
+    count = self.models.content_remote.get(to_username=self.user.username,
+        type='tumblr', deleted=False).count()
     self.write(json.dumps({ 'count': count }))
 
   def tumblr_request(self, path, callback, access_token=None,
@@ -268,7 +294,8 @@ class TumblrHandler(BaseHandler,
       raise Exception("This service does not support oauth_callback")
 
     if getattr(self, "_OAUTH_VERSION", "1.0a") == "1.0a":
-      response = content_remote.get_url(self._oauth_request_token_url(callback_uri=callback_uri, extra_params=extra_params))
+      response = content_remote.get_url(self._oauth_request_token_url(
+          callback_uri=callback_uri, extra_params=extra_params))
       self._on_request_token(self._OAUTH_AUTHORIZE_URL, callback_uri, response)
     else:
       response = content_remote.get_url(self._oauth_request_token_url())
@@ -293,7 +320,8 @@ class TumblrHandler(BaseHandler,
       callback(None)
       return
     self.clear_cookie("_oauth_request_token")
-    cookie_key, cookie_secret = [base64.b64decode(tornado.escape.utf8(i)) for i in request_cookie.split("|")]
+    cookie_key, cookie_secret = [base64.b64decode(tornado.escape.utf8(i))
+        for i in request_cookie.split("|")]
     if cookie_key != request_key:
       logging.info((cookie_key, request_key, request_cookie))
       logging.warning("Request token does not match cookie")

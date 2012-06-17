@@ -37,7 +37,8 @@ hw.drop = function(event) {
 };
 
 
-hw.dragChromeWorkaroundId = null; // XXX bite me Chrome, why can't you getData in dragOver and dragLeave??
+hw.dragChromeWorkaroundId = null;
+// XXX bite me Chrome, why can't you getData in dragOver and dragLeave??
 hw.dragStart = function(event, el) {
   hw.stopPropagation(event);
 
@@ -65,7 +66,8 @@ hw.dragLogic = function(event, el) {
     return { 'dragAllowed': false };
   }
 
-  var id = event.dataTransfer.getData('text/plain') || hw.dragChromeWorkaroundId; // XXX see chrome comment above :-/
+  var id = event.dataTransfer.getData('text/plain') ||
+      hw.dragChromeWorkaroundId; // XXX see chrome comment above :-/
   var draggedElement = hw.$(id);
 
   // if renaming, disable as well
@@ -76,10 +78,12 @@ hw.dragLogic = function(event, el) {
   var draggedIsSitemap = id.indexOf('hw-sitemap') == 0;
   var dropIsSitemap = el.id.indexOf('hw-sitemap') == 0;
 
-  var draggedIsAlbum = draggedIsSitemap && draggedElement.getAttribute('data-sitemap-album');
+  var draggedIsAlbum = draggedIsSitemap &&
+      draggedElement.getAttribute('data-sitemap-album');
   var dropIsAlbum = dropIsSitemap && el.getAttribute('data-sitemap-album');
 
-  var draggedIsContentAlbum = draggedElement.getAttribute('data-is-album') == 'true';
+  var draggedIsContentAlbum =
+      draggedElement.getAttribute('data-is-album') == 'true';
 
   var draggedAlbum = draggedElement.getElementsByTagName('UL');
   var draggedHasAlbum = draggedIsSitemap && draggedAlbum.length;
@@ -168,7 +172,8 @@ hw.dragDrop = function(event, el) {
 
   var draggedElement = dragInfo['draggedElement'];
 
-  var newSection = dragInfo['draggedIsSitemap'] && el.id.split('_')[1] != draggedElement.id.split('_')[1] ? el.id.split('_')[1] : '';
+  var newSection = dragInfo['draggedIsSitemap'] && el.id.split('_')[1] !=
+      draggedElement.id.split('_')[1] ? el.id.split('_')[1] : '';
 
   // remove item from current position
   draggedElement = draggedElement.parentNode.removeChild(draggedElement);
@@ -179,7 +184,8 @@ hw.dragDrop = function(event, el) {
   if (!dragInfo['draggedIsSitemap']) {
     hw.removeClass(el, 'hw-over-content');
     if (!dragInfo['dropIsSitemap']) {
-      insertedElement = el.parentNode.insertBefore(draggedElement, el.nextSibling);
+      insertedElement = el.parentNode.insertBefore(draggedElement,
+          el.nextSibling);
     }
   } else if (dragInfo['draggedIsAlbum']) {
     hw.removeClass(el, 'hw-over');
@@ -190,13 +196,16 @@ hw.dragDrop = function(event, el) {
     }
 
     if (dragInfo['dropIsAlbum']) {
-      insertedElement = el.parentNode.insertBefore(draggedElement, el.nextSibling);
+      insertedElement = el.parentNode.insertBefore(draggedElement,
+          el.nextSibling);
     } else {
-      insertedElement = dragInfo['dropAlbum'].insertBefore(draggedElement, dragInfo['dropAlbum'].firstChild);
+      insertedElement = dragInfo['dropAlbum'].insertBefore(draggedElement,
+          dragInfo['dropAlbum'].firstChild);
     }
   } else {
     hw.removeClass(el, 'hw-over');
-    insertedElement = el.parentNode.insertBefore(draggedElement, el.nextSibling);
+    insertedElement = el.parentNode.insertBefore(draggedElement,
+        el.nextSibling);
   }
 
   // calculate new position
@@ -218,12 +227,14 @@ hw.dragDrop = function(event, el) {
 
   // send off to server
   var createForm = hw.$c('hw-create');
-  var sectionAlbum = createForm['hw-section'].value + '_' + createForm['hw-name'].value;
+  var sectionAlbum = createForm['hw-section'].value + '_' +
+      createForm['hw-name'].value;
   new hw.ajax(hw.baseUri() + 'api',
     { method: 'post',
       postBody: 'op='       + encodeURIComponent('order')
-             + '&type='     + encodeURIComponent(!dragInfo['draggedIsSitemap'] ? 'content'
-                                                 : (dragInfo['draggedIsAlbum'] ? 'album' : 'section'))
+             + '&type='     + encodeURIComponent(
+                !dragInfo['draggedIsSitemap'] ? 'content'
+                : (dragInfo['draggedIsAlbum'] ? 'album' : 'section'))
              + '&dragged='  + encodeURIComponent(dragInfo['id'])
              + '&dropped='  + encodeURIComponent(dragInfo['dropped_id'])
              + '&current_section_album='  + encodeURIComponent(sectionAlbum)
@@ -263,9 +274,11 @@ hw.followingDragDrop = function(event, el) {
 
   hw.removeClass(el, 'hw-over');
   var insertBeforeElement = el.nextSibling;
-  insertedElement = el.parentNode.insertBefore(draggedElement, insertBeforeElement);
+  insertedElement = el.parentNode.insertBefore(draggedElement,
+      insertBeforeElement);
 
-  var position = 0;  // we have read all/your feed/favorites/comments/twitter/fb/goog/tumblr in front
+  var position = 0;
+  // we have read all/your feed/favorites/comments/[externals] in front
   var followingList = hw.$('hw-following-list');
   var followingListLis = followingList.getElementsByTagName('LI');
   for (var x = 0; x < followingListLis.length; ++x) {

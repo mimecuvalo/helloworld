@@ -18,7 +18,8 @@ def socialize(handler, content):
 
 def publish(handler, content):
   try:
-    pubsubhubbub_publish.publish(handler.constants['push_hub'], handler.nav_url(host=True, username=content.username, section='feed'))
+    pubsubhubbub_publish.publish(handler.constants['push_hub'],
+        handler.nav_url(host=True, username=content.username, section='feed'))
   except pubsubhubbub_publish.PublishError, e:
     # do nothing for now
     pass
@@ -31,10 +32,12 @@ def reply(handler, content, mentions=None):
   users_profile = []
   mentioned_users = []
   if content.thread:
-    thread_content = handler.models.content_remote.get(to_username=profile, post_id=content.thread)[0]
+    thread_content = handler.models.content_remote.get(to_username=profile,
+        post_id=content.thread)[0]
     if not thread_content:
       return
-    thread_user_remote = handler.models.users_remote.get(local_username=profile, profile_url=thread_content.from_user)[0]
+    thread_user_remote = handler.models.users_remote.get(
+        local_username=profile, profile_url=thread_content.from_user)[0]
 
     if thread_user_remote and thread_user_remote.salmon_url:
       users.append(thread_user_remote)
@@ -43,9 +46,11 @@ def reply(handler, content, mentions=None):
 
   if mentions:
     for user in mentions:
-      user_remote = handler.models.users_remote.get(local_username=profile, username=user)[0]
+      user_remote = handler.models.users_remote.get(local_username=profile,
+          username=user)[0]
 
-      if not user_remote or (thread_user_remote and thread_user_remote.profile_url == user_remote.profile_url):
+      if not user_remote or (thread_user_remote and
+          thread_user_remote.profile_url == user_remote.profile_url):
         continue
 
       if user_remote.profile_url in users_profile:
@@ -60,7 +65,8 @@ def reply(handler, content, mentions=None):
     comments = content_remote.get_comments(handler, content)
 
     for comment in comments:
-      user_remote = handler.models.users_remote.get(local_username=profile, username=comment.from_user)[0]
+      user_remote = handler.models.users_remote.get(local_username=profile,
+          username=comment.from_user)[0]
 
       if not user_remote:
         continue
@@ -73,4 +79,5 @@ def reply(handler, content, mentions=None):
         users_profile.append(user_remote.profile_url)
 
   for user in users:
-    user_logic.salmon_reply(handler, user, content, thread=content.thread, mentioned_users=mentioned_users)
+    user_logic.salmon_reply(handler, user, content, thread=content.thread,
+        mentioned_users=mentioned_users)

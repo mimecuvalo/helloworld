@@ -26,7 +26,8 @@ class SalmonHandler(BaseHandler):
 
     def LookupPublicKey(self, signer_uri=None):
       self.signer_uri = signer_uri
-      user_remote = self.handler.models.users_remote.get(local_username=self.local_user.username, profile_url=signer_uri)[0]
+      user_remote = self.handler.models.users_remote.get(
+          local_username=self.local_user.username, profile_url=signer_uri)[0]
 
       if not user_remote:
         # get host-meta first
@@ -37,7 +38,9 @@ class SalmonHandler(BaseHandler):
 
         # get webfinger
         webfinger_doc = users.get_webfinger(lrdd_link, signer_uri)
-        magic_key = webfinger_doc.find('link', rel='magic-public-key')['href'].replace('data:application/magic-public-key,', '')
+        magic_key = webfinger_doc.find('link',
+            rel='magic-public-key')['href'].replace(
+            'data:application/magic-public-key,', '')
 
         if not magic_key:
           raise tornado.web.HTTPError(400)
@@ -70,8 +73,10 @@ class SalmonHandler(BaseHandler):
     self.display["user"] = user
 
     salmonizer = salmoning.SalmonProtocol()
-    salmonizer.key_retriever = self.MockKeyRetriever(handler=self, local_user=user)
-    env = salmonizer.ParseSalmon(self.request.body, 'application/magic-envelope+xml')
+    salmonizer.key_retriever = self.MockKeyRetriever(handler=self,
+        local_user=user)
+    env = salmonizer.ParseSalmon(self.request.body,
+        'application/magic-envelope+xml')
     self.handle_activity_verb(env, salmonizer.key_retriever.signer_uri)
 
   # tornado & python rock
@@ -82,14 +87,19 @@ class SalmonHandler(BaseHandler):
   def handle_activity_verb(self, env, signer_uri):
     salmon_doc = BeautifulSoup(env)
     activity_verb = salmon_doc.find(re.compile('.+:verb$')).string
-    user_remote = self.models.users_remote.get(local_username=self.display["user"].username, profile_url=signer_uri)[0]
+    user_remote = self.models.users_remote.get(
+        local_username=self.display["user"].username,
+        profile_url=signer_uri)[0]
 
     if (activity_verb == 'http://activitystrea.ms/schema/1.0/follow'):
-      user = users.get_remote_user_info(self, signer_uri, user_remote.local_username)
+      user = users.get_remote_user_info(self, signer_uri,
+          user_remote.local_username)
       user.follower = 1
       user.save()
-      smtp.follow(self, user.username, self.display["user"].email, user.profile_url)
-    elif (activity_verb == 'http://ostatus.org/schema/1.0/unfollow' or activity_verb == 'http://activitystrea.ms/schema/1.0/stop-following'):
+      smtp.follow(self, user.username, self.display["user"].email,
+          user.profile_url)
+    elif (activity_verb == 'http://ostatus.org/schema/1.0/unfollow' or
+        activity_verb == 'http://activitystrea.ms/schema/1.0/stop-following'):
       user_remote.follower = 0
       user_remote.save()
     elif (activity_verb == 'http://activitystrea.ms/schema/1.0/favorite'):
@@ -98,10 +108,11 @@ class SalmonHandler(BaseHandler):
       local_url = atom_id.split(':')[2]
       content_url = url_factory.load_basic_parameters(self, url=local_url)
 
-      already_favorited = self.models.content_remote.get(to_username=self.display["user"].username,
-                                                         from_user=signer_uri,
-                                                         type='favorite',
-                                                         local_content_name=content_url['name'])[0]
+      already_favorited = self.models.content_remote.get(
+          to_username=self.display["user"].username,
+          from_user=signer_uri,
+          type='favorite',
+          local_content_name=content_url['name'])[0]
       if already_favorited:
         return
 
@@ -116,11 +127,13 @@ class SalmonHandler(BaseHandler):
       favorite_record.to_username = self.display["user"].username
       favorite_record.from_user = signer_uri
       favorite_record.username = user_remote.username
-      favorite_record.date_created = datetime.datetime.strptime(salmon_doc.find('atom:updated').string[:-6], '%Y-%m-%dT%H:%M:%S')
+      favorite_record.date_created = datetime.datetime.strptime(
+          salmon_doc.find('atom:updated').string[:-6], '%Y-%m-%dT%H:%M:%S')
       favorite_record.type = 'favorite'
       favorite_record.local_content_name = content.name
       favorite_record.save()
-    elif (activity_verb == 'http://activitystrea.ms/schema/1.0/unfavorite' or activity_verb == 'http://ostatus.org/schema/1.0/unfavorite'):
+    elif (activity_verb == 'http://activitystrea.ms/schema/1.0/unfavorite' or
+        activity_verb == 'http://ostatus.org/schema/1.0/unfavorite'):
       # TODO no activity object at least with ostatus??
       pass
     elif (activity_verb == 'http://activitystrea.ms/schema/1.0/share'):
@@ -128,11 +141,13 @@ class SalmonHandler(BaseHandler):
       pass
     elif (activity_verb == 'http://activitystrea.ms/schema/1.0/post'):
       atom_content = salmon_doc.find('atom:content').string
-      sanitized_atom_content = content_remote.sanitize(tornado.escape.xhtml_unescape(atom_content))
+      sanitized_atom_content = content_remote.sanitize(
+          tornado.escape.xhtml_unescape(atom_content))
 
-      existing_content = self.models.content_remote.get(to_username=self.display["user"].username,
-                                                      from_user=signer_uri,
-                                                      view=sanitized_atom_content)[0]
+      existing_content = self.models.content_remote.get(
+          to_username=self.display["user"].username,
+          from_user=signer_uri,
+          view=sanitized_atom_content)[0]
 
       thread = salmon_doc.find('thr:in-reply-to')
       ref = ''
@@ -140,8 +155,9 @@ class SalmonHandler(BaseHandler):
         try:
           local_url = thread['ref'].split(':')[2]
           content_url = url_factory.load_basic_parameters(self, url=local_url)
-          content = self.models.content.get(username=self.display["user"].username,
-                                            name=content_url['name'])[0]
+          content = self.models.content.get(
+              username=self.display["user"].username,
+              name=content_url['name'])[0]
           if not content:
             raise tornado.web.HTTPError(400)
           ref = content_url['name']
@@ -162,7 +178,8 @@ class SalmonHandler(BaseHandler):
         if replies.has_key('updated'):
           comments_updated = replies['updated']
         comments_response = urllib2.urlopen(replies['href'])
-        content_remote.parse_feed(self.models, user_remote, comments_response.read(), remote_comments=True)
+        content_remote.parse_feed(self.models, user_remote,
+            comments_response.read(), remote_comments=True)
 
       mentioned = salmon_doc.findAll('atom:link', rel='mentioned')
       if not mentioned:
@@ -170,14 +187,17 @@ class SalmonHandler(BaseHandler):
 
       this_user_mentioned = False
       if mentioned:
-        this_user_url = self.nav_url(host=True, username=self.display["user"].username)
+        this_user_url = self.nav_url(host=True,
+            username=self.display["user"].username)
         for mentions in mentioned:
           if mentions['href'] == this_user_url:
             # hey, you've been mentioned. cool.
             this_user_mentioned = True
             break
 
-      is_spam = spam.guess(atom_content, self.application.settings["private_path"], self.display["user"].username)
+      is_spam = spam.guess(atom_content,
+          self.application.settings["private_path"],
+          self.display["user"].username)
 
       if existing_content:
         # possible that it's picked up via feed, before we get the salmon call
@@ -188,18 +208,23 @@ class SalmonHandler(BaseHandler):
       post_remote.from_user = signer_uri
       post_remote.username = user_remote.username
       post_remote.avatar = user_remote.avatar
-      post_remote.date_created = datetime.datetime.strptime(salmon_doc.find('atom:published').string[:-6], '%Y-%m-%dT%H:%M:%S')
-      post_remote.date_updated = datetime.datetime.strptime(salmon_doc.find('atom:updated').string[:-6], '%Y-%m-%dT%H:%M:%S')
+      post_remote.date_created = datetime.datetime.strptime(
+          salmon_doc.find('atom:published').string[:-6], '%Y-%m-%dT%H:%M:%S')
+      post_remote.date_updated = datetime.datetime.strptime(
+          salmon_doc.find('atom:updated').string[:-6], '%Y-%m-%dT%H:%M:%S')
       post_remote.comments_count = comments_count
       if comments_updated:
-        post_remote.comments_updated = datetime.datetime.strptime(comments_updated[:-6], '%Y-%m-%dT%H:%M:%S')
+        post_remote.comments_updated = datetime.datetime.strptime(
+            comments_updated[:-6], '%Y-%m-%dT%H:%M:%S')
       else:
         post_remote.comments_updated = None
       if is_spam:
         post_remote.is_spam = True
       else:
-        spam.train_ham(atom_content, self.application.settings["private_path"], self.display["user"].username)
-      post_remote.type = 'comment' if ref or (existing_content and existing_content.type == 'comment') else 'post'
+        spam.train_ham(atom_content, self.application.settings["private_path"],
+            self.display["user"].username)
+      post_remote.type = 'comment' if ref or (existing_content and
+          existing_content.type == 'comment') else 'post'
       post_remote.title = salmon_doc.find('atom:title').string
       post_remote.post_id = salmon_doc.find('atom:id').string
       post_remote.link = salmon_doc.find('atom:link', rel='alternate')['href']
@@ -211,6 +236,10 @@ class SalmonHandler(BaseHandler):
         socialize.socialize(self, content)
 
       if ref:
-        smtp.comment(self, post_remote.username, post_remote.from_user, self.display["user"].email, self.content_url(content, host=True), sanitized_atom_content)
+        smtp.comment(self, post_remote.username, post_remote.from_user,
+            self.display["user"].email, self.content_url(content, host=True),
+            sanitized_atom_content)
       elif this_user_mentioned:
-        smtp.comment(self, post_remote.username, post_remote.from_user, self.display["user"].email, post_remote.link, sanitized_atom_content, this_user_mentioned=True)
+        smtp.comment(self, post_remote.username, post_remote.from_user,
+            self.display["user"].email, post_remote.link,
+            sanitized_atom_content, this_user_mentioned=True)

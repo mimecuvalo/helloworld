@@ -1,7 +1,8 @@
 {% extends "base_backend.html" %}
 
 {% block extra_js %}
-  <script src="{{ static_url('js/all_create.js', 'js/all_create.inc') }}"></script>
+  <script src="{{ static_url('js/all_create.js', 'js/all_create.inc') }}">
+  </script>
   <script>
     hw.disableHistory = true; {# disable popstate events #}
     hw.externalSources = {{ repr(external_sources) }};
@@ -20,7 +21,10 @@
         <span id="hw-external-posts-label">{{ _('post to: ') }}</span>
         {% for source in external_sources %}
           {% if getattr(user, source) %}
-            <label for="hw-post-{{ source }}"><span>{{ source }}</span><input id="hw-post-{{ source }}" type="checkbox"></label>
+            <label for="hw-post-{{ source }}">
+              <span>{{ source }}</span>
+              <input id="hw-post-{{ source }}" type="checkbox">
+            </label>
           {% end %}
         {% end %}
       </div>
@@ -30,13 +34,33 @@
   <div id="hw-absorb">
     <div id="hw-absorb-options">
       <span class="hw-button-group">
-        <button class="hw-menu-button" onclick="hw.menu(event, this)" type="button">
+        <button class="hw-menu-button" onclick="hw.menu(event, this)"
+                type="button">
           <a href="#settings" onclick="return false;">{{ _('settings') }}</a>
           <span class="hw-arrow-button"></span>
         </button>
-        <div class="hw-menu {% if list_mode %}hw-list-mode{% else %}hw-complete-mode{% end %} {% if read_all_mode %}hw-read-all-mode{% else %}hw-unread-mode{% end %}">
-          <a href="#list-mode" onclick="hw.listMode(event, this)">{% raw _('<span class="hw-complete-mode-label">complete text</span> / <span class="hw-list-mode-label">list</span>') %}</a>
-          <a href="#read-all-mode" onclick="hw.readAllMode(event, this)">{% raw _('<span class="hw-unread-mode-label">unread items</span> / <span class="hw-read-all-mode-label">all items</span>') %}</a>
+        <div class="hw-menu
+            {% if list_mode %}
+              hw-list-mode
+            {% else %}
+              hw-complete-mode
+            {% end %}
+            {% if read_all_mode %}
+              hw-read-all-mode
+            {% else %}
+              hw-unread-mode
+            {% end %}">
+          <a href="#list-mode" onclick="hw.listMode(event, this)">
+            {% raw _('<span class="hw-complete-mode-label">complete text' +
+                '</span> / <span class="hw-list-mode-label">list</span>')
+             %}
+          </a>
+          <a href="#read-all-mode" onclick="hw.readAllMode(event, this)">
+            {% raw _('<span class="hw-unread-mode-label">unread items' +
+                '</span> / <span class="hw-read-all-mode-label">all items' +
+                '</span>')
+             %}
+          </a>
         </div>
       </span>
     </div>
@@ -48,9 +72,12 @@
   </div>
 
   <script>
-    hw.loadMoreObject = new hw.loadMore('{{ nav_url(section='dashboard') }}', {{ offset }}, 'hw-feed');
+    hw.loadMoreObject = new hw.loadMore('{{ nav_url(section='dashboard') }}',
+        {{ offset }}, 'hw-feed');
     hw.setMsg('loading', "{% raw js_escape(_('loading...')) %}");
-    Event.observe(window, 'scroll', function() { hw.loadMoreObject.onScroll() }, false);
+    Event.observe(window, 'scroll', function() {
+      hw.loadMoreObject.onScroll()
+    }, false);
 
     Event.observe(window, 'scroll', hw.markReadOnScroll, false);
     Event.observe(window, 'resize', hw.markReadOnScroll, false);
@@ -63,7 +90,11 @@
 {% end %}
 
 {% block more_tools %}
-  <li><a href="#media" onclick="hw.mediaLibrary(event, this)">{{ _('media library') }}</a></li>
+  <li>
+    <a href="#media" onclick="hw.mediaLibrary(event, this)">
+      {{ _('media library') }}
+    </a>
+  </li>
 {% end %}
 
 {% block more_sidebar %}
@@ -71,55 +102,128 @@
     {% comment TODO to do unfollow maybe drag to a trash? %}
     <h2>{{ _('following') }}</h2>
     <div id="hw-following-new-wrapper">
-      <input id="hw-following-new" type="text" placeholder="{{ _('url') }}" data-error="{{ _('error subscribing!') }}" data-error-unsub="{{ _('error unsubscribing!') }}">
-      <button id="hw-following-button" type="button" class="hw-button" onclick="hw.follow(event)" data-normal="{{ _('follow') }}" data-following="{{ _('one sec...') }}">{{ _('follow') }}</button>
+      <input id="hw-following-new" type="text" placeholder="{{ _('url') }}"
+             data-error="{{ _('error subscribing!') }}"
+             data-error-unsub="{{ _('error unsubscribing!') }}">
+      <button id="hw-following-button" type="button" class="hw-button"
+              onclick="hw.follow(event)" data-normal="{{ _('follow') }}"
+              data-following="{{ _('one sec...') }}">
+        {{ _('follow') }}
+      </button>
       <div class="clear"></div>
     </div>
     <ul id="hw-following-list" data-error="{{ _('Nothing to read here!') }}">
       <li id="hw-following-read-all" data-user="" class="hw-selected">
-        <a href="#read-all" onclick="hw.read(event, this)">{{ _('read all') }}</a><a href="#read-all" id="hw-total-unread-count" class="hw-unread-count" onclick="hw.read(event, this)">&nbsp;({{ total_count }})</a>
+        <a href="#read-all" onclick="hw.read(event, this)">
+          {{ _('read all') }}
+        </a>
+        <a href="#read-all" id="hw-total-unread-count" class="hw-unread-count"
+           onclick="hw.read(event, this)">
+          &nbsp;({{ total_count }})
+        </a>
       </li>
       <li id="hw-following-your-feed" data-user="">
-        <a href="#your-feed" onclick="hw.read(event, null)" title="{{ _('your feed') }}">
-          <img height="16" width="16" src="{% if user.favicon %}{{ user.favicon }}{% else %}{{ static_url('favicon.ico') }}{% end %}" />
+        <a href="#your-feed" onclick="hw.read(event, null)"
+           title="{{ _('your feed') }}">
+          <img height="16" width="16"
+               src="{% if user.favicon %}
+                      {{ user.favicon }}
+                    {% else %}
+                      {{ static_url('favicon.ico') }}
+                    {% end %}" />
         </a>
-        <a href="#your-feed" onclick="hw.read(event, null)">{{ _('your feed') }}</a>
+        <a href="#your-feed" onclick="hw.read(event, null)">
+          {{ _('your feed') }}
+        </a>
       </li>
       <li id="hw-following-favorites" data-user="">
-        <a href="#favorites" onclick="hw.read(event, this, null, 'favorites')" title="{{ _('favorites') }}">
-          <img height="16" width="16" src="{% if user.favicon %}{{ user.favicon }}{% else %}{{ static_url('favicon.ico') }}{% end %}" />
+        <a href="#favorites" onclick="hw.read(event, this, null, 'favorites')"
+           title="{{ _('favorites') }}">
+          <img height="16" width="16"
+               src="{% if user.favicon %}
+                      {{ user.favicon }}
+                    {% else %}
+                      {{ static_url('favicon.ico') }}
+                    {% end %}" />
         </a>
-        <a href="#your-feed" class="hw-following-username" onclick="hw.read(event, this, null, 'favorites')">{{ _('favorites') }}</a><a href="#your-feed" class="hw-unread-count" onclick="hw.read(event, this, null, 'favorites')">&nbsp;({{ favorites_count }})</a>
+        <a href="#your-feed" class="hw-following-username"
+           onclick="hw.read(event, this, null, 'favorites')">
+          {{ _('favorites') }}
+        </a>
+        <a href="#your-feed" class="hw-unread-count"
+           onclick="hw.read(event, this, null, 'favorites')">
+           &nbsp;({{ favorites_count }})
+        </a>
       </li>
       <li id="hw-following-comments" data-user="">
-        <a href="#comments" onclick="hw.read(event, this, null, 'comments')" title="{{ _('comments') }}">
-          <img height="16" width="16" src="{% if user.favicon %}{{ user.favicon }}{% else %}{{ static_url('favicon.ico') }}{% end %}" />
+        <a href="#comments" onclick="hw.read(event, this, null, 'comments')"
+           title="{{ _('comments') }}">
+          <img height="16" width="16"
+               src="{% if user.favicon %}
+                      {{ user.favicon }}
+                    {% else %}
+                      {{ static_url('favicon.ico') }}
+                    {% end %}" />
         </a>
-        <a href="#comments" class="hw-following-username" onclick="hw.read(event, this, null, 'comments')">{{ _('comments') }}</a><a href="#comments" class="hw-unread-count" onclick="hw.read(event, this, null, 'comments')">&nbsp;({{ comments_count }})</a>
+        <a href="#comments" class="hw-following-username"
+           onclick="hw.read(event, this, null, 'comments')">
+          {{ _('comments') }}
+        </a>
+        <a href="#comments" class="hw-unread-count"
+           onclick="hw.read(event, this, null, 'comments')">
+          &nbsp;({{ comments_count }})
+        </a>
       </li>
 
       {% for source in external_sources %}
-        <li id="hw-following-{{ source }}" data-user="" {% if getattr(user, source) %}data-enabled{% end %} {% if source == 'google' %}style="display: none"{% end %}>
+        <li id="hw-following-{{ source }}" data-user=""
+          {% if getattr(user, source) %}data-enabled{% end %}
+          {% if source == 'google' %}style="display: none"{% end %}>
           {% if getattr(user, source) %}
-            <a href="#{{ source }}" onclick="hw.read(event, this, null, '{{ source }}')" title="{{ source.capitalize() }}">
-              <img height="16" width="16" src="{% if source == 'google' %}http://plus.google.com{% else %}http://{{ source }}.com{% end %}/favicon.ico" />
+            <a href="#{{ source }}"
+               onclick="hw.read(event, this, null, '{{ source }}')"
+               title="{{ source.capitalize() }}">
+              <img height="16" width="16"
+                   src="{% if source == 'google' %}http://plus.google.com{% else %}http://{{ source }}.com{% end %}/favicon.ico" />
             </a>
-            <a href="#{{ source }}" class="hw-following-username" onclick="hw.read(event, this, null, '{{ source }}')">{{ source }}</a><a href="#{{ source }}" class="hw-unread-count" onclick="hw.read(event, this, null, '{{ source }}')">&nbsp;({{ handler.display[source + '_count'] }})</a>
+            <a href="#{{ source }}" class="hw-following-username"
+               onclick="hw.read(event, this, null, '{{ source }}')">
+              {{ source }}
+            </a>
+            <a href="#{{ source }}" class="hw-unread-count"
+               onclick="hw.read(event, this, null, '{{ source }}')">
+              &nbsp;({{ handler.display[source + '_count'] }})
+            </a>
             <span class="hw-button-group">
-              <button class="hw-menu-button" onclick="hw.menu(event, this)" type="button">
+              <button class="hw-menu-button" onclick="hw.menu(event, this)"
+                      type="button">
                 <span class="hw-arrow-button"></span>
               </button>
               <div class="hw-menu">
-                <a href="{% if source == 'google' %}http://plus.google.com{% else %}http://{{ source }}.com{% end %}" target="_blank" class="hw-visit">{{ _('visit') }}</a>
-                <a href="#mark-all-as-read" data-user="{{ source }}" data-type="{{ source }}" onclick="hw.markAllAsRead(event, this)">{{ _('mark all as read') }}</a>
-                <a href="#unfollow" data-user="{{ source }}" onclick="hw.unfollow(event, this)" class="hw-unfollow">{{ _('unfollow') }}</a>
+                <a href="{% if source == 'google' %}http://plus.google.com{% else %}http://{{ source }}.com{% end %}"
+                   target="_blank" class="hw-visit">
+                  {{ _('visit') }}
+                </a>
+                <a href="#mark-all-as-read" data-user="{{ source }}"
+                   data-type="{{ source }}"
+                   onclick="hw.markAllAsRead(event, this)">
+                  {{ _('mark all as read') }}
+                </a>
+                <a href="#unfollow" data-user="{{ source }}"
+                   onclick="hw.unfollow(event, this)" class="hw-unfollow">
+                  {{ _('unfollow') }}
+                </a>
               </div>
             </span>
           {% else %}
-            <a href="{{ nav_url(section=source) }}" title="{{ _('connect to %(source)s' % { 'source': source } ) }}">
-              <img height="16" width="16" src="http://{{ source }}.com/favicon.ico" />
+            <a href="{{ nav_url(section=source) }}"
+               title="{{ _('connect to %(source)s' % { 'source': source } ) }}">
+              <img height="16" width="16"
+                   src="http://{{ source }}.com/favicon.ico" />
             </a>
-            <a href="{{ nav_url(section=source) }}">{{ _('connect to %(source)s' % { 'source': source }) }}</a>
+            <a href="{{ nav_url(section=source) }}">
+              {{ _('connect to %(source)s' % { 'source': source }) }}
+            </a>
           {% end %}
         </li>
       {% end %}
@@ -130,31 +234,81 @@
         {% else %}
           {% set name = follower.username %}
         {% end %}
-        <li id="hw-following-{{ follower.id }}" data-user="{{ follower.profile_url }}" data-sort-type="{{ follower.sort_type }}" draggable="true" ondragstart="hw.followingDragStart(event, this)" ondragover="hw.followingDragOver(event, this)" ondragenter="hw.followingDragOver(event, this)" ondragleave="hw.followingDragLeave(event, this)" ondrop="hw.followingDragDrop(event, this)">
-          <a href="{{ follower.profile_url }}" onclick="hw.read(event, this)" title="{{ name }}">
-            <img height="16" width="16" src="{% if follower.favicon %}{{ follower.favicon }}{% else %}{{ follower.avatar }}{% end %}" onerror="this.src='{{ static_url('img/pixel.gif') }}';this.style.border='1px solid black';this.style.width='14px';this.style.height='14px'" />
+        <li id="hw-following-{{ follower.id }}"
+            data-user="{{ follower.profile_url }}"
+            data-sort-type="{{ follower.sort_type }}"
+            draggable="true"
+            ondragstart="hw.followingDragStart(event, this)"
+            ondragover="hw.followingDragOver(event, this)"
+            ondragenter="hw.followingDragOver(event, this)"
+            ondragleave="hw.followingDragLeave(event, this)"
+            ondrop="hw.followingDragDrop(event, this)">
+          <a href="{{ follower.profile_url }}" onclick="hw.read(event, this)"
+             title="{{ name }}">
+            <img height="16" width="16"
+                 src="{% if follower.favicon %}
+                        {{ follower.favicon }}
+                      {% else %}
+                        {{ follower.avatar }}
+                      {% end %}"
+                 onerror="this.src='{{ static_url('img/pixel.gif') }}';
+                     this.style.border='1px solid black';
+                     this.style.width='14px';
+                     this.style.height='14px'" />
           </a>
-          <a href="{{ follower.profile_url }}" onclick="hw.read(event, this)" title="{{ name }}" class="hw-following-username">{{ name }}<span class="hw-overflow-shadow"></span></a><a href="{{ follower.profile_url }}" class="hw-unread-count" onclick="hw.read(event, this)">&nbsp;({{ follower.unread_entries }})</a>
+          <a href="{{ follower.profile_url }}" onclick="hw.read(event, this)"
+             title="{{ name }}" class="hw-following-username">
+            {{ name }}
+            <span class="hw-overflow-shadow"></span>
+          </a><a href="{{ follower.profile_url }}" class="hw-unread-count"
+             onclick="hw.read(event, this)">
+            &nbsp;({{ follower.unread_entries }})
+          </a>
           <span class="hw-button-group">
-            <button class="hw-menu-button" onclick="hw.menu(event, this)" type="button">
+            <button class="hw-menu-button" onclick="hw.menu(event, this)"
+                    type="button">
               <span class="hw-arrow-button"></span>
             </button>
             <div class="hw-menu hw-{% if follower.sort_type == 'oldest' %}sort-oldest{% else %}sort-newest{% end %}">
-              <a href="{{ follower.profile_url }}" target="_blank" class="hw-visit">{{ _('visit') }}</a>
-              <a href="#mark-all-as-read" data-user="{{ follower.profile_url }}" onclick="hw.markAllAsRead(event, this)">{{ _('mark all as read') }}</a>
-              <a href="#sort" data-user="{{ follower.profile_url }}" onclick="hw.sort(event, this)">{% raw _('sorting by <span class="hw-sort-oldest-label">oldest</span> / <span class="hw-sort-newest-label">newest</span>') %}</a>
-              <a href="#unfollow" data-user="{{ follower.profile_url }}" onclick="hw.unfollow(event, this)" class="hw-unfollow">{{ _('unfollow') }}</a>
+              <a href="{{ follower.profile_url }}" target="_blank"
+                 class="hw-visit">
+                {{ _('visit') }}
+              </a>
+              <a href="#mark-all-as-read"
+                 data-user="{{ follower.profile_url }}"
+                 onclick="hw.markAllAsRead(event, this)">
+                {{ _('mark all as read') }}
+              </a>
+              <a href="#sort" data-user="{{ follower.profile_url }}"
+                 onclick="hw.sort(event, this)">
+                {% raw _('sorting by <span class="hw-sort-oldest-label">' +
+                    'oldest</span> / <span class="hw-sort-newest-label">' +
+                    'newest</span>')
+                 %}
+              </a>
+              <a href="#unfollow" data-user="{{ follower.profile_url }}"
+                 onclick="hw.unfollow(event, this)" class="hw-unfollow">
+                {{ _('unfollow') }}
+              </a>
             </div>
           </span>
         </li>
       {% end %}
       <li id="hw-following-search" data-user="">
         <form method="get" onsubmit="return false">
-          <input type="search" name="q" placeholder="{{ _('search') }}" onkeypress="if (event.keyCode == 13) hw.read(event, this, null, null, this)">
+          <input type="search" name="q" placeholder="{{ _('search') }}"
+                 onkeypress="if (event.keyCode == 13) hw.read(event, this,
+                   null, null, this)">
         </form>
       </li>
       <li id="hw-following-spam" data-user="">
-        <a href="#spam" onclick="hw.read(event, this, null, 'spam')">{{ _('review spam') }}</a><span class="hw-unread-count" onclick="hw.read(event, this, null, 'spam')">&nbsp;({{ spam_count }})</span>
+        <a href="#spam" onclick="hw.read(event, this, null, 'spam')">
+          {{ _('review spam') }}
+        </a>
+        <span class="hw-unread-count"
+              onclick="hw.read(event, this, null, 'spam')">
+          &nbsp;({{ spam_count }})
+        </span>
       </li>
     </ul>
   </div>
@@ -169,19 +323,37 @@
           {% set name = follower.username %}
         {% end %}
         <li data-user="{{ follower.profile_url }}">
-          <a href="{{ follower.profile_url }}" target="_blank" title="{{ name }}">
-            <img height="16" width="16" src="{% if follower.favicon %}{{ follower.favicon }}{% else %}{{ follower.avatar }}{% end %}" onerror="this.src='{{ static_url('img/pixel.gif') }}';this.style.border='1px solid black';this.style.width='14px';this.style.height='14px'" />
+          <a href="{{ follower.profile_url }}" target="_blank"
+             title="{{ name }}">
+            <img height="16" width="16"
+                 src="{% if follower.favicon %}
+                        {{ follower.favicon }}
+                      {% else %}
+                        {{ follower.avatar }}
+                      {% end %}"
+                 onerror="this.src='{{ static_url('img/pixel.gif') }}';
+                    this.style.border='1px solid black';
+                    this.style.width='14px';
+                    this.style.height='14px'" />
           </a>
-          <a href="{{ follower.profile_url }}" target="_blank" title="{{ name }}" class="hw-following-username">{{ name }}<span class="hw-overflow-shadow"></span></a>
+          <a href="{{ follower.profile_url }}" target="_blank"
+             title="{{ name }}" class="hw-following-username">
+            {{ name }}
+            <span class="hw-overflow-shadow"></span>
+          </a>
           <span class="hw-button-group">
-            <button class="hw-menu-button" onclick="hw.menu(event, this)" type="button">
+            <button class="hw-menu-button" onclick="hw.menu(event, this)"
+                    type="button">
               <span class="hw-arrow-button"></span>
             </button>
             <div class="hw-menu hw-{% if follower.sort_type == 'oldest' %}sort-oldest{% else %}sort-newest{% end %}">
               {% if follower.following %}
                 <span>{{ _('you are following this person.') }}</span>
               {% else %}
-                <a href="#follow" data-user="{{ follower.profile_url }}" onclick="hw.followViaFollower(event, this)">{{ _('follow') }}</a>
+                <a href="#follow" data-user="{{ follower.profile_url }}"
+                   onclick="hw.followViaFollower(event, this)">
+                  {{ _('follow') }}
+                </a>
               {% end %}
             </div>
           </span>

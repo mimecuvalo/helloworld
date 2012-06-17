@@ -43,30 +43,43 @@ def create_user(handler, username, email):
 
   user.save()
 
-  create_empty_content(handler, user.username, 'main', 'home', 'Hello, world.', template="feed", translate=True)
-  create_empty_content(handler, user.username, 'main', 'photos', 'photos', template='album', translate=True)
-  create_empty_content(handler, user.username, 'main', 'microblog', 'microblog', template='feed', translate=True)
-  create_empty_content(handler, user.username, 'main', 'reblogged', 'reblogged', template='feed', translate=True)
-  create_empty_content(handler, user.username, 'main', 'links', 'links', template='album', translate=True)
-  create_empty_content(handler, user.username, 'main', 'about', 'about', view="I like turtles.", translate=True)
-  create_empty_content(handler, user.username, 'main', 'comments', 'comments', translate=True, hidden=True)
-  create_empty_content(handler, user.username, 'microblog', 'first', "first!", view="Hello, world.", translate=True)
+  create_empty_content(handler, user.username, 'main', 'home', 'Hello, world.',
+      template="feed", translate=True)
+  create_empty_content(handler, user.username, 'main', 'photos', 'photos',
+      template='album', translate=True)
+  create_empty_content(handler, user.username, 'main', 'microblog',
+      'microblog', template='feed', translate=True)
+  create_empty_content(handler, user.username, 'main', 'reblogged',
+      'reblogged', template='feed', translate=True)
+  create_empty_content(handler, user.username, 'main', 'links', 'links',
+      template='album', translate=True)
+  create_empty_content(handler, user.username, 'main', 'about', 'about',
+      view="I like turtles.", translate=True)
+  create_empty_content(handler, user.username, 'main', 'comments', 'comments',
+      translate=True, hidden=True)
+  create_empty_content(handler, user.username, 'microblog', 'first', "first!",
+      view="Hello, world.", translate=True)
 
-  os.makedirs(os.path.join(handler.application.settings["private_path"], username))
-  os.makedirs(os.path.join(os.path.join(handler.application.settings["resource_path"], username), 'themes'))
+  os.makedirs(os.path.join(handler.application.settings["private_path"],
+      username))
+  os.makedirs(os.path.join(os.path.join(
+      handler.application.settings["resource_path"], username), 'themes'))
 
   # give a blog to follow
-  user_remote = get_remote_user_info(handler, "http://boingboing.net", username)
+  user_remote = get_remote_user_info(handler, "http://boingboing.net",
+      username)
   user_remote.following = 1
   user_remote.save()
 
   # get some content, yo
   feed_response = urllib2.urlopen(user_remote.feed_url)
-  content_remote.parse_feed(handler.models, user_remote, feed_response.read(), max_days_old=handler.constants['feed_max_days_old'])
+  content_remote.parse_feed(handler.models, user_remote, feed_response.read(),
+      max_days_old=handler.constants['feed_max_days_old'])
 
   return user
 
-def create_empty_content(handler, username, section, name, title, template=None, view=None, translate=False, hidden=False):
+def create_empty_content(handler, username, section, name, title,
+    template=None, view=None, translate=False, hidden=False):
   content = handler.models.content()
   content.username = username
   content.section  = section
@@ -81,7 +94,8 @@ def create_empty_content(handler, username, section, name, title, template=None,
 
 def get_lrdd_link(url):
   parsed_url = urlparse.urlparse(url)
-  host_meta_url = parsed_url.scheme + '://' + parsed_url.hostname + '/.well-known/host-meta'
+  host_meta_url = (parsed_url.scheme + '://' + parsed_url.hostname +
+      '/.well-known/host-meta')
   #host_meta_url = 'http://localhost/statusnet2/.well-known/host-meta'
   host_meta_response = urllib2.urlopen(host_meta_url)
   host_meta_doc = BeautifulSoup(host_meta_response.read())
@@ -128,16 +142,20 @@ def salmon_favorite(handler, salmon_url, post_id, favorite=True):
   handler.display['atom_content'] = action
   handler.display['verb'] = 'http://activitystrea.ms/schema/1.0/' + action
   handler.display['activity_object'] = """
-    <activity:object-type>http://activitystrea.ms/schema/1.0/note</activity:object-type>
+    <activity:object-type>
+      http://activitystrea.ms/schema/1.0/note
+    </activity:object-type>
     <id>%(post_id)s</id>
     <title></title>
     <content type="html"></content>
-    <!--<link href="http://freelish.us/notice/19245388" rel="alternate" type="text/html" />-->
+    <!--<link href="http://freelish.us/notice/19245388" rel="alternate"
+      type="text/html" />-->
 """ % { 'post_id': post_id }
   atom_html = handler.render_string("feed.html", **handler.display)
   salmon_send(handler, user, salmon_url, atom_html)
 
-def salmon_reply(handler, user_remote, content, thread=None, mentioned_users=[]):
+def salmon_reply(handler, user_remote, content, thread=None,
+    mentioned_users=[]):
   user = salmon_common(handler)
   handler.display['id'] = handler.content_url(content)
   handler.display['title'] = content.title
@@ -147,8 +165,12 @@ def salmon_reply(handler, user_remote, content, thread=None, mentioned_users=[])
   object_type = 'comment' if content.section == 'comments' else 'note'
   handler.display['verb'] = 'http://activitystrea.ms/schema/1.0/post'
   handler.display['activity_extra'] = """
-    <activity:object-type>http://activitystrea.ms/schema/1.0/%(object_type)s</activity:object-type>
-    <link href="%(content_url)s" rel="alternate" type="text/html" />""" % { 'object_type': object_type, 'content_url': handler.content_url(content, host=True), }
+    <activity:object-type>
+      http://activitystrea.ms/schema/1.0/%(object_type)s
+    </activity:object-type>
+    <link href="%(content_url)s" rel="alternate" type="text/html" />""" % \
+        { 'object_type': object_type,
+          'content_url': handler.content_url(content, host=True), }
 
   for mentioned_user in mentioned_users:
     handler.display['activity_extra'] += """
@@ -158,11 +180,20 @@ def salmon_reply(handler, user_remote, content, thread=None, mentioned_users=[])
 
   thread = thread or content.thread
   if thread:
-    handler.display['activity_extra'] += """<thr:in-reply-to ref="%(thread)s" />""" % { 'thread': thread }
-    #handler.display['activity_extra'] += """<link rel="related" href="%(content_url)s"/>""" % { 'content_url': handler.content_url(content, host=True) }
+    handler.display['activity_extra'] += """
+        <thr:in-reply-to ref="%(thread)s" />""" % { 'thread': thread }
+    #handler.display['activity_extra'] +=
+    #    """<link rel="related" href="%(content_url)s"/>""" % \
+    #    { 'content_url': handler.content_url(content, host=True) }
   if content.comments_count:
-    handler.display['activity_extra'] += """<thr:replies type="application/atom+xml" href="%(url)s"
-count="%(count)s" updated="%(updated)s" />""" % { 'url': handler.nav_url(host=True, username=content.username, section='feed', comments=handler.content_url(content)), 'count': content.comments_count, 'updated': content.comments_updated.strftime('%Y-%m-%dT%H:%M:%S+00:00') }
+    handler.display['activity_extra'] += """
+        <thr:replies type="application/atom+xml" href="%(url)s"
+        count="%(count)s" updated="%(updated)s" />""" % \
+        { 'url': handler.nav_url(host=True, username=content.username,
+            section='feed', comments=handler.content_url(content)),
+          'count': content.comments_count,
+          'updated': content.comments_updated.strftime(
+              '%Y-%m-%dT%H:%M:%S+00:00') }
   atom_html = handler.render_string("feed.html", **handler.display)
   salmon_send(handler, user, user_remote.salmon_url, atom_html)
 
@@ -178,12 +209,13 @@ class MockKeyRetriever(magicsig.KeyRetriever):
 def salmon_send(handler, user, salmon_url, text):
   salmonizer = salmoning.SalmonProtocol()
   salmonizer.key_retriever = MockKeyRetriever(local_user=user)
-  env = salmonizer.SignSalmon(unicode(text, "utf8"), 'application/atom+xml', handler.nav_url(host=True, username=user.username))
+  env = salmonizer.SignSalmon(unicode(text, "utf8"), 'application/atom+xml',
+      handler.nav_url(host=True, username=user.username))
 
   try:
     req = urllib2.Request(url=salmon_url,
-                          data=env,
-                          headers={ 'Content-Type': 'application/magic-envelope+xml' })
+        data=env,
+        headers={ 'Content-Type': 'application/magic-envelope+xml' })
     
     urllib2.urlopen(req)
   except:
@@ -205,21 +237,25 @@ def get_remote_user_info(handler, user_url, profile):
   user_doc = BeautifulSoup(user_response.read())
 
   if not lrdd_link:
-    atom_url = user_doc.find('link', rel='alternate', type='application/atom+xml')
-    rss_url = user_doc.find('link', rel='alternate', type='application/rss+xml')
+    atom_url = user_doc.find('link', rel='alternate',
+        type='application/atom+xml')
+    rss_url = user_doc.find('link', rel='alternate',
+        type='application/rss+xml')
 
     feed_url = atom_url or rss_url
   else:
     # get webfinger
     try:
       webfinger_doc = get_webfinger(lrdd_link, user_url)
-      feed_url = webfinger_doc.find('link', rel='http://schemas.google.com/g/2010#updates-from')
+      feed_url = webfinger_doc.find('link',
+          rel='http://schemas.google.com/g/2010#updates-from')
       salmon_url = webfinger_doc.find('link', rel='salmon')
       if salmon_url:
         salmon_url = salmon_url['href']
       magic_key = webfinger_doc.find('link', rel='magic-public-key')
       if magic_key:
-        magic_key = magic_key['href'].replace('data:application/magic-public-key,', '')
+        magic_key = magic_key['href'];
+        magic_key = magic_key.replace('data:application/magic-public-key,', '')
       alias = webfinger_doc.find('alias')
       if alias:
         alias = alias.string
@@ -232,7 +268,8 @@ def get_remote_user_info(handler, user_url, profile):
     feed_url = feed_url['href']
   base_url = None
 
-  if not feed_url.startswith('/') and not (feed_url.startswith('http://') or feed_url.startswith('https://')):
+  if (not feed_url.startswith('/') and not (feed_url.startswith('http://') or
+      feed_url.startswith('https://'))):
     base_url = user_doc.find('base')
     if base_url:
       base_url = base_url['href']
@@ -259,12 +296,15 @@ def get_remote_user_info(handler, user_url, profile):
     if alt_link:
       alias = alt_link['href']
     else:
-      alias = feed_doc.find('link').nextSibling # XXX UGH, BeautifulSoup treats <link> as self-closing tag, LAMESAUCE for rss
+      # XXX UGH, BeautifulSoup treats <link> as self-closing tag
+      # LAMESAUCE for rss
+      alias = feed_doc.find('link').nextSibling
   if not alias or not alias.strip():
     raise tornado.web.HTTPError(400)
 
   alias = alias.strip()
-  user_remote = handler.models.users_remote.get(local_username=profile, profile_url=alias)[0]
+  user_remote = handler.models.users_remote.get(local_username=profile,
+      profile_url=alias)[0]
   hub_url = feed_doc.find(re.compile('.+:link$'), rel='hub')
 
   if not user_remote:
@@ -273,13 +313,15 @@ def get_remote_user_info(handler, user_url, profile):
   favicon = None
   favicon = user_doc.find('link', rel='shortcut icon')
   if favicon:
-    if favicon['href'].startswith('http://') or favicon['href'].startswith('https://'):
+    if (favicon['href'].startswith('http://') or
+        favicon['href'].startswith('https://')):
       favicon = favicon['href']
     else:
       if base_url:
         favicon = base_url + favicon['href']
       else:
-        favicon = parsed_url.scheme + '://' + parsed_url.hostname + ('' if favicon['href'].startswith('/') else '/') + favicon['href']
+        favicon = (parsed_url.scheme + '://' + parsed_url.hostname +
+            ('' if favicon['href'].startswith('/') else '/') + favicon['href'])
   else:
     favicon = parsed_url.scheme + '://' + parsed_url.hostname + '/favicon.ico'
   user_remote.favicon = favicon
@@ -311,7 +353,8 @@ def get_remote_user_info(handler, user_url, profile):
     user_remote.username = preferred_username.string
     user_remote.name = display_name.string
   elif webfinger_doc:
-    user_remote.username = webfinger_doc.find('Property', type="http://apinamespace.org/atom/username").string
+    user_remote.username = webfinger_doc.find('Property',
+        type="http://apinamespace.org/atom/username").string
   else:
     user_remote.username = feed_doc.find('title').string
   user_remote.profile_url = alias
@@ -324,8 +367,10 @@ def get_remote_user_info(handler, user_url, profile):
 
   try:
     if user_remote.hub_url:
-      callback_url = handler.nav_url(host=True, username=profile, section='push')
-      pubsubhubbub_subscribe.subscribe_topic(user_remote.hub_url, user_remote.feed_url, callback_url, verify="sync")
+      callback_url = handler.nav_url(host=True, username=profile,
+          section='push')
+      pubsubhubbub_subscribe.subscribe_topic(user_remote.hub_url,
+          user_remote.feed_url, callback_url, verify="sync")
   except:
     import logging
     logging.error("couldn't subscribe on the hub!")

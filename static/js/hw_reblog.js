@@ -126,7 +126,8 @@
         images[x].setAttribute('width', '');
         images[x].setAttribute('height', '');
         if (images[x].width * images[x].height > 16384
-            && !(images[x].src in dupCache) && images[x].style.display != 'none') {
+            && !(images[x].src in dupCache) && images[x].style.display !=
+            'none') {
           img.src = images[x].src;
           dupCache[img.src] = 1;
           imagesArray.push(img);
@@ -137,7 +138,8 @@
     // tumblr does photosets in iframes
     for (var x = 0; x < iframes.length; ++x) {
       try {
-        var iframeImages = iframes[x].contentDocument.getElementsByTagName('IMG');
+        var iframeImages = iframes[x].contentDocument.
+            getElementsByTagName('IMG');
         parseImages(iframeImages);
       } catch(ex) { }
     }
@@ -235,7 +237,8 @@
   var links = document.getElementsByTagName('LINK');
   for (var y = 0; y < links.length; ++y) {
     var type = links[y].getAttribute('type');
-    if (type == 'text/xml+oembed' || type == 'application/xml+oembed' || type == 'application/json+oembed') {
+    if (type == 'text/xml+oembed' || type == 'application/xml+oembed' ||
+        type == 'application/json+oembed') {
       hasOembedOrOpenGraph = true;
       break;
     }

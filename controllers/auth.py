@@ -15,15 +15,16 @@ class AuthHandler(BaseHandler, tornado.auth.GoogleMixin):
     audience = self.request.host
     try:
       browserid = urllib2.urlopen("https://browserid.org/verify",
-                                  "assertion=%(assertion)s&audience=%(audience)s"
-                                  % { 'assertion': assertion, 'audience': audience })
+          "assertion=%(assertion)s&audience=%(audience)s"
+          % { 'assertion': assertion, 'audience': audience })
       response = json.loads(browserid.read())
     except:
       raise tornado.web.HTTPError(500, "BrowserId auth failed")
 
     if response['status'] == 'okay':
       self.get_webfinger_data(response)
-      self.set_secure_cookie("user", tornado.escape.json_encode(response), path=self.base_path, HttpOnly=True)
+      self.set_secure_cookie("user", tornado.escape.json_encode(response),
+          path=self.base_path, HttpOnly=True)
     else:
       raise tornado.web.HTTPError(500, "BrowserId auth failed")
 
@@ -41,7 +42,8 @@ class AuthHandler(BaseHandler, tornado.auth.GoogleMixin):
 
     webfinger_doc = users.get_webfinger(lrdd, user['email'])
     if webfinger_doc:
-      ostatus_subscribe = webfinger_doc.find('link', rel='http://ostatus.org/schema/1.0/subscribe')
+      ostatus_subscribe = webfinger_doc.find('link',
+          rel='http://ostatus.org/schema/1.0/subscribe')
       if ostatus_subscribe:
         user['ostatus_subscribe'] = ostatus_subscribe['template']
 

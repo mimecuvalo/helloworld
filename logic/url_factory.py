@@ -7,8 +7,10 @@ import tornado.escape
 
 def load_basic_parameters(handler, prefix="", url=""):
   uri = url if url else handler.request.uri
-  uri = tornado.escape.url_unescape(uri)  # Hmmm, some servers send UTF-8 percent encoded and some don't...
-  uri = tornado.escape.url_unescape(uri)  # XXX WTF?? it's double-escaped??? something's weird here.  FIX
+  # Hmmm, some servers send UTF-8 percent encoded and some don't...
+  uri = tornado.escape.url_unescape(uri)
+  # XXX WTF?? it's double-escaped??? something's weird here.  FIX
+  uri = tornado.escape.url_unescape(uri)
 
   if handler.prefix and uri.find(handler.prefix) == 0:
     uri = uri[len(handler.prefix):]
@@ -43,7 +45,8 @@ def load_basic_parameters(handler, prefix="", url=""):
   }
 
   if not hostname_user and (len(uri_array) == 0 or uri_array[0] == ""):
-    uri_dict['profile'] = implied_profile or (handler.models.users.get(1).username if handler.models else '')
+    uri_dict['profile'] = (implied_profile or
+        (handler.models.users.get(1).username if handler.models else ''))
     uri_dict['section'] = 'main'
     uri_dict['name']    = 'main'
     return uri_dict
@@ -54,7 +57,8 @@ def load_basic_parameters(handler, prefix="", url=""):
 
   if uri_array[0] in handler.constants['reserved_names']:
     uri_array.insert(0, implied_profile)
-  elif (handler.constants['single_user_site'] or hostname_user) and uri_array[0] != implied_profile:
+  elif ((handler.constants['single_user_site'] or hostname_user) and
+      uri_array[0] != implied_profile):
     uri_array.insert(0, implied_profile)
 
   uri_dict['profile'] = uri_array[0]
@@ -86,7 +90,8 @@ def load_basic_parameters(handler, prefix="", url=""):
 def sanitize_form_value(value):
   main_regex = re.compile("<|>|&#|script\:", re.IGNORECASE)
   value = main_regex.sub("_", value)
-  value = re.sub("&amp;", "&", value)	# prevent something that is already &amp; from becoming &amp;amp;
+  # prevent something that is already &amp; from becoming &amp;amp;
+  value = re.sub("&amp;", "&", value)
   value = re.sub("&", "&amp;", value)
 
   if value.find('?') != -1:
@@ -101,19 +106,24 @@ def reverse_href(url):
   return url.replace("+", " ")
 
 def add_base_uris(handler, view):
-  return re.compile(r'(["\'])(static/resource)', re.M | re.U).sub(r'\1' + handler.base_uri + r'\2', view)
+  return re.compile(r'(["\'])(static/resource)', re.M | re.U).sub(
+      r'\1' + handler.base_uri + r'\2', view)
 
 # xxx, this is now done in wysiwyg
 def linkify_tags(handler, username, text):
-  return re.compile(r'#(\w+)(?![^<&]*([>;]))', re.M | re.U).sub(r' <a href="' + handler.nav_url(username=username, section='search') + r'?q=%23\1" rel="tag">#\1</a>', text)
+  return re.compile(r'#(\w+)(?![^<&]*([>;]))', re.M | re.U).sub(
+      r' <a href="' + handler.nav_url(username=username, section='search') +
+      r'?q=%23\1" rel="tag">#\1</a>', text)
 
 def clean_name(name):
-  return re.compile(r'[\W]+', re.M | re.U).sub('', name.replace(" ", "_").replace("-", "_")).replace("_", "-")[:255]
+  return re.compile(r'[\W]+', re.M | re.U).sub('', name.replace(
+      " ", "_").replace("-", "_")).replace("_", "-")[:255]
 
 def check_legit_filename(full_path):
   leafname = os.path.basename(full_path)
   # _current_theme is used internally for themes
-  if leafname in ('crossdomain.xml', 'clientaccesspolicy.xml', '.htaccess', '.htpasswd', '_current_theme'):
+  if leafname in ('crossdomain.xml', 'clientaccesspolicy.xml', '.htaccess',
+      '.htpasswd', '_current_theme'):
     raise tornado.web.HTTPError(400, "i call shenanigans")
 
 def clean_filename(name):
@@ -153,7 +163,8 @@ def content_url(handler, item, host=False, **arguments):
 
   return href(url)
 
-def nav_url(handler, host=False, username="", section="", name="", page=None, **arguments):
+def nav_url(handler, host=False, username="", section="", name="", page=None,
+    **arguments):
   url = ""
 
   if host:
@@ -162,7 +173,8 @@ def nav_url(handler, host=False, username="", section="", name="", page=None, **
   if not handler.constants['http_hide_prefix']:
     url += handler.prefix
 
-  if not handler.constants['single_user_site'] and not handler.hostname_user and username:
+  if (not handler.constants['single_user_site'] and not handler.hostname_user
+      and username):
     url += '/' + username
 
   if section:
@@ -194,7 +206,8 @@ def resource_directory(handler, section="", album=""):
 
   return path
 
-def resource_url(handler, section="", album="", resource="", filename="", host=False):
+def resource_url(handler, section="", album="", resource="", filename="",
+    host=False):
   if filename:
     return handler.application.settings["resource_url"] \
          + filename.replace(handler.application.settings["resource_path"], '')

@@ -11,8 +11,10 @@ hw.editImage = function(event, el) {
   editor.__hw_image = hw.$c('hw-image-options')['imageTag'];
 
   hw.show(editor);
-  editor.style.left = Math.max(imageOptions.getBoundingClientRect().left - 150, 100) + 'px';
-  editor.style.top = Math.max(imageOptions.getBoundingClientRect().top - 200, 100) + 'px';
+  editor.style.left = Math.max(imageOptions.getBoundingClientRect().left - 150,
+      100) + 'px';
+  editor.style.top = Math.max(imageOptions.getBoundingClientRect().top - 200,
+      100) + 'px';
 
   var img = hw.$c('hw-image-scratch');
   if (!img) {
@@ -30,7 +32,8 @@ hw.editImage = function(event, el) {
 
   img.src = editor.__hw_image.src;
   hw.removeClass(hw.$c('hw-image-editor'), 'hw-editing');
-  Pixastic.process(img, "rotate", {angle: 0}, hw.editImageResetForm);  // convert to canvas, noop
+  Pixastic.process(img, "rotate", {angle: 0}, hw.editImageResetForm);
+  // convert to canvas, noop
 };
 hw.editImageCanvas = function() {
   return hw.$c('hw-image-editor').getElementsByTagName('canvas')[0];
@@ -53,7 +56,8 @@ hw.editImageSave = function(event) {
   var badTrip = function(json) {
     button.disabled = false;
   };
-  var name = editor.__hw_image.src.substring(editor.__hw_image.src.lastIndexOf('/') + 1);
+  var name = editor.__hw_image.src.substring(
+      editor.__hw_image.src.lastIndexOf('/') + 1);
   var data;
   if (canvas.mozGetAsFile) {
     data = canvas.mozGetAsFile(name);
@@ -61,7 +65,9 @@ hw.editImageSave = function(event) {
     data = canvas.toDataURL('image/jpeg', 0.9);
     data = hw.dataURItoBlob(data);
   }
-  var section = editor.__hw_image.src.substring(hw.getMsg('resource-url').length + 1, editor.__hw_image.src.lastIndexOf(name) - 1);
+  var section = editor.__hw_image.src.substring(
+      hw.getMsg('resource-url').length + 1,
+      editor.__hw_image.src.lastIndexOf(name) - 1);
 
   var fd = new FormData();
   fd.append('section', section);
@@ -127,7 +133,8 @@ hw.editImageClose = function(event) {
 hw.editImageRotate = function(event) {
   var temp = hw.$c('hw-image-width').value;
   hw.$c('hw-image-width').value = hw.$c('hw-image-height').value;
-  hw.$c('hw-image-width').setAttribute('data-previous', hw.$c('hw-image-width').value);
+  hw.$c('hw-image-width').setAttribute('data-previous',
+      hw.$c('hw-image-width').value);
   hw.$c('hw-image-height').value = temp;
   hw.rangeSet(hw.$c('hw-image-width'), null, hw.$c('hw-image-width').value);
 
@@ -143,8 +150,10 @@ hw.editImageRotate = function(event) {
 };
 hw.editImageWidth = function(el) {
   var canvas = hw.editImageCanvas();
-  var ratio = hw.editImageDidCrop ? hw.$c('hw-image-height').value / hw.$c('hw-image-width').getAttribute('data-previous')
-                                  : canvas.__pixastic_org_height / canvas.__pixastic_org_width;
+  var ratio = hw.editImageDidCrop ?
+      hw.$c('hw-image-height').value /
+          hw.$c('hw-image-width').getAttribute('data-previous') :
+      canvas.__pixastic_org_height / canvas.__pixastic_org_width;
   hw.$c('hw-image-height').value = Math.max(1, parseInt(el.value * ratio));
   hw.$c('hw-image-width').setAttribute('data-previous', el.value);
   hw.editImageProcess();
@@ -160,12 +169,16 @@ hw.editImageProcess = function() {
     hw.editImageRevert(true);
     var canvas = hw.editImageCanvas();
     var scratch = canvas.__scratchImage;
-    var resizeOptions = { width: hw.$c('hw-image-width').value, height: hw.$c('hw-image-height').value };
+    var resizeOptions =
+      { width: hw.$c('hw-image-width').value,
+        height: hw.$c('hw-image-height').value };
     hw.removeClass(hw.$c('hw-image-editor'), 'hw-editing');
     Pixastic.process(canvas, "resize", resizeOptions);
 
     canvas = hw.editImageCanvas();
-    var brightnessOptions = { brightness: hw.$c('hw-image-brightness').value, contrast: hw.$c('hw-image-contrast').value };
+    var brightnessOptions =
+      { brightness: hw.$c('hw-image-brightness').value,
+        contrast: hw.$c('hw-image-contrast').value };
     Pixastic.process(canvas, "brightness", brightnessOptions);
     hw.addClass(hw.$c('hw-image-editor'), 'hw-editing');
 
@@ -181,7 +194,8 @@ hw.editImageCrop = function() {
   var editor = hw.$c('hw-image-editor');
   hw.editImageCropMode = !hw.editImageCropMode;
   if (hw.$('hw-image-crop-rect')) {
-    hw.$('hw-image-crop-rect').parentNode.removeChild(hw.$('hw-image-crop-rect'));
+    hw.$('hw-image-crop-rect').parentNode.removeChild(
+        hw.$('hw-image-crop-rect'));
   }
   if (hw.editImageCropMode) {
     Event.observe(canvas, 'mousedown', hw.cropMouseDown, false);
@@ -189,18 +203,21 @@ hw.editImageCrop = function() {
     Event.observe(canvas, 'mouseup', hw.cropMouseUp, false);
     Event.observe(canvas, 'keydown', hw.cropKeyDown, false);
     Event.observe(canvas, 'keyup', hw.cropKeyUp, false);
-    hw.$c('hw-image-crop').innerHTML = hw.$c('hw-image-crop').getAttribute('data-select-area');
+    hw.$c('hw-image-crop').innerHTML = hw.$c('hw-image-crop').
+        getAttribute('data-select-area');
   } else {
     Event.stopObserving(canvas, 'mousedown', hw.cropMouseDown, false);
     Event.stopObserving(editor, 'mousemove', hw.cropMouseMove, false);
     Event.stopObserving(canvas, 'mouseup', hw.cropMouseUp, false);
-    hw.$c('hw-image-crop').innerHTML = hw.$c('hw-image-crop').getAttribute('data-crop');
+    hw.$c('hw-image-crop').innerHTML = hw.$c('hw-image-crop').
+        getAttribute('data-crop');
     hw.editImageCropStart = null;
   }
 };
 hw.cropMouseDown = function(event) {
-  hw.editImageCropStart = { top: event.clientY - event.target.getBoundingClientRect().top,
-                            left: event.clientX - event.target.getBoundingClientRect().left };
+  hw.editImageCropStart =
+    { top: event.clientY - event.target.getBoundingClientRect().top,
+      left: event.clientX - event.target.getBoundingClientRect().left };
   var editor = hw.$c('hw-image-editor');
   var div = document.createElement('div');
   div.style.position = 'absolute';
@@ -217,8 +234,10 @@ hw.cropMouseDown = function(event) {
 hw.cropMouseMove = function(event) {
   if (hw.editImageCropStart) {
     var canvas = hw.editImageCanvas();
-    var width = (event.clientX - hw.editImageCropStart.left - canvas.getBoundingClientRect().left - 5);
-    var height = (event.clientY - hw.editImageCropStart.top - canvas.getBoundingClientRect().top - 5);
+    var width = (event.clientX - hw.editImageCropStart.left -
+        canvas.getBoundingClientRect().left - 5);
+    var height = (event.clientY - hw.editImageCropStart.top -
+        canvas.getBoundingClientRect().top - 5);
     if (hw.cropShiftEnabled) {
       var square = Math.max(width, height);
       width = square;
@@ -250,15 +269,19 @@ hw.cropMouseUp = function(event) {
   }
 
   var canvas = hw.editImageCanvas();
-  var width = event.clientX - hw.editImageCropStart.left - canvas.getBoundingClientRect().left;
-  var height = event.clientY - hw.editImageCropStart.top - canvas.getBoundingClientRect().top;
+  var width = event.clientX - hw.editImageCropStart.left -
+      canvas.getBoundingClientRect().left;
+  var height = event.clientY - hw.editImageCropStart.top -
+      canvas.getBoundingClientRect().top;
   if (hw.cropShiftEnabled) {
     var square = Math.max(width, height);
     width = square;
     height = square;
   }
-  var options = { rect: { top: hw.editImageCropStart.top, left: hw.editImageCropStart.left,
-                          width: width, height: height } };
+  var options =
+    { rect: { top: hw.editImageCropStart.top,
+              left: hw.editImageCropStart.left,
+              width: width, height: height } };
                           
   hw.removeClass(hw.$c('hw-image-editor'), 'hw-editing');
   Pixastic.process(canvas, "crop", options);
@@ -266,7 +289,8 @@ hw.cropMouseUp = function(event) {
   hw.editImageDidCrop = true;
   canvas = hw.editImageCanvas();
   hw.$c('hw-image-width').value = canvas.getBoundingClientRect().width;
-  hw.$c('hw-image-width').setAttribute('data-previous', hw.$c('hw-image-width').value);
+  hw.$c('hw-image-width').setAttribute('data-previous',
+      hw.$c('hw-image-width').value);
   hw.$c('hw-image-height').value = canvas.getBoundingClientRect().height;
   hw.rangeSet(hw.$c('hw-image-width'), null, hw.$c('hw-image-width').value);
   hw.$('hw-image-crop-rect').parentNode.removeChild(hw.$('hw-image-crop-rect'));
@@ -315,7 +339,8 @@ hw.editImageResetForm = function() {
   hw.$c('hw-image-contrast').value = 0;
   hw.$c('hw-image-width').value = canvas.__pixastic_org_width;
   hw.$c('hw-image-height').value = canvas.__pixastic_org_height;
-  hw.$c('hw-image-width').setAttribute('data-previous', canvas.__pixastic_org_width);
+  hw.$c('hw-image-width').setAttribute('data-previous',
+      canvas.__pixastic_org_width);
   hw.rangeSet(hw.$c('hw-image-brightness'), null, 0);
   hw.rangeSet(hw.$c('hw-image-contrast'), null, 0);
   hw.rangeSet(hw.$c('hw-image-width'), null, canvas.__pixastic_org_width);
@@ -338,13 +363,16 @@ hw.rangeSet = function(el, event, value) {
   var x;
 
   if (event) {
-    x = Math.max(0, event.clientX - el.getBoundingClientRect().left - sliderWidth / 2);
+    x = Math.max(0, event.clientX -
+        el.getBoundingClientRect().left - sliderWidth / 2);
     x = Math.min(x, el.getBoundingClientRect().width - sliderWidth);
   } else {
-    x = (value - min) / (max - min) * (el.getBoundingClientRect().width - sliderWidth);
+    x = (value - min) / (max - min) *
+        (el.getBoundingClientRect().width - sliderWidth);
   }
 
-  var rawValue = x / (el.getBoundingClientRect().width - sliderWidth) * (max - min) + min;
+  var rawValue = x / (el.getBoundingClientRect().width -
+      sliderWidth) * (max - min) + min;
   rawValue = (rawValue * 1 / step).toFixed(0) * step;
   var fraction = step - parseInt(step);
   if (fraction) {
@@ -353,7 +381,8 @@ hw.rangeSet = function(el, event, value) {
   rawValue = Number(rawValue);
   el.value = rawValue;
 
-  x = (rawValue - min) / (max - min) * (el.getBoundingClientRect().width - sliderWidth);
+  x = (rawValue - min) / (max - min) *
+      (el.getBoundingClientRect().width - sliderWidth);
   el.style.backgroundPosition = x + 'px 2px';
 };
 hw.rangeEnd = function(event, el) {

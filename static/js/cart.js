@@ -112,7 +112,8 @@ hw.saveCart = function(cart) {
 
   var cart_chunks = 0;
   for (var x = 0; x < cart.length; x += 4000) {
-    hw.setCookie('cart_chunk_' + (x / 4000), cart.substring(x, x + 4000), -1, hw.basePath());
+    hw.setCookie('cart_chunk_' + (x / 4000), cart.substring(x, x + 4000), -1,
+        hw.basePath());
     ++cart_chunks;
   }
 
@@ -132,7 +133,8 @@ hw.viewCart = function() {
     div.innerHTML = template.innerHTML;
     for (var arg in cart[x]) {
       var re = new RegExp("\\$" + arg, "g");
-      var value = arg == 'price' ? Number(cart[x][arg]).toFixed(2) : cart[x][arg];
+      var value = arg == 'price' ? Number(cart[x][arg]).toFixed(2) :
+          cart[x][arg];
       value = arg == 'thumb' ? 'src="' + value + '"' : value;
       div.innerHTML = div.innerHTML.replace(re, value);
     }
@@ -174,7 +176,8 @@ hw.checkoutPaypal = function(email, currency) {
 
   form.style.display = "none";
   form.method = "GET";
-  form.action = true ? "https://www.sandbox.paypal.com/cgi-bin/webscr" : "https://www.paypal.com/cgi-bin/webscr";
+  form.action = true ? "https://www.sandbox.paypal.com/cgi-bin/webscr" :
+      "https://www.paypal.com/cgi-bin/webscr";
   form.acceptCharset = "utf-8";
 
   // setup hidden fields
@@ -189,10 +192,12 @@ hw.checkoutPaypal = function(email, currency) {
   //}
 
   //if( me.shipping() !== 0){
-  //  form.appendChild(me.createHiddenElement("handling_cart",  me.shippingCost ));
+  //  form.appendChild(me.createHiddenElement("handling_cart", 
+  //      me.shippingCost ));
   //}
 
-  form.appendChild(hw.createHiddenElement("return", window.location.href + '?checkout_success=1'));
+  form.appendChild(hw.createHiddenElement("return", window.location.href +
+      '?checkout_success=1'));
 
   //if( me.cancelUrl ){
   //form.appendChild(me.createHiddenElement("cancel_return",  me.cancelUrl ));
@@ -201,18 +206,24 @@ hw.checkoutPaypal = function(email, currency) {
   var cart = hw.getCart();
   for (var x = 0; x < cart.length; ++x) {
     var item = cart[x];
-    form.appendChild(hw.createHiddenElement("item_name_" + counter, item['title'] + ' (' + item['id'] + ')'));
-    form.appendChild(hw.createHiddenElement("quantity_" + counter, item['quantity']));
-    form.appendChild(hw.createHiddenElement("amount_" + counter, item['price']));
-    form.appendChild(hw.createHiddenElement("item_number_" + counter, counter) );
+    form.appendChild(hw.createHiddenElement("item_name_" + counter,
+        item['title'] + ' (' + item['id'] + ')'));
+    form.appendChild(hw.createHiddenElement("quantity_" + counter,
+        item['quantity']));
+    form.appendChild(hw.createHiddenElement("amount_" + counter,
+        item['price']));
+    form.appendChild(hw.createHiddenElement("item_number_" + counter, counter));
 
     var option_count = 0;
 
-    //form.appendChild( me.createHiddenElement( "on" + option_count + "_"	+ counter, 	field ) );
-    //form.appendChild( me.createHiddenElement( "os" + option_count + "_"	+ counter, 	value ) );
+    //form.appendChild( me.createHiddenElement( "on" + option_count + "_"	+
+    //    counter, 	field ) );
+    //form.appendChild( me.createHiddenElement( "os" + option_count + "_"	+
+    //    counter, 	value ) );
     //option_count++;
 
-    form.appendChild(hw.createHiddenElement("option_index_" + counter, option_count));
+    form.appendChild(hw.createHiddenElement("option_index_" + counter,
+        option_count));
 
     ++counter;
   }
@@ -245,5 +256,6 @@ hw.checkoutBarter = function(email, subject) {
   body += hw.$('hw-cart-total-wrapper').innerHTML;
 
   window.location.href =
-    'mailto:' + email + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    'mailto:' + email + '?subject=' + encodeURIComponent(subject) + '&body=' +
+        encodeURIComponent(body);
 };
