@@ -69,6 +69,9 @@ class ApiHandler(BaseHandler):
       self.rename()
     elif op == 'follow':
       self.follow()
+      if self.get_argument('origin', '') == 'confirmpage':
+        # we redirect in follow() to dashboard
+        return
     elif op == 'unfollow':
       self.unfollow()
     elif op == 'favorite':
