@@ -243,7 +243,7 @@ class Feed(tornado.web.UIModule):
     if is_reverse:
       count = self.handler.models.content.get(**content_options).count()
       default_offset = int(math.ceil(
-          count / self.handler.constants['page_size']))
+          count / float(self.handler.constants['page_size'])))
     else:
       default_offset = 1
     offset = (int(self.handler.breadcrumbs["modifier"]) if
