@@ -261,7 +261,7 @@ class Feed(tornado.web.UIModule):
       feed = self.handler.models.content.get(**content_options).order_by(
           'date_start')[begin:end]
     else:
-      reverse_begin = math.max(count - end, 0)
+      reverse_begin = max(count - end, 0)
       reverse_end = count - begin
       feed = self.handler.models.content.get(**content_options).order_by(
           'date_created', 'DESC')[reverse_begin:reverse_end]
