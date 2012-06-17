@@ -29,12 +29,8 @@ class ApiHandler(BaseHandler):
 
     op = self.get_argument('op')
     if op == 'follow':
-      self.follow()
-
-    if self.get_argument('from_email', ''):
-      self.redirect(self.nav_url(section='dashboard'))
-    else:
-      self.set_status(204)
+      self.display['follow_url'] = self.get_argument('user_url')
+      self.fill_template("follow_confirm.html")
 
   def post(self):
     op = self.get_argument('op')
@@ -285,6 +281,9 @@ class ApiHandler(BaseHandler):
     feed_response = urllib2.urlopen(user.feed_url)
     content_remote.parse_feed(self.models, user, feed_response.read(),
         max_days_old=self.constants['feed_max_days_old'])
+
+    if self.get_argument('origin', '') == 'confirmpage':
+      self.redirect(self.nav_url(section='dashboard'))
 
   def unfollow(self):
     user_url = self.get_argument('user')

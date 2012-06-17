@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+  <link id="hw-stylesheet-theme" rel="stylesheet" type="text/css"
+        href="{{ static_url('css/themes/pixel/_compiled_pixel.css') }}">
+  <style>
+    #hw-container {
+      position: static;
+    }
+    h1,
+    #hw-follow-request {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 500px;
+      margin-top: -64px;
+      margin-left: -250px;
+      font-size: 32px;
+      text-align: center;
+    }
+    #hw-follow-request {
+      top: 65%;
+    }
+  </style>
+{% end %}
+
+{% block title %}
+  {{ _("Confirm Follow Request") }}
+{% end %}
+
+{% block content %}
+  <h1>{{ _("Confirm Follow Request") }}</h1>
+  <form id="hw-follow-request" action="{{ nav_url(section='api') }}"
+        method="post">
+    {% raw xsrf_form_html() %}
+    <input type="text" readonly name="user_url" value="{{ follow_url }}"
+           data-error="{{ _('error subscribing!') }}"
+           data-error-unsub="{{ _('error unsubscribing!') }}">
+    <input type="hidden" name="op" value="follow">
+    <input type="hidden" name="origin" value="confirmpage">
+    <button class"hw-button hw-button-save" type="submit">
+       {{ _('Follow') }}
+    </button>
+  </form>
+{% end %}
