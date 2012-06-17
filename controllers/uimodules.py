@@ -262,7 +262,7 @@ class Feed(tornado.web.UIModule):
           'date_start')[begin:end]
     else:
       feed = self.handler.models.content.get(**content_options).order_by(
-          'date_created')[begin:end]
+          'date_created', 'DESC')[count - end:count - begin]
 
     if (not feed and self.handler.request.headers.get("X-Requested-With") ==
         "XMLHttpRequest"):
