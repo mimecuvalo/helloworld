@@ -34,7 +34,7 @@
     <link rel="license" href="{{ user.license }}"/>
     {% if user.license == 'http://purl.org/atompub/license#unspecified' %}
       <rights>
-        {{ _("Copyright %(date)s by %(name)s") %
+        {{ _("Copyright %(date)s by %(name)s") % \
           { "date": current_datetime.year, 'name': user.name } }}
       </rights>
     {% else %}
