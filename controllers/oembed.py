@@ -10,6 +10,9 @@ class OembedHandler(BaseHandler):
         username=content_url["profile"],
         section=content_url["section"],
         name=content_url["name"])[0]
+    if not content:
+      raise tornado.web.HTTPError(404)
+
     content_owner = self.models.users.get(username=content.username)[0]
     self.display['content_owner'] = content_owner
     self.display['content_thumb'] = content_logic.get_thumbnail(self, content)

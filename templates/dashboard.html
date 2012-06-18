@@ -189,8 +189,7 @@
             <a href="#{{ source }}" class="hw-following-username"
                onclick="hw.read(event, this, null, '{{ source }}')">
               {{ source }}
-            </a>
-            <a href="#{{ source }}" class="hw-unread-count"
+            </a><a href="#{{ source }}" class="hw-unread-count"
                onclick="hw.read(event, this, null, '{{ source }}')">
               &nbsp;({{ handler.display[source + '_count'] }})
             </a>

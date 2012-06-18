@@ -145,7 +145,8 @@ def content_url(handler, item, host=False, **arguments):
   if not handler.constants['http_hide_prefix']:
     url += handler.prefix
 
-  if not handler.constants['single_user_site'] and not handler.hostname_user:
+  if (not handler.constants['single_user_site'] and not handler.hostname_user
+      and item.name != 'main'):
     url += '/' + item.username
 
   if item.section != 'main':
