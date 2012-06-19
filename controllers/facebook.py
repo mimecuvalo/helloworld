@@ -58,7 +58,7 @@ class FacebookHandler(BaseHandler,
     status = (content_remote.strip_html(self.get_argument('title', ''))
         + ('\n' if self.get_argument('title', '') and
             self.get_argument('view', '') else '')
-        + content_remote.strip_html(view)
+        + content_remote.strip_html(view.replace('<br>', ' '))
         + ('\n' if self.get_argument('title', '') or
             self.get_argument('view', '') else '')
         + self.get_argument('url'))
