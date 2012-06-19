@@ -68,20 +68,16 @@ def load_basic_parameters(handler, prefix="", url=""):
   elif uri_array[1] == "":
     uri_array[1] = 'home'
 
-  if uri_array[1] == "page":
-    uri_dict["section"] = 'main'
-    uri_dict["name"] = 'home'
-    uri_dict["modifier"] = uri_array[2]
-  elif len(uri_array) > 2 and uri_array[2] != "" and uri_array[2] != "page":
+  if len(uri_array) > 2 and uri_array[2] != "":
+    offset = 0
+    if uri_array[-2] == "page" and uri_array[-1] != "":
+      uri_dict["modifier"] = uri_array[-1]
+      offset = 2
     uri_dict["section"] = uri_array[1]
-    uri_dict["name"] = uri_array[2]
-    if len(uri_array) > 3 and uri_array[3] == "page":
-      uri_dict["modifier"] = uri_array[4]
+    uri_dict["name"] = uri_array[-1 - offset]
   else:
     uri_dict["section"] = 'main'
     uri_dict["name"] = uri_array[1]
-    if len(uri_array) > 2 and uri_array[2] == "page":
-      uri_dict["modifier"] = uri_array[3]
 
   uri_dict["name"] = reverse_href(urllib.unquote_plus(uri_dict["name"]))
 
@@ -152,6 +148,9 @@ def content_url(handler, item, host=False, **arguments):
   if item.section != 'main':
     url += '/' + item.section
 
+  if item.album and item.album != 'main':
+    url += '/' + item.album
+
   if item.name != 'home' and item.name != 'main':
     url += '/' + item.name
   elif item.name == 'home' and handler.hostname_user:
@@ -164,8 +163,8 @@ def content_url(handler, item, host=False, **arguments):
 
   return href(url)
 
-def nav_url(handler, host=False, username="", section="", name="", page=None,
-    **arguments):
+def nav_url(handler, host=False, username="", section="", album="", name="",
+    page=None, **arguments):
   url = ""
 
   if host:
@@ -180,8 +179,10 @@ def nav_url(handler, host=False, username="", section="", name="", page=None,
 
   if section:
     url += '/' + section
-    if name:
-      url += '/' + name
+    if album:
+      url += '/' + album
+      if name:
+        url += '/' + name
 
   if page:
     url += '/page/' + str(page)

@@ -14,7 +14,7 @@
   <title type="html">{{ user.title }}</title>
   <subtitle>{{ _('a hello world site.') }}</subtitle>
   <link rel="self" href="{{ nav_url(host=True, username=user.username,
-      section='feed', category=section, album=album,
+      section='feed', category=section, album_feed=album_feed,
       comments=comments_url) }}" />
   <link rel="alternate" type="text/html" href="{{ nav_url(host=True,
       username=user.username) }}" />

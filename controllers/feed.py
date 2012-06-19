@@ -17,7 +17,7 @@ class FeedHandler(BaseHandler):
     self.display["push_hub"] = self.constants['push_hub']
 
     section = self.get_argument('category', '')
-    album = self.get_argument('album', '')
+    album_feed = self.get_argument('album_feed', '')
     comments_url = self.get_argument('comments', '')
     self.display["comments_url"] = comments_url
     self.display["thread_url"] = None
@@ -44,8 +44,8 @@ class FeedHandler(BaseHandler):
                           'section !=': 'comments', }
       if section:
         content_options['section'] = section
-      if album:
-        content_options['album'] = album
+      if album_feed:
+        content_options['album'] = album_feed
 
       content_options = dict(common_options.items() + content_options.items())
       feed = self.models.content.get(**content_options).order_by(
@@ -56,7 +56,7 @@ class FeedHandler(BaseHandler):
           content.album != 'main' ]  # todo, this should move to query really
 
     self.display["section"] = section
-    self.display["album"] = album
+    self.display["album_feed"] = album_feed
 
     self.display['sup_id'] = hashlib.md5(self.nav_url(host=True,
         username=user.username, section='feed')).hexdigest()[:10]
