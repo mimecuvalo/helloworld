@@ -23,7 +23,9 @@ hw.changeBeforeUnloadState = function(event, allowPageChange) {
   noChange = noChange && wysiwyg.innerHTML.search(/<(?!\/?(h1|br))/ig) == -1;
   allowPageChange = allowPageChange || noChange;
 
-  window.onbeforeunload = allowPageChange ? null : function() { return "" };
+  window.onbeforeunload = allowPageChange ? null : function() {
+    return hw.getMsg('unsaved-changes');
+  };
 
   var createForm = hw.$c('hw-create');
   var title = "";

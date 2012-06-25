@@ -29,7 +29,9 @@ hw.customSetupFields = function() {
 };
 
 hw.customChangeBeforeUnloadState = function(allowPageChange) {
-  window.onbeforeunload = allowPageChange ? null : function() { return "" };
+  window.onbeforeunload = allowPageChange ? null : function() {
+    return hw.getMsg('unsaved-changes');
+  };
 };
 
 hw.customResetSaveState = function() {

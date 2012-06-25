@@ -46,6 +46,8 @@
     hw.setMsg('saved', "{% raw js_escape(_('saved!')) %}");
     hw.setMsg('uploading', "{% raw js_escape(_('uploading...')) %}");
     hw.setMsg('clear', "{% raw js_escape(_('clear')) %}");
+    hw.setMsg('unsaved-changes',
+        "{% raw js_escape(_('You have unsaved changes.')) %}");
     hw.pixelSrc = '{{ static_url('img/pixel.gif') }}';
     hw.colorPickerImage = '{{ static_url('img/color_picker.png') }}';
     hw.faviconDefault = '{{ static_url('favicon.ico') }}';
