@@ -415,7 +415,10 @@ hw.editContent = function(event, el) {
 
   hw.preventDefault(event);
 
-  var href = hw.sectionUrl + '/' + el.getAttribute('data-contentname') +
+  var href = hw.sectionUrl + '/' +
+      (el.getAttribute('data-album') ?
+          el.getAttribute('data-album') + '/' : '') +
+      el.getAttribute('data-contentname') +
       '?edit=true';
   if (hw.testAccelKey(event)) {
     window.open(href);

@@ -80,6 +80,7 @@
          {% end %}" 
          href="{{ content_url(item) }}" title="{{ title }}"
          data-contentname="{{ item.name }}"
+         data-album="{{ item.album }}"
          onclick="hw.albumClick(event, this)">
        {% if item.title %}
          {{ item.title }}

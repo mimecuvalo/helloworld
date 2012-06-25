@@ -26,6 +26,7 @@
           </span>
         {% end %}
         <a href="{{ content_url(item) }}" data-contentname="{{ item.name }}"
+           data-album="{{ item.album }}"
            {% if is_owner_viewing %}
              onclick="hw.editContent(event, this)"
            {% end %}>

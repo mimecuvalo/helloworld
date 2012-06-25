@@ -44,6 +44,7 @@
       {% set title += item.title %}
       <a href="{{ content_url(item) }}" title="{{ title }}"
          data-contentname="{{ item.name }}"
+         data-album="{{ item.album }}"
          onclick="hw.albumClick(event, this)">
         <img src="{{ static_url('img/pixel.gif') }}"
              onload="hw.thumbnailDelayLoad.transition(this)"
@@ -57,6 +58,7 @@
          href="{{ content_url(item) }}"
          title="{{ title }}"
          data-contentname="{{ item.name }}"
+         data-album="{{ item.album }}"
          onclick="hw.albumClick(event, this)">
         {{ item.title }}
       </a>
