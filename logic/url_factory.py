@@ -2,6 +2,7 @@ import cgi
 import os.path
 import re
 import urllib
+import urlparse
 
 import tornado.escape
 
@@ -30,8 +31,8 @@ def load_basic_parameters(handler, prefix="", url=""):
   elif handler.current_user is not None:
     implied_profile = handler.current_user.get('username', None)
 
-  uri = uri[:uri.find('?')]
-  uri_array = uri.split("/")
+  parsed_url = urlparse.urlparse(uri)
+  uri_array = parsed_url.path.split("/")
   uri_array.pop(0)
   uri_array = [sanitize_form_value(x) for x in uri_array]
 
