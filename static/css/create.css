@@ -568,7 +568,7 @@ div.hw-preview img {
   outline: 1px solid black;
 }
 
-#hw-container.hw-editing > #hw-sitemap li[draggable=true]:hover:after {
+#hw-container.hw-editing > #hw-sitemap li[draggable=true]:hover > a:after {
   content: ' ≡';
 }
 

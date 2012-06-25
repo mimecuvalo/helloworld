@@ -67,14 +67,14 @@ class TwitterHandler(BaseHandler,
     # XXX TODO multipart doesn't work for some reason right now... arrrgh
     thumb = None
     text_length = 79 if thumb else 99
+    title = self.get_argument('title', '')
+    view = self.get_argument('view', '')
     status = (content_logic.ellipsize(content_remote.strip_html(
-        self.get_argument('title', '')), 18, including_dots=True) +
-        (': ' if self.get_argument('title', '') and
-            self.get_argument('view', '') else '') +
+        title), 18, including_dots=True) +
+        (': ' if title and view else '') +
         content_logic.ellipsize(content_remote.strip_html(
-            self.get_argument('view', '')), text_length, including_dots=True) +
-        (' ' if self.get_argument('title', '') or
-          self.get_argument('view', '') else '') +
+            view.replace('<br>', ' ')), text_length, including_dots=True) +
+        (' ' if title or view else '') +
         self.get_argument('url'))
 
     if thumb:

@@ -54,13 +54,12 @@ class FacebookHandler(BaseHandler,
 
     self.user = self.get_author_user()
     access_token = self.user.facebook
+    title = self.get_argument('title', '')
     view = self.get_argument('view', '')
-    status = (content_remote.strip_html(self.get_argument('title', ''))
-        + ('\n' if self.get_argument('title', '') and
-            self.get_argument('view', '') else '')
+    status = (content_remote.strip_html(title)
+        + ('\n' if title and view else '')
         + content_remote.strip_html(view.replace('<br>', ' '))
-        + ('\n' if self.get_argument('title', '') or
-            self.get_argument('view', '') else '')
+        + ('\n' if title or view else '')
         + self.get_argument('url'))
 
     thumb = self.get_argument('thumb', '')

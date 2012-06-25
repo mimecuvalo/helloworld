@@ -30,6 +30,7 @@ def load_basic_parameters(handler, prefix="", url=""):
   elif handler.current_user is not None:
     implied_profile = handler.current_user.get('username', None)
 
+  uri = uri[:uri.find('?')]
   uri_array = uri.split("/")
   uri_array.pop(0)
   uri_array = [sanitize_form_value(x) for x in uri_array]
@@ -63,18 +64,20 @@ def load_basic_parameters(handler, prefix="", url=""):
 
   uri_dict['profile'] = uri_array[0]
 
+  if (len(uri_array) > 2 and uri_array[2] != "" and
+      uri_array[-2] == "page" and uri_array[-1] != ""):
+    uri_dict["modifier"] = uri_array[-1]
+    uri_array.pop()
+    uri_array.pop()
+
   if len(uri_array) == 1:
     uri_array.append('home')
   elif uri_array[1] == "":
     uri_array[1] = 'home'
 
   if len(uri_array) > 2 and uri_array[2] != "":
-    offset = 0
-    if uri_array[-2] == "page" and uri_array[-1] != "":
-      uri_dict["modifier"] = uri_array[-1]
-      offset = 2
     uri_dict["section"] = uri_array[1]
-    uri_dict["name"] = uri_array[-1 - offset]
+    uri_dict["name"] = uri_array[-1]
   else:
     uri_dict["section"] = 'main'
     uri_dict["name"] = uri_array[1]
