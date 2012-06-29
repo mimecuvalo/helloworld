@@ -77,10 +77,12 @@
       {% else %}
         {% if is_author %}
           {% if is_owner_viewing %}
+            {% if content %}
             <a id="hw-edit" class="hw-button" href="#edit"
                onclick="hw.edit(event)">
               {{ _('edit') }}
             </a>
+            {% end %}
             {% if (content and content.name != 'home' and
                content.name != 'main') %}
             <a id="hw-delete" class="hw-button hw-button-delete"
