@@ -419,6 +419,11 @@
 <div class="hw-user-autocomplete"></div>
 {% end %}
 <div class="hw-view {% if not individual_content %}hw-closed{% end %}">
+  <div class="hw-dragging-file-info">
+    <h2>
+      {{ _('Drop files anywhere to upload them.') }}
+    </h2>
+  </div>
   <div class="hw-wysiwyg
        {% if not content and individual_content %}
          hw-new

@@ -127,14 +127,23 @@ div.hw-wysiwyg {
 }
 
 div.hw-wysiwyg.hw-new h1 {
+  width: 70%;
+  margin-bottom: 5px;
   font-weight: bold;
   font-size: 24px;
+  color: #999;
+  border-bottom: 1px solid #ccc;
+}
+
+div.hw-wysiwyg.hw-new h1.hw-modified-title {
+  color: #000;
 }
 
 div.hw-wysiwyg.hw-new {
   min-height: 200px;
   border: 1px solid #333;
   width: 735px;
+  padding: 5px;
   -moz-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
   -webkit-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
   -o-box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
@@ -356,6 +365,30 @@ iframe.hw-media-wrapper.hw-closed {
 
 div.hw-media-creator.hw-drag {
   border: 1px solid #000;
+}
+
+.hw-dragging-file-info {
+  position: absolute;
+  top: 75px;
+  left: 0;
+  z-index: 3;
+  display: none;
+  width: 735px; /* Matches hw-wysiwyg */
+  height: 0;
+  text-align: center;
+}
+
+.hw-dragging-file-info h2 {
+  display: inline-block;
+  width: 50%;
+  font-weight: bold;
+  font-size: 30px;
+  border: 1px dashed #999;
+  background-color: #fff;
+}
+
+.hw-dragging-file .hw-dragging-file-info {
+  display: block;
 }
 
 input.hw-media-title,

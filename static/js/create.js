@@ -31,8 +31,13 @@ hw.changeBeforeUnloadState = function(event, allowPageChange) {
   var title = "";
   if (!createForm['hw-id'].value) {
     var newTitle = hw.$('hw-new-title');
-    title = newTitle && newTitle.textContent != hw.getMsg('untitled') ?
-        newTitle.textContent : '(' + hw.getMsg('untitled') + ')';
+    if (newTitle && newTitle.textContent != hw.getMsg('untitled')) {
+      title = newTitle.textContent;
+      hw.addClass(newTitle, 'hw-modified-title');
+    } else {
+      title = '(' + hw.getMsg('untitled') + ')';
+      hw.removeClass(newTitle, 'hw-modified-title');
+    }
   } else {
     title = createForm['hw-title'].value || '(' + hw.getMsg('untitled') + ')';
   }

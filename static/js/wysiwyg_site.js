@@ -579,6 +579,7 @@ hw.getEmbedHtml = function(link, opt_img) {
         'X-Helloworld-Title') && newTitle &&
         newTitle.textContent == hw.getMsg('untitled')) {
       newTitle.innerHTML = xhr.getResponseHeader('X-Helloworld-Title');
+      hw.addClass(newTitle, 'hw-modified-title');
       createForm['hw-title'].value =
           xhr.getResponseHeader('X-Helloworld-Title');
     }
@@ -966,11 +967,12 @@ hw.uploadButton = function(callback, section, opt_drop, opt_isComment,
   } else {
     document.write(buttonHtml);
   }
-  var buttons = hw.$$('.hw-button-media');
+  var commentSelector = opt_isComment ? '.hw-comment-form ' : '';
+  var buttons = hw.$$(commentSelector + '.hw-button-media');
   var button = buttons[buttons.length - 1];
   var progress = button.nextSibling;
   var result = progress.nextSibling;
-  var xsrf = hw.$$('input[name=_xsrf]')[0].value;
+  var xsrf = hw.$$(commentSelector + 'input[name=_xsrf]')[0].value;
 
   function displayResponse(good, msg) {
     hw.show(result);
@@ -1061,6 +1063,16 @@ hw.uploadButton = function(callback, section, opt_drop, opt_isComment,
 
   if (opt_drop) {
     r.assignDrop(document);
+    Event.observe(document, 'dragover', function() {
+      if (!hw.hasClass('hw-container', 'hw-editing')) {
+        return;
+      }
+
+      if (!opt_isComment) {
+        document.body.scrollTop = 0;
+      }
+      hw.addClass(document.body, 'hw-dragging-file');
+    }, false);
   }
 
   var resumableObj = null;
@@ -1073,6 +1085,9 @@ hw.uploadButton = function(callback, section, opt_drop, opt_isComment,
     hw.hide(button);
     hw.hide(result);
     result.innerHTML = "";
+    setTimeout(function() {
+      hw.removeClass(document.body, 'hw-dragging-file');
+    }, 0);
   });
   r.on('fileSuccess', function(file, msg) {
     var json = JSON.parse(msg);
