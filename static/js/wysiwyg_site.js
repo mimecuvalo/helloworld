@@ -577,7 +577,8 @@ hw.getEmbedHtml = function(link, opt_img) {
     var newTitle = hw.$('hw-new-title');
     if (!createForm['hw-id'].value && xhr.getResponseHeader(
         'X-Helloworld-Title') && newTitle &&
-        newTitle.textContent == hw.getMsg('untitled')) {
+        (newTitle.textContent == hw.getMsg('untitled') ||
+            newTitle.textContent == '')) {
       newTitle.innerHTML = xhr.getResponseHeader('X-Helloworld-Title');
       hw.addClass(newTitle, 'hw-modified-title');
       createForm['hw-title'].value =
