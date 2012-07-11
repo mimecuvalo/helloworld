@@ -132,8 +132,8 @@ class FacebookHandler(BaseHandler,
 
   def timeline_result(self, response):
     # Check if our OAuth key has expired
-    if response.has_key('error') and response['error']['type']
-        == 'OAuthException':
+    if (response.has_key('error') and response['error']['type']
+        == 'OAuthException'):
       self.delete()
       return
 
