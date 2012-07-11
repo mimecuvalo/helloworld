@@ -1074,6 +1074,10 @@ hw.uploadButton = function(callback, section, opt_drop, opt_isComment,
       }
       hw.addClass(document.body, 'hw-dragging-file');
     }, false);
+
+    Event.observe(document, 'dragover', function() {
+      hw.removeClass(document.body, 'hw-dragging-file');
+    }, false);
   }
 
   var resumableObj = null;
