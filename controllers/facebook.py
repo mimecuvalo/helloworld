@@ -61,6 +61,7 @@ class FacebookHandler(BaseHandler,
         + content_remote.strip_html(view.replace('<br>', ' '))
         + ('\n' if title or view else '')
         + self.get_argument('url'))
+    post_args = {"message": status}
 
     thumb = self.get_argument('thumb', '')
     picture = None
@@ -85,7 +86,9 @@ class FacebookHandler(BaseHandler,
       else:
         picture = thumb
 
-    post_args = {"message": status, "picture": picture}
+    if picture:
+      post_args['picture'] = picture
+
     video = re.compile(r'<iframe[^>]*(youtube|vimeo)[^>]*>.*?</iframe>',
         re.M | re.S).search(view)
     if video:
