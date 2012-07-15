@@ -189,7 +189,10 @@ hw.templateChange = function(oldTemplate, newTemplate) {
   hw.removeClass(hw.$c('hw-create'), 'hw-template-' + oldTemplate);
   hw.addClass(hw.$c('hw-create'), 'hw-template-' + newTemplate);
 
-  hw.$c('hw-template').setAttribute('data-previous', newTemplate)
+  hw.$c('hw-template').setAttribute('data-previous', newTemplate);
+
+  hw.display(hw.$c('hw-sort-type-row'), newTemplate != 'feed');
+  hw.display(hw.$c('hw-sort-type-input'), newTemplate != 'feed');
 };
 
 hw.shortcuts = function(event) {

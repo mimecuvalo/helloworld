@@ -257,7 +257,8 @@
         {% end %}
       </select></dd>
       {% if not individual_content %}
-        <dt><label>{{ _("sorting:") }}</label></dt><dd>
+        <dt class="hw-sort-type-row"><label>{{ _("sorting:") }}</label></dt><dd
+            class="hw-sort-type-input">
           <select name="hw-sort-type"
                   {% if content %}value="{{ content.sort_type }}"{% end %}>
             <option value="">{{ _('newest to oldest') }}</option>
@@ -273,9 +274,7 @@
                     {% end %}>
               {{ _('alphabetical') }}
             </option>
-          </select></dd>
-      {% end %}
-      <dt><label>{{ _("hidden:") }}</label></dt><dd>
+          </select></dd>{% end %}<dt><label>{{ _("hidden:") }}</label></dt><dd>
       <input name="hw-hidden" type="checkbox"
              {% if content and content.hidden %}checked="checked"{% end %}>
       </dd>
@@ -455,6 +454,8 @@
   Event.observe(hw.$c('hw-wysiwyg'), 'mouseup', hw.changeBeforeUnloadState,
       false);
   Event.observe(window, 'scroll', hw.createOnScroll, false);
+{% else %}
+  hw.templateChange('{{ content.template }}', '{{ content.template }}');
 {% end %}
 
 {% if not content %}
