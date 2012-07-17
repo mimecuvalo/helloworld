@@ -1117,8 +1117,11 @@ hw.uploadButton = function(callback, section, opt_drop, opt_isComment,
 
   if (opt_drop) {
     r.assignDrop(document);
-    Event.observe(document, 'dragover', function() {
-      if (!hw.hasClass('hw-container', 'hw-editing')) {
+    var dragFileTimeout;
+    Event.observe(document, 'dragover', function(event) {
+      if (!hw.hasClass('hw-container', 'hw-editing') ||
+          (event.dataTransfer.getData('text/plain') ||
+          hw.dragChromeWorkaroundId)) {
         return;
       }
 
@@ -1126,10 +1129,10 @@ hw.uploadButton = function(callback, section, opt_drop, opt_isComment,
         document.body.scrollTop = 0;
       }
       hw.addClass(document.body, 'hw-dragging-file');
-    }, false);
-
-    Event.observe(document, 'dragover', function() {
-      hw.removeClass(document.body, 'hw-dragging-file');
+      clearTimeout(dragFileTimeout);
+      dragFileTimeout = setTimeout(function() {
+        hw.removeClass(document.body, 'hw-dragging-file');
+      }, 250);
     }, false);
   }
 

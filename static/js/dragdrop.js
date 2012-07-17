@@ -71,7 +71,7 @@ hw.dragLogic = function(event, el) {
   var draggedElement = hw.$(id);
 
   // if renaming, disable as well
-  if (hw.hasClass(draggedElement, 'hw-renaming')) {
+  if (!draggedElement || hw.hasClass(draggedElement, 'hw-renaming')) {
     return { 'dragAllowed': false };
   }
 

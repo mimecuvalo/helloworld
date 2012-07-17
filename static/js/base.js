@@ -265,8 +265,6 @@ hw.ajax.prototype = {
         this.transport.setRequestHeader('Content-type',
             'application/x-www-form-urlencoded');
       }
-      if (this.transport.overrideMimeType)
-        this.transport.setRequestHeader('Connection', 'close');
     }
     this.transport.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     for (var header in this.headers) {
