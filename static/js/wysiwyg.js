@@ -191,8 +191,10 @@ hw.templateChange = function(oldTemplate, newTemplate) {
 
   hw.$c('hw-template').setAttribute('data-previous', newTemplate);
 
-  hw.display(hw.$c('hw-sort-type-row'), newTemplate != 'feed');
-  hw.display(hw.$c('hw-sort-type-input'), newTemplate != 'feed');
+  if (hw.$c('hw-sort-type-row')) {
+    hw.display(hw.$c('hw-sort-type-row'), newTemplate != 'feed');
+    hw.display(hw.$c('hw-sort-type-input'), newTemplate != 'feed');
+  }
 };
 
 hw.shortcuts = function(event) {

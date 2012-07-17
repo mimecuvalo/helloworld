@@ -465,18 +465,50 @@ hw.getSelectionStartNode = function(allowTextNodes) {
 };
 
 hw.onbeforepaste = function(event) {
-  if (hw.shiftKeyPressed) {
-    return;
-  }
-
   hw.preventDefault(event);
 };
 
-hw.paste = function(event) {
-  if (hw.shiftKeyPressed) {
-    return;
-  }
+// from feedparser.py
+hw.acceptable_elements = ['a', 'abbr', 'acronym', 'address', 'area',
+        'article', 'aside', 'audio', 'b', 'big', 'blockquote', 'br', 'button',
+        'canvas', 'caption', 'center', 'cite', 'code', 'col', 'colgroup',
+        'command', 'datagrid', 'datalist', 'dd', 'del', 'details', 'dfn',
+        'dialog', 'dir', 'div', 'dl', 'dt', 'em', 'event-source', 'fieldset',
+        'figcaption', 'figure', 'footer', 'font', 'form', 'header', 'h1',
+        'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'i', 'img', 'input', 'ins',
+        'keygen', 'kbd', 'label', 'legend', 'li', 'm', 'map', 'menu', 'meter',
+        'multicol', 'nav', 'nextid', 'ol', 'output', 'optgroup', 'option',
+        'p', 'pre', 'progress', 'q', 's', 'samp', 'section', 'select',
+        'small', 'sound', 'source', 'spacer', 'span', 'strike', 'strong',
+        'sub', 'sup', 'table', 'tbody', 'td', 'textarea', 'time', 'tfoot',
+        'th', 'thead', 'tr', 'tt', 'u', 'ul', 'var', 'video', 'noscript'];
+hw.acceptable_elements_regex = "";
 
+hw.acceptable_attributes = ['abbr', 'accept', 'accept-charset', 'accesskey',
+      'action', 'align', 'alt', 'autocomplete', 'autofocus', 'axis',
+      'background', 'balance', 'bgcolor', 'bgproperties', 'border',
+      'bordercolor', 'bordercolordark', 'bordercolorlight', 'bottompadding',
+      'cellpadding', 'cellspacing', 'ch', 'challenge', 'char', 'charoff',
+      'choff', 'charset', 'checked', 'cite', 'class', 'clear', 'color', 'cols',
+      'colspan', 'compact', 'contenteditable', 'controls', 'coords', 'data',
+      'datafld', 'datapagesize', 'datasrc', 'datetime', 'default', 'delay',
+      'dir', 'disabled', 'draggable', 'dynsrc', 'enctype', 'end', 'face', 'for',
+      'form', 'frame', 'galleryimg', 'gutter', 'headers', 'height', 'hidefocus',
+      'hidden', 'high', 'href', 'hreflang', 'hspace', 'icon', 'id', 'inputmode',
+      'ismap', 'keytype', 'label', 'leftspacing', 'lang', 'list', 'longdesc',
+      'loop', 'loopcount', 'loopend', 'loopstart', 'low', 'lowsrc', 'max',
+      'maxlength', 'media', 'method', 'min', 'multiple', 'name', 'nohref',
+      'noshade', 'nowrap', 'open', 'optimum', 'pattern', 'ping', 'point-size',
+      'prompt', 'pqg', 'radiogroup', 'readonly', 'rel', 'repeat-max',
+      'repeat-min', 'replace', 'required', 'rev', 'rightspacing', 'rows',
+      'rowspan', 'rules', 'scope', 'selected', 'shape', 'size', 'span', 'src',
+      'start', 'step', 'summary', 'suppress', 'tabindex', 'target', 'template',
+      'title', 'toppadding', 'type', 'unselectable', 'usemap', 'urn', 'valign',
+      'value', 'variable', 'volume', 'vspace', 'vrml', 'width', 'wrap',
+      'xml:lang'];
+hw.acceptable_attributes_regex = "";
+
+hw.paste = function(event) {
   var wysiwygResult = hw.getCurrentWysiwyg();
   var isComment = wysiwygResult['isComment'];
   var wysiwyg = wysiwygResult['wysiwyg'];
@@ -510,6 +542,15 @@ hw.paste = function(event) {
     }
 
     if (pastedContent) {
+      if (hw.shiftKeyPressed) {
+        if (pastedContent.search(/https?:\/\//ig) == 0) { // links
+          pastedContent = '<a href="' + pastedContent + '">' + pastedContent
+              + '</a>';
+        }
+        hw.insertHTML(pastedContent);
+        return;
+      }
+
       if (pastedContent.search(/https?:\/\/maps.google.com/ig) == 0) {
         pastedContent = '&lt;iframe width="425" height="350" src="' +
             pastedContent +
@@ -526,14 +567,26 @@ hw.paste = function(event) {
             replace(/&quot;/g, "\"");
         pastedContent += '<br><br>';
       } else {
+        if (!hw.acceptable_elements_regex) {
+          for (var x = 0; x < hw.acceptable_elements.length; ++x) {
+            hw.acceptable_elements_regex += (x == 0 ? '' : '|')
+                + hw.acceptable_elements[x];
+          }
+          for (var x = 0; x < hw.acceptable_attributes.length; ++x) {
+            hw.acceptable_attributes_regex += (x == 0 ? '' : '|')
+                + hw.acceptable_attributes[x];
+          }
+        }
         // very simple html sanitizer, not meant for xss prevention
         // just to strip annoying styling when pasting
         // remove all but whitelisted tags
-        pastedContent = pastedContent.replace(
-            /<(?!\/?(a|b|br|strong|em|div)(>|\s+[^>]+))[^>]*>/ig, "");
+        var tagRegex = new RegExp("<(?!\/?(" + hw.acceptable_elements_regex
+            + ")(>|\\s+[^>]+))[^>]*>", "ig");
+        pastedContent = pastedContent.replace(tagRegex, "");
         // remove all but whitelisted attributes
-        pastedContent = pastedContent.replace(
-            /\s(?!(href))[^<>=]*=('([^']*)'|"([^"]*)")/ig, "");
+        var attrRegex = new RegExp("\\s(?!(" + hw.acceptable_attributes_regex
+            + "))[^<>=]*=('([^']*)'|\"([^\"]*)\")", "ig");
+        pastedContent = pastedContent.replace(attrRegex, "");
       }
 
       hw.insertHTML(pastedContent);
