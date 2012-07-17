@@ -23,7 +23,11 @@
           {% if getattr(user, source) %}
             <label for="hw-post-{{ source }}">
               <span>{{ source }}</span>
-              <input id="hw-post-{{ source }}" type="checkbox">
+              <input id="hw-post-{{ source }}" type="checkbox"
+                  {% if handler.display['external_cookie_' + source] == '1' %}
+                    checked
+                  {% end %}
+                  onclick="hw.selectExternal(this)" data-source="{{ source }}">
             </label>
           {% end %}
         {% end %}

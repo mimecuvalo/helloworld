@@ -60,6 +60,8 @@ class DashboardHandler(BaseHandler):
     for source in self.constants['external_sources']:
       self.display["read_" + source] = \
           int(self.get_argument('read_' + source, 0))
+      self.display["external_cookie_" + source] = \
+          self.get_cookie("external_" + source)
     self.display["from_local_id"] = self.get_argument('from_local_id', None)
     self.display["from_remote_id"] = self.get_argument('from_remote_id', None)
     self.display["q"] = self.get_argument('q', None)

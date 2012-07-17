@@ -504,3 +504,8 @@ hw.help = function(event) {
 hw.setNewSection = function() {
   hw.$c('hw-section-album').options[0].selected = true;
 };
+
+hw.selectExternal = function(el) {
+  hw.setCookie('external_' + el.getAttribute('data-source'),
+      el.checked ? '1' : '0', -1, hw.basePath());
+};
