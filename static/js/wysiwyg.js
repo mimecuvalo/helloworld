@@ -3,6 +3,7 @@ hw.edit = function(event) {
   if (event) {
     hw.preventDefault(event);
   }
+  Event.stopObserving(document, 'click', hw.instantEdit, false);
 
   var createForm = hw.$c('hw-create');
   var turnEditingOn = hw.isHidden(createForm);
@@ -58,6 +59,14 @@ hw.edit = function(event) {
 
   return false;
 };
+
+hw.instantEdit = function(event) {
+  if (event.target.nodeName != 'A') {
+    hw.preventDefault(event);
+    hw.edit();
+  }
+};
+Event.observe(document, 'click', hw.instantEdit, false);
 
 hw.editScriptWorkaround = function() {
   var wysiwyg = hw.$c('hw-wysiwyg');
