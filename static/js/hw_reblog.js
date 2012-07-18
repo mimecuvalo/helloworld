@@ -211,8 +211,8 @@
     var closePicker = function() {
       var imageFinder = document.getElementById('hw-image-finder');
       imageFinder.parentNode.removeChild(imageFinder);
-      Event.stopObserving(document, 'keyup', closePicker, false);
-      Event.stopObserving(document, 'click', closePicker, false);
+      Event.stopObserving(document, 'keyup', documentKeyUp, false);
+      Event.stopObserving(document, 'click', documentClick, false);
       return false;
     };
     var documentKeyUp = function(event) {
