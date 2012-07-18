@@ -9,6 +9,7 @@ hw.insertHTML = function(html) {
 
 hw.modify = function(alter, direction, granularity) {
   if (document.selection && document.selection.createRange) {
+    // TODO fix on IE
     //var range = document.selection.createRange();
     //range.move(granularity, direction == 'forward' ? 1 : -1)
   } else if (window.getSelection) {
@@ -374,7 +375,7 @@ hw.wysiwygKeys = function(event, opt_key) {
 
           var tag = hw.getSelectionStartNode();
           if (tag && tag.nodeName == 'A' && tag.href.indexOf(hw.tagUrl) == 0) {
-            tag.href = hw.tagUrl + tag.textContent;
+            tag.href = hw.tagUrl + hw.text(tag);
           }
         }, 0);
 
@@ -630,8 +631,8 @@ hw.getEmbedHtml = function(link, opt_img) {
     var newTitle = hw.$('hw-new-title');
     if (!createForm['hw-id'].value && xhr.getResponseHeader(
         'X-Helloworld-Title') && newTitle &&
-        (newTitle.textContent == hw.getMsg('untitled') ||
-            newTitle.textContent == '')) {
+        (hw.text(newTitle) == hw.getMsg('untitled') ||
+            hw.text(newTitle) == '')) {
       newTitle.innerHTML = xhr.getResponseHeader('X-Helloworld-Title');
       hw.addClass(newTitle, 'hw-modified-title');
       createForm['hw-title'].value =
@@ -871,8 +872,8 @@ hw.hideImageOptions = function() {
           hw.$c('hw-image-options')['captionTag'].firstChild) {
         return;
       }
-      if (hw.$c('hw-image-options')['captionTag'].
-          textContent.replace(/\W/g, '') == hw.getMsg('image-info')) {
+      if (hw.text(hw.$c('hw-image-options')['captionTag']).
+          replace(/\W/g, '') == hw.getMsg('image-info')) {
         hw.$c('hw-image-options')['captionTag'].parentNode.
             removeChild(hw.$c('hw-image-options')['captionTag']);
         hw.$c('hw-image-options')['captionTag'] = null;
@@ -1065,7 +1066,7 @@ hw.uploadButton = function(callback, section, opt_drop, opt_isComment,
       var bad = false;
       var json;
       try {
-        json = JSON.parse(body.textContent);
+        json = JSON.parse(hw.text(body));
       } catch(ex) {
         bad = true;
       }

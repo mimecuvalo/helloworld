@@ -16,8 +16,8 @@ hw.changeBeforeUnloadState = function(event, allowPageChange) {
 
   var createForm = hw.$c('hw-create');
   var wysiwyg = hw.$c('hw-wysiwyg');
-  var noChange = wysiwyg.textContent.replace('\n', '') == hw.getMsg('untitled')
-      || wysiwyg.textContent == '';
+  var noChange = hw.text(wysiwyg).replace('\n', '') == hw.getMsg('untitled')
+      || hw.text(wysiwyg) == '';
   noChange = noChange && !createForm['hw-code'].value &&
       !createForm['hw-style'].value;
   noChange = noChange && wysiwyg.innerHTML.search(/<(?!\/?(h1|br))/ig) == -1;
@@ -31,8 +31,8 @@ hw.changeBeforeUnloadState = function(event, allowPageChange) {
   var title = "";
   if (!createForm['hw-id'].value) {
     var newTitle = hw.$('hw-new-title');
-    if (newTitle && newTitle.textContent != hw.getMsg('untitled')) {
-      title = newTitle.textContent;
+    if (newTitle && hw.text(newTitle) != hw.getMsg('untitled')) {
+      title = hw.text(newTitle);
       hw.addClass(newTitle, 'hw-modified-title');
     } else {
       title = '(' + hw.getMsg('untitled') + ')';
@@ -237,8 +237,8 @@ hw.save = function() {
     var html = hw.$c('hw-wysiwyg').innerHTML;
     if (!createForm['hw-id'].value) {
       var newTitle = hw.$('hw-new-title');
-      createForm['hw-title'].value = newTitle && newTitle.textContent !=
-          hw.getMsg('untitled') ? newTitle.textContent : '';
+      createForm['hw-title'].value = newTitle && hw.text(newTitle) !=
+          hw.getMsg('untitled') ? hw.text(newTitle) : '';
 
       if (newTitle) {
         var div = document.createElement('DIV');
@@ -456,9 +456,9 @@ hw.renameEnd = function(event, el, album, accept) {
 
   if (accept) {
     var createForm = hw.$c('hw-create');
-    var newName = hw.cleanName(el.textContent);
+    var newName = hw.cleanName(hw.text(el));
     el.href = el.href.substring(0, el.href.lastIndexOf('/')) + '/' + newName;
-    el.setAttribute('data-original', el.textContent);
+    el.setAttribute('data-original', hw.text(el));
     var oldId = el.parentNode.id;
     el.parentNode.id = el.parentNode.id.substring(0,
         el.parentNode.id.lastIndexOf('_')) + '_' + newName;
@@ -468,10 +468,10 @@ hw.renameEnd = function(event, el, album, accept) {
         postBody: 'op='   + encodeURIComponent('rename')
                + '&type=' + encodeURIComponent(album ? 'album' : 'section')
                + '&id='   + encodeURIComponent(oldId)
-               + '&new='  + encodeURIComponent(el.textContent),
+               + '&new='  + encodeURIComponent(hw.text(el)),
         headers: { 'X-Xsrftoken' : createForm['_xsrf'].value } });
   } else {
-    el.textContent = el.getAttribute('data-original');
+    hw.text(el, el.getAttribute('data-original'));
   }
 
   el.blur();

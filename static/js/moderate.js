@@ -429,7 +429,7 @@ hw.updateCount = function(el, delta, opt_setCount) {
   if (opt_setCount != undefined) {
     newCount = opt_setCount;
   } else {
-    newCount = parseInt(el.textContent.slice(2, -1)) + delta;
+    newCount = parseInt(hw.text(el).slice(2, -1)) + delta;
   }
   el.innerHTML = '&nbsp;(' + newCount + ')';
 };
@@ -470,7 +470,9 @@ hw.updateCounts = function() {
       onSuccess: callback,
       onError: function() {} });
 
-  // TODO(mime): this needs to move somewhere else.
+  // TODO(mime): This should be on the server side part of the
+  // tools/update_feeds.py script that updates every 30 min.  But it's very
+  // complicated to do so :-/
   hw.updateExternal();
 };
 
@@ -788,7 +790,7 @@ hw.markAllAsRead = function(event, el) {
     countEl = hw.$$('#hw-following li[data-user="' + user +
         '"] .hw-unread-count')[0];
   }
-  var count = parseInt(countEl.textContent.slice(2, -1));
+  var count = parseInt(hw.text(countEl).slice(2, -1));
   hw.updateCount(hw.$('hw-total-unread-count'), -1 * count);
   hw.updateCount(countEl, 0, 0);
 

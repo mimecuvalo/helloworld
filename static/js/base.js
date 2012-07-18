@@ -574,3 +574,11 @@ hw.inArray = function(query, arr) {
   }
   return false;
 };
+
+hw.text = function(el, opt_value) {
+  if (opt_value) {
+    el.textContent = el.innerText = opt_value;
+  }
+
+  return el.textContent || el.innerText;
+};
