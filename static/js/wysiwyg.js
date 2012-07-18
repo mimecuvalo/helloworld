@@ -120,6 +120,8 @@ hw.setupCodeMirror = function() {
     hw.addClass(hw.cm.getWrapperElement(), 'hw-html-cm');
     hw.cm.getWrapperElement().cm = hw.cm;
     //hw.cm.focus();
+    CodeMirror.commands["selectAll"](hw.cm);
+    hw.cm.autoFormatRange(hw.cm.getCursor(true), hw.cm.getCursor(false));
     Event.observe(hw.$c('hw-html-cm'), 'keydown', hw.shortcuts, false);
   }
 };
@@ -321,12 +323,13 @@ hw.htmlPreview = function(force, codeMirror) {
   } else if (document.activeElement != styleCMTextarea &&
       document.activeElement != codeCMTextarea) {
     if (html && !hw.isHidden(htmlWrapper)) {
-      html.value = wysiwyg.innerHTML;
-      // hmm, this was supposed to help in formatting the html but it
-      // ends up being annoying...
-      // html.value.replace(/>([^\n])/g, '>\n$1')
+      var line = hw.cm && hw.cm.getCursor().line;
+      html.value = wysiwyg.innerHTML.replace(/>([^\n])/g, '>\n$1');
       if (hw.cm) {
         hw.cm.setValue(html.value);
+        CodeMirror.commands["selectAll"](hw.cm);
+        hw.cm.autoFormatRange(hw.cm.getCursor(true), hw.cm.getCursor(false));
+        hw.cm.setCursor(line, 0, true);
       }
     }
   }
@@ -344,10 +347,11 @@ hw.htmlPreview = function(force, codeMirror) {
 
   var styleElement = hw.$('hw-content-style') ? hw.$('hw-content-style') :
       hw.$('hw-preview-style');
+  var style = style.value.replace(/<style[^>]*?>/, '').replace('</style>', '');
   if (styleElement.styleSheet) {
-    styleElement.styleSheet.cssText = style.value;
+    styleElement.styleSheet.cssText = style;
    } else {
-    styleElement.innerHTML = style.value;
+    styleElement.innerHTML = style;
   }
 
   var jsCode = code.value;

@@ -5,6 +5,7 @@ js/image_editor.js
 js/dragdrop.js
 js/moderate.js
 js/CodeMirror2/lib/codemirror.js
+js/CodeMirror2/lib/util/formatting.js
 js/CodeMirror2/mode/xml/xml.js
 js/CodeMirror2/mode/javascript/javascript.js
 js/CodeMirror2/mode/css/css.js
