@@ -203,18 +203,19 @@
           {% end %}
           {% if item.is_remote %}
             • <a href="{{ item.link }}" target="_blank">
-                {{ _('permalink') }}
-              </a>
+                {{ _('permalink') }}</a>
           {% else %}
             • <a href="{{ content_url(item) }}" target="_blank">
-                {{ _('permalink') }}
-              </a>
+                {{ _('permalink') }}</a>
+          {% end %}
+          {% if individual_content and not item.is_remote %}
+            • <a href="#fullscreen" onclick="hw.fullscreen(event)">
+                {{ _('fullscreen') }}</a>
           {% end %}
           {% if item.is_remote %}
             • <a href="#markAsUnread" onclick="hw.markAsUnread(event, this)"
                  class="hw-mark-unread">
-                {{ _('keep unread') }}
-              </a>
+                {{ _('keep unread') }}</a>
           {% else %}
             • {{ _("%(count)s human view", "%(count)s human views",
                 item.count) % { "count": locale.friendly_number(item.count) } }}
@@ -223,8 +224,7 @@
                   locale.friendly_number(item.count_robot) } }}
             {% if item.thread %}
                 • <a href="{{ item.thread.split(':')[2] }}">
-                    {{ _('view thread') }}
-                  </a>
+                    {{ _('view thread') }}</a>
               {% end %}
             {% end %}
         </span>

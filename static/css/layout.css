@@ -857,6 +857,50 @@ div.hw-paste-area {
   float: right;
 }
 
+#hw-container:fullscreen {
+  text-align: center; /* to make mozilla look nicer in future */
+}
+/* Bollocks to this repeating crap. */
+#hw-container:fullscreen #hw-sitemap,
+#hw-container:fullscreen #hw-header,
+#hw-container:fullscreen #hw-footer,
+#hw-container:fullscreen nav.hw-neighbors,
+#hw-container:fullscreen .hw-info,
+#hw-container:fullscreen header {
+  display: none;
+}
+#hw-container:-moz-full-screen #hw-sitemap,
+#hw-container:-moz-full-screen #hw-header,
+#hw-container:-moz-full-screen #hw-footer,
+#hw-container:-moz-full-screen nav.hw-neighbors,
+#hw-container:-moz-full-screen .hw-info,
+#hw-container:-moz-full-screen header {
+  display: none;
+}
+#hw-container:-webkit-full-screen #hw-sitemap,
+#hw-container:-webkit-full-screen #hw-header,
+#hw-container:-webkit-full-screen #hw-footer,
+#hw-container:-webkit-full-screen nav.hw-neighbors,
+#hw-container:-webkit-full-screen .hw-info,
+#hw-container:-webkit-full-screen header {
+  display: none;
+}
+
+#hw-container:fullscreen #hw-content {
+  position: static;
+  display: inline-block; /* to make mozilla look nicer in future */
+}
+#hw-container:-moz-full-screen #hw-content {
+  top: 50%;
+  left: 50%;
+  margin-top: -18%;
+  margin-left: -25%;
+}
+#hw-container:-webkit-full-screen #hw-content {
+  position: static;
+}
+
+
 @media print {
   #hw-user,
   nav.hw-neighbors,

@@ -104,17 +104,35 @@ hw.navigate = function(event, url, title) {
 
   if (!hw.addedFirstUrlToHistory) {
     var isAlbum = !!hw.$c('hw-album');
-    history.replaceState({ 'title': title, 'isAlbum': isAlbum }, title,
-        window.location.href);
+    if (!hw.isFullscreen()) {
+      history.replaceState({ 'title': title, 'isAlbum': isAlbum }, title,
+          window.location.href);
+    }
     hw.loadedContent[window.location.href] = hw.$('hw-content').innerHTML;
     hw.addedFirstUrlToHistory = true;
   }
   hw.startUrl = null; // XXX chrome, ugh, see below in popstate
 
-  history.pushState({ 'title': title }, title, url);
-  document.title = title;
+  if (!hw.isFullscreen()) {
+    history.pushState({ 'title': title }, title, url);
+    document.title = title;
+  }
 
   hw.swapContent(url);
+};
+
+hw.fullscreen = function(event) {
+  hw.preventDefault(event);
+
+  var content = hw.$('hw-container');
+  content.requestFullScreen && content.requestFullScreen();
+  content.mozRequestFullScreen && content.mozRequestFullScreen();
+  content.webkitRequestFullScreen && content.webkitRequestFullScreen();
+};
+
+hw.isFullscreen = function() {
+  return document.fullScreen || document.mozFullScreen
+      || document.webkitIsFullScreen;
 };
 
 hw.albumClick = function(event, el) {
