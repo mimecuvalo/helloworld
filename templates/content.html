@@ -94,7 +94,8 @@
         <img src="{{ item.avatar }}" >
       </a>
     {% end %}
-    <header class="{% if (not individual_content and not item.title and
+    <header class="{% if ((not individual_content or is_dashboard)
+                        and not item.title and
                         not item.is_remote and not item.hidden) %}
                      hw-hidden
                    {% end %}">

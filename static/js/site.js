@@ -246,10 +246,20 @@ Event.observe(window, 'popstate', function(e) {
   }
 }, false);
 
+hw.appendHTML = function(el, html) {
+  // doing innerHTML += to the feed reloads
+  var docFragment = document.createDocumentFragment();
+  var div = document.createElement('div');
+  div.innerHTML = html;
+  docFragment.appendChild(div);
+  el.insertBefore(docFragment, el.lastChild);
+};
+
 hw.loadMore = function(url, offset, opt_feed_id, opt_reverse) {
   this.url = url;
   this.url = this.url.lastIndexOf('/') == this.url.length - 1 ?
         this.url.substring(0, this.url.length - 1) : this.url;  // remove slash
+  this.startedWithoutPage = this.url.indexOf('/page/') == -1;
   this.url = this.url.replace(/\/page\/\d+/g, '');
   this.initialOffset = offset;
   this.offset = offset;
@@ -278,7 +288,8 @@ hw.loadMore.prototype = {
       var parameterStart = this.url.indexOf('?');
       var pageUrl = this.url.substring(0, parameterStart == -1 ?
           this.url.length : parameterStart)
-          + '/page/' + this.offset;
+          + (this.startedWithoutPage && this.offset == this.initialOffset ? ''
+          : '/page/' + this.offset);
           //+ this.url.substring(parameterStart == -1 ?
           //this.url.length : parameterStart, this.url.length);
 
@@ -300,8 +311,8 @@ hw.loadMore.prototype = {
       setTimeout(fn, 3000);
 
       hw.$('hw-loading').parentNode.removeChild(hw.$('hw-loading'));
-      self.feed.innerHTML += '<a id="hw-feed-page-' + nextOffset + '"></a>' +
-          xhr.responseText;
+      hw.appendHTML(self.feed, '<a id="hw-feed-page-' + nextOffset + '"></a>' +
+          xhr.responseText);
       var a = document.body.offsetWidth;
       // XXX workaround https://bugzilla.mozilla.org/show_bug.cgi?id=693219#c33
 
@@ -337,8 +348,8 @@ hw.loadMore.prototype = {
         3
         && !hw.$('hw-feed-page-' + (this.offset + this.offsetModifier))) {
       this.processing = true;
-      this.feed.innerHTML += '<div id="hw-loading">' + hw.getMsg('loading') +
-          '</div>';
+      hw.appendHTML(this.feed, '<div id="hw-loading">' + hw.getMsg('loading') +
+          '</div>');
       var a = document.body.offsetWidth;
       // XXX workaround https://bugzilla.mozilla.org/show_bug.cgi?id=693219#c33 
 
