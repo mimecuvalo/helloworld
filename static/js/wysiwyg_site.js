@@ -196,7 +196,6 @@ hw.wysiwygKeyDown = function(event) {
       hw.preventDefault(event);
       hw.wysiwygKeys(event);
       break;
-    case 8:   // delete
     case 37:  // left
     case 38:  // up
     case 39:  // right

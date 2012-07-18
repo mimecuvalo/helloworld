@@ -196,7 +196,7 @@
 
     var close = document.createElement('A');
     close.href = '#close-image-finder';
-    hw.text(close, '×');
+    close.innerHTML = '×';
     close.style.fontSize = '20px';
     close.style.fontFamily = '"Helvetica Neue",Arial,sans-serif';
     close.style.position = 'fixed';
@@ -212,6 +212,7 @@
       var imageFinder = document.getElementById('hw-image-finder');
       imageFinder.parentNode.removeChild(imageFinder);
       Event.stopObserving(document, 'keyup', closePicker, false);
+      Event.stopObserving(document, 'click', closePicker, false);
       return false;
     };
     var documentKeyUp = function(event) {
@@ -219,10 +220,21 @@
         closePicker();
       }
     };
+    var documentClick = function(event) {
+      var el = event.target;
+      while (el) {
+        if (el.id == 'hw-image-finder') {
+          return;
+        }
+        el = el.parentNode;
+      }
+      closePicker();
+    };
     close.onclick = closePicker;
     wrapper.appendChild(close);
     document.body.appendChild(wrapper);
-    Event.observe(document, 'keyup', closePicker, false);
+    Event.observe(document, 'keyup', documentKeyUp, false);
+    Event.observe(document, 'click', documentClick, false);
   }
 
   var scripts = document.getElementsByTagName('SCRIPT');
