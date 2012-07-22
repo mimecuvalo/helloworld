@@ -18,6 +18,7 @@
       "{% raw js_escape(resource_url(handler, host=True)) %}");
   hw.setMsg('unsaved-changes',
       "{% raw js_escape(_('You have unsaved changes.')) %}");
+  hw.isDashboard = {% if is_dashboard %}true{% else %}false{% end %};
   hw.contentOwnerTitle =
     {% if content %}
       "{{ content_owner.title }}"

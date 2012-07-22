@@ -61,6 +61,10 @@ hw.edit = function(event) {
 };
 
 hw.instantEdit = function(event) {
+  if (hw.isDashboard || !hw.createIndividualContent) {
+    return;
+  }
+
   if (event.target.nodeName != 'A') {
     hw.preventDefault(event);
     hw.edit();
