@@ -866,6 +866,7 @@ div.hw-paste-area {
 #hw-container:fullscreen #hw-footer,
 #hw-container:fullscreen nav.hw-neighbors,
 #hw-container:fullscreen .hw-info,
+#hw-container:fullscreen .hw-create,
 #hw-container:fullscreen header {
   display: none;
 }
@@ -874,6 +875,7 @@ div.hw-paste-area {
 #hw-container:-moz-full-screen #hw-footer,
 #hw-container:-moz-full-screen nav.hw-neighbors,
 #hw-container:-moz-full-screen .hw-info,
+#hw-container:-moz-full-screen .hw-create,
 #hw-container:-moz-full-screen header {
   display: none;
 }
@@ -882,6 +884,7 @@ div.hw-paste-area {
 #hw-container:-webkit-full-screen #hw-footer,
 #hw-container:-webkit-full-screen nav.hw-neighbors,
 #hw-container:-webkit-full-screen .hw-info,
+#hw-container:-webkit-full-screen .hw-create,
 #hw-container:-webkit-full-screen header {
   display: none;
 }
