@@ -60,5 +60,8 @@ steps than just cloning.
 - reduce/cache mysql calls
 - make oauth on the server so that external apps can plug in?
 - mysql migrator
+- tag editing is meh (deleting tags too)
+- don't refresh on new section/album
+- full templates possibly (also shouldn't make copy of non-edited css)
 - plugins?
 - translations (UI like [pontoon](https://github.com/mathjazz/pontoon))

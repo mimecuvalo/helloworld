@@ -889,15 +889,18 @@ div.hw-paste-area {
 #hw-container:fullscreen #hw-content {
   position: static;
   display: inline-block; /* to make mozilla look nicer in future */
+  background-color: black;
 }
 #hw-container:-moz-full-screen #hw-content {
   top: 50%;
   left: 50%;
   margin-top: -18%;
   margin-left: -25%;
+  background-color: black;
 }
 #hw-container:-webkit-full-screen #hw-content {
   position: static;
+  background-color: black;
 }
 
 
