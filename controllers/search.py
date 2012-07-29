@@ -6,7 +6,7 @@ from models import db
 
 class SearchHandler(BaseHandler):
   def get(self):
-    query = self.get_argument('q', "")
+    query = self.breadcrumbs["name"]
 
     content_owner = self.models.users.get(
         username=self.breadcrumbs["profile"])[0]

@@ -87,7 +87,8 @@
 
     <li id="hw-sidebar-search">
       <form method="get" action="{{ nav_url(username=content_owner.username,
-          section='search') }}">
+          section='search') }}" onsubmit="window.location.href=
+          this.action + '/' + this.q.value;return false;">
         <input type="search" name="q"
                {% if query %}
                  value="{{ query }}"{% end %}
