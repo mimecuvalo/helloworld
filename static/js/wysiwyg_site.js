@@ -5,6 +5,51 @@ hw.insertHTML = function(html) {
   } else {
     document.execCommand("insertHTML", false, html);
   }
+
+  var wysiwygResult = hw.getCurrentWysiwyg();
+  var isComment = wysiwygResult['isComment'];
+  if (!isComment) {
+    hw.changeBeforeUnloadState();
+  }
+};
+
+
+hw.changeBeforeUnloadState = function(event, allowPageChange) {
+  if (hw.$('hw-container') && !hw.hasClass('hw-container', 'hw-editing')) {
+    return;
+  }
+
+  var createForm = hw.$c('hw-create');
+  var wysiwyg = hw.$c('hw-wysiwyg');
+  var noChange = hw.text(wysiwyg).replace('\n', '') == hw.getMsg('untitled')
+      || hw.text(wysiwyg) == '';
+  noChange = noChange && !createForm['hw-code'].value &&
+      !createForm['hw-style'].value;
+  noChange = noChange && wysiwyg.innerHTML.search(/<(?!\/?(h1|br))/ig) == -1;
+  allowPageChange = allowPageChange || noChange;
+
+  window.onbeforeunload = allowPageChange ? null : function() {
+    return hw.getMsg('unsaved-changes');
+  };
+
+  var createForm = hw.$c('hw-create');
+  var title = "";
+  if (!createForm['hw-id'].value) {
+    var newTitle = hw.$('hw-new-title');
+    if (newTitle && hw.text(newTitle) != hw.getMsg('untitled')) {
+      title = hw.text(newTitle);
+      hw.addClass(newTitle, 'hw-modified-title');
+    } else {
+      title = '(' + hw.getMsg('untitled') + ')';
+      hw.removeClass(newTitle, 'hw-modified-title');
+    }
+  } else {
+    title = createForm['hw-title'].value || '(' + hw.getMsg('untitled') + ')';
+  }
+  document.title = hw.contentOwnerTitle.replace(/&quot;/g, '"')
+                + (hw.contentOwnerTitle && title ? ' - ' : '')
+                + title.replace(/&quot;/g, '"')
+                + (allowPageChange ? '' : ' +');
 };
 
 hw.modify = function(alter, direction, granularity) {

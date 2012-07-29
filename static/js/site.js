@@ -91,6 +91,7 @@ hw.supportsLocalStorage = function() {
 };
 
 hw.addedFirstUrlToHistory = false;
+hw.fullscreenLatestUrl = null;
 hw.navigate = function(event, url, title) {
   if (!hw.supportsHistory()) {
     return;  // allow regular links to continue
@@ -113,7 +114,9 @@ hw.navigate = function(event, url, title) {
   }
   hw.startUrl = null; // XXX chrome, ugh, see below in popstate
 
-  if (!hw.isFullscreen()) {
+  if (hw.isFullscreen()) {
+    hw.fullscreenLatestUrl = { 'title': title, 'url': url };
+  } else {
     history.pushState({ 'title': title }, title, url);
     document.title = title;
   }
@@ -134,6 +137,20 @@ hw.isFullscreen = function() {
   return document.fullScreen || document.mozFullScreen
       || document.webkitIsFullScreen;
 };
+
+hw.fullscreenChange = function() {
+  if (!hw.isFullscreen()) {
+    if (hw.fullscreenLatestUrl) {
+      history.pushState({ 'title': hw.fullscreenLatestUrl.title },
+          hw.fullscreenLatestUrl.title, hw.fullscreenLatestUrl.url);
+      document.title = hw.fullscreenLatestUrl.title;
+      hw.fullscreenLatestUrl = null;
+    }
+  }
+};
+Event.observe(window, 'fullscreenchange', hw.fullscreenChange, false);
+Event.observe(window, 'mozfullscreenchange', hw.fullscreenChange, false);
+Event.observe(window, 'webkitfullscreenchange', hw.fullscreenChange, false);
 
 hw.albumClick = function(event, el) {
   if (hw.hasClass('hw-content', 'hw-owner-viewing')) {
