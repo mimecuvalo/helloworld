@@ -144,6 +144,12 @@
       } catch(ex) { }
     }
 
+    if (!imagesArray.length) {
+      // send it off!
+      window.location.href = host + 'dashboard#reblog=' + url;
+      return;
+    }
+
     images = imagesArray;
     images.sort(function(a, b) {
       var aArea = a.width * a.height;
