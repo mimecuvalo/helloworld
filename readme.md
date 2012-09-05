@@ -54,6 +54,7 @@ steps than just cloning.
 ## could help work on! email me: mimecuvalo@gmail.com)
 - privacy
 - possibly: wiki
+- possibly: multiple blogs per person
 - possibly: django port?
 - possibly: js "templating" - be able to add microformatting,
   creativeworks/recipes/person, schema.org

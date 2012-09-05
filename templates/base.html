@@ -118,13 +118,9 @@
         <input class="hw-anchor-link" name="hw-anchor-link" type="text"
                placeholder="{{ _('http://') }}"
                onchange="hw.changeAnchorLink(this)">
-        <a class="hw-anchor-visit" href="#" target="_blank">
-          {{ _('visit') }}
-        </a>
+        <a class="hw-anchor-visit" href="#" target="_blank">{{ _('visit') }}</a>
         <a class="hw-anchor-remove" href="#removeLink"
-           onclick='hw.wysiwyg(event, "createLink")'>
-          {{ _('remove') }}
-        </a><br>
+           onclick='hw.wysiwyg(event, "createLink")'>{{ _('remove') }}</a><br>
         <input type="radio" class="" name="hw-anchor-type" value="web"
                onclick="hw.changeAnchorType(this)">
         <label onclick="hw.changeAnchorType(this.previousSibling)">

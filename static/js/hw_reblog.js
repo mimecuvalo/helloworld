@@ -174,12 +174,19 @@
     wrapper.style.borderBottom = '1px solid #999';
     wrapper.style.boxShadow = '0px 0px 10px 5px #999';
     wrapper.style.zIndex = '4294967295';
+    wrapper.style.textAlign = 'left';
 
     var selectImage = function(img) {
       // send it off!
       window.location.href = host + 'dashboard#reblog=' + url + '&img='
           + encodeURIComponent(img.src);
     };
+
+    if (images.length == 1) {
+      selectImage(images[0]);
+      return;
+    }
+
     for (var x = 0; x < images.length; ++x) {
       images[x].style.maxHeight = '190px';
       images[x].style.maxWidth = '270px';
