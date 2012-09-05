@@ -231,7 +231,7 @@ hw.follow = function(event, el) {
   var callback = function(xhr) {
     hw.$('hw-following-new').value = '';
     button.disabled = false;
-    window.location.reload();
+    window.location.href = hw.baseUri() + 'dashboard';
   };
 
   var badTrip = function(xhr) {
@@ -488,7 +488,7 @@ hw.unfollow = function(event, el, opt_special) {
   var user = el.getAttribute('data-user');
 
   var callback = function(xhr) {
-    window.location.reload();
+    window.location.href = hw.baseUri() + 'dashboard';
   };
 
   var badTrip = function(xhr) {
