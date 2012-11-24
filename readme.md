@@ -65,4 +65,5 @@ steps than just cloning.
 - don't refresh on new section/album
 - full templates possibly (also shouldn't make copy of non-edited css)
 - plugins?
+- maybe backbone/underscore
 - translations (UI like [pontoon](https://github.com/mathjazz/pontoon))

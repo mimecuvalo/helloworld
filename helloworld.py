@@ -170,19 +170,19 @@ else:
 # add cache_invalidate to crontab
 try:
   cache_script = 'rm -rf ' + settings['cache_path']
-  cache_cron_line = '0 2 * * * ' + cache_script
+  cache_cron_line = '0 5 * * * ' + cache_script
   f = os.popen('crontab -l')
   crontab = f.readlines()
   if (cache_cron_line + '\n') not in crontab:
     os.system('(crontab -l ; echo "' + cache_cron_line + '") | crontab -')
 
   update_feeds_script = 'python ' + settings['update_feeds_path']
-  update_feed_line = '0 * * * * ' + update_feeds_script
+  update_feed_line = '0 1 * * * ' + update_feeds_script
   if (update_feed_line + '\n') not in crontab:
     os.system('(crontab -l ; echo "' + update_feed_line + '") | crontab -')
 
   prune_feeds_script = 'python ' + settings['prune_entries_path']
-  prune_feed_line = '0 2 * * * ' + prune_feeds_script
+  prune_feed_line = '0 9 * * * ' + prune_feeds_script
   if (prune_feed_line + '\n') not in crontab:
     os.system('(crontab -l ; echo "' + prune_feed_line + '") | crontab -')
 except:

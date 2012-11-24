@@ -31,14 +31,19 @@ autumn_db.conn.connect('mysql', host=constants['mysql_host'],
     db=constants['mysql_database'], charset="utf8", use_unicode=True)
 from models import base as models
 
-types = ['post'] + constants['external_sources']
+types = ['post'] + constants['external_sources'] + ['remote-comment']
 for t in types:
-  content_remote = models.content_remote.get(type=t, favorited=False)[:]
+  content_options = {
+    'type': t,
+    'favorited': False,
+    'local_content_name': '',
+    'date_created <': datetime.datetime.utcnow() -
+              datetime.timedelta(days=constants['feed_max_days_old'])
+  }  
+  content_remote = models.content_remote.get(**content_options)[:]
 
   for content in content_remote:
     try:
-      if (content.date_created < datetime.datetime.utcnow() -
-          datetime.timedelta(days=constants['feed_max_days_old'])):
-        content.delete()
+      content.delete()
     except:
       pass

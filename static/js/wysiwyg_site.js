@@ -317,6 +317,7 @@ hw.wysiwygKeys = function(event, opt_key) {
           }
         }
 
+        var previousSelection = hw.selection.toString();
         if (!skipExec) {
           document.execCommand(action, false, value);
         }
@@ -333,7 +334,7 @@ hw.wysiwygKeys = function(event, opt_key) {
         if (key == 9) {
           hw.preventDefault(event);
         } else if (hw.wysiwygLastKeys[hw.wysiwygLastKeys.length - 1] ==
-            String.fromCharCode(key)) {
+            String.fromCharCode(key) && !previousSelection) {
           hw.wysiwygLastKeys = "";
         } else {
           hw.preventDefault(event);
@@ -1166,7 +1167,8 @@ hw.uploadButton = function(callback, section, opt_drop, opt_isComment,
     Event.observe(document, 'dragover', function(event) {
       if (!hw.hasClass('hw-container', 'hw-editing') ||
           (event.dataTransfer.getData('text/plain') ||
-          hw.dragChromeWorkaroundId)) {
+          hw.dragChromeWorkaroundId ||
+          event.dataTransfer.types[0] != "Files")) {
         return;
       }
 

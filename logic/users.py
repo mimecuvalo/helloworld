@@ -66,7 +66,7 @@ def create_user(handler, username, email):
       handler.application.settings["resource_path"], username), 'themes'))
 
   # give a blog to follow
-  user_remote = get_remote_user_info(handler, "http://boingboing.net",
+  user_remote = get_remote_user_info(handler, "http://kottke.org",
       username)
   user_remote.following = 1
   user_remote.save()
