@@ -277,6 +277,7 @@ class Feed(tornado.web.UIModule):
         content.album != 'main' ]
     self.handler.display["offset"] = offset + 1
     self.handler.display["is_event"] = self.template_type == "events"
+    self.handler.display["page_size"] = self.handler.constants['page_size']
 
     if (self.handler.request.headers.get("X-Requested-With") ==
         "XMLHttpRequest"):

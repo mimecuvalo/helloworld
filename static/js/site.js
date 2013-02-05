@@ -287,7 +287,7 @@ hw.loadMore.prototype = {
   processing : false,
   done : false,
 
-  onScroll : function(opt_callback) {
+  onScroll : function(opt_callback, opt_force) {
     var currentOffset = this.offset;
 
     if (hw.supportsHistory()) {
@@ -358,12 +358,13 @@ hw.loadMore.prototype = {
     };
 
     if (!this.done && !this.processing &&
-        this.offset != (this.initialOffset - this.offsetModifier) &&
+        ((this.offset != (this.initialOffset - this.offsetModifier) &&
         (document.height || document.body.parentNode.scrollHeight) -
         (document.body.parentNode.scrollTop || document.body.scrollTop) <
         (document.body.parentNode.clientHeight || document.body.clientHeight) *
         3
-        && !hw.$('hw-feed-page-' + (this.offset + this.offsetModifier))) {
+        && !hw.$('hw-feed-page-' + (this.offset + this.offsetModifier))) ||
+            opt_force)) {
       this.processing = true;
       hw.appendHTML(this.feed, '<div id="hw-loading">' + hw.getMsg('loading') +
           '</div>');
@@ -371,9 +372,11 @@ hw.loadMore.prototype = {
       // XXX workaround https://bugzilla.mozilla.org/show_bug.cgi?id=693219#c33 
 
       var parameterStart = this.url.indexOf('?');
+      var offsetToSend = opt_force ? (currentOffset + this.offsetModifier) :
+          (this.offset + this.offsetModifier);
       var nextPageUrl = this.url.substring(0, parameterStart == -1 ?
           this.url.length : parameterStart)
-          + '/page/' + (this.offset + this.offsetModifier)
+          + '/page/' + offsetToSend
           + this.url.substring(parameterStart == -1 ?
           this.url.length : parameterStart, this.url.length);
 
