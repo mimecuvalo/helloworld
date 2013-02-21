@@ -46,6 +46,22 @@
   {% if content_owner.title %}
   <meta property="og:site_name" content="{{ content_owner.title }}">
   {% end %}
+  {% if content_owner.google_analytics %}
+    <script>
+      var _gaq = [['_setAccount', '{{ content_owner.google_analytics }}'],
+          ['_gat._anonymizeIp'], ['_trackPageview']];
+
+      (function() {
+        var ga = document.createElement('script');
+        ga.type = 'text/javascript';
+        ga.async = true;
+        ga.src = ('https:' == document.location.protocol ?
+            'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  {% end %}
 {% end %}
 
 {% block favicon %}
@@ -164,23 +180,6 @@
 {% end %}
 
 {% block end_content %}
-  {% if content_owner.google_analytics %}
-    <script>
-      var _gaq = [['_setAccount', '{{ content_owner.google_analytics }}'],
-          ['_gat._anonymizeIp'], ['_trackPageview']];
-
-      (function() {
-        var ga = document.createElement('script');
-        ga.type = 'text/javascript';
-        ga.async = true;
-        ga.src = ('https:' == document.location.protocol ?
-            'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0];
-        s.parentNode.insertBefore(ga, s);
-      })();
-    </script>
-  {% end %}
-
   {% if is_store %}
     {% module StoreCheckout(content, content_owner) %}
     <script>

@@ -366,6 +366,7 @@ def get_remote_user_info(handler, user_url, profile):
   user_remote.save()
 
   try:
+    # TODO(mime): Add hub.secret
     if user_remote.hub_url:
       callback_url = handler.nav_url(host=True, username=profile,
           section='push')
