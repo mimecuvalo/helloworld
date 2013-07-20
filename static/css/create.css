@@ -630,7 +630,6 @@ div.hw-preview img {
   box-shadow: 1px 1px 0 #333, 2px 2px #333, 3px 3px 0 #333;
 }
 .CodeMirror-scroll {
-  height: 190px;
   border: 1px solid black;
 }
 
