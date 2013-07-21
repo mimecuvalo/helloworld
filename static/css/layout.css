@@ -905,11 +905,8 @@ div.hw-paste-area {
 
 
 @media print {
-  body {
-    margin: 0.79in;
-  }
-
   #hw-user,
+  .hw-create,
   nav.hw-neighbors,
   #hw-sitemap,
   .hw-wysiwyg-controls,
