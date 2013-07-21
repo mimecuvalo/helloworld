@@ -907,7 +907,14 @@ div.hw-paste-area {
 @media print {
   #hw-user,
   nav.hw-neighbors,
-  #hw-sitemap {
+  #hw-sitemap,
+  .hw-wysiwyg-controls,
+  .hw-playground,
+  .hw-image-editor,
+  .hw-sitemap,
+  .hw-info,
+  #hw-footer,
+  #hw-checkout {
     display: none;
   }
 
