@@ -5,7 +5,7 @@
   </script>
   <script>
     hw.disableHistory = true; {# disable popstate events #}
-    hw.externalSources = {{ repr(external_sources) }};
+    hw.externalSources = {% raw repr(external_sources) %};
   </script>
 {% end block %}
 
