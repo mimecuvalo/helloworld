@@ -159,6 +159,7 @@ CREATE TABLE IF NOT EXISTS `users_remote` (
   `magic_key` text NOT NULL,
   `profile_url` text NOT NULL,
   `salmon_url` text NOT NULL,
+  `webmention_url` text NOT NULL,
   `feed_url` text NOT NULL,
   `hub_url` text NOT NULL,
   `follower` tinyint(1) NOT NULL,

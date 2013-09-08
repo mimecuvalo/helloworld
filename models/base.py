@@ -158,6 +158,7 @@ class users_remote(Model):
                 'avatar': '',
                 'favicon': '',
                 'salmon_url': '',
+                'webmention_url': '',
                 'hub_url': '',
                 'feed_url': '',
                 'sort_type': '',
