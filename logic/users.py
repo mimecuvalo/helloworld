@@ -268,6 +268,8 @@ def get_remote_user_info(handler, user_url, profile):
 
   if not webmention_url:
     webmention_url = user_doc.find('link', rel=re.compile(r"\bwebmention\b"))
+    if webmention_url:
+        webmention_url = webmention_url['href']
 
   if not feed_url:
     feed_url = user_url
