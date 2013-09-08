@@ -5,7 +5,7 @@ from base import BaseHandler
 from logic import smtp
 from logic import spam
 
-class WebMentionHandler(BaseHandler):
+class WebmentionHandler(BaseHandler):
   def post(self):
     acct = self.get_argument("q").split(':')
 
