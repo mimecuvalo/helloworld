@@ -327,6 +327,7 @@
         {% for comment in item.comments_list %}
           {% if comment.is_remote %}
             <li data-post-id="{{ comment.post_id }}"
+                data-post-link="{{ comment.link }}"
                 data-post-user="{% if comment.from_user.startswith('http://') %}{{ comment.from_user }}{% end %}">
               <img src="{% if comment.avatar %}
                           {{ comment.avatar }}

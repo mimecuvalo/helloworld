@@ -124,13 +124,14 @@ hw.reply = function(event, el) {
   }
 
   var dataPostId = el.parentNode.getAttribute('data-post-id');
+  var dataPostLink = el.parentNode.getAttribute('data-post-link');
 
   if (user) {
     wysiwyg.innerHTML = '<a href="' + user + '">@' + username + '</a>';
   } else {
     wysiwyg.innerHTML = '@' + username;
   }
-  wysiwyg.innerHTML += ', ' + '<a href="' + dataPostId + '">' +
+  wysiwyg.innerHTML += ', ' + '<a href="' + dataPostLink + '">' +
       hw.getMsg('source') + '</a>&nbsp;'
   wysiwyg.focus();
 
