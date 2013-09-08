@@ -13,6 +13,7 @@
   hw.xsrf = '{% raw xsrf_form_html() %}';
   hw.uploadUrl = '{{ nav_url(section='upload') }}';
   hw.setMsg('uploading', "{% raw js_escape(_('uploading...')) %}");
+  hw.setMsg('source', "{% raw js_escape(_('source')) %}");
   hw.setMsg('image-info', "{% raw js_escape(_('caption')) %}");
   hw.setMsg('resource-url',
       "{% raw js_escape(resource_url(handler, host=True)) %}");

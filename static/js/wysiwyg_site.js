@@ -123,11 +123,15 @@ hw.reply = function(event, el) {
     }
   }
 
+  var dataPostId = el.parentNode.getAttribute('data-post-id');
+
   if (user) {
     wysiwyg.innerHTML = '<a href="' + user + '">@' + username + '</a>&nbsp;';
   } else {
     wysiwyg.innerHTML = '@' + username + '&nbsp;';
   }
+  wysiwyg.innerHTML += ', ' + '<a href="' + dataPostId + '">' +
+      hw.getMsg('source') + '</a> '
   wysiwyg.focus();
 
   // move to end of doc...TODO make simpler? use modify?
@@ -146,7 +150,7 @@ hw.reply = function(event, el) {
   }
 
   if (hw.$c('hw-thread')) {
-    hw.$c('hw-thread').value = el.parentNode.getAttribute('data-post-id');
+    hw.$c('hw-thread').value = dataPostId;
   }
 };
 
