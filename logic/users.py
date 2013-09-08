@@ -229,6 +229,7 @@ def get_remote_user_info(handler, user_url, profile):
   except:
     pass
   salmon_url = ''
+  webmention_url = ''
   magic_key = ''
   alias = ''
   webfinger_doc = None
@@ -252,6 +253,9 @@ def get_remote_user_info(handler, user_url, profile):
       salmon_url = webfinger_doc.find('link', rel='salmon')
       if salmon_url:
         salmon_url = salmon_url['href']
+      webmention_url = webfinger_doc.find('link', rel='webmention')
+      if webmention_url:
+        webmention_url = webmention_url['href']
       magic_key = webfinger_doc.find('link', rel='magic-public-key')
       if magic_key:
         magic_key = magic_key['href'];
@@ -261,6 +265,9 @@ def get_remote_user_info(handler, user_url, profile):
         alias = alias.string
     except:
       feed_url = None
+
+  if not webmention_url:
+    webmention_url = user_doc.find('link', rel=re.compile(r"\bwebmention\b"))
 
   if not feed_url:
     feed_url = user_url
@@ -362,6 +369,7 @@ def get_remote_user_info(handler, user_url, profile):
   user_remote.profile_url = alias
   user_remote.magic_key = magic_key
   user_remote.salmon_url = salmon_url
+  user_remote.webmention_url = webmention_url
   user_remote.feed_url = feed_url
   if hub_url:
     user_remote.hub_url = hub_url['href']

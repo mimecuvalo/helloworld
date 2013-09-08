@@ -32,6 +32,8 @@
       '@' + handler.request.host) }}" />
   <Link rel="magic-public-key"
     href="data:application/magic-public-key,{{ user.magic_key }}" />
+  <Link rel="webmention" href="{{ nav_url(host=True, section='webmention/',
+    q='acct:' + user.username + '@' + handler.request.host) }}" />
 
 	<Link rel="http://webfinger.net/rel/profile-page"
     href="{{ nav_url(host=True, username=user.username, section='about') }}"

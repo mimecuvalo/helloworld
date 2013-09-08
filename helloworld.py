@@ -164,6 +164,8 @@ else:
     (prefix + r"/users(?:$|/.*)", "controllers.users.UsersHandler"),
     (prefix + r"/webfinger(?:$|/.*)",
         "controllers.webfinger.WebfingerHandler"),
+    (prefix + r"/webmention(?:$|/.*)",
+        "controllers.webmention.WebmentionHandler"),
     (r".*", "controllers.view.ViewHandler"),
   ]
 
