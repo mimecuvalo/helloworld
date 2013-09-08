@@ -237,9 +237,9 @@ def get_remote_user_info(handler, user_url, profile):
   user_doc = BeautifulSoup(user_response.read())
 
   if not lrdd_link:
-    atom_url = user_doc.find('link', rel='alternate',
+    atom_url = user_doc.find('link', rel=re.compile(r"\balternate\b"),
         type='application/atom+xml')
-    rss_url = user_doc.find('link', rel='alternate',
+    rss_url = user_doc.find('link', rel=re.compile(r"\balternate\b"),
         type='application/rss+xml')
 
     feed_url = atom_url or rss_url
@@ -279,6 +279,8 @@ def get_remote_user_info(handler, user_url, profile):
 
   parsed_url = urlparse.urlparse(user_url)
   if not (feed_url.startswith('http://') or feed_url.startswith('https://')):
+    if (not feed_url.startswith('/')):
+      feed_url = '/' + feed_url
     feed_url = parsed_url.scheme + '://' + parsed_url.hostname + feed_url
 
   feed_response = urllib2.urlopen(feed_url)
@@ -292,7 +294,7 @@ def get_remote_user_info(handler, user_url, profile):
       alias = uri.string  # alias or user_url
 
   if not alias:
-    alt_link = feed_doc.find('link', rel="alternate")
+    alt_link = feed_doc.find('link', rel=re.compile(r"\balternate\b"))
     if alt_link:
       alias = alt_link['href']
     else:

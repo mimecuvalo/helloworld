@@ -13,7 +13,6 @@ sys.path.insert(0, os.path.normpath(os.path.realpath(__file__) +
     '/../../packages'))
 
 from logic import constants as constants_module
-from logic import content_remote
 
 config = ConfigParser.ConfigParser()
 config.read(os.path.normpath(os.path.realpath(__file__) +
@@ -32,11 +31,15 @@ autumn_db.conn.connect('mysql', host=constants['mysql_host'],
     db=constants['mysql_database'], charset="utf8", use_unicode=True)
 from models import base as models
 
+from logic import content_remote
+import gc
+gc.enable()
 
 remote_users = models.users_remote.get(following=1)[:]
 
 for remote_user in remote_users:
   try:
+    gc.collect()
     feed_response = urllib2.urlopen(str(remote_user.feed_url))
     content_remote.parse_feed(models, remote_user, feed_response.read(),
         max_days_old=constants['feed_max_days_old'])

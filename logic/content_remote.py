@@ -139,12 +139,12 @@ def get_remote_title_and_thumb(url, content_type=None):
       if not oembed_link:
         oembed_link = doc.find('link', type='application/xml+oembed')
       if oembed_link and not oembed_link['href'].startswith('http://'):
-        oembed_link['href'] = ('http://' + parsed_url.hostname +
+        oembed_link['href'] = ('http://' + parsed_url.netloc +
             oembed_link['href'])
       if not oembed_link:
         oembed_json = doc.find('link', type='application/json+oembed')
         if oembed_json and not oembed_json['href'].startswith('http://'):
-          oembed_json['href'] = ('http://' + parsed_url.hostname +
+          oembed_json['href'] = ('http://' + parsed_url.netloc +
               oembed_json['href'])
     else:
       video_id = urlparse.parse_qs(parsed_url.query)['v'][0]

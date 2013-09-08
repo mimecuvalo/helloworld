@@ -291,10 +291,13 @@ class TwitterHandler(BaseHandler,
     if getattr(self, "_OAUTH_VERSION", "1.0a") == "1.0a":
       response = content_remote.get_url(self._oauth_request_token_url(
           callback_uri=callback_uri, extra_params=extra_params))
-      self._on_request_token(self._OAUTH_AUTHORIZE_URL, callback_uri, response)
+      self._on_request_token(self._OAUTH_AUTHORIZE_URL, callback_uri, self.noop, response)
     else:
       response = content_remote.get_url(self._oauth_request_token_url())
-      self._on_request_token(self._OAUTH_AUTHORIZE_URL, callback_uri, response)
+      self._on_request_token(self._OAUTH_AUTHORIZE_URL, callback_uri, self.noop, response)
+
+  def noop(self):
+    pass
 
   def get_sync_authenticated_user(self, callback, http_client=None):
     """Gets the OAuth authorized user and access token on callback.
