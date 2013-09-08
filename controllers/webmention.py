@@ -63,13 +63,15 @@ class WebmentionHandler(BaseHandler):
       return
 
     remote_content = hEntry.find(
-        attrs={'class':re.compile(r'\be-content\b')}).string
+        attrs={'class':re.compile(r'\be-content\b')})
 
     existing_content = self.models.content_remote.get(
         to_username=self.display["user"].username,
         from_user=source_url,
         view=remote_content)[0]
 
+    import logging
+    logging.error(remote_content)
     # TODO(mime): source_url should actually point to the user's url
     # Should look at webfinger for url.
     this_user_url = self.nav_url(host=True,
@@ -86,9 +88,9 @@ class WebmentionHandler(BaseHandler):
         logging.error("something wrong with thread")
         logging.error(ex)
 
-    is_spam = spam.guess(remote_content,
-        self.application.settings["private_path"],
-        self.display["user"].username)
+    is_spam = False # TODO(mime): spam.guess(remote_content,
+        #self.application.settings["private_path"],
+        #self.display["user"].username)
 
     if existing_content:
       # possible that it's picked up via feed, before we get the salmon call
@@ -109,11 +111,11 @@ class WebmentionHandler(BaseHandler):
     if updated:
       post_remote.date_updated = datetime.datetime.strptime(
           updated['datetime'].string[:-6], '%Y-%m-%dT%H:%M:%S')
-    if is_spam:
-      post_remote.is_spam = True
-    else:
-      spam.train_ham(remote_content, self.application.settings["private_path"],
-          self.display["user"].username)
+    #if is_spam:
+    #  post_remote.is_spam = True
+    #else:
+    #  spam.train_ham(remote_content, self.application.settings["private_path"],
+    #      self.display["user"].username)
     post_remote.type = 'comment' if thread or (existing_content and
         existing_content.type == 'comment') else 'post'
     title = hEntry.find(
