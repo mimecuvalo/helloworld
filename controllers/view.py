@@ -558,8 +558,10 @@ class ViewHandler(BaseHandler):
         date_start is not None and date_start != 'NaN' and date_start != '' else None)
     content.date_end     = (datetime.datetime.fromtimestamp(int(date_end)) if
         date_end is not None and date_end != 'NaN' and date_end != '' else None)
-    content.date_repeats = int(self.get_argument('date_repeats', 0))
-    content.hidden       = int(self.get_argument('hidden', 0))
+    date_repeats = self.get_argument('date_repeats', 0)
+    content.date_repeats = int(date_repeats) if date_repeats != '' else 0
+    hidden = self.get_argument('hidden', 0)
+    content.hidden       = int(hidden) if hidden != '' else 0
 
     content.save()
 
