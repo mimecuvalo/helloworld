@@ -2,12 +2,14 @@ import urllib2
 import urlparse
 
 from BeautifulSoup import BeautifulSoup
+import tornado.escape
 import tornado.web
 
 from base import BaseHandler
 from logic import content_remote
 from logic import smtp
 from logic import spam
+from logic import url_factory
 
 class WebmentionHandler(BaseHandler):
   def post(self):
