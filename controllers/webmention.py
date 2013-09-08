@@ -96,12 +96,12 @@ class WebmentionHandler(BaseHandler):
     post_remote.username = 'Remote User'
     post_remote.avatar = '' # TODO(mime): user_remote.avatar
     published = hEntry.find(
-        attrs={'class':re.compile(r'\bdt-published\b', 'datetime':re.compile('.+'))})
+        attrs={'class':re.compile(r'\bdt-published\b'), 'datetime':re.compile('.+')})
     if published:
       post_remote.date_created = datetime.datetime.strptime(
           published['datetime'].string[:-6], '%Y-%m-%dT%H:%M:%S')
     updated = hEntry.find(
-        attrs={'class':re.compile(r'\bdt-updated\b', 'datetime':re.compile('.+'))})
+        attrs={'class':re.compile(r'\bdt-updated\b'), 'datetime':re.compile('.+')})
     if updated:
       post_remote.date_updated = datetime.datetime.strptime(
           updated['datetime'].string[:-6], '%Y-%m-%dT%H:%M:%S')
@@ -126,7 +126,7 @@ class WebmentionHandler(BaseHandler):
       smtp.comment(self, post_remote.username, post_remote.from_user,
           self.display["user"].email, self.content_url(content, host=True),
           remote_content)
-    elif:
+    else:
       smtp.comment(self, post_remote.username, post_remote.from_user,
           self.display["user"].email, post_remote.link,
           remote_content, this_user_mentioned=True)
