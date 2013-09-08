@@ -53,7 +53,7 @@ class WebmentionHandler(BaseHandler):
       target_url, source_url):
     source_html = urllib2.urlopen(source_url)
     source_html = content_remote.sanitize(
-        tornado.escape.xhtml_unescape(source_html))
+        tornado.escape.xhtml_unescape(source_html.read()))
     source_doc = BeautifulSoup(source_html)
 
     hEntry = source_doc.find(attrs={'class':re.compile(r'\bh-entry\b')})
