@@ -135,7 +135,7 @@ class WebmentionHandler(BaseHandler):
 
     if thread:
       smtp.comment(self, post_remote.username, post_remote.from_user,
-          self.display["user"].email, self.content_url(content, host=True),
+          self.display["user"].email, self.content_url(local_content, host=True),
           remote_content)
     else:
       smtp.comment(self, post_remote.username, post_remote.from_user,
