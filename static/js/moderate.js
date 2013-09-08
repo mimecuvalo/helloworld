@@ -875,6 +875,7 @@ hw.outgoingLink = function(event) {
 };
 
 hw.updateExternal = function() {
+  return;
   for (var x = 0; x < hw.externalSources.length; ++x) {
     if (hw.$('hw-following-' +
         hw.externalSources[x]).hasAttribute('data-enabled')) {
