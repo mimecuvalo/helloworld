@@ -126,12 +126,12 @@ hw.reply = function(event, el) {
   var dataPostId = el.parentNode.getAttribute('data-post-id');
 
   if (user) {
-    wysiwyg.innerHTML = '<a href="' + user + '">@' + username + '</a>&nbsp;';
+    wysiwyg.innerHTML = '<a href="' + user + '">@' + username + '</a>';
   } else {
-    wysiwyg.innerHTML = '@' + username + '&nbsp;';
+    wysiwyg.innerHTML = '@' + username;
   }
   wysiwyg.innerHTML += ', ' + '<a href="' + dataPostId + '">' +
-      hw.getMsg('source') + '</a> '
+      hw.getMsg('source') + '</a>&nbsp;'
   wysiwyg.focus();
 
   // move to end of doc...TODO make simpler? use modify?
