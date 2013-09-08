@@ -124,7 +124,7 @@ class WebmentionHandler(BaseHandler):
       post_remote.title = title.string
     post_remote.post_id = source_url
     post_remote.link = source_url
-    post_remote.local_content_name = content.name if thread else ''
+    post_remote.local_content_name = local_content.name if thread else ''
     post_remote.view = remote_content
     post_remote.save()
 
