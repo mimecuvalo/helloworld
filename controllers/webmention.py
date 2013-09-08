@@ -101,16 +101,21 @@ class WebmentionHandler(BaseHandler):
     post_remote.from_user = source_url
     post_remote.username = 'Remote User'
     post_remote.avatar = '' # TODO(mime): user_remote.avatar
+    current_datetime = datetime.datetime.utcnow()
     published = hEntry.find(
         attrs={'class':re.compile(r'\bdt-published\b'), 'datetime':re.compile('.+')})
     if published:
       post_remote.date_created = datetime.datetime.strptime(
           published['datetime'].string[:-6], '%Y-%m-%dT%H:%M:%S')
+    else:
+      post_remote.date_created = current_datetime
     updated = hEntry.find(
         attrs={'class':re.compile(r'\bdt-updated\b'), 'datetime':re.compile('.+')})
     if updated:
       post_remote.date_updated = datetime.datetime.strptime(
           updated['datetime'].string[:-6], '%Y-%m-%dT%H:%M:%S')
+    else:
+      post_remote.date_updated = current_datetime
     #if is_spam:
     #  post_remote.is_spam = True
     #else:
