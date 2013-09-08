@@ -72,7 +72,7 @@
 {% end %}
 
 {% for item in content_list %}
-<section class="{% if individual_content %}
+<section class="h-entry {% if individual_content %}
                   hw-individual-content
                 {% end %}
                 {% if item.is_remote %}
@@ -104,12 +104,13 @@
           <a href="{{ item.link }}" target="_blank"
              data-remote-id="{{ item.id }}"
              data-list-mode="{{ list_mode }}"
-             onclick="hw.listOpen(event, this)">
+             onclick="hw.listOpen(event, this)"
+             class="p-summary">
             {{ item.username }}{% if item.title %}: {{ item.title }}{% end %}
           </a>
         {% else %}
           <a href="{{ content_url(item) }}"
-             class="{% if is_owner_viewing and item.hidden %}
+             class="p-summary {% if is_owner_viewing and item.hidden %}
                       hw-content-hidden
                     {% end %}"
              data-contentname="{{ item.name }}"
@@ -167,7 +168,7 @@
         {% module Create(content) %}
       {% else %}
         <div {% raw bidi(item.view) %}
-             class="hw-view
+             class="e-content hw-view
                  {% if individual_content %}
                    hw-individual-content
                  {% else %}
@@ -189,12 +190,14 @@
             {{ item.username }}
           {% end %}
           {{ _("posted") }}
-          <time pubdate>
+          <time pubdate datetime="{{ item.date_created.strftime("%Y-%m-%dT%H:%M:%SZ%z00:00") }}">
             {{ locale.format_date(item.date_created) }}
           </time>
           {% if item.date_updated and item.date_updated != item.date_created %}
             ({{ _("updated") }}
-            <time>{{ locale.format_date(item.date_updated) }}</time>)
+            <time datetime="{{ item.date_updated.strftime("%Y-%m-%dT%H:%M:%SZ%z00:00") }}">
+              {{ locale.format_date(item.date_updated) }}
+            </time>)
           {% end %}
           {% if item.comments_count %}
             • ({{ _("%(comments_count)s comment",

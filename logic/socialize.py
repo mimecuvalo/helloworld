@@ -39,7 +39,7 @@ def reply(handler, content, mentions=None):
     thread_user_remote = handler.models.users_remote.get(
         local_username=profile, profile_url=thread_content.from_user)[0]
 
-    if thread_user_remote and thread_user_remote.salmon_url:
+    if thread_user_remote and thread_user_remote.webmention_url:
       users.append(thread_user_remote)
       users_profile.append(thread_user_remote.profile_url)
       mentioned_users.append(thread_user_remote)
@@ -56,7 +56,7 @@ def reply(handler, content, mentions=None):
       if user_remote.profile_url in users_profile:
         continue
 
-      if user_remote.salmon_url:
+      if user_remote.webmention_url:
         users.append(user_remote)
         users_profile.append(user_remote.profile_url)
         mentioned_users.append(user_remote)
@@ -74,10 +74,11 @@ def reply(handler, content, mentions=None):
       if user_remote.profile_url in users_profile:
         continue
 
-      if user_remote:
+      # TODO(mime): Necessary to check webmention_url?
+      if user_remote and user_remote.webmention_url:
         users.append(user_remote)
         users_profile.append(user_remote.profile_url)
 
   for user in users:
-    user_logic.salmon_reply(handler, user, content, thread=content.thread,
+    user_logic.webmention_reply(handler, user, content, thread=content.thread,
         mentioned_users=mentioned_users)

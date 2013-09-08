@@ -221,6 +221,27 @@ def salmon_send(handler, user, salmon_url, text):
   except:
     pass
 
+def webmention_reply(handler, user_remote, content, thread=None,
+    mentioned_users=[]):
+  if not user_remote.webmention_url:
+    return
+
+  target = thread or content.thread
+  if not target:
+    target = user_remote.profile_url
+
+  env = {
+    'source': handler.content_url(content, host=True),
+    'target': target
+  }
+
+  try:
+    req = urllib2.Request(url=user_remote.webmention_url,
+        data=urllib.urlencode(env))
+    urllib2.urlopen(req)
+  except:
+    pass
+
 def get_remote_user_info(handler, user_url, profile):
   # get host-meta first
   lrdd_link = None
