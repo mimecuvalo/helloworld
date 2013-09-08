@@ -33,13 +33,13 @@ class WebmentionHandler(BaseHandler):
     if not env['target'] or not env['source']:
       raise tornado.web.HTTPError(400)
 
-    content_url = url_factory.load_basic_parameters(self, url=env['target'])
+    content_url = url_factory.load_basic_parameters(self, url=env['target'][0])
     content = self.models.content.get(username=self.display["user"].username,
                                       name=content_url['name'])[0]
     if not content:
       raise tornado.web.HTTPError(400)
 
-    self.handle_mention(content_url, content, env['target'], env['source'])
+    self.handle_mention(content_url, content, env['target'][0], env['source'][0])
 
     # Accepted
     self.set_status(202)
