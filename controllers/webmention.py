@@ -1,3 +1,5 @@
+import datetime
+import re
 import urllib2
 import urlparse
 
