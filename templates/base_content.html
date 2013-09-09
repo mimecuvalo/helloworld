@@ -4,6 +4,8 @@
   <link rel="alternate" type="application/atom+xml"
         title="{{ content_owner.title }}"
         href="{{ nav_url(username=content.username, section='feed') }}" />
+  <link rel="webmention" href="{{ nav_url(host=True, section='webmention/',
+    q='acct:' + content.username + '@' + handler.request.host) }}" />
   {% if main_section_title and main_section_name != 'home' %}
   <link rel="alternate" type="application/atom+xml"
         title="{{ content_owner.title }} - {{ main_section_title }}"
