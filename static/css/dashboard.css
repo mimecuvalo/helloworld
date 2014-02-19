@@ -273,6 +273,12 @@
   display: inline-block;
   vertical-align: top;
 }
+
+#hw-absorb section img {
+  max-width: 150%;
+  max-height: 150%;
+}
+
 #hw-absorb .hw-remote br {
   display: none;
 }
