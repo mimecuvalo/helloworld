@@ -107,10 +107,12 @@
 }
 
 #hw-create,
-#hw-absorb,
 #hw-users {
   float: left;
   width: 740px;
+}
+#hw-absorb {
+  width: 82%;
 }
 #hw-absorb {
   padding-bottom: 250px;
@@ -266,7 +268,13 @@
 }
 
 #hw-absorb .hw-remote img {
-  max-width: 720px;
+  max-width: 100px;
+  max-height: 100px;
+  display: inline-block;
+  vertical-align: top;
+}
+#hw-absorb .hw-remote br {
+  display: none;
 }
 #hw-absorb .hw-remote img[align=left],
 #hw-absorb .hw-remote img.alignleft {  /* boing boing wp */
@@ -388,6 +396,10 @@ section {
   border-bottom: 1px solid gray;
   margin-bottom: 5px;
   padding: 5px 5px 10px 5px;
+  float: left;
+  width: 200px;
+  height: 200px;
+  overflow: hidden;
 }
 
 

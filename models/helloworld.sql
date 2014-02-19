@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS `content_remote` (
   PRIMARY KEY  (`id`),
   KEY `to_username` (`to_username`),
   KEY `from_user` (`from_user`(255)),
-  KEY `to_username_2` (`to_username`,`from_user`(255))
+  KEY `to_username_2` (`to_username`,`from_user`(255)),
   KEY `thread` (`thread`(255))
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
@@ -140,9 +140,9 @@ CREATE TABLE IF NOT EXISTS `users` (
   `twitter` text NOT NULL,
   `facebook` text NOT NULL,
   `google` text NOT NULL,
+  `tumblr` text NOT NULL,
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `username` (`username`),
-  UNIQUE KEY `oauth` (`oauth`)
+  UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
