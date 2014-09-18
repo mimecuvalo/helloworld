@@ -270,6 +270,8 @@
 #hw-absorb .hw-remote img {
   max-width: 200px;
   max-height: 200px;
+  width: auto;
+  height: auto;
   display: inline-block;
   vertical-align: top;
 }
