@@ -268,8 +268,8 @@
 }
 
 #hw-absorb .hw-remote img {
-  max-width: 100px;
-  max-height: 100px;
+  max-width: 200px;
+  max-height: 200px;
   display: inline-block;
   vertical-align: top;
 }
@@ -403,8 +403,8 @@ section {
   margin-bottom: 5px;
   padding: 5px 5px 10px 5px;
   float: left;
-  width: 200px;
-  height: 200px;
+  width: 400px;
+  height: 400px;
   overflow: hidden;
 }
 
