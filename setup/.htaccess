@@ -1,6 +1,0 @@
-Options All -Indexes
-Options +FollowSymLinks
-
-<FilesMatch "^(setup\.py)$">
-  SetHandler cgi-script
-</FilesMatch>

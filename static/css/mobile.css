@@ -1,8 +1,0 @@
-@media screen and (max-device-width: 800px) {
-  body {
-    font-size: 2em;
-  }
-  #hw-content {
-    top: 1.5em;
-  }
-}
