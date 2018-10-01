@@ -292,7 +292,7 @@ hw.read = function(event, el, listMode, special, query, readAllMode) {
       hw.addClass(hw.$('hw-following-' + special), 'hw-selected');
     } else {
       url = hw.baseUri() + 'dashboard' +
-          '?specific_feed=' + encodeURIComponent(user)
+          '?specific_feed=' + encodeURIComponent(user.substring(7))
           + '&own_feed=' + (ownFeed ? 1 : 0)
           + '&sort_type=' + (sortType == 'oldest' ? 'oldest' : '')
           + '&list_mode=' + (hw.hasClass('hw-feed', 'hw-list-mode') ? 1 : 0);
