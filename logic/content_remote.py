@@ -96,7 +96,10 @@ def parse_feed(models, user, feed=None, parsed_feed=None, max_days_old=30,
       new_entry.thread = entry['thr_in-reply-to']['ref']
     if entry.has_key('author'):
       new_entry.creator = entry.author
-    new_entry.title = entry.title
+    if entry.has_key('title'):
+      new_entry.title = entry.title
+    else:
+      new_entry.title = 'untitled'
     new_entry.post_id = entry_id
     new_entry.link = entry.link
     if entry.has_key('content'):
