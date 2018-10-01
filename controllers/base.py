@@ -14,7 +14,7 @@ import urllib
 import uuid
 
 import jspacker
-import tornado.database
+#import tornado.database
 import tornado.escape
 import tornado.web
 from tornado.web import RequestHandler
@@ -37,6 +37,7 @@ class BaseHandler(tornado.web.RequestHandler):
     self.author_user = None
     self.hostname_user = None
     self.display["original_uri"] = self.request.uri
+    self.request.protocol = self.request.headers['X-Scheme'] or self.request.protocol
     self.request.uri = self.request.uri.replace('/helloworld.py', '')
     prefix_constant = (self.constants['https_prefix'] if
         self.request.protocol == 'https' else self.constants['http_prefix'])
@@ -347,7 +348,7 @@ class BaseHandler(tornado.web.RequestHandler):
         logging.error("Could not open static file %r", path)
         hashes[abs_path] = None
     base = self.request.protocol + "://" + self.request.host \
-      if getattr(self, "include_host", False) or include_host else ""
+    #  if getattr(self, "include_host", False) or include_host else ""
     if (self.request.protocol == 'https' or not
         self.constants['http_hide_prefix']):
       base += self.prefix
