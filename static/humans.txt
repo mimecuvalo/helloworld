@@ -3,7 +3,7 @@
 /* TEAM */
 Creator: Mime Čuvalo
 Contact: mimecuvalo@gmail.com
-Site: http://www.nightlight.ws
+Site: http://www.nite-lite.net
 Location: teh interwebs
 
 /* THANKS */
