@@ -1,0 +1,12 @@
+.menu {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+}
+
+.login {
+  display: block;
+  position: fixed;
+  top: 10px;
+  right: 10px;
+}

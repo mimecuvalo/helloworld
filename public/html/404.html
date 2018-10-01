@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charSet="utf-8" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <title>i'm sorry, dave. i'm afraid i can't do that.</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+          "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .message {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .emoji {
+        font-size: 128px;
+        height: 128px;
+        width: 128px;
+        line-height: 140px;
+        animation: spin 3s linear 1 1.5s forwards;
+      }
+      @keyframes spin { 100% { transform: rotate(180deg); } }
+    </style>
+  </head>
+  <div class="message">
+    <span class="emoji" role="img" aria-label="upside down face">🙃</span>
+    <h1>404: not found</h1>
+    <div>
+      i'm sorry, dave. i'm afraid i can't do that.<br />
+      try going back to the <a href="/">beginning</a>.
+    </div>
+  </div>
+</html>

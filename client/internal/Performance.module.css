@@ -1,0 +1,23 @@
+.performanceList {
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.performanceButton {
+  text-transform: lowercase;
+}
+
+.slowPerformanceButton {
+  text-transform: lowercase;
+  color: red;
+}
+
+.entryType {
+  font-weight: bold;
+  padding: 5px 20px 5px 5px;
+}
+
+.entryData {
+  text-align: right;
+  padding: 5px;
+}

@@ -1,0 +1,11 @@
+# Gives you control on what search engines can index or not on your site.
+# http://www.robotstxt.org/
+
+# For example, uncomment for search engines to not search your site at all.
+# User-agent: *
+# Disallow: /
+
+# Another example, uncomment for search engines to not search certain sections of your site.
+# User-agent: *
+# Disallow: /admin
+# Disallow: /tmp

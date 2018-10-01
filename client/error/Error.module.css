@@ -1,0 +1,22 @@
+.message {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.emoji {
+  font-size: 128px;
+  height: 128px;
+  width: 128px;
+  line-height: 140px;
+  animation: spin 3s linear 1 1.5s forwards;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(180deg);
+  }
+}

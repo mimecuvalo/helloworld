@@ -1,13 +1,39 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# packaging logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# vim
+*.sw[a-p]
+
+# mac
 .DS_STORE
-*.pyc
-*.svn
-*.swp
+
+# windows thumbnail cache files
 Thumbs.db
 
-.htaccess
-fabfile.py
-hello.pid
-mod_time
-server.log
-site.cfg
-spam.bayes
+# development directories
+.cache
+flow-typed
+logs/*.log
+logs/*.log.gz
