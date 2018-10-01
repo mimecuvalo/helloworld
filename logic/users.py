@@ -30,9 +30,9 @@ def create_user(handler, username, email):
   user.author = False
   user.theme = 'css/themes/pixel/_compiled_pixel.css'
   user.theme_title = 'pixel'
-  user.theme_link = 'http://nightlight.ws'
+  user.theme_link = 'http://nite-lite.net'
   user.theme_author = 'nightlight'
-  user.theme_author_link = 'http://nightlight.ws'
+  user.theme_author_link = 'http://nite-lite.net'
 
   key = RSA.generate(1024, os.urandom)
   n = base64.urlsafe_b64encode(number.long_to_bytes(key.n))
@@ -255,7 +255,9 @@ def get_remote_user_info(handler, user_url, profile):
   alias = ''
   webfinger_doc = None
 
-  user_response = urllib2.urlopen(user_url)
+  opener = urllib2.build_opener()
+  opener.addheaders = [('User-Agent', 'Hello, world bot.')]
+  user_response = opener.open(user_url)
   user_doc = BeautifulSoup(user_response.read())
 
   if not lrdd_link:
@@ -313,7 +315,9 @@ def get_remote_user_info(handler, user_url, profile):
       feed_url = '/' + feed_url
     feed_url = parsed_url.scheme + '://' + parsed_url.hostname + feed_url
 
-  feed_response = urllib2.urlopen(feed_url)
+  opener = urllib2.build_opener()
+  opener.addheaders = [('User-Agent', 'Hello, world bot.')]
+  feed_response = opener.open(feed_url)
   feed_doc = BeautifulSoup(feed_response.read())
   author = feed_doc.find('author')
 

@@ -281,7 +281,9 @@ class ApiHandler(BaseHandler):
       users.salmon_follow(self, user.salmon_url)
 
     # get some content, yo
-    feed_response = urllib2.urlopen(user.feed_url)
+    opener = urllib2.build_opener()
+    opener.addheaders = [('User-Agent', 'Hello, world bot.')]
+    feed_response = opener.open(user.feed_url)
     content_remote.parse_feed(self.models, user, feed_response.read(),
         max_days_old=self.constants['feed_max_days_old'])
 
