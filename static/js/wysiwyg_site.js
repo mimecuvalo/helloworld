@@ -1098,7 +1098,7 @@ hw.uploadButton = function(callback, section, opt_drop, opt_isComment,
   }
 
   // Resumable.js isn't supported, fall back on a different method
-  if (opt_isComment || !r.support) {
+  if (true||opt_isComment || !r.support) {
     var iframe = document.createElement('iframe');
     var child = button.parentNode.appendChild(iframe);
     iframe.src = 'about:blank';
