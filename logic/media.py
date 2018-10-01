@@ -4,7 +4,7 @@ import os.path
 import shutil
 import zipfile
 
-import Image
+from PIL import Image
 from PIL.ExifTags import TAGS
 import tornado.web
 
@@ -42,7 +42,7 @@ def generate_full_html(handler, url, original_size_url, full_caption='',
   media_html = '<figure>'
   if media_type == 'image':
     media_html += '<a href="' + original_size_url + '">'
-    media_html += generate_html(url, alt_text=alt_text)
+    media_html += generate_html(original_size_url, alt_text=alt_text)
     media_html += '</a>'
   elif media_type in ('video', 'audio'):
     media_html += generate_html(url, alt_text=alt_text)
