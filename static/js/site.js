@@ -9,25 +9,17 @@ hw.login = function(event, el) {
 
   login.innerHTML = login.getAttribute('data-logging-in');
 
-  navigator.id.get(function(assertion) {
-    if (assertion !== null) {
-      // This code will be invoked once the user has successfully
-      // selected an email address they control to sign in with.
-      var callback = function(xhr) {
-        window.location.reload();
-      };
-  
-      new hw.ajax(hw.baseUri() + 'login',
-        { method: 'post',
-          postBody: 'assertion=' + encodeURIComponent(assertion),
-          headers: { 'X-Xsrftoken' : hw.$('hw-login-form')['_xsrf'].value },
-          onSuccess: callback,
-          onError: badTrip });
-    } else {
-      // something went wrong!  the user isn't logged in.
-      badTrip();
+  // TODO would need to move this client id/domain to a config file
+  var lock = new Auth0Lock('wQOPNew6usKJQ9fXqAMqxSENncVLDRLf', 'mimecuvalo.auth0.com', {
+    auth: {
+      redirectUrl: hw.baseUri() + 'login',
+      responseType: 'code',
+      params: {
+        scope: 'openid email' // Learn about scopes: https://auth0.com/docs/scopes
+      }
     }
   });
+  lock.show();
 };
 
 hw.keyNavigation = function(event) {
@@ -187,7 +179,9 @@ hw.swapContent = function(url, event) {
       hw.preloadNextLogicalContent();
 
       hw.commentUploadButton();
-    };
+
+      hw.loadHigherResIfPossible();
+   };
     setTimeout(fn, 100);
   };
 
@@ -387,3 +381,14 @@ hw.loadMore.prototype = {
     }
   }
 };
+
+
+hw.loadHigherResIfPossible = function() {
+    Array.prototype.slice.call(document.querySelectorAll('.hw-view img')).forEach(function(img) {
+          if (img.parentNode.href.indexOf('/original/') != -1) {
+            img.src = img.parentNode.href;
+          }
+    });
+};
+Event.observe(window, 'load', hw.loadHigherResIfPossible, false);
+
