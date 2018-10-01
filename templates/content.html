@@ -190,13 +190,13 @@
             {{ item.username }}
           {% end %}
           {{ _("posted") }}
-          <time pubdate datetime="{{ item.date_created.strftime("%Y-%m-%dT%H:%M:%SZ%z00:00") }}">
-            {{ locale.format_date(item.date_created) }}
+          <time pubdate datetime="{{ item.date_created }}">
+            {{ item.date_created }}
           </time>
           {% if item.date_updated and item.date_updated != item.date_created %}
             ({{ _("updated") }}
-            <time datetime="{{ item.date_updated.strftime("%Y-%m-%dT%H:%M:%SZ%z00:00") }}">
-              {{ locale.format_date(item.date_updated) }}
+            <time datetime="{{ item.date_updated }}">
+              {{ item.date_updated }}
             </time>)
           {% end %}
           {% if item.comments_count %}
