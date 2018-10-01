@@ -79,6 +79,8 @@ class DashboardHandler(BaseHandler):
         break
 
     if self.display["specific_feed"]:
+      if not self.display['specific_feed'].startswith('http://') and not self.display['specific_feed'].startswith('https://'):
+        self.display["specific_feed"] = 'http://' + self.display["specific_feed"]
       specific_user = self.models.users_remote.get(
           local_username=user.username,
           profile_url=self.display["specific_feed"])[0]
