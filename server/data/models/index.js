@@ -1,5 +1,8 @@
+import content from './content';
+import contentRemote from './content_remote';
 import Sequelize from 'sequelize';
 import user from './user';
+import userRemote from './user_remote';
 
 export const sequelize = new Sequelize({
   dialect: 'mysql',
@@ -10,8 +13,14 @@ export const sequelize = new Sequelize({
   operatorsAliases: false,
 });
 
-export const User = user(sequelize, Sequelize.DataTypes);
+export const Content = content(sequelize, Sequelize);
+export const Content_Remote = contentRemote(sequelize, Sequelize);
+export const User = user(sequelize, Sequelize);
+export const User_Remote = userRemote(sequelize, Sequelize);
 
 export default {
+  Content,
+  Content_Remote,
   User,
+  User_Remote,
 };

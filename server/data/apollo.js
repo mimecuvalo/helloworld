@@ -20,10 +20,15 @@ export default function apolloServer(app) {
       }
 
       const currentUser = req.session.user;
+      let modelUser;
+      if (currentUser) {
+        modelUser = await models.User.findOne({ where: { email: currentUser.email } });
+      }
 
       return {
         currentUser,
         models,
+        modelUser,
       };
     },
   });
