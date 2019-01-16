@@ -3,14 +3,14 @@ import { isAdmin } from './authorization';
 
 export default {
   Query: {
-    allUsers: combineResolvers(
+    allUsersRemote: combineResolvers(
       isAdmin,
       async (parent, args, { models }) => {
         return await models.User_Remote.findAll();
       }
     ),
 
-    fetchUser: combineResolvers(
+    fetchUserRemote: combineResolvers(
       isAdmin,
       async (parent, { id }, { models }) => {
         return await models.User_Remote.findById(id);

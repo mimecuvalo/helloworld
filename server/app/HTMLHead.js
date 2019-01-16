@@ -14,6 +14,7 @@ export default function HTMLHead({ nonce, assetPathsByType, title, urls, publicU
       <link rel="search" href="/api/opensearch" type="application/opensearchdescription+xml" title={title} />
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
       <meta name="theme-color" content="#000000" />
+      <meta name="generator" content="Hello, world." />
       <OpenGraphMetadata title={title} urls={urls} />
       {/*
         manifest.json provides metadata used when your web app is added to the

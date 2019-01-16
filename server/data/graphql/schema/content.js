@@ -34,6 +34,6 @@ export default gql`
 
   extend type Query {
     allContent: [Content]
-    fetchContent(id: Int!): Content
+    fetchContent(username: String!, name: String!): Content
   }
 `;
