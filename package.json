@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "apollo-link-http": "1.5.9",
     "cra-all-the-things": "0.1.0",
+    "graphql-resolvers": "0.3.2",
     "react": "^16.7.0",
     "react-dom": "^16.7.0"
   },
