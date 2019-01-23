@@ -53,7 +53,7 @@ export default {
       };
       const collection = await models.Content.findAll({
         attributes: ['username', 'section', 'album', 'name', 'title'],
-        where: Object.assign(constraints, collectionConstraints),
+        where: Object.assign({}, constraints, collectionConstraints),
         order: [['order'], ['date_created', 'DESC']],
       });
 
@@ -94,7 +94,7 @@ export default {
         const contentConstraints = { username, section, album: name };
         collection = await models.Content.findAll({
           attributes: ATTRIBUTES_NAVIGATION,
-          where: Object.assign(constraints, contentConstraints),
+          where: Object.assign({}, constraints, contentConstraints),
           order: [['order'], ['date_created', 'DESC']],
         });
       }
@@ -103,16 +103,16 @@ export default {
         const contentConstraints = { username, section: name, album: 'main' };
         collection = await models.Content.findAll({
           attributes: ATTRIBUTES_NAVIGATION,
-          where: Object.assign(constraints, contentConstraints),
+          where: Object.assign({}, constraints, contentConstraints),
           order: [['order'], ['date_created', 'DESC']],
         });
 
-        const albumConstraints = Object.assign({}, contentConstraints);
+        const albumConstraints = Object.assign({}, constraints, contentConstraints);
         for (const content of collection) {
           albumConstraints['album'] = content.name;
           const albumFirstContent = await models.Content.findOne({
             attributes: ['thumb'],
-            where: Object.assign(constraints, albumConstraints),
+            where: Object.assign({}, constraints, albumConstraints),
             order: [['order'], ['date_created', 'DESC']],
           });
           if (albumFirstContent) {
@@ -124,7 +124,7 @@ export default {
         const topLevelContentConstraints = { username, section: name, album: '' };
         const topLevelItems = await models.Content.findAll({
           attributes: ATTRIBUTES_NAVIGATION,
-          where: Object.assign(constraints, topLevelContentConstraints),
+          where: Object.assign({}, constraints, topLevelContentConstraints),
           order: [['order'], ['date_created', 'DESC']],
         });
         collection = collection.concat(topLevelItems);
@@ -134,7 +134,7 @@ export default {
         const contentConstraints = { username, section };
         collection = await models.Content.findAll({
           attributes: ATTRIBUTES_NAVIGATION,
-          where: Object.assign(constraints, contentConstraints),
+          where: Object.assign({}, constraints, contentConstraints),
           order: [['order'], ['date_created', 'DESC']],
         });
       }
@@ -162,7 +162,7 @@ export default {
       };
       return await models.Content.findAll({
         attributes: ATTRIBUTES_NAVIGATION,
-        where: Object.assign(constraints, contentConstraints),
+        where: Object.assign({}, constraints, contentConstraints),
         order: [['order'], ['date_created', 'DESC']],
         limit,
         offset,
@@ -181,7 +181,7 @@ export default {
 
       const contentConstraints = { username, section: name };
       return await models.Content.findOne({
-        where: Object.assign(constraints, contentConstraints),
+        where: Object.assign({}, constraints, contentConstraints),
         order: [['order'], ['date_created', 'DESC']],
       });
     },
@@ -201,7 +201,7 @@ export default {
 
       const sections = await models.Content.findAll({
         attributes: ATTRIBUTES_NAVIGATION,
-        where: Object.assign(constraints, contentConstraints),
+        where: Object.assign({}, constraints, contentConstraints),
         order: [['order'], ['date_created', 'DESC']],
       });
 
@@ -215,7 +215,7 @@ export default {
 
         const albums = await models.Content.findAll({
           attributes: ATTRIBUTES_NAVIGATION,
-          where: Object.assign(constraints, albumConstraints),
+          where: Object.assign({}, constraints, albumConstraints),
           order: [['order'], ['date_created', 'DESC']],
         });
 
