@@ -1,10 +1,16 @@
+import classNames from 'classnames';
+import { F } from '../../shared/i18n';
+import Feed from './Feed';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
+import Item from './Item';
+import Nav from './Nav';
 import React, { PureComponent } from 'react';
+import SiteMap from './SiteMap';
+import styles from './Content.module.css';
 
-// This is an Apollo/GraphQL decorator for the Home component which passes the query result to the props.
 @graphql(gql`
-  query ($username: String!, $name: String!) {
+  query ContentAndUserQuery($username: String!, $name: String!) {
     fetchContent(username: $username, name: $name) {
       username
       section
@@ -13,6 +19,7 @@ import React, { PureComponent } from 'react';
       template
       sort_type
       redirect
+      hidden
       title
       date_created
       date_updated
@@ -26,25 +33,55 @@ import React, { PureComponent } from 'react';
       code
       view
     }
+
+    fetchPublicUserData(username: $username) {
+      title
+      description
+    }
   }
 `, {
-  options: ({ match: { params: { name, username } } }) => ({
+  options: ({ match: { params: { username, name } } }) => ({
     variables: {
-      name,
-      username,
+      username: username || '',
+      name: name || ''
     }
   })
 })
 class Content extends PureComponent {
   render() {
+    const content = this.props.data.fetchContent;
+    const contentOwner = this.props.data.fetchPublicUserData;
+
+    const item = content.template === 'feed' ? <Feed content={content} /> : <Item content={content} />;
+    if (content.template === 'blank') {
+      return <div id="hw-content">{item}</div>;
+    }
+
     return (
-      <div id="hw-container">
-        <article id="hw-content" className="hw-invisible-transition">
-          <div className="e-content hw-view hw-individual-content"
-            dangerouslySetInnerHTML={{ __html: this.props.data.fetchContent.view }} />
-          <div dangerouslySetInnerHTML={{ __html: this.props.data.fetchContent.style }} />
-          <div dangerouslySetInnerHTML={{ __html: this.props.data.fetchContent.code }} />
+      <div id="hw-content" className={styles.container}>
+        <header>
+          <h1>{contentOwner.title}</h1>
+          <h2>{contentOwner.description}</h2>
+        </header>
+
+        <SiteMap content={content} />
+
+        <article className={classNames(styles.content, 'hw-invisible-transition')}>
+          <Nav content={content} />
+          {item}
         </article>
+
+        <footer className={styles.footer}>
+          <F msg="powered by {br} {link}"
+            values={{
+              br: <br />,
+              link: (
+                <a href="https://github.com/mimecuvalo/helloworld" rel="generator">
+                  Hello, world.
+                </a>
+              )
+            }} />
+        </footer>
       </div>
     );
   }

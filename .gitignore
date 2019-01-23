@@ -40,3 +40,6 @@ Thumbs.db
 flow-typed
 logs/*.log
 logs/*.log.gz
+
+# private resources for users of hello, world
+public/resource/

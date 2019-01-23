@@ -16,6 +16,28 @@ export default {
         return await models.User.findById(id);
       }
     ),
+
+    async fetchPublicUserData(parent, { username }, { models }) {
+      if (!username) {
+        username = (await models.User.findOne({ attributes: ['username'] , where: { id: 1 } })).username;
+      }
+
+      return await models.User.findOne({
+        attributes: [
+          'username',
+          'name',
+          'email',
+          'title',
+          'description',
+          'license',
+          'google_analytics',
+          'favicon',
+          'logo',
+          'theme',
+        ],
+        where: { username }
+      });
+    },
   },
 
   // Example stubs of mutations, non-functional out of the box.

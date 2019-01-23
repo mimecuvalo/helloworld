@@ -1,0 +1,21 @@
+.container {
+  display: flex;
+  align-items: flex-start;
+}
+
+.content {
+  width: 650px;
+  margin: 6px;
+  padding: 0 3px 10px 3px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 182px;
+  padding-top: 10px;
+  font-size: 11px;
+  color: #000;
+  text-align: center;
+}

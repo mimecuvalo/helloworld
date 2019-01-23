@@ -21,7 +21,13 @@ export default function HTMLBase({
 }) {
   return (
     <html lang={locale}>
-      <HTMLHead nonce={nonce} assetPathsByType={assetPathsByType} title={title} publicUrl={publicUrl} urls={urls} />
+      <HTMLHead
+          assetPathsByType={assetPathsByType}
+          nonce={nonce}
+          publicUrl={publicUrl}
+          title={title}
+          urls={urls}
+          user={user}/>
       <body>
         <div id="root">{children}</div>
         <ConfigurationScript

@@ -1,0 +1,49 @@
+:root {
+  --thumb-width: 154px;
+  --thumb-height: 115px;
+}
+
+.album {
+  list-style: none;
+}
+
+.item {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  text-align: center;
+  padding: 3px;
+  margin-bottom: 3px;
+  transition: all 0.3s ease-out;
+}
+
+.item:hover {
+  box-shadow: 2px 2px 6px #666;
+}
+
+.link,
+.thumbLink {
+  display: block;
+  width: var(--thumb-width);
+  max-width: var(--thumb-width);
+}
+
+.thumbLink {
+  min-height: var(--thumb-height);
+}
+
+.thumb {
+  display: inline-block;
+  min-height: var(--thumb-height);
+  max-width: var(--thumb-width);
+  max-height: var(--thumb-height);
+}
+
+.title {
+  min-height: 1.1em;
+}
+
+.hidden {
+  font-style: italic;
+}

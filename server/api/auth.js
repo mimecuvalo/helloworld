@@ -1,5 +1,6 @@
 import express from 'express';
 import fetch from 'node-fetch';
+import models from '../data/models';
 
 /**
  * Routes for letting the user login / logout.
@@ -30,7 +31,12 @@ router.get('/callback', async (req, res) => {
     );
     const userInfo = await userResponse.json();
 
-    req.session.user = userInfo;
+    const userDbInfo = await models.User.findOne({ where: { email: userInfo.email } });
+
+    req.session.user = {
+      oauth: userInfo,
+      model: userDbInfo,
+    }
 
     res.redirect(req.query.next || '/');
     return;

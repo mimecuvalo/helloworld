@@ -1,6 +1,11 @@
 import React from 'react';
 
-export default function HTMLHead({ nonce, assetPathsByType, title, urls, publicUrl }) {
+export default function HTMLHead({ assetPathsByType, nonce, publicUrl, title, urls, user }) {
+  let theme;
+  if (user && user.model.theme) {
+    theme = <link rel="stylesheet" href={user.model.theme} />;
+  }
+
   return (
     <head>
       <meta charSet="utf-8" />
@@ -9,6 +14,7 @@ export default function HTMLHead({ nonce, assetPathsByType, title, urls, publicU
       {assetPathsByType['css'].map(path => (
         <link nonce={nonce} rel="stylesheet" key={path} href={path} />
       ))}
+      {theme}
       <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" />
       <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
       <link rel="search" href="/api/opensearch" type="application/opensearchdescription+xml" title={title} />

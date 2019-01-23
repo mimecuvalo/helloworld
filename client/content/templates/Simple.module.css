@@ -1,0 +1,12 @@
+.view {
+  position: relative;
+  clear: both;
+}
+
+.view img,
+.view iframe,
+.view object,
+.view embed {
+  max-width: 600px;
+  max-height: 450px;
+}

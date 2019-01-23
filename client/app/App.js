@@ -42,7 +42,11 @@ export default class App extends Component {
             <Header />
             <main className="App-main">
               <Switch>
+                <Route path={`/:username/:section/:album/:name`} component={Content} />
+                <Route path={`/:username/:section/:name`} component={Content} />
                 <Route path={`/:username/:name`} component={Content} />
+                <Route path={`/:username`} component={Content} />
+                <Route path={`/`} component={Content} />
               </Switch>
             </main>
             <Footer />

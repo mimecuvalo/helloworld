@@ -32,8 +32,30 @@ export default gql`
     view: String!
   }
 
+  type ContentMetaInfo {
+    username: String!
+    section: String!
+    album: String!
+    name: String!
+    title: String!
+    hidden: Boolean!
+  }
+
+  type Neighbors {
+    first: ContentMetaInfo
+    prev: ContentMetaInfo
+    top: ContentMetaInfo
+    next: ContentMetaInfo
+    last: ContentMetaInfo
+  }
+
   extend type Query {
     allContent: [Content]
-    fetchContent(username: String!, name: String!): Content
+    fetchContent(username: String, name: String): Content
+    fetchContentNeighbors(username: String, section: String, album: String, name: String): Neighbors
+    fetchCollection(username: String!, section: String!, name: String!): [Content]
+    fetchCollectionPaginated(username: String!, section: String!, name: String!): [Content]
+    fetchCollectionLatest(username: String!, section: String!, name: String!): Content
+    fetchSiteMap(username: String!): [ContentMetaInfo]
   }
 `;

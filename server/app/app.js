@@ -1,5 +1,6 @@
 import { ApolloProvider, getDataFromTree } from 'react-apollo';
 import { ApolloClient } from 'apollo-client';
+import { ApolloLink } from 'apollo-link';
 import App from '../../client/app/App';
 import { exec } from 'child_process';
 import { DEFAULT_LOCALE, getLocale } from './locale';
@@ -9,13 +10,14 @@ import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { IntlProvider } from 'react-intl';
 import * as languages from '../../shared/i18n/languages';
+import { onError } from 'apollo-link-error';
 import React from 'react';
 import { renderToNodeStream } from 'react-dom/server';
 import { StaticRouter } from 'react-router';
 import util from 'util';
 import uuid from 'uuid';
 
-export default async function render({ req, res, assetPathsByType, appName, publicUrl, urls }) {
+export default async function render({ req, res, next, assetPathsByType, appName, publicUrl, urls }) {
   const apolloClient = await createApolloClient(req);
   const context = {};
   const nonce = createNonceAndSetCSP(res);
@@ -31,6 +33,17 @@ export default async function render({ req, res, assetPathsByType, appName, publ
   const locale = getLocale(req);
   const translations = languages[locale];
 
+  const FILTERED_KEYS = ['id', 'magic_key', 'private_key'];
+  const filteredUser = req.session.user ? {
+    oauth: req.session.user.oauth,
+    model: Object.keys(req.session.user.model)
+        .filter(key => !FILTERED_KEYS.includes(key))
+        .reduce((obj, key) => {
+          obj[key] = req.session.user.model[key];
+          return obj;
+        }, {})
+  } : null;
+
   const completeApp = (
     <IntlProvider locale={locale} messages={translations}>
       <HTMLBase
@@ -45,11 +58,11 @@ export default async function render({ req, res, assetPathsByType, appName, publ
         publicUrl={publicUrl}
         title={appName}
         urls={urls}
-        user={req.session.user}
+        user={filteredUser}
       >
         <ApolloProvider client={apolloClient}>
           <StaticRouter location={req.url} context={context}>
-            <App user={req.session.user} />
+            <App user={filteredUser} />
           </StaticRouter>
         </ApolloProvider>
       </HTMLBase>
@@ -57,11 +70,18 @@ export default async function render({ req, res, assetPathsByType, appName, publ
   );
 
   // This is so we can do `apolloClient.extract()` later on.
-  await getDataFromTree(completeApp);
+  try {
+    await getDataFromTree(completeApp);
+  } catch(ex) {
+    next(ex);
+    return;
+  }
 
   res.write('<!doctype html>');
   const stream = renderToNodeStream(completeApp);
-  stream.pipe(res);
+  stream.on('error', function(err) {
+    next(err);
+  }).pipe(res);
 
   if (context.url) {
     res.redirect(301, context.url);
@@ -71,10 +91,34 @@ export default async function render({ req, res, assetPathsByType, appName, publ
 
 // We create an Apollo client here on the server so that we can get server-side rendering in properly.
 async function createApolloClient(req) {
+  const errorLink = onError(({ graphQLErrors, networkError }) => {
+    if (graphQLErrors) {
+      graphQLErrors.map(({ message, locations, path }) =>
+        console.log(`\n[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}\n`)
+      );
+    }
+    if (networkError) {
+      console.log(`\n[Network error]: ${networkError}\n`);
+    }
+  });
+
+  const cookieLink = new ApolloLink((operation, forward) => {
+    operation.setContext({
+      headers: {
+        cookie: req.get('cookie')
+      }
+    });
+    return forward(operation);
+  });
+
   const hostWithPort = req.get('host');
+  const httpLink = new HttpLink({ uri: `${req.protocol}://${hostWithPort}/graphql`, fetch });
+
+  const link = ApolloLink.from([ errorLink, cookieLink, httpLink ]);
+
   const client = new ApolloClient({
     ssrMode: true,
-    link: new HttpLink({ uri: `${req.protocol}://${hostWithPort}/graphql`, fetch }),
+    link,
     cache: new InMemoryCache(),
   });
 

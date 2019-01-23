@@ -2,7 +2,7 @@ import { gql } from 'apollo-server-express';
 
 // Keep in sync with both models/user.js and migrations/[date]-create-user.js
 export default gql`
-  type User {
+  type UserPrivate {
     id: ID!
     username: String!
     name: String!
@@ -20,12 +20,26 @@ export default gql`
     private_key: String!
   }
 
+  type UserPublic {
+    username: String!
+    name: String!
+    email: String!
+    title: String!
+    description: String
+    license: String
+    google_analytics: String
+    favicon: String
+    logo: String
+    theme: String!
+  }
+
   extend type Query {
-    allUsers: [User]
-    fetchUser(id: Int!): User
+    allUsers: [UserPrivate]
+    fetchUser(id: Int!): UserPrivate
+    fetchPublicUserData(username: String): UserPublic
   }
 
   extend type Mutation {
-    createUser(username: String!, email: String!): User
+    createUser(username: String!, email: String!): UserPrivate
   }
 `;

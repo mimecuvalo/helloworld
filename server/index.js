@@ -44,7 +44,13 @@ export default function constructApps({ appName, urls }) {
   );
 
   // Add XSRF/CSRF protection.
-  const csrfMiddleware = csurf({ cookie: true });
+  const csrfMiddleware = csurf({
+    cookie: {
+      path: '/',
+      httpOnly: true,
+      secure: false,
+    }
+  });
 
   // Set up API server.
   apiServer && app.use('/api', csrfMiddleware, apiServer({ appName, urls }));
@@ -61,10 +67,11 @@ export default function constructApps({ appName, urls }) {
 
   // Our main request handler that kicks off the SSR, using the appServer which is compiled from serverCompiler.
   // `res` has the assets (via webpack's `stats` object) from the clientCompiler.
-  app.get('/*', csrfMiddleware, (req, res) => {
+  app.get('/*', csrfMiddleware, (req, res, next) => {
     logRequest(appLogger, req, req.info || req.connection);
     const assetPathsByType = processAssetsFromWebpackStats(res);
-    appServer({ req, res, assetPathsByType, appName, urls, publicUrl: res.locals.webpackStats.toJson().publicPath });
+    const publicUrl = res.locals.webpackStats.toJson().publicPath;
+    appServer({ req, res, next, assetPathsByType, appName, urls, publicUrl });
   });
 
   return app;

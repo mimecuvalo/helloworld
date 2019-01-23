@@ -1,0 +1,21 @@
+.sitemap {
+  margin: 6px;
+  width: 155px;
+  padding: 6px;
+}
+
+.album {
+  padding-left: 7px;
+}
+
+.selected {
+  font-weight: bold;
+}
+
+.item {
+  word-wrap: break-word;
+}
+
+.hidden {
+  font-style: italic;
+}

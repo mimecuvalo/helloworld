@@ -32,11 +32,20 @@ export default class Footer extends PureComponent {
     return null;
   }
 
+  renderHelp() {
+    // Conditionally compile this code. Should not appear in production.
+    if (process.env.NODE_ENV === 'development') {
+      return <Help />;
+    }
+
+    return null;
+  }
+
   render() {
     return (
       <footer className={styles.footer}>
         {this.renderDebugMenu()}
-        <Help />
+        {this.renderHelp()}
       </footer>
     );
   }
