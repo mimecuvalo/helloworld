@@ -13,12 +13,12 @@ const messages = defineMessages({
 @graphql(gql`
   query SiteMapAndUserQuery($username: String!) {
     fetchSiteMap(username: $username) {
-      username
-      section
       album
-      name
-      title
       hidden
+      name
+      section
+      title
+      username
     }
 
     fetchPublicUserData(username: $username) {

@@ -9,10 +9,10 @@ import styles from './Nav.module.css';
   query ($username: String!, $section: String!, $album: String!, $name: String!) {
     fetchContentNeighbors(username: $username, section: $section, album: $album, name: $name) {
       first { username section album name title }
+      last  { username section album name title }
+      next  { username section album name title }
       prev  { username section album name title }
       top   { username section album name title }
-      next  { username section album name title }
-      last  { username section album name title }
     }
   }
 `, {

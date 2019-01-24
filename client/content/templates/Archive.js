@@ -9,11 +9,11 @@ import UserContext from '../../app/User_Context';
 @graphql(gql`
   query ($username: String!, $section: String!, $name: String!) {
     fetchCollection(username: $username, section: $section, name: $name) {
-      username
-      section
       album
       name
+      section
       title
+      username
     }
   }
 `, {

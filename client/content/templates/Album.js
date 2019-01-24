@@ -14,13 +14,13 @@ const messages = defineMessages({
 @graphql(gql`
   query ($username: String!, $section: String!, $name: String!) {
     fetchCollection(username: $username, section: $section, name: $name) {
-      username
-      section
       album
-      name
       hidden
-      title
+      name
+      section
       thumb
+      title
+      username
     }
   }
 `, {
@@ -70,8 +70,8 @@ class Thumb extends Component {
     };
   }
   componentDidMount() {
-    window.addEventListener('scroll', this.maybeLoadImage, false);
-    window.addEventListener('resize', this.maybeLoadImage, false);
+    window.addEventListener('scroll', this.maybeLoadImage, { passive: true });
+    window.addEventListener('resize', this.maybeLoadImage, { passive: true });
 
     this.maybeLoadImage();
   }

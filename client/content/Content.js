@@ -12,25 +12,25 @@ import styles from './Content.module.css';
 @graphql(gql`
   query ContentAndUserQuery($username: String!, $name: String!) {
     fetchContent(username: $username, name: $name) {
-      username
-      section
       album
-      name
-      template
-      sort_type
-      redirect
-      hidden
-      title
-      date_created
-      date_updated
-      thumb
-      order
-      count
-      count_robot
+      code
       comments_count
       comments_updated
+      count
+      count_robot
+      date_created
+      date_updated
+      hidden
+      name
+      order
+      redirect
+      section
+      sort_type
       style
-      code
+      template
+      thumb
+      title
+      username
       view
     }
 

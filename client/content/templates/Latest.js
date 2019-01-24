@@ -9,11 +9,11 @@ import { withRouter } from 'react-router-dom';
 @graphql(gql`
   query ($username: String!, $section: String!, $name: String!) {
     fetchCollectionLatest(username: $username, section: $section, name: $name) {
-      username
-      section
       album
       name
+      section
       title
+      username
       view
     }
   }
