@@ -30,7 +30,7 @@ export default function constructApps({ appName, urls }) {
   const SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30 days.
   app.use(
     session({
-      store: new FileStore({ ttl: SESSION_MAX_AGE }),
+      store: new FileStore({ ttl: SESSION_MAX_AGE, logFn: () => {} }),
       secret: process.env.REACT_APP_SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
