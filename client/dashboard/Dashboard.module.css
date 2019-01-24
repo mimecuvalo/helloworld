@@ -1,0 +1,41 @@
+.container {
+  display: flex;
+  align-items: flex-start;
+}
+
+.content {
+  width: 82%;
+  margin: 6px;
+}
+
+.nav {
+  position: sticky;
+  top: 0;
+  width: 235px;
+  height: 100vh;
+  margin: 6px;
+  overflow: scroll;
+}
+
+.tools {
+  border: 1px solid #c0f;
+  box-shadow: 1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f;
+}
+
+.following {
+  border: 1px solid #0c0;
+  box-shadow: 1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0;
+}
+
+.followers {
+  border: 1px solid #fa0;
+  box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
+}
+
+.tools,
+.following,
+.followers {
+  width: calc(100% - 20px);
+  padding: 5px;
+  margin-bottom: 10px;
+}

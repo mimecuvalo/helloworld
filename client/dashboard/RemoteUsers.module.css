@@ -1,0 +1,46 @@
+.remoteUsers li {
+  border: 1px solid transparent;
+  padding: 1px;
+}
+
+.remoteUsers li:hover {
+  border: 1px solid hotpink;
+}
+
+.remoteUsers img {
+  width: 16px;
+  max-height: 16px;
+  vertical-align: text-top;
+  margin: 0 5px 0 1px;
+}
+
+.remoteUsers a {
+  width: calc(100% - 36px);
+  height: 20px;
+  line-height: 20px;
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.remoteUsers a:hover {
+  text-decoration: none;
+}
+
+.unreadCount {
+  float: right;
+  line-height: 20px;
+  max-width: 36px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: #999;
+}
+
+.unreadCount:before {
+  content: '(';
+}
+.unreadCount:after {
+  content: ')';
+}

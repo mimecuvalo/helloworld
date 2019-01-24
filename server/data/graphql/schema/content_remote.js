@@ -29,5 +29,6 @@ export default gql`
   extend type Query {
     allContentRemote: [Content_Remote]
     fetchContentRemote(id: Int!): Content_Remote
+    fetchContentRemotePaginated: [Content_Remote]
   }
 `;

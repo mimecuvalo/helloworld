@@ -2,6 +2,7 @@ import './App.css';
 import clientHealthCheck from './client_health_check';
 import Content from '../content/Content';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import Dashboard from '../dashboard/Dashboard';
 import ErrorBoundary from '../error/ErrorBoundary';
 import Footer from './Footer';
 import Header from './Header';
@@ -42,6 +43,7 @@ export default class App extends Component {
             <Header />
             <main className="App-main">
               <Switch>
+                <Route path={`/dashboard`} component={Dashboard} />
                 <Route path={`/:username/:section/:album/:name`} component={Content} />
                 <Route path={`/:username/:section/:name`} component={Content} />
                 <Route path={`/:username/:name`} component={Content} />
