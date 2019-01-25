@@ -42,14 +42,24 @@ export default class A11y extends PureComponent {
 
   runAudit() {
     console.log('[a11y]: running accessibility audit...');
-    axe.run((err, results) => {
-      if (err) throw err;
-      console.log('[a11y]:', results);
-      this.setState({
-        errorCount: results.violations.length,
-        results,
-      });
-    });
+    axe.run(
+      document,
+      {
+        'rules': {
+          // This is a very annoying property of color-contrast that causes the page to scroll on page load.
+          // We disable it here. This 'options' structure is insane btw. wtf.
+          'color-contrast': { checks: { 'color-contrast': { 'options': { 'noScroll': true } } } }
+        }
+      },
+      (err, results) => {
+        if (err) throw err;
+        console.log('[a11y]:', results);
+        this.setState({
+          errorCount: results.violations.length,
+          results,
+        });
+      }
+    );
   }
 
   renderViolationByType(typeFilter) {
@@ -60,6 +70,7 @@ export default class A11y extends PureComponent {
 
     return (
       <div>
+        <br />
         <h3 className={styles.typeFilter}>{typeFilter}</h3>
         <ul>
           {violationsByType.map(violation => (
@@ -70,6 +81,7 @@ export default class A11y extends PureComponent {
             </li>
           ))}
         </ul>
+        <br />
       </div>
     );
   }
@@ -96,11 +108,14 @@ export default class A11y extends PureComponent {
         {this.renderViolationByType('serious')}
         {this.renderViolationByType('moderate')}
         {this.renderViolationByType('minor')}
+        <br />
         <strong>Passing tests</strong>: {this.state.results.passes.length}
         <br />
         <strong>Inapplicable tests</strong>: {this.state.results.inapplicable.length}
         <br />
         <strong>See console output for more detailed information.</strong>
+        <br />
+        <br />
       </div>
     );
   }
