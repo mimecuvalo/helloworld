@@ -2,7 +2,7 @@ import { combineResolvers } from 'graphql-resolvers';
 import { isAdmin } from './authorization';
 import Sequelize from 'sequelize';
 
-const ATTRIBUTES_NAVIGATION = ['username', 'section', 'album', 'name', 'title', 'hidden'];
+const ATTRIBUTES_NAVIGATION = ['username', 'section', 'album', 'name', 'title', 'thumb', 'hidden'];
 
 export default {
   Query: {
@@ -161,7 +161,6 @@ export default {
         album: section !== 'main' ? name : notEqualToMain,
       };
       return await models.Content.findAll({
-        attributes: ATTRIBUTES_NAVIGATION,
         where: Object.assign({}, constraints, contentConstraints),
         order: [['order'], ['date_created', 'DESC']],
         limit,
