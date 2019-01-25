@@ -85,7 +85,7 @@ class SiteMap extends PureComponent {
     const items = this.generateItems(siteMap);
 
     return (
-      <nav className={styles.sitemap}>
+      <nav id="hw-sitemap" className={styles.sitemap}>
         <a href={navUrl(content.username)}>
           <img src={contentOwner.logo} title={contentOwner.title} alt={logoAltText} />
         </a>

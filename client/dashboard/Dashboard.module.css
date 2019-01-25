@@ -13,7 +13,7 @@
   top: 0;
   width: 235px;
   height: 100vh;
-  margin: 6px;
+  padding: 6px;
   overflow: scroll;
 }
 

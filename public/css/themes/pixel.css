@@ -10,12 +10,16 @@
   display: none;
 }
 
-#hw-content > nav {
+#hw-sitemap {
   border: 1px solid #0cf;
   box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf;
 }
 
-#hw-content > article > section > header {
+.hw-item {
+  width: 650px;
+}
+
+.hw-item > header {
   border: 1px solid #fa0;
   box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
 }
