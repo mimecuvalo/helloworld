@@ -21,14 +21,9 @@ class Item extends PureComponent {
     let TemplateComponent = COMPONENT_TYPE_MAP[content.template] || Simple;
 
     return (
-      <section>
+      <section className="hw-item">
         <Header content={content} />
-
-        <div dangerouslySetInnerHTML={{ __html: content.style }} />
-        <div dangerouslySetInnerHTML={{ __html: content.code }} />
-
         <TemplateComponent content={content} />
-
         <Footer content={content} />
       </section>
     );
