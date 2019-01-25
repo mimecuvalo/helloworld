@@ -11,7 +11,7 @@ const NotFound = React.memo(function NotFound({ intl }) {
 
   return (
     <div className={styles.message}>
-      <span className={styles.emoji} role="img" aria-label={emojiAriaLabel}>
+      <span className={styles.emojiSpin} role="img" aria-label={emojiAriaLabel}>
         🙃
       </span>
       <h1>

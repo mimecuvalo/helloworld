@@ -5,6 +5,7 @@ import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import Item from './Item';
 import Nav from './Nav';
+import NotFound from '../error/404';
 import React, { PureComponent } from 'react';
 import Simple from './templates/Simple';
 import SiteMap from './SiteMap';
@@ -58,6 +59,10 @@ import styles from './Content.module.css';
 class Content extends PureComponent {
   render() {
     const content = this.props.data.fetchContent;
+
+    if (!content) {
+      return <NotFound />;
+    }
 
     if (content.template === 'blank') {
       return (

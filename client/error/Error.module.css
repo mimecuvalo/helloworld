@@ -7,11 +7,15 @@
   text-align: center;
 }
 
-.emoji {
+.emoji,
+.emojiSpin {
   font-size: 128px;
   height: 128px;
   width: 128px;
   line-height: 140px;
+}
+
+.emojiSpin {
   animation: spin 3s linear 1 1.5s forwards;
 }
 
