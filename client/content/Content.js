@@ -6,6 +6,7 @@ import { graphql } from 'react-apollo';
 import Item from './Item';
 import Nav from './Nav';
 import React, { PureComponent } from 'react';
+import Simple from './templates/Simple';
 import SiteMap from './SiteMap';
 import styles from './Content.module.css';
 
@@ -43,19 +44,20 @@ import styles from './Content.module.css';
   options: ({ match: { params: { username, name } } }) => ({
     variables: {
       username: username || '',
-      name: name || ''
+      name: username ? (name || 'home') : ''
     }
   })
 })
 class Content extends PureComponent {
   render() {
     const content = this.props.data.fetchContent;
-    const contentOwner = this.props.data.fetchPublicUserData;
 
-    const item = content.template === 'feed' ? <Feed content={content} /> : <Item content={content} />;
     if (content.template === 'blank') {
-      return <div id="hw-content">{item}</div>;
+      return <div id="hw-content"><Simple content={content} /></div>;
     }
+
+    const contentOwner = this.props.data.fetchPublicUserData;
+    const item = content.template === 'feed' ? <Feed content={content} /> : <Item content={content} />;
 
     return (
       <div id="hw-content" className={styles.container}>
@@ -64,12 +66,14 @@ class Content extends PureComponent {
           <h2>{contentOwner.description}</h2>
         </header>
 
-        <SiteMap content={content} />
+        <div className={styles.articleNavContainer}>
+          <SiteMap content={content} />
 
-        <article className={classNames(styles.content, 'hw-invisible-transition')}>
-          <Nav content={content} />
-          {item}
-        </article>
+          <article className={classNames(styles.content, 'hw-invisible-transition')}>
+            <Nav content={content} />
+            {item}
+          </article>
+        </div>
 
         <footer className={styles.footer}>
           <F msg="powered by {br} {link}"
