@@ -7,7 +7,7 @@
     "apollo-link-error": "1.1.5",
     "apollo-link-http": "1.5.9",
     "classnames": "2.2.6",
-    "cra-all-the-things": "0.1.0",
+    "cra-all-the-things": "0.5.0",
     "graphql-resolvers": "0.3.2",
     "react": "^16.7.0",
     "react-dom": "^16.7.0"
