@@ -11,27 +11,30 @@ const messages = defineMessages({
   thumbnail: { msg: 'thumbnail' },
 });
 
-@graphql(gql`
-  query ($username: String!, $section: String!, $name: String!) {
-    fetchCollection(username: $username, section: $section, name: $name) {
-      album
-      hidden
-      name
-      section
-      thumb
-      title
-      username
+@graphql(
+  gql`
+    query($username: String!, $section: String!, $name: String!) {
+      fetchCollection(username: $username, section: $section, name: $name) {
+        album
+        hidden
+        name
+        section
+        thumb
+        title
+        username
+      }
     }
+  `,
+  {
+    options: ({ content: { username, section, name } }) => ({
+      variables: {
+        username,
+        section,
+        name,
+      },
+    }),
   }
-`, {
-  options: ({ content: { username, section, name } }) => ({
-    variables: {
-      username,
-      section,
-      name,
-    }
-  })
-})
+)
 class Album extends PureComponent {
   static contextType = UserContext;
 
@@ -42,17 +45,20 @@ class Album extends PureComponent {
 
     return (
       <ul className={styles.album}>
-        {collection.map(item =>
+        {collection.map(item => (
           <li key={item.name} className={styles.item}>
             <a href={contentUrl(item)} className={styles.thumbLink} title={item.title}>
               <DelayLoadedThumb item={item} />
             </a>
-            <a href={contentUrl(item)} title={item.title}
-                className={classNames(styles.title, styles.link, { [styles.hidden]: isOwnerViewing && item.hidden })}>
+            <a
+              href={contentUrl(item)}
+              title={item.title}
+              className={classNames(styles.title, styles.link, { [styles.hidden]: isOwnerViewing && item.hidden })}
+            >
               {item.title}
             </a>
           </li>
-        )}
+        ))}
       </ul>
     );
   }
@@ -66,7 +72,7 @@ class Thumb extends Component {
 
     this.state = {
       isAboveFold: false,
-      isLoaded: false
+      isLoaded: false,
     };
   }
   componentDidMount() {
@@ -91,12 +97,12 @@ class Thumb extends Component {
     }
   };
 
-  handleThumbLoad = (evt) => {
+  handleThumbLoad = evt => {
     if (!this.state.aboveFold) {
       this.setState({ isLoaded: true });
       this.removeEventListeners();
     }
-  }
+  };
 
   render() {
     const item = this.props.item;
@@ -104,13 +110,15 @@ class Thumb extends Component {
     const src = this.state.isAboveFold ? item.thumb : '/img/pixel.gif';
 
     return (
-      <img src={src}
-          ref={this.image}
-          alt={thumbAltText}
-          onLoad={this.handleThumbLoad}
-          className={classNames('hw-invisible-slow-transition', styles.thumb, {
-            'hw-invisible': !this.state.isLoaded
-          })} />
+      <img
+        src={src}
+        ref={this.image}
+        alt={thumbAltText}
+        onLoad={this.handleThumbLoad}
+        className={classNames('hw-invisible-slow-transition', styles.thumb, {
+          'hw-invisible': !this.state.isLoaded,
+        })}
+      />
     );
   }
 }

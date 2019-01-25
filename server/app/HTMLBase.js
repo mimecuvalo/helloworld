@@ -22,12 +22,13 @@ export default function HTMLBase({
   return (
     <html lang={locale}>
       <HTMLHead
-          assetPathsByType={assetPathsByType}
-          nonce={nonce}
-          publicUrl={publicUrl}
-          title={title}
-          urls={urls}
-          user={user}/>
+        assetPathsByType={assetPathsByType}
+        nonce={nonce}
+        publicUrl={publicUrl}
+        title={title}
+        urls={urls}
+        user={user}
+      />
       <body>
         <div id="root">{children}</div>
         <ConfigurationScript
@@ -71,7 +72,9 @@ export default function HTMLBase({
         <noscript>
           <F msg="You need to enable JavaScript to run this app." />
         </noscript>
-        <div dangerouslySetInnerHTML={{ __html: `<!--
+        <div
+          dangerouslySetInnerHTML={{
+            __html: `<!--
             this is the way the web ends
             this is the way the web ends
             this is the way the web ends
@@ -81,7 +84,9 @@ export default function HTMLBase({
                _  *  _  |_ -|- | *  _  |_ -|-
               | | | |_| | | |  | | |_| | | |
                      _|             _|
-          -->` }} />
+          -->`,
+          }}
+        />
       </body>
     </html>
   );

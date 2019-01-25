@@ -21,10 +21,4 @@ const linkSchema = gql`
   }
 `;
 
-export default [
-  linkSchema,
-  contentSchema,
-  contentRemoteSchema,
-  userSchema,
-  userRemoteSchema,
-];
+export default [linkSchema, contentSchema, contentRemoteSchema, userSchema, userRemoteSchema];

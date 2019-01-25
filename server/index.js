@@ -49,7 +49,7 @@ export default function constructApps({ appName, urls }) {
       path: '/',
       httpOnly: true,
       secure: false,
-    }
+    },
   });
 
   // Set up API server.

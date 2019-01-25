@@ -23,16 +23,18 @@ class Followers extends PureComponent {
 
     return (
       <div className={classNames(this.props.className, styles.remoteUsers)}>
-        <h2><F msg="followers" /></h2>
+        <h2>
+          <F msg="followers" />
+        </h2>
         <ul>
-          {followers.map(follower =>
+          {followers.map(follower => (
             <li key={follower.profile_url}>
               <a href={follower.profile_url} target="_blank" rel="noopener noreferrer">
                 <Avatar src={follower.favicon || follower.avatar} />
-                { follower.name || follower.username }
+                {follower.name || follower.username}
               </a>
             </li>
-          )}
+          ))}
         </ul>
       </div>
     );

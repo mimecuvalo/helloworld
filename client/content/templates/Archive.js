@@ -6,25 +6,28 @@ import React, { PureComponent } from 'react';
 import styles from './Archive.module.css';
 import UserContext from '../../app/User_Context';
 
-@graphql(gql`
-  query ($username: String!, $section: String!, $name: String!) {
-    fetchCollection(username: $username, section: $section, name: $name) {
-      album
-      name
-      section
-      title
-      username
+@graphql(
+  gql`
+    query($username: String!, $section: String!, $name: String!) {
+      fetchCollection(username: $username, section: $section, name: $name) {
+        album
+        name
+        section
+        title
+        username
+      }
     }
+  `,
+  {
+    options: ({ content: { username, section, name } }) => ({
+      variables: {
+        username,
+        section,
+        name,
+      },
+    }),
   }
-`, {
-  options: ({ content: { username, section, name } }) => ({
-    variables: {
-      username,
-      section,
-      name,
-    }
-  })
-})
+)
 class Archive extends PureComponent {
   static contextType = UserContext;
 
@@ -35,16 +38,18 @@ class Archive extends PureComponent {
 
     return (
       <ul className="hw-archive">
-        {collection
-            .filter(item => item.name !== content.name)
-            .map(item =>
-              <li key={item.name} className={classNames('hw-content-item', {
-                    [styles.hidden]: isOwnerViewing && item.hidden
-                  })}>
-                <a href={contentUrl(item)} title={item.title}>{item.title}</a>
-              </li>
-            )
-        }
+        {collection.filter(item => item.name !== content.name).map(item => (
+          <li
+            key={item.name}
+            className={classNames('hw-content-item', {
+              [styles.hidden]: isOwnerViewing && item.hidden,
+            })}
+          >
+            <a href={contentUrl(item)} title={item.title}>
+              {item.title}
+            </a>
+          </li>
+        ))}
       </ul>
     );
   }

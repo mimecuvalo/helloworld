@@ -53,8 +53,8 @@
     }
   },
   "lint-staged": {
-    "(client|server)/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-      "prettier --single-quote --write",
+    "(client|server|shared)/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --trailing-comma es5 --single-quote --write",
       "git add"
     ]
   },

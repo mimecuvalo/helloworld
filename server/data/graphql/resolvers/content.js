@@ -6,16 +6,13 @@ const ATTRIBUTES_NAVIGATION = ['username', 'section', 'album', 'name', 'title', 
 
 export default {
   Query: {
-    allContent: combineResolvers(
-      isAdmin,
-      async (parent, args, { models }) => {
-        return await models.Content.findAll();
-      }
-    ),
+    allContent: combineResolvers(isAdmin, async (parent, args, { models }) => {
+      return await models.Content.findAll();
+    }),
 
     async fetchContent(parent, { username, name }, { models }) {
       if (!username) {
-        username = (await models.User.findOne({ attributes: ['username'] , where: { id: 1 } })).username;
+        username = (await models.User.findOne({ attributes: ['username'], where: { id: 1 } })).username;
       }
       name = name || 'main';
 
@@ -23,7 +20,7 @@ export default {
       if (content && !content.template && content.album === 'main') {
         // This is when we're visiting a url of the form: /profile/section/album
         const parentContent = await models.Content.findOne({
-          where: { username, section: 'main', name: content.section }
+          where: { username, section: 'main', name: content.section },
         });
         content.template = parentContent.template;
       }
@@ -33,7 +30,7 @@ export default {
 
     async fetchContentNeighbors(parent, { username, section, album, name }, { currentUser, models }) {
       if (!username) {
-        username = (await models.User.findOne({ attributes: ['username'] , where: { id: 1 } })).username;
+        username = (await models.User.findOne({ attributes: ['username'], where: { id: 1 } })).username;
       }
       name = name || 'main';
 
@@ -157,7 +154,7 @@ export default {
       const notEqualToMain = { [Sequelize.Op.ne]: 'main' };
       const contentConstraints = {
         username,
-        section: section !== 'main' ? section : (name !== 'home' ? name : notEqualToMain),
+        section: section !== 'main' ? section : name !== 'home' ? name : notEqualToMain,
         album: section !== 'main' ? name : notEqualToMain,
       };
       return await models.Content.findAll({
@@ -195,7 +192,7 @@ export default {
       const contentConstraints = {
         username,
         section: 'main',
-        name: { [Sequelize.Op.notIn]: ['main', 'home', 'comments'] }
+        name: { [Sequelize.Op.notIn]: ['main', 'home', 'comments'] },
       };
 
       const sections = await models.Content.findAll({

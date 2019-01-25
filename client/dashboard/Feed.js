@@ -30,7 +30,9 @@ class Feed extends PureComponent {
 
     return (
       <article className={this.props.className}>
-        {feed.map(item => <Item key={item.link} content={item} /> )}
+        {feed.map(item => (
+          <Item key={item.link} content={item} />
+        ))}
       </article>
     );
   }

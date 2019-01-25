@@ -15,10 +15,12 @@ class Header extends PureComponent {
     return (
       <header className={classNames(styles.header)}>
         <h1 className={styles.title}>
-          <a href={contentUrl(content)}
-              className={classNames({
-                [styles.hidden]: isOwnerViewing && content.hidden
-              })}>
+          <a
+            href={contentUrl(content)}
+            className={classNames({
+              [styles.hidden]: isOwnerViewing && content.hidden,
+            })}
+          >
             {content.title || <F msg="(untitled)" />}
             {isOwnerViewing && content.hidden && <F msg="(hidden)" />}
           </a>

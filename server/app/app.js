@@ -34,15 +34,17 @@ export default async function render({ req, res, next, assetPathsByType, appName
   const translations = languages[locale];
 
   const FILTERED_KEYS = ['id', 'magic_key', 'private_key'];
-  const filteredUser = req.session.user ? {
-    oauth: req.session.user.oauth,
-    model: Object.keys(req.session.user.model)
-        .filter(key => !FILTERED_KEYS.includes(key))
-        .reduce((obj, key) => {
-          obj[key] = req.session.user.model[key];
-          return obj;
-        }, {})
-  } : null;
+  const filteredUser = req.session.user
+    ? {
+        oauth: req.session.user.oauth,
+        model: Object.keys(req.session.user.model)
+          .filter(key => !FILTERED_KEYS.includes(key))
+          .reduce((obj, key) => {
+            obj[key] = req.session.user.model[key];
+            return obj;
+          }, {}),
+      }
+    : null;
 
   const completeApp = (
     <IntlProvider locale={locale} messages={translations}>
@@ -72,16 +74,18 @@ export default async function render({ req, res, next, assetPathsByType, appName
   // This is so we can do `apolloClient.extract()` later on.
   try {
     await getDataFromTree(completeApp);
-  } catch(ex) {
+  } catch (ex) {
     next(ex);
     return;
   }
 
   res.write('<!doctype html>');
   const stream = renderToNodeStream(completeApp);
-  stream.on('error', function(err) {
-    next(err);
-  }).pipe(res);
+  stream
+    .on('error', function(err) {
+      next(err);
+    })
+    .pipe(res);
 
   if (context.url) {
     res.redirect(301, context.url);
@@ -105,8 +109,8 @@ async function createApolloClient(req) {
   const cookieLink = new ApolloLink((operation, forward) => {
     operation.setContext({
       headers: {
-        cookie: req.get('cookie')
-      }
+        cookie: req.get('cookie'),
+      },
     });
     return forward(operation);
   });
@@ -114,7 +118,7 @@ async function createApolloClient(req) {
   const hostWithPort = req.get('host');
   const httpLink = new HttpLink({ uri: `${req.protocol}://${hostWithPort}/graphql`, fetch });
 
-  const link = ApolloLink.from([ errorLink, cookieLink, httpLink ]);
+  const link = ApolloLink.from([errorLink, cookieLink, httpLink]);
 
   const client = new ApolloClient({
     ssrMode: true,

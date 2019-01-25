@@ -24,7 +24,7 @@ class Following extends PureComponent {
   render() {
     const following = this.props.data.fetchFollowing;
     const unreadEntries = 0; // TODO(mime)
-    const totalCount = 0;  // TODO(mime)
+    const totalCount = 0; // TODO(mime)
     const userFavicon = this.context.user.model.favicon;
     const userAvatar = <Avatar src={userFavicon || '/favicon.ico'} />;
     const favoritesCount = 0; // TODO(mime)
@@ -32,7 +32,9 @@ class Following extends PureComponent {
 
     return (
       <div className={classNames(this.props.className, styles.remoteUsers)}>
-        <h2><F msg="following" /></h2>
+        <h2>
+          <F msg="following" />
+        </h2>
         <ul>
           <li>
             <a href="#read-all">
@@ -60,16 +62,20 @@ class Following extends PureComponent {
             </a>
             <span className={styles.unreadCount}>{commentsCount}</span>
           </li>
-          {following.map(follower =>
+          {following.map(follower => (
             <li key={follower.profile_url}>
-              <a href={follower.profile_url} target="_blank" rel="noopener noreferrer"
-                 title={ follower.name || follower.username }>
+              <a
+                href={follower.profile_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={follower.name || follower.username}
+              >
                 <Avatar src={follower.favicon || follower.avatar} />
-                { follower.name || follower.username }
+                {follower.name || follower.username}
               </a>
               <span className={styles.unreadCount}>{unreadEntries}</span>
             </li>
-          )}
+          ))}
         </ul>
       </div>
     );

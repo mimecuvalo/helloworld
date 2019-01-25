@@ -45,11 +45,11 @@ export default class A11y extends PureComponent {
     axe.run(
       document,
       {
-        'rules': {
+        rules: {
           // This is a very annoying property of color-contrast that causes the page to scroll on page load.
           // We disable it here. This 'options' structure is insane btw. wtf.
-          'color-contrast': { checks: { 'color-contrast': { 'options': { 'noScroll': true } } } }
-        }
+          'color-contrast': { checks: { 'color-contrast': { options: { noScroll: true } } } },
+        },
       },
       (err, results) => {
         if (err) throw err;

@@ -5,33 +5,68 @@ import { graphql } from 'react-apollo';
 import React, { PureComponent } from 'react';
 import styles from './Nav.module.css';
 
-@graphql(gql`
-  query ($username: String!, $section: String!, $album: String!, $name: String!) {
-    fetchContentNeighbors(username: $username, section: $section, album: $album, name: $name) {
-      first { username section album name title }
-      last  { username section album name title }
-      next  { username section album name title }
-      prev  { username section album name title }
-      top   { username section album name title }
+@graphql(
+  gql`
+    query($username: String!, $section: String!, $album: String!, $name: String!) {
+      fetchContentNeighbors(username: $username, section: $section, album: $album, name: $name) {
+        first {
+          username
+          section
+          album
+          name
+          title
+        }
+        last {
+          username
+          section
+          album
+          name
+          title
+        }
+        next {
+          username
+          section
+          album
+          name
+          title
+        }
+        prev {
+          username
+          section
+          album
+          name
+          title
+        }
+        top {
+          username
+          section
+          album
+          name
+          title
+        }
+      }
     }
+  `,
+  {
+    options: ({ content: { username, section, album, name } }) => ({
+      variables: {
+        username,
+        section,
+        album,
+        name,
+      },
+    }),
   }
-`, {
-  options: ({ content: { username, section, album, name } }) => ({
-    variables: {
-      username,
-      section,
-      album,
-      name,
-    }
-  })
-})
+)
 class Nav extends PureComponent {
   render() {
     const content = this.props.content;
-    if (content.template === 'feed' ||
-        content.section === 'main' ||
-        content.album === 'main' ||
-        content.name === 'main') {
+    if (
+      content.template === 'feed' ||
+      content.section === 'main' ||
+      content.album === 'main' ||
+      content.name === 'main'
+    ) {
       return null;
     }
 
@@ -45,11 +80,21 @@ class Nav extends PureComponent {
 
     return (
       <nav className={styles.nav}>
-        <a rel="last" className="hw-last hw-button" href={contentUrl(last)} title={last.title}><F msg="last" /></a>
-        <a rel="next" className="hw-next hw-button" href={contentUrl(next)} title={next.title}><F msg="next" /></a>
-        <a rel="top" className="hw-top hw-button" href={contentUrl(top)} title={top.title}>{top.name}</a>
-        <a rel="prev" className="hw-previous hw-button" href={contentUrl(prev)} title={prev.title}><F msg="prev" /></a>
-        <a rel="first" className="hw-first hw-button" href={contentUrl(first)} title={first.title}><F msg="first" /></a>
+        <a rel="last" className="hw-last hw-button" href={contentUrl(last)} title={last.title}>
+          <F msg="last" />
+        </a>
+        <a rel="next" className="hw-next hw-button" href={contentUrl(next)} title={next.title}>
+          <F msg="next" />
+        </a>
+        <a rel="top" className="hw-top hw-button" href={contentUrl(top)} title={top.title}>
+          {top.name}
+        </a>
+        <a rel="prev" className="hw-previous hw-button" href={contentUrl(prev)} title={prev.title}>
+          <F msg="prev" />
+        </a>
+        <a rel="first" className="hw-first hw-button" href={contentUrl(first)} title={first.title}>
+          <F msg="first" />
+        </a>
       </nav>
     );
   }

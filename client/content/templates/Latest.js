@@ -6,26 +6,29 @@ import React, { Component } from 'react';
 import Simple from './Simple';
 import { withRouter } from 'react-router-dom';
 
-@graphql(gql`
-  query ($username: String!, $section: String!, $name: String!) {
-    fetchCollectionLatest(username: $username, section: $section, name: $name) {
-      album
-      name
-      section
-      title
-      username
-      view
+@graphql(
+  gql`
+    query($username: String!, $section: String!, $name: String!) {
+      fetchCollectionLatest(username: $username, section: $section, name: $name) {
+        album
+        name
+        section
+        title
+        username
+        view
+      }
     }
+  `,
+  {
+    options: ({ content: { username, section, name } }) => ({
+      variables: {
+        username,
+        section,
+        name,
+      },
+    }),
   }
-`, {
-  options: ({ content: { username, section, name } }) => ({
-    variables: {
-      username,
-      section,
-      name,
-    }
-  })
-})
+)
 class Latest extends Component {
   constructor() {
     super();

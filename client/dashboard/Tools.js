@@ -11,7 +11,11 @@ class Tools extends PureComponent {
 
     return (
       <ul className={this.props.className}>
-        <li><a href={navUrl(username)} target="_blank" rel="noopener noreferrer"><F msg="view site" /></a></li>
+        <li>
+          <a href={navUrl(username)} target="_blank" rel="noopener noreferrer">
+            <F msg="view site" />
+          </a>
+        </li>
       </ul>
     );
   }

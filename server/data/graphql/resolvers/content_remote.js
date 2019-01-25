@@ -3,19 +3,13 @@ import { isAdmin } from './authorization';
 
 export default {
   Query: {
-    allContentRemote: combineResolvers(
-      isAdmin,
-      async (parent, args, { models }) => {
-        return await models.Content_Remote.findAll();
-      }
-    ),
+    allContentRemote: combineResolvers(isAdmin, async (parent, args, { models }) => {
+      return await models.Content_Remote.findAll();
+    }),
 
-    fetchContentRemote: combineResolvers(
-      isAdmin,
-      async (parent, { id }, { models }) => {
-        return await models.Content_Remote.findById(id);
-      }
-    ),
+    fetchContentRemote: combineResolvers(isAdmin, async (parent, { id }, { models }) => {
+      return await models.Content_Remote.findById(id);
+    }),
 
     async fetchContentRemotePaginated(parent, args, { currentUser, models }) {
       if (!currentUser) {

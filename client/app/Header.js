@@ -6,8 +6,7 @@ export default class Header extends PureComponent {
   render() {
     return (
       <header className="App-header">
-        <nav>
-        </nav>
+        <nav />
 
         <LoginLogoutButton className={styles.login} />
       </header>

@@ -36,7 +36,7 @@ router.get('/callback', async (req, res) => {
     req.session.user = {
       oauth: userInfo,
       model: userDbInfo,
-    }
+    };
 
     res.redirect(req.query.next || '/');
     return;

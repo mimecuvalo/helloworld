@@ -3,23 +3,17 @@ import { isAdmin } from './authorization';
 
 export default {
   Query: {
-    allUsers: combineResolvers(
-      isAdmin,
-      async (parent, args, { models }) => {
-        return await models.User.findAll();
-      }
-    ),
+    allUsers: combineResolvers(isAdmin, async (parent, args, { models }) => {
+      return await models.User.findAll();
+    }),
 
-    fetchUser: combineResolvers(
-      isAdmin,
-      async (parent, { id }, { models }) => {
-        return await models.User.findById(id);
-      }
-    ),
+    fetchUser: combineResolvers(isAdmin, async (parent, { id }, { models }) => {
+      return await models.User.findById(id);
+    }),
 
     async fetchPublicUserData(parent, { username }, { models }) {
       if (!username) {
-        username = (await models.User.findOne({ attributes: ['username'] , where: { id: 1 } })).username;
+        username = (await models.User.findOne({ attributes: ['username'], where: { id: 1 } })).username;
       }
 
       return await models.User.findOne({
@@ -35,18 +29,15 @@ export default {
           'logo',
           'theme',
         ],
-        where: { username }
+        where: { username },
       });
     },
   },
 
   // Example stubs of mutations, non-functional out of the box.
   Mutation: {
-    createUser: combineResolvers(
-      isAdmin,
-      async (parent, { username, email }, { models }) => {
-        return await models.User.create({ username, email });
-      }
-    )
+    createUser: combineResolvers(isAdmin, async (parent, { username, email }, { models }) => {
+      return await models.User.create({ username, email });
+    }),
   },
 };

@@ -6,7 +6,6 @@ import styles from './Dashboard.module.css';
 import Tools from './Tools';
 
 class Dashboard extends PureComponent {
-
   render() {
     return (
       <div className={styles.container}>

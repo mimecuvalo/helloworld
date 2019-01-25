@@ -1,4 +1,4 @@
-export function contentUrl(content, host=false, searchParams={}) {
+export function contentUrl(content, host = false, searchParams = {}) {
   let url = '';
 
   /*
@@ -25,7 +25,7 @@ export function contentUrl(content, host=false, searchParams={}) {
     url += '/';
   }
 
-/* TODO(mime): use new URL()
+  /* TODO(mime): use new URL()
   if searchParams:
     for arg in searchParams:
       searchParams[arg] = searchParams[arg].encode('utf-8')

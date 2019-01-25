@@ -10,39 +10,44 @@ const messages = defineMessages({
   logo: { msg: 'logo' },
 });
 
-@graphql(gql`
-  query SiteMapAndUserQuery($username: String!) {
-    fetchSiteMap(username: $username) {
-      album
-      hidden
-      name
-      section
-      title
-      username
-    }
+@graphql(
+  gql`
+    query SiteMapAndUserQuery($username: String!) {
+      fetchSiteMap(username: $username) {
+        album
+        hidden
+        name
+        section
+        title
+        username
+      }
 
-    fetchPublicUserData(username: $username) {
-      logo
+      fetchPublicUserData(username: $username) {
+        logo
+      }
     }
+  `,
+  {
+    options: ({ content: { username } }) => ({
+      variables: {
+        username,
+      },
+    }),
   }
-`, {
-  options: ({ content: { username } }) => ({
-    variables: {
-      username,
-    }
-  })
-})
+)
 class SiteMap extends PureComponent {
   generateItem(item, albums) {
     const content = this.props.content;
 
     return (
       <li key={item.name} className={styles.item}>
-        <a href={contentUrl(item)}
-            className={classNames({
-              [styles.selected]: item.name === content.name,
-              [styles.hidden]: item.hidden,
-            })}>
+        <a
+          href={contentUrl(item)}
+          className={classNames({
+            [styles.selected]: item.name === content.name,
+            [styles.hidden]: item.hidden,
+          })}
+        >
           {item.title}
         </a>
         {albums}
