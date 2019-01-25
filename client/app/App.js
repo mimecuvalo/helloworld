@@ -30,6 +30,32 @@ export default class App extends Component {
     this.setState({ devOnlyHiddenOnLoad: false });
   }
 
+  renderDashboard() {
+    return <Dashboard />;
+    // TODO(mime): Can't get Suspense/lazy to play nicely with CSS modules yet.
+    // TODO(mime): Suspense and lazy aren't supported by ReactDOMServer yet (breaks SSR).
+    // const IS_CLIENT = typeof window !== 'undefined';
+    // const Fallback = (
+    //   <span>
+    //     <F msg="Loading…" />
+    //   </span>
+    // );
+    //
+    // let SuspenseWithTemporaryWorkaround;
+    // if (IS_CLIENT) {
+    //   const Dashboard = lazy(() => import('../dashboard/Dashboard'));
+    //   SuspenseWithTemporaryWorkaround = (
+    //     <Suspense fallback={Fallback}>
+    //       <Dashboard />
+    //     </Suspense>
+    //   );
+    // } else {
+    //   SuspenseWithTemporaryWorkaround = Fallback;
+    // }
+    //
+    // return SuspenseWithTemporaryWorkaround;
+  }
+
   render() {
     // HACK(all-the-things): we can't get rid of FOUC in dev mode because we want hot reloading of CSS updates.
     // This hides the unsightly unstyled app. However, in dev mode, it removes the perceived gain of SSR. :-/
@@ -43,7 +69,7 @@ export default class App extends Component {
             <Header />
             <main className="App-main">
               <Switch>
-                <Route path={`/dashboard`} component={Dashboard} />
+                <Route path={`/dashboard`} component={this.renderDashboard} />
                 <Route path={`/:username/:section/:album/:name`} component={Content} />
                 <Route path={`/:username/:section/:name`} component={Content} />
                 <Route path={`/:username/:name`} component={Content} />

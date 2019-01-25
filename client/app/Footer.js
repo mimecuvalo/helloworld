@@ -1,6 +1,6 @@
 import { F } from '../../shared/i18n';
 import Help from './Help';
-import React, { PureComponent, Suspense, lazy } from 'react';
+import React, { PureComponent, lazy, Suspense } from 'react';
 import styles from './Footer.module.css';
 
 export default class Footer extends PureComponent {
@@ -14,6 +14,7 @@ export default class Footer extends PureComponent {
           <F msg="Loading…" />
         </span>
       );
+
       let SuspenseWithTemporaryWorkaround;
       if (IS_CLIENT) {
         const Debug = lazy(() => import('../internal/Debug'));
