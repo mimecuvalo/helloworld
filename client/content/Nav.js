@@ -72,11 +72,11 @@ class Nav extends PureComponent {
 
     const contentNeighbors = this.props.data.fetchContentNeighbors;
 
-    const first = contentNeighbors.prev;
-    const prev = contentNeighbors.prev;
-    const top = contentNeighbors.top;
-    const next = contentNeighbors.next;
-    const last = contentNeighbors.last;
+    const first = contentNeighbors.first || {};
+    const prev = contentNeighbors.prev || {};
+    const top = contentNeighbors.top || {};
+    const next = contentNeighbors.next || {};
+    const last = contentNeighbors.last || {};
 
     return (
       <nav className={styles.nav}>

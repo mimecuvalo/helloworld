@@ -1,4 +1,8 @@
 export function contentUrl(content, host = false, searchParams = {}) {
+  if (!content.name) {
+    return null;
+  }
+
   let url = '';
 
   /*

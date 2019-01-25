@@ -49,7 +49,7 @@ export default {
         album,
       };
       const collection = await models.Content.findAll({
-        attributes: ['username', 'section', 'album', 'name', 'title'],
+        attributes: ATTRIBUTES_NAVIGATION,
         where: Object.assign({}, constraints, collectionConstraints),
         order: [['order'], ['date_created', 'DESC']],
       });
@@ -63,16 +63,16 @@ export default {
         name: album ? album : section,
       };
       const collectionItem = await models.Content.findOne({
-        attributes: ['username', 'section', 'album', 'name', 'title'],
+        attributes: ATTRIBUTES_NAVIGATION,
         where: collectionItemConstraints,
       });
 
       return {
-        first: collection[0],
-        prev: collection[contentIndex - 1],
+        first: collection[collection.length - 1],
+        prev: collection[contentIndex + 1],
         top: collectionItem,
-        next: collection[contentIndex + 1],
-        last: collection[collection.length - 1],
+        next: collection[contentIndex - 1],
+        last: collection[0],
       };
     },
 
