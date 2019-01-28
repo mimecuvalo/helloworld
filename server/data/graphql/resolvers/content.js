@@ -58,8 +58,8 @@ export default {
 
       const collectionItemConstraints = {
         username,
-        section,
-        album: album ? 'main' : null,
+        section: !album ? 'main' : section,
+        album: album ? 'main' : '',
         name: album ? album : section,
       };
       const collectionItem = await models.Content.findOne({
@@ -142,7 +142,7 @@ export default {
     async fetchCollectionPaginated(parent, { username, section, name }, { currentUser, models }) {
       const isOwnerViewing = currentUser && currentUser.model.username === username;
       const limit = 20; // TODO(mime)
-      const offset = 1; // TODO(mime)
+      const offset = 0; // TODO(mime)
 
       const constraints = {
         redirect: false,
@@ -198,7 +198,7 @@ export default {
       const sections = await models.Content.findAll({
         attributes: ATTRIBUTES_NAVIGATION,
         where: Object.assign({}, constraints, contentConstraints),
-        order: [['order'], ['date_created', 'DESC']],
+        order: [['order'], ['date_created']],
       });
 
       let siteMap = [];
@@ -212,7 +212,7 @@ export default {
         const albums = await models.Content.findAll({
           attributes: ATTRIBUTES_NAVIGATION,
           where: Object.assign({}, constraints, albumConstraints),
-          order: [['order'], ['date_created', 'DESC']],
+          order: [['order'], ['date_created']],
         });
 
         siteMap.push(section);
