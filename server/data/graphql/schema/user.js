@@ -23,7 +23,6 @@ export default gql`
   type UserPublic {
     username: String!
     name: String!
-    email: String!
     title: String!
     description: String
     license: String

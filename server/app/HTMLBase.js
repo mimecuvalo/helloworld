@@ -6,6 +6,7 @@ import React from 'react';
 // It's React all the way down!
 export default function HTMLBase({
   apolloStateFn,
+  appName,
   appTime,
   appVersion,
   assetPathsByType,
@@ -14,20 +15,20 @@ export default function HTMLBase({
   defaultLocale,
   locale,
   nonce,
+  probableContentUsername,
   publicUrl,
-  title,
   urls,
   user,
 }) {
   return (
     <html lang={locale}>
       <HTMLHead
+        appName={appName}
         assetPathsByType={assetPathsByType}
         nonce={nonce}
+        probableContentUsername={probableContentUsername}
         publicUrl={publicUrl}
-        title={title}
         urls={urls}
-        user={user}
       />
       <body>
         <div id="root">{children}</div>
@@ -56,7 +57,7 @@ export default function HTMLBase({
           <script nonce={nonce} key={path} src={path} />
         ))}
 
-        <StructuredMetaData nonce={nonce} title={title} urls={urls} />
+        <StructuredMetaData nonce={nonce} appName={appName} urls={urls} />
 
         {/*
           This HTML file is a template.
@@ -150,7 +151,7 @@ function WindowErrorScript({ nonce }) {
 
 // This needs to be filled out by the developer to provide content for the site.
 // Learn more here: https://developers.google.com/search/docs/guides/intro-structured-data
-function StructuredMetaData({ title, urls, nonce }) {
+function StructuredMetaData({ appName, urls, nonce }) {
   return (
     <script
       nonce={nonce}
@@ -176,7 +177,7 @@ function StructuredMetaData({ title, urls, nonce }) {
           },
            "publisher": {
             "@type": "Organization",
-            "name": "${title}",
+            "name": "${appName}",
             "logo": {
               "@type": "ImageObject",
               "url": "${urls.localUrlForBrowser}favicon.ico"

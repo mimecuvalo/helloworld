@@ -46,28 +46,34 @@ export default async function render({ req, res, next, assetPathsByType, appName
       }
     : null;
 
+  // The username is either the first part of the path (e.g. hostname.com/mime/section/album/name)
+  // or if we're on a user that has a `hostname` defined then it's implicit in the url
+  // (e.g. hostname.com/section/album/name) and we figure it out in the user resolver.
+  const probableContentUsername = req.path.split('/')[1];
+
   const completeApp = (
     <IntlProvider locale={locale} messages={translations}>
-      <HTMLBase
-        apolloStateFn={() => apolloClient.extract()}
-        appTime={gitTime}
-        appVersion={gitRev}
-        assetPathsByType={assetPathsByType}
-        csrfToken={req.csrfToken()}
-        defaultLocale={DEFAULT_LOCALE}
-        locale={locale}
-        nonce={nonce}
-        publicUrl={publicUrl}
-        title={appName}
-        urls={urls}
-        user={filteredUser}
-      >
-        <ApolloProvider client={apolloClient}>
+      <ApolloProvider client={apolloClient}>
+        <HTMLBase
+          apolloStateFn={() => apolloClient.extract()}
+          appName={appName}
+          appTime={gitTime}
+          appVersion={gitRev}
+          assetPathsByType={assetPathsByType}
+          csrfToken={req.csrfToken()}
+          defaultLocale={DEFAULT_LOCALE}
+          locale={locale}
+          nonce={nonce}
+          probableContentUsername={probableContentUsername}
+          publicUrl={publicUrl}
+          urls={urls}
+          user={filteredUser}
+        >
           <StaticRouter location={req.url} context={context}>
             <App user={filteredUser} />
           </StaticRouter>
-        </ApolloProvider>
-      </HTMLBase>
+        </HTMLBase>
+      </ApolloProvider>
     </IntlProvider>
   );
 

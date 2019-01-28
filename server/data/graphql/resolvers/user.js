@@ -11,7 +11,14 @@ export default {
       return await models.User.findById(id);
     }),
 
-    async fetchPublicUserData(parent, { username }, { models }) {
+    async fetchPublicUserData(parent, { username }, { hostname, models }) {
+      if (hostname) {
+        const hostnameUserData = await models.User.findOne({ attributes: ['username'], where: { hostname } });
+        if (hostnameUserData) {
+          username = hostnameUserData.username;
+        }
+      }
+
       if (!username) {
         username = (await models.User.findOne({ attributes: ['username'], where: { id: 1 } })).username;
       }
@@ -20,7 +27,6 @@ export default {
         attributes: [
           'username',
           'name',
-          'email',
           'title',
           'description',
           'license',

@@ -20,8 +20,11 @@ export default function apolloServer(app) {
       }
 
       const currentUser = req.session.user;
+      const hostname = req.hostname;
+
       return {
         currentUser,
+        hostname,
         models,
       };
     },
