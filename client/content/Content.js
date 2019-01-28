@@ -58,6 +58,10 @@ import styles from './Content.module.css';
 )
 class Content extends PureComponent {
   render() {
+    if (this.props.data.loading) {
+      return null;
+    }
+
     const content = this.props.data.fetchContent;
 
     if (!content) {

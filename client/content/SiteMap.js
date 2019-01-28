@@ -3,6 +3,7 @@ import { contentUrl, navUrl } from '../../shared/util/url_factory';
 import { defineMessages, F, injectIntl } from '../../shared/i18n';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
+import { Link } from 'react-router-dom';
 import React, { PureComponent } from 'react';
 import styles from './SiteMap.module.css';
 
@@ -41,15 +42,15 @@ class SiteMap extends PureComponent {
 
     return (
       <li key={item.name} className={styles.item}>
-        <a
-          href={contentUrl(item)}
+        <Link
+          to={contentUrl(item)}
           className={classNames({
             [styles.selected]: item.name === content.name,
             [styles.hidden]: item.hidden,
           })}
         >
           {item.title}
-        </a>
+        </Link>
         {albums}
       </li>
     );
@@ -82,6 +83,10 @@ class SiteMap extends PureComponent {
   }
 
   render() {
+    if (this.props.data.loading) {
+      return null;
+    }
+
     const content = this.props.content;
     const siteMap = this.props.data.fetchSiteMap;
     const contentOwner = this.props.data.fetchPublicUserData;
@@ -91,9 +96,11 @@ class SiteMap extends PureComponent {
 
     return (
       <nav id="hw-sitemap" className={styles.sitemap}>
-        <a href={navUrl(content.username)}>
-          <img src={contentOwner.logo} title={contentOwner.title} alt={logoAltText} />
-        </a>
+        {contentOwner.logo ? (
+          <a href={navUrl(content.username)}>
+            <img src={contentOwner.logo} title={contentOwner.title} alt={logoAltText} />
+          </a>
+        ) : null}
         <ul>
           <li>
             <a href={navUrl(content.username)} className={classNames({ 'hw-selected': content.name === 'home' })}>

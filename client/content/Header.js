@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { contentUrl } from '../../shared/util/url_factory';
 import { F } from '../../shared/i18n';
+import { Link } from 'react-router-dom';
 import React, { PureComponent } from 'react';
 import styles from './Header.module.css';
 import UserContext from '../app/User_Context';
@@ -15,15 +16,15 @@ class Header extends PureComponent {
     return (
       <header className={classNames(styles.header)}>
         <h1 className={styles.title}>
-          <a
-            href={contentUrl(content)}
+          <Link
+            to={contentUrl(content)}
             className={classNames({
               [styles.hidden]: isOwnerViewing && content.hidden,
             })}
           >
             {content.title || <F msg="(untitled)" />}
             {isOwnerViewing && content.hidden && <F msg="(hidden)" />}
-          </a>
+          </Link>
         </h1>
       </header>
     );

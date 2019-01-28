@@ -52,6 +52,10 @@ class Latest extends Component {
       return <Archive content={this.props.content} />;
     }
 
+    if (this.props.data.loading) {
+      return null;
+    }
+
     return <Simple content={this.props.data.fetchCollectionLatest} />;
   }
 }

@@ -3,6 +3,7 @@ import { contentUrl } from '../../../shared/util/url_factory';
 import { defineMessages, injectIntl } from '../../../shared/i18n';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
+import { Link } from 'react-router-dom';
 import React, { Component, PureComponent } from 'react';
 import styles from './Album.module.css';
 import UserContext from '../../app/User_Context';
@@ -39,6 +40,10 @@ class Album extends PureComponent {
   static contextType = UserContext;
 
   render() {
+    if (this.props.data.loading) {
+      return <div className={styles.loadingEmptyBox} />;
+    }
+
     const content = this.props.content;
     const isOwnerViewing = this.context.user && this.context.user.model.username === content.username;
     const collection = this.props.data.fetchCollection;
@@ -47,16 +52,16 @@ class Album extends PureComponent {
       <ul className={styles.album}>
         {collection.map(item => (
           <li key={item.name} className={styles.item}>
-            <a href={contentUrl(item)} className={styles.thumbLink} title={item.title}>
+            <Link to={contentUrl(item)} className={styles.thumbLink} title={item.title}>
               <DelayLoadedThumb item={item} />
-            </a>
-            <a
-              href={contentUrl(item)}
+            </Link>
+            <Link
+              to={contentUrl(item)}
               title={item.title}
               className={classNames(styles.title, styles.link, { [styles.hidden]: isOwnerViewing && item.hidden })}
             >
               {item.title}
-            </a>
+            </Link>
           </li>
         ))}
       </ul>
@@ -94,13 +99,13 @@ class Thumb extends Component {
   maybeLoadImage = () => {
     if (this.image.current.getBoundingClientRect().top < window.innerHeight + 175 /* fudge factor */) {
       this.setState({ isAboveFold: true });
+      this.removeEventListeners();
     }
   };
 
   handleThumbLoad = evt => {
     if (!this.state.aboveFold) {
       this.setState({ isLoaded: true });
-      this.removeEventListeners();
     }
   };
 
@@ -116,7 +121,7 @@ class Thumb extends Component {
         alt={thumbAltText}
         onLoad={this.handleThumbLoad}
         className={classNames('hw-invisible-slow-transition', styles.thumb, {
-          'hw-invisible': !this.state.isLoaded,
+          'hw-invisible': !this.state.isLoaded || !this.state.isAboveFold,
         })}
       />
     );

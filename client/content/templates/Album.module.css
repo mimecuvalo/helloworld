@@ -7,6 +7,10 @@
   list-style: none;
 }
 
+.loadingEmptyBox {
+  min-height: 100vh;
+}
+
 .item {
   position: relative;
   display: inline-block;

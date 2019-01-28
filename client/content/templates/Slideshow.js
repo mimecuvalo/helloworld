@@ -28,6 +28,10 @@ import Simple from './Simple';
 )
 class Slideshow extends PureComponent {
   render() {
+    if (this.props.data.loading) {
+      return null;
+    }
+
     const collection = this.props.data.fetchCollection;
 
     return (

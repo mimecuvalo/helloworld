@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import { contentUrl } from '../../../shared/util/url_factory';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
+import { Link } from 'react-router-dom';
 import React, { PureComponent } from 'react';
 import styles from './Archive.module.css';
 import UserContext from '../../app/User_Context';
@@ -32,6 +33,10 @@ class Archive extends PureComponent {
   static contextType = UserContext;
 
   render() {
+    if (this.props.data.loading) {
+      return <div className={styles.loadingEmptyBox} />;
+    }
+
     const content = this.props.content;
     const isOwnerViewing = this.context.user && this.context.user.model.username === content.username;
     const collection = this.props.data.fetchCollection;
@@ -45,9 +50,9 @@ class Archive extends PureComponent {
               [styles.hidden]: isOwnerViewing && item.hidden,
             })}
           >
-            <a href={contentUrl(item)} title={item.title}>
+            <Link to={contentUrl(item)} title={item.title}>
               {item.title}
-            </a>
+            </Link>
           </li>
         ))}
       </ul>
