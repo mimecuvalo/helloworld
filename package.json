@@ -10,7 +10,8 @@
     "cra-all-the-things": "0.5.1",
     "graphql-resolvers": "0.3.2",
     "react": "^16.7.0",
-    "react-dom": "^16.7.0"
+    "react-dom": "^16.7.0",
+    "webpack-node-externals": "1.7.2"
   },
   "scripts": {
     "start": "npm-run-all --parallel serve:dev styleguide",
@@ -21,7 +22,7 @@
     "eject": "react-scripts eject",
     "analyze": "source-map-explorer build/static/js/main.*",
     "flow": "flow",
-    "postinstall": "flow-typed install",
+    "postinstall": "if test \"$NODE_ENV\" = \"development\" ; then flow-typed install; fi",
     "build-storybook": "build-storybook -s public",
     "styleguide": "start-storybook -p 9001 -c .storybook --ci --quiet"
   },
@@ -33,6 +34,7 @@
     "axe-core": "3.1.2",
     "enzyme": "3.8.0",
     "enzyme-adapter-react-16": "1.7.1",
+    "flightplan": "0.6.19",
     "flow-bin": "0.86.0",
     "flow-typed": "2.5.1",
     "husky": "1.1.2",
@@ -44,8 +46,7 @@
     "react-dom": "16.7.0",
     "react-test-renderer": "16.7.0",
     "require-from-string": "2.0.2",
-    "source-map-explorer": "1.6.0",
-    "webpack-node-externals": "1.7.2"
+    "source-map-explorer": "1.6.0"
   },
   "husky": {
     "hooks": {
