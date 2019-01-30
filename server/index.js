@@ -55,10 +55,6 @@ export default function constructApps({ appName, urls }) {
   // Set up API server.
   apiServer && app.use('/api', csrfMiddleware, apiServer({ appName, urls }));
 
-  // XXX(mime): Not ideal. The GraphQL playground needs the csrf token to work so it's disabled in dev mode :-/
-  if (process.env.NODE_ENV === 'production') {
-    app.use('/graphql', csrfMiddleware, (req, res, next) => next());
-  }
   // Set up Apollo server.
   apolloServer && apolloServer(app);
 
