@@ -1,7 +1,7 @@
 // Keep in sync with both graphql/schema/user_remote.js and migrations/[date]-create-user-remote.js
 export default (sequelize, Sequelize) => {
   const User_Remote = sequelize.define(
-    'Users_Remote',
+    'User_Remote',
     {
       id: {
         type: Sequelize.INTEGER.UNSIGNED,

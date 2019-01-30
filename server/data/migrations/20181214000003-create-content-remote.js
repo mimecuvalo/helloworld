@@ -5,7 +5,7 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface
       .createTable(
-        'content_remote',
+        'Content_Remote',
         {
           id: {
             type: Sequelize.INTEGER.UNSIGNED,
@@ -120,16 +120,16 @@ module.exports = {
         }
       )
       .then(() => {
-        queryInterface.addIndex('content_remote', { fields: ['to_username'] });
+        queryInterface.addIndex('Content_Remote', { fields: ['to_username'] });
       })
       .then(() => {
-        queryInterface.addIndex('content_remote', { fields: [{ name: 'from_user', length: 255 }] });
+        queryInterface.addIndex('Content_Remote', { fields: [{ name: 'from_user', length: 255 }] });
       })
       .then(() => {
-        queryInterface.addIndex('content_remote', { fields: [{ name: 'thread', length: 255 }] });
+        queryInterface.addIndex('Content_Remote', { fields: [{ name: 'thread', length: 255 }] });
       })
       .then(() => {
-        queryInterface.addIndex('content_remote', {
+        queryInterface.addIndex('Content_Remote', {
           name: 'to_username_2',
           fields: ['to_username', { name: 'from_user', length: 255 }],
         });
@@ -137,6 +137,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('content_remote');
+    return queryInterface.dropTable('Content_Remote');
   },
 };

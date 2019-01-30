@@ -4,7 +4,7 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface
-      .createTable('content', {
+      .createTable('Content', {
         id: {
           type: Sequelize.INTEGER.UNSIGNED,
           autoIncrement: true,
@@ -114,23 +114,23 @@ module.exports = {
         },
       })
       .then(() => {
-        queryInterface.addIndex('content', { name: 'uri', fields: ['username', 'name'] });
+        queryInterface.addIndex('Content', { name: 'uri', fields: ['username', 'name'] });
       })
       .then(() => {
-        queryInterface.addIndex('content', { fields: ['section'] });
+        queryInterface.addIndex('Content', { fields: ['section'] });
       })
       .then(() => {
-        queryInterface.addIndex('content', { fields: ['name'] });
+        queryInterface.addIndex('Content', { fields: ['name'] });
       })
       .then(() => {
-        queryInterface.addIndex('content', { fields: ['username'] });
+        queryInterface.addIndex('Content', { fields: ['username'] });
       })
       .then(() => {
-        queryInterface.addIndex('content', { fields: ['album'] });
+        queryInterface.addIndex('Content', { fields: ['album'] });
       });
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('content');
+    return queryInterface.dropTable('Content');
   },
 };

@@ -3,7 +3,7 @@
 // Keep in sync with both models/user.js and graphql/schema/user.js
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('users', {
+    return queryInterface.createTable('User', {
       id: {
         type: Sequelize.INTEGER.UNSIGNED,
         autoIncrement: true,
@@ -54,6 +54,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('users');
+    return queryInterface.dropTable('User');
   },
 };

@@ -4,7 +4,7 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface
-      .createTable('users_remote', {
+      .createTable('User_Remote', {
         id: {
           type: Sequelize.INTEGER.UNSIGNED,
           autoIncrement: true,
@@ -73,13 +73,13 @@ module.exports = {
         },
       })
       .then(() => {
-        queryInterface.addIndex('users_remote', { fields: ['local_username'] });
+        queryInterface.addIndex('User_Remote', { fields: ['local_username'] });
       })
       .then(() => {
-        queryInterface.addIndex('users_remote', { fields: [{ name: 'profile_url', length: 255 }] });
+        queryInterface.addIndex('User_Remote', { fields: [{ name: 'profile_url', length: 255 }] });
       })
       .then(() => {
-        queryInterface.addIndex('users_remote', {
+        queryInterface.addIndex('User_Remote', {
           name: 'local_username_2',
           fields: ['local_username', { name: 'profile_url', length: 255 }],
         });
@@ -87,6 +87,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('users_remote');
+    return queryInterface.dropTable('User_Remote');
   },
 };
