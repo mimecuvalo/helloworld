@@ -2,7 +2,6 @@ import { ApolloProvider, getDataFromTree } from 'react-apollo';
 import { ApolloClient } from 'apollo-client';
 import { ApolloLink } from 'apollo-link';
 import App from '../../client/app/App';
-import { exec } from 'child_process';
 import { DEFAULT_LOCALE, getLocale } from './locale';
 import fetch from 'node-fetch';
 import HTMLBase from './HTMLBase';
@@ -14,7 +13,6 @@ import { onError } from 'apollo-link-error';
 import React from 'react';
 import { renderToNodeStream } from 'react-dom/server';
 import { StaticRouter } from 'react-router';
-import util from 'util';
 import uuid from 'uuid';
 
 export default async function render({ req, res, next, assetPathsByType, appName, publicUrl, urls }) {
@@ -26,9 +24,11 @@ export default async function render({ req, res, next, assetPathsByType, appName
   // This lets us make sure that if there are bad / incompatible clients in the wild later on, we can
   // disable certain clients using their version number and making sure they're upgraded to the
   // latest, working version.
-  const execPromise = util.promisify(exec);
-  const gitRev = (await execPromise('git rev-parse HEAD')).stdout.trim();
-  const gitTime = (await execPromise('git log -1 --format=%cd --date=unix')).stdout.trim();
+  //const execPromise = util.promisify(exec);
+
+  // TODO(mime): need to rework this, causing problems on prod.
+  const gitRev = 1; // (await execPromise('git rev-parse HEAD')).stdout.trim();
+  const gitTime = 1; // (await execPromise('git log -1 --format=%cd --date=unix')).stdout.trim();
 
   const locale = getLocale(req);
   const translations = languages[locale];
@@ -85,6 +85,7 @@ export default async function render({ req, res, next, assetPathsByType, appName
     return;
   }
 
+  res.type('html');
   res.write('<!doctype html>');
   const stream = renderToNodeStream(completeApp);
   stream
@@ -121,8 +122,9 @@ async function createApolloClient(req) {
     return forward(operation);
   });
 
-  const hostWithPort = req.get('host');
-  const httpLink = new HttpLink({ uri: `${req.protocol}://${hostWithPort}/graphql`, fetch });
+  // const hostWithPort = req.get('host');
+  // TODO(mime): need to rework this - shouldn't be hardcode uri but having troubles on prod currently.
+  const httpLink = new HttpLink({ uri: `http://localhost:3001/graphql`, fetch });
 
   const link = ApolloLink.from([errorLink, cookieLink, httpLink]);
 
