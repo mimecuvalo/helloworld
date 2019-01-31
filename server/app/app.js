@@ -122,9 +122,7 @@ async function createApolloClient(req) {
     return forward(operation);
   });
 
-  // const hostWithPort = req.get('host');
-  // TODO(mime): need to rework this - shouldn't be hardcode uri but having troubles on prod currently.
-  const httpLink = new HttpLink({ uri: `http://localhost:3001/graphql`, fetch });
+  const httpLink = new HttpLink({ uri: `http://localhost:${req.socket.localPort}/graphql`, fetch });
 
   const link = ApolloLink.from([errorLink, cookieLink, httpLink]);
 
