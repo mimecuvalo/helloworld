@@ -24,13 +24,17 @@ class Help extends PureComponent {
   };
 
   handleStyleguide = () => {
-    this.setState({ anchorEl: null });
+    this.handleClose();
     window.open('http://localhost:9001', 'styleguide');
   };
 
   handleLanguage = () => {
-    this.setState({ anchorEl: null });
+    this.handleClose();
     window.location.href = '/?lang=fr';
+  };
+
+  handleClose = () => {
+    this.setState({ anchorEl: null });
   };
 
   renderStyleguide() {
