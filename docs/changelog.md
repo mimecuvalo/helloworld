@@ -15,13 +15,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- added this project! <email@gmail.com> [@githubusername](https://github.com/githubusername)
+- redid this entire in JS instead of Python! <mimecuvalo@gmail.com> [@mimecuvalo](https://github.com/mimecuvalo)
 
 ### Changed
 
 ### Deprecated
 
 ### Removed
+
+- put the legacy Python version of this repo into a [separate branch](https://github.com/mimecuvalo/helloworld/tree/legacy_tornado_python). <mimecuvalo@gmail.com> [@mimecuvalo](https://github.com/mimecuvalo)
 
 ### Fixed
 
