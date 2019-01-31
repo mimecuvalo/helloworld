@@ -34,7 +34,7 @@ export default {
       }
       name = name || 'main';
 
-      const isOwnerViewing = currentUser && currentUser.model.username === username;
+      const isOwnerViewing = currentUser?.model.username === username;
 
       const constraints = {
         redirect: false,
@@ -77,7 +77,7 @@ export default {
     },
 
     async fetchCollection(parent, { username, section, name }, { currentUser, models }) {
-      const isOwnerViewing = currentUser && currentUser.model.username === username;
+      const isOwnerViewing = currentUser?.model.username === username;
 
       const constraints = {
         redirect: false,
@@ -140,7 +140,7 @@ export default {
     },
 
     async fetchCollectionPaginated(parent, { username, section, name }, { currentUser, models }) {
-      const isOwnerViewing = currentUser && currentUser.model.username === username;
+      const isOwnerViewing = currentUser?.model.username === username;
       const limit = 20; // TODO(mime)
       const offset = 0; // TODO(mime)
 
@@ -166,7 +166,7 @@ export default {
     },
 
     async fetchCollectionLatest(parent, { username, section, name }, { currentUser, models }) {
-      const isOwnerViewing = currentUser && currentUser.model.username === username;
+      const isOwnerViewing = currentUser?.model.username === username;
 
       const constraints = {
         redirect: false,
@@ -183,7 +183,7 @@ export default {
     },
 
     async fetchSiteMap(parent, { username }, { currentUser, models }) {
-      const isOwnerViewing = currentUser && currentUser.model.username === username;
+      const isOwnerViewing = currentUser?.model.username === username;
       const constraints = {};
       if (!isOwnerViewing) {
         constraints['hidden'] = false;

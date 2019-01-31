@@ -45,7 +45,7 @@ class Album extends PureComponent {
     }
 
     const content = this.props.content;
-    const isOwnerViewing = this.context.user && this.context.user.model.username === content.username;
+    const isOwnerViewing = this.context.user?.model.username === content.username;
     const collection = this.props.data.fetchCollection;
 
     return (
