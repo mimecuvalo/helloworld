@@ -24,26 +24,33 @@
 
 federated social web blog app. basically, i'm trying to build an open-source Tumblr (RIP). passes [SWAT0](https://indieweb.org/SWAT0)!
 
-
-## 🔨 Install
-
-To run locally:
+## 💾 Install
 
 ```sh
-npm install
-npm start # or you can do npm run serve:dev if you don't need the styleguide server.
+npx create-react-app react-all-the-things --use-npm --scripts-version=all-the-things
+```
+
+Then, to run your newly created server locally, **with** the Storybook styleguide server:
+
+```sh
+npm start
+```
+
+Or, to run locally **without** the Storybook styleguide server:
+
+```sh
+npm run serve:dev
+```
+
+To run in production (or better yet check out bin/flightplan.js)
+```sh
+npm --production install
+npm run serve:prod
 ```
 
 To run tests:
-
 ```sh
 npm run test
-```
-
-for production use:
-```sh
-npm install
-npm run serve:prod
 ```
 
 ## ⚡ Features

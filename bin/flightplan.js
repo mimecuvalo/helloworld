@@ -1,6 +1,8 @@
 'use strict';
 
 /**
+ * For general instructions, see: https://www.npmjs.com/package/flightplan
+ *
  * To configure, first set the "plan.target" sections below.
  * Then, set: DIRECTORY_NAME appropriately.
  * Then, to run, do:
