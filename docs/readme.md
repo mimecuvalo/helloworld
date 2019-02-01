@@ -80,7 +80,7 @@ npm run test
   - data liberation, ability to port data to another site/service
 
 ## 🎯 Goals
-- pass (SWAT0)[https://indieweb.org/SWAT0]
+- pass [SWAT0](https://indieweb.org/SWAT0)
 - open source
 - easy to install
 - be a good, easy-to-use alternative to what's out there!
