@@ -23,6 +23,11 @@ code {
   box-sizing: border-box;
 }
 
+img {
+  border: 0;
+  vertical-align: middle;
+}
+
 nav ul,
 nav ol {
   list-style: none;
@@ -49,8 +54,4 @@ figcaption {
   text-align: center;
   color: #666;
   font-size: 12px;
-}
-
-img {
-  border: 0;
 }
