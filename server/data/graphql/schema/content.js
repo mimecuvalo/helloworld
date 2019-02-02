@@ -40,6 +40,7 @@ export default gql`
     title: String!
     thumb: String!
     hidden: Boolean!
+    template: String!
   }
 
   type Neighbors {

@@ -2,7 +2,7 @@ import { combineResolvers } from 'graphql-resolvers';
 import { isAdmin } from './authorization';
 import Sequelize from 'sequelize';
 
-const ATTRIBUTES_NAVIGATION = ['username', 'section', 'album', 'name', 'title', 'thumb', 'hidden'];
+const ATTRIBUTES_NAVIGATION = ['username', 'section', 'album', 'name', 'title', 'thumb', 'hidden', 'template'];
 
 export default {
   Query: {
@@ -17,6 +17,35 @@ export default {
       name = name || 'main';
 
       const content = await models.Content.findOne({ where: { username, name } });
+
+      // Inherit style, code, template from the album.
+      if (content?.album && content.album !== 'main') {
+        const albumContent = await models.Content.findOne({
+          where: { username, section: content.section, album: 'main', name: content.album },
+        });
+        if (albumContent.style) {
+          content.style = albumContent.style + content.style;
+        }
+        if (albumContent.code) {
+          content.code = albumContent.code + content.code;
+        }
+      }
+
+      // Inherit style, code, template from section.
+      if (content?.section !== 'main') {
+        const sectionContent = await models.Content.findOne({
+          where: { username, section: 'main', name: content.section },
+        });
+        if (sectionContent.style) {
+          content.style = sectionContent.style + content.style;
+        }
+        if (sectionContent.code) {
+          content.code = sectionContent.code + content.code;
+        }
+        if (!content.template && content.album === 'main') {
+          content.template = sectionContent.template;
+        }
+      }
       if (content && !content.template && content.album === 'main') {
         // This is when we're visiting a url of the form: /profile/section/album
         const parentContent = await models.Content.findOne({
@@ -193,6 +222,7 @@ export default {
         username,
         section: 'main',
         name: { [Sequelize.Op.notIn]: ['main', 'home', 'comments'] },
+        redirect: 0,
       };
 
       const sections = await models.Content.findAll({
