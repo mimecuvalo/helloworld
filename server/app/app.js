@@ -37,12 +37,14 @@ export default async function render({ req, res, next, assetPathsByType, appName
   const filteredUser = req.session.user
     ? {
         oauth: req.session.user.oauth,
-        model: Object.keys(req.session.user.model)
-          .filter(key => !FILTERED_KEYS.includes(key))
-          .reduce((obj, key) => {
-            obj[key] = req.session.user.model[key];
-            return obj;
-          }, {}),
+        model:
+          req.session.user.model &&
+          Object.keys(req.session.user.model)
+            .filter(key => !FILTERED_KEYS.includes(key))
+            .reduce((obj, key) => {
+              obj[key] = req.session.user.model[key];
+              return obj;
+            }, {}),
       }
     : null;
 

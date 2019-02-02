@@ -50,7 +50,7 @@ class HTMLHead extends PureComponent {
         <link rel="search" href="/api/opensearch" type="application/opensearchdescription+xml" title={title} />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="theme-color" content="#000000" />
-        <meta name="generator" content="Hello, world." />
+        <meta name="generator" content="Hello, world. https://github.com/mimecuvalo/helloworld" />
         <OpenGraphMetadata title={title} urls={urls} />
         {/*
           manifest.json provides metadata used when your web app is added to the

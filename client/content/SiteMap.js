@@ -99,12 +99,14 @@ class SiteMap extends PureComponent {
 
     return (
       <nav id="hw-sitemap" className={styles.sitemap}>
-        {contentOwner.logo ? (
-          <a id="hw-sitemap-logo" href={navUrl(content.username)}>
-            <img src={contentOwner.logo} title={contentOwner.title} alt={logoAltText} />
-          </a>
-        ) : null}
         <ul>
+          {contentOwner.logo ? (
+            <li>
+              <a id="hw-sitemap-logo" href={navUrl(content.username)}>
+                <img src={contentOwner.logo} title={contentOwner.title} alt={logoAltText} />
+              </a>
+            </li>
+          ) : null}
           <li>
             <a
               id="hw-sitemap-home"

@@ -11,7 +11,7 @@ class Header extends PureComponent {
 
   render() {
     const content = this.props.content;
-    const isOwnerViewing = this.context.user?.model.username === content.username;
+    const isOwnerViewing = this.context.user?.model?.username === content.username;
 
     return (
       <header className={classNames(styles.header)}>
