@@ -44,6 +44,7 @@ import styles from './Nav.module.css';
           album
           name
           title
+          template
         }
       }
     }
@@ -63,7 +64,11 @@ class Nav extends PureComponent {
   renderLink(content, name, msg) {
     content = content || {};
 
-    const url = contentUrl(content);
+    const url = contentUrl(
+      content,
+      undefined /* host */,
+      content.template === 'latest' ? { mode: 'archive' } : undefined
+    );
     if (!url) {
       return (
         <a href={url} rel={name} className={`hw-${name} hw-button`} title={content.title}>

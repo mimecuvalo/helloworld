@@ -1,4 +1,4 @@
-export function contentUrl(content, host = false, searchParams = {}) {
+export function contentUrl(content, host = false, searchParams) {
   if (!content.name) {
     return null;
   }
@@ -29,12 +29,9 @@ export function contentUrl(content, host = false, searchParams = {}) {
     url += '/';
   }
 
-  /* TODO(mime): use new URL()
-  if searchParams:
-    for arg in searchParams:
-      searchParams[arg] = searchParams[arg].encode('utf-8')
-    url += '?' + urllib.urlencode(searchParams)
-    */
+  if (searchParams) {
+    url += '?' + new URLSearchParams(searchParams).toString();
+  }
 
   return prettifyUrl(url);
 }
