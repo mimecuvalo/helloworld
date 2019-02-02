@@ -5,14 +5,12 @@ import Header from './Header';
 import Latest from './templates/Latest';
 import React, { PureComponent } from 'react';
 import Simple from './templates/Simple';
-import Slideshow from './templates/Slideshow';
 
 const COMPONENT_TYPE_MAP = {
   album: Album,
   archive: Archive,
   latest: Latest,
   links: Album,
-  slideshow: Slideshow,
 };
 
 class Item extends PureComponent {
