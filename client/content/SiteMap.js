@@ -40,12 +40,14 @@ class SiteMap extends PureComponent {
   generateItem(item, albums) {
     const content = this.props.content;
 
+    const isSelected = item.name === content.name || item.name === content.album || item.name === content.section;
     return (
-      <li key={item.name} className={styles.item}>
+      <li id={`hw-sitemap-${item.name}`} key={item.name} className={styles.item}>
         <Link
           to={contentUrl(item)}
           className={classNames({
-            [styles.selected]: item.name === content.name,
+            'hw-selected': isSelected,
+            [styles.selected]: isSelected,
             [styles.hidden]: item.hidden,
           })}
         >
@@ -63,13 +65,14 @@ class SiteMap extends PureComponent {
       const nextItem = siteMap[i + 1];
 
       let albums;
-      if (nextItem && nextItem.album === 'main') {
+      if (nextItem?.album === 'main') {
         const albumItems = [];
         for (i += 1; i < siteMap.length; ++i) {
           const albumItem = siteMap[i];
           if (albumItem.album === 'main') {
             albumItems.push(this.generateItem(albumItem));
           } else {
+            i -= 1;
             break;
           }
         }
@@ -97,13 +100,17 @@ class SiteMap extends PureComponent {
     return (
       <nav id="hw-sitemap" className={styles.sitemap}>
         {contentOwner.logo ? (
-          <a href={navUrl(content.username)}>
+          <a id="hw-sitemap-logo" href={navUrl(content.username)}>
             <img src={contentOwner.logo} title={contentOwner.title} alt={logoAltText} />
           </a>
         ) : null}
         <ul>
           <li>
-            <a href={navUrl(content.username)} className={classNames({ 'hw-selected': content.name === 'home' })}>
+            <a
+              id="hw-sitemap-home"
+              href={navUrl(content.username)}
+              className={classNames({ 'hw-selected': content.name === 'home' })}
+            >
               <F msg="home" />
             </a>
           </li>

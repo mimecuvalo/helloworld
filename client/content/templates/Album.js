@@ -58,7 +58,9 @@ class Album extends PureComponent {
             <Link
               to={contentUrl(item)}
               title={item.title}
-              className={classNames(styles.title, styles.link, { [styles.hidden]: isOwnerViewing && item.hidden })}
+              className={classNames('hw-album-title', styles.title, styles.link, {
+                [styles.hidden]: isOwnerViewing && item.hidden,
+              })}
             >
               {item.title}
             </Link>
