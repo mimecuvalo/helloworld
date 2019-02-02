@@ -63,6 +63,11 @@ export default {
       }
       name = name || 'main';
 
+      const sectionContent = await models.Content.findOne({
+        where: { username, section: 'main', name: section === 'main' ? name : section },
+      });
+      const order = [['order'], getSQLSortType(sectionContent.sort_type)];
+
       const isOwnerViewing = currentUser?.model.username === username;
 
       const constraints = {
@@ -80,7 +85,7 @@ export default {
       const collection = await models.Content.findAll({
         attributes: ATTRIBUTES_NAVIGATION,
         where: Object.assign({}, constraints, collectionConstraints),
-        order: [['order'], ['date_created', 'DESC']],
+        order,
       });
 
       const contentIndex = collection.findIndex(i => i.name === name);
@@ -108,6 +113,12 @@ export default {
     async fetchCollection(parent, { username, section, name }, { currentUser, models }) {
       const isOwnerViewing = currentUser?.model.username === username;
 
+      const sectionContent = await models.Content.findOne({
+        where: { username, section: 'main', name },
+      });
+      const order = [['order'], getSQLSortType(sectionContent.sort_type)];
+      console.log(order, sectionContent.sort_type);
+
       const constraints = {
         redirect: false,
       };
@@ -121,7 +132,7 @@ export default {
         collection = await models.Content.findAll({
           attributes: ATTRIBUTES_NAVIGATION,
           where: Object.assign({}, constraints, contentConstraints),
-          order: [['order'], ['date_created', 'DESC']],
+          order,
         });
       }
 
@@ -130,7 +141,7 @@ export default {
         collection = await models.Content.findAll({
           attributes: ATTRIBUTES_NAVIGATION,
           where: Object.assign({}, constraints, contentConstraints),
-          order: [['order'], ['date_created', 'DESC']],
+          order,
         });
 
         const albumConstraints = Object.assign({}, constraints, contentConstraints);
@@ -139,7 +150,7 @@ export default {
           const albumFirstContent = await models.Content.findOne({
             attributes: ['thumb'],
             where: Object.assign({}, constraints, albumConstraints),
-            order: [['order'], ['date_created', 'DESC']],
+            order,
           });
           if (albumFirstContent) {
             content.thumb = albumFirstContent.thumb;
@@ -151,7 +162,7 @@ export default {
         const topLevelItems = await models.Content.findAll({
           attributes: ATTRIBUTES_NAVIGATION,
           where: Object.assign({}, constraints, topLevelContentConstraints),
-          order: [['order'], ['date_created', 'DESC']],
+          order,
         });
         collection = collection.concat(topLevelItems);
       }
@@ -161,7 +172,7 @@ export default {
         collection = await models.Content.findAll({
           attributes: ATTRIBUTES_NAVIGATION,
           where: Object.assign({}, constraints, contentConstraints),
-          order: [['order'], ['date_created', 'DESC']],
+          order,
         });
       }
 
@@ -255,3 +266,13 @@ export default {
     },
   },
 };
+
+function getSQLSortType(sortType) {
+  if (sortType === 'oldest') {
+    return ['date_created'];
+  }
+  if (sortType === 'alphabetical') {
+    return ['title'];
+  }
+  return ['date_created', 'DESC'];
+}

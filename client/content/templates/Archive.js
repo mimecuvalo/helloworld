@@ -12,6 +12,7 @@ import UserContext from '../../app/User_Context';
     query($username: String!, $section: String!, $name: String!) {
       fetchCollection(username: $username, section: $section, name: $name) {
         album
+        hidden
         name
         section
         title
@@ -42,7 +43,7 @@ class Archive extends PureComponent {
     const collection = this.props.data.fetchCollection;
 
     return (
-      <ul className="hw-archive">
+      <ul className={styles.archive}>
         {collection.filter(item => item.name !== content.name).map(item => (
           <li
             key={item.name}

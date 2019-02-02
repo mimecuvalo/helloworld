@@ -25,10 +25,7 @@ import styles from './Content.module.css';
         date_updated
         hidden
         name
-        order
-        redirect
         section
-        sort_type
         style
         template
         thumb
