@@ -15,8 +15,8 @@ export default function HTMLBase({
   defaultLocale,
   locale,
   nonce,
-  probableContentUsername,
   publicUrl,
+  request,
   urls,
   user,
 }) {
@@ -26,8 +26,8 @@ export default function HTMLBase({
         appName={appName}
         assetPathsByType={assetPathsByType}
         nonce={nonce}
-        probableContentUsername={probableContentUsername}
         publicUrl={publicUrl}
+        request={request}
         urls={urls}
       />
       <body>

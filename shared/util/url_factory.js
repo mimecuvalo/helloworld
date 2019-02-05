@@ -1,15 +1,13 @@
-export function contentUrl(content, host = false, searchParams) {
+export function contentUrl(content, protocolAndHost = '', searchParams) {
   if (!content.name) {
     return null;
   }
 
   let url = '';
 
-  /*
-  TODO(mime):
-  if (host) {
-    url += handler.request.protocol + "://" + handler.request.host
-  }*/
+  if (protocolAndHost) {
+    url += protocolAndHost;
+  }
 
   if (content.name !== 'main') {
     url += '/' + content.username;
@@ -25,7 +23,7 @@ export function contentUrl(content, host = false, searchParams) {
 
   if (content.name !== 'home' && content.name !== 'main') {
     url += '/' + content.name;
-  } else if (content.name === 'home' /* TODO(mime): && handler.hostname_user*/) {
+  } else if (content.name === 'home') {
     url += '/';
   }
 

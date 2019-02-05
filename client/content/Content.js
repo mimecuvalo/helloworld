@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import DocumentTitle from 'react-document-title';
 import { F } from '../../shared/i18n';
 import Feed from './Feed';
 import gql from 'graphql-tag';
@@ -75,37 +76,40 @@ class Content extends PureComponent {
 
     const contentOwner = this.props.data.fetchPublicUserData;
     const item = content.template === 'feed' ? <Feed content={content} /> : <Item content={content} />;
+    const title = (content.title ? content.title + ' – ' : '') + contentOwner.title;
 
     return (
-      <div id="hw-content" className={styles.container}>
-        <header>
-          <h1>{contentOwner.title}</h1>
-          <h2>{contentOwner.description}</h2>
-        </header>
+      <DocumentTitle title={title}>
+        <div id="hw-content" className={styles.container}>
+          <header>
+            <h1>{contentOwner.title}</h1>
+            <h2>{contentOwner.description}</h2>
+          </header>
 
-        <div className={styles.articleNavContainer}>
-          <SiteMap content={content} />
+          <div className={styles.articleNavContainer}>
+            <SiteMap content={content} />
 
-          <article className={classNames(styles.content, 'hw-invisible-transition')}>
-            <Nav content={content} />
-            {item}
-          </article>
+            <article className={classNames(styles.content, 'hw-invisible-transition')}>
+              <Nav content={content} />
+              {item}
+            </article>
+          </div>
+
+          <footer className={styles.footer}>
+            <F
+              msg="powered by {br} {link}"
+              values={{
+                br: <br />,
+                link: (
+                  <a href="https://github.com/mimecuvalo/helloworld" rel="generator">
+                    Hello, world.
+                  </a>
+                ),
+              }}
+            />
+          </footer>
         </div>
-
-        <footer className={styles.footer}>
-          <F
-            msg="powered by {br} {link}"
-            values={{
-              br: <br />,
-              link: (
-                <a href="https://github.com/mimecuvalo/helloworld" rel="generator">
-                  Hello, world.
-                </a>
-              ),
-            }}
-          />
-        </footer>
-      </div>
+      </DocumentTitle>
     );
   }
 }

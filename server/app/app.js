@@ -48,11 +48,6 @@ export default async function render({ req, res, next, assetPathsByType, appName
       }
     : null;
 
-  // The username is either the first part of the path (e.g. hostname.com/mime/section/album/name)
-  // or if we're on a user that has a `hostname` defined then it's implicit in the url
-  // (e.g. hostname.com/section/album/name) and we figure it out in the user resolver.
-  const probableContentUsername = req.path.split('/')[1];
-
   const completeApp = (
     <IntlProvider locale={locale} messages={translations}>
       <ApolloProvider client={apolloClient}>
@@ -66,8 +61,8 @@ export default async function render({ req, res, next, assetPathsByType, appName
           defaultLocale={DEFAULT_LOCALE}
           locale={locale}
           nonce={nonce}
-          probableContentUsername={probableContentUsername}
           publicUrl={publicUrl}
+          request={req}
           urls={urls}
           user={filteredUser}
         >
