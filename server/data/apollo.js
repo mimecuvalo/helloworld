@@ -20,7 +20,7 @@ export default function apolloServer(app) {
       }
 
       const currentUser = req.session.user;
-      const hostname = req.hostname;
+      const hostname = req.header('x-forwarded-host') || req.hostname;
 
       return {
         currentUser,

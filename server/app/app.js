@@ -115,10 +115,11 @@ async function createApolloClient(req) {
     }
   });
 
-  const cookieLink = new ApolloLink((operation, forward) => {
+  const cookieAndHostLink = new ApolloLink((operation, forward) => {
     operation.setContext({
       headers: {
         cookie: req.get('cookie'),
+        'x-forwarded-host': req.hostname,
       },
     });
     return forward(operation);
@@ -126,7 +127,7 @@ async function createApolloClient(req) {
 
   const httpLink = new HttpLink({ uri: `http://localhost:${req.socket.localPort}/graphql`, fetch });
 
-  const link = ApolloLink.from([errorLink, cookieLink, httpLink]);
+  const link = ApolloLink.from([errorLink, cookieAndHostLink, httpLink]);
 
   const client = new ApolloClient({
     ssrMode: true,

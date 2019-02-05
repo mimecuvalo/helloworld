@@ -10,11 +10,20 @@ export default {
       return await models.Content.findAll();
     }),
 
-    async fetchContent(parent, { username, name }, { models }) {
+    async fetchContent(parent, { username, name }, { hostname, models }) {
       if (!username) {
-        username = (await models.User.findOne({ attributes: ['username'], where: { id: 1 } })).username;
+        if (hostname) {
+          const hostnameUserData = await models.User.findOne({ attributes: ['username'], where: { hostname } });
+          if (hostnameUserData) {
+            username = hostnameUserData.username;
+            name = name || 'home';
+          }
+        }
+        if (!username) {
+          username = (await models.User.findOne({ attributes: ['username'], where: { id: 1 } })).username;
+          name = name || 'main';
+        }
       }
-      name = name || 'main';
 
       const content = await models.Content.findOne({ where: { username, name } });
 
