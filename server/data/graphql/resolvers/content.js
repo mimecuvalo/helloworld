@@ -119,14 +119,13 @@ export default {
       };
     },
 
-    async fetchCollection(parent, { username, section, name }, { currentUser, models }) {
+    async fetchCollection(parent, { username, section, album, name }, { currentUser, models }) {
       const isOwnerViewing = currentUser?.model.username === username;
 
       const sectionContent = await models.Content.findOne({
-        where: { username, section: 'main', name },
+        where: { username, section: !album ? 'main' : section, name },
       });
       const order = [['order'], getSQLSortType(sectionContent.sort_type)];
-      console.log(order, sectionContent.sort_type);
 
       const constraints = {
         redirect: false,

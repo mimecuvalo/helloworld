@@ -9,8 +9,8 @@ import UserContext from '../../app/User_Context';
 
 @graphql(
   gql`
-    query($username: String!, $section: String!, $name: String!) {
-      fetchCollection(username: $username, section: $section, name: $name) {
+    query($username: String!, $section: String!, $album: String!, $name: String!) {
+      fetchCollection(username: $username, section: $section, album: $album, name: $name) {
         album
         hidden
         name
@@ -21,10 +21,11 @@ import UserContext from '../../app/User_Context';
     }
   `,
   {
-    options: ({ content: { username, section, name } }) => ({
+    options: ({ content: { username, section, album, name } }) => ({
       variables: {
         username,
         section,
+        album,
         name,
       },
     }),
