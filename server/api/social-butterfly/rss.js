@@ -6,7 +6,7 @@ import crypto from 'crypto';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import { renderToString } from 'react-dom/server';
-import React, { PureComponent } from 'react';
+import React, { createElement as RcE, PureComponent } from 'react';
 
 export default async (req, res, next) => {
   const apolloClient = await createApolloClient(req);
@@ -66,6 +66,7 @@ class NotFoundError extends Error {
         logo
         name
         title
+        username
       }
     }
   `,
@@ -83,23 +84,14 @@ class NotFoundError extends Error {
 )
 class RSS extends PureComponent {
   render() {
-    const namespaces = {
-      xmlLang: 'en-US',
-      xmlns: 'http://www.w3.org/2005/Atom',
-      'xmlns:activity': 'http://activitystrea.ms/spec/1.0/',
-      'xmlns:poco': 'http://portablecontacts.net/spec/1.0',
-      'xmlns:media': 'http://purl.org/syndication/atommedia',
-      'xmlns:thr': 'http://purl.org/syndication/thread/1.0',
-    };
-
-    const { req } = this.props;
-    const username = req.query.username;
     const contentOwner = this.props.data.fetchPublicUserData;
-    const feed = this.props.data.fetchFeed;
-
     if (!contentOwner) {
       throw new NotFoundError();
     }
+
+    const { req } = this.props;
+    const username = req.query.username;
+    const feed = this.props.data.fetchFeed;
 
     const protocolAndHost = req.protocol + '://' + req.get('host');
     const feedUrl = protocolAndHost + req.originalUrl;
@@ -111,7 +103,14 @@ class RSS extends PureComponent {
       .digest('hex')
       .slice(0, 10);
 
-    const RcE = React.createElement;
+    const namespaces = {
+      xmlLang: 'en-US',
+      xmlns: 'http://www.w3.org/2005/Atom',
+      'xmlns:activity': 'http://activitystrea.ms/spec/1.0/',
+      'xmlns:poco': 'http://portablecontacts.net/spec/1.0',
+      'xmlns:media': 'http://purl.org/syndication/atommedia',
+      'xmlns:thr': 'http://purl.org/syndication/thread/1.0',
+    };
 
     return (
       <feed {...namespaces}>
@@ -136,53 +135,63 @@ class RSS extends PureComponent {
           </rights>
         ) : null}
         {feed.length ? <updated>{new Date(feed[0].date_updated).toISOString()}</updated> : null}
-        <author>
-          {RcE('activity:object-type', {}, `http://activitystrea.ms/schema/1.0/person`)}
-          <name>{contentOwner.name}</name>
-          <uri>{profileUrl}</uri>
-          <email>{contentOwner.email}</email>
-          {RcE('poco:preferredusername', {}, username)}
-          {RcE('poco:displayname', {}, contentOwner.name)}
-          {RcE('poco:emails', {}, [
-            RcE('poco:value', {}, contentOwner.email),
-            RcE('poco:type', {}, 'home'),
-            RcE('poco:primary', {}, 'true'),
-          ])}
-          {RcE('poco:urls', {}, [
-            RcE('poco:value', {}, profileUrl),
-            RcE('poco:type', {}, 'profile'),
-            RcE('poco:primary', {}, 'true'),
-          ])}
-        </author>
+        <Author contentOwner={contentOwner} profileUrl={profileUrl} />
         {contentOwner.logo ? <logo>{`${protocolAndHost}${contentOwner.logo}`}</logo> : null}
         <icon>
           {contentOwner.favicon ? `${protocolAndHost}${contentOwner.favicon}` : `${protocolAndHost}/favicon.ico`}
         </icon>
 
         {feed.map(content => (
-          <entry>
-            <title>{content.title}</title>
-            <link href={contentUrl(content, protocolAndHost)} />
-            <id>
-              {`tag:${req.hostname}` +
-                `,${new Date(content.date_created).toISOString().slice(0, 10)}` +
-                `:${contentUrl(content)}`}
-            </id>
-            <content
-              type="html"
-              dangerouslySetInnerHTML={{
-                __html:
-                  content.view.replace(/(['"])\/resource/gm, `$1${protocolAndHost}/resource`) +
-                  `<img src="${protocolAndHost}/api/stats?url=${contentUrl(content)}" />`,
-              }}
-            />
-            {/* TODO(mime): addBaseUris*/}
-            <published>{new Date(content.date_created).toISOString()}</published>
-            <updated>{new Date(content.date_updated).toISOString()}</updated>
-            {RcE('activity:verb', {}, `http://activitystrea.ms/schema/1.0/post`)}
-          </entry>
+          <Entry key={content.name} content={content} req={req} />
         ))}
       </feed>
+    );
+  }
+}
+
+const Author = ({ contentOwner, profileUrl }) => (
+  <author>
+    {RcE('activity:object-type', {}, `http://activitystrea.ms/schema/1.0/person`)}
+    <name>{contentOwner.name}</name>
+    <uri>{profileUrl}</uri>
+    <email>{contentOwner.email}</email>
+    {RcE('poco:preferredusername', {}, contentOwner.username)}
+    {RcE('poco:displayname', {}, contentOwner.name)}
+    {RcE('poco:emails', {}, [
+      RcE('poco:value', {}, contentOwner.email),
+      RcE('poco:type', {}, 'home'),
+      RcE('poco:primary', {}, 'true'),
+    ])}
+    {RcE('poco:urls', {}, [
+      RcE('poco:value', {}, profileUrl),
+      RcE('poco:type', {}, 'profile'),
+      RcE('poco:primary', {}, 'true'),
+    ])}
+  </author>
+);
+
+class Entry extends PureComponent {
+  render() {
+    const { content, req } = this.props;
+    const protocolAndHost = req.protocol + '://' + req.get('host');
+    const statsImg = `<img src="${protocolAndHost}/api/stats?url=${contentUrl(content)}" />`;
+    const viewWithAbsoluteUrls = content.view.replace(/(['"])\/resource/gm, `$1${protocolAndHost}/resource`);
+    const html = viewWithAbsoluteUrls + statsImg;
+
+    return (
+      <entry>
+        <title>{content.title}</title>
+        <link href={contentUrl(content, protocolAndHost)} />
+        <id>
+          {`tag:${req.hostname}` +
+            `,${new Date(content.date_created).toISOString().slice(0, 10)}` +
+            `:${contentUrl(content)}`}
+        </id>
+        <content type="html" dangerouslySetInnerHTML={{ __html: html }} />
+        <published>{new Date(content.date_created).toISOString()}</published>
+        <updated>{new Date(content.date_updated).toISOString()}</updated>
+        {RcE('activity:verb', {}, `http://activitystrea.ms/schema/1.0/post`)}
+      </entry>
     );
   }
 }
