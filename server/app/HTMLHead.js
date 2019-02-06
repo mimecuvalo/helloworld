@@ -20,15 +20,16 @@ import React, { PureComponent } from 'react';
         favicon
         theme
         title
+        username
       }
     }
   `,
   {
-    options: ({ request }) => {
+    options: ({ req }) => {
       // The username is either the first part of the path (e.g. hostname.com/mime/section/album/name)
       // or if we're on a user that has a `hostname` defined then it's implicit in the url
       // (e.g. hostname.com/section/album/name) and we figure it out in the user resolver.
-      const splitPath = request.path.split('/');
+      const splitPath = req.path.split('/');
       const probableContentUsername = splitPath[1];
       const probableContentName = splitPath[splitPath.length - 1];
 
@@ -43,14 +44,22 @@ import React, { PureComponent } from 'react';
 )
 class HTMLHead extends PureComponent {
   render() {
-    const { appName, assetPathsByType, nonce, publicUrl, request } = this.props;
+    const { appName, assetPathsByType, nonce, publicUrl, req } = this.props;
     const contentOwner = this.props.data.fetchPublicUserData;
     const content = this.props.data.fetchContent;
 
-    let description, favicon, theme, title;
+    let description, favicon, rss, theme, title;
     if (contentOwner) {
       description = contentOwner.description && <meta name="description" content={contentOwner.description} />;
       favicon = contentOwner.favicon;
+      rss = (
+        <link
+          rel="alternate"
+          type="application/atom+xml"
+          title={title}
+          href={`/api/social/rss?username=${contentOwner.username}`}
+        />
+      );
       theme = contentOwner.theme && <link rel="stylesheet" href={contentOwner.theme} />;
       title = contentOwner.title;
     }
@@ -71,11 +80,12 @@ class HTMLHead extends PureComponent {
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
         <link rel="search" href="/api/opensearch" type="application/opensearchdescription+xml" title={title} />
+        {rss}
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="theme-color" content="#000000" />
         <meta name="generator" content="Hello, world. https://github.com/mimecuvalo/helloworld" />
         {description}
-        <OpenGraphMetadata contentOwner={contentOwner} content={content} request={request} />
+        <OpenGraphMetadata contentOwner={contentOwner} content={content} req={req} />
         {/*
           manifest.json provides metadata used when your web app is added to the
           homescreen on Android. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -98,8 +108,8 @@ class HTMLHead extends PureComponent {
 
 // This needs to be filled out by the developer to provide content for the site.
 // Learn more here: http://ogp.me/
-const OpenGraphMetadata = React.memo(function OpenGraphMetadata({ contentOwner, content, request }) {
-  const protocolAndHost = request.protocol + '://' + request.get('host');
+const OpenGraphMetadata = React.memo(function OpenGraphMetadata({ contentOwner, content, req }) {
+  const protocolAndHost = req.protocol + '://' + req.get('host');
   let thumb;
   if (content?.thumb) {
     thumb = content.thumb;

@@ -34,8 +34,16 @@ export function contentUrl(content, protocolAndHost = '', searchParams) {
   return prettifyUrl(url);
 }
 
-export function navUrl(username = '') {
-  return `/${username}`;
+export function navUrl(username = '', protocolAndHost = '') {
+  let url = '';
+
+  if (protocolAndHost) {
+    url += protocolAndHost;
+  }
+
+  url += `/${username}`;
+
+  return url;
 }
 
 function prettifyUrl(url) {

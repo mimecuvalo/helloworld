@@ -77,7 +77,7 @@ export default {
       });
       const order = [['order'], getSQLSortType(sectionContent.sort_type)];
 
-      const isOwnerViewing = currentUser?.model.username === username;
+      const isOwnerViewing = currentUser?.model?.username === username;
 
       const constraints = {
         redirect: false,
@@ -120,7 +120,7 @@ export default {
     },
 
     async fetchCollection(parent, { username, section, album, name }, { currentUser, models }) {
-      const isOwnerViewing = currentUser?.model.username === username;
+      const isOwnerViewing = currentUser?.model?.username === username;
 
       const sectionContent = await models.Content.findOne({
         where: { username, section: !album ? 'main' : section, name },
@@ -188,7 +188,7 @@ export default {
     },
 
     async fetchCollectionPaginated(parent, { username, section, name }, { currentUser, models }) {
-      const isOwnerViewing = currentUser?.model.username === username;
+      const isOwnerViewing = currentUser?.model?.username === username;
       const limit = 20; // TODO(mime)
       const offset = 0; // TODO(mime)
 
@@ -213,8 +213,24 @@ export default {
       });
     },
 
+    async fetchFeed(parent, { username }, { models }) {
+      const notEqualToMain = { [Sequelize.Op.ne]: 'main' };
+      const contentConstraints = {
+        username,
+        section: notEqualToMain,
+        album: notEqualToMain,
+        hidden: false,
+        redirect: false,
+      };
+      return await models.Content.findAll({
+        where: contentConstraints,
+        order: [['date_created', 'DESC']],
+        limit: 50,
+      });
+    },
+
     async fetchCollectionLatest(parent, { username, section, name }, { currentUser, models }) {
-      const isOwnerViewing = currentUser?.model.username === username;
+      const isOwnerViewing = currentUser?.model?.username === username;
 
       const constraints = {
         redirect: false,
@@ -231,7 +247,7 @@ export default {
     },
 
     async fetchSiteMap(parent, { username }, { currentUser, models }) {
-      const isOwnerViewing = currentUser?.model.username === username;
+      const isOwnerViewing = currentUser?.model?.username === username;
       const constraints = {};
       if (!isOwnerViewing) {
         constraints['hidden'] = false;

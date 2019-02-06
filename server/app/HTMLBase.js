@@ -16,7 +16,7 @@ export default function HTMLBase({
   locale,
   nonce,
   publicUrl,
-  request,
+  req,
   urls,
   user,
 }) {
@@ -27,7 +27,7 @@ export default function HTMLBase({
         assetPathsByType={assetPathsByType}
         nonce={nonce}
         publicUrl={publicUrl}
-        request={request}
+        req={req}
         urls={urls}
       />
       <body>

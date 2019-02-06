@@ -1,15 +1,10 @@
 import { ApolloProvider, getDataFromTree } from 'react-apollo';
-import { ApolloClient } from 'apollo-client';
-import { ApolloLink } from 'apollo-link';
 import App from '../../client/app/App';
+import createApolloClient from '../data/apollo_client';
 import { DEFAULT_LOCALE, getLocale } from './locale';
-import fetch from 'node-fetch';
 import HTMLBase from './HTMLBase';
-import { HttpLink } from 'apollo-link-http';
-import { InMemoryCache } from 'apollo-cache-inmemory';
 import { IntlProvider } from 'react-intl';
 import * as languages from '../../shared/i18n/languages';
-import { onError } from 'apollo-link-error';
 import React from 'react';
 import { renderToNodeStream } from 'react-dom/server';
 import { StaticRouter } from 'react-router';
@@ -62,7 +57,7 @@ export default async function render({ req, res, next, assetPathsByType, appName
           locale={locale}
           nonce={nonce}
           publicUrl={publicUrl}
-          request={req}
+          req={req}
           urls={urls}
           user={filteredUser}
         >
@@ -95,42 +90,6 @@ export default async function render({ req, res, next, assetPathsByType, appName
     res.redirect(301, context.url);
     return;
   }
-}
-
-// We create an Apollo client here on the server so that we can get server-side rendering in properly.
-async function createApolloClient(req) {
-  const errorLink = onError(({ graphQLErrors, networkError }) => {
-    if (graphQLErrors) {
-      graphQLErrors.map(({ message, locations, path }) =>
-        console.log(`\n[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}\n`)
-      );
-    }
-    if (networkError) {
-      console.log(`\n[Network error]: ${networkError}\n`);
-    }
-  });
-
-  const cookieAndHostLink = new ApolloLink((operation, forward) => {
-    operation.setContext({
-      headers: {
-        cookie: req.get('cookie'),
-        'x-forwarded-host': req.hostname,
-      },
-    });
-    return forward(operation);
-  });
-
-  const httpLink = new HttpLink({ uri: `http://localhost:${req.socket.localPort}/graphql`, fetch });
-
-  const link = ApolloLink.from([errorLink, cookieAndHostLink, httpLink]);
-
-  const client = new ApolloClient({
-    ssrMode: true,
-    link,
-    cache: new InMemoryCache(),
-  });
-
-  return client;
 }
 
 function createNonceAndSetCSP(res) {

@@ -3,6 +3,7 @@ import clientHealthCheckRouter from './client_health_check';
 import errorRouter from './error';
 import express from 'express';
 import openSearchRouterFactory from './opensearch';
+import socialButterfly from './social-butterfly';
 
 /**
  * Main routing entry point for all of our API server.
@@ -17,6 +18,7 @@ export default function apiServerFactory({ appName, urls }) {
   });
   router.use('/opensearch', openSearchRouterFactory({ appName, urls }));
   router.use('/report-error', errorRouter);
+  router.use('/social', socialButterfly);
   router.get('/', (req, res) => {
     res.sendStatus(404);
   });

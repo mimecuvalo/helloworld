@@ -36,8 +36,8 @@ import styles from './Content.module.css';
       }
 
       fetchPublicUserData(username: $username) {
-        title
         description
+        title
       }
     }
   `,

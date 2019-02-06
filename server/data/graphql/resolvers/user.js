@@ -28,6 +28,7 @@ export default {
           'username',
           'name',
           'title',
+          'email',
           'description',
           'license',
           'google_analytics',
