@@ -1,6 +1,6 @@
+import { absoluteUrl, contentUrl, navUrl } from '../../../shared/util/url_factory';
 import { ApolloProvider, getDataFromTree } from 'react-apollo';
 import constants from '../../constants';
-import { contentUrl, navUrl } from '../../../shared/util/url_factory';
 import createApolloClient from '../../data/apollo_client';
 import crypto from 'crypto';
 import gql from 'graphql-tag';
@@ -93,9 +93,8 @@ class RSS extends PureComponent {
     const username = req.query.username;
     const feed = this.props.data.fetchFeed;
 
-    const protocolAndHost = req.protocol + '://' + req.get('host');
-    const feedUrl = protocolAndHost + req.originalUrl;
-    const profileUrl = navUrl(username, protocolAndHost);
+    const feedUrl = absoluteUrl(req, req.originalUrl);
+    const profileUrl = navUrl(username, req);
 
     const md5 = crypto.createHash('md5');
     const supId = md5
@@ -136,10 +135,8 @@ class RSS extends PureComponent {
         ) : null}
         {feed.length ? <updated>{new Date(feed[0].date_updated).toISOString()}</updated> : null}
         <Author contentOwner={contentOwner} profileUrl={profileUrl} />
-        {contentOwner.logo ? <logo>{`${protocolAndHost}${contentOwner.logo}`}</logo> : null}
-        <icon>
-          {contentOwner.favicon ? `${protocolAndHost}${contentOwner.favicon}` : `${protocolAndHost}/favicon.ico`}
-        </icon>
+        {contentOwner.logo ? <logo>{absoluteUrl(req, contentOwner.logo)}</logo> : null}
+        <icon>{contentOwner.favicon ? absoluteUrl(req, contentOwner.favicon) : absoluteUrl(req, '/favicon.ico')}</icon>
 
         {feed.map(content => (
           <Entry key={content.name} content={content} req={req} />
@@ -158,14 +155,14 @@ const Author = ({ contentOwner, profileUrl }) => (
     {RcE('poco:preferredusername', {}, contentOwner.username)}
     {RcE('poco:displayname', {}, contentOwner.name)}
     {RcE('poco:emails', {}, [
-      RcE('poco:value', {}, contentOwner.email),
-      RcE('poco:type', {}, 'home'),
-      RcE('poco:primary', {}, 'true'),
+      RcE('poco:value', { key: 'value' }, contentOwner.email),
+      RcE('poco:type', { key: 'type' }, 'home'),
+      RcE('poco:primary', { key: 'primary' }, 'true'),
     ])}
     {RcE('poco:urls', {}, [
-      RcE('poco:value', {}, profileUrl),
-      RcE('poco:type', {}, 'profile'),
-      RcE('poco:primary', {}, 'true'),
+      RcE('poco:value', { key: 'value' }, profileUrl),
+      RcE('poco:type', { key: 'type' }, 'profile'),
+      RcE('poco:primary', { key: 'primary' }, 'true'),
     ])}
   </author>
 );
@@ -173,16 +170,17 @@ const Author = ({ contentOwner, profileUrl }) => (
 class Entry extends PureComponent {
   render() {
     const { content, req } = this.props;
-    const protocolAndHost = req.protocol + '://' + req.get('host');
-    const statsImg = `<img src="${protocolAndHost}/api/stats?url=${contentUrl(content)}" />`;
+    const statsImgSrc = absoluteUrl(req, `/api/stats?url=${contentUrl(content)}`);
+    const statsImg = `<img src="${statsImgSrc}" />`;
+    const absoluteUrlReplacement = absoluteUrl(req, '/resource');
     const viewWithAbsoluteUrls =
-      '<![CDATA[' + content.view.replace(/(['"])\/resource/gm, `$1${protocolAndHost}/resource`) + ']]>';
+      '<![CDATA[' + content.view.replace(/(['"])\/resource/gm, `$1${absoluteUrlReplacement}`) + ']]>';
     const html = viewWithAbsoluteUrls + statsImg;
 
     return (
       <entry>
         <title>{content.title}</title>
-        <link href={contentUrl(content, protocolAndHost)} />
+        <link href={contentUrl(content, req)} />
         <id>
           {`tag:${req.hostname}` +
             `,${new Date(content.date_created).toISOString().slice(0, 10)}` +

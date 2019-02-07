@@ -1,3 +1,4 @@
+import { absoluteClientsideUrl } from '../../shared/util/url_factory';
 import Auth0Lock from 'auth0-lock';
 import configuration from './configuration';
 
@@ -5,9 +6,7 @@ import configuration from './configuration';
 export function createLock() {
   return new Auth0Lock(configuration.auth0_client_id, configuration.auth0_domain, {
     auth: {
-      redirectUrl: `${window.location.protocol}//${window.location.host}/api/auth/callback?next=${
-        window.location.href
-      }`,
+      redirectUrl: absoluteClientsideUrl(window, `/api/auth/callback?next=${window.location.href}`),
       responseType: 'code',
       params: {
         scope: 'openid profile email',

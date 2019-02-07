@@ -1,4 +1,4 @@
-import { contentUrl } from '../../shared/util/url_factory';
+import { absoluteUrl, contentUrl } from '../../shared/util/url_factory';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import React, { PureComponent } from 'react';
@@ -109,12 +109,11 @@ class HTMLHead extends PureComponent {
 // This needs to be filled out by the developer to provide content for the site.
 // Learn more here: http://ogp.me/
 const OpenGraphMetadata = React.memo(function OpenGraphMetadata({ contentOwner, content, req }) {
-  const protocolAndHost = req.protocol + '://' + req.get('host');
   let thumb;
   if (content?.thumb) {
     thumb = content.thumb;
     if (!/^https?:/.test(thumb)) {
-      thumb = protocolAndHost + thumb;
+      thumb = absoluteUrl(req, thumb);
     }
   }
 
@@ -123,7 +122,7 @@ const OpenGraphMetadata = React.memo(function OpenGraphMetadata({ contentOwner, 
       <meta property="og:title" content={content?.title} />
       <meta property="og:description" content={contentOwner?.description} />
       <meta property="og:type" content="website" />
-      <meta property="og:url" content={content && contentUrl(content, protocolAndHost)} />
+      <meta property="og:url" content={content && contentUrl(content, req)} />
       <meta property="og:site_name" content={contentOwner?.title} />
       <meta property="og:image" content={thumb} />
     </>
