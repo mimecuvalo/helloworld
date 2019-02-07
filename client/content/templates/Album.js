@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { contentUrl } from '../../../shared/util/url_factory';
-import { defineMessages, injectIntl } from '../../../shared/i18n';
+import { defineMessages, F, injectIntl } from '../../../shared/i18n';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import { Link } from 'react-router-dom';
@@ -51,6 +51,11 @@ class Album extends PureComponent {
 
     return (
       <ul className={styles.album}>
+        {!collection.length && (
+          <li>
+            <F msg="No content here yet." />
+          </li>
+        )}
         {collection.map(item => (
           <li key={item.name} className={styles.item}>
             <Link to={contentUrl(item)} className={styles.thumbLink} title={item.title}>

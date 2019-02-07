@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { contentUrl } from '../../../shared/util/url_factory';
+import { F } from '../../../shared/i18n';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import { Link } from 'react-router-dom';
@@ -45,6 +46,11 @@ class Archive extends PureComponent {
 
     return (
       <ul className={styles.archive}>
+        {!collection.length && (
+          <li>
+            <F msg="No content here yet." />
+          </li>
+        )}
         {collection.filter(item => item.name !== content.name).map(item => (
           <li
             key={item.name}
