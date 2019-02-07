@@ -34,20 +34,20 @@ module.exports = {
       },
       description: { type: Sequelize.STRING(191) },
       hostname: { type: Sequelize.STRING(191) },
-      license: { type: Sequelize.TEXT },
+      license: { type: Sequelize.TEXT('medium') },
       google_analytics: { type: Sequelize.STRING(191) },
-      favicon: { type: Sequelize.TEXT },
-      logo: { type: Sequelize.TEXT },
+      favicon: { type: Sequelize.TEXT('medium') },
+      logo: { type: Sequelize.TEXT('medium') },
       theme: {
         type: Sequelize.STRING(191),
         allowNull: false,
       },
       magic_key: {
-        type: Sequelize.TEXT,
+        type: Sequelize.TEXT('medium'),
         allowNull: false,
       },
       private_key: {
-        type: Sequelize.TEXT,
+        type: Sequelize.TEXT('medium'),
         allowNull: false,
       },
     });

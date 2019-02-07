@@ -23,54 +23,39 @@ module.exports = {
           type: Sequelize.STRING(191),
           allowNull: false,
         },
-        magic_key: {
-          type: Sequelize.TEXT,
-          allowNull: false,
-        },
         profile_url: {
-          type: Sequelize.TEXT,
-          allowNull: false,
-        },
-        salmon_url: {
-          type: Sequelize.TEXT,
-          allowNull: false,
-        },
-        webmention_url: {
-          type: Sequelize.TEXT,
+          type: Sequelize.TEXT('medium'),
           allowNull: false,
         },
         feed_url: {
-          type: Sequelize.TEXT,
+          type: Sequelize.TEXT('medium'),
           allowNull: false,
         },
-        hub_url: {
-          type: Sequelize.TEXT,
-          allowNull: false,
-        },
+        magic_key: { type: Sequelize.TEXT('medium') },
+        salmon_url: { type: Sequelize.TEXT('medium') },
+        webmention_url: { type: Sequelize.TEXT('medium') },
+        hub_url: { type: Sequelize.TEXT('medium') },
         follower: {
           type: Sequelize.BOOLEAN,
           allowNull: false,
+          defaultValue: false,
         },
         following: {
           type: Sequelize.BOOLEAN,
           allowNull: false,
+          defaultValue: false,
         },
         avatar: {
-          type: Sequelize.TEXT,
+          type: Sequelize.TEXT('medium'),
           allowNull: false,
         },
-        favicon: {
-          type: Sequelize.TEXT,
-          allowNull: false,
-        },
+        favicon: { type: Sequelize.TEXT('medium') },
         order: {
           type: Sequelize.INTEGER.UNSIGNED,
           allowNull: false,
+          defaultValue: 0,
         },
-        sort_type: {
-          type: Sequelize.STRING(191),
-          allowNull: false,
-        },
+        sort_type: { type: Sequelize.STRING(191) },
       })
       .then(() => {
         queryInterface.addIndex('User_Remote', { fields: ['local_username'] });

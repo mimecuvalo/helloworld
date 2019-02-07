@@ -10,7 +10,7 @@ import React, { createElement as RcE, PureComponent } from 'react';
 
 export default async (req, res, next) => {
   const apolloClient = await createApolloClient(req);
-  res.type('application/atom+xml');
+  res.type('xml');
 
   const feed = (
     <ApolloProvider client={apolloClient}>
@@ -175,7 +175,8 @@ class Entry extends PureComponent {
     const { content, req } = this.props;
     const protocolAndHost = req.protocol + '://' + req.get('host');
     const statsImg = `<img src="${protocolAndHost}/api/stats?url=${contentUrl(content)}" />`;
-    const viewWithAbsoluteUrls = content.view.replace(/(['"])\/resource/gm, `$1${protocolAndHost}/resource`);
+    const viewWithAbsoluteUrls =
+      '<![CDATA[' + content.view.replace(/(['"])\/resource/gm, `$1${protocolAndHost}/resource`) + ']]>';
     const html = viewWithAbsoluteUrls + statsImg;
 
     return (

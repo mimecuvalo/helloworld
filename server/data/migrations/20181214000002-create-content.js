@@ -33,24 +33,20 @@ module.exports = {
           type: Sequelize.STRING(191),
           allowNull: false,
         },
-        template: {
-          type: Sequelize.STRING(191),
-          allowNull: false,
-        },
-        sort_type: {
-          type: Sequelize.STRING(191),
-          allowNull: false,
-        },
+        template: { type: Sequelize.STRING(191) },
+        sort_type: { type: Sequelize.STRING(191) },
         redirect: {
           type: Sequelize.INTEGER.UNSIGNED,
           allowNull: false,
+          defaultValue: 0,
         },
         hidden: {
           type: Sequelize.BOOLEAN,
           allowNull: false,
+          defaultValue: false,
         },
         title: {
-          type: Sequelize.TEXT,
+          type: Sequelize.TEXT('medium'),
           allowNull: false,
         },
         date_created: {
@@ -62,55 +58,53 @@ module.exports = {
           allowNull: false,
         },
         thumb: {
-          type: Sequelize.TEXT,
+          type: Sequelize.TEXT('medium'),
           allowNull: false,
+          defaultValue: '',
         },
         order: {
           type: Sequelize.INTEGER.UNSIGNED,
           allowNull: false,
+          defaultValue: 0,
         },
         count: {
           type: Sequelize.INTEGER.UNSIGNED,
           allowNull: false,
+          defaultValue: 0,
         },
         count_robot: {
           type: Sequelize.INTEGER.UNSIGNED,
           allowNull: false,
+          defaultValue: 0,
         },
         comments_count: {
           type: Sequelize.INTEGER.UNSIGNED,
           allowNull: false,
+          defaultValue: 0,
         },
-        comments_updated: {
-          type: Sequelize.DATE,
-        },
+        comments_updated: { type: Sequelize.DATE },
         favorited: {
           type: Sequelize.BOOLEAN,
           allowNull: false,
+          defaultValue: false,
         },
-        thread: {
-          type: Sequelize.TEXT,
-          allowNull: false,
-        },
-        thread_user: {
-          type: Sequelize.TEXT,
-          allowNull: false,
-        },
-        avatar: {
-          type: Sequelize.TEXT,
-          allowNull: false,
-        },
+        thread: { type: Sequelize.TEXT('medium') },
+        thread_user: { type: Sequelize.TEXT('medium') },
+        avatar: { type: Sequelize.TEXT('medium') },
         style: {
           type: Sequelize.TEXT('medium'),
           allowNull: false,
+          defaultValue: '',
         },
         code: {
           type: Sequelize.TEXT('medium'),
           allowNull: false,
+          defaultValue: '',
         },
         view: {
           type: Sequelize.TEXT('medium'),
           allowNull: false,
+          defaultValue: '',
         },
       })
       .then(() => {

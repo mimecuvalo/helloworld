@@ -7,8 +7,10 @@ import cookieParser from 'cookie-parser';
 import csurf from 'csurf';
 import express from 'express';
 import path from 'path';
+import schedule from 'node-schedule';
 import session from 'express-session';
 import sessionFileStore from 'session-file-store';
+import updateFeeds from './tasks/update_feeds';
 import winston from 'winston';
 import WinstonDailyRotateFile from 'winston-daily-rotate-file';
 
@@ -60,6 +62,12 @@ export default function constructApps({ appName, urls }) {
   // Set up Apollo server.
   apolloServer && apolloServer(app);
 
+  // Background requests
+  const dispose = () => {
+    schedule.cancelJob('updateFeeds');
+  };
+  schedule.scheduleJob('updateFeeds', '0 1 * * *', updateFeeds);
+
   // Create logger for app server to log requests.
   const appLogger = createLogger();
 
@@ -72,7 +80,7 @@ export default function constructApps({ appName, urls }) {
     appServer({ req, res, next, assetPathsByType, appName, urls, publicUrl });
   });
 
-  return app;
+  return [app, dispose];
 }
 
 // Sets up winston to give us request logging on the main App server.
