@@ -64,7 +64,7 @@ async function getFreshContent() {
       });
       if (feedResponse.status !== 200) {
         updateFeedsLogger.error(
-          `${userRemote.local_username} - ${userRemote.profile_url}: fetch FAILED. ` + `status: ${feedResponse.status}`
+          `${userRemote.local_username} - ${userRemote.profile_url}: fetch FAILED. status: ${feedResponse.status}`
         );
         continue;
       }
@@ -90,11 +90,11 @@ async function getFreshContent() {
     try {
       newEntries.length && (await models.Content_Remote.bulkCreate(newEntries, { validate: true }));
       updateFeedsLogger.info(
-        `${userRemote.local_username} - ${userRemote.profile_url}: ` + `inserted ${newEntries.length} entries into db.`
+        `${userRemote.local_username} - ${userRemote.profile_url}: inserted ${newEntries.length} entries into db.`
       );
     } catch (ex) {
       updateFeedsLogger.error(
-        `${userRemote.local_username} - ${userRemote.profile_url}: ` + `db insertion failed.\n${ex.stack}`
+        `${userRemote.local_username} - ${userRemote.profile_url}: db insertion failed.\n${ex.stack}`
       );
     }
   }
