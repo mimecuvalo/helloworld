@@ -1,6 +1,6 @@
 import { absoluteUrl, contentUrl, navUrl } from '../../../shared/util/url_factory';
 import { ApolloProvider, getDataFromTree } from 'react-apollo';
-import constants from '../../constants';
+import constants from '../../../shared/constants';
 import createApolloClient from '../../data/apollo_client';
 import crypto from 'crypto';
 import gql from 'graphql-tag';

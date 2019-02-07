@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import constants from '../../shared/constants';
 import { contentUrl, navUrl } from '../../shared/util/url_factory';
 import { defineMessages, F, injectIntl } from '../../shared/i18n';
 import gql from 'graphql-tag';
@@ -24,7 +25,9 @@ const messages = defineMessages({
       }
 
       fetchPublicUserData(username: $username) {
+        license
         logo
+        name
       }
     }
   `,
@@ -119,6 +122,18 @@ class SiteMap extends PureComponent {
 
           {items}
         </ul>
+
+        {contentOwner.license ? (
+          <div className={styles.license}>
+            {contentOwner.license === 'http://purl.org/atompub/license#unspecified' ? (
+              `Copyright ${new Date().getFullYear()} by ${contentOwner.name}`
+            ) : (
+              <a href={contentOwner.license} target="_blank" rel="noopener noreferrer">
+                <img src={constants.licenses[contentOwner.license].img} alt="license" />
+              </a>
+            )}
+          </div>
+        ) : null}
       </nav>
     );
   }

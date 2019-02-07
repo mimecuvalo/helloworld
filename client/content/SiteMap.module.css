@@ -19,3 +19,9 @@
 .hidden {
   font-style: italic;
 }
+
+.license {
+  margin: 20px 0 10px 0;
+  text-align: center;
+  font-size: 10px;
+}
