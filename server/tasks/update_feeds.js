@@ -34,7 +34,7 @@ async function pruneOlderContent() {
         type: 'post',
         favorited: false,
         local_content_name: '',
-        date_created: { [Sequelize.Op.lt]: Date.now() - MAX_DAYS_OLD },
+        createdAt: { [Sequelize.Op.lt]: Date.now() - MAX_DAYS_OLD },
       },
     });
     updateFeedsLogger.info(`pruned ${rowsDeletedCount} entries.`);
@@ -151,7 +151,7 @@ async function handleEntry(feedEntry, userRemote) {
   // We ignore if we already have the item in our DB.
   // Also, we don't keep items that are over MAX_DAYS_OLD.
   if (
-    (existingModelEntry && +existingModelEntry.date_updated === +dateUpdated) ||
+    (existingModelEntry && +existingModelEntry.updatedAt === +dateUpdated) ||
     dateUpdated < new Date(Date.now() - MAX_DAYS_OLD)
   ) {
     return;
@@ -159,8 +159,8 @@ async function handleEntry(feedEntry, userRemote) {
 
   return {
     creator: feedEntry.author,
-    date_created: feedEntry.pubdate || new Date(),
-    date_updated: dateUpdated,
+    createdAt: feedEntry.pubdate || new Date(),
+    updatedAt: dateUpdated,
     from_user: userRemote.profile_url,
     link: feedEntry.link || feedEntry.permalink,
     post_id: entryId,

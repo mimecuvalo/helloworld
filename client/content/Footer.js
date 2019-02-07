@@ -18,9 +18,9 @@ class Footer extends PureComponent {
           values={{
             username: content.username,
             date: (
-              <time dateTime={content.date_created}>
+              <time dateTime={content.createdAt}>
                 <FormattedDate
-                  value={content.date_created}
+                  value={content.createdAt}
                   year="numeric"
                   month="long"
                   day="2-digit"
@@ -31,17 +31,17 @@ class Footer extends PureComponent {
             ),
           }}
         />
-        {content.date_updated &&
-          content.date_updated !== content.date_created && (
+        {content.updatedAt &&
+          content.updatedAt !== content.createdAt && (
             <>
               &nbsp;
               <F
                 msg="(updated {date})"
                 values={{
                   date: (
-                    <time dateTime={content.date_updated}>
+                    <time dateTime={content.updatedAt}>
                       <FormattedDate
-                        value={content.date_updated}
+                        value={content.updatedAt}
                         year="numeric"
                         month="long"
                         day="2-digit"

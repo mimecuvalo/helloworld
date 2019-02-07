@@ -73,7 +73,6 @@ export default (sequelize, Sequelize) => {
       },
     },
     {
-      timestamps: false,
       freezeTableName: true,
       indexes: [
         {

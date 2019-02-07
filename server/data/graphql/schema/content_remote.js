@@ -13,8 +13,8 @@ export default gql`
     title: String!
     post_id: String!
     link: String!
-    date_created: Date!
-    date_updated: Date
+    createdAt: Date!
+    updatedAt: Date
     comments_updated: Date
     comments_count: Int!
     thread: String!

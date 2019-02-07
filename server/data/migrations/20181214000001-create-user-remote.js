@@ -56,6 +56,8 @@ module.exports = {
           defaultValue: 0,
         },
         sort_type: { type: Sequelize.STRING(191) },
+        createdAt: Sequelize.DATE,
+        updatedAt: Sequelize.DATE,
       })
       .then(() => {
         queryInterface.addIndex('User_Remote', { fields: ['local_username'] });

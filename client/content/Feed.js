@@ -13,8 +13,8 @@ import React, { PureComponent } from 'react';
         comments_updated
         count
         count_robot
-        date_created
-        date_updated
+        createdAt
+        updatedAt
         hidden
         name
         order

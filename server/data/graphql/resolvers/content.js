@@ -210,7 +210,7 @@ export default {
       };
       return await models.Content.findAll({
         where: Object.assign({}, constraints, contentConstraints),
-        order: [['order'], ['date_created', 'DESC']],
+        order: [['order'], ['createdAt', 'DESC']],
         limit,
         offset,
       });
@@ -227,7 +227,7 @@ export default {
       };
       return await models.Content.findAll({
         where: contentConstraints,
-        order: [['date_created', 'DESC']],
+        order: [['createdAt', 'DESC']],
         limit: 50,
       });
     },
@@ -245,7 +245,7 @@ export default {
       const contentConstraints = { username, section: name };
       return await models.Content.findOne({
         where: Object.assign({}, constraints, contentConstraints),
-        order: [['order'], ['date_created', 'DESC']],
+        order: [['order'], ['createdAt', 'DESC']],
       });
     },
 
@@ -266,7 +266,7 @@ export default {
       const sections = await models.Content.findAll({
         attributes: ATTRIBUTES_NAVIGATION,
         where: Object.assign({}, constraints, contentConstraints),
-        order: [['order'], ['date_created']],
+        order: [['order'], ['createdAt']],
       });
 
       let siteMap = [];
@@ -280,7 +280,7 @@ export default {
         const albums = await models.Content.findAll({
           attributes: ATTRIBUTES_NAVIGATION,
           where: Object.assign({}, constraints, albumConstraints),
-          order: [['order'], ['date_created']],
+          order: [['order'], ['createdAt']],
         });
 
         siteMap.push(section);
@@ -296,10 +296,10 @@ export default {
 
 function getSQLSortType(sortType) {
   if (sortType === 'oldest') {
-    return ['date_created'];
+    return ['createdAt'];
   }
   if (sortType === 'alphabetical') {
     return ['title'];
   }
-  return ['date_created', 'DESC'];
+  return ['createdAt', 'DESC'];
 }

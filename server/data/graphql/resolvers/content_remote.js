@@ -26,7 +26,7 @@ export default {
 
       return await models.Content_Remote.findAll({
         where: constraints,
-        order: [['date_created', 'DESC']],
+        order: [['createdAt', 'DESC']],
         limit,
         offset,
       });

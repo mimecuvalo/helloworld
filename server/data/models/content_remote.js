@@ -56,11 +56,11 @@ export default (sequelize, Sequelize) => {
         type: Sequelize.TEXT('medium'),
         allowNull: false,
       },
-      date_created: {
+      createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
       },
-      date_updated: {
+      updatedAt: {
         type: Sequelize.DATE,
       },
       comments_updated: {
@@ -107,7 +107,6 @@ export default (sequelize, Sequelize) => {
       },
     },
     {
-      timestamps: false,
       freezeTableName: true,
       indexes: [
         {

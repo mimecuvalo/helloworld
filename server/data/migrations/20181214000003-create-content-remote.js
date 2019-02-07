@@ -46,13 +46,6 @@ module.exports = {
             type: Sequelize.TEXT('medium'),
             allowNull: false,
           },
-          date_created: {
-            type: Sequelize.DATE,
-            allowNull: false,
-          },
-          date_updated: {
-            type: Sequelize.DATE,
-          },
           comments_updated: {
             type: Sequelize.DATE,
           },
@@ -90,6 +83,8 @@ module.exports = {
             type: Sequelize.TEXT('medium'),
             allowNull: false,
           },
+          createdAt: Sequelize.DATE,
+          updatedAt: Sequelize.DATE,
         },
         {
           indexes: [

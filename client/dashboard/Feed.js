@@ -9,7 +9,7 @@ import React, { PureComponent } from 'react';
       avatar
       comments_count
       creator
-      date_created
+      createdAt
       deleted
       favorited
       from_user

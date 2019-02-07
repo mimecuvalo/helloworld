@@ -15,8 +15,8 @@ export default gql`
     redirect: ID!
     hidden: Boolean!
     title: String!
-    date_created: Date!
-    date_updated: Date!
+    createdAt: Date!
+    updatedAt: Date!
     thumb: String!
     order: Int!
     count: Int!

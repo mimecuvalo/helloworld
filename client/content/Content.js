@@ -22,8 +22,8 @@ import styles from './Content.module.css';
         comments_updated
         count
         count_robot
-        date_created
-        date_updated
+        createdAt
+        updatedAt
         hidden
         name
         section

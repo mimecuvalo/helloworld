@@ -49,8 +49,8 @@ class NotFoundError extends Error {
     query FeedAndUserQuery($username: String!) {
       fetchFeed(username: $username) {
         album
-        date_created
-        date_updated
+        createdAt
+        updatedAt
         name
         section
         title
@@ -133,7 +133,7 @@ class RSS extends PureComponent {
               : `${constants.licenses[contentOwner.license]['name']}: ${contentOwner.license}`}
           </rights>
         ) : null}
-        {feed.length ? <updated>{new Date(feed[0].date_updated).toISOString()}</updated> : null}
+        {feed.length ? <updated>{new Date(feed[0].updatedAt).toISOString()}</updated> : null}
         <Author contentOwner={contentOwner} profileUrl={profileUrl} />
         {contentOwner.logo ? <logo>{absoluteUrl(req, contentOwner.logo)}</logo> : null}
         <icon>{contentOwner.favicon ? absoluteUrl(req, contentOwner.favicon) : absoluteUrl(req, '/favicon.ico')}</icon>
@@ -183,12 +183,12 @@ class Entry extends PureComponent {
         <link href={contentUrl(content, req)} />
         <id>
           {`tag:${req.hostname}` +
-            `,${new Date(content.date_created).toISOString().slice(0, 10)}` +
+            `,${new Date(content.createdAt).toISOString().slice(0, 10)}` +
             `:${contentUrl(content)}`}
         </id>
         <content type="html" dangerouslySetInnerHTML={{ __html: html }} />
-        <published>{new Date(content.date_created).toISOString()}</published>
-        <updated>{new Date(content.date_updated).toISOString()}</updated>
+        <published>{new Date(content.createdAt).toISOString()}</published>
+        <updated>{new Date(content.updatedAt).toISOString()}</updated>
         {RcE('activity:verb', {}, `http://activitystrea.ms/schema/1.0/post`)}
       </entry>
     );

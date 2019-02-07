@@ -49,14 +49,6 @@ module.exports = {
           type: Sequelize.TEXT('medium'),
           allowNull: false,
         },
-        date_created: {
-          type: Sequelize.DATE,
-          allowNull: false,
-        },
-        date_updated: {
-          type: Sequelize.DATE,
-          allowNull: false,
-        },
         thumb: {
           type: Sequelize.TEXT('medium'),
           allowNull: false,
@@ -106,6 +98,8 @@ module.exports = {
           allowNull: false,
           defaultValue: '',
         },
+        createdAt: Sequelize.DATE,
+        updatedAt: Sequelize.DATE,
       })
       .then(() => {
         queryInterface.addIndex('Content', { name: 'uri', fields: ['username', 'name'] });
