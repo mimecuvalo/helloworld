@@ -96,7 +96,7 @@ class Nav extends PureComponent {
     }
 
     if (this.props.data.loading) {
-      return null;
+      return <div className={styles.loadingEmptyBox} />;
     }
 
     const { first, prev, top, next, last } = this.props.data.fetchContentNeighbors;

@@ -1,15 +1,19 @@
 import classNames from 'classnames';
+import CloseIcon from '@material-ui/icons/Close';
 import constants from '../../shared/constants';
 import { contentUrl, navUrl } from '../../shared/util/url_factory';
 import { defineMessages, F, injectIntl } from '../../shared/i18n';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
+import IconButton from '@material-ui/core/IconButton';
 import { Link } from 'react-router-dom';
-import React, { PureComponent } from 'react';
+import MenuIcon from '@material-ui/icons/Menu';
+import React, { Component } from 'react';
 import styles from './SiteMap.module.css';
 
 const messages = defineMessages({
   logo: { msg: 'logo' },
+  menu: { msg: 'Menu' },
 });
 
 @graphql(
@@ -39,7 +43,15 @@ const messages = defineMessages({
     }),
   }
 )
-class SiteMap extends PureComponent {
+class SiteMap extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      forceMenuOpen: false,
+    };
+  }
+
   generateItem(item, albums) {
     const content = this.props.content;
 
@@ -88,6 +100,10 @@ class SiteMap extends PureComponent {
     return items;
   }
 
+  handleMobileClick = () => {
+    this.setState({ forceMenuOpen: !this.state.forceMenuOpen });
+  };
+
   render() {
     if (this.props.data.loading) {
       return null;
@@ -97,44 +113,59 @@ class SiteMap extends PureComponent {
     const siteMap = this.props.data.fetchSiteMap;
     const contentOwner = this.props.data.fetchPublicUserData;
     const logoAltText = this.props.intl.formatMessage(messages.logo);
+    const menuButtonLabel = this.props.intl.formatMessage(messages.menu);
 
     const items = this.generateItems(siteMap);
 
     return (
-      <nav id="hw-sitemap" className={styles.sitemap}>
-        <ul>
-          {contentOwner.logo ? (
+      <>
+        <IconButton
+          className={classNames(styles.hamburger, 'hw-sitemap-hamburger')}
+          aria-label={menuButtonLabel}
+          onClick={this.handleMobileClick}
+        >
+          {this.state.forceMenuOpen ? <CloseIcon /> : <MenuIcon />}
+        </IconButton>
+        <nav
+          id="hw-sitemap"
+          className={classNames(styles.sitemap, {
+            'hw-sitemap-open': this.state.forceMenuOpen,
+          })}
+        >
+          <ul>
+            {contentOwner.logo ? (
+              <li>
+                <a id="hw-sitemap-logo" href={navUrl(content.username)}>
+                  <img src={contentOwner.logo} title={contentOwner.title} alt={logoAltText} />
+                </a>
+              </li>
+            ) : null}
             <li>
-              <a id="hw-sitemap-logo" href={navUrl(content.username)}>
-                <img src={contentOwner.logo} title={contentOwner.title} alt={logoAltText} />
+              <a
+                id="hw-sitemap-home"
+                href={navUrl(content.username)}
+                className={classNames({ 'hw-selected': content.name === 'home' })}
+              >
+                <F msg="home" />
               </a>
             </li>
+
+            {items}
+          </ul>
+
+          {contentOwner.license ? (
+            <div className={styles.license}>
+              {contentOwner.license === 'http://purl.org/atompub/license#unspecified' ? (
+                `Copyright ${new Date().getFullYear()} by ${contentOwner.name}`
+              ) : (
+                <a href={contentOwner.license} target="_blank" rel="noopener noreferrer">
+                  <img src={constants.licenses[contentOwner.license].img} alt="license" />
+                </a>
+              )}
+            </div>
           ) : null}
-          <li>
-            <a
-              id="hw-sitemap-home"
-              href={navUrl(content.username)}
-              className={classNames({ 'hw-selected': content.name === 'home' })}
-            >
-              <F msg="home" />
-            </a>
-          </li>
-
-          {items}
-        </ul>
-
-        {contentOwner.license ? (
-          <div className={styles.license}>
-            {contentOwner.license === 'http://purl.org/atompub/license#unspecified' ? (
-              `Copyright ${new Date().getFullYear()} by ${contentOwner.name}`
-            ) : (
-              <a href={contentOwner.license} target="_blank" rel="noopener noreferrer">
-                <img src={constants.licenses[contentOwner.license].img} alt="license" />
-              </a>
-            )}
-          </div>
-        ) : null}
-      </nav>
+        </nav>
+      </>
     );
   }
 }

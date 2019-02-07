@@ -3,3 +3,7 @@
   padding: 4px 0;
   white-space: nowrap;
 }
+
+.loadingEmptyBox {
+  height: 32px;
+}

@@ -135,3 +135,71 @@ a.hw-button[href]:hover {
   color: #90f;
   box-shadow: 1px 1px #90f, 2px 2px #90f, 3px 3px #90f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
 }
+
+@media only screen and (max-width: 600px) {
+  #hw-sitemap,
+  .App > header,
+  .App > footer,
+  .App-main footer {
+    display: none;
+  }
+
+  html .hw-sitemap-hamburger {
+    display: block !important;
+    position: absolute;
+    top: -4px;
+    left: -6px;
+  }
+
+  #hw-sitemap.hw-sitemap-open {
+    display: block;
+    position: fixed;
+    top: 32px;
+    bottom: 0;
+    z-index: 1;
+    overflow: scroll;
+    background: #fff;
+  }
+
+  #hw-content article > nav {
+    text-align: right;
+  }
+  #hw-content article > nav,
+  #hw-content article > nav > .hw-button {
+    float: none;
+  }
+
+  .hw-item > header {
+    width: auto;
+    max-width: cacl(100vw - 20px);
+  }
+
+  .hw-item {
+    width: auto;
+  }
+
+  .hw-item figure img {
+    max-width: calc(100vw - 20px);
+  }
+
+  .hw-button.hw-selected,
+  .hw-button:active,
+  .hw-button[disabled] {
+    margin-top: 0;
+  }
+}
+
+@media print {
+  #hw-sitemap,
+  .App > header,
+  .App > footer,
+  .App-main footer,
+  html .hw-sitemap-hamburger,
+  #hw-content article > nav {
+    display: none;
+  }
+
+  html figure {
+    text-align: left;
+  }
+}
