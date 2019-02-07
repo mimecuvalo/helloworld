@@ -41,7 +41,7 @@ export default {
       }
 
       // Inherit style, code, template from section.
-      if (content?.section !== 'main') {
+      if (content && content?.section !== 'main') {
         const sectionContent = await models.Content.findOne({
           where: { username, section: 'main', name: content.section },
         });
