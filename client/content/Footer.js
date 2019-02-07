@@ -2,10 +2,14 @@ import { contentUrl } from '../../shared/util/url_factory';
 import { F, FormattedDate } from '../../shared/i18n';
 import React, { PureComponent } from 'react';
 import styles from './Footer.module.css';
+import UserContext from '../app/User_Context';
 
 class Footer extends PureComponent {
+  static contextType = UserContext;
+
   render() {
     const content = this.props.content;
+    const isOwnerViewing = this.context.user?.model?.username === content.username;
 
     return (
       <footer className={styles.footer}>
@@ -68,6 +72,7 @@ class Footer extends PureComponent {
           msg="{count, plural, =0 {no robot views} one {# robot view} other {# robot views}}"
           values={{ count: content.count_robot }}
         />
+        {!isOwnerViewing && <img src={`/api/stats?url=${contentUrl(content)}`} alt="" />}
         {/* <CommentEntry /> TODO(mime) */}
         {/* <Comments /> TODO(mime) */}
       </footer>
