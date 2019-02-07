@@ -135,6 +135,7 @@ export default {
       }
 
       let collection = [];
+      // Check first to see if this is an album and grab items within it.
       if (section !== 'main') {
         const contentConstraints = { username, section, album: name };
         collection = await models.Content.findAll({
@@ -144,6 +145,7 @@ export default {
         });
       }
 
+      // If we couldn't find an album then, look for the section instead and find the albums within it.
       if (!collection.length) {
         const contentConstraints = { username, section: name, album: 'main' };
         collection = await models.Content.findAll({
@@ -165,7 +167,7 @@ export default {
           }
         }
 
-        // Then, it combines with top-level items (not in an album)
+        // Then, it combines with top-level items in the section (not in an album).
         const topLevelContentConstraints = { username, section: name, album: '' };
         const topLevelItems = await models.Content.findAll({
           attributes: ATTRIBUTES_NAVIGATION,
@@ -175,6 +177,7 @@ export default {
         collection = collection.concat(topLevelItems);
       }
 
+      // This is if the top-level user page is an album. (I'm pretty sure at least :-/)
       if (!collection.length && section !== 'main') {
         const contentConstraints = { username, section };
         collection = await models.Content.findAll({
