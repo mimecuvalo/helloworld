@@ -2,7 +2,18 @@ import { combineResolvers } from 'graphql-resolvers';
 import { isAdmin } from './authorization';
 import Sequelize from 'sequelize';
 
-const ATTRIBUTES_NAVIGATION = ['username', 'section', 'album', 'name', 'title', 'thumb', 'hidden', 'template'];
+const ATTRIBUTES_NAVIGATION = [
+  'username',
+  'section',
+  'album',
+  'name',
+  'title',
+  'thumb',
+  'hidden',
+  'template',
+  'style',
+  'code',
+];
 
 export default {
   Query: {
@@ -63,7 +74,7 @@ export default {
         content.template = parentContent.template;
       }
 
-      return content;
+      return decorateWithRefreshFlag(content);
     },
 
     async fetchContentNeighbors(parent, { username, section, album, name }, { currentUser, models }) {
@@ -111,11 +122,11 @@ export default {
       });
 
       return {
-        first: collection[collection.length - 1],
-        prev: collection[contentIndex + 1],
-        top: collectionItem,
-        next: collection[contentIndex - 1],
-        last: collection[0],
+        first: decorateWithRefreshFlag(collection[collection.length - 1]),
+        prev: decorateWithRefreshFlag(collection[contentIndex + 1]),
+        top: decorateWithRefreshFlag(collectionItem),
+        next: decorateWithRefreshFlag(collection[contentIndex - 1]),
+        last: decorateWithRefreshFlag(collection[0]),
       };
     },
 
@@ -187,7 +198,7 @@ export default {
         });
       }
 
-      return collection;
+      return decorateArrayWithNavFlag(collection);
     },
 
     async fetchCollectionPaginated(parent, { username, section, name }, { currentUser, models }) {
@@ -289,7 +300,7 @@ export default {
         }
       }
 
-      return siteMap;
+      return decorateArrayWithNavFlag(siteMap);
     },
   },
 };
@@ -302,4 +313,21 @@ function getSQLSortType(sortType) {
     return ['title'];
   }
   return ['createdAt', 'DESC'];
+}
+
+function decorateArrayWithNavFlag(list) {
+  for (const item of list) {
+    decorateWithRefreshFlag(item);
+  }
+
+  return list;
+}
+
+function decorateWithRefreshFlag(item) {
+  if (!item) {
+    return null;
+  }
+
+  item.forceRefresh = !!(item.style || item.code);
+  return item;
 }

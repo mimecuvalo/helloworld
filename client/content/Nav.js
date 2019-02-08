@@ -6,44 +6,34 @@ import { Link } from 'react-router-dom';
 import React, { PureComponent } from 'react';
 import styles from './Nav.module.css';
 
+const NAV_FIELDS = `
+  album
+  forceRefresh
+  hidden
+  name
+  section
+  title
+  username
+`;
+
 @graphql(
   gql`
     query($username: String!, $section: String!, $album: String!, $name: String!) {
       fetchContentNeighbors(username: $username, section: $section, album: $album, name: $name) {
         first {
-          username
-          section
-          album
-          name
-          title
+          ${NAV_FIELDS}
         }
         last {
-          username
-          section
-          album
-          name
-          title
+          ${NAV_FIELDS}
         }
         next {
-          username
-          section
-          album
-          name
-          title
+          ${NAV_FIELDS}
         }
         prev {
-          username
-          section
-          album
-          name
-          title
+          ${NAV_FIELDS}
         }
         top {
-          username
-          section
-          album
-          name
-          title
+          ${NAV_FIELDS}
           template
         }
       }
@@ -65,24 +55,30 @@ class Nav extends PureComponent {
     return !nextProps.data.loading;
   }
 
-  renderLink(content, name, msg) {
-    content = content || {};
+  renderLink(contentMeta, name, msg) {
+    contentMeta = contentMeta || {};
 
     const url = contentUrl(
-      content,
+      contentMeta,
       undefined /* host */,
-      content.template === 'latest' ? { mode: 'archive' } : undefined
+      contentMeta.template === 'latest' ? { mode: 'archive' } : undefined
     );
     if (!url) {
       return (
-        <a href={url} rel={name} className={`hw-${name} hw-button`} title={content.title}>
+        <a href={url} rel={name} className={`hw-${name} hw-button`} title={contentMeta.title}>
           {msg}
         </a>
       );
     }
 
     return (
-      <Link to={url} rel={name} className={`hw-${name} hw-button`} title={content.title}>
+      <Link
+        to={url}
+        rel={name}
+        className={`hw-${name} hw-button`}
+        title={contentMeta.title}
+        target={contentMeta.forceRefresh || this.props.content.forceRefresh ? '_self' : ''}
+      >
         {msg}
       </Link>
     );

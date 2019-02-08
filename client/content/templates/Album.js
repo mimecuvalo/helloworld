@@ -17,6 +17,7 @@ const messages = defineMessages({
     query($username: String!, $section: String!, $album: String!, $name: String!) {
       fetchCollection(username: $username, section: $section, album: $album, name: $name) {
         album
+        forceRefresh
         hidden
         name
         section
@@ -58,7 +59,12 @@ class Album extends PureComponent {
         )}
         {collection.map(item => (
           <li key={item.name} className={styles.item}>
-            <Link to={contentUrl(item)} className={styles.thumbLink} title={item.title}>
+            <Link
+              to={contentUrl(item)}
+              className={styles.thumbLink}
+              title={item.title}
+              target={item.forceRefresh ? '_self' : ''}
+            >
               <DelayLoadedThumb item={item} />
             </Link>
             <Link
@@ -67,6 +73,7 @@ class Album extends PureComponent {
               className={classNames('hw-album-title', styles.title, styles.link, {
                 [styles.hidden]: isOwnerViewing && item.hidden,
               })}
+              target={item.forceRefresh ? '_self' : ''}
             >
               {item.title}
             </Link>

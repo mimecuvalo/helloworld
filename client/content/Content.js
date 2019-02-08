@@ -23,7 +23,7 @@ import styles from './Content.module.css';
         count
         count_robot
         createdAt
-        updatedAt
+        forceRefresh
         hidden
         name
         section
@@ -31,6 +31,7 @@ import styles from './Content.module.css';
         template
         thumb
         title
+        updatedAt
         username
         view
       }

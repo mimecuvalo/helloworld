@@ -29,6 +29,7 @@ export default gql`
     style: String!
     code: String!
     view: String!
+    forceRefresh: Boolean # If content contains style/code we can't do ajax navigation.
   }
 
   type ContentMetaInfo {
@@ -40,6 +41,7 @@ export default gql`
     thumb: String!
     hidden: Boolean!
     template: String!
+    forceRefresh: Boolean! # If content contains style/code we can't do ajax navigation.
   }
 
   type Neighbors {

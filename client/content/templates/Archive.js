@@ -13,6 +13,7 @@ import UserContext from '../../app/User_Context';
     query($username: String!, $section: String!, $album: String!, $name: String!) {
       fetchCollection(username: $username, section: $section, album: $album, name: $name) {
         album
+        forceRefresh
         hidden
         name
         section
@@ -58,7 +59,7 @@ class Archive extends PureComponent {
               [styles.hidden]: isOwnerViewing && item.hidden,
             })}
           >
-            <Link to={contentUrl(item)} title={item.title}>
+            <Link to={contentUrl(item)} title={item.title} target={item.forceRefresh ? '_self' : ''}>
               {item.title}
             </Link>
           </li>

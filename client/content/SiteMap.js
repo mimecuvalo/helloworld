@@ -21,6 +21,7 @@ const messages = defineMessages({
     query SiteMapAndUserQuery($username: String!) {
       fetchSiteMap(username: $username) {
         album
+        forceRefresh
         hidden
         name
         section
@@ -65,6 +66,7 @@ class SiteMap extends Component {
             [styles.selected]: isSelected,
             [styles.hidden]: item.hidden,
           })}
+          target={item.forceRefresh || content.forceRefresh ? '_self' : ''}
         >
           {item.title}
         </Link>
