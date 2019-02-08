@@ -5,7 +5,6 @@ export default gql`
   scalar Date
 
   type Content {
-    id: ID!
     username: String!
     section: String!
     album: String!

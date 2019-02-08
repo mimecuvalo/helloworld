@@ -2,8 +2,7 @@ import { gql } from 'apollo-server-express';
 
 // Keep in sync with both models/content_remote.js and migrations/[date]-create-content-remote.js
 export default gql`
-  type Content_Remote {
-    id: ID!
+  type ContentRemote {
     to_username: String!
     local_content_name: String!
     from_user: String!
@@ -27,8 +26,8 @@ export default gql`
   }
 
   extend type Query {
-    allContentRemote: [Content_Remote]
-    fetchContentRemote(id: Int!): Content_Remote
-    fetchContentRemotePaginated: [Content_Remote]
+    allContentRemote: [ContentRemote]
+    fetchContentRemote(id: Int!): ContentRemote
+    fetchContentRemotePaginated: [ContentRemote]
   }
 `;
