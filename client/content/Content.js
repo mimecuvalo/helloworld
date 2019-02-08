@@ -1,3 +1,4 @@
+import { absoluteClientsideUrl, contentUrl } from '../../shared/util/url_factory';
 import classNames from 'classnames';
 import DocumentTitle from 'react-document-title';
 import { F } from '../../shared/i18n';
@@ -7,10 +8,11 @@ import { graphql } from 'react-apollo';
 import Item from './Item';
 import Nav from './Nav';
 import NotFound from '../error/404';
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import Simple from './templates/Simple';
 import SiteMap from './SiteMap';
 import styles from './Content.module.css';
+import { withRouter } from 'react-router-dom';
 
 @graphql(
   gql`
@@ -55,7 +57,21 @@ import styles from './Content.module.css';
     }),
   }
 )
-class Content extends PureComponent {
+class Content extends Component {
+  componentDidMount() {
+    if (this.props.data.loading) {
+      return;
+    }
+
+    const canonicalUrl = contentUrl(this.props.data.fetchContent);
+    const absoluteCanonicalUrl = absoluteClientsideUrl(canonicalUrl);
+    const parsedCanonicalUrl = new URL(absoluteCanonicalUrl);
+    const currentWindowUrl = new URL(window.location.href);
+    if (currentWindowUrl.pathname !== parsedCanonicalUrl.pathname) {
+      this.props.history.replace(canonicalUrl);
+    }
+  }
+
   shouldComponentUpdate(nextProps) {
     return !nextProps.data.loading;
   }
@@ -119,4 +135,4 @@ class Content extends PureComponent {
   }
 }
 
-export default Content;
+export default withRouter(Content);

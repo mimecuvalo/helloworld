@@ -50,7 +50,7 @@ export function absoluteUrl(req, url) {
   return `${req.protocol}://${req.get('host')}${url}`;
 }
 
-export function absoluteClientsideUrl(window, url) {
+export function absoluteClientsideUrl(url) {
   return `${window.location.protocol}//${window.location.host}${url}`;
 }
 
