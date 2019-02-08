@@ -55,6 +55,10 @@ import styles from './Content.module.css';
   }
 )
 class Content extends PureComponent {
+  shouldComponentUpdate(nextProps) {
+    return !nextProps.data.loading;
+  }
+
   render() {
     if (this.props.data.loading) {
       return null;

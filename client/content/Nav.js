@@ -61,6 +61,10 @@ import styles from './Nav.module.css';
   }
 )
 class Nav extends PureComponent {
+  shouldComponentUpdate(nextProps) {
+    return !nextProps.data.loading;
+  }
+
   renderLink(content, name, msg) {
     content = content || {};
 
