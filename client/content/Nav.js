@@ -51,6 +51,38 @@ const NAV_FIELDS = `
   }
 )
 class Nav extends Component {
+  constructor(props) {
+    super(props);
+
+    this.next = React.createRef();
+    this.prev = React.createRef();
+    this.top = React.createRef();
+    this.first = React.createRef();
+    this.last = React.createRef();
+  }
+
+  componentDidMount() {
+    window.addEventListener('keyup', this.handleKeyUp.bind(this));
+  }
+
+  handleKeyUp = evt => {
+    switch (evt.code) {
+      case 'ArrowUp':
+        this.top.current.click();
+        break;
+      case 'ArrowLeft':
+        this.next.current.click();
+        break;
+      case 'ArrowRight':
+        this.prev.current.click();
+        break;
+    }
+  };
+
+  componentWillUnmount() {
+    window.removeEventListener('keyup', this.handleKeyUp);
+  }
+
   shouldComponentUpdate(nextProps) {
     return !nextProps.data.loading;
   }
@@ -65,7 +97,7 @@ class Nav extends Component {
     );
     if (!url) {
       return (
-        <a href={url} rel={name} className={`hw-${name} hw-button`} title={contentMeta.title}>
+        <a href={url} rel={name} ref={this[name]} className={`hw-${name} hw-button`} title={contentMeta.title}>
           {msg}
         </a>
       );
@@ -75,6 +107,7 @@ class Nav extends Component {
       <Link
         to={url}
         rel={name}
+        innerRef={this[name]}
         className={`hw-${name} hw-button`}
         title={contentMeta.title}
         target={contentMeta.forceRefresh || this.props.content.forceRefresh ? '_self' : ''}

@@ -7,6 +7,11 @@ import UserContext from '../app/User_Context';
 class Footer extends PureComponent {
   static contextType = UserContext;
 
+  handleFullscreen = evt => {
+    evt.preventDefault();
+    document.getElementById('hw-content').requestFullscreen();
+  };
+
   render() {
     const content = this.props.content;
     const isOwnerViewing = this.context.user?.model?.username === content.username;

@@ -193,6 +193,27 @@ a.hw-button[href]:hover {
   }
 }
 
+#hw-content:fullscreen #hw-sitemap,
+#hw-content:fullscreen > header,
+#hw-content:fullscreen > footer,
+#hw-content:fullscreen .hw-item footer,
+#hw-content:fullscreen article > nav {
+  display: none;
+}
+
+#hw-content:fullscreen {
+  background-color: black;
+  text-align: center;
+}
+
+#hw-content:fullscreen .hw-item {
+  width: 100vw;
+}
+
+#hw-content:fullscreen .hw-item header {
+  display: inline-block;
+}
+
 @media print {
   #hw-sitemap,
   .App > header,
