@@ -80,6 +80,7 @@ class HTMLHead extends PureComponent {
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
         <link rel="search" href="/api/opensearch" type="application/opensearchdescription+xml" title={title} />
+        <link rel="canonical" href={content && contentUrl(content)} />
         {rss}
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="theme-color" content="#000000" />
