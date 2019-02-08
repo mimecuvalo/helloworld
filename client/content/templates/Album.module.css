@@ -1,9 +1,6 @@
-:root {
+.album {
   --thumb-width: 154px;
   --thumb-height: 115px;
-}
-
-.album {
   list-style: none;
 }
 
