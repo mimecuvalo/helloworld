@@ -1,9 +1,9 @@
 import { absoluteClientsideUrl, contentUrl } from '../../shared/util/url_factory';
 import classNames from 'classnames';
+import ContentQuery from './ContentQuery';
 import DocumentTitle from 'react-document-title';
 import { F } from '../../shared/i18n';
 import Feed from './Feed';
-import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import Item from './Item';
 import Nav from './Nav';
@@ -14,49 +14,18 @@ import SiteMap from './SiteMap';
 import styles from './Content.module.css';
 import { withRouter } from 'react-router-dom';
 
-@graphql(
-  gql`
-    query ContentAndUserQuery($username: String!, $name: String!) {
-      fetchContent(username: $username, name: $name) {
-        album
-        code
-        comments_count
-        comments_updated
-        count
-        count_robot
-        createdAt
-        forceRefresh
-        hidden
-        name
-        section
-        style
-        template
-        thumb
-        title
-        updatedAt
-        username
-        view
-      }
-
-      fetchPublicUserData(username: $username) {
-        description
-        title
-      }
-    }
-  `,
-  {
-    options: ({
-      match: {
-        params: { username, name },
-      },
-    }) => ({
-      variables: {
-        username: username || '',
-        name: username ? name || 'home' : '',
-      },
-    }),
-  }
-)
+@graphql(ContentQuery, {
+  options: ({
+    match: {
+      params: { username, name },
+    },
+  }) => ({
+    variables: {
+      username: username || '',
+      name: username ? name || 'home' : '',
+    },
+  }),
+})
 class Content extends Component {
   componentDidMount() {
     if (this.props.data.loading) {

@@ -1,3 +1,5 @@
+import { ApolloConsumer } from 'react-apollo';
+import ContentQuery from './ContentQuery';
 import { contentUrl } from '../../shared/util/url_factory';
 import { F } from '../../shared/i18n';
 import gql from 'graphql-tag';
@@ -28,9 +30,11 @@ const NAV_FIELDS = `
         }
         next {
           ${NAV_FIELDS}
+          prefetchImages
         }
         prev {
           ${NAV_FIELDS}
+          prefetchImages
         }
         top {
           ${NAV_FIELDS}
@@ -54,11 +58,11 @@ class Nav extends Component {
   constructor(props) {
     super(props);
 
-    this.next = React.createRef();
-    this.prev = React.createRef();
-    this.top = React.createRef();
-    this.first = React.createRef();
     this.last = React.createRef();
+    this.next = React.createRef();
+    this.top = React.createRef();
+    this.prev = React.createRef();
+    this.first = React.createRef();
   }
 
   componentDidMount() {
@@ -75,6 +79,8 @@ class Nav extends Component {
         break;
       case 'ArrowRight':
         this.prev.current.click();
+        break;
+      default:
         break;
     }
   };
@@ -101,6 +107,20 @@ class Nav extends Component {
           {msg}
         </a>
       );
+    }
+
+    // Preload surrounding content. We preload the GraphQL data here. Then, we also preload the images.
+    if (['prev', 'next'].indexOf(name) !== -1) {
+      this.props.client.query({
+        query: ContentQuery,
+        variables: { username: contentMeta.username, name: contentMeta.name },
+      });
+
+      if (typeof window !== 'undefined') {
+        for (const img of contentMeta.prefetchImages) {
+          new Image().src = img;
+        }
+      }
     }
 
     return (
@@ -145,4 +165,6 @@ class Nav extends Component {
   }
 }
 
-export default Nav;
+const NavWithApolloClient = props => <ApolloConsumer>{client => <Nav client={client} {...props} />}</ApolloConsumer>;
+
+export default NavWithApolloClient;

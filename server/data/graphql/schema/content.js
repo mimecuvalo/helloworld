@@ -42,6 +42,7 @@ export default gql`
     hidden: Boolean!
     template: String!
     forceRefresh: Boolean! # If content contains style/code we can't do ajax navigation.
+    prefetchImages: [String!] # Images to download on client to make loading faster.
   }
 
   type Neighbors {

@@ -78,6 +78,8 @@ export default {
     },
 
     async fetchContentNeighbors(parent, { username, section, album, name }, { currentUser, models }) {
+      const ATTRIBUTES_NAVIGATION_WITH_VIEW = ATTRIBUTES_NAVIGATION.concat(['view']);
+
       if (!username) {
         username = (await models.User.findOne({ attributes: ['username'], where: { id: 1 } })).username;
       }
@@ -103,7 +105,7 @@ export default {
         album,
       };
       const collection = await models.Content.findAll({
-        attributes: ATTRIBUTES_NAVIGATION,
+        attributes: ATTRIBUTES_NAVIGATION_WITH_VIEW,
         where: Object.assign({}, constraints, collectionConstraints),
         order,
       });
@@ -117,15 +119,15 @@ export default {
         name: album ? album : section,
       };
       const collectionItem = await models.Content.findOne({
-        attributes: ATTRIBUTES_NAVIGATION,
+        attributes: ATTRIBUTES_NAVIGATION_WITH_VIEW,
         where: collectionItemConstraints,
       });
 
       return {
         first: decorateWithRefreshFlag(collection[collection.length - 1]),
-        prev: decorateWithRefreshFlag(collection[contentIndex + 1]),
+        prev: decoratePrefetchImages(decorateWithRefreshFlag(collection[contentIndex + 1])),
         top: decorateWithRefreshFlag(collectionItem),
-        next: decorateWithRefreshFlag(collection[contentIndex - 1]),
+        next: decoratePrefetchImages(decorateWithRefreshFlag(collection[contentIndex - 1])),
         last: decorateWithRefreshFlag(collection[0]),
       };
     },
@@ -324,10 +326,17 @@ function decorateArrayWithNavFlag(list) {
 }
 
 function decorateWithRefreshFlag(item) {
-  if (!item) {
-    return null;
+  if (item) {
+    item.forceRefresh = !!(item.style || item.code);
   }
 
-  item.forceRefresh = !!(item.style || item.code);
+  return item;
+}
+
+function decoratePrefetchImages(item) {
+  if (item) {
+    item.prefetchImages = (item.view.match(/src=['"][^'"]+['"]/g) || []).map(i => i.slice(5, -1));
+  }
+
   return item;
 }
