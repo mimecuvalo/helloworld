@@ -1,5 +1,5 @@
 .sitemap {
-  margin: 6px;
+  margin: var(--app-margin);
   width: 155px;
   padding: 6px;
 }

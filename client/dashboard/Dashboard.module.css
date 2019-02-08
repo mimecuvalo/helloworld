@@ -13,7 +13,7 @@
   top: 0;
   width: 235px;
   height: 100vh;
-  padding: 6px;
+  padding: var(--app-margin);
   overflow: scroll;
 }
 

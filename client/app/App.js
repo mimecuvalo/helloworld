@@ -9,6 +9,7 @@ import Footer from './Footer';
 import Header from './Header';
 import { Route, Switch } from 'react-router-dom';
 import React, { Component } from 'react';
+import styles from './constants.module.css';
 import UserContext from './User_Context';
 
 // This is the main entry point on the client-side.
@@ -65,7 +66,10 @@ export default class App extends Component {
     return (
       <UserContext.Provider value={this.state.userContext}>
         <ErrorBoundary>
-          <div className={classNames('App', { 'App-logged-in': this.props.user })} style={devOnlyHiddenOnLoadStyle}>
+          <div
+            className={classNames('App', styles.app, { 'App-logged-in': this.props.user })}
+            style={devOnlyHiddenOnLoadStyle}
+          >
             <CssBaseline />
             <Header />
             <main className="App-main">

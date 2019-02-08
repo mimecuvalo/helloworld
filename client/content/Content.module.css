@@ -10,7 +10,7 @@
 }
 
 .content {
-  margin: 6px;
+  margin: var(--app-margin);
   padding: 0 3px 10px 3px;
 }
 
