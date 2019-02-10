@@ -1,7 +1,7 @@
 import classNames from 'classnames';
-import { defineMessages, injectIntl } from '../../../shared/i18n';
+import { defineMessages, injectIntl } from '../../shared/i18n';
 import React, { Component } from 'react';
-import styles from './Album.module.css';
+import styles from './Thumb.module.css';
 
 const messages = defineMessages({
   thumbnail: { msg: 'thumbnail' },

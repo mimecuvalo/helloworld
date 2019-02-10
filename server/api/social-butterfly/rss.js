@@ -1,6 +1,6 @@
-import { absoluteUrl, contentUrl, navUrl } from '../../../shared/util/url_factory';
 import { ApolloProvider, getDataFromTree } from 'react-apollo';
 import constants from '../../../shared/constants';
+import { buildUrl, contentUrl, profileUrl } from '../../../shared/util/url_factory';
 import createApolloClient from '../../data/apollo_client';
 import crypto from 'crypto';
 import gql from 'graphql-tag';
@@ -93,8 +93,8 @@ class RSS extends PureComponent {
     const username = req.query.username;
     const feed = this.props.data.fetchFeed;
 
-    const feedUrl = absoluteUrl(req, req.originalUrl);
-    const profileUrl = navUrl(username, req);
+    const feedUrl = buildUrl({ req, pathname: req.originalUrl });
+    const profile = profileUrl(username, req);
 
     const md5 = crypto.createHash('md5');
     const supId = md5
@@ -118,7 +118,7 @@ class RSS extends PureComponent {
         <title>{contentOwner.title}</title>
         <subtitle>a hello world site.</subtitle>
         <link rel="self" href={feedUrl} />
-        <link rel="alternate" type="text/html" href={profileUrl} />
+        <link rel="alternate" type="text/html" href={profile} />
         <link rel="hub" href={constants.pushHub} />
         <link
           rel="http://api.friendfeed.com/2008/03#sup"
@@ -134,9 +134,13 @@ class RSS extends PureComponent {
           </rights>
         ) : null}
         {feed.length ? <updated>{new Date(feed[0].updatedAt).toISOString()}</updated> : null}
-        <Author contentOwner={contentOwner} profileUrl={profileUrl} />
-        {contentOwner.logo ? <logo>{absoluteUrl(req, contentOwner.logo)}</logo> : null}
-        <icon>{contentOwner.favicon ? absoluteUrl(req, contentOwner.favicon) : absoluteUrl(req, '/favicon.ico')}</icon>
+        <Author contentOwner={contentOwner} profile={profile} />
+        {contentOwner.logo ? <logo>{buildUrl({ req, pathname: contentOwner.logo })}</logo> : null}
+        <icon>
+          {contentOwner.favicon
+            ? buildUrl({ req, pathname: contentOwner.favicon })
+            : buildUrl({ req, pathname: '/favicon.ico' })}
+        </icon>
 
         {feed.map(content => (
           <Entry key={content.name} content={content} req={req} />
@@ -146,11 +150,11 @@ class RSS extends PureComponent {
   }
 }
 
-const Author = ({ contentOwner, profileUrl }) => (
+const Author = ({ contentOwner, profile }) => (
   <author>
     {RcE('activity:object-type', {}, `http://activitystrea.ms/schema/1.0/person`)}
     <name>{contentOwner.name}</name>
-    <uri>{profileUrl}</uri>
+    <uri>{profile}</uri>
     <email>{contentOwner.email}</email>
     {RcE('poco:preferredusername', {}, contentOwner.username)}
     {RcE('poco:displayname', {}, contentOwner.name)}
@@ -160,7 +164,7 @@ const Author = ({ contentOwner, profileUrl }) => (
       RcE('poco:primary', { key: 'primary' }, 'true'),
     ])}
     {RcE('poco:urls', {}, [
-      RcE('poco:value', { key: 'value' }, profileUrl),
+      RcE('poco:value', { key: 'value' }, profile),
       RcE('poco:type', { key: 'type' }, 'profile'),
       RcE('poco:primary', { key: 'primary' }, 'true'),
     ])}
@@ -170,9 +174,9 @@ const Author = ({ contentOwner, profileUrl }) => (
 class Entry extends PureComponent {
   render() {
     const { content, req } = this.props;
-    const statsImgSrc = absoluteUrl(req, `/api/stats?url=${contentUrl(content)}`);
+    const statsImgSrc = buildUrl({ req, pathname: '/api/stats', searchParams: { url: contentUrl(content) } });
     const statsImg = `<img src="${statsImgSrc}" />`;
-    const absoluteUrlReplacement = absoluteUrl(req, '/resource');
+    const absoluteUrlReplacement = buildUrl({ req, pathname: '/resource' });
     const viewWithAbsoluteUrls =
       '<![CDATA[' + content.view.replace(/(['"])\/resource/gm, `$1${absoluteUrlReplacement}`) + ']]>';
     const html = viewWithAbsoluteUrls + statsImg;

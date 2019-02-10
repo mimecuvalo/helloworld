@@ -1,5 +1,5 @@
 import { F } from '../../shared/i18n';
-import { navUrl } from '../../shared/util/url_factory';
+import { profileUrl } from '../../shared/util/url_factory';
 import React, { PureComponent } from 'react';
 import UserContext from '../app/User_Context';
 
@@ -12,7 +12,7 @@ class Tools extends PureComponent {
     return (
       <ul className={this.props.className}>
         <li>
-          <a href={navUrl(username)} target="_blank" rel="noopener noreferrer">
+          <a href={profileUrl(username)} target="_blank" rel="noopener noreferrer">
             <F msg="view site" />
           </a>
         </li>

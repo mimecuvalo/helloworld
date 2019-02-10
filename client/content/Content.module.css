@@ -4,6 +4,10 @@
   flex-direction: column;
 }
 
+.container > header {
+  display: none;
+}
+
 .articleNavContainer {
   display: flex;
   align-items: flex-start;

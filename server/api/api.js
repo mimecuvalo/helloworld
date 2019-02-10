@@ -8,7 +8,7 @@ import socialButterfly from './social-butterfly';
 /**
  * Main routing entry point for all of our API server.
  */
-export default function apiServerFactory({ appName, urls }) {
+export default function apiServerFactory({ appName }) {
   const router = express.Router();
   router.use('/auth', authRouter);
   router.use('/client-health-check', clientHealthCheckRouter);
@@ -16,7 +16,7 @@ export default function apiServerFactory({ appName, urls }) {
     // Just an example of the checkIsLoggedIn (very simplistic) capability.
     res.send('OK');
   });
-  router.use('/opensearch', openSearchRouterFactory({ appName, urls }));
+  router.use('/opensearch', openSearchRouterFactory({ appName }));
   router.use('/report-error', errorRouter);
   router.use('/social', socialButterfly);
   router.get('/', (req, res) => {

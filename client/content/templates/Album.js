@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { contentUrl } from '../../../shared/util/url_factory';
-import DelayLoadedThumb from './Thumb';
+import DelayLoadedThumb from '../../components/Thumb';
 import { F } from '../../../shared/i18n';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';

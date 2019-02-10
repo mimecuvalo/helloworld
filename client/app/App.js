@@ -9,6 +9,7 @@ import Footer from './Footer';
 import Header from './Header';
 import { Route, Switch } from 'react-router-dom';
 import React, { Component } from 'react';
+import Search from '../content/Search';
 import styles from './constants.module.css';
 import UserContext from './User_Context';
 
@@ -75,6 +76,7 @@ export default class App extends Component {
             <main className="App-main">
               <Switch>
                 <Route path={`/dashboard`} component={this.renderDashboard} />
+                <Route path={`/:username/search/:query`} component={Search} />
                 <Route path={`/:username/:section/:album/:name`} component={Content} />
                 <Route path={`/:username/:section/:name`} component={Content} />
                 <Route path={`/:username/:name`} component={Content} />

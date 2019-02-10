@@ -98,7 +98,7 @@ class Nav extends Component {
 
     const url = contentUrl(
       contentMeta,
-      undefined /* host */,
+      false /* isAbsolute */,
       contentMeta.template === 'latest' ? { mode: 'archive' } : undefined
     );
     if (!url) {

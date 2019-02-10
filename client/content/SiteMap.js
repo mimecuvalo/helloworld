@@ -1,7 +1,7 @@
+import { buildUrl, contentUrl, profileUrl } from '../../shared/util/url_factory';
 import classNames from 'classnames';
 import CloseIcon from '@material-ui/icons/Close';
 import constants from '../../shared/constants';
-import { contentUrl, navUrl } from '../../shared/util/url_factory';
 import { defineMessages, F, injectIntl } from '../../shared/i18n';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import MenuIcon from '@material-ui/icons/Menu';
 import React, { Component } from 'react';
 import styles from './SiteMap.module.css';
+import { withRouter } from 'react-router-dom';
 
 const messages = defineMessages({
   logo: { msg: 'logo' },
@@ -37,7 +38,7 @@ const messages = defineMessages({
     }
   `,
   {
-    options: ({ content: { username } }) => ({
+    options: ({ username }) => ({
       variables: {
         username,
       },
@@ -54,7 +55,7 @@ class SiteMap extends Component {
   }
 
   generateItem(item, albums) {
-    const content = this.props.content;
+    const content = this.props.content || {};
 
     const isSelected = item.name === content.name || item.name === content.album || item.name === content.section;
     return (
@@ -106,12 +107,24 @@ class SiteMap extends Component {
     this.setState({ forceMenuOpen: !this.state.forceMenuOpen });
   };
 
+  handleSearchSubmit = evt => {
+    evt.preventDefault();
+
+    const form = evt.target;
+    const formUrl = new URL(form.action);
+    const username = this.props.username;
+    const query = form.q.value;
+    const url = buildUrl({ pathname: `/${username}${formUrl.pathname}/${query}` });
+    this.props.history.push(url);
+  };
+
   render() {
     if (this.props.data.loading) {
       return null;
     }
 
-    const content = this.props.content;
+    const content = this.props.content || {};
+    const username = this.props.username;
     const siteMap = this.props.data.fetchSiteMap;
     const contentOwner = this.props.data.fetchPublicUserData;
     const logoAltText = this.props.intl.formatMessage(messages.logo);
@@ -137,7 +150,7 @@ class SiteMap extends Component {
           <ul>
             {contentOwner.logo ? (
               <li>
-                <a id="hw-sitemap-logo" href={navUrl(content.username)}>
+                <a id="hw-sitemap-logo" href={profileUrl(username)}>
                   <img src={contentOwner.logo} title={contentOwner.title} alt={logoAltText} />
                 </a>
               </li>
@@ -145,7 +158,7 @@ class SiteMap extends Component {
             <li>
               <a
                 id="hw-sitemap-home"
-                href={navUrl(content.username)}
+                href={profileUrl(username)}
                 className={classNames({ 'hw-selected': content.name === 'home' })}
               >
                 <F msg="home" />
@@ -154,6 +167,10 @@ class SiteMap extends Component {
 
             {items}
           </ul>
+
+          <form method="get" action="/search" onSubmit={this.handleSearchSubmit} className={styles.search}>
+            <input type="search" name="q" placeholder="search" required />
+          </form>
 
           {contentOwner.license ? (
             <div className={styles.license}>
@@ -172,4 +189,4 @@ class SiteMap extends Component {
   }
 }
 
-export default injectIntl(SiteMap);
+export default withRouter(injectIntl(SiteMap));

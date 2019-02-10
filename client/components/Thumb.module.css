@@ -1,0 +1,6 @@
+.thumb {
+  display: inline-block;
+  min-height: var(--thumb-height);
+  max-width: var(--thumb-width);
+  max-height: var(--thumb-height);
+}

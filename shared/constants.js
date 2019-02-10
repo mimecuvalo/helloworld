@@ -34,5 +34,5 @@ export default {
     },
   },
   pushHub: 'http://pubsubhubbub.appspot.com',
-  reservedNames: ['admin', 'api', 'dashboard', 'graphql', 'public'],
+  reservedNames: ['admin', 'api', 'dashboard', 'graphql', 'public', 'search'],
 };

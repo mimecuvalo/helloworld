@@ -200,7 +200,7 @@ export default {
         });
       }
 
-      return decorateArrayWithNavFlag(collection);
+      return decorateArrayWithRefreshFlag(collection);
     },
 
     async fetchCollectionPaginated(parent, { username, section, name }, { currentUser, models }) {
@@ -302,7 +302,38 @@ export default {
         }
       }
 
-      return decorateArrayWithNavFlag(siteMap);
+      return decorateArrayWithRefreshFlag(siteMap);
+    },
+
+    async searchContent(parent, { username, query }, { currentUser, models }) {
+      const isOwnerViewing = currentUser?.model?.username === username;
+
+      const constraints = {
+        redirect: false,
+        username,
+      };
+      if (!isOwnerViewing) {
+        constraints['hidden'] = false;
+      }
+
+      const contentConstraints = {
+        [Sequelize.Op.or]: [
+          { title: { [Sequelize.Op.like]: `%${query}%` } },
+          { view: { [Sequelize.Op.like]: `%${query}%` } },
+        ],
+      };
+
+      let collection = await models.Content.findAll({
+        attributes: ATTRIBUTES_NAVIGATION.concat(['view']),
+        where: Object.assign({}, constraints, contentConstraints),
+      });
+
+      for (const item of collection) {
+        const HTML_REGEX = /<[^>]+>/g;
+        item.preview = ellipsize(item.view.replace(HTML_REGEX, '').trim(), 130);
+      }
+
+      return decorateArrayWithRefreshFlag(collection);
     },
   },
 };
@@ -317,7 +348,7 @@ function getSQLSortType(sortType) {
   return ['createdAt', 'DESC'];
 }
 
-function decorateArrayWithNavFlag(list) {
+function decorateArrayWithRefreshFlag(list) {
   for (const item of list) {
     decorateWithRefreshFlag(item);
   }
@@ -339,4 +370,12 @@ function decoratePrefetchImages(item) {
   }
 
   return item;
+}
+
+function ellipsize(str, len) {
+  if (str.length <= len) {
+    return str;
+  }
+
+  return str.slice(0, len) + '…';
 }

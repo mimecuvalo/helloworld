@@ -57,7 +57,7 @@ export default function constructApps({ appName, urls }) {
   });
 
   // Set up API server.
-  apiServer && app.use('/api', csrfMiddleware, apiServer({ appName, urls }));
+  apiServer && app.use('/api', csrfMiddleware, apiServer({ appName }));
 
   // Set up Apollo server.
   apolloServer && apolloServer(app);

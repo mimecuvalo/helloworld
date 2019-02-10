@@ -45,6 +45,19 @@ export default gql`
     prefetchImages: [String!] # Images to download on client to make loading faster.
   }
 
+  type SearchContentMetaInfo {
+    username: String!
+    section: String!
+    album: String!
+    name: String!
+    title: String!
+    thumb: String!
+    hidden: Boolean!
+    template: String!
+    forceRefresh: Boolean! # If content contains style/code we can't do ajax navigation.
+    preview: String!
+  }
+
   type Neighbors {
     first: ContentMetaInfo
     prev: ContentMetaInfo
@@ -62,5 +75,6 @@ export default gql`
     fetchCollectionLatest(username: String!, section: String!, name: String!): Content
     fetchFeed(username: String!): [Content]
     fetchSiteMap(username: String!): [ContentMetaInfo]
+    searchContent(username: String!, query: String!): [SearchContentMetaInfo]
   }
 `;

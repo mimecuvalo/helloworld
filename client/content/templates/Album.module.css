@@ -1,6 +1,4 @@
 .album {
-  --thumb-width: 154px;
-  --thumb-height: 115px;
   list-style: none;
 }
 
@@ -32,13 +30,6 @@
 
 .thumbLink {
   min-height: var(--thumb-height);
-}
-
-.thumb {
-  display: inline-block;
-  min-height: var(--thumb-height);
-  max-width: var(--thumb-width);
-  max-height: var(--thumb-height);
 }
 
 .title {

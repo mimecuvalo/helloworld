@@ -1,4 +1,4 @@
-import { absoluteUrl, contentUrl } from '../../shared/util/url_factory';
+import { buildUrl, contentUrl } from '../../shared/util/url_factory';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import React, { PureComponent } from 'react';
@@ -48,7 +48,7 @@ class HTMLHead extends PureComponent {
     const contentOwner = this.props.data.fetchPublicUserData;
     const content = this.props.data.fetchContent;
 
-    let description, favicon, rss, theme, title;
+    let description, favicon, rss, theme, title, username;
     if (contentOwner) {
       description = contentOwner.description && <meta name="description" content={contentOwner.description} />;
       favicon = contentOwner.favicon;
@@ -62,6 +62,7 @@ class HTMLHead extends PureComponent {
       );
       theme = contentOwner.theme && <link rel="stylesheet" href={contentOwner.theme} />;
       title = contentOwner.title;
+      username = contentOwner.username;
     }
 
     if (!title) {
@@ -79,7 +80,12 @@ class HTMLHead extends PureComponent {
         {theme}
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
-        <link rel="search" href="/api/opensearch" type="application/opensearchdescription+xml" title={title} />
+        <link
+          rel="search"
+          href={buildUrl({ pathname: '/api/opensearch', searchParams: { username } })}
+          type="application/opensearchdescription+xml"
+          title={title}
+        />
         <link rel="canonical" href={content && contentUrl(content)} />
         {rss}
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -114,7 +120,7 @@ const OpenGraphMetadata = React.memo(function OpenGraphMetadata({ contentOwner, 
   if (content?.thumb) {
     thumb = content.thumb;
     if (!/^https?:/.test(thumb)) {
-      thumb = absoluteUrl(req, thumb);
+      thumb = buildUrl({ req, pathname: thumb });
     }
   }
 

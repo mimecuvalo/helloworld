@@ -1,4 +1,4 @@
-import { absoluteUrl } from '../../shared/util/url_factory';
+import { buildUrl } from '../../shared/util/url_factory';
 import express from 'express';
 import fetch from 'node-fetch';
 import models from '../data/models';
@@ -10,7 +10,7 @@ import models from '../data/models';
 const router = express.Router();
 router.get('/callback', async (req, res) => {
   try {
-    const redirectUri = absoluteUrl(req, '/api/auth/callback');
+    const redirectUri = buildUrl({ req, pathname: '/api/auth/callback' });
     const tokenResponse = await fetch(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, {
       method: 'POST',
       body: JSON.stringify({
