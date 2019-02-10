@@ -57,7 +57,7 @@ class HTMLHead extends PureComponent {
           rel="alternate"
           type="application/atom+xml"
           title={title}
-          href={`/api/social/rss?username=${contentOwner.username}`}
+          href={buildUrl({ pathname: '/api/social/rss', searchParams: { username: contentOwner.username } })}
         />
       );
       theme = contentOwner.theme && <link rel="stylesheet" href={contentOwner.theme} />;

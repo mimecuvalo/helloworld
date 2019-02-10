@@ -1,7 +1,8 @@
+import { buildUrl } from '../../shared/util/url_factory';
 import configuration from '../app/configuration';
 
 export function logError(data) {
-  fetch('/api/report-error', {
+  fetch(buildUrl({ pathname: '/api/report-error' }), {
     method: 'POST',
     body: JSON.stringify({
       data,

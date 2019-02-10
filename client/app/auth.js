@@ -8,7 +8,7 @@ export function createLock() {
     auth: {
       redirectUrl: buildUrl({
         isAbsolute: true,
-        pathname: '/api/auth/callback',
+        pathname: buildUrl({ pathname: '/api/auth/callback' }),
         searchParams: { next: window.location.href },
       }),
       responseType: 'code',
