@@ -21,6 +21,10 @@
   clear: both;
 }
 
+.list > li:first-child {
+  border-top: 0;
+}
+
 .innerList {
   float: left;
   display: flex;

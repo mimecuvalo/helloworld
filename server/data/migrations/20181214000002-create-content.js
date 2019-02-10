@@ -115,6 +115,9 @@ module.exports = {
       })
       .then(() => {
         queryInterface.addIndex('Content', { fields: ['album'] });
+      })
+      .then(() => {
+        queryInterface.addIndex('Content', { name: 'search', fields: ['title', 'view'], type: 'fulltext' });
       });
   },
 

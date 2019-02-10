@@ -316,16 +316,12 @@ export default {
         constraints['hidden'] = false;
       }
 
-      const contentConstraints = {
-        [Sequelize.Op.or]: [
-          { title: { [Sequelize.Op.like]: `%${query}%` } },
-          { view: { [Sequelize.Op.like]: `%${query}%` } },
-        ],
-      };
-
       let collection = await models.Content.findAll({
         attributes: ATTRIBUTES_NAVIGATION.concat(['view']),
-        where: Object.assign({}, constraints, contentConstraints),
+        where: [constraints, Sequelize.literal('match (title, view) against (:query)')],
+        replacements: {
+          query,
+        },
       });
 
       for (const item of collection) {

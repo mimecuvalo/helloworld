@@ -154,6 +154,11 @@ export default (sequelize, Sequelize) => {
           name: 'album',
           fields: ['album'],
         },
+        {
+          name: 'search',
+          fields: ['title', 'view'],
+          type: 'fulltext',
+        },
       ],
     }
   );
