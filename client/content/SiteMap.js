@@ -1,12 +1,12 @@
-import { buildUrl, contentUrl, profileUrl } from '../../shared/util/url_factory';
+import { buildUrl, profileUrl } from '../../shared/util/url_factory';
 import classNames from 'classnames';
 import CloseIcon from '@material-ui/icons/Close';
 import constants from '../../shared/constants';
+import ContentLink from '../components/ContentLink';
 import { defineMessages, F, injectIntl } from '../../shared/i18n';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import IconButton from '@material-ui/core/IconButton';
-import { Link } from 'react-router-dom';
 import MenuIcon from '@material-ui/icons/Menu';
 import React, { Component } from 'react';
 import styles from './SiteMap.module.css';
@@ -60,17 +60,13 @@ class SiteMap extends Component {
     const isSelected = item.name === content.name || item.name === content.album || item.name === content.section;
     return (
       <li id={`hw-sitemap-${item.name}`} key={item.name} className={styles.item}>
-        <Link
-          to={contentUrl(item)}
-          className={classNames({
-            'hw-selected': isSelected,
-            [styles.selected]: isSelected,
-            [styles.hidden]: item.hidden,
-          })}
-          target={item.forceRefresh || content.forceRefresh ? '_self' : ''}
+        <ContentLink
+          item={item}
+          currentContent={content}
+          className={classNames({ 'hw-selected': isSelected, [styles.selected]: isSelected })}
         >
           {item.title}
-        </Link>
+        </ContentLink>
         {albums}
       </li>
     );

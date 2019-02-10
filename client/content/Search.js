@@ -1,11 +1,9 @@
-import classNames from 'classnames';
 import ContentBase from './ContentBase';
-import { contentUrl } from '../../shared/util/url_factory';
+import ContentLink from '../components/ContentLink';
+import ContentThumb from '../components/ContentThumb';
 import { defineMessages, injectIntl } from '../../shared/i18n';
-import DelayLoadedThumb from '../components/Thumb';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
-import { Link } from 'react-router-dom';
 import React, { PureComponent } from 'react';
 import styles from './Search.module.css';
 import UserContext from '../app/User_Context';
@@ -61,7 +59,6 @@ class Search extends PureComponent {
     const query = this.props.match.params.query;
     const results = this.props.data.searchContent;
     const contentOwner = this.props.data.fetchPublicUserData;
-    const isOwnerViewing = this.context.user?.model?.username === contentOwner.username;
     const pageTitle = this.props.intl.formatMessage(messages.search);
     const untitled = this.props.intl.formatMessage(messages.untitled);
 
@@ -76,27 +73,11 @@ class Search extends PureComponent {
           {results.map(item => (
             <li key={item.name}>
               <div className={styles.innerList}>
-                {item.thumb ? (
-                  <Link
-                    to={contentUrl(item)}
-                    className={styles.thumbLink}
-                    title={item.title || untitled}
-                    target={item.forceRefresh ? '_self' : ''}
-                  >
-                    <DelayLoadedThumb item={item} />
-                  </Link>
-                ) : null}
+                {item.thumb ? <ContentThumb className={styles.thumbLink} item={item} /> : null}
                 <div>
-                  <Link
-                    to={contentUrl(item)}
-                    title={item.title || untitled}
-                    className={classNames(styles.title, {
-                      [styles.hidden]: isOwnerViewing && item.hidden,
-                    })}
-                    target={item.forceRefresh ? '_self' : ''}
-                  >
+                  <ContentLink item={item} className={styles.title}>
                     <Highlight str={item.title || untitled} term={query} />
-                  </Link>
+                  </ContentLink>
                   <div className={styles.preview}>
                     <Highlight str={item.preview} term={query} />
                   </div>

@@ -3,10 +3,6 @@
   padding: 10px;
 }
 
-.hidden {
-  font-style: italic;
-}
-
 .loadingEmptyBox {
   min-height: 100vh;
 }

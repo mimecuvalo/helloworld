@@ -28,6 +28,7 @@
 
 .thumbLink {
   min-height: auto;
+  width: auto;
   margin-right: 5px;
 }
 
@@ -45,8 +46,4 @@
 
 .clear {
   clear: both;
-}
-
-.hidden {
-  font-style: italic;
 }

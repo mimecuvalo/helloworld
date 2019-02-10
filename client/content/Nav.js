@@ -1,10 +1,10 @@
 import { ApolloConsumer } from 'react-apollo';
+import ContentLink from '../components/ContentLink';
 import ContentQuery from './ContentQuery';
 import { contentUrl } from '../../shared/util/url_factory';
 import { F } from '../../shared/i18n';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
-import { Link } from 'react-router-dom';
 import React, { Component } from 'react';
 import styles from './Nav.module.css';
 
@@ -124,16 +124,15 @@ class Nav extends Component {
     }
 
     return (
-      <Link
-        to={url}
+      <ContentLink
+        item={contentMeta}
+        currentContent={this.props.content}
         rel={name}
         innerRef={this[name]}
         className={`hw-${name} hw-button`}
-        title={contentMeta.title}
-        target={contentMeta.forceRefresh || this.props.content.forceRefresh ? '_self' : ''}
       >
         {msg}
-      </Link>
+      </ContentLink>
     );
   }
 

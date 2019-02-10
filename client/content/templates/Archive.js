@@ -1,9 +1,8 @@
 import classNames from 'classnames';
-import { contentUrl } from '../../../shared/util/url_factory';
+import ContentLink from '../../components/ContentLink';
 import { F } from '../../../shared/i18n';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
-import { Link } from 'react-router-dom';
 import React, { PureComponent } from 'react';
 import styles from './Archive.module.css';
 import UserContext from '../../app/User_Context';
@@ -59,9 +58,9 @@ class Archive extends PureComponent {
               [styles.hidden]: isOwnerViewing && item.hidden,
             })}
           >
-            <Link to={contentUrl(item)} title={item.title} target={item.forceRefresh ? '_self' : ''}>
+            <ContentLink item={item} currentContent={content}>
               {item.title}
-            </Link>
+            </ContentLink>
           </li>
         ))}
       </ul>

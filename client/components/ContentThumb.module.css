@@ -1,0 +1,16 @@
+.thumbLink {
+  display: block;
+  width: var(--thumb-width);
+  max-width: var(--thumb-width);
+}
+
+.thumbLink {
+  min-height: var(--thumb-height);
+}
+
+.thumb {
+  display: inline-block;
+  min-height: var(--thumb-height);
+  max-width: var(--thumb-width);
+  max-height: var(--thumb-height);
+}

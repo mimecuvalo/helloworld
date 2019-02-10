@@ -1,13 +1,11 @@
 import classNames from 'classnames';
-import { contentUrl } from '../../../shared/util/url_factory';
-import DelayLoadedThumb from '../../components/Thumb';
+import ContentLink from '../../components/ContentLink';
+import ContentThumb from '../../components/ContentThumb';
 import { F } from '../../../shared/i18n';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
-import { Link } from 'react-router-dom';
 import React, { PureComponent } from 'react';
 import styles from './Album.module.css';
-import UserContext from '../../app/User_Context';
 
 @graphql(
   gql`
@@ -36,15 +34,12 @@ import UserContext from '../../app/User_Context';
   }
 )
 class Album extends PureComponent {
-  static contextType = UserContext;
-
   render() {
     if (this.props.data.loading) {
       return <div className={styles.loadingEmptyBox} />;
     }
 
     const content = this.props.content;
-    const isOwnerViewing = this.context.user?.model?.username === content.username;
     const collection = this.props.data.fetchCollection;
 
     return (
@@ -56,24 +51,14 @@ class Album extends PureComponent {
         )}
         {collection.map(item => (
           <li key={item.name} className={styles.item}>
-            <Link
-              to={contentUrl(item)}
-              className={styles.thumbLink}
-              title={item.title}
-              target={item.forceRefresh ? '_self' : ''}
-            >
-              <DelayLoadedThumb item={item} />
-            </Link>
-            <Link
-              to={contentUrl(item)}
-              title={item.title}
-              className={classNames('hw-album-title', styles.title, styles.link, {
-                [styles.hidden]: isOwnerViewing && item.hidden,
-              })}
-              target={item.forceRefresh ? '_self' : ''}
+            <ContentThumb item={item} currentContent={content} />
+            <ContentLink
+              item={item}
+              currentContent={content}
+              className={classNames('hw-album-title', styles.title, styles.link)}
             >
               {item.title}
-            </Link>
+            </ContentLink>
           </li>
         ))}
       </ul>

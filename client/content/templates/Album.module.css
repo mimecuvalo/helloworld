@@ -21,21 +21,12 @@
   box-shadow: 2px 2px 6px #666;
 }
 
-.link,
-.thumbLink {
+.link {
   display: block;
   width: var(--thumb-width);
   max-width: var(--thumb-width);
 }
 
-.thumbLink {
-  min-height: var(--thumb-height);
-}
-
 .title {
   min-height: 1.1em;
-}
-
-.hidden {
-  font-style: italic;
 }

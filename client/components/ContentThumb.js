@@ -1,7 +1,9 @@
 import classNames from 'classnames';
+import { contentUrl } from '../../shared/util/url_factory';
 import { defineMessages, injectIntl } from '../../shared/i18n';
+import { Link } from 'react-router-dom';
 import React, { Component } from 'react';
-import styles from './Thumb.module.css';
+import styles from './ContentThumb.module.css';
 
 const messages = defineMessages({
   thumbnail: { msg: 'thumbnail' },
@@ -50,19 +52,27 @@ class Thumb extends Component {
 
   render() {
     const item = this.props.item;
+    const currentContent = this.props.currentContent || {};
     const thumbAltText = this.props.intl.formatMessage(messages.thumbnail);
     const src = this.state.isAboveFold ? item.thumb : '/img/pixel.gif';
 
     return (
-      <img
-        src={src}
-        ref={this.image}
-        alt={thumbAltText}
-        onLoad={this.handleThumbLoad}
-        className={classNames('hw-invisible-slow-transition', styles.thumb, {
-          'hw-invisible': !this.state.isLoaded || !this.state.isAboveFold,
-        })}
-      />
+      <Link
+        to={contentUrl(item)}
+        className={classNames(styles.thumbLink, this.props.className)}
+        title={item.title}
+        target={item.forceRefresh || currentContent.forceRefresh ? '_self' : ''}
+      >
+        <img
+          src={src}
+          ref={this.image}
+          alt={thumbAltText}
+          onLoad={this.handleThumbLoad}
+          className={classNames('hw-invisible-slow-transition', styles.thumb, {
+            'hw-invisible': !this.state.isLoaded || !this.state.isAboveFold,
+          })}
+        />
+      </Link>
     );
   }
 }
