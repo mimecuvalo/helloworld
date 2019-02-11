@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
-import Item from '../content/Item';
+import Item from './Item';
 import React, { PureComponent } from 'react';
 
 @graphql(gql`
@@ -19,6 +19,7 @@ import React, { PureComponent } from 'react';
       read
       title
       type
+      updatedAt
       username
       view
     }
@@ -35,7 +36,7 @@ class Feed extends PureComponent {
     return (
       <article className={this.props.className}>
         {feed.map(item => (
-          <Item key={item.link} content={item} />
+          <Item key={item.post_id} contentRemote={item} />
         ))}
       </article>
     );

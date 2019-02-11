@@ -65,6 +65,10 @@ class HTMLHead extends PureComponent {
       username = contentOwner.username;
     }
 
+    if (!theme) {
+      theme = <link rel="stylesheet" href="/css/themes/pixel.css" />;
+    }
+
     if (!title) {
       title = appName;
     }

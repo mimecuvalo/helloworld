@@ -1,21 +1,10 @@
-import { buildUrl, contentUrl } from '../../shared/util/url_factory';
 import { F, FormattedDate } from '../../shared/i18n';
 import React, { PureComponent } from 'react';
 import styles from './Footer.module.css';
-import UserContext from '../app/User_Context';
 
 class Footer extends PureComponent {
-  static contextType = UserContext;
-
-  handleFullscreen = evt => {
-    evt.preventDefault();
-    document.getElementById('hw-content').requestFullscreen();
-  };
-
   render() {
-    const content = this.props.content;
-    const { count, count_robot, createdAt, updatedAt, username } = content;
-    const isOwnerViewing = this.context.user?.model?.username === username;
+    const { createdAt, link, updatedAt, username } = this.props.contentRemote;
 
     return (
       <footer className={styles.footer}>
@@ -61,28 +50,9 @@ class Footer extends PureComponent {
             </>
           )}
         &nbsp;•&nbsp;
-        <a href={contentUrl(content)} target="_blank" rel="noopener noreferrer">
+        <a href={link} target="_blank" rel="noopener noreferrer">
           <F msg="permalink" />
         </a>
-        &nbsp;•&nbsp;
-        <a href="#fullscreen" onClick={this.handleFullscreen}>
-          <F msg="fullscreen" />
-        </a>
-        &nbsp;•&nbsp;
-        <F
-          msg="{count, plural, =0 {no human views} one {# human view} other {# human views}}"
-          values={{ count: count }}
-        />
-        &nbsp;•&nbsp;
-        <F
-          msg="{count, plural, =0 {no robot views} one {# robot view} other {# robot views}}"
-          values={{ count: count_robot }}
-        />
-        {!isOwnerViewing && (
-          <img src={buildUrl({ pathname: '/api/stats', searchParams: { url: contentUrl(content) } })} alt="" />
-        )}
-        {/* <CommentEntry /> TODO(mime) */}
-        {/* <Comments /> TODO(mime) */}
       </footer>
     );
   }

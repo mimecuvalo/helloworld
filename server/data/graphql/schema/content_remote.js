@@ -4,11 +4,11 @@ import { gql } from 'apollo-server-express';
 export default gql`
   type ContentRemote {
     to_username: String!
-    local_content_name: String!
+    local_content_name: String
     from_user: String!
     username: String!
-    creator: String!
-    avatar: String!
+    creator: String
+    avatar: String
     title: String!
     post_id: String!
     link: String!
@@ -16,7 +16,7 @@ export default gql`
     updatedAt: Date
     comments_updated: Date
     comments_count: Int!
-    thread: String!
+    thread: String
     type: String!
     favorited: Boolean!
     read: Boolean!

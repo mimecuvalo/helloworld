@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import ContentLink from '../components/ContentLink';
 import { F } from '../../shared/i18n';
 import React, { PureComponent } from 'react';
@@ -13,7 +12,7 @@ class Header extends PureComponent {
     const isOwnerViewing = this.context.user?.model?.username === content.username;
 
     return (
-      <header className={classNames(styles.header)}>
+      <header className={styles.header}>
         <h1 className={styles.title}>
           <ContentLink item={content} currentContent={content}>
             {content.title || <F msg="(untitled)" />}

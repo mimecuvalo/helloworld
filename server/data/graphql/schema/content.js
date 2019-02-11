@@ -9,8 +9,8 @@ export default gql`
     section: String!
     album: String!
     name: String!
-    template: String!
-    sort_type: String!
+    template: String
+    sort_type: String
     redirect: ID!
     hidden: Boolean!
     title: String!
@@ -23,9 +23,9 @@ export default gql`
     comments_count: Int!
     comments_updated: Date
     favorited: Boolean!
-    thread: String!
-    thread_user: String!
-    avatar: String!
+    thread: String
+    thread_user: String
+    avatar: String
     style: String!
     code: String!
     view: String!
