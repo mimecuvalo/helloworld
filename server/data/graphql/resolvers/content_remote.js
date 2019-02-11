@@ -31,5 +31,36 @@ export default {
         offset,
       });
     },
+
+    async fetchUserTotalCounts(parent, args, { currentUser, models }) {
+      if (!currentUser) {
+        // TODO(mime): return to login.
+        return;
+      }
+
+      const commonConstraints = {
+        to_username: currentUser.model.username,
+        deleted: false,
+        is_spam: false,
+      };
+
+      const commentsCount = await models.Content_Remote.count({
+        where: Object.assign({}, commonConstraints, { type: 'comment' }),
+      });
+
+      const favoritesCount = await models.Content_Remote.count({
+        where: Object.assign({}, commonConstraints, { favorited: true }),
+      });
+
+      const totalCount = await models.Content_Remote.count({
+        where: Object.assign({}, commonConstraints, { type: 'post', read: false }),
+      });
+
+      return {
+        commentsCount,
+        favoritesCount,
+        totalCount,
+      };
+    },
   },
 };

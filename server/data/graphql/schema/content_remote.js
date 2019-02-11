@@ -25,9 +25,16 @@ export default gql`
     view: String!
   }
 
+  type UserCounts {
+    commentsCount: Int!
+    favoritesCount: Int!
+    totalCount: Int!
+  }
+
   extend type Query {
     allContentRemote: [ContentRemote]
     fetchContentRemote(id: Int!): ContentRemote
     fetchContentRemotePaginated: [ContentRemote]
+    fetchUserTotalCounts: UserCounts
   }
 `;

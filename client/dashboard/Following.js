@@ -8,13 +8,19 @@ import styles from './RemoteUsers.module.css';
 import UserContext from '../app/User_Context';
 
 @graphql(gql`
-  {
+  query FollowingQuery {
     fetchFollowing {
       avatar
       favicon
       name
       profile_url
       username
+    }
+
+    fetchUserTotalCounts {
+      commentsCount
+      favoritesCount
+      totalCount
     }
   }
 `)
@@ -23,12 +29,10 @@ class Following extends PureComponent {
 
   render() {
     const following = this.props.data.fetchFollowing;
+    const { commentsCount, favoritesCount, totalCount } = this.props.data.fetchUserTotalCounts;
     const unreadEntries = 0; // TODO(mime)
-    const totalCount = 0; // TODO(mime)
     const userFavicon = this.context.user.model.favicon;
     const userAvatar = <Avatar src={userFavicon || '/favicon.ico'} />;
-    const favoritesCount = 0; // TODO(mime)
-    const commentsCount = 0; // TODO(mime)
 
     return (
       <div className={classNames(this.props.className, styles.remoteUsers)}>
