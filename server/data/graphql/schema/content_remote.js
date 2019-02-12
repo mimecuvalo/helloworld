@@ -39,7 +39,7 @@ export default gql`
   extend type Query {
     allContentRemote: [ContentRemote]
     fetchContentRemote(id: Int!): ContentRemote
-    fetchContentRemotePaginated(currentFeed: String): [ContentRemote]
+    fetchContentRemotePaginated(profileUrlOrSpecialFeed: String): [ContentRemote]
     fetchUserTotalCounts: UserCounts
     fetchFeedCounts: [FeedCount]
   }

@@ -12,7 +12,7 @@ export default {
       return await models.Content_Remote.findById(id);
     }),
 
-    async fetchContentRemotePaginated(parent, { currentFeed }, { currentUser, models }) {
+    async fetchContentRemotePaginated(parent, { profileUrlOrSpecialFeed }, { currentUser, models }) {
       if (!currentUser) {
         // TODO(mime): return to login.
         return;
@@ -23,14 +23,24 @@ export default {
 
       const constraints = {
         to_username: currentUser.model.username,
-        type: 'post',
         deleted: false,
         is_spam: false,
-        read: false,
       };
 
-      if (currentFeed) {
-        constraints.from_user = currentFeed;
+      switch (profileUrlOrSpecialFeed) {
+        case 'favorites':
+          constraints.favorited = true;
+          break;
+        case 'comments':
+          constraints.type = 'comment';
+          break;
+        default:
+          if (profileUrlOrSpecialFeed) {
+            constraints.from_user = profileUrlOrSpecialFeed;
+          }
+          constraints.type = 'post';
+          constraints.read = false;
+          break;
       }
 
       return await models.Content_Remote.findAll({

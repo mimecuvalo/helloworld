@@ -1,9 +1,11 @@
 .remoteUsers li {
   border: 1px solid transparent;
   padding: 1px;
+  margin-bottom: 1px;
 }
 
-.remoteUsers li:hover {
+.remoteUsers li:hover,
+.remoteUsers li.selected {
   border: 1px solid hotpink;
 }
 

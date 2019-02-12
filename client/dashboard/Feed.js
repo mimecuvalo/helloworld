@@ -2,11 +2,12 @@ import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import Item from './Item';
 import React, { PureComponent } from 'react';
+import styles from './Dashboard.module.css';
 
 @graphql(
   gql`
-    query($currentFeed: String) {
-      fetchContentRemotePaginated(currentFeed: $currentFeed) {
+    query($profileUrlOrSpecialFeed: String) {
+      fetchContentRemotePaginated(profileUrlOrSpecialFeed: $profileUrlOrSpecialFeed) {
         avatar
         comments_count
         creator
@@ -27,9 +28,9 @@ import React, { PureComponent } from 'react';
     }
   `,
   {
-    options: ({ currentFeed }) => ({
+    options: ({ userRemote, specialFeed }) => ({
       variables: {
-        currentFeed,
+        profileUrlOrSpecialFeed: userRemote ? userRemote.profile_url : specialFeed,
       },
     }),
   }
@@ -41,13 +42,15 @@ class Feed extends PureComponent {
     }
 
     const feed = this.props.data.fetchContentRemotePaginated;
+    const { userRemote } = this.props;
 
     return (
-      <article className={this.props.className}>
+      <>
+        {userRemote ? <h1 className={styles.header}>{userRemote.username}</h1> : null}
         {feed.map(item => (
           <Item key={item.post_id} contentRemote={item} />
         ))}
-      </article>
+      </>
     );
   }
 }

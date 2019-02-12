@@ -39,3 +39,11 @@
   padding: 5px;
   margin-bottom: 10px;
 }
+
+.header {
+  border: 1px solid #0cf;
+  box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf;
+  width: 50vw;
+  margin-bottom: 25px;
+  padding: 3px 6px;
+}

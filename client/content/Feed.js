@@ -42,6 +42,10 @@ import React, { PureComponent } from 'react';
 )
 class Feed extends PureComponent {
   render() {
+    if (this.props.data.loading) {
+      return null;
+    }
+
     const collection = this.props.data.fetchCollectionPaginated;
 
     return (

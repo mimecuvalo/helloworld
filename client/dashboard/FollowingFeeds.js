@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import Avatar from './Avatar';
+import classNames from 'classnames';
 import { FormattedNumber } from '../../shared/i18n';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
@@ -22,32 +23,35 @@ import styles from './RemoteUsers.module.css';
   }
 )
 class FollowingFeeds extends PureComponent {
-  handleClick = (evt, profile_url) => {
+  handleClick = (evt, userRemote) => {
     evt.preventDefault();
-
-    this.props.handleSetFeed(profile_url);
+    this.props.handleSetFeed(userRemote);
   };
 
   render() {
     const following = this.props.following;
     const feedCounts = this.props.data.fetchFeedCounts;
     const feedCountsObj = _.keyBy(feedCounts, 'from_user');
+    const currentUserRemote = this.props.currentUserRemote || {};
 
     return (
       <>
-        {following.map(follower => (
-          <li key={follower.profile_url}>
+        {following.map(userRemote => (
+          <li
+            key={userRemote.profile_url}
+            className={classNames({ [styles.selected]: currentUserRemote.profile_url === userRemote.profile_url })}
+          >
             <a
               href="#open-feed"
-              onClick={evt => this.handleClick(evt, follower.profile_url)}
-              title={follower.name || follower.username}
+              onClick={evt => this.handleClick(evt, userRemote)}
+              title={userRemote.name || userRemote.username}
             >
-              <Avatar src={follower.favicon || follower.avatar} />
-              {follower.name || follower.username}
+              <Avatar src={userRemote.favicon || userRemote.avatar} />
+              {userRemote.name || userRemote.username}
             </a>
             <span className={styles.unreadCount}>
-              {feedCountsObj[follower.profile_url] ? (
-                <FormattedNumber value={feedCountsObj[follower.profile_url].count} />
+              {feedCountsObj[userRemote.profile_url] ? (
+                <FormattedNumber value={feedCountsObj[userRemote.profile_url].count} />
               ) : (
                 '0'
               )}

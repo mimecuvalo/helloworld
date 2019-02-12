@@ -13,9 +13,11 @@ class Header extends PureComponent {
 
     return (
       <>
-        <header className={styles.header}>
-          <h1 className={styles.title}>{title}</h1>
-        </header>
+        {title ? (
+          <header className={styles.header}>
+            <h1 className={styles.title}>{title}</h1>
+          </header>
+        ) : null}
         {creator ? (
           <div className={styles.creator}>
             <F msg={`by {creator}`} values={{ creator }} />

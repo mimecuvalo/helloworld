@@ -3,6 +3,7 @@ import DocumentTitle from 'react-document-title';
 import Feed from './Feed';
 import Followers from './Followers';
 import Following from './Following';
+import MyFeed from '../content/Feed';
 import React, { PureComponent } from 'react';
 import styles from './Dashboard.module.css';
 import Tools from './Tools';
@@ -18,12 +19,15 @@ class Dashboard extends PureComponent {
     super(props);
 
     this.state = {
-      currentFeed: undefined,
+      specialFeed: '',
+      userRemote: undefined,
     };
   }
 
-  handleSetFeed = currentFeed => {
-    this.setState({ currentFeed });
+  handleSetFeed = userRemoteOrSpecialFeed => {
+    typeof userRemoteOrSpecialFeed === 'string'
+      ? this.setState({ specialFeed: userRemoteOrSpecialFeed, userRemote: undefined })
+      : this.setState({ userRemote: userRemoteOrSpecialFeed, specialFeed: '' });
   };
 
   render() {
@@ -31,7 +35,7 @@ class Dashboard extends PureComponent {
 
     return (
       <UserContext.Consumer>
-        {user =>
+        {({ user }) =>
           !user ? (
             <Unauthorized />
           ) : (
@@ -39,11 +43,22 @@ class Dashboard extends PureComponent {
               <div className={styles.container}>
                 <nav className={styles.nav}>
                   <Tools className={styles.tools} />
-                  <Following className={styles.following} handleSetFeed={this.handleSetFeed} />
+                  <Following
+                    className={styles.following}
+                    handleSetFeed={this.handleSetFeed}
+                    specialFeed={this.state.specialFeed}
+                    userRemote={this.state.userRemote}
+                  />
                   <Followers className={styles.followers} />
                 </nav>
 
-                <Feed className={styles.content} currentFeed={this.state.currentFeed} />
+                <article className={styles.content}>
+                  {this.state.specialFeed === 'me' ? (
+                    <MyFeed content={{ username: user.model.username, section: 'main', name: 'home' }} />
+                  ) : (
+                    <Feed specialFeed={this.state.specialFeed} userRemote={this.state.userRemote} />
+                  )}
+                </article>
               </div>
             </DocumentTitle>
           )

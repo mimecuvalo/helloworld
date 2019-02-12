@@ -28,9 +28,30 @@ import UserContext from '../app/User_Context';
 class Following extends PureComponent {
   static contextType = UserContext;
 
+  handleEntireFeedClick = evt => {
+    evt.preventDefault();
+    this.props.handleSetFeed('');
+  };
+
+  handleMyFeedClick = evt => {
+    evt.preventDefault();
+    this.props.handleSetFeed('me');
+  };
+
+  handleFavoritesClick = evt => {
+    evt.preventDefault();
+    this.props.handleSetFeed('favorites');
+  };
+
+  handleCommentsClick = evt => {
+    evt.preventDefault();
+    this.props.handleSetFeed('comments');
+  };
+
   render() {
     const following = this.props.data.fetchFollowing;
     const { commentsCount, favoritesCount, totalCount } = this.props.data.fetchUserTotalCounts;
+    const { userRemote, specialFeed } = this.props;
     const userFavicon = this.context.user.model.favicon;
     const userAvatar = <Avatar src={userFavicon || '/favicon.ico'} />;
 
@@ -41,32 +62,36 @@ class Following extends PureComponent {
         </h2>
         <ul>
           <li>
-            <a href="#read-all">
+            <a href="#read-all" onClick={this.handleEntireFeedClick}>
               <F msg="read all" />
             </a>
             <span className={styles.unreadCount}>{totalCount}</span>
           </li>
-          <li>
-            <a href="#your-feed">
+          <li className={classNames({ [styles.selected]: specialFeed === 'me' })}>
+            <a href="#your-feed" onClick={this.handleMyFeedClick}>
               {userAvatar}
               <F msg="your feed" />
             </a>
           </li>
-          <li>
-            <a href="#your-favorites">
+          <li className={classNames({ [styles.selected]: specialFeed === 'favorites' })}>
+            <a href="#your-favorites" onClick={this.handleFavoritesClick}>
               {userAvatar}
               <F msg="favorites" />
             </a>
             <span className={styles.unreadCount}>{favoritesCount}</span>
           </li>
-          <li>
-            <a href="#comments">
+          <li className={classNames({ [styles.selected]: specialFeed === 'comments' })}>
+            <a href="#comments" onClick={this.handleCommentsClick}>
               {userAvatar}
               <F msg="comments" />
             </a>
             <span className={styles.unreadCount}>{commentsCount}</span>
           </li>
-          <FollowingFeeds following={following} handleSetFeed={this.props.handleSetFeed} />
+          <FollowingFeeds
+            following={following}
+            handleSetFeed={this.props.handleSetFeed}
+            currentUserRemote={userRemote}
+          />
         </ul>
       </div>
     );
