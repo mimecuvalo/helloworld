@@ -1,5 +1,6 @@
 import { combineResolvers } from 'graphql-resolvers';
 import { isAdmin } from './authorization';
+import Sequelize from 'sequelize';
 
 export default {
   Query: {
@@ -61,6 +62,31 @@ export default {
         favoritesCount,
         totalCount,
       };
+    },
+
+    async fetchFeedCounts(parent, args, { currentUser, models }) {
+      if (!currentUser) {
+        // TODO(mime): return to login.
+        return;
+      }
+
+      const result = await models.Content_Remote.findAll({
+        attributes: ['from_user', [Sequelize.fn('COUNT', '*'), 'count']],
+        where: {
+          to_username: currentUser.model.username,
+          deleted: false,
+          is_spam: false,
+          read: false,
+          type: 'post',
+        },
+        group: ['from_user'],
+      });
+
+      result.forEach(item => {
+        item.count = item.get('count');
+      }); // hrmph.
+
+      return result;
     },
   },
 };

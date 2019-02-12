@@ -1,17 +1,29 @@
 import { addLocaleData, IntlProvider } from 'react-intl';
-import ApolloClient from 'apollo-boost';
+import ApolloClient from 'apollo-client';
 import { ApolloProvider } from 'react-apollo';
 import App from './App';
+import { BatchHttpLink } from 'apollo-link-batch-http';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { buildUrl } from '../../shared/util/url_factory';
 import configuration from '../app/configuration';
 import CurrentUser from './current_user';
+import { HttpLink } from 'apollo-link-http';
 import './index.css';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
+import { split } from 'apollo-link';
 
 async function renderAppTree(app) {
+  const apolloUrl = buildUrl({ isAbsolute: true, pathname: '/graphql' });
+
+  // link to use if batching
+  // also adds a `batch: true` header to the request to prove it's a different link
+  const batchHttpLink = new BatchHttpLink({ apolloUrl });
+  // link to use if not batching (default)
+  const httpLink = new HttpLink({ apolloUrl });
+
   // We add the Apollo/GraphQL capabilities here (also notice ApolloProvider below).
   const client = new ApolloClient({
     request: async op => {
@@ -21,6 +33,11 @@ async function renderAppTree(app) {
         },
       });
     },
+    link: split(
+      op => op.getContext().important === true,
+      httpLink, // if test is true, debatch
+      batchHttpLink // otherwise, batch
+    ),
     cache: new InMemoryCache().restore(window['__APOLLO_STATE__']),
   });
 

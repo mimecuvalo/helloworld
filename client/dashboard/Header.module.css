@@ -7,3 +7,16 @@
 .title {
   margin: 3px 3px 3px 0;
 }
+
+.creator {
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: #666;
+}
+
+.avatar {
+  float: left;
+  max-height: 32px;
+  max-width: 32px;
+  margin-right: 5px;
+}

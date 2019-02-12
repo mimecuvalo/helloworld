@@ -31,10 +31,16 @@ export default gql`
     totalCount: Int!
   }
 
+  type FeedCount {
+    from_user: String!
+    count: Int!
+  }
+
   extend type Query {
     allContentRemote: [ContentRemote]
     fetchContentRemote(id: Int!): ContentRemote
     fetchContentRemotePaginated: [ContentRemote]
     fetchUserTotalCounts: UserCounts
+    fetchFeedCounts: [FeedCount]
   }
 `;
