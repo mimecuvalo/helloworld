@@ -22,6 +22,12 @@ import styles from './RemoteUsers.module.css';
   }
 )
 class FollowingFeeds extends PureComponent {
+  handleClick = (evt, profile_url) => {
+    evt.preventDefault();
+
+    this.props.handleSetFeed(profile_url);
+  };
+
   render() {
     const following = this.props.following;
     const feedCounts = this.props.data.fetchFeedCounts;
@@ -32,9 +38,8 @@ class FollowingFeeds extends PureComponent {
         {following.map(follower => (
           <li key={follower.profile_url}>
             <a
-              href={follower.profile_url}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#open-feed"
+              onClick={evt => this.handleClick(evt, follower.profile_url)}
               title={follower.name || follower.username}
             >
               <Avatar src={follower.favicon || follower.avatar} />

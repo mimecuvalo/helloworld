@@ -12,18 +12,26 @@ export default {
       return await models.Content_Remote.findById(id);
     }),
 
-    async fetchContentRemotePaginated(parent, args, { currentUser, models }) {
+    async fetchContentRemotePaginated(parent, { currentFeed }, { currentUser, models }) {
       if (!currentUser) {
         // TODO(mime): return to login.
         return;
       }
 
       const limit = 20; // TODO(mime)
-      const offset = 1; // TODO(mime)
+      const offset = 0; // TODO(mime)
 
       const constraints = {
         to_username: currentUser.model.username,
+        type: 'post',
+        deleted: false,
+        is_spam: false,
+        read: false,
       };
+
+      if (currentFeed) {
+        constraints.from_user = currentFeed;
+      }
 
       return await models.Content_Remote.findAll({
         where: constraints,

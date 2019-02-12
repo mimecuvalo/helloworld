@@ -14,6 +14,18 @@ const messages = defineMessages({
 });
 
 class Dashboard extends PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      currentFeed: undefined,
+    };
+  }
+
+  handleSetFeed = currentFeed => {
+    this.setState({ currentFeed });
+  };
+
   render() {
     const title = this.props.intl.formatMessage(messages.title);
 
@@ -27,11 +39,11 @@ class Dashboard extends PureComponent {
               <div className={styles.container}>
                 <nav className={styles.nav}>
                   <Tools className={styles.tools} />
-                  <Following className={styles.following} />
+                  <Following className={styles.following} handleSetFeed={this.handleSetFeed} />
                   <Followers className={styles.followers} />
                 </nav>
 
-                <Feed className={styles.content} />
+                <Feed className={styles.content} currentFeed={this.state.currentFeed} />
               </div>
             </DocumentTitle>
           )

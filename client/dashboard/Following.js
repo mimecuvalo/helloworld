@@ -66,7 +66,7 @@ class Following extends PureComponent {
             </a>
             <span className={styles.unreadCount}>{commentsCount}</span>
           </li>
-          <FollowingFeeds following={following} />
+          <FollowingFeeds following={following} handleSetFeed={this.props.handleSetFeed} />
         </ul>
       </div>
     );
