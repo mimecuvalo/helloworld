@@ -12,14 +12,13 @@ export default {
       return await models.Content_Remote.findById(id);
     }),
 
-    async fetchContentRemotePaginated(parent, { profileUrlOrSpecialFeed }, { currentUser, models }) {
+    async fetchContentRemotePaginated(parent, { profileUrlOrSpecialFeed, offset }, { currentUser, models }) {
       if (!currentUser) {
         // TODO(mime): return to login.
         return;
       }
 
-      const limit = 20; // TODO(mime)
-      const offset = 0; // TODO(mime)
+      const limit = 20;
 
       const constraints = {
         to_username: currentUser.model.username,
@@ -47,7 +46,7 @@ export default {
         where: constraints,
         order: [['createdAt', 'DESC']],
         limit,
-        offset,
+        offset: offset * limit,
       });
     },
 

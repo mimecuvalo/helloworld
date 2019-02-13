@@ -203,10 +203,9 @@ export default {
       return decorateArrayWithRefreshFlag(collection);
     },
 
-    async fetchCollectionPaginated(parent, { username, section, name }, { currentUser, models }) {
+    async fetchCollectionPaginated(parent, { username, section, name, offset }, { currentUser, models }) {
       const isOwnerViewing = currentUser?.model?.username === username;
-      const limit = 20; // TODO(mime)
-      const offset = 0; // TODO(mime)
+      const limit = 20;
 
       const constraints = {
         redirect: false,
@@ -225,7 +224,7 @@ export default {
         where: Object.assign({}, constraints, contentConstraints),
         order: [['order'], ['createdAt', 'DESC']],
         limit,
-        offset,
+        offset: offset * limit,
       });
     },
 

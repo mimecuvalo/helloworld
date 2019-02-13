@@ -1,13 +1,14 @@
 import { F } from '../../shared/i18n';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
+import InfiniteFeed from '../components/InfiniteFeed';
 import Item from './Item';
 import React, { PureComponent } from 'react';
 
 @graphql(
   gql`
-    query($username: String!, $section: String!, $name: String!) {
-      fetchCollectionPaginated(username: $username, section: $section, name: $name) {
+    query($username: String!, $section: String!, $name: String!, $offset: Int!) {
+      fetchCollectionPaginated(username: $username, section: $section, name: $name, offset: $offset) {
         album
         code
         comments_count
@@ -37,7 +38,9 @@ import React, { PureComponent } from 'react';
         username,
         section,
         name,
+        offset: 0,
       },
+      fetchPolicy: 'network-only',
     }),
   }
 )
@@ -54,11 +57,11 @@ class Feed extends PureComponent {
     }
 
     return (
-      <>
+      <InfiniteFeed fetchMore={this.props.data.fetchMore} queryName="fetchCollectionPaginated">
         {collection.map(item => (
           <Item key={item.name} content={item} />
         ))}
-      </>
+      </InfiniteFeed>
     );
   }
 }

@@ -71,7 +71,7 @@ export default gql`
     fetchContent(username: String, name: String): Content
     fetchContentNeighbors(username: String, section: String, album: String, name: String): Neighbors
     fetchCollection(username: String!, section: String!, album: String!, name: String!): [ContentMetaInfo]
-    fetchCollectionPaginated(username: String!, section: String!, name: String!): [Content]
+    fetchCollectionPaginated(username: String!, section: String!, name: String!, offset: Int!): [Content]
     fetchCollectionLatest(username: String!, section: String!, name: String!): Content
     fetchFeed(username: String!): [Content]
     fetchSiteMap(username: String!): [ContentMetaInfo]
