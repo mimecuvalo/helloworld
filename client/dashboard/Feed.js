@@ -33,6 +33,7 @@ import styles from './Dashboard.module.css';
       variables: {
         profileUrlOrSpecialFeed: userRemote ? userRemote.profile_url : specialFeed,
       },
+      fetchPolicy: 'network-only',
     }),
   }
 )
