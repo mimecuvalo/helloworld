@@ -157,6 +157,32 @@ async function handleEntry(feedEntry, userRemote) {
     return;
   }
 
+  let view = sanitizeHTML(feedEntry.description || feedEntry.summary, {
+    allowedTags: sanitizeHTML.defaults.allowedTags.concat(['img']),
+    allowedAttributes: {
+      a: ['href', 'name', 'target'],
+      img: ['src', 'srcset', 'width', 'height'],
+      iframe: ['src', 'width', 'height'],
+    },
+  });
+
+  // XXX(mime): A shortcoming of feedparser currently is that it doesn't resolve relative urls for feeds that have
+  // urls in the content, e.g. kottke.org Fix this hackily for now. It should really be looking at xml:base in the XML.
+  const HTML_ATTRIBUTES_WITH_LINKS = [
+    'action',
+    'background',
+    'cite',
+    'classid',
+    'codebase',
+    'href',
+    'longdesc',
+    'profile',
+    'src',
+    'usemap',
+  ];
+  const RELATIVE_REGEXP = new RegExp(`(${HTML_ATTRIBUTES_WITH_LINKS.join('|')})(=['"])/`, 'gi');
+  view = view.replace(RELATIVE_REGEXP, `$1$2${userRemote.profile_url}/`);
+
   return {
     creator: feedEntry.author,
     createdAt: feedEntry.pubdate || new Date(),
@@ -168,14 +194,7 @@ async function handleEntry(feedEntry, userRemote) {
     to_username: userRemote.local_username,
     type: 'post',
     username: userRemote.username,
-    view: sanitizeHTML(feedEntry.description || feedEntry.summary, {
-      allowedTags: sanitizeHTML.defaults.allowedTags.concat(['img']),
-      allowedAttributes: {
-        a: ['href', 'name', 'target'],
-        img: ['src', 'srcset'],
-        iframe: ['src'],
-      },
-    }),
+    view,
   };
 }
 

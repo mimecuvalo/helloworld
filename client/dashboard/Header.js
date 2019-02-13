@@ -8,14 +8,18 @@ const messages = defineMessages({
 
 class Header extends PureComponent {
   render() {
-    const { avatar, creator, title } = this.props.contentRemote;
+    const { avatar, creator, link, title } = this.props.contentRemote;
     const avatarAltText = this.props.intl.formatMessage(messages.avatar);
 
     return (
       <>
         {title ? (
           <header className={styles.header}>
-            <h1 className={styles.title}>{title}</h1>
+            <h1 className={styles.title}>
+              <a href={link} target="_blank" rel="noopener noreferrer">
+                {title}
+              </a>
+            </h1>
           </header>
         ) : null}
         {creator ? (
