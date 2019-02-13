@@ -1,3 +1,4 @@
+import { F } from '../../shared/i18n';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import Item from './Item';
@@ -47,9 +48,11 @@ class Feed extends PureComponent {
     return (
       <>
         {userRemote ? <h1 className={styles.header}>{userRemote.username}</h1> : null}
-        {feed.map(item => (
-          <Item key={item.post_id} contentRemote={item} />
-        ))}
+        {!feed.length ? (
+          <F msg="Nothing to read right now!" />
+        ) : (
+          feed.map(item => <Item key={item.post_id} contentRemote={item} />)
+        )}
       </>
     );
   }

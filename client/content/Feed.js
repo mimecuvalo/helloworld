@@ -1,3 +1,4 @@
+import { F } from '../../shared/i18n';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import Item from './Item';
@@ -47,6 +48,10 @@ class Feed extends PureComponent {
     }
 
     const collection = this.props.data.fetchCollectionPaginated;
+
+    if (!collection.length) {
+      return <F msg="Nothing to read right now!" />;
+    }
 
     return (
       <>
