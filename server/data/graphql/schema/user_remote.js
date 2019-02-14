@@ -29,9 +29,9 @@ export default gql`
   }
 
   extend type Query {
-    allUsersRemote: [UserRemotePrivate]
+    allUsersRemote: [UserRemotePrivate!]!
     fetchUserRemote(id: Int!): UserRemotePrivate
-    fetchFollowers: [UserRemotePublic]
-    fetchFollowing: [UserRemotePublic]
+    fetchFollowers: [UserRemotePublic!]!
+    fetchFollowing: [UserRemotePublic!]!
   }
 `;

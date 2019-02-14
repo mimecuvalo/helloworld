@@ -23,16 +23,6 @@ class InfiniteFeed extends Component {
     window.removeEventListener('resize', this.maybeLoadMoreContent);
   }
 
-  // componentDidUpdate(prevProps) {
-  //   if (prevProps.userRemote !== this.props.userRemote || prevProps.specialFeed !== this.props.specialFeed) {
-  //     this.setState({
-  //       didReachEndOfFeed: false,
-  //       fetchingMore: false,
-  //       offset: 0,
-  //     });
-  //   }
-  // }
-
   maybeLoadMoreContent = () => {
     if (this.state.fetchingMore || this.state.didReachEndOfFeed) {
       return;

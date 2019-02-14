@@ -1,4 +1,7 @@
 /* Reset some sane defaults for web content. Taken from Chrome's User Agent defaults. */
+.item {
+  clear: both;
+}
 
 .item p {
   margin-block-start: 1em;

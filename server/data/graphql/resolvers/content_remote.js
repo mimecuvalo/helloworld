@@ -106,4 +106,28 @@ export default {
       return result;
     },
   },
+
+  Mutation: {
+    async favoriteContentRemote(parent, { from_user, post_id, favorited }, { currentUser, models }) {
+      if (!currentUser) {
+        // TODO(mime): return to login.
+        return false;
+      }
+
+      await models.Content_Remote.update(
+        {
+          favorited,
+        },
+        {
+          where: {
+            to_username: currentUser.model.username,
+            from_user,
+            post_id,
+          },
+        }
+      );
+
+      return { from_user, post_id, favorited };
+    },
+  },
 };

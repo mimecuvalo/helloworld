@@ -37,10 +37,14 @@ export default gql`
   }
 
   extend type Query {
-    allContentRemote: [ContentRemote]
+    allContentRemote: [ContentRemote!]!
     fetchContentRemote(id: Int!): ContentRemote
-    fetchContentRemotePaginated(profileUrlOrSpecialFeed: String!, offset: Int!): [ContentRemote]
-    fetchUserTotalCounts: UserCounts
-    fetchFeedCounts: [FeedCount]
+    fetchContentRemotePaginated(profileUrlOrSpecialFeed: String!, offset: Int!): [ContentRemote!]!
+    fetchUserTotalCounts: UserCounts!
+    fetchFeedCounts: [FeedCount!]!
+  }
+
+  extend type Mutation {
+    favoriteContentRemote(from_user: String!, post_id: String!, favorited: Boolean!): ContentRemote!
   }
 `;
