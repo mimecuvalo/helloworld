@@ -70,7 +70,7 @@ class Nav extends Component {
   }
 
   handleKeyUp = evt => {
-    switch (evt.code) {
+    switch (evt.key) {
       case 'ArrowUp':
         this.top.current.click();
         break;

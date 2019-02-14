@@ -12,7 +12,7 @@ export default {
       return await models.Content_Remote.findById(id);
     }),
 
-    async fetchContentRemotePaginated(parent, { profileUrlOrSpecialFeed, offset }, { currentUser, models }) {
+    async fetchContentRemotePaginated(parent, { profileUrlOrSpecialFeed, offset, query }, { currentUser, models }) {
       if (!currentUser) {
         // TODO(mime): return to login.
         return;
@@ -20,7 +20,7 @@ export default {
 
       const limit = 20;
 
-      const constraints = {
+      let constraints = {
         to_username: currentUser.model.username,
         deleted: false,
         is_spam: false,
@@ -42,11 +42,18 @@ export default {
           break;
       }
 
+      let replacements;
+      if (query) {
+        constraints = [constraints, Sequelize.literal('match (title, view) against (:query)')];
+        replacements = { query };
+      }
+
       return await models.Content_Remote.findAll({
         where: constraints,
         order: [['createdAt', 'DESC']],
         limit,
         offset: offset * limit,
+        replacements,
       });
     },
 

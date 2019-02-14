@@ -36,6 +36,11 @@
   text-decoration: none;
 }
 
+.search {
+  width: 100%;
+  margin: 10px 0;
+}
+
 .unreadCount {
   float: right;
   line-height: 20px;

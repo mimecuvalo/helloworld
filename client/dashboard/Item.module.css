@@ -11,6 +11,11 @@
   padding-bottom: 0;
   margin-bottom: 32px;
   box-shadow: 1px 1px 2px #ccc;
+  transition: box-shadow 100ms;
+}
+
+.item:hover {
+  box-shadow: 1px 1px 2px #999;
 }
 
 .item p {

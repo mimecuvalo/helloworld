@@ -19,15 +19,16 @@ class Dashboard extends PureComponent {
     super(props);
 
     this.state = {
+      query: null,
       specialFeed: '',
-      userRemote: undefined,
+      userRemote: null,
     };
   }
 
-  handleSetFeed = userRemoteOrSpecialFeed => {
+  handleSetFeed = (userRemoteOrSpecialFeed, opt_query) => {
     typeof userRemoteOrSpecialFeed === 'string'
-      ? this.setState({ specialFeed: userRemoteOrSpecialFeed, userRemote: undefined })
-      : this.setState({ userRemote: userRemoteOrSpecialFeed, specialFeed: '' });
+      ? this.setState({ specialFeed: userRemoteOrSpecialFeed, userRemote: null, query: opt_query })
+      : this.setState({ userRemote: userRemoteOrSpecialFeed, specialFeed: '', query: opt_query });
   };
 
   render() {
@@ -56,7 +57,11 @@ class Dashboard extends PureComponent {
                   {this.state.specialFeed === 'me' ? (
                     <MyFeed content={{ username: user.model.username, section: 'main', name: 'home' }} />
                   ) : (
-                    <Feed specialFeed={this.state.specialFeed} userRemote={this.state.userRemote} />
+                    <Feed
+                      specialFeed={this.state.specialFeed}
+                      userRemote={this.state.userRemote}
+                      query={this.state.query}
+                    />
                   )}
                 </article>
               </div>

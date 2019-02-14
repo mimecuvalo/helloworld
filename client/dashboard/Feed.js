@@ -8,8 +8,8 @@ import styles from './Dashboard.module.css';
 
 @graphql(
   gql`
-    query($profileUrlOrSpecialFeed: String!, $offset: Int!) {
-      fetchContentRemotePaginated(profileUrlOrSpecialFeed: $profileUrlOrSpecialFeed, offset: $offset) {
+    query($profileUrlOrSpecialFeed: String!, $offset: Int!, $query: String) {
+      fetchContentRemotePaginated(profileUrlOrSpecialFeed: $profileUrlOrSpecialFeed, offset: $offset, query: $query) {
         avatar
         comments_count
         creator
@@ -30,10 +30,11 @@ import styles from './Dashboard.module.css';
     }
   `,
   {
-    options: ({ userRemote, specialFeed }) => ({
+    options: ({ userRemote, specialFeed, query }) => ({
       variables: {
         profileUrlOrSpecialFeed: userRemote ? userRemote.profile_url : specialFeed,
         offset: 0,
+        query,
       },
       fetchPolicy: 'network-only',
     }),
@@ -46,15 +47,21 @@ class Feed extends PureComponent {
     }
 
     const feed = this.props.data.fetchContentRemotePaginated;
-    const { userRemote } = this.props;
+    const { userRemote, query } = this.props;
 
     return (
       <InfiniteFeed fetchMore={this.props.data.fetchMore} queryName="fetchContentRemotePaginated">
-        {userRemote ? (
+        {userRemote || query ? (
           <h1 className={styles.header}>
-            <a href={userRemote.profile_url} target="_blank" rel="noopener noreferrer">
-              {userRemote.username}
-            </a>
+            {userRemote ? (
+              <a href={userRemote.profile_url} target="_blank" rel="noopener noreferrer">
+                {userRemote.username}
+              </a>
+            ) : (
+              <>
+                <F msg="Search:" /> {query}
+              </>
+            )}
           </h1>
         ) : null}
         {!feed.length ? (

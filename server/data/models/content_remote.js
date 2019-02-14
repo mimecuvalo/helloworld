@@ -125,6 +125,11 @@ export default (sequelize, Sequelize) => {
           name: 'thread',
           fields: ['thread', { length: 255 }],
         },
+        {
+          name: 'search',
+          fields: ['title', 'view'],
+          type: 'fulltext',
+        },
       ],
     }
   );

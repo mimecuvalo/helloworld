@@ -121,6 +121,9 @@ module.exports = {
           name: 'to_username_2',
           fields: ['to_username', { name: 'from_user', length: 255 }],
         });
+      })
+      .then(() => {
+        queryInterface.addIndex('Content_Remote', { name: 'search', fields: ['title', 'view'], type: 'fulltext' });
       });
   },
 
