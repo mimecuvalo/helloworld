@@ -11,50 +11,48 @@ class Footer extends PureComponent {
     return (
       <footer className={styles.footer}>
         <div className={styles.info}>
-          <F
-            msg="{username} posted on {date}"
-            values={{
-              username: username,
-              date: (
-                <time dateTime={createdAt}>
-                  <FormattedDate
-                    value={createdAt}
-                    year="numeric"
-                    month="long"
-                    day="2-digit"
-                    hour="2-digit"
-                    minute="2-digit"
+          <a className={styles.permalink} href={link} target="_blank" rel="noopener noreferrer">
+            <F
+              msg="{username} posted on {date}"
+              values={{
+                username: username,
+                date: (
+                  <time dateTime={createdAt}>
+                    <FormattedDate
+                      value={createdAt}
+                      year="numeric"
+                      month="long"
+                      day="2-digit"
+                      hour="2-digit"
+                      minute="2-digit"
+                    />
+                  </time>
+                ),
+              }}
+            />
+            {updatedAt &&
+              updatedAt !== createdAt && (
+                <>
+                  &nbsp;
+                  <F
+                    msg="(updated {date})"
+                    values={{
+                      date: (
+                        <time dateTime={updatedAt}>
+                          <FormattedDate
+                            value={updatedAt}
+                            year="numeric"
+                            month="long"
+                            day="2-digit"
+                            hour="2-digit"
+                            minute="2-digit"
+                          />
+                        </time>
+                      ),
+                    }}
                   />
-                </time>
-              ),
-            }}
-          />
-          {updatedAt &&
-            updatedAt !== createdAt && (
-              <>
-                &nbsp;
-                <F
-                  msg="(updated {date})"
-                  values={{
-                    date: (
-                      <time dateTime={updatedAt}>
-                        <FormattedDate
-                          value={updatedAt}
-                          year="numeric"
-                          month="long"
-                          day="2-digit"
-                          hour="2-digit"
-                          minute="2-digit"
-                        />
-                      </time>
-                    ),
-                  }}
-                />
-              </>
-            )}
-          &nbsp;•&nbsp;
-          <a href={link} target="_blank" rel="noopener noreferrer">
-            <F msg="permalink" />
+                </>
+              )}
           </a>
         </div>
         <div className={styles.actions}>

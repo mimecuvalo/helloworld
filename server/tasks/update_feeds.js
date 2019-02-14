@@ -160,9 +160,9 @@ async function handleEntry(feedEntry, userRemote) {
   let view = sanitizeHTML(feedEntry.description || feedEntry.summary, {
     allowedTags: sanitizeHTML.defaults.allowedTags.concat(['img']),
     allowedAttributes: {
-      a: ['href', 'name', 'target'],
-      img: ['src', 'srcset', 'width', 'height'],
-      iframe: ['src', 'width', 'height'],
+      a: ['href', 'name', 'target', 'title'],
+      img: ['src', 'srcset', 'width', 'height', 'alt', 'title'],
+      iframe: ['src', 'width', 'height', 'alt', 'title'],
     },
   });
 

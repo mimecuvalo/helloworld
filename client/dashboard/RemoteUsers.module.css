@@ -10,6 +10,10 @@
   border: 1px solid hotpink;
 }
 
+.remoteUsers li.selected {
+  font-weight: bold;
+}
+
 .remoteUsers img {
   width: 16px;
   max-height: 16px;

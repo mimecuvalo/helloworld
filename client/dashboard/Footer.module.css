@@ -1,16 +1,23 @@
 .footer {
+  position: sticky;
+  bottom: 0;
   display: flex;
   font-size: 11px;
-  margin: 6px 6px 24px 0;
-  border-top: 1px solid #0bf;
-  padding: 3px 6px 6px 3px;
+  box-shadow: 0px -1px 0 #0bf, 0 -9px 0 #fafafa;
+  padding: 3px 6px 5px 3px;
+  margin-top: 12px;
+  background: #fafafa;
+}
+
+.permalink {
+  color: inherit;
 }
 
 .info {
-  max-width: 50%;
+  flex: 1;
+  margin-right: 32px;
 }
 
 .actions {
-  width: 50%;
   text-align: right;
 }

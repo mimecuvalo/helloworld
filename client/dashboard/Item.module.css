@@ -1,6 +1,16 @@
 /* Reset some sane defaults for web content. Taken from Chrome's User Agent defaults. */
 .item {
   clear: both;
+  zoom: 0.75;
+  margin-right: 32px;
+  flex: 0 1;
+  max-height: 90vh;
+  min-width: 34vw;
+  overflow-y: scroll;
+  padding: 6px;
+  padding-bottom: 0;
+  margin-bottom: 32px;
+  box-shadow: 1px 1px 2px #ccc;
 }
 
 .item p {
@@ -17,6 +27,15 @@
   margin-inline-start: 0px;
   margin-inline-end: 0px;
   padding-inline-start: 40px;
+}
+
+.item a {
+  word-break: break-word;
+}
+
+.item pre {
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .item img {
