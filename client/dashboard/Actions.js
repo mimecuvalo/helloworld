@@ -19,13 +19,25 @@ class Favorite extends PureComponent {
     evt.preventDefault();
 
     const { favorited, from_user, post_id } = this.props.contentRemote;
-    const data = { from_user, post_id, favorited: !favorited };
+    const variables = { from_user, post_id, favorited: !favorited };
 
     await this.props.mutate({
-      variables: data,
+      variables,
       optimisticResponse: {
         __typename: 'Mutation',
-        favoriteContentRemote: Object.assign({}, data, { __typename: 'ContentRemote' }),
+        favoriteContentRemote: Object.assign({}, variables, { __typename: 'ContentRemote' }),
+      },
+      update: (store, { data: { favoriteContentRemote } }) => {
+        const query = gql`
+          {
+            fetchUserTotalCounts {
+              favoritesCount
+            }
+          }
+        `;
+        const data = store.readQuery({ query });
+        data.fetchUserTotalCounts.favoritesCount += variables.favorited ? 1 : -1;
+        store.writeQuery({ query: query, data });
       },
     });
   };
