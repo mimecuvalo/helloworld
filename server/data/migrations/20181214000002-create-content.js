@@ -102,7 +102,7 @@ module.exports = {
         updatedAt: Sequelize.DATE,
       })
       .then(() => {
-        queryInterface.addIndex('Content', { name: 'uri', fields: ['username', 'name'] });
+        queryInterface.addIndex('Content', { unique: true, name: 'uri', fields: ['username', 'name'] });
       })
       .then(() => {
         queryInterface.addIndex('Content', { fields: ['section'] });

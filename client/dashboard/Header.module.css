@@ -4,7 +4,7 @@
   background: #fafafa;
   margin-bottom: 7px;
   padding: 0 6px;
-  width: 100%;
+  width: calc(100% - 4px);
   padding: 0 6px;
   box-shadow: 0 -6px #fafafa, 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0, 0 10px #fafafa !important;
 }

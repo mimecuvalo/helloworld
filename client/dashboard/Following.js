@@ -4,6 +4,7 @@ import { defineMessages, F, injectIntl } from '../../shared/i18n';
 import FollowingFeeds from './FollowingFeeds';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
+import NewFeed from './actions/NewFeed';
 import React, { PureComponent } from 'react';
 import styles from './RemoteUsers.module.css';
 import UserContext from '../app/User_Context';
@@ -19,6 +20,7 @@ const messages = defineMessages({
       favicon
       name
       profile_url
+      sort_type
       username
     }
 
@@ -84,8 +86,9 @@ class Following extends PureComponent {
         <h2>
           <F msg="following" />
         </h2>
+
         <ul>
-          <li>
+          <li className={styles.readAll}>
             <a href="#read-all" onClick={this.handleEntireFeedClick}>
               <F msg="read all" />
             </a>
@@ -116,15 +119,18 @@ class Following extends PureComponent {
             handleSetFeed={this.props.handleSetFeed}
             currentUserRemote={userRemote}
           />
-          <input
-            className={styles.search}
-            type="search"
-            onKeyUp={this.handleSearchKeyUp}
-            onChange={this.handleSearchChange}
-            ref={this.searchInput}
-            placeholder={searchPlaceholder}
-          />
         </ul>
+
+        <NewFeed />
+
+        <input
+          className={styles.search}
+          type="search"
+          onKeyUp={this.handleSearchKeyUp}
+          onChange={this.handleSearchChange}
+          ref={this.searchInput}
+          placeholder={searchPlaceholder}
+        />
       </div>
     );
   }

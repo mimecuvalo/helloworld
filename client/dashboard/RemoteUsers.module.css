@@ -5,6 +5,13 @@
   cursor: pointer;
 }
 
+.remoteUsers .readAll {
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  margin: 6px 0;
+  padding-left: 23px; /* TODO(mime): should be constant, img width + padding */
+}
+
 .remoteUsers li:hover,
 .remoteUsers li.selected {
   border: 1px solid hotpink;
@@ -39,6 +46,11 @@
 .search {
   width: 100%;
   margin: 10px 0;
+  border: 1px solid #ccc;
+  padding: 0px 3px;
+  border-radius: 3px;
+  height: 19px;
+  line-height: normal;
 }
 
 .unreadCount {

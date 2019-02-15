@@ -84,6 +84,7 @@ export default (sequelize, Sequelize) => {
           fields: ['profile_url', { length: 255 }],
         },
         {
+          unique: true,
           name: 'local_username_2',
           fields: ['local_username', 'profile_url', { length: 255 }],
         },

@@ -34,4 +34,8 @@ export default gql`
     fetchFollowers: [UserRemotePublic!]!
     fetchFollowing: [UserRemotePublic!]!
   }
+
+  extend type Mutation {
+    createUserRemote(profile_url: String!): UserRemotePublic
+  }
 `;

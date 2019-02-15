@@ -135,6 +135,7 @@ export default (sequelize, Sequelize) => {
       freezeTableName: true,
       indexes: [
         {
+          unique: true,
           name: 'uri',
           fields: ['username', 'name'],
         },

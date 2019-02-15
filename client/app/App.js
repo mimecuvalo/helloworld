@@ -1,20 +1,35 @@
 import './App.css';
 import classNames from 'classnames';
 import clientHealthCheck from './client_health_check';
+import CloseIcon from '@material-ui/icons/Close';
 import Content from '../content/Content';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Dashboard from '../dashboard/Dashboard';
+import { defineMessages, injectIntl } from '../../shared/i18n';
 import ErrorBoundary from '../error/ErrorBoundary';
 import Footer from './Footer';
 import Header from './Header';
+import IconButton from '@material-ui/core/IconButton';
 import { Route, Switch } from 'react-router-dom';
 import React, { Component } from 'react';
 import Search from '../content/Search';
+import { SnackbarProvider } from 'notistack';
 import styles from './constants.module.css';
 import UserContext from './User_Context';
+import { withStyles } from '@material-ui/core/styles';
+
+const messages = defineMessages({
+  close: { msg: 'Close' },
+});
+
+const muiStyles = theme => ({
+  close: {
+    padding: theme.spacing.unit / 2,
+  },
+});
 
 // This is the main entry point on the client-side.
-export default class App extends Component {
+class App extends Component {
   constructor(props) {
     super(props);
 
@@ -63,31 +78,41 @@ export default class App extends Component {
     // HACK(all-the-things): we can't get rid of FOUC in dev mode because we want hot reloading of CSS updates.
     // This hides the unsightly unstyled app. However, in dev mode, it removes the perceived gain of SSR. :-/
     const devOnlyHiddenOnLoadStyle = this.state.devOnlyHiddenOnLoad ? { opacity: 0 } : null;
+    const closeAriaLabel = this.props.intl.formatMessage(messages.close);
+    const closeButton = (
+      <IconButton key="close" color="inherit" className={this.props.classes.close} aria-label={closeAriaLabel}>
+        <CloseIcon />
+      </IconButton>
+    );
 
     return (
       <UserContext.Provider value={this.state.userContext}>
-        <ErrorBoundary>
-          <div
-            className={classNames('App', styles.app, { 'App-logged-in': this.props.user })}
-            style={devOnlyHiddenOnLoadStyle}
-          >
-            <CssBaseline />
-            <Header />
-            <main className="App-main">
-              <Switch>
-                <Route path={`/dashboard`} component={this.renderDashboard} />
-                <Route path={`/:username/search/:query`} component={Search} />
-                <Route path={`/:username/:section/:album/:name`} component={Content} />
-                <Route path={`/:username/:section/:name`} component={Content} />
-                <Route path={`/:username/:name`} component={Content} />
-                <Route path={`/:username`} component={Content} />
-                <Route path={`/`} component={Content} />
-              </Switch>
-            </main>
-            <Footer />
-          </div>
-        </ErrorBoundary>
+        <SnackbarProvider action={[closeButton]}>
+          <ErrorBoundary>
+            <div
+              className={classNames('App', styles.app, { 'App-logged-in': this.props.user })}
+              style={devOnlyHiddenOnLoadStyle}
+            >
+              <CssBaseline />
+              <Header />
+              <main className="App-main">
+                <Switch>
+                  <Route path={`/dashboard`} component={this.renderDashboard} />
+                  <Route path={`/:username/search/:query`} component={Search} />
+                  <Route path={`/:username/:section/:album/:name`} component={Content} />
+                  <Route path={`/:username/:section/:name`} component={Content} />
+                  <Route path={`/:username/:name`} component={Content} />
+                  <Route path={`/:username`} component={Content} />
+                  <Route path={`/`} component={Content} />
+                </Switch>
+              </main>
+              <Footer />
+            </div>
+          </ErrorBoundary>
+        </SnackbarProvider>
       </UserContext.Provider>
     );
   }
 }
+
+export default withStyles(muiStyles)(injectIntl(App));

@@ -42,7 +42,7 @@ export function buildUrl({ req, isAbsolute, pathname, searchParams }) {
   if (req) {
     url += `${req.protocol}://${req.get('host')}`;
   } else if (isAbsolute) {
-    url += `${window.location.protocol}//${window.location.host}`;
+    url += `${window.location.origin}`;
   }
 
   url += pathname;

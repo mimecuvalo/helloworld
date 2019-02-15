@@ -67,6 +67,7 @@ module.exports = {
       })
       .then(() => {
         queryInterface.addIndex('User_Remote', {
+          unique: true,
           name: 'local_username_2',
           fields: ['local_username', { name: 'profile_url', length: 255 }],
         });

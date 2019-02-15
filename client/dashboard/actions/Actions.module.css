@@ -1,0 +1,13 @@
+.enabled {
+  font-weight: bold;
+}
+
+.newFeed {
+  width: 100%;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  padding: 0px 3px;
+  border-radius: 3px;
+  height: 19px;
+  line-height: normal;
+}

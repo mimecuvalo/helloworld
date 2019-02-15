@@ -5,6 +5,7 @@ import createApolloClient from '../../data/apollo_client';
 import crypto from 'crypto';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
+import { NotFoundError } from '../../util/exceptions';
 import { renderToString } from 'react-dom/server';
 import React, { createElement as RcE, PureComponent } from 'react';
 
@@ -36,13 +37,6 @@ export default async (req, res, next) => {
     return;
   }
 };
-
-class NotFoundError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = '404';
-  }
-}
 
 @graphql(
   gql`

@@ -1,5 +1,5 @@
 import { F, FormattedDate } from '../../shared/i18n';
-import { Favorite } from './Actions';
+import Favorite from './actions/Favorite';
 import React, { PureComponent } from 'react';
 import styles from './Footer.module.css';
 

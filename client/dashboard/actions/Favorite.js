@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { F } from '../../shared/i18n';
+import { F } from '../../../shared/i18n';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import React, { PureComponent } from 'react';
@@ -55,4 +55,4 @@ class Favorite extends PureComponent {
   }
 }
 
-export { Favorite };
+export default Favorite;

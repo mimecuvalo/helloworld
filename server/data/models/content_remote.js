@@ -122,6 +122,11 @@ export default (sequelize, Sequelize) => {
           fields: ['to_username', 'from_user', { length: 255 }],
         },
         {
+          unique: true,
+          name: 'content_per_user',
+          fields: ['to_username', 'post_id', { length: 255 }],
+        },
+        {
           name: 'thread',
           fields: ['thread', { length: 255 }],
         },
