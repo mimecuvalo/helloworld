@@ -158,6 +158,7 @@ async function handleEntry(feedEntry, userRemote) {
     createdAt: feedEntry.pubdate || new Date(),
     updatedAt: dateUpdated,
     from_user: userRemote.profile_url,
+    from_user_remote_id: userRemote.id,
     link: feedEntry.link || feedEntry.permalink,
     post_id: entryId,
     title: feedEntry.title || 'untitled',

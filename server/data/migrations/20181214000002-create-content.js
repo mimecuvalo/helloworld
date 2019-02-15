@@ -15,7 +15,7 @@ module.exports = {
           type: Sequelize.STRING(191),
           allowNull: false,
           references: {
-            model: 'users',
+            model: 'User',
             key: 'username',
           },
           onUpdate: 'cascade',

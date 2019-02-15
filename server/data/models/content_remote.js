@@ -17,7 +17,7 @@ export default (sequelize, Sequelize) => {
           len: [1, 191],
         },
         references: {
-          model: 'users',
+          model: 'User',
           key: 'username',
         },
         onUpdate: 'cascade',
@@ -27,10 +27,17 @@ export default (sequelize, Sequelize) => {
         type: Sequelize.STRING(191),
         validate: { len: [0, 191] },
       },
-      from_user: {
-        type: Sequelize.TEXT('medium'),
-        allowNull: false,
+      from_user: { type: Sequelize.TEXT('medium') },
+      from_user_remote_id: {
+        type: Sequelize.INTEGER.UNSIGNED,
+        references: {
+          model: 'User_Remote',
+          key: 'id',
+        },
+        onUpdate: 'cascade',
+        onDelete: 'cascade',
       },
+      comment_user: { type: Sequelize.TEXT('medium') },
       username: {
         type: Sequelize.STRING(191),
         allowNull: false,
@@ -118,8 +125,16 @@ export default (sequelize, Sequelize) => {
           fields: ['from_user', { length: 255 }],
         },
         {
+          name: 'comment_user',
+          fields: ['comment_user', { length: 255 }],
+        },
+        {
           name: 'to_username_2',
           fields: ['to_username', 'from_user', { length: 255 }],
+        },
+        {
+          name: 'to_username_3',
+          fields: ['to_username', 'comment_user', { length: 255 }],
         },
         {
           unique: true,

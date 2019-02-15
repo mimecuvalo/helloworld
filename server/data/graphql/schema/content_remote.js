@@ -6,6 +6,7 @@ export default gql`
     to_username: String!
     local_content_name: String
     from_user: String!
+    comment_user: String
     username: String!
     creator: String
     avatar: String

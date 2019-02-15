@@ -17,7 +17,7 @@ export default (sequelize, Sequelize) => {
           len: [1, 191],
         },
         references: {
-          model: 'users',
+          model: 'User',
           key: 'username',
         },
         onUpdate: 'cascade',

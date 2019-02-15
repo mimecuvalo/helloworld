@@ -42,7 +42,7 @@ async function getFreshContent() {
   let usersRemote;
   try {
     usersRemote = await models.User_Remote.findAll({
-      attributes: ['feed_url', 'local_username', 'profile_url', 'username'],
+      attributes: ['id', 'feed_url', 'local_username', 'profile_url', 'username'],
     });
   } catch (ex) {
     updateFeedsLogger.error(`FAILED to get remote users from db.\n${ex}`);
