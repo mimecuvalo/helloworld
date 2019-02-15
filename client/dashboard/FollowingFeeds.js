@@ -1,27 +1,17 @@
 import _ from 'lodash';
 import Avatar from './Avatar';
 import classNames from 'classnames';
+import FollowingFeedsQuery from './FollowingFeedsQuery';
 import { FormattedNumber } from '../../shared/i18n';
-import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import React, { PureComponent } from 'react';
 import styles from './RemoteUsers.module.css';
 
-@graphql(
-  gql`
-    {
-      fetchFeedCounts {
-        from_user
-        count
-      }
-    }
-  `,
-  {
-    options: () => ({
-      pollInterval: 60 * 1000,
-    }),
-  }
-)
+@graphql(FollowingFeedsQuery, {
+  options: () => ({
+    pollInterval: 60 * 1000,
+  }),
+})
 class FollowingFeeds extends PureComponent {
   handleClick = (evt, userRemote) => {
     evt.preventDefault();

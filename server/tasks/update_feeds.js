@@ -61,8 +61,8 @@ async function getFreshContent() {
 
     let newEntries, skippedCount;
     try {
-      const { feedEntries } = await parseFeed(feedResponseText, userRemote);
-      [newEntries, skippedCount] = await mapFeedEntriesToModelEntries(feedEntries);
+      const { feedEntries } = await parseFeed(feedResponseText);
+      [newEntries, skippedCount] = await mapFeedEntriesToModelEntries(feedEntries, userRemote);
       updateFeedsLogger.info(
         `${userRemote.local_username} - ${userRemote.profile_url}: ` +
           `parsed ${newEntries.length} entries, skipped ${skippedCount}.`

@@ -2,7 +2,7 @@ import Avatar from './Avatar';
 import classNames from 'classnames';
 import { defineMessages, F, injectIntl } from '../../shared/i18n';
 import FollowingFeeds from './FollowingFeeds';
-import gql from 'graphql-tag';
+import FollowingQuery from './FollowingQuery';
 import { graphql } from 'react-apollo';
 import NewFeed from './actions/NewFeed';
 import React, { PureComponent } from 'react';
@@ -13,24 +13,7 @@ const messages = defineMessages({
   search: { msg: 'search' },
 });
 
-@graphql(gql`
-  query FollowingQuery {
-    fetchFollowing {
-      avatar
-      favicon
-      name
-      profile_url
-      sort_type
-      username
-    }
-
-    fetchUserTotalCounts {
-      commentsCount
-      favoritesCount
-      totalCount
-    }
-  }
-`)
+@graphql(FollowingQuery)
 class Following extends PureComponent {
   static contextType = UserContext;
 
@@ -121,7 +104,7 @@ class Following extends PureComponent {
           />
         </ul>
 
-        <NewFeed />
+        <NewFeed handleSetFeed={this.props.handleSetFeed} />
 
         <input
           className={styles.search}

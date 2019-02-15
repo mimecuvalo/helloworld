@@ -1,6 +1,8 @@
 import { defineMessages, injectIntl } from '../../../shared/i18n';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
+import FollowingQuery from '../FollowingQuery';
+import FollowingFeedsQuery from '../FollowingFeedsQuery';
 import React, { PureComponent } from 'react';
 import styles from './Actions.module.css';
 import { withSnackbar } from 'notistack';
@@ -24,34 +26,26 @@ const messages = defineMessages({
 `)
 class NewFeed extends PureComponent {
   handleNewFeedPaste = evt => {
-    // Note: we do setTimeout b/c the <input /> field's value isn't set quite yet upon paste.
     const inputField = evt.target;
+
     const func = async () => {
       try {
-        await this.props.mutate({
-          variables: { profile_url: inputField.value },
-          // optimisticResponse: {
-          //   __typename: 'Mutation',
-          //   favoriteContentRemote: Object.assign({}, variables, { __typename: 'ContentRemote' }),
-          // },
-          // update: (store, { data: { favoriteContentRemote } }) => {
-          //   const query = gql`
-          //     {
-          //       fetchUserTotalCounts {
-          //         favoritesCount
-          //       }
-          //     }
-          //   `;
-          //   const data = store.readQuery({ query });
-          //   data.fetchUserTotalCounts.favoritesCount += variables.favorited ? 1 : -1;
-          //   store.writeQuery({ query: query, data });
-          // },
+        const profile_url = inputField.value;
+        inputField.value = '';
+        inputField.blur();
+
+        const mutationResult = await this.props.mutate({
+          variables: { profile_url },
+          refetchQueries: [{ query: FollowingQuery }, { query: FollowingFeedsQuery }],
         });
+
+        this.props.handleSetFeed(mutationResult.data.createUserRemote);
       } catch (ex) {
         this.props.enqueueSnackbar(this.props.intl.formatMessage(messages.error), { variant: 'error' });
       }
     };
 
+    // Note: we do setTimeout b/c the <input /> field's value isn't set quite yet upon paste.
     setTimeout(func, 0);
   };
 

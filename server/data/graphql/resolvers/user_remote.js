@@ -1,5 +1,5 @@
 import { combineResolvers } from 'graphql-resolvers';
-import { discoverAndParseFeedFromUrl } from '../../../util/feeds';
+import { discoverAndParseFeedFromUrl, mapFeedEntriesToModelEntries } from '../../../util/feeds';
 import { isAdmin } from './authorization';
 
 export default {
@@ -36,7 +36,7 @@ export default {
         return;
       }
 
-      const { feedMeta } = await discoverAndParseFeedFromUrl(profile_url);
+      const { feedMeta, feedEntries } = await discoverAndParseFeedFromUrl(profile_url);
 
       const parsedUrl = new URL(profile_url);
       await models.User_Remote.upsert({
@@ -52,9 +52,21 @@ export default {
         avatar: feedMeta.image?.url,
         favicon: feedMeta.favicon || `${parsedUrl.origin}/favicon.ico`,
         following: true,
+        order: Math.pow(2, 31) - 1,
       });
 
-      return await models.User_Remote.findOne({ where: { local_username: currentUser.model.username, profile_url } });
+      const userRemote = await models.User_Remote.findOne({
+        where: { local_username: currentUser.model.username, profile_url },
+      });
+
+      try {
+        const [newEntries] = await mapFeedEntriesToModelEntries(feedEntries, userRemote);
+        newEntries.length && (await models.Content_Remote.bulkCreate(newEntries, { validate: true }));
+      } catch (ex) {
+        throw ex;
+      }
+
+      return userRemote;
     },
   },
 };
