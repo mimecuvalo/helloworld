@@ -1,8 +1,9 @@
 import _ from 'lodash';
 import Avatar from './Avatar';
 import classNames from 'classnames';
-import FollowingFeedsQuery from './FollowingFeedsQuery';
 import { FormattedNumber } from '../../shared/i18n';
+import FollowingFeedsQuery from './FollowingFeedsQuery';
+import FollowingMenu from './FollowingMenu';
 import { graphql } from 'react-apollo';
 import React, { PureComponent } from 'react';
 import styles from './RemoteUsers.module.css';
@@ -46,6 +47,7 @@ class FollowingFeeds extends PureComponent {
                 '0'
               )}
             </span>
+            <FollowingMenu userRemote={userRemote} />
           </li>
         ))}
       </>

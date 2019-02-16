@@ -136,5 +136,26 @@ export default {
 
       return { from_user, post_id, favorited };
     },
+
+    async markAllContentInFeedAsRead(parent, { from_user }, { currentUser, models }) {
+      if (!currentUser) {
+        // TODO(mime): return to login.
+        return false;
+      }
+
+      await models.Content_Remote.update(
+        {
+          read: true,
+        },
+        {
+          where: {
+            to_username: currentUser.model.username,
+            from_user,
+          },
+        }
+      );
+
+      return true;
+    },
   },
 };

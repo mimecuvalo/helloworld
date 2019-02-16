@@ -3,14 +3,14 @@ import HelpOutlineRoundedIcon from '@material-ui/icons/HelpOutlineRounded';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import styles from './Help.module.css';
 
 const messages = defineMessages({
   help: { msg: 'Help' },
 });
 
-class Help extends PureComponent {
+class Help extends Component {
   constructor() {
     super();
 

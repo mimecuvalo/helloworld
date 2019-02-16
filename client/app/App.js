@@ -16,16 +16,9 @@ import Search from '../content/Search';
 import { SnackbarProvider } from 'notistack';
 import styles from './constants.module.css';
 import UserContext from './User_Context';
-import { withStyles } from '@material-ui/core/styles';
 
 const messages = defineMessages({
   close: { msg: 'Close' },
-});
-
-const muiStyles = theme => ({
-  close: {
-    padding: theme.spacing.unit / 2,
-  },
 });
 
 // This is the main entry point on the client-side.
@@ -80,7 +73,7 @@ class App extends Component {
     const devOnlyHiddenOnLoadStyle = this.state.devOnlyHiddenOnLoad ? { opacity: 0 } : null;
     const closeAriaLabel = this.props.intl.formatMessage(messages.close);
     const closeButton = (
-      <IconButton key="close" color="inherit" className={this.props.classes.close} aria-label={closeAriaLabel}>
+      <IconButton key="close" className="App-snackbar-icon" color="inherit" aria-label={closeAriaLabel}>
         <CloseIcon />
       </IconButton>
     );
@@ -115,4 +108,4 @@ class App extends Component {
   }
 }
 
-export default withStyles(muiStyles)(injectIntl(App));
+export default injectIntl(App);

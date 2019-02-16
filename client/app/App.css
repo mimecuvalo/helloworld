@@ -42,3 +42,7 @@
 .hw-invisible-reverse-transition {
   transition: opacity 0.2s ease-in-out 5s;
 }
+
+html .App-snackbar-icon {
+  padding: 5px 0;
+}

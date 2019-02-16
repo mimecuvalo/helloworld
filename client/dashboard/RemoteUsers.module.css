@@ -1,6 +1,7 @@
 .remoteUsers li {
+  display: flex;
   border: 1px solid transparent;
-  padding: 1px;
+  padding: 1px 4px;
   margin-bottom: 1px;
   cursor: pointer;
 }
@@ -29,9 +30,9 @@
 }
 
 .remoteUsers a {
-  width: calc(100% - 36px);
-  height: 20px;
-  line-height: 20px;
+  flex: 1;
+  height: 24px;
+  line-height: 24px;
   display: inline-block;
   overflow: hidden;
   white-space: nowrap;
@@ -54,8 +55,7 @@
 }
 
 .unreadCount {
-  float: right;
-  line-height: 20px;
+  line-height: 24px;
   max-width: 36px;
   overflow: hidden;
   white-space: nowrap;
@@ -68,4 +68,17 @@
 }
 .unreadCount:after {
   content: ')';
+}
+
+.remoteUsers button,
+.remoteUsers li:hover .unreadCount {
+  display: none;
+}
+
+.remoteUsers li:hover button {
+  display: inline-block;
+}
+
+html .menu {
+  padding: 0;
 }

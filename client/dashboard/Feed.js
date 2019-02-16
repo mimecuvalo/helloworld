@@ -65,7 +65,9 @@ class Feed extends PureComponent {
           </h1>
         ) : null}
         {!feed.length ? (
-          <F msg="Nothing to read right now!" />
+          <div className={styles.empty}>
+            <F msg="Nothing to read right now!" />
+          </div>
         ) : (
           feed.map(item => <Item key={item.post_id} contentRemote={item} />)
         )}
