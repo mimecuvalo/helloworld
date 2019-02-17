@@ -1,13 +1,13 @@
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import { defineMessages, F, injectIntl } from '../../shared/i18n';
-import FollowingFeedsQuery from './FollowingFeedsQuery';
-import gql from 'graphql-tag';
-import { graphql } from 'react-apollo';
 import IconButton from '@material-ui/core/IconButton';
+import MarkAllAsRead from './actions/MarkAllAsRead';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { Component, PureComponent } from 'react';
+import React, { Component } from 'react';
+import Sort from './actions/Sort';
 import styles from './RemoteUsers.module.css';
+import UnfollowFeed from './actions/UnfollowFeed';
 
 const messages = defineMessages({
   menu: { msg: 'user options' },
@@ -56,46 +56,22 @@ class FollowingMenu extends Component {
           <MenuItem key="visit" onClick={this.handleVisit}>
             <F msg="visit" />
           </MenuItem>
-          <MarkAllAsReadItem key="read" handleClose={this.handleClose} userRemote={this.props.userRemote} />
+          <MarkAllAsRead key="read" handleClose={this.handleClose} userRemote={this.props.userRemote} />
+          <Sort
+            key="sort"
+            handleClose={this.handleClose}
+            userRemote={this.props.userRemote}
+            handleSetFeed={this.props.handleSetFeed}
+          />
+          <UnfollowFeed
+            key="unfollow"
+            handleClose={this.handleClose}
+            userRemote={this.props.userRemote}
+            handleSetFeed={this.props.handleSetFeed}
+          />
         </Menu>
       </>
     );
   }
 }
-
-@graphql(gql`
-  mutation markAllContentInFeedAsRead($from_user: String!) {
-    markAllContentInFeedAsRead(from_user: $from_user)
-  }
-`)
-class MarkAllAsReadItem extends PureComponent {
-  handleClick = async () => {
-    this.props.handleClose();
-
-    await this.props.mutate({
-      variables: { from_user: this.props.userRemote.profile_url },
-      refetchQueries: [
-        {
-          query: gql`
-            {
-              fetchUserTotalCounts {
-                totalCount
-              }
-            }
-          `,
-        },
-        { query: FollowingFeedsQuery },
-      ],
-    });
-  };
-
-  render() {
-    return (
-      <MenuItem onClick={this.handleClick}>
-        <F msg="mark all as read" />
-      </MenuItem>
-    );
-  }
-}
-
 export default injectIntl(FollowingMenu);

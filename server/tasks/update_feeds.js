@@ -24,7 +24,6 @@ export default async function updateFeeds() {
 async function pruneOlderContent() {
   try {
     const rowsDeletedCount = await models.Content_Remote.destroy({
-      attributes: ['link'],
       where: {
         type: 'post',
         favorited: false,

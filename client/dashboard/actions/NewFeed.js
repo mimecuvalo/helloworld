@@ -1,8 +1,9 @@
 import { defineMessages, injectIntl } from '../../../shared/i18n';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
+import FollowingFeedCountsQuery from '../FollowingFeedCountsQuery';
 import FollowingQuery from '../FollowingQuery';
-import FollowingFeedsQuery from '../FollowingFeedsQuery';
+import FollowingSpecialFeedCountsQuery from '../FollowingSpecialFeedCountsQuery';
 import React, { PureComponent } from 'react';
 import styles from './Actions.module.css';
 import { withSnackbar } from 'notistack';
@@ -36,7 +37,14 @@ class NewFeed extends PureComponent {
 
         const mutationResult = await this.props.mutate({
           variables: { profile_url },
-          refetchQueries: [{ query: FollowingQuery }, { query: FollowingFeedsQuery }],
+          refetchQueries: [{ query: FollowingSpecialFeedCountsQuery }, { query: FollowingFeedCountsQuery }],
+          update: (store, { data: { createUserRemote } }) => {
+            const data = store.readQuery({ query: FollowingQuery });
+            store.writeQuery({
+              query: FollowingQuery,
+              data: { fetchFollowing: [...data.fetchFollowing, createUserRemote] },
+            });
+          },
         });
 
         this.props.handleSetFeed(mutationResult.data.createUserRemote);

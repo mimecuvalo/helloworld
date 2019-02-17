@@ -37,5 +37,7 @@ export default gql`
 
   extend type Mutation {
     createUserRemote(profile_url: String!): UserRemotePublic
+    toggleSortFeed(profile_url: String!, current_sort_type: String!): UserRemotePublic!
+    destroyFeed(profile_url: String!): Boolean!
   }
 `;

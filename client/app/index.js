@@ -7,9 +7,10 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { buildUrl } from '../../shared/util/url_factory';
 import configuration from '../app/configuration';
 import CurrentUser from './current_user';
-import { defaultDataIdFromObject, InMemoryCache } from 'apollo-cache-inmemory';
+import { dataIdFromObject } from '../../shared/data/apollo';
 import { HttpLink } from 'apollo-link-http';
 import './index.css';
+import { InMemoryCache } from 'apollo-cache-inmemory';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
@@ -25,18 +26,7 @@ async function renderAppTree(app) {
   const httpLink = new HttpLink({ apolloUrl });
 
   // We add the Apollo/GraphQL capabilities here (also notice ApolloProvider below).
-  const cache = new InMemoryCache({
-    dataIdFromObject: obj => {
-      switch (obj.__typename) {
-        case 'Content':
-          return `${obj.__typename} ${obj.username} ${obj.name}`;
-        case 'ContentRemote':
-          return `${obj.__typename} ${obj.from_user} ${obj.post_id}`;
-        default:
-          return defaultDataIdFromObject(obj); // fall back to default handling
-      }
-    },
-  }).restore(window['__APOLLO_STATE__']);
+  const cache = new InMemoryCache({ dataIdFromObject }).restore(window['__APOLLO_STATE__']);
   const client = new ApolloClient({
     request: async op => {
       op.setContext({

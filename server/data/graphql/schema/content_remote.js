@@ -47,6 +47,6 @@ export default gql`
 
   extend type Mutation {
     favoriteContentRemote(from_user: String!, post_id: String!, favorited: Boolean!): ContentRemote!
-    markAllContentInFeedAsRead(from_user: String!): Boolean!
+    markAllContentInFeedAsRead(from_user: String!): FeedCount!
   }
 `;

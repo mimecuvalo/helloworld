@@ -2,15 +2,15 @@ import _ from 'lodash';
 import Avatar from './Avatar';
 import classNames from 'classnames';
 import { FormattedNumber } from '../../shared/i18n';
-import FollowingFeedsQuery from './FollowingFeedsQuery';
+import FollowingFeedCountsQuery from './FollowingFeedCountsQuery';
 import FollowingMenu from './FollowingMenu';
 import { graphql } from 'react-apollo';
 import React, { PureComponent } from 'react';
 import styles from './RemoteUsers.module.css';
 
-@graphql(FollowingFeedsQuery, {
-  options: () => ({
-    pollInterval: 60 * 1000,
+@graphql(FollowingFeedCountsQuery, {
+  options: ({ pollInterval }) => ({
+    pollInterval,
   }),
 })
 class FollowingFeeds extends PureComponent {
@@ -47,7 +47,7 @@ class FollowingFeeds extends PureComponent {
                 '0'
               )}
             </span>
-            <FollowingMenu userRemote={userRemote} />
+            <FollowingMenu userRemote={userRemote} handleSetFeed={this.props.handleSetFeed} />
           </li>
         ))}
       </>

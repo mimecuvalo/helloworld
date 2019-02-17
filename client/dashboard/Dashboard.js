@@ -4,7 +4,7 @@ import Feed from './Feed';
 import Followers from './Followers';
 import Following from './Following';
 import MyFeed from '../content/Feed';
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import styles from './Dashboard.module.css';
 import Tools from './Tools';
 import Unauthorized from '../error/401';
@@ -14,11 +14,12 @@ const messages = defineMessages({
   title: { msg: 'Dashboard' },
 });
 
-class Dashboard extends PureComponent {
+class Dashboard extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      didFeedLoad: false,
       query: null,
       specialFeed: '',
       userRemote: null,
@@ -27,8 +28,8 @@ class Dashboard extends PureComponent {
 
   handleSetFeed = (userRemoteOrSpecialFeed, opt_query) => {
     typeof userRemoteOrSpecialFeed === 'string'
-      ? this.setState({ specialFeed: userRemoteOrSpecialFeed, userRemote: null, query: opt_query })
-      : this.setState({ userRemote: userRemoteOrSpecialFeed, specialFeed: '', query: opt_query });
+      ? this.setState({ specialFeed: userRemoteOrSpecialFeed, userRemote: null, query: opt_query, didFeedLoad: true })
+      : this.setState({ userRemote: userRemoteOrSpecialFeed, specialFeed: '', query: opt_query, didFeedLoad: true });
   };
 
   render() {
@@ -55,9 +56,13 @@ class Dashboard extends PureComponent {
 
                 <article className={styles.content}>
                   {this.state.specialFeed === 'me' ? (
-                    <MyFeed content={{ username: user.model.username, section: 'main', name: 'home' }} />
+                    <MyFeed
+                      content={{ username: user.model.username, section: 'main', name: 'home' }}
+                      didFeedLoad={this.state.didFeedLoad}
+                    />
                   ) : (
                     <Feed
+                      didFeedLoad={this.state.didFeedLoad}
                       specialFeed={this.state.specialFeed}
                       userRemote={this.state.userRemote}
                       query={this.state.query}

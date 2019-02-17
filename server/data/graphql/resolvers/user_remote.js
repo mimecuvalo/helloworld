@@ -68,5 +68,43 @@ export default {
 
       return userRemote;
     },
+
+    async toggleSortFeed(parent, { profile_url, current_sort_type }, { currentUser, models }) {
+      if (!currentUser) {
+        // TODO(mime): return to login.
+        return;
+      }
+
+      const sort_type = current_sort_type === 'oldest' ? '' : 'oldest';
+      await models.User_Remote.update(
+        {
+          sort_type,
+        },
+        {
+          where: {
+            local_username: currentUser.model.username,
+            profile_url,
+          },
+        }
+      );
+
+      return { profile_url, sort_type };
+    },
+
+    async destroyFeed(parent, { profile_url }, { currentUser, models }) {
+      if (!currentUser) {
+        // TODO(mime): return to login.
+        return;
+      }
+
+      await models.User_Remote.destroy({
+        where: {
+          local_username: currentUser.model.username,
+          profile_url,
+        },
+      });
+
+      return true;
+    },
   },
 };

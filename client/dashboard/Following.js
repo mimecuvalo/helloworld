@@ -1,47 +1,26 @@
-import Avatar from './Avatar';
 import classNames from 'classnames';
 import { defineMessages, F, injectIntl } from '../../shared/i18n';
 import FollowingFeeds from './FollowingFeeds';
 import FollowingQuery from './FollowingQuery';
+import FollowingSpecialFeeds from './FollowingSpecialFeeds';
 import { graphql } from 'react-apollo';
 import NewFeed from './actions/NewFeed';
 import React, { PureComponent } from 'react';
 import styles from './RemoteUsers.module.css';
-import UserContext from '../app/User_Context';
 
 const messages = defineMessages({
   search: { msg: 'search' },
 });
 
+const POLL_INTERVAL = 60 * 1000;
+
 @graphql(FollowingQuery)
 class Following extends PureComponent {
-  static contextType = UserContext;
-
   constructor(props) {
     super(props);
 
     this.searchInput = React.createRef();
   }
-
-  handleEntireFeedClick = evt => {
-    evt.preventDefault();
-    this.props.handleSetFeed('');
-  };
-
-  handleMyFeedClick = evt => {
-    evt.preventDefault();
-    this.props.handleSetFeed('me');
-  };
-
-  handleFavoritesClick = evt => {
-    evt.preventDefault();
-    this.props.handleSetFeed('favorites');
-  };
-
-  handleCommentsClick = evt => {
-    evt.preventDefault();
-    this.props.handleSetFeed('comments');
-  };
 
   handleSearchKeyUp = evt => {
     if (evt.key === 'Enter') {
@@ -58,53 +37,26 @@ class Following extends PureComponent {
 
   render() {
     const following = this.props.data.fetchFollowing;
-    const { commentsCount, favoritesCount, totalCount } = this.props.data.fetchUserTotalCounts;
-    const { userRemote, specialFeed } = this.props;
-    const userFavicon = this.context.user.model.favicon;
-    const userAvatar = <Avatar src={userFavicon || '/favicon.ico'} />;
+    const { className, handleSetFeed, userRemote, specialFeed } = this.props;
     const searchPlaceholder = this.props.intl.formatMessage(messages.search);
 
     return (
-      <div className={classNames(this.props.className, styles.remoteUsers)}>
+      <div className={classNames(className, styles.remoteUsers)}>
         <h2>
           <F msg="following" />
         </h2>
 
         <ul>
-          <li className={styles.readAll}>
-            <a href="#read-all" onClick={this.handleEntireFeedClick}>
-              <F msg="read all" />
-            </a>
-            <span className={styles.unreadCount}>{totalCount}</span>
-          </li>
-          <li className={classNames({ [styles.selected]: specialFeed === 'me' })}>
-            <a href="#your-feed" onClick={this.handleMyFeedClick}>
-              {userAvatar}
-              <F msg="your feed" />
-            </a>
-          </li>
-          <li className={classNames({ [styles.selected]: specialFeed === 'favorites' })}>
-            <a href="#your-favorites" onClick={this.handleFavoritesClick}>
-              {userAvatar}
-              <F msg="favorites" />
-            </a>
-            <span className={styles.unreadCount}>{favoritesCount}</span>
-          </li>
-          <li className={classNames({ [styles.selected]: specialFeed === 'comments' })}>
-            <a href="#comments" onClick={this.handleCommentsClick}>
-              {userAvatar}
-              <F msg="comments" />
-            </a>
-            <span className={styles.unreadCount}>{commentsCount}</span>
-          </li>
+          <FollowingSpecialFeeds handleSetFeed={handleSetFeed} specialFeed={specialFeed} pollInterval={POLL_INTERVAL} />
           <FollowingFeeds
             following={following}
-            handleSetFeed={this.props.handleSetFeed}
+            handleSetFeed={handleSetFeed}
             currentUserRemote={userRemote}
+            pollInterval={POLL_INTERVAL}
           />
         </ul>
 
-        <NewFeed handleSetFeed={this.props.handleSetFeed} />
+        <NewFeed handleSetFeed={handleSetFeed} />
 
         <input
           className={styles.search}

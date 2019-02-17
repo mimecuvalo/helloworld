@@ -33,14 +33,14 @@ import React, { PureComponent } from 'react';
     }
   `,
   {
-    options: ({ content: { username, section, name } }) => ({
+    options: ({ content: { username, section, name }, didFeedLoad }) => ({
       variables: {
         username,
         section,
         name,
         offset: 0,
       },
-      fetchPolicy: 'network-only',
+      fetchPolicy: didFeedLoad ? 'network-only' : 'cache-first',
     }),
   }
 )

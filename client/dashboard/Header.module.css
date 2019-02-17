@@ -25,3 +25,7 @@
   max-width: 32px;
   margin-right: 5px;
 }
+
+.isRead {
+  font-weight: 500;
+}

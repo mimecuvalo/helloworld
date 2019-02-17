@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { F } from '../../../shared/i18n';
+import FollowingSpecialFeedCountsQuery from '../FollowingSpecialFeedCountsQuery';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import React, { PureComponent } from 'react';
@@ -28,16 +29,10 @@ class Favorite extends PureComponent {
         favoriteContentRemote: Object.assign({}, variables, { __typename: 'ContentRemote' }),
       },
       update: (store, { data: { favoriteContentRemote } }) => {
-        const query = gql`
-          {
-            fetchUserTotalCounts {
-              favoritesCount
-            }
-          }
-        `;
+        const query = FollowingSpecialFeedCountsQuery;
         const data = store.readQuery({ query });
         data.fetchUserTotalCounts.favoritesCount += variables.favorited ? 1 : -1;
-        store.writeQuery({ query: query, data });
+        store.writeQuery({ query, data });
       },
     });
   };

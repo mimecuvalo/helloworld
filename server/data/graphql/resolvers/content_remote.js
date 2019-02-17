@@ -25,6 +25,7 @@ export default {
         deleted: false,
         is_spam: false,
       };
+      let order = 'DESC';
 
       switch (profileUrlOrSpecialFeed) {
         case 'favorites':
@@ -36,6 +37,13 @@ export default {
         default:
           if (profileUrlOrSpecialFeed) {
             constraints.from_user = profileUrlOrSpecialFeed;
+            const userRemote = await models.User_Remote.findOne({
+              attributes: ['sort_type'],
+              where: { local_username: currentUser.model.username, profile_url: profileUrlOrSpecialFeed },
+            });
+            if (userRemote.sort_type === 'oldest') {
+              order = 'ASC';
+            }
           }
           constraints.type = 'post';
           constraints.read = false;
@@ -50,7 +58,7 @@ export default {
 
       return await models.Content_Remote.findAll({
         where: constraints,
-        order: [['createdAt', 'DESC']],
+        order: [['createdAt', order]],
         limit,
         offset: offset * limit,
         replacements,
@@ -155,7 +163,7 @@ export default {
         }
       );
 
-      return true;
+      return { from_user, count: 0 };
     },
   },
 };

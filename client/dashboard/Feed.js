@@ -30,13 +30,13 @@ import styles from './Dashboard.module.css';
     }
   `,
   {
-    options: ({ userRemote, specialFeed, query }) => ({
+    options: ({ userRemote, specialFeed, query, didFeedLoad }) => ({
       variables: {
         profileUrlOrSpecialFeed: userRemote ? userRemote.profile_url : specialFeed,
         offset: 0,
         query,
       },
-      fetchPolicy: 'network-only',
+      fetchPolicy: didFeedLoad ? 'network-only' : 'cache-first',
     }),
   }
 )

@@ -1,5 +1,6 @@
 import { ApolloClient } from 'apollo-client';
 import { ApolloLink } from 'apollo-link';
+import { dataIdFromObject } from '../../shared/data/apollo';
 import fetch from 'node-fetch';
 import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
@@ -35,7 +36,7 @@ export default async function createApolloClient(req) {
   const client = new ApolloClient({
     ssrMode: true,
     link,
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({ dataIdFromObject }),
   });
 
   return client;
