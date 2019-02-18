@@ -1,5 +1,5 @@
 import { combineResolvers } from 'graphql-resolvers';
-import { isAdmin } from './authorization';
+import { isAdmin, isAuthor } from './authorization';
 import Sequelize from 'sequelize';
 
 export default {
@@ -12,65 +12,58 @@ export default {
       return await models.Content_Remote.findById(id);
     }),
 
-    async fetchContentRemotePaginated(parent, { profileUrlOrSpecialFeed, offset, query }, { currentUser, models }) {
-      if (!currentUser) {
-        // TODO(mime): return to login.
-        return;
-      }
+    fetchContentRemotePaginated: combineResolvers(
+      isAuthor,
+      async (parent, { profileUrlOrSpecialFeed, offset, query }, { currentUser, models }) => {
+        const limit = 20;
 
-      const limit = 20;
+        let constraints = {
+          to_username: currentUser.model.username,
+          deleted: false,
+          is_spam: false,
+        };
+        let order = 'DESC';
 
-      let constraints = {
-        to_username: currentUser.model.username,
-        deleted: false,
-        is_spam: false,
-      };
-      let order = 'DESC';
-
-      switch (profileUrlOrSpecialFeed) {
-        case 'favorites':
-          constraints.favorited = true;
-          break;
-        case 'comments':
-          constraints.type = 'comment';
-          break;
-        default:
-          if (profileUrlOrSpecialFeed) {
-            constraints.from_user = profileUrlOrSpecialFeed;
-            const userRemote = await models.User_Remote.findOne({
-              attributes: ['sort_type'],
-              where: { local_username: currentUser.model.username, profile_url: profileUrlOrSpecialFeed },
-            });
-            if (userRemote.sort_type === 'oldest') {
-              order = 'ASC';
+        switch (profileUrlOrSpecialFeed) {
+          case 'favorites':
+            constraints.favorited = true;
+            break;
+          case 'comments':
+            constraints.type = 'comment';
+            break;
+          default:
+            if (profileUrlOrSpecialFeed) {
+              constraints.from_user = profileUrlOrSpecialFeed;
+              const userRemote = await models.User_Remote.findOne({
+                attributes: ['sort_type'],
+                where: { local_username: currentUser.model.username, profile_url: profileUrlOrSpecialFeed },
+              });
+              if (userRemote.sort_type === 'oldest') {
+                order = 'ASC';
+              }
             }
-          }
-          constraints.type = 'post';
-          constraints.read = false;
-          break;
+            constraints.type = 'post';
+            constraints.read = false;
+            break;
+        }
+
+        let replacements;
+        if (query) {
+          constraints = [constraints, Sequelize.literal('match (title, view) against (:query)')];
+          replacements = { query };
+        }
+
+        return await models.Content_Remote.findAll({
+          where: constraints,
+          order: [['createdAt', order]],
+          limit,
+          offset: offset * limit,
+          replacements,
+        });
       }
+    ),
 
-      let replacements;
-      if (query) {
-        constraints = [constraints, Sequelize.literal('match (title, view) against (:query)')];
-        replacements = { query };
-      }
-
-      return await models.Content_Remote.findAll({
-        where: constraints,
-        order: [['createdAt', order]],
-        limit,
-        offset: offset * limit,
-        replacements,
-      });
-    },
-
-    async fetchUserTotalCounts(parent, args, { currentUser, models }) {
-      if (!currentUser) {
-        // TODO(mime): return to login.
-        return;
-      }
-
+    fetchUserTotalCounts: combineResolvers(isAuthor, async (parent, args, { currentUser, models }) => {
       const commonConstraints = {
         to_username: currentUser.model.username,
         deleted: false,
@@ -94,14 +87,9 @@ export default {
         favoritesCount,
         totalCount,
       };
-    },
+    }),
 
-    async fetchFeedCounts(parent, args, { currentUser, models }) {
-      if (!currentUser) {
-        // TODO(mime): return to login.
-        return;
-      }
-
+    fetchFeedCounts: combineResolvers(isAuthor, async (parent, args, { currentUser, models }) => {
       const result = await models.Content_Remote.findAll({
         attributes: ['from_user', [Sequelize.fn('COUNT', '*'), 'count']],
         where: {
@@ -119,38 +107,31 @@ export default {
       }); // hrmph.
 
       return result;
-    },
+    }),
   },
 
   Mutation: {
-    async favoriteContentRemote(parent, { from_user, post_id, favorited }, { currentUser, models }) {
-      if (!currentUser) {
-        // TODO(mime): return to login.
-        return false;
-      }
-
-      await models.Content_Remote.update(
-        {
-          favorited,
-        },
-        {
-          where: {
-            to_username: currentUser.model.username,
-            from_user,
-            post_id,
+    favoriteContentRemote: combineResolvers(
+      isAuthor,
+      async (parent, { from_user, post_id, favorited }, { currentUser, models }) => {
+        await models.Content_Remote.update(
+          {
+            favorited,
           },
-        }
-      );
+          {
+            where: {
+              to_username: currentUser.model.username,
+              from_user,
+              post_id,
+            },
+          }
+        );
 
-      return { from_user, post_id, favorited };
-    },
-
-    async markAllContentInFeedAsRead(parent, { from_user }, { currentUser, models }) {
-      if (!currentUser) {
-        // TODO(mime): return to login.
-        return false;
+        return { from_user, post_id, favorited };
       }
+    ),
 
+    markAllContentInFeedAsRead: combineResolvers(isAuthor, async (parent, { from_user }, { currentUser, models }) => {
       await models.Content_Remote.update(
         {
           read: true,
@@ -164,28 +145,26 @@ export default {
       );
 
       return { from_user, count: 0 };
-    },
+    }),
 
-    async readContentRemote(parent, { from_user, post_id, read }, { currentUser, models }) {
-      if (!currentUser) {
-        // TODO(mime): return to login.
-        return false;
-      }
-
-      await models.Content_Remote.update(
-        {
-          read,
-        },
-        {
-          where: {
-            to_username: currentUser.model.username,
-            from_user,
-            post_id,
+    readContentRemote: combineResolvers(
+      isAuthor,
+      async (parent, { from_user, post_id, read }, { currentUser, models }) => {
+        await models.Content_Remote.update(
+          {
+            read,
           },
-        }
-      );
+          {
+            where: {
+              to_username: currentUser.model.username,
+              from_user,
+              post_id,
+            },
+          }
+        );
 
-      return { from_user, post_id, read };
-    },
+        return { from_user, post_id, read };
+      }
+    ),
   },
 };

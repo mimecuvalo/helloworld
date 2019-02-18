@@ -1,6 +1,6 @@
 import { combineResolvers } from 'graphql-resolvers';
 import { discoverAndParseFeedFromUrl, mapFeedEntriesToModelEntries } from '../../../util/feeds';
-import { isAdmin } from './authorization';
+import { isAdmin, isAuthor } from './authorization';
 
 export default {
   Query: {
@@ -30,12 +30,7 @@ export default {
   },
 
   Mutation: {
-    async createUserRemote(parent, { profile_url }, { currentUser, models }) {
-      if (!currentUser) {
-        // TODO(mime): return to login.
-        return;
-      }
-
+    createUserRemote: combineResolvers(isAuthor, async (parent, { profile_url }, { currentUser, models }) => {
       const { feedMeta, feedEntries } = await discoverAndParseFeedFromUrl(profile_url);
 
       const parsedUrl = new URL(profile_url);
@@ -67,36 +62,29 @@ export default {
       }
 
       return userRemote;
-    },
+    }),
 
-    async toggleSortFeed(parent, { profile_url, current_sort_type }, { currentUser, models }) {
-      if (!currentUser) {
-        // TODO(mime): return to login.
-        return;
-      }
-
-      const sort_type = current_sort_type === 'oldest' ? '' : 'oldest';
-      await models.User_Remote.update(
-        {
-          sort_type,
-        },
-        {
-          where: {
-            local_username: currentUser.model.username,
-            profile_url,
+    toggleSortFeed: combineResolvers(
+      isAuthor,
+      async (parent, { profile_url, current_sort_type }, { currentUser, models }) => {
+        const sort_type = current_sort_type === 'oldest' ? '' : 'oldest';
+        await models.User_Remote.update(
+          {
+            sort_type,
           },
-        }
-      );
+          {
+            where: {
+              local_username: currentUser.model.username,
+              profile_url,
+            },
+          }
+        );
 
-      return { profile_url, sort_type };
-    },
-
-    async destroyFeed(parent, { profile_url }, { currentUser, models }) {
-      if (!currentUser) {
-        // TODO(mime): return to login.
-        return;
+        return { profile_url, sort_type };
       }
+    ),
 
+    destroyFeed: combineResolvers(isAuthor, async (parent, { profile_url }, { currentUser, models }) => {
       await models.User_Remote.destroy({
         where: {
           local_username: currentUser.model.username,
@@ -105,6 +93,6 @@ export default {
       });
 
       return true;
-    },
+    }),
   },
 };

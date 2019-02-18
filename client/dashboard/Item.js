@@ -49,7 +49,7 @@ class Item extends Component {
   }
 
   maybeMarkAsRead = () => {
-    if (!this.state.keepUnread && this.item.current && this.item.current.getBoundingClientRect().top < 0) {
+    if (!this.state.keepUnread && this.item.current && this.item.current.getBoundingClientRect().top < 5) {
       this.removeEventListeners();
 
       this.readContentRemote(true);
