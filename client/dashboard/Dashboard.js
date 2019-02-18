@@ -19,6 +19,7 @@ class Dashboard extends Component {
     super(props);
 
     this.state = {
+      shouldShowAllItems: false,
       didFeedLoad: false,
       query: null,
       specialFeed: '',
@@ -26,10 +27,16 @@ class Dashboard extends Component {
     };
   }
 
-  handleSetFeed = (userRemoteOrSpecialFeed, opt_query) => {
+  handleSetFeed = (userRemoteOrSpecialFeed, opt_query, opt_allItems) => {
+    const newState = {
+      didFeedLoad: true,
+      query: opt_query,
+      shouldShowAllItems: !!opt_allItems,
+    };
+
     typeof userRemoteOrSpecialFeed === 'string'
-      ? this.setState({ specialFeed: userRemoteOrSpecialFeed, userRemote: null, query: opt_query, didFeedLoad: true })
-      : this.setState({ userRemote: userRemoteOrSpecialFeed, specialFeed: '', query: opt_query, didFeedLoad: true });
+      ? this.setState(Object.assign(newState, { specialFeed: userRemoteOrSpecialFeed, userRemote: null }))
+      : this.setState(Object.assign(newState, { userRemote: userRemoteOrSpecialFeed, specialFeed: '' }));
   };
 
   render() {
@@ -63,9 +70,10 @@ class Dashboard extends Component {
                   ) : (
                     <Feed
                       didFeedLoad={this.state.didFeedLoad}
+                      query={this.state.query}
+                      shouldShowAllItems={this.state.shouldShowAllItems}
                       specialFeed={this.state.specialFeed}
                       userRemote={this.state.userRemote}
-                      query={this.state.query}
                     />
                   )}
                 </article>

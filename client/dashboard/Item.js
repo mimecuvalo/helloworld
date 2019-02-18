@@ -31,7 +31,9 @@ class Item extends Component {
   }
 
   componentDidMount() {
-    this.addEventListeners();
+    if (!this.props.contentRemote.read) {
+      this.addEventListeners();
+    }
   }
 
   componentWillUnmount() {

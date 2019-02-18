@@ -8,8 +8,13 @@ import styles from './Dashboard.module.css';
 
 @graphql(
   gql`
-    query($profileUrlOrSpecialFeed: String!, $offset: Int!, $query: String) {
-      fetchContentRemotePaginated(profileUrlOrSpecialFeed: $profileUrlOrSpecialFeed, offset: $offset, query: $query) {
+    query($profileUrlOrSpecialFeed: String!, $offset: Int!, $query: String, $shouldShowAllItems: Boolean) {
+      fetchContentRemotePaginated(
+        profileUrlOrSpecialFeed: $profileUrlOrSpecialFeed
+        offset: $offset
+        query: $query
+        shouldShowAllItems: $shouldShowAllItems
+      ) {
         avatar
         comments_count
         creator
@@ -30,11 +35,12 @@ import styles from './Dashboard.module.css';
     }
   `,
   {
-    options: ({ userRemote, specialFeed, query, didFeedLoad }) => ({
+    options: ({ userRemote, specialFeed, query, shouldShowAllItems, didFeedLoad }) => ({
       variables: {
         profileUrlOrSpecialFeed: userRemote ? userRemote.profile_url : specialFeed,
         offset: 0,
         query,
+        shouldShowAllItems,
       },
       fetchPolicy: didFeedLoad ? 'network-only' : 'cache-first',
     }),

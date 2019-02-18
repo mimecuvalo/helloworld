@@ -14,7 +14,7 @@ export default {
 
     fetchContentRemotePaginated: combineResolvers(
       isAuthor,
-      async (parent, { profileUrlOrSpecialFeed, offset, query }, { currentUser, models }) => {
+      async (parent, { profileUrlOrSpecialFeed, offset, query, shouldShowAllItems }, { currentUser, models }) => {
         const limit = 20;
 
         let constraints = {
@@ -43,7 +43,9 @@ export default {
               }
             }
             constraints.type = 'post';
-            constraints.read = false;
+            if (!shouldShowAllItems) {
+              constraints.read = false;
+            }
             break;
         }
 

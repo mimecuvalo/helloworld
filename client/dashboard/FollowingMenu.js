@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import Sort from './actions/Sort';
 import styles from './RemoteUsers.module.css';
 import UnfollowFeed from './actions/UnfollowFeed';
+import ViewAlreadyRead from './actions/ViewAlreadyRead';
 
 const messages = defineMessages({
   menu: { msg: 'user options' },
@@ -59,6 +60,12 @@ class FollowingMenu extends Component {
           <MarkAllAsRead key="read" handleClose={this.handleClose} userRemote={this.props.userRemote} />
           <Sort
             key="sort"
+            handleClose={this.handleClose}
+            userRemote={this.props.userRemote}
+            handleSetFeed={this.props.handleSetFeed}
+          />
+          <ViewAlreadyRead
+            key="alreadyread"
             handleClose={this.handleClose}
             userRemote={this.props.userRemote}
             handleSetFeed={this.props.handleSetFeed}
