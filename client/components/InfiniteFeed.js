@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
 
 class InfiniteFeed extends Component {
@@ -11,16 +12,17 @@ class InfiniteFeed extends Component {
     };
 
     React.createRef(); // XXX(mime): import React lint error above since we're just using <> elements below :-/
+    this.throttledMaybeLoadMoreContent = _.throttle(this.maybeLoadMoreContent, 100);
   }
 
   componentDidMount() {
-    window.addEventListener('scroll', this.maybeLoadMoreContent, { passive: true });
-    window.addEventListener('resize', this.maybeLoadMoreContent, { passive: true });
+    window.addEventListener('scroll', this.throttledMaybeLoadMoreContent, { passive: true });
+    window.addEventListener('resize', this.throttledMaybeLoadMoreContent, { passive: true });
   }
 
   componentWillUnmount() {
-    window.removeEventListener('scroll', this.maybeLoadMoreContent);
-    window.removeEventListener('resize', this.maybeLoadMoreContent);
+    window.removeEventListener('scroll', this.throttledMaybeLoadMoreContent);
+    window.removeEventListener('resize', this.throttledMaybeLoadMoreContent);
   }
 
   maybeLoadMoreContent = () => {
@@ -29,7 +31,7 @@ class InfiniteFeed extends Component {
     }
 
     // We check to see if we're close to the bottom of the feed, three window-fulls of content ahead.
-    if (document.documentElement.scrollTop + window.innerHeight * 5 < document.documentElement.scrollHeight) {
+    if (document.documentElement.scrollTop + window.innerHeight * 3 < document.documentElement.scrollHeight) {
       return;
     }
 

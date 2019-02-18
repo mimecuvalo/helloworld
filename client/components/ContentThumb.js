@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import classNames from 'classnames';
 import { contentUrl } from '../../shared/util/url_factory';
 import { defineMessages, injectIntl } from '../../shared/i18n';
@@ -19,11 +20,13 @@ class Thumb extends Component {
       isAboveFold: false,
       isLoaded: false,
     };
+
+    this.throttledMaybeLoadImage = _.throttle(this.maybeLoadImage, 100);
   }
 
   componentDidMount() {
-    window.addEventListener('scroll', this.maybeLoadImage, { passive: true });
-    window.addEventListener('resize', this.maybeLoadImage, { passive: true });
+    window.addEventListener('scroll', this.throttledMaybeLoadImage, { passive: true });
+    window.addEventListener('resize', this.throttledMaybeLoadImage, { passive: true });
 
     this.maybeLoadImage();
   }
@@ -33,8 +36,8 @@ class Thumb extends Component {
   }
 
   removeEventListeners() {
-    window.removeEventListener('scroll', this.maybeLoadImage);
-    window.removeEventListener('resize', this.maybeLoadImage);
+    window.removeEventListener('scroll', this.throttledMaybeLoadImage);
+    window.removeEventListener('resize', this.throttledMaybeLoadImage);
   }
 
   maybeLoadImage = () => {

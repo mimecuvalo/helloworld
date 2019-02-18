@@ -16,7 +16,7 @@ import styles from './Actions.module.css';
   }
 `)
 class Favorite extends PureComponent {
-  handleFavorite = async evt => {
+  handleClick = async evt => {
     evt.preventDefault();
 
     const { favorited, from_user, post_id } = this.props.contentRemote;
@@ -41,7 +41,7 @@ class Favorite extends PureComponent {
     return (
       <a
         href="#favorite"
-        onClick={this.handleFavorite}
+        onClick={this.handleClick}
         className={classNames({ [styles.enabled]: this.props.contentRemote.favorited })}
       >
         <F msg="favorite" />

@@ -1,5 +1,6 @@
 import { F, FormattedDate } from '../../shared/i18n';
 import Favorite from './actions/Favorite';
+import KeepUnread from './actions/KeepUnread';
 import React, { PureComponent } from 'react';
 import styles from './Footer.module.css';
 
@@ -57,6 +58,8 @@ class Footer extends PureComponent {
         </div>
         <div className={styles.actions}>
           <Favorite contentRemote={contentRemote} />
+          &nbsp;•&nbsp;
+          <KeepUnread keepUnreadCb={this.props.keepUnreadCb} contentRemote={contentRemote} />
         </div>
       </footer>
     );

@@ -165,5 +165,27 @@ export default {
 
       return { from_user, count: 0 };
     },
+
+    async readContentRemote(parent, { from_user, post_id, read }, { currentUser, models }) {
+      if (!currentUser) {
+        // TODO(mime): return to login.
+        return false;
+      }
+
+      await models.Content_Remote.update(
+        {
+          read,
+        },
+        {
+          where: {
+            to_username: currentUser.model.username,
+            from_user,
+            post_id,
+          },
+        }
+      );
+
+      return { from_user, post_id, read };
+    },
   },
 };
