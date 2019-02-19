@@ -20,7 +20,7 @@ class Item extends PureComponent {
 
     return (
       <section className="hw-item">
-        <Header content={content} />
+        <Header content={content} handleEdit={this.props.handleEdit} />
         <TemplateComponent content={content} />
         <Footer content={content} />
       </section>

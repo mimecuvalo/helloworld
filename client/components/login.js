@@ -17,11 +17,9 @@ export default class LoginLogoutButton extends PureComponent {
 
   render() {
     return (
-      <span className={this.props.className}>
-        <Button variant="contained" color="primary" onClick={this.handleClick}>
-          <UserContext.Consumer>{({ user }) => (user ? <F msg="Logout" /> : <F msg="Login" />)}</UserContext.Consumer>
-        </Button>
-      </span>
+      <Button variant="contained" color="primary" onClick={this.handleClick}>
+        <UserContext.Consumer>{({ user }) => (user ? <F msg="Logout" /> : <F msg="Login" />)}</UserContext.Consumer>
+      </Button>
     );
   }
 }

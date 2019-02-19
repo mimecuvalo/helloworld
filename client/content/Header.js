@@ -19,6 +19,16 @@ class Header extends PureComponent {
             &nbsp;
             {isOwnerViewing && content.hidden && <F msg="(hidden)" />}
           </ContentLink>
+
+          {isOwnerViewing ? (
+            <span>
+              (
+              <a href="#edit" onClick={this.props.handleEdit}>
+                <F msg="edit" />
+              </a>
+              )
+            </span>
+          ) : null}
         </h1>
       </header>
     );

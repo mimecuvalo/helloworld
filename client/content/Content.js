@@ -2,6 +2,7 @@ import { buildUrl, contentUrl } from '../../shared/util/url_factory';
 import classNames from 'classnames';
 import ContentBase from './ContentBase';
 import ContentQuery from './ContentQuery';
+import Editor from '../editor';
 import Feed from './Feed';
 import { graphql } from 'react-apollo';
 import Item from './Item';
@@ -25,6 +26,14 @@ import { withRouter } from 'react-router-dom';
   }),
 })
 class Content extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isEditing: false,
+    };
+  }
+
   componentDidMount() {
     if (this.props.data.loading || !this.props.data.fetchContent) {
       return;
@@ -42,6 +51,12 @@ class Content extends Component {
   shouldComponentUpdate(nextProps) {
     return !nextProps.data.loading;
   }
+
+  handleEdit = evt => {
+    evt.preventDefault();
+
+    this.setState({ isEditing: true });
+  };
 
   render() {
     if (this.props.data.loading) {
@@ -63,13 +78,20 @@ class Content extends Component {
     }
 
     const contentOwner = this.props.data.fetchPublicUserData;
-    const item = content.template === 'feed' ? <Feed content={content} /> : <Item content={content} />;
+    const item =
+      content.template === 'feed' ? (
+        <Feed content={content} />
+      ) : (
+        <Item content={content} handleEdit={this.handleEdit} />
+      );
     const title = (content.title ? content.title + ' – ' : '') + contentOwner.title;
+    const isEditing = this.state.isEditing;
 
     return (
       <ContentBase content={content} contentOwner={contentOwner} title={title} username={content.username}>
+        {isEditing ? <Editor /> : null}
         <article className={classNames(styles.content, 'hw-invisible-transition')}>
-          <Nav content={content} />
+          {isEditing ? null : <Nav content={content} />}
           {item}
         </article>
       </ContentBase>

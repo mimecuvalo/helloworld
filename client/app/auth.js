@@ -34,7 +34,7 @@ async function removeLogin() {
   await fetch('/api/auth/logout', {
     method: 'POST',
     body: JSON.stringify({
-      next: window.location.href,
+      next: window.location.origin,
       _csrf: configuration.csrf,
     }),
     headers: {

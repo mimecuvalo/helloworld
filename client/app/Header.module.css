@@ -1,6 +1,15 @@
-.login {
+.header {
   display: block;
   position: fixed;
   top: 10px;
   right: 10px;
+}
+
+.header a,
+.header a:visited {
+  color: #fff;
+}
+
+.header button {
+  margin-left: 10px;
 }
