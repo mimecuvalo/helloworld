@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import { F } from '../../../shared/i18n';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import styles from './Actions.module.css';
 
-class KeepUnread extends Component {
+class KeepUnread extends PureComponent {
   constructor(props) {
     super(props);
 

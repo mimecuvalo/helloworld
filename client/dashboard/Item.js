@@ -6,7 +6,7 @@ import Footer from './Footer';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import Header from './Header';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import styles from './Item.module.css';
 
 @graphql(gql`
@@ -18,7 +18,7 @@ import styles from './Item.module.css';
     }
   }
 `)
-class Item extends Component {
+class Item extends PureComponent {
   constructor(props) {
     super(props);
 

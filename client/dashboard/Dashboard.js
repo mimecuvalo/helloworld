@@ -4,7 +4,7 @@ import Feed from './Feed';
 import Followers from './Followers';
 import Following from './Following';
 import MyFeed from '../content/Feed';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import styles from './Dashboard.module.css';
 import Tools from './Tools';
 import Unauthorized from '../error/401';
@@ -14,7 +14,7 @@ const messages = defineMessages({
   title: { msg: 'Dashboard' },
 });
 
-class Dashboard extends Component {
+class Dashboard extends PureComponent {
   constructor(props) {
     super(props);
 

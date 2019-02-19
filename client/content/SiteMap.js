@@ -8,7 +8,7 @@ import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import styles from './SiteMap.module.css';
 import { withRouter } from 'react-router-dom';
 
@@ -45,7 +45,7 @@ const messages = defineMessages({
     }),
   }
 )
-class SiteMap extends Component {
+class SiteMap extends PureComponent {
   constructor(props) {
     super(props);
 

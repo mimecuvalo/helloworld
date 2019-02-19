@@ -4,7 +4,7 @@ import IconButton from '@material-ui/core/IconButton';
 import MarkAllAsRead from './actions/MarkAllAsRead';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Sort from './actions/Sort';
 import styles from './RemoteUsers.module.css';
 import UnfollowFeed from './actions/UnfollowFeed';
@@ -14,7 +14,7 @@ const messages = defineMessages({
   menu: { msg: 'user options' },
 });
 
-class FollowingMenu extends Component {
+class FollowingMenu extends PureComponent {
   constructor() {
     super();
 

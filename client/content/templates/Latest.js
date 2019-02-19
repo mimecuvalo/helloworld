@@ -2,7 +2,7 @@ import Archive from './Archive';
 import { contentUrl } from '../../../shared/util/url_factory';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Simple from './Simple';
 import { withRouter } from 'react-router-dom';
 
@@ -29,7 +29,7 @@ import { withRouter } from 'react-router-dom';
     }),
   }
 )
-class Latest extends Component {
+class Latest extends PureComponent {
   constructor() {
     super();
 

@@ -3,14 +3,14 @@ import classNames from 'classnames';
 import { contentUrl } from '../../shared/util/url_factory';
 import { defineMessages, injectIntl } from '../../shared/i18n';
 import { Link } from 'react-router-dom';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import styles from './ContentThumb.module.css';
 
 const messages = defineMessages({
   thumbnail: { msg: 'thumbnail' },
 });
 
-class Thumb extends Component {
+class Thumb extends PureComponent {
   constructor() {
     super();
 

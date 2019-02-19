@@ -1,11 +1,11 @@
 import { defineMessages, injectIntl } from '../../shared/i18n';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 
 const messages = defineMessages({
   avatar: { msg: 'user avatar' },
 });
 
-class Avatar extends Component {
+class Avatar extends PureComponent {
   constructor() {
     super();
 

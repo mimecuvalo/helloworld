@@ -8,7 +8,7 @@ import { graphql } from 'react-apollo';
 import Item from './Item';
 import Nav from './Nav';
 import NotFound from '../error/404';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Simple from './templates/Simple';
 import styles from './Content.module.css';
 import { withRouter } from 'react-router-dom';
@@ -25,7 +25,7 @@ import { withRouter } from 'react-router-dom';
     },
   }),
 })
-class Content extends Component {
+class Content extends PureComponent {
   constructor(props) {
     super(props);
 

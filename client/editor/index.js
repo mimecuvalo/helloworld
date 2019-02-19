@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Editor from 'draft-js-plugins-editor';
 import createHashtagPlugin from 'draft-js-hashtag-plugin';
 import createLinkifyPlugin from 'draft-js-linkify-plugin';
@@ -19,7 +19,7 @@ const linkifyPlugin = createLinkifyPlugin();
 
 const plugins = [hashtagPlugin, linkifyPlugin];
 
-export default class UnicornEditor extends Component {
+export default class UnicornEditor extends PureComponent {
   state = {
     editorState: EditorState.createEmpty(),
   };

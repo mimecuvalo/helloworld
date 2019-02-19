@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 
-class InfiniteFeed extends Component {
+class InfiniteFeed extends PureComponent {
   constructor(props) {
     super(props);
 
