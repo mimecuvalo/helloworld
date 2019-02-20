@@ -130,6 +130,11 @@ export default (sequelize, Sequelize) => {
         allowNull: false,
         defaultValue: '',
       },
+      content: {
+        type: Sequelize.TEXT('medium'),
+        allowNull: false,
+        defaultValue: '',
+      },
     },
     {
       freezeTableName: true,
@@ -158,6 +163,11 @@ export default (sequelize, Sequelize) => {
         {
           name: 'search',
           fields: ['title', 'view'],
+          type: 'fulltext',
+        },
+        {
+          name: 'search2',
+          fields: ['title', 'content'],
           type: 'fulltext',
         },
       ],

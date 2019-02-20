@@ -5,7 +5,7 @@ import { contentUrl } from '../../shared/util/url_factory';
 import { F } from '../../shared/i18n';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import styles from './Nav.module.css';
 
 const NAV_FIELDS = `
@@ -54,7 +54,7 @@ const NAV_FIELDS = `
     }),
   }
 )
-class Nav extends PureComponent {
+class Nav extends Component {
   constructor(props) {
     super(props);
 

@@ -1,5 +1,5 @@
 import { combineResolvers } from 'graphql-resolvers';
-import { isAdmin } from './authorization';
+import { isAdmin, isAuthor } from './authorization';
 import Sequelize from 'sequelize';
 
 const ATTRIBUTES_NAVIGATION = [
@@ -330,6 +330,24 @@ export default {
 
       return decorateArrayWithRefreshFlag(collection);
     },
+  },
+
+  Mutation: {
+    saveContent: combineResolvers(isAuthor, async (parent, { name, content }, { currentUser, models }) => {
+      await models.Content.update(
+        {
+          content,
+        },
+        {
+          where: {
+            username: currentUser.model.username,
+            name,
+          },
+        }
+      );
+
+      return { username: currentUser.model.username, name, content };
+    }),
   },
 };
 

@@ -21,6 +21,7 @@ export default gql`
       updatedAt
       username
       view
+      content
     }
 
     fetchPublicUserData(username: $username) {

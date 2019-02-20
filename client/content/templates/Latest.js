@@ -16,6 +16,7 @@ import { withRouter } from 'react-router-dom';
         title
         username
         view
+        content
       }
     }
   `,

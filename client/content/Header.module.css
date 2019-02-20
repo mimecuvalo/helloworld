@@ -5,5 +5,17 @@
 }
 
 .title {
+  display: flex;
   margin: 3px 3px 3px 0;
+}
+
+.titleLink {
+  flex: 1;
+}
+
+.edit {
+  line-height: 14px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 2px;
 }

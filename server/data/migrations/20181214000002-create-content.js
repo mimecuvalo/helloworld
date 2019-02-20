@@ -98,6 +98,11 @@ module.exports = {
           allowNull: false,
           defaultValue: '',
         },
+        content: {
+          type: Sequelize.TEXT('medium'),
+          allowNull: false,
+          defaultValue: '',
+        },
         createdAt: Sequelize.DATE,
         updatedAt: Sequelize.DATE,
       })
@@ -118,6 +123,9 @@ module.exports = {
       })
       .then(() => {
         queryInterface.addIndex('Content', { name: 'search', fields: ['title', 'view'], type: 'fulltext' });
+      })
+      .then(() => {
+        queryInterface.addIndex('Content', { name: 'search2', fields: ['title', 'content'], type: 'fulltext' });
       });
   },
 

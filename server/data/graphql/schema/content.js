@@ -29,6 +29,7 @@ export default gql`
     style: String!
     code: String!
     view: String!
+    content: String!
     forceRefresh: Boolean # If content contains style/code we can't do ajax navigation.
   }
 
@@ -76,5 +77,9 @@ export default gql`
     fetchFeed(username: String!): [Content!]!
     fetchSiteMap(username: String!): [ContentMetaInfo!]!
     searchContent(username: String!, query: String!): [SearchContentMetaInfo!]!
+  }
+
+  extend type Mutation {
+    saveContent(name: String!, content: String!): Content!
   }
 `;

@@ -50,6 +50,7 @@ export default async (req, res, next) => {
         title
         username
         view
+        content
       }
 
       fetchPublicUserData(username: $username) {

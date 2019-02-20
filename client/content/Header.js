@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import ContentLink from '../components/ContentLink';
 import { F } from '../../shared/i18n';
 import React, { PureComponent } from 'react';
@@ -8,26 +9,31 @@ class Header extends PureComponent {
   static contextType = UserContext;
 
   render() {
-    const content = this.props.content;
+    const { content, handleEdit, isEditing } = this.props;
     const isOwnerViewing = this.context.user?.model?.username === content.username;
 
     return (
       <header className={styles.header}>
         <h1 className={styles.title}>
-          <ContentLink item={content} currentContent={content}>
+          <ContentLink item={content} currentContent={content} className={styles.titleLink}>
             {content.title || <F msg="(untitled)" />}
-            &nbsp;
-            {isOwnerViewing && content.hidden && <F msg="(hidden)" />}
+            {isOwnerViewing &&
+              content.hidden && (
+                <span>
+                  &nbsp;
+                  <F msg="(hidden)" />
+                </span>
+              )}
           </ContentLink>
 
           {isOwnerViewing ? (
-            <span>
-              (
-              <a href="#edit" onClick={this.props.handleEdit}>
-                <F msg="edit" />
-              </a>
-              )
-            </span>
+            <a
+              href="#edit"
+              onClick={handleEdit}
+              className={classNames('hw-button', 'hw-edit', styles.edit, { 'hw-selected': isEditing })}
+            >
+              <F msg="edit" />
+            </a>
           ) : null}
         </h1>
       </header>

@@ -1,28 +1,37 @@
-import React, { PureComponent } from 'react';
-import Editor from 'draft-js-plugins-editor';
+import './Draft.css';
+import { convertFromHTML } from 'draft-convert';
 import createHashtagPlugin from 'draft-js-hashtag-plugin';
+import createImagePlugin from 'draft-js-image-plugin';
 import createLinkifyPlugin from 'draft-js-linkify-plugin';
-import { EditorState } from 'draft-js';
+import draftJSExtendPlugins, { blockRenderers, decorator } from './plugins';
+import Editor from 'draft-js-plugins-editor';
+import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
+import React, { Component } from 'react';
 
-/*
-plugins	an array of plugins
-decorators	an array of custom decorators
-defaultKeyBindings	bool
-defaultBlockRenderMap	bool
-all other props accepted by the DraftJS Editor except decorator	https://facebook.github.io/draft-js/docs/api-reference-editor.html#props
-https://github.com/jpuri/draftjs-utils
-dante / megadraft
-*/
+const plugins = [createHashtagPlugin(), createImagePlugin(), createLinkifyPlugin()];
 
-const hashtagPlugin = createHashtagPlugin();
-const linkifyPlugin = createLinkifyPlugin();
+export default class HelloWorldEditor extends Component {
+  constructor(props) {
+    super(props);
 
-const plugins = [hashtagPlugin, linkifyPlugin];
+    const content = this.props.content;
 
-export default class UnicornEditor extends PureComponent {
-  state = {
-    editorState: EditorState.createEmpty(),
-  };
+    let state;
+    if (content.content) {
+      state = convertFromRaw(JSON.parse(content.content));
+    } else if (content.view) {
+      // XXX(mime): this is the dumbest shit i have ever seen. ARGH. the custom block renderer won't fire unless
+      // there's a whitespace character before the <img /> tag to attach to. ARRRRRRRRRRGH.
+      // See related hack in image.js for the blockRendererFn.
+      const view = content.view.replace(/<img /g, ' <img ');
+
+      state = draftJSExtendPlugins(convertFromHTML)(view);
+    }
+
+    this.state = {
+      editorState: EditorState.createWithContent(state),
+    };
+  }
 
   onChange = editorState => {
     this.setState({
@@ -30,7 +39,20 @@ export default class UnicornEditor extends PureComponent {
     });
   };
 
+  export() {
+    return convertToRaw(this.state.editorState.getCurrentContent());
+  }
+
   render() {
-    return <Editor editorState={this.state.editorState} onChange={this.onChange} plugins={plugins} />;
+    return (
+      <Editor
+        readOnly={this.props.readOnly}
+        decorators={[decorator]}
+        blockRendererFn={blockRenderers}
+        editorState={this.state.editorState}
+        onChange={this.onChange}
+        plugins={plugins}
+      />
+    );
   }
 }

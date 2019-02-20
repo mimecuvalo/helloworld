@@ -15,7 +15,8 @@ body {
   box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf;
 }
 
-.hw-item {
+.hw-item,
+#hw-content .DraftEditor-root {
   width: 650px;
 }
 
@@ -88,6 +89,11 @@ a.hw-button[href]:hover {
   margin-left: 6px;
   margin-right: 0;
   margin-bottom: 3px;
+}
+
+.hw-edit.hw-button.hw-selected {
+  margin-top: 1px;
+  margin-bottom: 1px;
 }
 
 .hw-last,

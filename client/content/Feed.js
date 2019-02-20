@@ -29,6 +29,7 @@ import React, { PureComponent } from 'react';
         title
         username
         view
+        content
       }
     }
   `,

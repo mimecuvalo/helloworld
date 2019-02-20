@@ -1,33 +1,23 @@
 import { buildUrl, contentUrl } from '../../shared/util/url_factory';
 import classNames from 'classnames';
+import { compose, graphql } from 'react-apollo';
 import ContentBase from './ContentBase';
 import ContentQuery from './ContentQuery';
-import Editor from '../editor';
 import Feed from './Feed';
-import { graphql } from 'react-apollo';
+import gql from 'graphql-tag';
 import Item from './Item';
 import Nav from './Nav';
 import NotFound from '../error/404';
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import Simple from './templates/Simple';
 import styles from './Content.module.css';
 import { withRouter } from 'react-router-dom';
 
-@graphql(ContentQuery, {
-  options: ({
-    match: {
-      params: { username, name },
-    },
-  }) => ({
-    variables: {
-      username: username || '',
-      name: username ? name || 'home' : '',
-    },
-  }),
-})
-class Content extends PureComponent {
+class Content extends Component {
   constructor(props) {
     super(props);
+
+    this.item = React.createRef();
 
     this.state = {
       isEditing: false,
@@ -55,8 +45,26 @@ class Content extends PureComponent {
   handleEdit = evt => {
     evt.preventDefault();
 
-    this.setState({ isEditing: true });
+    if (this.state.isEditing) {
+      this.saveContent();
+    }
+
+    this.setState({ isEditing: !this.state.isEditing });
   };
+
+  async saveContent() {
+    const { username, name } = this.props.data.fetchContent;
+    const content = JSON.stringify(this.item.current.getEditor().export());
+    const variables = { username, name, content };
+
+    await this.props.mutate({
+      variables,
+      optimisticResponse: {
+        __typename: 'Mutation',
+        saveContent: Object.assign({}, variables, { __typename: 'Content' }),
+      },
+    });
+  }
 
   render() {
     if (this.props.data.loading) {
@@ -77,19 +85,18 @@ class Content extends PureComponent {
       );
     }
 
+    const isEditing = this.state.isEditing;
     const contentOwner = this.props.data.fetchPublicUserData;
     const item =
       content.template === 'feed' ? (
         <Feed content={content} />
       ) : (
-        <Item content={content} handleEdit={this.handleEdit} />
+        <Item content={content} handleEdit={this.handleEdit} isEditing={isEditing} ref={this.item} />
       );
     const title = (content.title ? content.title + ' – ' : '') + contentOwner.title;
-    const isEditing = this.state.isEditing;
 
     return (
       <ContentBase content={content} contentOwner={contentOwner} title={title} username={content.username}>
-        {isEditing ? <Editor /> : null}
         <article className={classNames(styles.content, 'hw-invisible-transition')}>
           {isEditing ? null : <Nav content={content} />}
           {item}
@@ -99,4 +106,26 @@ class Content extends PureComponent {
   }
 }
 
-export default withRouter(Content);
+export default compose(
+  graphql(ContentQuery, {
+    options: ({
+      match: {
+        params: { username, name },
+      },
+    }) => ({
+      variables: {
+        username: username || '',
+        name: username ? name || 'home' : '',
+      },
+    }),
+  }),
+  graphql(gql`
+    mutation saveContent($name: String!, $content: String!) {
+      saveContent(name: $name, content: $content) {
+        username
+        name
+        content
+      }
+    }
+  `)
+)(withRouter(Content));

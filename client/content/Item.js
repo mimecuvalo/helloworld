@@ -14,14 +14,24 @@ const COMPONENT_TYPE_MAP = {
 };
 
 class Item extends PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.template = React.createRef();
+  }
+
+  getEditor() {
+    return this.template.current?.getEditor && this.template.current.getEditor();
+  }
+
   render() {
-    const content = this.props.content;
+    const { content, handleEdit, isEditing } = this.props;
     let TemplateComponent = COMPONENT_TYPE_MAP[content.template] || Simple;
 
     return (
       <section className="hw-item">
-        <Header content={content} handleEdit={this.props.handleEdit} />
-        <TemplateComponent content={content} />
+        <Header content={content} handleEdit={handleEdit} isEditing={isEditing} />
+        <TemplateComponent ref={this.template} content={content} isEditing={isEditing} />
         <Footer content={content} />
       </section>
     );
