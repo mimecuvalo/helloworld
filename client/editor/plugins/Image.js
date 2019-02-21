@@ -24,17 +24,6 @@ export default createPlugin({
       return create(ENTITY_TYPE, 'IMMUTABLE', { src, alt });
     }
   },
-  // blockRendererFn: (block) => {
-  //   if (block.getType() === 'atomic' && block.length > 0 && Entity.get(block.getEntityAt(0)).getType() === ENTITY_TYPE) {
-  //     return {
-  //       component: ({block}) => {
-  //         const {src} = Entity.get(block.getEntityAt(0)).getData();
-  //         return <img src={src} alt="" />;
-  //       },
-  //       editable: false
-  //     };
-  //   }
-  // },
   blockToHTML: next => block => {
     const result = next(block);
     if (block.data && React.isValidElement(result)) {

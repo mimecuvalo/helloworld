@@ -4,6 +4,7 @@ import errorRouter from './error';
 import express from 'express';
 import openSearchRouterFactory from './opensearch';
 import socialButterfly from './social-butterfly';
+import upload from './upload';
 
 /**
  * Main routing entry point for all of our API server.
@@ -19,6 +20,7 @@ export default function apiServerFactory({ appName }) {
   router.use('/opensearch', openSearchRouterFactory({ appName }));
   router.use('/report-error', errorRouter);
   router.use('/social', socialButterfly);
+  router.use('/upload', upload);
   router.get('/', (req, res) => {
     res.sendStatus(404);
   });

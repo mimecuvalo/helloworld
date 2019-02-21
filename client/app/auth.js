@@ -31,7 +31,7 @@ export function setUser(userObjOrUndefined) {
 
 // Internal function to this file to remove the user information.
 async function removeLogin() {
-  await fetch('/api/auth/logout', {
+  await fetch(buildUrl({ pathname: '/api/auth/logout' }), {
     method: 'POST',
     body: JSON.stringify({
       next: window.location.origin,
