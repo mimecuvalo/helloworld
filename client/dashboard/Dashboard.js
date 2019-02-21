@@ -1,3 +1,4 @@
+import DashboardEditor from './Editor';
 import { defineMessages, injectIntl } from '../../shared/i18n';
 import DocumentTitle from 'react-document-title';
 import Feed from './Feed';
@@ -49,7 +50,7 @@ class Dashboard extends PureComponent {
             <Unauthorized />
           ) : (
             <DocumentTitle title={title}>
-              <div className={styles.container}>
+              <div id="hw-dashboard" className={styles.container}>
                 <nav className={styles.nav}>
                   <Tools className={styles.tools} />
                   <Following
@@ -62,6 +63,7 @@ class Dashboard extends PureComponent {
                 </nav>
 
                 <article className={styles.content}>
+                  <DashboardEditor />
                   {this.state.specialFeed === 'me' ? (
                     <MyFeed
                       content={{ username: user.model.username, section: 'main', name: 'home' }}

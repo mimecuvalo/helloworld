@@ -17,9 +17,9 @@ export default class HelloWorldEditor extends Component {
     const content = this.props.content;
 
     let state;
-    if (content.content) {
+    if (content?.content) {
       state = convertFromRaw(JSON.parse(content.content));
-    } else if (content.view) {
+    } else if (content?.view) {
       // XXX(mime): this is the dumbest shit i have ever seen. ARGH. the custom block renderer won't fire unless
       // there's a whitespace character before the <img /> tag to attach to. ARRRRRRRRRRGH.
       // See related hack in image.js for the blockRendererFn.
@@ -29,7 +29,7 @@ export default class HelloWorldEditor extends Component {
     }
 
     this.state = {
-      editorState: EditorState.createWithContent(state),
+      editorState: state ? EditorState.createWithContent(state) : EditorState.createEmpty(),
     };
   }
 

@@ -1,9 +1,11 @@
+import classNames from 'classnames';
 import { F } from '../../shared/i18n';
 import Help from './Help';
 import React, { PureComponent, lazy, Suspense } from 'react';
 import styles from './Footer.module.css';
+import { withRouter } from 'react-router-dom';
 
-export default class Footer extends PureComponent {
+class Footer extends PureComponent {
   renderDebugMenu() {
     // Conditionally compile this code. Should not appear in production.
     if (process.env.NODE_ENV === 'development') {
@@ -44,10 +46,16 @@ export default class Footer extends PureComponent {
 
   render() {
     return (
-      <footer className={styles.footer}>
+      <footer
+        className={classNames(styles.footer, {
+          [styles.dashboardFooter]: this.props.location.pathname === '/dashboard',
+        })}
+      >
         {this.renderDebugMenu()}
         {this.renderHelp()}
       </footer>
     );
   }
 }
+
+export default withRouter(Footer);

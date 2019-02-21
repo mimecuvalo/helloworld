@@ -5,6 +5,11 @@
   clear: both;
 }
 
+.dashboardFooter {
+  position: static;
+  text-align: right;
+}
+
 .footer button {
   margin-left: 10px;
 }

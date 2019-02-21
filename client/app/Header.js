@@ -4,25 +4,34 @@ import LoginLogoutButton from '../components/login';
 import React, { PureComponent } from 'react';
 import styles from './Header.module.css';
 import UserContext from '../app/User_Context';
+import { withRouter } from 'react-router-dom';
 
-export default class Header extends PureComponent {
-  static contextType = UserContext;
-
+class Header extends PureComponent {
   render() {
-    const isLoggedIn = !!this.context.user;
-    const isAuthor = !!this.context.user?.model;
-
     return (
       <header className={styles.header}>
         <nav>
-          {isAuthor ? (
-            <Button variant="contained" color="primary" href="/dashboard">
-              <F msg="dashboard" />
-            </Button>
-          ) : null}
-          {!isLoggedIn || !isAuthor ? <LoginLogoutButton /> : null}
+          <UserContext.Consumer>
+            {({ user }) => {
+              const isLoggedIn = !!user;
+              const isAuthor = !!user?.model;
+
+              return (
+                <>
+                  {isAuthor && this.props.location.pathname !== '/dashboard' ? (
+                    <Button variant="contained" color="primary" href="/dashboard">
+                      <F msg="dashboard" />
+                    </Button>
+                  ) : null}
+                  {!isLoggedIn || !isAuthor ? <LoginLogoutButton /> : null}
+                </>
+              );
+            }}
+          </UserContext.Consumer>
         </nav>
       </header>
     );
   }
 }
+
+export default withRouter(Header);
