@@ -46,8 +46,9 @@ a:hover {
   text-decoration: underline;
 }
 
-figure {
+figure a {
   text-align: center;
+  display: block;
 }
 
 figcaption {

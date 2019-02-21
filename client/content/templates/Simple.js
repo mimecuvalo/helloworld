@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import Editor from '../../editor';
+import ErrorBoundary from '../../error/ErrorBoundary';
 import React, { PureComponent } from 'react';
 import styles from './Simple.module.css';
 
@@ -23,7 +24,9 @@ export default class Simple extends PureComponent {
         <div dangerouslySetInnerHTML={{ __html: content.code }} />
         {isEditing || content.content ? (
           <div className={classNames(styles.view, 'hw-view')}>
-            <Editor ref={this.editor} readOnly={!isEditing} content={content} />
+            <ErrorBoundary>
+              <Editor ref={this.editor} readOnly={!isEditing} content={content} />
+            </ErrorBoundary>
           </div>
         ) : (
           <div dangerouslySetInnerHTML={{ __html: content.view }} className={classNames(styles.view, 'hw-view')} />
