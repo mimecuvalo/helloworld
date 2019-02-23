@@ -6,6 +6,7 @@ import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import csurf from 'csurf';
 import express from 'express';
+import fs from 'fs';
 import path from 'path';
 import schedule from 'node-schedule';
 import session from 'express-session';
@@ -55,6 +56,11 @@ export default function constructApps({ appName, productionAssetsByType, publicU
       secure: false,
     },
   });
+
+  // The resource directory has the users' assets.
+  const appDirectory = fs.realpathSync(process.cwd());
+  const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
+  app.use('/resource', express.static(resolveApp('resource')));
 
   // Set up API server.
   apiServer && app.use('/api', csrfMiddleware, apiServer({ appName }));
