@@ -42,7 +42,7 @@ plan.target('prod', [
 
 const DIRECTORY_NAME = 'helloworld';
 
-const time = //new Date().getTime();
+const time = new Date().getTime();
 const tmpDir = `${DIRECTORY_NAME}-${time}`;
 const remoteTmpDir = `/tmp/${tmpDir}`;
 
@@ -52,7 +52,7 @@ plan.local(function(local) {
   local.with(`cd ..`, () => {
     const filesToCopy = local.exec(`git ls-files`, { silent: true });
 
-    // rsync files to all the target's remote hosts
+    // rsync git files to all the target's remote hosts
     local.transfer(filesToCopy, remoteTmpDir);
   });
 });
@@ -67,7 +67,7 @@ plan.remote(function(remote) {
   remote.sudo(`cp -R ${remoteTmpDir} /var/www`, { user });
   remote.rm(`-rf ${remoteTmpDir}`);
 
-  remote.log('Moving .env file over...');
+  remote.log('Copying .env file over...');
   remote.sudo(`cp ${destDir}/.env ${varTmpDir}/`, { user, failsafe: true });
 
   remote.log('Seeing if we can just reuse the previous node_modules folder...');
@@ -82,9 +82,12 @@ plan.remote(function(remote) {
   }
 
   remote.log('Reloading application...');
+  remote.sudo(`ln -snf /var/www/resource ${varTmpDir}/resource`, { user });
   remote.sudo(`ln -snf ${varTmpDir} ${destDir}`, { user });
-  remote.sudo(`cd ${destDir}; pm2 startOrReload`, { user });
 
-  // TODO(mime): temporary for migration purposes.
-  remote.sudo(`ln -snf /var/www/helloworld_old/static/resource ${varTmpDir}/public/resource`, { user });
+  // XXX(mime) :-/ sucks but getCSSModuleLocalIdent gives hashes based on filepaths... need to look for workaround
+  remote.log('Building production files...');
+  remote.sudo(`cd ${varTmpDir}; npm run build`, { user });
+
+  remote.sudo(`cd ${destDir}; pm2 startOrReload ecosystem.config.js`, { user });
 });
