@@ -15,7 +15,7 @@ const ATTRIBUTES_NAVIGATION = [
   'code',
 ];
 
-export default {
+const Content = {
   Query: {
     allContent: combineResolvers(isAdmin, async (parent, args, { models }) => {
       return await models.Content.findAll();
@@ -75,6 +75,11 @@ export default {
       }
 
       return decorateWithRefreshFlag(content);
+    },
+
+    // XXX(mime): see HTMLHead.js :(
+    async fetchContentHead(parent, { username, name }, { hostname, models }) {
+      return await Content.Query.fetchContent(parent, { username, name }, { hostname, models });
     },
 
     async fetchContentNeighbors(parent, { username, section, album, name }, { currentUser, models }) {
@@ -350,6 +355,8 @@ export default {
     }),
   },
 };
+
+export default Content;
 
 function getSQLSortType(sortType) {
   if (sortType === 'oldest') {

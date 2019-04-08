@@ -6,7 +6,7 @@ import React, { PureComponent } from 'react';
 @graphql(
   gql`
     query ContentAndUserQuery($username: String!, $name: String!) {
-      fetchContent(username: $username, name: $name) {
+      fetchContentHead(username: $username, name: $name) {
         username
         section
         album
@@ -15,7 +15,7 @@ import React, { PureComponent } from 'react';
         title
       }
 
-      fetchPublicUserData(username: $username) {
+      fetchPublicUserDataHead(username: $username) {
         description
         favicon
         theme
@@ -45,8 +45,12 @@ import React, { PureComponent } from 'react';
 class HTMLHead extends PureComponent {
   render() {
     const { appName, assetPathsByType, nonce, publicUrl, req } = this.props;
-    const contentOwner = this.props.data.fetchPublicUserData;
-    const content = this.props.data.fetchContent;
+
+    // XXX(mime): terrible hack until i figure out what's going on.
+    // seems that having the same query twice in a tree while doing SSR will prevent rendering of the first
+    // component. in this case, HTMLHead's data will be missing.
+    const contentOwner = this.props.data.fetchPublicUserDataHead;
+    const content = this.props.data.fetchContentHead;
 
     let description, favicon, rss, theme, title, username;
     if (contentOwner) {

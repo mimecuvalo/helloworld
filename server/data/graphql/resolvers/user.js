@@ -1,7 +1,7 @@
 import { combineResolvers } from 'graphql-resolvers';
 import { isAdmin } from './authorization';
 
-export default {
+const User = {
   Query: {
     allUsers: combineResolvers(isAdmin, async (parent, args, { models }) => {
       return await models.User.findAll();
@@ -39,6 +39,11 @@ export default {
         where: { username },
       });
     },
+
+    // XXX(mime): see HTMLHead.js :(
+    async fetchPublicUserDataHead(parent, { username }, { hostname, models }) {
+      return await User.Query.fetchPublicUserData(parent, { username }, { hostname, models });
+    },
   },
 
   // Example stubs of mutations, non-functional out of the box.
@@ -48,3 +53,5 @@ export default {
     }),
   },
 };
+
+export default User;
