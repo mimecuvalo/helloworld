@@ -72,7 +72,8 @@ async function getFreshContent() {
     }
 
     try {
-      newEntries.length && (await models.Content_Remote.bulkCreate(newEntries, { validate: true }));
+      newEntries.length &&
+        (await models.Content_Remote.bulkCreate(newEntries, { ignoreDuplicates: true, validate: true }));
       updateFeedsLogger.info(
         `${userRemote.local_username} - ${userRemote.profile_url}: inserted ${newEntries.length} entries into db.`
       );

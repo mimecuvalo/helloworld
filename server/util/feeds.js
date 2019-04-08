@@ -154,6 +154,7 @@ async function handleEntry(feedEntry, userRemote) {
   view = view.replace(RELATIVE_REGEXP, `$1$2${userRemote.profile_url}/`);
 
   return {
+    id: existingModelEntry ? existingModelEntry.id : undefined,
     creator: feedEntry.author,
     createdAt: feedEntry.pubdate || new Date(),
     updatedAt: dateUpdated,
