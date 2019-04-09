@@ -11,6 +11,8 @@ import { dataIdFromObject } from '../../shared/data/apollo';
 import { HttpLink } from 'apollo-link-http';
 import './index.css';
 import { InMemoryCache } from 'apollo-cache-inmemory';
+import JssProvider from 'react-jss/lib/JssProvider';
+import { MuiThemeProvider, createMuiTheme, createGenerateClassName } from '@material-ui/core/styles';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
@@ -50,10 +52,22 @@ async function renderAppTree(app) {
     addLocaleData(localeData);
   }
 
+  // For Material UI setup.
+  const generateClassName = createGenerateClassName();
+  const theme = createMuiTheme({
+    typography: {
+      useNextVariants: true,
+    },
+  });
+
   return (
     <IntlProvider locale={configuration.locale} messages={translations}>
       <ApolloProvider client={client}>
-        <Router>{app}</Router>
+        <Router>
+          <JssProvider generateClassName={generateClassName}>
+            <MuiThemeProvider theme={theme}>{app}</MuiThemeProvider>
+          </JssProvider>
+        </Router>
       </ApolloProvider>
     </IntlProvider>
   );

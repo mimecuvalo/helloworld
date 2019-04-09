@@ -116,6 +116,12 @@ class HTMLHead extends PureComponent {
           Learn how to configure a non-root public URL by running `npm run build`.
         */}
         <title>{title}</title>
+        {/*
+          XXX(mime): Material UI's server-side rendering for CSS doesn't allow for inserting CSS the same way we do
+          Apollo's data (see apolloStateFn in HTMLBase). So for now, we just do a string replace, sigh.
+          See related hacky code in server/app/app.js
+        */}
+        <style id="jss-ssr" dangerouslySetInnerHTML={{ __html: `<!--MATERIAL-UI-CSS-SSR-REPLACE-->` }} />
       </head>
     );
   }

@@ -4,9 +4,12 @@ import createApolloClient from '../data/apollo_client';
 import { DEFAULT_LOCALE, getLocale } from './locale';
 import HTMLBase from './HTMLBase';
 import { IntlProvider } from 'react-intl';
+import JssProvider from 'react-jss/lib/JssProvider';
 import * as languages from '../../shared/i18n/languages';
+import { MuiThemeProvider, createMuiTheme, createGenerateClassName } from '@material-ui/core/styles';
 import React from 'react';
-import { renderToNodeStream } from 'react-dom/server';
+import { renderToString } from 'react-dom/server';
+import { SheetsRegistry } from 'jss';
 import { StaticRouter } from 'react-router';
 import uuid from 'uuid';
 
@@ -43,6 +46,16 @@ export default async function render({ req, res, next, assetPathsByType, appName
       }
     : null;
 
+  // For Material UI setup.
+  const sheetsRegistry = new SheetsRegistry();
+  const sheetsManager = new Map();
+  const generateClassName = createGenerateClassName();
+  const theme = createMuiTheme({
+    typography: {
+      useNextVariants: true,
+    },
+  });
+
   const completeApp = (
     <IntlProvider locale={locale} messages={translations}>
       <ApolloProvider client={apolloClient}>
@@ -62,7 +75,11 @@ export default async function render({ req, res, next, assetPathsByType, appName
           user={filteredUser}
         >
           <StaticRouter location={req.url} context={context}>
-            <App user={filteredUser} />
+            <JssProvider registry={sheetsRegistry} generateClassName={generateClassName}>
+              <MuiThemeProvider theme={theme} sheetsManager={sheetsManager}>
+                <App user={filteredUser} />
+              </MuiThemeProvider>
+            </JssProvider>
           </StaticRouter>
         </HTMLBase>
       </ApolloProvider>
@@ -77,19 +94,25 @@ export default async function render({ req, res, next, assetPathsByType, appName
     return;
   }
 
-  res.type('html');
-  res.write('<!doctype html>');
-  const stream = renderToNodeStream(completeApp);
-  stream
-    .on('error', function(err) {
-      next(err);
-    })
-    .pipe(res);
-
+  const renderedApp = renderToString(completeApp);
   if (context.url) {
     res.redirect(301, context.url);
     return;
   }
+
+  const materialUICSS = sheetsRegistry.toString();
+
+  /*
+    XXX(mime): Material UI's server-side rendering for CSS doesn't allow for inserting CSS the same way we do
+    Apollo's data (see apolloStateFn in HTMLBase). So for now, we just do a string replace, sigh.
+    See related hacky code in server/app/HTMLHead.js
+  */
+  const renderedAppWithMaterialUICSS = renderedApp.replace(`<!--MATERIAL-UI-CSS-SSR-REPLACE-->`, materialUICSS);
+
+  res.type('html');
+  res.write('<!doctype html>');
+  res.write(renderedAppWithMaterialUICSS);
+  res.end();
 }
 
 function createNonceAndSetCSP(res) {

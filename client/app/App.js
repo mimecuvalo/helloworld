@@ -35,6 +35,12 @@ class App extends Component {
   }
 
   componentDidMount() {
+    // Remove MaterialUI's SSR generated CSS.
+    const jssStyles = document.getElementById('jss-ssr');
+    if (jssStyles && jssStyles.parentNode) {
+      jssStyles.parentNode.removeChild(jssStyles);
+    }
+
     // Upon starting the app, kick off a client health check which runs periodically.
     clientHealthCheck();
 
