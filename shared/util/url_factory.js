@@ -40,7 +40,8 @@ export function buildUrl({ req, isAbsolute, pathname, searchParams }) {
   let url = '';
 
   if (req) {
-    url += `${req.protocol}://${req.get('host')}`;
+    const protocol = req.get('x-scheme') || req.protocol;
+    url += `${protocol}://${req.get('host')}`;
   } else if (isAbsolute) {
     url += `${window.location.origin}`;
   }
