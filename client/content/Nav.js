@@ -72,13 +72,13 @@ class Nav extends Component {
   handleKeyUp = evt => {
     switch (evt.key) {
       case 'ArrowUp':
-        this.top.current.click();
+        this.top && this.top.current.click();
         break;
       case 'ArrowLeft':
-        this.next.current.click();
+        this.next && this.next.current.click();
         break;
       case 'ArrowRight':
-        this.prev.current.click();
+        this.prev && this.prev.current.click();
         break;
       default:
         break;
@@ -156,7 +156,7 @@ class Nav extends Component {
       <nav className={styles.nav}>
         {this.renderLink(last, 'last', <F msg="last" />)}
         {this.renderLink(next, 'next', <F msg="next" />)}
-        {this.renderLink(top, 'top', top.name)}
+        {this.renderLink(top, 'top', top?.name)}
         {this.renderLink(prev, 'prev', <F msg="prev" />)}
         {this.renderLink(first, 'first', <F msg="first" />)}
       </nav>
