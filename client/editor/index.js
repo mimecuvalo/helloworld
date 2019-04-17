@@ -1,4 +1,6 @@
 import './Draft.css';
+import './Editor.css';
+import classNames from 'classnames';
 import { convertFromHTML } from 'draft-convert';
 import createHashtagPlugin from 'draft-js-hashtag-plugin';
 import createLinkifyPlugin from 'draft-js-linkify-plugin';
@@ -16,6 +18,7 @@ import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
 import Emojis, { emojiPlugin } from './ui/autocomplete/Emojis';
 import Mentions, { mentionPlugin } from './ui/autocomplete/Mentions';
 import React, { Component } from 'react';
+import styles from './Editor.module.css';
 import Toolbars, { inlineToolbarPlugin, linkPlugin, sideToolbarPlugin } from './ui/toolbars';
 import uploadFiles from './media/attachment';
 import { withSnackbar } from 'notistack';
@@ -62,6 +65,7 @@ class HelloWorldEditor extends Component {
 
     this.state = {
       editorState: state ? EditorState.createWithContent(state) : EditorState.createEmpty(),
+      hasText: !!state,
       hasUnsavedChanges: false,
       showEditor: false,
     };
@@ -85,8 +89,11 @@ class HelloWorldEditor extends Component {
   }
 
   onChange = editorState => {
+    const hasText = editorState.getCurrentContent().hasText();
+
     this.setState({
       editorState,
+      hasText,
       hasUnsavedChanges: true,
     });
   };
@@ -109,7 +116,7 @@ class HelloWorldEditor extends Component {
     return (
       <>
         {this.state.showEditor ? (
-          <>
+          <div className={classNames({ [styles.showPlaceholder]: this.props.showPlaceholder && !this.state.hasText })}>
             <Editor
               blockRendererFn={blockRenderers}
               decorators={[decorator]}
@@ -123,7 +130,7 @@ class HelloWorldEditor extends Component {
             <Toolbars AlignmentTool={AlignmentTool} dividerPlugin={dividerPlugin} />
             <Emojis />
             <Mentions />
-          </>
+          </div>
         ) : null}
       </>
     );

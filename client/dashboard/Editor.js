@@ -3,6 +3,6 @@ import React, { PureComponent } from 'react';
 
 export default class DashboardEditor extends PureComponent {
   render() {
-    return <Editor />;
+    return <Editor showPlaceholder={true} />;
   }
 }
