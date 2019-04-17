@@ -4,7 +4,7 @@ import React from 'react';
 const ENTITY_TYPE = 'ANCHOR';
 
 // TODO(mime): one day, maybe switch wholesale to draft-extend. for now, we have a weird hybrid
-// of draft-extend/draft-covert/draft-js-plugins
+// of draft-extend/draft-convert/draft-js-plugins
 export default createPlugin({
   htmlToEntity: (nodeName, node, create) => {
     if (nodeName === 'a') {

@@ -5,6 +5,7 @@ const messages = defineMessages({
   avatar: { msg: 'user avatar' },
 });
 
+@injectIntl
 class Avatar extends PureComponent {
   constructor() {
     super();
@@ -25,4 +26,4 @@ class Avatar extends PureComponent {
   }
 }
 
-export default injectIntl(Avatar);
+export default Avatar;

@@ -10,6 +10,7 @@ const messages = defineMessages({
   help: { msg: 'Help' },
 });
 
+@injectIntl
 class Help extends PureComponent {
   constructor() {
     super();
@@ -89,4 +90,4 @@ class Help extends PureComponent {
   }
 }
 
-export default injectIntl(Help);
+export default Help;

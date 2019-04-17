@@ -13,6 +13,8 @@ const messages = defineMessages({
   follow: { msg: 'paste url to follow' },
 });
 
+@withSnackbar
+@injectIntl
 @graphql(gql`
   mutation createUserRemote($profile_url: String!) {
     createUserRemote(profile_url: $profile_url) {
@@ -64,4 +66,4 @@ class NewFeed extends PureComponent {
   }
 }
 
-export default withSnackbar(injectIntl(NewFeed));
+export default NewFeed;

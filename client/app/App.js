@@ -22,6 +22,7 @@ const messages = defineMessages({
 });
 
 // This is the main entry point on the client-side.
+@injectIntl
 class App extends Component {
   constructor(props) {
     super(props);
@@ -114,4 +115,4 @@ class App extends Component {
   }
 }
 
-export default injectIntl(App);
+export default App;

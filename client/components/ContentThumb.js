@@ -10,6 +10,7 @@ const messages = defineMessages({
   thumbnail: { msg: 'thumbnail' },
 });
 
+@injectIntl
 class Thumb extends PureComponent {
   constructor() {
     super();
@@ -80,4 +81,4 @@ class Thumb extends PureComponent {
   }
 }
 
-export default injectIntl(Thumb);
+export default Thumb;

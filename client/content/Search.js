@@ -13,6 +13,7 @@ const messages = defineMessages({
   untitled: { msg: 'untitled' },
 });
 
+@injectIntl
 @graphql(
   gql`
     query SearchAndUserQuery($username: String!, $query: String!) {
@@ -91,6 +92,7 @@ class Search extends PureComponent {
     );
   }
 }
+export default Search;
 
 const Highlight = React.memo(function Highlight({ str, term }) {
   const regex = new RegExp(`(${term})`, 'gi');
@@ -99,5 +101,3 @@ const Highlight = React.memo(function Highlight({ str, term }) {
     .filter(i => i)
     .map((part, index) => (part.match(regex) ? <mark key={index}>{part}</mark> : <span key={index}>{part}</span>));
 });
-
-export default injectIntl(Search);

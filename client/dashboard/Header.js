@@ -7,6 +7,7 @@ const messages = defineMessages({
   avatar: { msg: 'avatar' },
 });
 
+@injectIntl
 class Header extends PureComponent {
   render() {
     const { avatar, creator, link, read, title } = this.props.contentRemote;
@@ -34,4 +35,4 @@ class Header extends PureComponent {
   }
 }
 
-export default injectIntl(Header);
+export default Header;

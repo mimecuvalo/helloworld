@@ -72,13 +72,13 @@ class Nav extends Component {
   handleKeyUp = evt => {
     switch (evt.key) {
       case 'ArrowUp':
-        this.top && this.top.current.click();
+        this.top?.current && this.top.current.click();
         break;
       case 'ArrowLeft':
-        this.next && this.next.current.click();
+        this.next?.current && this.next.current.click();
         break;
       case 'ArrowRight':
-        this.prev && this.prev.current.click();
+        this.prev?.current && this.prev.current.click();
         break;
       default:
         break;

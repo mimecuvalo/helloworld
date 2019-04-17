@@ -13,6 +13,7 @@ import Simple from './templates/Simple';
 import styles from './Content.module.css';
 import { withRouter } from 'react-router-dom';
 
+@withRouter
 class Content extends Component {
   constructor(props) {
     super(props);
@@ -50,11 +51,13 @@ class Content extends Component {
     }
 
     this.setState({ isEditing: !this.state.isEditing });
+    this.item.current.getEditor().setUnsavedChanges(!this.state.isEditing);
   };
 
   async saveContent() {
     const { username, name } = this.props.data.fetchContent;
-    const content = JSON.stringify(this.item.current.getEditor().export());
+    const editor = this.item.current.getEditor();
+    const content = JSON.stringify(editor.export());
     const variables = { username, name, content };
 
     await this.props.mutate({
@@ -128,4 +131,4 @@ export default compose(
       }
     }
   `)
-)(withRouter(Content));
+)(Content);

@@ -14,6 +14,7 @@ const messages = defineMessages({
   menu: { msg: 'user options' },
 });
 
+@injectIntl
 class FollowingMenu extends PureComponent {
   constructor() {
     super();
@@ -81,4 +82,4 @@ class FollowingMenu extends PureComponent {
     );
   }
 }
-export default injectIntl(FollowingMenu);
+export default FollowingMenu;

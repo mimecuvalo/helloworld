@@ -48,20 +48,52 @@ router.post('/', upload.array('files', MAX_FILES), async (req, res) => {
       currentUser.model.username
     );
 
-    fs.renameSync(file.path, localOriginal);
+    let isError = false;
+    try {
+      ensureDirectoriesExist(localOriginal, localThumb, localNormal);
+      fs.renameSync(file.path, localOriginal);
 
-    await resize(localOriginal, localThumb, THUMB_WIDTH, THUMB_HEIGHT);
-    await resize(localOriginal, localNormal, NORMAL_WIDTH, NORMAL_HEIGHT);
+      await resize(localOriginal, localThumb, THUMB_WIDTH, THUMB_HEIGHT);
+      await resize(localOriginal, localNormal, NORMAL_WIDTH, NORMAL_HEIGHT);
+    } catch (ex) {
+      isError = true;
+      console.error('Error uploading image.', ex);
+    }
 
     fileInfo.push({
       original: publicOriginal,
       thumb: publicThumb,
       normal: publicNormal,
+      originalname: file.originalname,
+      isError,
     });
   }
 
   res.status(201).json(fileInfo);
 });
+
+function ensureDirectoriesExist(localOriginal, localThumb, localNormal) {
+  const localOriginalDirname = path.dirname(localOriginal);
+  try {
+    fs.accessSync(localOriginalDirname);
+  } catch (ex) {
+    fs.mkdirSync(localOriginalDirname, { recursive: true });
+  }
+
+  const localThumbDirname = path.dirname(localThumb);
+  try {
+    fs.accessSync(localThumbDirname);
+  } catch (ex) {
+    fs.mkdirSync(localThumbDirname, { recursive: true });
+  }
+
+  const localNormalDirname = path.dirname(localNormal);
+  try {
+    fs.accessSync(localNormalDirname);
+  } catch (ex) {
+    fs.mkdirSync(localNormalDirname, { recursive: true });
+  }
+}
 
 function getUniqueFilenames(file, username) {
   let localOriginal, filename, publicOriginal;
@@ -95,6 +127,7 @@ function getUniqueFilenames(file, username) {
 async function resize(original, dest, width, height) {
   try {
     await sharp(original)
+      .rotate()
       .resize(width, height, { fit: 'inside' })
       .toFile(dest);
   } catch (ex) {

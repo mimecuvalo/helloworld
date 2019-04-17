@@ -1,5 +1,5 @@
 import { createPlugin } from 'draft-extend';
-import React from 'react';
+import React, { PureComponent } from 'react';
 
 const BLOCK_TYPE = 'atomic';
 const ENTITY_TYPE = 'IMAGE';
@@ -39,18 +39,27 @@ export default createPlugin({
   },
 });
 
-export const imageBlockRendererFn = (block, editor) => {
-  if (block.getType() === 'atomic' && block.size > 0 && block.getData().get('nodeName') === NODE_NAME) {
-    return {
-      component: ({ block, children }) => {
-        const data = block.getData();
-        return (
-          <a href={data.get('href')}>
-            <img src={data.get('src')} alt={data.get('alt')} />
-          </a>
-        );
-      },
-      editable: false,
-    };
+class Image extends PureComponent {
+  render() {
+    const { block, /*children,*/ className } = this.props;
+    const data = block.getData();
+    return (
+      <a href={data.get('href')}>
+        <img className={className} src={data.get('src')} alt={data.get('alt')} />
+      </a>
+    );
   }
+}
+
+export const imageBlockRendererFn = componentDecorators => {
+  const decoratedImage = componentDecorators(Image);
+
+  return (block, editor) => {
+    if (block.getType() === 'atomic' && block.size > 0 && block.getData().get('nodeName') === NODE_NAME) {
+      return {
+        component: decoratedImage,
+        editable: false,
+      };
+    }
+  };
 };

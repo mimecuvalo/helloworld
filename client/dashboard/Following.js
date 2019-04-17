@@ -14,6 +14,7 @@ const messages = defineMessages({
 
 const POLL_INTERVAL = 60 * 1000;
 
+@injectIntl
 @graphql(FollowingQuery)
 class Following extends PureComponent {
   constructor(props) {
@@ -71,4 +72,4 @@ class Following extends PureComponent {
   }
 }
 
-export default injectIntl(Following);
+export default Following;

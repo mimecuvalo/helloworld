@@ -1,19 +1,48 @@
 import './Draft.css';
-import { buildUrl } from '../../shared/util/url_factory';
-import configuration from '../app/configuration';
 import { convertFromHTML } from 'draft-convert';
 import createHashtagPlugin from 'draft-js-hashtag-plugin';
-import createImagePlugin from 'draft-js-image-plugin';
 import createLinkifyPlugin from 'draft-js-linkify-plugin';
-import draftJSExtendPlugins, { blockRenderers, decorator } from './plugins';
+import { defineMessages, injectIntl } from '../../shared/i18n';
+import draftJSExtendPlugins, {
+  alignmentPlugin,
+  blockDndPlugin,
+  blockRenderers,
+  decorator,
+  dividerPlugin,
+  focusPlugin,
+} from './plugins';
 import Editor from 'draft-js-plugins-editor';
 import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
-import insertAtomicBlockShim from './AtomicBlockUtilsShim';
+import Emojis, { emojiPlugin } from './ui/autocomplete/Emojis';
+import Mentions, { mentionPlugin } from './ui/autocomplete/Mentions';
 import React, { Component } from 'react';
+import Toolbars, { inlineToolbarPlugin, linkPlugin, sideToolbarPlugin } from './ui/toolbars';
+import uploadFiles from './media/attachment';
+import { withSnackbar } from 'notistack';
 
-const plugins = [createHashtagPlugin(), createImagePlugin(), createLinkifyPlugin()];
+const messages = defineMessages({
+  errorMedia: { msg: 'Error uploading image.' },
+});
 
-export default class HelloWorldEditor extends Component {
+const { AlignmentTool } = alignmentPlugin;
+
+const plugins = [
+  alignmentPlugin,
+  blockDndPlugin,
+  createHashtagPlugin(),
+  createLinkifyPlugin(),
+  dividerPlugin,
+  emojiPlugin,
+  focusPlugin,
+  inlineToolbarPlugin,
+  linkPlugin,
+  mentionPlugin,
+  sideToolbarPlugin,
+];
+
+@withSnackbar
+@injectIntl
+class HelloWorldEditor extends Component {
   constructor(props) {
     super(props);
 
@@ -33,6 +62,7 @@ export default class HelloWorldEditor extends Component {
 
     this.state = {
       editorState: state ? EditorState.createWithContent(state) : EditorState.createEmpty(),
+      hasUnsavedChanges: false,
       showEditor: false,
     };
   }
@@ -40,47 +70,32 @@ export default class HelloWorldEditor extends Component {
   componentDidMount() {
     // TODO(mime): for some reason editorKey isn't working - having problems with SSR.
     this.setState({ showEditor: true });
+
+    window.addEventListener('beforeunload', this.handleOnBeforeUnload);
+  }
+
+  handleOnBeforeUnload = evt => {
+    if (this.state.hasUnsavedChanges) {
+      evt.returnValue = 'You have unfinished changes!';
+    }
+  };
+
+  setUnsavedChanges(hasUnsavedChanges) {
+    this.setState({ hasUnsavedChanges });
   }
 
   onChange = editorState => {
     this.setState({
       editorState,
+      hasUnsavedChanges: true,
     });
   };
 
-  // TODO(mime): move this somewhere else.
-  handleDroppedFiles = (selection, files) => {
-    const body = new FormData();
-    for (const file of files) {
-      body.append('files', file, file.name);
-    }
-
-    fetch(buildUrl({ pathname: '/api/upload' }), {
-      method: 'POST',
-      body,
-      headers: { 'x-csrf-token': configuration.csrf },
-    }).then(this.handleUploadComplete);
-
-    return true;
-  };
-
-  handleUploadComplete = async response => {
-    const files = await response.json();
-
-    let editorState = this.state.editorState;
-    for (const fileInfo of files) {
-      const href = fileInfo.original;
-      const src = fileInfo.normal;
-      //const thumb = fileInfo.thumb;
-      const alt = '';
-
-      // TODO(mime): ostensibly, you shouldn't need this since we have the data at the block level.
-      // DraftEntity's are apparently going away 'soon'.
-      const contentState = editorState.getCurrentContent();
-      const contentStateWithEntity = contentState.createEntity('IMAGE', 'IMMUTABLE', { src, alt });
-      const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
-
-      editorState = insertAtomicBlockShim(editorState, entityKey, ' ', { nodeName: 'img', href, src, alt });
+  handleDroppedFiles = async (selection, files) => {
+    const { editorState, isError } = await uploadFiles(this.state.editorState, files);
+    if (isError) {
+      this.props.enqueueSnackbar(this.props.intl.formatMessage(messages.errorMedia), { variant: 'error' });
+      return;
     }
 
     this.setState({ editorState });
@@ -94,18 +109,25 @@ export default class HelloWorldEditor extends Component {
     return (
       <>
         {this.state.showEditor ? (
-          <Editor
-            blockRendererFn={blockRenderers}
-            decorators={[decorator]}
-            editorKey="editor"
-            editorState={this.state.editorState}
-            handleDroppedFiles={this.handleDroppedFiles}
-            onChange={this.onChange}
-            plugins={plugins}
-            readOnly={this.props.readOnly}
-          />
+          <>
+            <Editor
+              blockRendererFn={blockRenderers}
+              decorators={[decorator]}
+              editorKey="editor"
+              editorState={this.state.editorState}
+              handleDroppedFiles={this.handleDroppedFiles}
+              onChange={this.onChange}
+              plugins={plugins}
+              readOnly={this.props.readOnly}
+            />
+            <Toolbars AlignmentTool={AlignmentTool} dividerPlugin={dividerPlugin} />
+            <Emojis />
+            <Mentions />
+          </>
         ) : null}
       </>
     );
   }
 }
+
+export default HelloWorldEditor;

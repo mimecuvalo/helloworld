@@ -6,6 +6,7 @@ import styles from './Header.module.css';
 import UserContext from '../app/User_Context';
 import { withRouter } from 'react-router-dom';
 
+@withRouter
 class Header extends PureComponent {
   render() {
     return (
@@ -34,4 +35,4 @@ class Header extends PureComponent {
   }
 }
 
-export default withRouter(Header);
+export default Header;

@@ -17,6 +17,8 @@ const messages = defineMessages({
   menu: { msg: 'Menu' },
 });
 
+@withRouter
+@injectIntl
 @graphql(
   gql`
     query SiteMapAndUserQuery($username: String!) {
@@ -185,4 +187,4 @@ class SiteMap extends PureComponent {
   }
 }
 
-export default withRouter(injectIntl(SiteMap));
+export default SiteMap;

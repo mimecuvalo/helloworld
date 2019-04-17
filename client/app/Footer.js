@@ -5,6 +5,7 @@ import React, { PureComponent, lazy, Suspense } from 'react';
 import styles from './Footer.module.css';
 import { withRouter } from 'react-router-dom';
 
+@withRouter
 class Footer extends PureComponent {
   renderDebugMenu() {
     // Conditionally compile this code. Should not appear in production.
@@ -58,4 +59,4 @@ class Footer extends PureComponent {
   }
 }
 
-export default withRouter(Footer);
+export default Footer;

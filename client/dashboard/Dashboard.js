@@ -15,6 +15,7 @@ const messages = defineMessages({
   title: { msg: 'Dashboard' },
 });
 
+@injectIntl
 class Dashboard extends PureComponent {
   constructor(props) {
     super(props);
@@ -88,4 +89,4 @@ class Dashboard extends PureComponent {
   }
 }
 
-export default injectIntl(Dashboard);
+export default Dashboard;

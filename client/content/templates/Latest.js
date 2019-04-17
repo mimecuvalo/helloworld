@@ -6,6 +6,7 @@ import React, { PureComponent } from 'react';
 import Simple from './Simple';
 import { withRouter } from 'react-router-dom';
 
+@withRouter
 @graphql(
   gql`
     query($username: String!, $section: String!, $name: String!) {
@@ -61,4 +62,4 @@ class Latest extends PureComponent {
   }
 }
 
-export default withRouter(Latest);
+export default Latest;
