@@ -1,6 +1,6 @@
 import cheerio from 'cheerio';
 import FeedParser from 'feedparser';
-import fetch from 'node-fetch';
+import { fetchUrl, createAbsoluteUrl } from './crawler';
 import models from '../data/models'; // TODO(mime): code smell that we should have models in a util file.
 import { NotFoundError } from '../util/exceptions';
 import { Readable } from 'stream';
@@ -37,10 +37,7 @@ async function parseHtmlAndRetrieveFeed(websiteUrl, html) {
     throw new NotFoundError();
   }
 
-  if (feedUrl.startsWith('/')) {
-    const parsedUrl = new URL(websiteUrl);
-    feedUrl = `${parsedUrl.origin}${feedUrl}`;
-  }
+  feedUrl = createAbsoluteUrl(websiteUrl, feedUrl);
 
   return await retrieveFeed(feedUrl);
 }
@@ -48,22 +45,6 @@ async function parseHtmlAndRetrieveFeed(websiteUrl, html) {
 export async function retrieveFeed(feedUrl) {
   const response = await fetchUrl(feedUrl);
   return await response.text();
-}
-
-async function fetchUrl(url) {
-  try {
-    const response = await fetch(url, {
-      headers: {
-        'user-agent': 'hello, world bot.',
-      },
-    });
-    if (response.status !== 200) {
-      throw new NotFoundError();
-    }
-    return response;
-  } catch (ex) {
-    throw ex;
-  }
 }
 
 export async function parseFeed(content) {

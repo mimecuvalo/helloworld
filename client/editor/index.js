@@ -21,11 +21,13 @@ import Mentions, { mentionPlugin } from './ui/autocomplete/Mentions';
 import React, { Component } from 'react';
 import styles from './Editor.module.css';
 import Toolbars, { inlineToolbarPlugin, linkPlugin, sideToolbarPlugin } from './ui/toolbars';
+import unfurl from './media/unfurl';
 import uploadFiles from './media/attachment';
 import { withSnackbar } from 'notistack';
 
 const messages = defineMessages({
   errorMedia: { msg: 'Error uploading image.' },
+  errorUnfurl: { msg: 'Error unfurling link.' },
 });
 
 const { AlignmentTool } = alignmentPlugin;
@@ -92,7 +94,10 @@ class HelloWorldEditor extends Component {
   }
 
   onChange = editorState => {
-    const hasText = editorState.getCurrentContent().hasText();
+    const hasText = !!editorState
+      .getCurrentContent()
+      .getPlainText()
+      .trim();
 
     this.setState({
       editorState,
@@ -129,6 +134,19 @@ class HelloWorldEditor extends Component {
     this.setState({ editorState: RichUtils.onTab(evt, this.state.editorState, MAX_DEPTH) });
   };
 
+  handlePastedText = async (text, html, editorState) => {
+    if (text.match(/^https?:\/\//)) {
+      const editorStateAndInfo = await unfurl(text, editorState);
+
+      if (editorStateAndInfo.isError) {
+        this.props.enqueueSnackbar(this.props.intl.formatMessage(messages.errorUnfurl), { variant: 'error' });
+        return;
+      }
+
+      this.setState({ editorState: editorStateAndInfo.editorState });
+    }
+  };
+
   export() {
     return convertToRaw(this.state.editorState.getCurrentContent());
   }
@@ -145,6 +163,7 @@ class HelloWorldEditor extends Component {
               editorState={this.state.editorState}
               handleDroppedFiles={this.handleDroppedFiles}
               handleKeyCommand={this.handleKeyCommand}
+              handlePastedText={this.handlePastedText}
               keyBindingFn={keyBindingFn}
               onChange={this.onChange}
               onTab={this.handleOnTab}

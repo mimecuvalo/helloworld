@@ -65,3 +65,8 @@
   margin: 0 1.35em;
   padding: 6px;
 }
+
+.public-DraftEditor-content > [data-contents='true'] img {
+  max-width: 80%;
+  max-height: 50vh;
+}

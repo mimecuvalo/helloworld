@@ -1,23 +1,27 @@
 import { buildUrl } from '../../../shared/util/url_factory';
 import configuration from '../../app/configuration';
-import insertAtomicBlockShim from '../utils/AtomicBlockUtilsShim';
+import { createNewBlock } from '../utils/Blocks';
 
-// TODO(mime): move this somewhere else.
 export default async function uploadFiles(editorState, files) {
   const body = new FormData();
   for (const file of files) {
     body.append('files', file, file.name);
   }
 
-  const response = await fetch(buildUrl({ pathname: '/api/upload' }), {
-    method: 'POST',
-    body,
-    headers: { 'x-csrf-token': configuration.csrf },
-  });
+  let response;
+  try {
+    response = await fetch(buildUrl({ pathname: '/api/upload' }), {
+      method: 'POST',
+      body,
+      headers: { 'x-csrf-token': configuration.csrf },
+    });
+  } catch (ex) {
+    return { isError: true };
+  }
 
-  editorState = await handleUploadComplete(editorState, response);
+  const editorStateAndInfo = await handleUploadComplete(editorState, response);
 
-  return editorState;
+  return editorStateAndInfo;
 }
 
 async function handleUploadComplete(editorState, response) {
@@ -33,13 +37,7 @@ async function handleUploadComplete(editorState, response) {
     //const thumb = fileInfo.thumb;
     const alt = '';
 
-    // TODO(mime): ostensibly, you shouldn't need this since we have the data at the block level.
-    // DraftEntity's are apparently going away 'soon'.
-    const contentState = editorState.getCurrentContent();
-    const contentStateWithEntity = contentState.createEntity('IMAGE', 'IMMUTABLE', { src, alt });
-    const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
-
-    editorState = insertAtomicBlockShim(editorState, entityKey, ' ', { nodeName: 'img', href, src, alt });
+    editorState = createNewBlock('IMAGE', 'img', editorState, { src, alt }, { href, src, alt });
   }
 
   return { editorState, isError: false };
