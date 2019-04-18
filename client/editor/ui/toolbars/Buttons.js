@@ -60,6 +60,9 @@ class StyleButton extends Component {
       .getCurrentContent()
       .getBlockForKey(editorState.getSelection().getStartKey())
       .getType();
+    if (this.props.formatStyle.indexOf('header') === 0) {
+      return type.indexOf('header') === 0;
+    }
     return type === this.props.formatStyle;
   }
 

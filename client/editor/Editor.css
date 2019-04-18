@@ -1,0 +1,67 @@
+/* Hello, world custom styling */
+.DraftEditor-editorContainer {
+  padding: 12px;
+}
+
+/* Title */
+.public-DraftEditor-content > [data-contents='true'] > [data-block='true']:first-child {
+  font-weight: normal;
+  font-size: 40px;
+  line-height: 48px;
+}
+.public-DraftEditor-content > [data-contents='true'] > [data-block='true']:first-child:before {
+  display: none;
+  position: absolute;
+  left: 12px;
+  margin-top: 1px;
+  content: 'Untitled'; /* TODO(mime): needs translation */
+  pointer-events: none;
+  color: #c1c7cd;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.public-DraftEditor-content > [data-contents='true'] > [data-block='true'] {
+  padding: 1px 0;
+}
+
+.public-DraftEditor-content > [data-contents='true'] > h1 {
+  margin-top: 30px;
+  margin-bottom: 12px;
+  font-size: 30px;
+  line-height: 36px;
+  word-spacing: 1px;
+  font-weight: normal;
+}
+
+.public-DraftEditor-content > [data-contents='true'] > h2 {
+  margin-top: 18px;
+  margin-bottom: 6px;
+  font-size: 21px;
+  line-height: 28px;
+  word-spacing: 0.5px;
+  font-weight: normal;
+}
+
+.public-DraftEditor-content > [data-contents='true'] > blockquote[data-block='true'] {
+  border-left: 1px solid #637282;
+  margin: 0 1.35em;
+  padding-left: 1.5em;
+  font-style: italic;
+}
+
+.public-DraftEditor-content > [data-contents='true'] > blockquote:first-of-type {
+  margin-top: 10px;
+}
+
+.public-DraftEditor-content > [data-contents='true'] > blockquote:last-of-type {
+  margin-bottom: 10px;
+}
+
+.public-DraftEditor-content > [data-contents='true'] > pre {
+  background-color: #f7f9fa;
+  border: 1px solid #e6e8eb;
+  margin: 0 1.35em;
+  padding: 6px;
+}

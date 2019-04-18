@@ -14,8 +14,9 @@ import draftJSExtendPlugins, {
   focusPlugin,
 } from './plugins';
 import Editor from 'draft-js-plugins-editor';
-import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
+import { convertFromRaw, convertToRaw, EditorState, RichUtils } from 'draft-js';
 import Emojis, { emojiPlugin } from './ui/autocomplete/Emojis';
+import { handleKeyCommand, keyBindingFn } from './input/keyboard';
 import Mentions, { mentionPlugin } from './ui/autocomplete/Mentions';
 import React, { Component } from 'react';
 import styles from './Editor.module.css';
@@ -28,6 +29,8 @@ const messages = defineMessages({
 });
 
 const { AlignmentTool } = alignmentPlugin;
+
+const MAX_DEPTH = 5;
 
 const plugins = [
   alignmentPlugin,
@@ -108,6 +111,24 @@ class HelloWorldEditor extends Component {
     this.setState({ editorState });
   };
 
+  handleKeyCommand = cmd => {
+    const editorState = handleKeyCommand(cmd, this.state.editorState);
+
+    if (!editorState) {
+      return 'unhandled';
+    }
+
+    if (typeof editorState === 'object') {
+      this.setState({ editorState });
+    }
+
+    return 'handled';
+  };
+
+  handleOnTab = evt => {
+    this.setState({ editorState: RichUtils.onTab(evt, this.state.editorState, MAX_DEPTH) });
+  };
+
   export() {
     return convertToRaw(this.state.editorState.getCurrentContent());
   }
@@ -123,7 +144,10 @@ class HelloWorldEditor extends Component {
               editorKey="editor"
               editorState={this.state.editorState}
               handleDroppedFiles={this.handleDroppedFiles}
+              handleKeyCommand={this.handleKeyCommand}
+              keyBindingFn={keyBindingFn}
               onChange={this.onChange}
+              onTab={this.handleOnTab}
               plugins={plugins}
               readOnly={this.props.readOnly}
             />

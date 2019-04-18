@@ -48,7 +48,9 @@ export default class Toolbars extends Component {
             <Toolbar className={styles.materialUIToolbar} disableGutters>
               <BoldButton {...externalProps} />
               <StrikethroughButton {...externalProps} />
-              <linkPlugin.LinkButton {...externalProps} theme={styles} />
+              <div id="editor-toolbar-link">
+                <linkPlugin.LinkButton {...externalProps} theme={styles} />
+              </div>
               <Separator className={styles.separator} />
               <HeaderButton {...externalProps} />
               <BulletedListButton {...externalProps} />

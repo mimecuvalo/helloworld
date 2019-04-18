@@ -1,0 +1,4 @@
+/* Title */
+.showPlaceholder [data-contents='true'] > [data-block='true']:first-child:before {
+  display: block;
+}
