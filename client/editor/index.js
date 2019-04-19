@@ -18,7 +18,7 @@ import { convertFromRaw, convertToRaw, EditorState, RichUtils } from 'draft-js';
 import Emojis, { emojiPlugin } from './ui/autocomplete/Emojis';
 import { handleKeyCommand, keyBindingFn } from './input/keyboard';
 import Mentions, { mentionPlugin } from './ui/autocomplete/Mentions';
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import styles from './Editor.module.css';
 import Toolbars, { inlineToolbarPlugin, linkPlugin, sideToolbarPlugin } from './ui/toolbars';
 import unfurl from './media/unfurl';
@@ -48,8 +48,6 @@ const plugins = [
   sideToolbarPlugin,
 ];
 
-@withSnackbar
-@injectIntl
 class HelloWorldEditor extends Component {
   constructor(props) {
     super(props);
@@ -70,6 +68,7 @@ class HelloWorldEditor extends Component {
 
     this.state = {
       editorState: state ? EditorState.createWithContent(state) : EditorState.createEmpty(),
+      errorMessage: null,
       hasText: !!state,
       hasUnsavedChanges: false,
       showEditor: false,
@@ -81,6 +80,10 @@ class HelloWorldEditor extends Component {
     this.setState({ showEditor: true });
 
     window.addEventListener('beforeunload', this.handleOnBeforeUnload);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('beforeunload', this.handleOnBeforeUnload);
   }
 
   handleOnBeforeUnload = evt => {
@@ -104,12 +107,14 @@ class HelloWorldEditor extends Component {
       hasText,
       hasUnsavedChanges: true,
     });
+
+    this.props.onChange && this.props.onChange();
   };
 
   handleDroppedFiles = async (selection, files) => {
     const { editorState, isError } = await uploadFiles(this.state.editorState, files);
     if (isError) {
-      this.props.enqueueSnackbar(this.props.intl.formatMessage(messages.errorMedia), { variant: 'error' });
+      this.setState({ errorMessage: messages.errorMedia });
       return;
     }
 
@@ -139,7 +144,7 @@ class HelloWorldEditor extends Component {
       const editorStateAndInfo = await unfurl(text, editorState);
 
       if (editorStateAndInfo.isError) {
-        this.props.enqueueSnackbar(this.props.intl.formatMessage(messages.errorUnfurl), { variant: 'error' });
+        this.setState({ errorMessage: messages.errorUnfurl });
         return;
       }
 
@@ -175,8 +180,24 @@ class HelloWorldEditor extends Component {
             <Mentions />
           </div>
         ) : null}
+        <HiddenSnackbarShim errorMessage={this.state.errorMessage} />
       </>
     );
+  }
+}
+
+// XXX(mime): Sigh. I need to be able to put a ref on the HelloworldEditor to access functionality. However,
+// I can't use refs if the withSnackbar/injectIntl wrappers are present. Because they are not classes React will
+// not be able to attach a ref to them. So this is the next best thing. LAME.
+@withSnackbar
+@injectIntl
+class HiddenSnackbarShim extends PureComponent {
+  componentDidUpdate(prevProps, prevState) {
+    this.props.enqueueSnackbar(this.props.intl.formatMessage(this.props.errorMessage), { variant: 'error' });
+  }
+
+  render() {
+    return null;
   }
 }
 

@@ -50,15 +50,22 @@ class Content extends Component {
       this.saveContent();
     }
 
-    this.setState({ isEditing: !this.state.isEditing });
-    this.item.current.getEditor().setUnsavedChanges(!this.state.isEditing);
+    this.setState({ isEditing: !this.state.isEditing }, () => {
+      this.item.current.getEditor() && this.item.current.getEditor().setUnsavedChanges(!this.state.isEditing);
+    });
   };
 
   async saveContent() {
     const { username, name } = this.props.data.fetchContent;
     const editor = this.item.current.getEditor();
-    const content = JSON.stringify(editor.export());
-    const variables = { username, name, content };
+    const content = editor.export();
+    const variables = {
+      username,
+      name,
+      content: JSON.stringify(content.content),
+      style: content.style,
+      code: content.code,
+    };
 
     await this.props.mutate({
       variables,
@@ -123,10 +130,12 @@ export default compose(
     }),
   }),
   graphql(gql`
-    mutation saveContent($name: String!, $content: String!) {
-      saveContent(name: $name, content: $content) {
+    mutation saveContent($name: String!, $style: String!, $code: String!, $content: String!) {
+      saveContent(name: $name, style: $style, code: $code, content: $content) {
         username
         name
+        style
+        code
         content
       }
     }

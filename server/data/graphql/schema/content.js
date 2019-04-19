@@ -81,6 +81,6 @@ export default gql`
   }
 
   extend type Mutation {
-    saveContent(name: String!, content: String!): Content!
+    saveContent(name: String!, style: String!, code: String!, content: String!): Content!
   }
 `;

@@ -338,9 +338,11 @@ const Content = {
   },
 
   Mutation: {
-    saveContent: combineResolvers(isAuthor, async (parent, { name, content }, { currentUser, models }) => {
+    saveContent: combineResolvers(isAuthor, async (parent, { name, style, code, content }, { currentUser, models }) => {
       await models.Content.update(
         {
+          style,
+          code,
           content,
         },
         {
@@ -351,7 +353,7 @@ const Content = {
         }
       );
 
-      return { username: currentUser.model.username, name, content };
+      return { username: currentUser.model.username, name, style, code, content };
     }),
   },
 };

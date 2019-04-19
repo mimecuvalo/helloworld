@@ -20,7 +20,7 @@ body {
   width: 650px;
 }
 
-#hw-dashboard  .DraftEditor-root {
+#hw-dashboard .DraftEditor-root {
   width: 66vw;
   border: 1px solid #000;
   box-shadow: 1px 1px #000, 2px 2px #000, 3px 3px #000;
@@ -39,7 +39,7 @@ body {
 }
 
 #hw-content > header,
-.hw-item > header {
+.hw-item > header:first-child {
   border: 1px solid #fa0;
   box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
 }
@@ -194,7 +194,7 @@ a.hw-button[href]:hover {
     float: none;
   }
 
-  .hw-item > header {
+  .hw-item > header:first-child {
     width: auto;
     max-width: cacl(100vw - 20px);
   }
