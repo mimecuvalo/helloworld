@@ -79,11 +79,15 @@ class HelloWorldEditor extends Component {
     // TODO(mime): for some reason editorKey isn't working - having problems with SSR.
     this.setState({ showEditor: true });
 
-    window.addEventListener('beforeunload', this.handleOnBeforeUnload);
+    if (!this.props.readOnly) {
+      window.addEventListener('beforeunload', this.handleOnBeforeUnload);
+    }
   }
 
   componentWillUnmount() {
-    window.removeEventListener('beforeunload', this.handleOnBeforeUnload);
+    if (!this.props.readOnly) {
+      window.removeEventListener('beforeunload', this.handleOnBeforeUnload);
+    }
   }
 
   handleOnBeforeUnload = evt => {
