@@ -98,6 +98,10 @@ export default class ContentEditor extends Component {
     });
   };
 
+  handleMediaAdd = fileInfos => {
+    this.props.onMediaAdd && this.props.onMediaAdd(fileInfos);
+  };
+
   handleTabChange = (evt, tabValue) => {
     this.setState({ tabValue });
   };
@@ -114,6 +118,7 @@ export default class ContentEditor extends Component {
           content={this.state.content ? this.state : content}
           ref={this.contentEditor}
           onChange={this.handleContentChange}
+          onMediaAdd={this.handleMediaAdd}
           showPlaceholder={this.props.showPlaceholder}
         />
       </div>

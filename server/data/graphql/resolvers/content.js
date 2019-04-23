@@ -359,7 +359,7 @@ const Content = {
 
     postContent: combineResolvers(
       isAuthor,
-      async (parent, { section, album, name, title, style, code, content }, { currentUser, models }) => {
+      async (parent, { section, album, name, title, thumb, style, code, content }, { currentUser, models }) => {
         name = (name || 'untitled') + '-' + nanoid(10);
         name = name.replace(/[^A-Za-z0-9-]/, '-');
 
@@ -369,12 +369,13 @@ const Content = {
           album,
           name,
           title,
+          thumb,
           style,
           code,
           content,
         });
 
-        return { username: currentUser.model.username, section, album, name, title, style, code, content };
+        return { username: currentUser.model.username, section, album, name, title, thumb, style, code, content };
       }
     ),
   },

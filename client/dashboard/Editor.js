@@ -27,6 +27,7 @@ class DashboardEditor extends PureComponent {
     this.editor = React.createRef();
 
     this.state = {
+      latestFileInfo: null,
       // Not so clean but, meh, don't feel like implementing two separate <select>'s
       sectionAndAlbum: JSON.stringify({ section: this.props.data.fetchSiteMap[0].name, album: '' }),
     };
@@ -45,12 +46,15 @@ class DashboardEditor extends PureComponent {
     const name = title.replace(/[^A-Za-z0-9-]/g, '-');
     const { section, album } = JSON.parse(this.state.sectionAndAlbum);
 
+    const thumb = this.state.fileInfo?.thumb || '';
+
     const variables = {
       username,
       section,
       album,
       name,
       title,
+      thumb,
       style,
       code,
       content: JSON.stringify(content),
@@ -112,6 +116,11 @@ class DashboardEditor extends PureComponent {
     return items;
   }
 
+  handleMediaAdd = fileInfos => {
+    // We currently just grab the first one and disregard the other ones for purposes of getting the thumb.
+    this.setState({ fileInfo: fileInfos[0] });
+  };
+
   render() {
     return (
       <div className={styles.editor}>
@@ -137,7 +146,7 @@ class DashboardEditor extends PureComponent {
             </FormControl>
           </form>
         </Toolbar>
-        <ContentEditor ref={this.editor} showPlaceholder={true} content={null} />
+        <ContentEditor ref={this.editor} showPlaceholder={true} content={null} onMediaAdd={this.handleMediaAdd} />
       </div>
     );
   }
@@ -171,6 +180,7 @@ export default compose(
       $album: String!
       $name: String!
       $title: String!
+      $thumb: String!
       $style: String!
       $code: String!
       $content: String!
@@ -180,6 +190,7 @@ export default compose(
         album: $album
         name: $name
         title: $title
+        thumb: $thumb
         style: $style
         code: $code
         content: $content
@@ -188,9 +199,10 @@ export default compose(
         section
         album
         name
+        title
+        thumb
         style
         code
-        title
         content
       }
     }

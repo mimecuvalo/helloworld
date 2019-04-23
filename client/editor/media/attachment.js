@@ -25,20 +25,19 @@ export default async function uploadFiles(editorState, files) {
 }
 
 async function handleUploadComplete(editorState, response) {
-  const files = await response.json();
+  const fileInfos = await response.json();
 
-  for (const fileInfo of files) {
+  for (const fileInfo of fileInfos) {
     if (fileInfo.isError) {
       return { editorState, isError: true };
     }
 
     const href = fileInfo.original;
     const src = fileInfo.normal;
-    //const thumb = fileInfo.thumb;
     const alt = '';
 
     editorState = createNewBlock('IMAGE', 'img', editorState, { src, alt }, { href, src, alt });
   }
 
-  return { editorState, isError: false };
+  return { editorState, fileInfos, isError: false };
 }

@@ -86,9 +86,10 @@ export default gql`
       section: String!
       album: String!
       name: String!
+      title: String!
+      thumb: String!
       style: String!
       code: String!
-      title: String!
       content: String!
     ): Content!
   }

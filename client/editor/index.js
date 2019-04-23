@@ -120,7 +120,7 @@ class HelloWorldEditor extends Component {
   };
 
   handleDroppedFiles = async (selection, files) => {
-    const { editorState, isError } = await uploadFiles(this.state.editorState, files);
+    const { editorState, fileInfos, isError } = await uploadFiles(this.state.editorState, files);
     if (isError) {
       this.setState({ errorMessage: messages.errorMedia }, () => {
         this.setState({ errorMessage: null });
@@ -129,6 +129,8 @@ class HelloWorldEditor extends Component {
     }
 
     this.setState({ editorState });
+
+    this.props.onMediaAdd && this.props.onMediaAdd(fileInfos);
   };
 
   handleKeyCommand = cmd => {

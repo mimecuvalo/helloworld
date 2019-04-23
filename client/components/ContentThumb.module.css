@@ -1,5 +1,7 @@
 .thumbLink {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: var(--thumb-width);
   max-width: var(--thumb-width);
 }
@@ -10,7 +12,6 @@
 
 .thumb {
   display: inline-block;
-  min-height: var(--thumb-height);
   max-width: var(--thumb-width);
   max-height: var(--thumb-height);
 }
