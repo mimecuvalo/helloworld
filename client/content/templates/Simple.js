@@ -25,8 +25,8 @@ export default class Simple extends PureComponent {
 
     return (
       <>
-        <div dangerouslySetInnerHTML={{ __html: content.style }} />
-        <div dangerouslySetInnerHTML={{ __html: content.code }} />
+        {this.props.isFeed ? null : <div dangerouslySetInnerHTML={{ __html: content.style }} />}
+        {this.props.isFeed ? null : <div dangerouslySetInnerHTML={{ __html: content.code }} />}
 
         {content.content ? (
           <div className={classNames(styles.view, 'hw-view')}>

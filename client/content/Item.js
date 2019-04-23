@@ -31,7 +31,7 @@ class Item extends PureComponent {
     return (
       <section className="hw-item">
         <Header content={content} handleEdit={handleEdit} isEditing={isEditing} />
-        <TemplateComponent ref={this.template} content={content} isEditing={isEditing} />
+        <TemplateComponent ref={this.template} content={content} isEditing={isEditing} isFeed={this.props.isFeed} />
         <Footer content={content} />
       </section>
     );

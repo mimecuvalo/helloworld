@@ -60,7 +60,7 @@ class Feed extends PureComponent {
     return (
       <InfiniteFeed fetchMore={this.props.data.fetchMore} queryName="fetchCollectionPaginated">
         {collection.map(item => (
-          <Item key={item.name} content={item} />
+          <Item key={item.name} content={item} isFeed={true} />
         ))}
       </InfiniteFeed>
     );
