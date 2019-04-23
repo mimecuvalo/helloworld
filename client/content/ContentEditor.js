@@ -16,6 +16,8 @@ export default class ContentEditor extends Component {
     super(props);
 
     this.contentEditor = React.createRef();
+    this.codeMirrorCSS = React.createRef();
+    this.codeMirrorJS = React.createRef();
 
     this.state = {
       code: null,
@@ -53,13 +55,26 @@ export default class ContentEditor extends Component {
   }
 
   export() {
-    const { content } = this.props;
+    const content = this.props.content || {};
 
     return {
-      style: this.state.style || content.style,
-      code: this.state.code || content.code,
+      style: this.state.style || content.style || '',
+      code: this.state.code || content.code || '',
       content: this.state.content || content.content,
     };
+  }
+
+  clear() {
+    this.setState({
+      hasUnsavedChanges: false,
+      style: null,
+      code: null,
+      content: null,
+    });
+
+    this.contentEditor.current && this.contentEditor.current.clear();
+    this.codeMirrorCSS.current && this.codeMirrorCSS.current.getCodeMirror().setValue('');
+    this.codeMirrorJS.current && this.codeMirrorJS.current.getCodeMirror().setValue('');
   }
 
   handleStyleChange = style => {
@@ -88,14 +103,19 @@ export default class ContentEditor extends Component {
   };
 
   render() {
-    const { content } = this.props;
+    const content = this.props.content || {};
     const codeMirrorOptions = {
       lineNumbers: true,
     };
 
     let tab = (
       <div key="content" className={classNames(styles.view, 'hw-view')}>
-        <Editor content={content} ref={this.contentEditor} onChange={this.handleContentChange} />
+        <Editor
+          content={this.state.content ? this.state : content}
+          ref={this.contentEditor}
+          onChange={this.handleContentChange}
+          showPlaceholder={this.props.showPlaceholder}
+        />
       </div>
     );
 
@@ -104,6 +124,7 @@ export default class ContentEditor extends Component {
         case 1:
           tab = (
             <CodeMirror
+              ref={this.codeMirrorCSS}
               key="css"
               value={this.state.style || content.style}
               onChange={this.handleStyleChange}
@@ -114,6 +135,7 @@ export default class ContentEditor extends Component {
         case 2:
           tab = (
             <CodeMirror
+              ref={this.codeMirrorJS}
               key="js"
               value={this.state.code || content.code}
               onChange={this.handleCodeChange}

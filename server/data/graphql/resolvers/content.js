@@ -1,5 +1,6 @@
 import { combineResolvers } from 'graphql-resolvers';
 import { isAdmin, isAuthor } from './authorization';
+import nanoid from 'nanoid';
 import Sequelize from 'sequelize';
 
 const ATTRIBUTES_NAVIGATION = [
@@ -355,6 +356,27 @@ const Content = {
 
       return { username: currentUser.model.username, name, style, code, content };
     }),
+
+    postContent: combineResolvers(
+      isAuthor,
+      async (parent, { section, album, name, title, style, code, content }, { currentUser, models }) => {
+        name = (name || 'untitled') + '-' + nanoid(10);
+        name = name.replace(/[^A-Za-z0-9-]/, '-');
+
+        await models.Content.create({
+          username: currentUser.model.username,
+          section,
+          album,
+          name,
+          title,
+          style,
+          code,
+          content,
+        });
+
+        return { username: currentUser.model.username, section, album, name, title, style, code, content };
+      }
+    ),
   },
 };
 

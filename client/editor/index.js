@@ -56,7 +56,7 @@ class HelloWorldEditor extends Component {
 
     let state;
     if (content?.content) {
-      state = convertFromRaw(JSON.parse(content.content));
+      state = convertFromRaw(typeof content.content === 'string' ? JSON.parse(content.content) : content.content);
     } else if (content?.view) {
       // XXX(mime): this is the dumbest shit i have ever seen. ARGH. the custom block renderer won't fire unless
       // there's a whitespace character before the <img /> tag to attach to. ARRRRRRRRRRGH.
@@ -90,6 +90,10 @@ class HelloWorldEditor extends Component {
     }
   }
 
+  get editorState() {
+    return this.state.editorState;
+  }
+
   handleOnBeforeUnload = evt => {
     if (this.state.hasUnsavedChanges) {
       evt.returnValue = 'You have unfinished changes!';
@@ -118,7 +122,9 @@ class HelloWorldEditor extends Component {
   handleDroppedFiles = async (selection, files) => {
     const { editorState, isError } = await uploadFiles(this.state.editorState, files);
     if (isError) {
-      this.setState({ errorMessage: messages.errorMedia });
+      this.setState({ errorMessage: messages.errorMedia }, () => {
+        this.setState({ errorMessage: null });
+      });
       return;
     }
 
@@ -148,7 +154,9 @@ class HelloWorldEditor extends Component {
       const editorStateAndInfo = await unfurl(text, editorState);
 
       if (editorStateAndInfo.isError) {
-        this.setState({ errorMessage: messages.errorUnfurl });
+        this.setState({ errorMessage: messages.errorUnfurl }, () => {
+          this.setState({ errorMessage: null });
+        });
         return;
       }
 
@@ -158,6 +166,14 @@ class HelloWorldEditor extends Component {
 
   export() {
     return convertToRaw(this.state.editorState.getCurrentContent());
+  }
+
+  clear() {
+    this.setState({
+      editorState: EditorState.createEmpty(),
+      hasText: false,
+      hasUnsavedChanges: false,
+    });
   }
 
   render() {

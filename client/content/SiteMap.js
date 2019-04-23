@@ -74,7 +74,7 @@ class SiteMap extends PureComponent {
     );
   }
 
-  generateItems(siteMap, i = 0) {
+  generateItems(siteMap) {
     const items = [];
     for (let i = 0; i < siteMap.length; ++i) {
       const item = siteMap[i];

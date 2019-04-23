@@ -16,11 +16,13 @@ body {
 }
 
 .hw-item,
-#hw-content .DraftEditor-root {
+#hw-content .DraftEditor-root,
+#hw-content .ReactCodeMirror {
   width: 650px;
 }
 
-#hw-dashboard .DraftEditor-root {
+#hw-dashboard .DraftEditor-root,
+#hw-dashboard .ReactCodeMirror {
   width: 66vw;
   border: 1px solid #000;
   box-shadow: 1px 1px #000, 2px 2px #000, 3px 3px #000;
@@ -29,7 +31,8 @@ body {
 
 #hw-dashboard .DraftEditor-root,
 #hw-dashboard .public-DraftEditor-content,
-#hw-dashboard .DraftEditor-editorContainer {
+#hw-dashboard .DraftEditor-editorContainer,
+#hw-dashboard .ReactCodeMirror {
   min-height: 33vh;
 }
 

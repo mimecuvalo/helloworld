@@ -82,5 +82,14 @@ export default gql`
 
   extend type Mutation {
     saveContent(name: String!, style: String!, code: String!, content: String!): Content!
+    postContent(
+      section: String!
+      album: String!
+      name: String!
+      style: String!
+      code: String!
+      title: String!
+      content: String!
+    ): Content!
   }
 `;

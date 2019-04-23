@@ -64,7 +64,7 @@ class Dashboard extends PureComponent {
                 </nav>
 
                 <article className={styles.content}>
-                  <DashboardEditor />
+                  <DashboardEditor username={user.model.username} />
                   {this.state.specialFeed === 'me' ? (
                     <MyFeed
                       content={{ username: user.model.username, section: 'main', name: 'home' }}

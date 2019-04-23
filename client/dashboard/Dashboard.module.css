@@ -12,6 +12,19 @@
   margin: 6px;
 }
 
+.editor {
+}
+
+.editorForm {
+  width: 100%;
+}
+
+div.editorToolbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
 .nav {
   position: sticky;
   top: 0;
@@ -54,4 +67,8 @@
 
 .empty {
   width: 100%;
+}
+
+button.post {
+  margin-left: 12px;
 }
