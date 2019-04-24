@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import csurf from 'csurf';
 import express from 'express';
 import fs from 'fs';
+import hostMeta from './api/social_butterfly/host_meta';
 import path from 'path';
 import schedule from 'node-schedule';
 import session from 'express-session';
@@ -62,11 +63,13 @@ export default function constructApps({ appName, productionAssetsByType, publicU
   const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
   app.use('/resource', express.static(resolveApp('resource')));
 
+  app.use('/.well-known/host-meta', hostMeta);
+
   // Set up API server.
-  apiServer && app.use('/api', csrfMiddleware, apiServer({ appName }));
+  app.use('/api', csrfMiddleware, apiServer({ appName }));
 
   // Set up Apollo server.
-  apolloServer && apolloServer(app);
+  apolloServer(app);
 
   // Background requests
   const dispose = () => {

@@ -1,41 +1,16 @@
-import { ApolloProvider, getDataFromTree } from 'react-apollo';
 import constants from '../../../shared/constants';
 import { buildUrl, contentUrl, profileUrl } from '../../../shared/util/url_factory';
-import createApolloClient from '../../data/apollo_client';
 import crypto from 'crypto';
+import endpointWithApollo from '../../util/endpoint_with_apollo';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import { NotFoundError } from '../../util/exceptions';
-import { renderToString } from 'react-dom/server';
 import React, { createElement as RcE, PureComponent } from 'react';
 
 export default async (req, res, next) => {
-  const apolloClient = await createApolloClient(req);
   res.type('xml');
-
-  const feed = (
-    <ApolloProvider client={apolloClient}>
-      <RSS req={req} />
-    </ApolloProvider>
-  );
-
-  try {
-    await getDataFromTree(feed);
-  } catch (ex) {
-    next(ex);
-    return;
-  }
-
-  try {
-    res.send(`<?xml version="1.0" encoding="UTF-8"?>` + renderToString(feed));
-  } catch (ex) {
-    if (ex instanceof NotFoundError) {
-      res.sendStatus(404);
-    } else {
-      next(ex);
-    }
-    return;
-  }
+  res.write(`<?xml version="1.0" encoding="UTF-8"?>`);
+  return await endpointWithApollo(req, res, next, <RSS req={req} />);
 };
 
 @graphql(

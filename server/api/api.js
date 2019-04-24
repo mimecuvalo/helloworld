@@ -3,7 +3,7 @@ import clientHealthCheckRouter from './client_health_check';
 import errorRouter from './error';
 import express from 'express';
 import openSearchRouterFactory from './opensearch';
-import socialButterfly from './social-butterfly';
+import socialButterfly from './social_butterfly';
 import unfurl from './unfurl';
 import upload from './upload';
 
