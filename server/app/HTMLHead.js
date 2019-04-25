@@ -59,13 +59,13 @@ class HTMLHead extends PureComponent {
     let description, favicon, rss, theme, title, username;
     const acct = `acct:${username}@${req.get('host')}`;
     const feedUrl = buildUrl({ pathname: '/api/social/feed', searchParams: { username: contentOwner?.username } });
+    const repliesUrl =
+      content && buildUrl({ pathname: '/api/social/comments', searchParams: { url: contentUrl(content) } });
     const webmentionUrl = buildUrl({ req, pathname: '/api/social/webmention', searchParams: { q: acct } });
-    const repliesAttribs = content
-      ? {
-          'thr:count': content.comments_count,
-          'thr:updated': new Date(content.comments_updated).toISOString(),
-        }
-      : null;
+    const repliesAttribs = content && {
+      'thr:count': content.comments_count,
+      'thr:updated': new Date(content.comments_updated).toISOString(),
+    };
 
     if (contentOwner) {
       description = contentOwner.description && <meta name="description" content={contentOwner.description} />;
@@ -88,9 +88,9 @@ class HTMLHead extends PureComponent {
       <head>
         <meta charSet="utf-8" />
         <link rel="author" href={`${publicUrl}humans.txt`} />
-        {contentOwner ? (
+        {contentOwner && (
           <link rel="author" href={contentUrl({ username: contentOwner.username, section: 'main', name: 'about' })} />
-        ) : null}
+        )}
         <link rel="shortcut icon" href={favicon || `${publicUrl}favicon.ico`} />
         {assetPathsByType['css'].map(path => (
           <link nonce={nonce} rel="stylesheet" key={path} href={path} />
@@ -117,10 +117,10 @@ class HTMLHead extends PureComponent {
           href={buildUrl({ pathname: '/api/social/oembed', searchParams: { url: content && contentUrl(content) } })}
           title={content?.title}
         />
-        {content ? <link rel="webmention" href={webmentionUrl} /> : null}
-        {content?.comments_count ? (
-          <link rel="replies" type="application/atom+xml" href={feedUrl} {...repliesAttribs} />
-        ) : null}
+        {content && <link rel="webmention" href={webmentionUrl} />}
+        {content?.comments_count && (
+          <link rel="replies" type="application/atom+xml" href={repliesUrl} {...repliesAttribs} />
+        )}
         {/*
           manifest.json provides metadata used when your web app is added to the
           homescreen on Android. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -142,7 +142,7 @@ class HTMLHead extends PureComponent {
           See related hacky code in server/app/app.js
         */}
         <style id="jss-ssr" dangerouslySetInnerHTML={{ __html: `<!--MATERIAL-UI-CSS-SSR-REPLACE-->` }} />
-        {contentOwner ? <GoogleAnalytics nonce={nonce} contentOwner={contentOwner} /> : null}
+        {contentOwner && <GoogleAnalytics nonce={nonce} contentOwner={contentOwner} />}
       </head>
     );
   }

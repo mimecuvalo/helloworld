@@ -89,16 +89,16 @@ class Feed extends PureComponent {
         <link rel="http://salmon-protocol.org/ns/salmon-replies" href={salmonUrl} />
         <link rel="http://salmon-protocol.org/ns/salmon-mention" href={salmonUrl} />
         <link rel="license" href={contentOwner.license} />
-        {contentOwner.license ? (
+        {contentOwner.license && (
           <rights>
             {contentOwner.license === 'http://purl.org/atompub/license#unspecified'
               ? `Copyright ${new Date().getFullYear()} by ${contentOwner.name}`
               : `${constants.licenses[contentOwner.license]['name']}: ${contentOwner.license}`}
           </rights>
-        ) : null}
-        {feed.length ? <updated>{new Date(feed[0].updatedAt).toISOString()}</updated> : null}
+        )}
+        {feed.length && <updated>{new Date(feed[0].updatedAt).toISOString()}</updated>}
         <Author contentOwner={contentOwner} profile={profile} />
-        {contentOwner.logo ? <logo>{buildUrl({ req, pathname: contentOwner.logo })}</logo> : null}
+        {contentOwner.logo && <logo>{buildUrl({ req, pathname: contentOwner.logo })}</logo>}
         <icon>
           {contentOwner.favicon
             ? buildUrl({ req, pathname: contentOwner.favicon })
