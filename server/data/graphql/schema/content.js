@@ -87,6 +87,7 @@ export default gql`
       album: String!
       name: String!
       title: String!
+      hidden: Boolean!
       thumb: String!
       style: String!
       code: String!

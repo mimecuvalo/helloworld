@@ -54,6 +54,7 @@ class DashboardEditor extends PureComponent {
       album,
       name,
       title,
+      hidden: false, // TODO(mime)
       thumb,
       style,
       code,
@@ -180,6 +181,7 @@ export default compose(
       $album: String!
       $name: String!
       $title: String!
+      $hidden: Boolean!
       $thumb: String!
       $style: String!
       $code: String!
@@ -190,6 +192,7 @@ export default compose(
         album: $album
         name: $name
         title: $title
+        hidden: $hidden
         thumb: $thumb
         style: $style
         code: $code
@@ -200,6 +203,7 @@ export default compose(
         album
         name
         title
+        hidden
         thumb
         style
         code
