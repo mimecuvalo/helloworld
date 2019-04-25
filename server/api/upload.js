@@ -1,14 +1,14 @@
 import constants from '../../shared/constants';
 import express from 'express';
 import fs from 'fs';
+import mime from 'mime/lite';
 import multer from 'multer';
 import path from 'path';
 import sharp from 'sharp';
 
 function fileFilter(req, file, cb) {
-  const extension = file.originalname.split('.').slice(-1)[0];
-  const isImage = ['apng', 'gif', 'jpeg', 'jpg', 'mng', 'png', 'webp'].indexOf(extension) !== -1;
-  cb(null, isImage);
+  const isMedia = !!mime.getType(file.originalname).match(/^(video|image|audio)\//);
+  cb(null, isMedia);
 }
 
 const storage = multer.diskStorage({
