@@ -63,7 +63,9 @@ class Feed extends PureComponent {
     const username = req.query.username;
     const feed = this.props.data.fetchFeed;
 
+    const acct = `acct:${username}@${req.get('host')}`;
     const feedUrl = buildUrl({ req, pathname: req.originalUrl });
+    const salmonUrl = buildUrl({ req, pathname: '/api/social/salmon', searchParams: { q: acct } });
     const profile = profileUrl(username, req);
 
     const md5 = crypto.createHash('md5');
@@ -95,6 +97,9 @@ class Feed extends PureComponent {
           href={`http://friendfeed.com/api/public-sup.json#${supId}`}
           type="application/json"
         />
+        <link rel="salmon" href={salmonUrl} />
+        <link rel="http://salmon-protocol.org/ns/salmon-replies" href={salmonUrl} />
+        <link rel="http://salmon-protocol.org/ns/salmon-mention" href={salmonUrl} />
         <link rel="license" href={contentOwner.license} />
         {contentOwner.license ? (
           <rights>
