@@ -1,6 +1,5 @@
 import constants from '../../../shared/constants';
 import { buildUrl, contentUrl, profileUrl } from '../../../shared/util/url_factory';
-import crypto from 'crypto';
 import endpointWithApollo from '../../util/endpoint_with_apollo';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
@@ -68,12 +67,6 @@ class Feed extends PureComponent {
     const salmonUrl = buildUrl({ req, pathname: '/api/social/salmon', searchParams: { q: acct } });
     const profile = profileUrl(username, req);
 
-    const md5 = crypto.createHash('md5');
-    const supId = md5
-      .update(feedUrl)
-      .digest('hex')
-      .slice(0, 10);
-
     const namespaces = {
       xmlLang: 'en-US',
       xmlns: 'http://www.w3.org/2005/Atom',
@@ -92,11 +85,6 @@ class Feed extends PureComponent {
         <link rel="self" href={feedUrl} />
         <link rel="alternate" type="text/html" href={profile} />
         <link rel="hub" href={constants.pushHub} />
-        <link
-          rel="http://api.friendfeed.com/2008/03#sup"
-          href={`http://friendfeed.com/api/public-sup.json#${supId}`}
-          type="application/json"
-        />
         <link rel="salmon" href={salmonUrl} />
         <link rel="http://salmon-protocol.org/ns/salmon-replies" href={salmonUrl} />
         <link rel="http://salmon-protocol.org/ns/salmon-mention" href={salmonUrl} />
