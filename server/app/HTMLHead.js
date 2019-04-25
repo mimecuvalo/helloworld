@@ -88,9 +88,9 @@ class HTMLHead extends PureComponent {
       <head>
         <meta charSet="utf-8" />
         <link rel="author" href={`${publicUrl}humans.txt`} />
-        {contentOwner && (
+        {contentOwner ? (
           <link rel="author" href={contentUrl({ username: contentOwner.username, section: 'main', name: 'about' })} />
-        )}
+        ) : null}
         <link rel="shortcut icon" href={favicon || `${publicUrl}favicon.ico`} />
         {assetPathsByType['css'].map(path => (
           <link nonce={nonce} rel="stylesheet" key={path} href={path} />
@@ -117,10 +117,10 @@ class HTMLHead extends PureComponent {
           href={buildUrl({ pathname: '/api/social/oembed', searchParams: { url: content && contentUrl(content) } })}
           title={content?.title}
         />
-        {content && <link rel="webmention" href={webmentionUrl} />}
-        {content?.comments_count && (
+        {content ? <link rel="webmention" href={webmentionUrl} /> : null}
+        {content?.comments_count ? (
           <link rel="replies" type="application/atom+xml" href={repliesUrl} {...repliesAttribs} />
-        )}
+        ) : null}
         {/*
           manifest.json provides metadata used when your web app is added to the
           homescreen on Android. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -142,7 +142,7 @@ class HTMLHead extends PureComponent {
           See related hacky code in server/app/app.js
         */}
         <style id="jss-ssr" dangerouslySetInnerHTML={{ __html: `<!--MATERIAL-UI-CSS-SSR-REPLACE-->` }} />
-        {contentOwner && <GoogleAnalytics nonce={nonce} contentOwner={contentOwner} />}
+        {contentOwner ? <GoogleAnalytics nonce={nonce} contentOwner={contentOwner} /> : null}
       </head>
     );
   }

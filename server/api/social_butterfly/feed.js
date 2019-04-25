@@ -16,13 +16,17 @@ export default async (req, res, next) => {
   gql`
     query FeedAndUserQuery($username: String!) {
       fetchFeed(username: $username) {
+        username
+        section
         album
+        name
+        title
         createdAt
         updatedAt
-        name
-        section
-        title
-        username
+        comments_count
+        comments_updated
+        thread
+        thread_user
         view
         content
       }
@@ -89,16 +93,16 @@ class Feed extends PureComponent {
         <link rel="http://salmon-protocol.org/ns/salmon-replies" href={salmonUrl} />
         <link rel="http://salmon-protocol.org/ns/salmon-mention" href={salmonUrl} />
         <link rel="license" href={contentOwner.license} />
-        {contentOwner.license && (
+        {contentOwner.license ? (
           <rights>
             {contentOwner.license === 'http://purl.org/atompub/license#unspecified'
               ? `Copyright ${new Date().getFullYear()} by ${contentOwner.name}`
               : `${constants.licenses[contentOwner.license]['name']}: ${contentOwner.license}`}
           </rights>
-        )}
-        {feed.length && <updated>{new Date(feed[0].updatedAt).toISOString()}</updated>}
+        ) : null}
+        {feed.length ? <updated>{new Date(feed[0].updatedAt).toISOString()}</updated> : null}
         <Author contentOwner={contentOwner} profile={profile} />
-        {contentOwner.logo && <logo>{buildUrl({ req, pathname: contentOwner.logo })}</logo>}
+        {contentOwner.logo ? <logo>{buildUrl({ req, pathname: contentOwner.logo })}</logo> : null}
         <icon>
           {contentOwner.favicon
             ? buildUrl({ req, pathname: contentOwner.favicon })
@@ -137,11 +141,17 @@ const Author = ({ contentOwner, profile }) => (
 class Entry extends PureComponent {
   render() {
     const { content, req } = this.props;
-    const statsImgSrc = buildUrl({ req, pathname: '/api/stats', searchParams: { url: contentUrl(content) } });
+    const contentUrlWithoutHost = contentUrl(content);
+    const statsImgSrc = buildUrl({ req, pathname: '/api/stats', searchParams: { url: contentUrlWithoutHost } });
     const statsImg = `<img src="${statsImgSrc}" />`;
     const absoluteUrlReplacement = buildUrl({ req, pathname: '/resource' });
     const html =
       '<![CDATA[' + content.view.replace(/(['"])\/resource/gm, `$1${absoluteUrlReplacement}`) + statsImg + ']]>';
+    const repliesUrl = buildUrl({ pathname: '/api/social/comments', searchParams: { url: contentUrlWithoutHost } });
+    const repliesAttribs = {
+      'thr:count': content.comments_count,
+      'thr:updated': new Date(content.comments_updated).toISOString(),
+    };
 
     return (
       <entry>
@@ -156,6 +166,29 @@ class Entry extends PureComponent {
         <published>{new Date(content.createdAt).toISOString()}</published>
         <updated>{new Date(content.updatedAt).toISOString()}</updated>
         {RcE('activity:verb', {}, `http://activitystrea.ms/schema/1.0/post`)}
+        {content.section === 'comments' ? (
+          /* we'll never get here currently because we never render main sections in our feed */
+          <>
+            {RcE('activity:object-type', {}, `http://activitystrea.ms/schema/1.0/comment`)}
+            {content.thread
+              ? /* XXX(mime): this doesn't work currently because React uses `ref` internally. oops. */ RcE(
+                  'thr:in-reply-to',
+                  { ref: content.thread }
+                )
+              : null}
+            {content.thread_user ? (
+              <>
+                <link rel="ostatus:attention" href={content.thread_user} />
+                <link rel="mentioned" href={content.thread_user} />
+              </>
+            ) : null}
+          </>
+        ) : (
+          RcE('activity:object-type', {}, `http://activitystrea.ms/schema/1.0/article`)
+        )}
+        {content.comments_count ? (
+          <link rel="replies" type="application/atom+xml" href={repliesUrl} {...repliesAttribs} />
+        ) : null}
       </entry>
     );
   }
