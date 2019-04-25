@@ -1,3 +1,4 @@
+import constants from '../../shared/constants';
 import express from 'express';
 import fs from 'fs';
 import multer from 'multer';
@@ -27,10 +28,6 @@ function cleanFilename(filename) {
 
 const MAX_SIZE = 1024 * 1024 * 20; // 20 MB
 const MAX_FILES = 10;
-const THUMB_WIDTH = 154;
-const THUMB_HEIGHT = 115;
-const NORMAL_WIDTH = 650;
-const NORMAL_HEIGHT = 525;
 
 const upload = multer({ storage, limits: { fileSize: MAX_SIZE, files: MAX_FILES, fields: MAX_FILES }, fileFilter });
 
@@ -53,8 +50,8 @@ router.post('/', upload.array('files', MAX_FILES), async (req, res) => {
       ensureDirectoriesExist(localOriginal, localThumb, localNormal);
       fs.renameSync(file.path, localOriginal);
 
-      await resize(localOriginal, localThumb, THUMB_WIDTH, THUMB_HEIGHT);
-      await resize(localOriginal, localNormal, NORMAL_WIDTH, NORMAL_HEIGHT);
+      await resize(localOriginal, localThumb, constants.thumbWidth, constants.thumbHeight);
+      await resize(localOriginal, localNormal, constants.normalWidth, constants.normalHeight);
     } catch (ex) {
       isError = true;
       console.error('Error uploading image.', ex);

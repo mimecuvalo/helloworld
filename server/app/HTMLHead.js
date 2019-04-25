@@ -18,6 +18,7 @@ import React, { PureComponent } from 'react';
       fetchPublicUserDataHead(username: $username) {
         description
         favicon
+        logo
         theme
         title
         username
@@ -101,6 +102,12 @@ class HTMLHead extends PureComponent {
         <meta name="generator" content="Hello, world. https://github.com/mimecuvalo/helloworld" />
         {description}
         <OpenGraphMetadata contentOwner={contentOwner} content={content} req={req} />
+        <link
+          rel="alternate"
+          type="application/json+oembed"
+          href={buildUrl({ pathname: '/api/social/oembed', searchParams: { url: content && contentUrl(content) } })}
+          title={content?.title}
+        />
         {/*
           manifest.json provides metadata used when your web app is added to the
           homescreen on Android. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -136,6 +143,10 @@ const OpenGraphMetadata = React.memo(function OpenGraphMetadata({ contentOwner, 
     if (!/^https?:/.test(thumb)) {
       thumb = buildUrl({ req, pathname: thumb });
     }
+  }
+
+  if (!thumb) {
+    thumb = buildUrl({ req, pathname: contentOwner.logo || contentOwner.favicon });
   }
 
   return (
