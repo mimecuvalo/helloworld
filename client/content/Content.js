@@ -62,6 +62,7 @@ class Content extends Component {
     const variables = {
       username,
       name,
+      hidden: false, // TODO(mime)
       content: JSON.stringify(content.content),
       style: content.style,
       code: content.code,
@@ -130,10 +131,11 @@ export default compose(
     }),
   }),
   graphql(gql`
-    mutation saveContent($name: String!, $style: String!, $code: String!, $content: String!) {
-      saveContent(name: $name, style: $style, code: $code, content: $content) {
+    mutation saveContent($name: String!, $hidden: Boolean!, $style: String!, $code: String!, $content: String!) {
+      saveContent(name: $name, hidden: $hidden, style: $style, code: $code, content: $content) {
         username
         name
+        hidden
         style
         code
         content

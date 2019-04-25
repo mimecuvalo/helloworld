@@ -356,23 +356,34 @@ const Content = {
   },
 
   Mutation: {
-    saveContent: combineResolvers(isAuthor, async (parent, { name, style, code, content }, { currentUser, models }) => {
-      await models.Content.update(
-        {
-          style,
-          code,
-          content,
-        },
-        {
-          where: {
-            username: currentUser.model.username,
-            name,
+    saveContent: combineResolvers(
+      isAuthor,
+      async (parent, { name, hidden, style, code, content }, { currentUser, models, req }) => {
+        const username = currentUser.model.username;
+        await models.Content.update(
+          {
+            hidden,
+            style,
+            code,
+            content,
           },
-        }
-      );
+          {
+            where: {
+              username,
+              name,
+            },
+          }
+        );
 
-      return { username: currentUser.model.username, name, style, code, content };
-    }),
+        const updatedContent = await models.Content.findOne({ where: { username, name } });
+
+        if (!hidden) {
+          await socialize(updatedContent, req);
+        }
+
+        return { username: currentUser.model.username, name, style, code, content };
+      }
+    ),
 
     postContent: combineResolvers(
       isAuthor,
