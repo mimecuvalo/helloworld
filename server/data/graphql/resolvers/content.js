@@ -1,11 +1,9 @@
 import { combineResolvers } from 'graphql-resolvers';
-import constants from '../../../../shared/constants';
-import { contentUrl } from '../../../../shared/util/url_factory';
-import fetch from 'node-fetch';
 import { isAdmin, isAuthor } from './authorization';
 import { isRobotViewing } from '../../../util/crawler';
 import nanoid from 'nanoid';
 import Sequelize from 'sequelize';
+import socialize from '../../../api/social_butterfly/socialize';
 
 const ATTRIBUTES_NAVIGATION = [
   'username',
@@ -400,7 +398,7 @@ const Content = {
         });
 
         if (!hidden) {
-          await pubsubhubbubPush(createdContent, req);
+          await socialize(createdContent, req);
         }
 
         return {
@@ -462,16 +460,4 @@ function ellipsize(str, len) {
   }
 
   return str.slice(0, len) + '…';
-}
-
-async function pubsubhubbubPush(content, req) {
-  try {
-    const contentFeedUrl = contentUrl(content, req);
-    await fetch(constants.pushHub, {
-      method: 'POST',
-      body: new URLSearchParams({ 'hub.url': contentFeedUrl, 'hub.mode': 'publish' }),
-    });
-  } catch (ex) {
-    // Not a big deal if this fails.
-  }
 }
