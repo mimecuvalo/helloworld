@@ -1,4 +1,7 @@
 import { combineResolvers } from 'graphql-resolvers';
+import constants from '../../../../shared/constants';
+import { contentUrl } from '../../../../shared/util/url_factory';
+import fetch from 'node-fetch';
 import { isAdmin, isAuthor } from './authorization';
 import nanoid from 'nanoid';
 import Sequelize from 'sequelize';
@@ -359,11 +362,11 @@ const Content = {
 
     postContent: combineResolvers(
       isAuthor,
-      async (parent, { section, album, name, title, thumb, style, code, content }, { currentUser, models }) => {
+      async (parent, { section, album, name, title, thumb, style, code, content }, { currentUser, models, req }) => {
         name = (name || 'untitled') + '-' + nanoid(10);
         name = name.replace(/[^A-Za-z0-9-]/, '-');
 
-        await models.Content.create({
+        const createdContent = await models.Content.create({
           username: currentUser.model.username,
           section,
           album,
@@ -374,6 +377,8 @@ const Content = {
           code,
           content,
         });
+
+        await pubsubhubbubPush(createdContent, req);
 
         return { username: currentUser.model.username, section, album, name, title, thumb, style, code, content };
       }
@@ -423,4 +428,16 @@ function ellipsize(str, len) {
   }
 
   return str.slice(0, len) + '…';
+}
+
+async function pubsubhubbubPush(content, req) {
+  try {
+    const contentFeedUrl = contentUrl(content, req);
+    await fetch(constants.pushHub, {
+      method: 'POST',
+      body: new URLSearchParams({ 'hub.url': contentFeedUrl, 'hub.mode': 'publish' }),
+    });
+  } catch (ex) {
+    // Not a big deal if this fails.
+  }
 }

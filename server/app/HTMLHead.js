@@ -146,7 +146,7 @@ const OpenGraphMetadata = React.memo(function OpenGraphMetadata({ contentOwner, 
   }
 
   if (!thumb) {
-    thumb = buildUrl({ req, pathname: contentOwner.logo || contentOwner.favicon });
+    thumb = buildUrl({ req, pathname: contentOwner?.logo || contentOwner?.favicon });
   }
 
   return (

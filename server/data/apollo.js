@@ -26,6 +26,7 @@ export default function apolloServer(app) {
         currentUser,
         hostname,
         models,
+        req,
       };
     },
   });
