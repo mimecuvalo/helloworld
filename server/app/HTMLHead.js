@@ -13,11 +13,14 @@ import React, { PureComponent } from 'react';
         name
         thumb
         title
+        comments_count
+        comments_updated
       }
 
       fetchPublicUserDataHead(username: $username) {
         description
         favicon
+        google_analytics
         logo
         theme
         title
@@ -54,17 +57,20 @@ class HTMLHead extends PureComponent {
     const content = this.props.data.fetchContentHead;
 
     let description, favicon, rss, theme, title, username;
+    const acct = `acct:${username}@${req.get('host')}`;
+    const feedUrl = buildUrl({ pathname: '/api/social/feed', searchParams: { username: contentOwner?.username } });
+    const webmentionUrl = buildUrl({ req, pathname: '/api/social/webmention', searchParams: { q: acct } });
+    const repliesAttribs = content
+      ? {
+          'thr:count': content.comments_count,
+          'thr:updated': new Date(content.comments_updated).toISOString(),
+        }
+      : null;
+
     if (contentOwner) {
       description = contentOwner.description && <meta name="description" content={contentOwner.description} />;
       favicon = contentOwner.favicon;
-      rss = (
-        <link
-          rel="alternate"
-          type="application/atom+xml"
-          title={title}
-          href={buildUrl({ pathname: '/api/social/feed', searchParams: { username: contentOwner.username } })}
-        />
-      );
+      rss = <link rel="alternate" type="application/atom+xml" title={title} href={feedUrl} />;
       theme = contentOwner.theme && <link rel="stylesheet" href={contentOwner.theme} />;
       title = contentOwner.title;
       username = contentOwner.username;
@@ -82,6 +88,9 @@ class HTMLHead extends PureComponent {
       <head>
         <meta charSet="utf-8" />
         <link rel="author" href={`${publicUrl}humans.txt`} />
+        {contentOwner ? (
+          <link rel="author" href={contentUrl({ username: contentOwner.username, section: 'main', name: 'about' })} />
+        ) : null}
         <link rel="shortcut icon" href={favicon || `${publicUrl}favicon.ico`} />
         {assetPathsByType['css'].map(path => (
           <link nonce={nonce} rel="stylesheet" key={path} href={path} />
@@ -108,6 +117,10 @@ class HTMLHead extends PureComponent {
           href={buildUrl({ pathname: '/api/social/oembed', searchParams: { url: content && contentUrl(content) } })}
           title={content?.title}
         />
+        {content ? <link rel="webmention" href={webmentionUrl} /> : null}
+        {content?.comments_count ? (
+          <link rel="replies" type="application/atom+xml" href={feedUrl} {...repliesAttribs} />
+        ) : null}
         {/*
           manifest.json provides metadata used when your web app is added to the
           homescreen on Android. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -122,13 +135,14 @@ class HTMLHead extends PureComponent {
           work correctly both with client-side routing and a non-root public URL.
           Learn how to configure a non-root public URL by running `npm run build`.
         */}
-        <title>{title}</title>
+        <title>{(content?.title ? content.title + ' – ' : '') + title}</title>
         {/*
           XXX(mime): Material UI's server-side rendering for CSS doesn't allow for inserting CSS the same way we do
           Apollo's data (see apolloStateFn in HTMLBase). So for now, we just do a string replace, sigh.
           See related hacky code in server/app/app.js
         */}
         <style id="jss-ssr" dangerouslySetInnerHTML={{ __html: `<!--MATERIAL-UI-CSS-SSR-REPLACE-->` }} />
+        {contentOwner ? <GoogleAnalytics nonce={nonce} contentOwner={contentOwner} /> : null}
       </head>
     );
   }
@@ -160,5 +174,29 @@ const OpenGraphMetadata = React.memo(function OpenGraphMetadata({ contentOwner, 
     </>
   );
 });
+
+// TODO(mime): meh, lame that this is in the <head> but I don't feel like moving this to HTMLBase where we don't have
+// contentOwner currently.
+function GoogleAnalytics({ nonce, contentOwner }) {
+  return (
+    <script
+      nonce={nonce}
+      async
+      dangerouslySetInnerHTML={{
+        __html: `
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', '${contentOwner.google_analytics}']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = 'https://ssl.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+        `,
+      }}
+    />
+  );
+}
 
 export default HTMLHead;

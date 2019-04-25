@@ -33,7 +33,7 @@ class WebFinger extends PureComponent {
     const { username, magic_key } = user;
 
     const acct = `acct:${username}@${req.get('host')}`;
-    const aboutUrl = contentUrl({ username, section: 'about', name: 'main' }, req);
+    const aboutUrl = contentUrl({ username, section: 'main', name: 'about' }, req);
     const feedUrl = buildUrl({ req, pathname: '/api/social/rss', searchParams: { username } });
     const foafUrl = buildUrl({ req, pathname: '/api/social/foaf', searchParams: { username } });
     const followUrl = buildUrl({ req, pathname: '/api/social/follow', searchParams: { username } });
