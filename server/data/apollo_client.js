@@ -23,6 +23,7 @@ export default async function createApolloClient(req) {
     operation.setContext({
       headers: {
         cookie: req.get('cookie'),
+        'x-user-agent': req.headers['user-agent'],
         'x-forwarded-host': req.hostname,
       },
     });

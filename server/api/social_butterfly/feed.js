@@ -140,9 +140,8 @@ class Entry extends PureComponent {
     const statsImgSrc = buildUrl({ req, pathname: '/api/stats', searchParams: { url: contentUrl(content) } });
     const statsImg = `<img src="${statsImgSrc}" />`;
     const absoluteUrlReplacement = buildUrl({ req, pathname: '/resource' });
-    const viewWithAbsoluteUrls =
-      '<![CDATA[' + content.view.replace(/(['"])\/resource/gm, `$1${absoluteUrlReplacement}`) + ']]>';
-    const html = viewWithAbsoluteUrls + statsImg;
+    const html =
+      '<![CDATA[' + content.view.replace(/(['"])\/resource/gm, `$1${absoluteUrlReplacement}`) + statsImg + ']]>';
 
     return (
       <entry>

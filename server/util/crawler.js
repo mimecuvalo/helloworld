@@ -25,3 +25,8 @@ export function createAbsoluteUrl(websiteUrl, url) {
 
   return url;
 }
+
+export function isRobotViewing(req) {
+  const userAgent = req.headers['x-user-agent'] || req.headers['user-agent'];
+  return !!userAgent?.match(/bot|spider|crawl|slurp|ia_archiver/i);
+}

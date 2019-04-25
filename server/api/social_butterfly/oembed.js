@@ -1,12 +1,9 @@
 import constants from '../../../shared/constants';
-import { buildUrl, contentUrl, profileUrl } from '../../../shared/util/url_factory';
+import { buildUrl, contentUrl, parseContentUrl, profileUrl } from '../../../shared/util/url_factory';
 import models from '../../data/models';
 
 export default async (req, res, next) => {
-  const splitUrl = req.query.url.split('/');
-  const username = splitUrl[1];
-  const name = splitUrl.length > 2 ? splitUrl.slice(-1)[0] : 'home';
-
+  const { username, name } = parseContentUrl(req.query.url);
   const contentOwner = await models.User.findOne({ attributes: ['favicon', 'logo', 'title'], where: { username } });
   const content = await models.Content.findOne({
     attributes: ['username', 'section', 'album', 'name', 'thumb', 'title'],
@@ -29,11 +26,15 @@ export default async (req, res, next) => {
     thumb = buildUrl({ req, pathname: contentOwner.logo || contentOwner.favicon });
   }
 
+  const contentUrlWithoutHost = contentUrl(content);
   const contentUrlWithHost = contentUrl(content, req);
   const homepageUrl = buildUrl({ req, pathname: '/' });
   const profile = profileUrl(username, req);
   let htmlContent = thumb ? `<img src="${thumb}" alt="thumbnail" title="${content.title}" />` : content.title;
   htmlContent = htmlContent.replace(/</g, '\u003c').replace(/>/g, '\u003e');
+
+  const statsUrl = buildUrl({ req, pathname: '/api/stats', searchParams: { url: contentUrlWithoutHost } });
+  const statsImg = `<img src="${statsUrl}" alt="stats" />`;
 
   res.type('application/json+oembed');
   res.json({
@@ -49,6 +50,6 @@ export default async (req, res, next) => {
     thumbnail_width: thumb ? constants.thumbWidth : undefined,
     thumbnail_height: thumb ? constants.thumbHeight : undefined,
     thumbnail_url: thumb || undefined,
-    html: `<a href="${contentUrlWithHost}">${htmlContent}</a>`,
+    html: `<a href="${contentUrlWithHost}">${htmlContent}</a>${statsImg}`,
   });
 };

@@ -29,6 +29,14 @@ export function contentUrl(content, reqOrIsAbsolute = false, searchParams) {
   return buildUrl({ req, isAbsolute, pathname, searchParams });
 }
 
+export function parseContentUrl(url) {
+  const splitUrl = url.split('/');
+  const username = splitUrl[1];
+  const name = splitUrl.length > 2 ? splitUrl.slice(-1)[0] : 'home';
+
+  return { username, name };
+}
+
 export function profileUrl(username, reqOrIsAbsolute = false) {
   const req = typeof reqOrIsAbsolute === 'object' && reqOrIsAbsolute;
   const isAbsolute = typeof reqOrIsAbsolute === 'boolean' && reqOrIsAbsolute;

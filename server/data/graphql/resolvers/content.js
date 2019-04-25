@@ -3,6 +3,7 @@ import constants from '../../../../shared/constants';
 import { contentUrl } from '../../../../shared/util/url_factory';
 import fetch from 'node-fetch';
 import { isAdmin, isAuthor } from './authorization';
+import { isRobotViewing } from '../../../util/crawler';
 import nanoid from 'nanoid';
 import Sequelize from 'sequelize';
 
@@ -25,7 +26,7 @@ const Content = {
       return await models.Content.findAll();
     }),
 
-    async fetchContent(parent, { username, name }, { hostname, models }) {
+    async fetchContent(parent, { username, name }, { currentUser, hostname, models, req }) {
       if (!username) {
         if (hostname) {
           const hostnameUserData = await models.User.findOne({ attributes: ['username'], where: { hostname } });
@@ -76,6 +77,21 @@ const Content = {
           where: { username, section: 'main', name: content.section },
         });
         content.template = parentContent.template;
+      }
+
+      // Update count
+      // lack of 'req' is a dumb check for !fetchContentHead :-/
+      const isOwnerViewing = currentUser?.model?.username === username;
+      if (req && content && !isOwnerViewing) {
+        const attributes = isRobotViewing(req)
+          ? { count_robot: content.count_robot + 1 }
+          : { count: content.count + 1 };
+        await models.Content.update(attributes, {
+          where: {
+            username,
+            name: content.name,
+          },
+        });
       }
 
       return decorateWithRefreshFlag(content);
