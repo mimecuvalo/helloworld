@@ -10,7 +10,7 @@ import React, { createElement as RcE, PureComponent } from 'react';
 export default async (req, res, next) => {
   res.type('xml');
   res.write(`<?xml version="1.0" encoding="UTF-8"?>`);
-  return await endpointWithApollo(req, res, next, <RSS req={req} />);
+  return await endpointWithApollo(req, res, next, <Feed req={req} />);
 };
 
 @graphql(
@@ -52,7 +52,7 @@ export default async (req, res, next) => {
     }),
   }
 )
-class RSS extends PureComponent {
+class Feed extends PureComponent {
   render() {
     const contentOwner = this.props.data.fetchPublicUserData;
     if (!contentOwner) {
