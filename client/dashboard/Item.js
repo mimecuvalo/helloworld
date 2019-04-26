@@ -99,7 +99,7 @@ class Item extends PureComponent {
       <section ref={this.item} className={classNames('hw-item', styles.item)}>
         <Header contentRemote={contentRemote} />
         <div dangerouslySetInnerHTML={{ __html: contentRemote.view }} />
-        <Footer contentRemote={contentRemote} keepUnreadCb={this.keepUnreadCb} />
+        <Footer contentRemote={contentRemote} keepUnreadCb={this.keepUnreadCb} getEditor={this.props.getEditor} />
       </section>
     );
   }

@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { convertFromHTML } from 'draft-convert';
 import createHashtagPlugin from 'draft-js-hashtag-plugin';
 import createLinkifyPlugin from 'draft-js-linkify-plugin';
-import { defineMessages, injectIntl } from '../../shared/i18n';
+import { defineMessages } from '../../shared/i18n';
 import draftJSExtendPlugins, {
   alignmentPlugin,
   blockDndPlugin,
@@ -17,13 +17,13 @@ import Editor from 'draft-js-plugins-editor';
 import { convertFromRaw, convertToRaw, EditorState, RichUtils } from 'draft-js';
 import Emojis, { emojiPlugin } from './ui/autocomplete/Emojis';
 import { handleKeyCommand, keyBindingFn } from './input/keyboard';
+import HiddenSnackbarShim from '../components/HiddenSnackbarShim';
 import Mentions, { mentionPlugin } from './ui/autocomplete/Mentions';
-import React, { Component, PureComponent } from 'react';
+import React, { Component } from 'react';
 import styles from './Editor.module.css';
 import Toolbars, { inlineToolbarPlugin, linkPlugin, sideToolbarPlugin } from './ui/toolbars';
 import unfurl from './media/unfurl';
 import uploadFiles from './media/attachment';
-import { withSnackbar } from 'notistack';
 
 const messages = defineMessages({
   errorMedia: { msg: 'Error uploading image.' },
@@ -210,24 +210,9 @@ class HelloWorldEditor extends Component {
             <Mentions />
           </div>
         ) : null}
-        <HiddenSnackbarShim errorMessage={this.state.errorMessage} />
+        <HiddenSnackbarShim message={this.state.errorMessage} variant="error" />
       </>
     );
-  }
-}
-
-// XXX(mime): Sigh. I need to be able to put a ref on the HelloworldEditor to access functionality. However,
-// I can't use refs if the withSnackbar/injectIntl wrappers are present. Because they are not classes React will
-// not be able to attach a ref to them. So this is the next best thing. LAME.
-@withSnackbar
-@injectIntl
-class HiddenSnackbarShim extends PureComponent {
-  componentDidUpdate(prevProps, prevState) {
-    this.props.enqueueSnackbar(this.props.intl.formatMessage(this.props.errorMessage), { variant: 'error' });
-  }
-
-  render() {
-    return null;
   }
 }
 

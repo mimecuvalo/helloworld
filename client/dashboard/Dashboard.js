@@ -20,6 +20,8 @@ class Dashboard extends PureComponent {
   constructor(props) {
     super(props);
 
+    this.editor = React.createRef();
+
     this.state = {
       shouldShowAllItems: false,
       didFeedLoad: false,
@@ -39,6 +41,11 @@ class Dashboard extends PureComponent {
     typeof userRemoteOrSpecialFeed === 'string'
       ? this.setState(Object.assign(newState, { specialFeed: userRemoteOrSpecialFeed, userRemote: null }))
       : this.setState(Object.assign(newState, { userRemote: userRemoteOrSpecialFeed, specialFeed: '' }));
+  };
+
+  getEditor = () => {
+    // Oof :-/
+    return this.editor.current.getWrappedInstance().getWrappedInstance();
   };
 
   render() {
@@ -64,7 +71,7 @@ class Dashboard extends PureComponent {
                 </nav>
 
                 <article className={styles.content}>
-                  <DashboardEditor username={user.model.username} />
+                  <DashboardEditor ref={this.editor} username={user.model.username} />
                   {this.state.specialFeed === 'me' ? (
                     <MyFeed
                       content={{ username: user.model.username, section: 'main', name: 'home' }}
@@ -73,6 +80,7 @@ class Dashboard extends PureComponent {
                   ) : (
                     <Feed
                       didFeedLoad={this.state.didFeedLoad}
+                      getEditor={this.getEditor}
                       query={this.state.query}
                       shouldShowAllItems={this.state.shouldShowAllItems}
                       specialFeed={this.state.specialFeed}

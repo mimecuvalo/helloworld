@@ -2,6 +2,11 @@
   font-weight: bold;
 }
 
+.disabled {
+  color: #aaa;
+  cursor: not-allowed;
+}
+
 .newFeed {
   width: 100%;
   margin-top: 5px;

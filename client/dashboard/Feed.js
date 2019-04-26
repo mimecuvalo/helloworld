@@ -75,7 +75,7 @@ class Feed extends PureComponent {
             <F msg="Nothing to read right now!" />
           </div>
         ) : (
-          feed.map(item => <Item key={item.post_id} contentRemote={item} />)
+          feed.map(item => <Item key={item.post_id} contentRemote={item} getEditor={this.props.getEditor} />)
         )}
       </InfiniteFeed>
     );

@@ -2,6 +2,8 @@ import { F, FormattedDate } from '../../shared/i18n';
 import Favorite from './actions/Favorite';
 import KeepUnread from './actions/KeepUnread';
 import React, { PureComponent } from 'react';
+import Reblog from './actions/Reblog';
+import Reply from './actions/Reply';
 import styles from './Footer.module.css';
 
 class Footer extends PureComponent {
@@ -57,9 +59,13 @@ class Footer extends PureComponent {
           </a>
         </div>
         <div className={styles.actions}>
+          <Reblog contentRemote={contentRemote} getEditor={this.props.getEditor} />
+          &nbsp;•&nbsp;
           <Favorite contentRemote={contentRemote} />
           &nbsp;•&nbsp;
           <KeepUnread keepUnreadCb={this.props.keepUnreadCb} contentRemote={contentRemote} />
+          &nbsp;•&nbsp;
+          <Reply contentRemote={contentRemote} />
         </div>
       </footer>
     );

@@ -3,24 +3,22 @@ import classNames from 'classnames';
 import { compose, graphql } from 'react-apollo';
 import ContentEditor from '../content/ContentEditor';
 import { convertFromRaw, EditorState } from 'draft-js';
-import { defineMessages, F, injectIntl } from '../../shared/i18n';
+import { defineMessages, F } from '../../shared/i18n';
 import FormControl from '@material-ui/core/FormControl';
 import { getTextForLine } from '../editor/utils/Text';
 import gql from 'graphql-tag';
+import HiddenSnackbarShim from '../components/HiddenSnackbarShim';
 import { insertTextAtLine } from '../editor/utils/Text';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { PureComponent } from 'react';
 import Select from '@material-ui/core/Select';
 import styles from './Dashboard.module.css';
 import Toolbar from '@material-ui/core/Toolbar';
-import { withSnackbar } from 'notistack';
 
 const messages = defineMessages({
   posted: { msg: 'Success!' },
 });
 
-@withSnackbar
-@injectIntl
 class DashboardEditor extends PureComponent {
   constructor(props) {
     super(props);
@@ -31,6 +29,7 @@ class DashboardEditor extends PureComponent {
       latestFileInfo: null,
       // Not so clean but, meh, don't feel like implementing two separate <select>'s
       sectionAndAlbum: JSON.stringify({ section: this.props.data.fetchSiteMap[0].name, album: '' }),
+      successMessage: null,
     };
   }
 
@@ -40,13 +39,16 @@ class DashboardEditor extends PureComponent {
       const url = searchParams.get('reblog');
       const img = searchParams.get('img');
 
-      const contentEditor = this.editor.current.getContentEditor();
-      const editorState = contentEditor.editorState;
-      insertTextAtLine(editorState, 0, '\n');
-      contentEditor.handlePastedText(img || url, undefined /* html */, editorState);
-
+      this.reblog(img || url);
       window.location.hash = '';
     }
+  }
+
+  reblog(text) {
+    const contentEditor = this.editor.current.getContentEditor();
+    const editorState = contentEditor.editorState;
+    insertTextAtLine(editorState, 0, '\n');
+    contentEditor.handlePastedText(text, undefined /* html */, editorState);
   }
 
   handlePost = async evt => {
@@ -88,6 +90,9 @@ class DashboardEditor extends PureComponent {
     editor.clear();
 
     this.props.enqueueSnackbar(this.props.intl.formatMessage(messages.posted), { variant: 'success' });
+    this.setState({ message: messages.posted }, () => {
+      this.setState({ message: null });
+    });
   };
 
   handleSectionAndAlbumChange = evt => {
@@ -164,6 +169,7 @@ class DashboardEditor extends PureComponent {
           </form>
         </Toolbar>
         <ContentEditor ref={this.editor} showPlaceholder={true} content={null} onMediaAdd={this.handleMediaAdd} />
+        <HiddenSnackbarShim message={this.state.message} variant="success" />
       </div>
     );
   }
@@ -189,42 +195,46 @@ export default compose(
           username: username,
         },
       }),
+      withRef: true,
     }
   ),
-  graphql(gql`
-    mutation postContent(
-      $section: String!
-      $album: String!
-      $name: String!
-      $title: String!
-      $hidden: Boolean!
-      $thumb: String!
-      $style: String!
-      $code: String!
-      $content: String!
-    ) {
-      postContent(
-        section: $section
-        album: $album
-        name: $name
-        title: $title
-        hidden: $hidden
-        thumb: $thumb
-        style: $style
-        code: $code
-        content: $content
+  graphql(
+    gql`
+      mutation postContent(
+        $section: String!
+        $album: String!
+        $name: String!
+        $title: String!
+        $hidden: Boolean!
+        $thumb: String!
+        $style: String!
+        $code: String!
+        $content: String!
       ) {
-        username
-        section
-        album
-        name
-        title
-        hidden
-        thumb
-        style
-        code
-        content
+        postContent(
+          section: $section
+          album: $album
+          name: $name
+          title: $title
+          hidden: $hidden
+          thumb: $thumb
+          style: $style
+          code: $code
+          content: $content
+        ) {
+          username
+          section
+          album
+          name
+          title
+          hidden
+          thumb
+          style
+          code
+          content
+        }
       }
-    }
-  `)
+    `,
+    { withRef: true }
+  )
 )(DashboardEditor);

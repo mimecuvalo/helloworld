@@ -1,4 +1,4 @@
-import { buildUrl, contentUrl } from '../../shared/util/url_factory';
+import { contentUrl } from '../../shared/util/url_factory';
 import { F, FormattedDate } from '../../shared/i18n';
 import React, { PureComponent } from 'react';
 import styles from './Footer.module.css';
@@ -11,6 +11,8 @@ class Footer extends PureComponent {
     evt.preventDefault();
     document.getElementById('hw-content').requestFullscreen();
   };
+
+  handleReply = evt => {};
 
   render() {
     const content = this.props.content;
@@ -78,9 +80,12 @@ class Footer extends PureComponent {
           msg="{count, plural, =0 {no robot views} one {# robot view} other {# robot views}}"
           values={{ count: count_robot }}
         />
-        {!isOwnerViewing && (
-          <img src={buildUrl({ pathname: '/api/stats', searchParams: { url: contentUrl(content) } })} alt="" />
-        )}
+        {!isOwnerViewing &&
+          this.context.user && (
+            <a href="#reply" onClick={this.handleReply}>
+              <F msg="reply" />
+            </a>
+          )}
         {/* <CommentEntry /> TODO(mime) */}
         {/* <Comments /> TODO(mime) */}
       </footer>
