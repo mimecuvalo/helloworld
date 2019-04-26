@@ -1,5 +1,5 @@
 import { combineResolvers } from 'graphql-resolvers';
-import { discoverAndParseFeedFromUrl, mapFeedEntriesToModelEntries } from '../../../util/feeds';
+import { followUser, unfollowUser } from '../../../api/social_butterfly/follow';
 import { isAdmin, isAuthor } from './authorization';
 
 export default {
@@ -30,38 +30,8 @@ export default {
   },
 
   Mutation: {
-    createUserRemote: combineResolvers(isAuthor, async (parent, { profile_url }, { currentUser, models }) => {
-      const { feedMeta, feedEntries } = await discoverAndParseFeedFromUrl(profile_url);
-
-      const parsedUrl = new URL(profile_url);
-      await models.User_Remote.upsert({
-        local_username: currentUser.model.username,
-        username: feedMeta['atom:author']?.['poco:preferredusername']['#'] || feedMeta.title || profile_url,
-        name: feedMeta.author || feedMeta['atom:author']?.['poco:displayname'] || '',
-        profile_url,
-        salmon_url:
-          feedMeta['atom:link'] &&
-          [].concat(feedMeta['atom:link']).find(link => link['@'].rel === 'salmon')?.['@'].href,
-        feed_url: feedMeta.xmlurl,
-        hub_url: feedMeta.cloud?.type === 'hub' ? feedMeta.cloud.href : undefined,
-        avatar: feedMeta.image?.url,
-        favicon: feedMeta.favicon || `${parsedUrl.origin}/favicon.ico`,
-        following: true,
-        order: Math.pow(2, 31) - 1,
-      });
-
-      const userRemote = await models.User_Remote.findOne({
-        where: { local_username: currentUser.model.username, profile_url },
-      });
-
-      try {
-        const [newEntries] = await mapFeedEntriesToModelEntries(feedEntries, userRemote);
-        newEntries.length && (await models.Content_Remote.bulkCreate(newEntries, { validate: true }));
-      } catch (ex) {
-        throw ex;
-      }
-
-      return userRemote;
+    createUserRemote: combineResolvers(isAuthor, async (parent, { profile_url }, { currentUser, models, req }) => {
+      return await followUser(req, currentUser, profile_url);
     }),
 
     toggleSortFeed: combineResolvers(
@@ -84,13 +54,15 @@ export default {
       }
     ),
 
-    destroyFeed: combineResolvers(isAuthor, async (parent, { profile_url }, { currentUser, models }) => {
+    destroyFeed: combineResolvers(isAuthor, async (parent, { profile_url }, { currentUser, models, req }) => {
       await models.User_Remote.destroy({
         where: {
           local_username: currentUser.model.username,
           profile_url,
         },
       });
+
+      await unfollowUser(req, currentUser, profile_url);
 
       return true;
     }),

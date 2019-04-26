@@ -42,12 +42,48 @@ async function parseHtmlAndRetrieveFeed(websiteUrl, html) {
   return await retrieveFeed(feedUrl);
 }
 
+export async function parseFeedAndInsertIntoDb(userRemote, feedResponseText, logger) {
+  try {
+    const { feedEntries } = await parseFeed(feedResponseText);
+    await mapFeedAndInsertIntoDb(userRemote, feedEntries, logger);
+  } catch (ex) {
+    logger && logger.error(`${userRemote.local_username} - ${userRemote.profile_url}: parseFeed FAILED.\n${ex}`);
+  }
+}
+
+export async function mapFeedAndInsertIntoDb(userRemote, feedEntries, logger) {
+  let newEntries, skippedCount;
+  try {
+    [newEntries, skippedCount] = await mapFeedEntriesToModelEntries(feedEntries, userRemote);
+    logger &&
+      logger.info(
+        `${userRemote.local_username} - ${userRemote.profile_url}: ` +
+          `parsed ${newEntries.length} entries, skipped ${skippedCount}.`
+      );
+  } catch (ex) {
+    logger && logger.error(`${userRemote.local_username} - ${userRemote.profile_url}: mapFeed FAILED.\n${ex}`);
+    return;
+  }
+
+  try {
+    newEntries.length &&
+      (await models.Content_Remote.bulkCreate(newEntries, { ignoreDuplicates: true, validate: true }));
+    logger &&
+      logger.info(
+        `${userRemote.local_username} - ${userRemote.profile_url}: inserted ${newEntries.length} entries into db.`
+      );
+  } catch (ex) {
+    logger &&
+      logger.error(`${userRemote.local_username} - ${userRemote.profile_url}: db insertion failed.\n${ex.stack}`);
+  }
+}
+
 export async function retrieveFeed(feedUrl) {
   const response = await fetchUrl(feedUrl);
   return await response.text();
 }
 
-export async function parseFeed(content) {
+async function parseFeed(content) {
   const { feedEntries, feedMeta } = await new Promise((resolve, reject) => {
     const feedEntries = [];
     new TextStream({}, content)
@@ -74,7 +110,7 @@ export async function parseFeed(content) {
   return { feedEntries, feedMeta };
 }
 
-export async function mapFeedEntriesToModelEntries(feedEntries, userRemote) {
+async function mapFeedEntriesToModelEntries(feedEntries, userRemote) {
   const entries = await Promise.all(feedEntries.map(async feedEntry => await handleEntry(feedEntry, userRemote)));
   const filteredEntries = entries.filter(entry => entry);
   const skippedCount = entries.length - filteredEntries.length;

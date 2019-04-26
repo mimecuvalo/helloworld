@@ -1,4 +1,4 @@
-import { mapFeedEntriesToModelEntries, FEED_MAX_DAYS_OLD, parseFeed, retrieveFeed } from '../util/feeds';
+import { FEED_MAX_DAYS_OLD, parseFeedAndInsertIntoDb, retrieveFeed } from '../util/feeds';
 import models from '../data/models';
 import path from 'path';
 import Sequelize from 'sequelize';
@@ -58,29 +58,6 @@ async function getFreshContent() {
       continue;
     }
 
-    let newEntries, skippedCount;
-    try {
-      const { feedEntries } = await parseFeed(feedResponseText);
-      [newEntries, skippedCount] = await mapFeedEntriesToModelEntries(feedEntries, userRemote);
-      updateFeedsLogger.info(
-        `${userRemote.local_username} - ${userRemote.profile_url}: ` +
-          `parsed ${newEntries.length} entries, skipped ${skippedCount}.`
-      );
-    } catch (ex) {
-      updateFeedsLogger.error(`${userRemote.local_username} - ${userRemote.profile_url}: parseFeed FAILED.\n${ex}`);
-      continue;
-    }
-
-    try {
-      newEntries.length &&
-        (await models.Content_Remote.bulkCreate(newEntries, { ignoreDuplicates: true, validate: true }));
-      updateFeedsLogger.info(
-        `${userRemote.local_username} - ${userRemote.profile_url}: inserted ${newEntries.length} entries into db.`
-      );
-    } catch (ex) {
-      updateFeedsLogger.error(
-        `${userRemote.local_username} - ${userRemote.profile_url}: db insertion failed.\n${ex.stack}`
-      );
-    }
+    await parseFeedAndInsertIntoDb(userRemote, feedResponseText, updateFeedsLogger);
   }
 }
