@@ -13,7 +13,7 @@ router.post('/', async (req, res) => {
     return;
   }
 
-  res.json({ success: true, ...embed });
+  res.json({ success: true, wasMediaFound: !!(embed.image || embed.iframe), ...embed });
 });
 
 async function discoverAndRetrieveOEmbedOrOpenGraphDataFromUrl(url) {

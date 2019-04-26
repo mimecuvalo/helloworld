@@ -1,10 +1,19 @@
 import { buildUrl } from '../../../shared/util/url_factory';
 import configuration from '../../app/configuration';
 import { createNewBlock } from '../utils/Blocks';
-import { EditorState, Modifier, SelectionState } from 'draft-js';
-import { getTextForLine } from '../utils/Text';
+import { getTextForLine, insertTextAtLine } from '../utils/Text';
+import mime from 'mime/lite';
 
 export default async function unfurl(url, editorState) {
+  if (mime.getType(url)?.match(/^image\//)) {
+    const src = url;
+    const href = url;
+    const alt = '';
+    editorState = createNewBlock('IMAGE', 'img', editorState, { src, alt }, { href, src, alt });
+
+    return { editorState, isError: false, wasMediaFound: true, isImg: true };
+  }
+
   let response;
   try {
     response = await fetch(buildUrl({ pathname: '/api/unfurl' }), {
@@ -22,32 +31,23 @@ export default async function unfurl(url, editorState) {
   }
 
   const json = await response.json();
-  if (json.success) {
+  let isImg = false;
+  if (json.wasMediaFound) {
     if (json.iframe) {
       editorState = createNewBlock('IFRAME', 'iframe', editorState, json.iframe, json.iframe);
     } else {
       const href = json.image;
       const src = json.image;
       const alt = json.title;
+      isImg = true;
       editorState = createNewBlock('IMAGE', 'img', editorState, { src, alt }, { href, src, alt });
     }
 
     const titleLine = getTextForLine(editorState, 0);
     if (!titleLine) {
-      const selectionState = SelectionState.createEmpty(
-        editorState
-          .getCurrentContent()
-          .getBlockMap()
-          .first()
-          .getKey()
-      ).merge({
-        anchorOffset: 0,
-        focusOffset: 0,
-      });
-      const newContentState = Modifier.replaceText(editorState.getCurrentContent(), selectionState, json.title);
-      editorState = EditorState.push(editorState, newContentState, 'set-title');
+      editorState = insertTextAtLine(editorState, 0, json.title);
     }
   }
 
-  return { editorState, isError: false };
+  return { editorState, isError: false, wasMediaFound: json.wasMediaFound, isImg };
 }

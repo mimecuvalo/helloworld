@@ -77,6 +77,10 @@ export default class ContentEditor extends Component {
     this.codeMirrorJS.current && this.codeMirrorJS.current.getCodeMirror().setValue('');
   }
 
+  getContentEditor() {
+    return this.contentEditor.current;
+  }
+
   handleStyleChange = style => {
     this.setState({
       hasUnsavedChanges: true,

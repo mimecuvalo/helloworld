@@ -7,6 +7,7 @@ import { defineMessages, F, injectIntl } from '../../shared/i18n';
 import FormControl from '@material-ui/core/FormControl';
 import { getTextForLine } from '../editor/utils/Text';
 import gql from 'graphql-tag';
+import { insertTextAtLine } from '../editor/utils/Text';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { PureComponent } from 'react';
 import Select from '@material-ui/core/Select';
@@ -31,6 +32,21 @@ class DashboardEditor extends PureComponent {
       // Not so clean but, meh, don't feel like implementing two separate <select>'s
       sectionAndAlbum: JSON.stringify({ section: this.props.data.fetchSiteMap[0].name, album: '' }),
     };
+  }
+
+  componentDidMount() {
+    if (window.location.hash.startsWith('#reblog')) {
+      const searchParams = new URLSearchParams(window.location.hash.slice(1));
+      const url = searchParams.get('reblog');
+      const img = searchParams.get('img');
+
+      const contentEditor = this.editor.current.getContentEditor();
+      const editorState = contentEditor.editorState;
+      insertTextAtLine(editorState, 0, '\n');
+      contentEditor.handlePastedText(img || url, undefined /* html */, editorState);
+
+      window.location.hash = '';
+    }
   }
 
   handlePost = async evt => {

@@ -155,6 +155,10 @@ class HelloWorldEditor extends Component {
     if (text.match(/^https?:\/\//)) {
       const editorStateAndInfo = await unfurl(text, editorState);
 
+      if (!editorStateAndInfo.wasMediaFound) {
+        return;
+      }
+
       if (editorStateAndInfo.isError) {
         this.setState({ errorMessage: messages.errorUnfurl }, () => {
           this.setState({ errorMessage: null });
@@ -163,6 +167,10 @@ class HelloWorldEditor extends Component {
       }
 
       this.setState({ editorState: editorStateAndInfo.editorState });
+
+      if (editorStateAndInfo.isImg) {
+        this.props.onMediaAdd && this.props.onMediaAdd({ fileInfos: [{ thumb: text }] });
+      }
     }
   };
 
