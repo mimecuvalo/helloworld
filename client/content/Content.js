@@ -98,11 +98,20 @@ class Content extends Component {
 
     const isEditing = this.state.isEditing;
     const contentOwner = this.props.data.fetchPublicUserData;
+    const comments = this.props.data.fetchCommentsRemote;
+    const favorites = this.props.data.fetchFavoritesRemote;
     const item =
       content.template === 'feed' ? (
         <Feed content={content} />
       ) : (
-        <Item content={content} handleEdit={this.handleEdit} isEditing={isEditing} ref={this.item} />
+        <Item
+          content={content}
+          comments={comments}
+          favorites={favorites}
+          handleEdit={this.handleEdit}
+          isEditing={isEditing}
+          ref={this.item}
+        />
       );
     const title = (content.title ? content.title + ' – ' : '') + contentOwner.title;
 

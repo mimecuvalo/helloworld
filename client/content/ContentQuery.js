@@ -24,6 +24,21 @@ export default gql`
       content
     }
 
+    fetchCommentsRemote(username: $username, name: $name) {
+      avatar
+      from_user
+      link
+      post_id
+      username
+      view
+    }
+
+    fetchFavoritesRemote(username: $username, name: $name) {
+      avatar
+      from_user
+      username
+    }
+
     fetchPublicUserData(username: $username) {
       description
       title

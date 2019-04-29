@@ -5,7 +5,7 @@ export default gql`
   type ContentRemote {
     to_username: String!
     local_content_name: String
-    from_user: String!
+    from_user: String
     comment_user: String
     username: String!
     creator: String
@@ -24,6 +24,21 @@ export default gql`
     is_spam: Boolean!
     deleted: Boolean!
     view: String!
+  }
+
+  type Comment {
+    avatar: String!
+    from_user: String
+    link: String!
+    post_id: String!
+    username: String!
+    view: String!
+  }
+
+  type Favorite {
+    avatar: String!
+    from_user: String
+    username: String!
   }
 
   type UserCounts {
@@ -48,6 +63,8 @@ export default gql`
     ): [ContentRemote!]!
     fetchUserTotalCounts: UserCounts!
     fetchFeedCounts: [FeedCount!]!
+    fetchCommentsRemote(username: String, name: String): [Comment!]!
+    fetchFavoritesRemote(username: String, name: String): [Favorite!]!
   }
 
   extend type Mutation {

@@ -1,5 +1,7 @@
 import Album from './templates/Album';
 import Archive from './templates/Archive';
+import Comments from './Comments';
+import Favorites from './Favorites';
 import Footer from './Footer';
 import Header from './Header';
 import Latest from './templates/Latest';
@@ -13,7 +15,7 @@ const COMPONENT_TYPE_MAP = {
   links: Album,
 };
 
-class Item extends PureComponent {
+export default class Item extends PureComponent {
   constructor(props) {
     super(props);
 
@@ -25,7 +27,7 @@ class Item extends PureComponent {
   }
 
   render() {
-    const { content, handleEdit, isEditing } = this.props;
+    const { content, comments, favorites, handleEdit, isEditing } = this.props;
     let TemplateComponent = COMPONENT_TYPE_MAP[content.template] || Simple;
 
     return (
@@ -33,9 +35,9 @@ class Item extends PureComponent {
         <Header content={content} handleEdit={handleEdit} isEditing={isEditing} />
         <TemplateComponent ref={this.template} content={content} isEditing={isEditing} isFeed={this.props.isFeed} />
         <Footer content={content} />
+        <Comments comments={comments} />
+        <Favorites favorites={favorites} />
       </section>
     );
   }
 }
-
-export default Item;

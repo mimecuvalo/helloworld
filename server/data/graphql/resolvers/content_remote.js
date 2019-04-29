@@ -110,6 +110,40 @@ export default {
 
       return result;
     }),
+
+    fetchCommentsRemote: combineResolvers(isAuthor, async (parent, { username, name }, { models }) => {
+      const result = await models.Content_Remote.findAll({
+        attributes: ['avatar', 'from_user', 'link', 'post_id', 'username', 'view'],
+        where: {
+          to_username: username,
+          local_content_name: name,
+          deleted: false,
+          is_spam: false,
+          read: false,
+          type: 'comment',
+        },
+        order: [['createdAt', 'DESC']],
+      });
+
+      return result;
+    }),
+
+    fetchFavoritesRemote: combineResolvers(isAuthor, async (parent, { username, name }, { models }) => {
+      const result = await models.Content_Remote.findAll({
+        attributes: ['avatar', 'from_user', 'username'],
+        where: {
+          to_username: username,
+          local_content_name: name,
+          deleted: false,
+          is_spam: false,
+          read: false,
+          type: 'favorite',
+        },
+        order: [['createdAt', 'DESC']],
+      });
+
+      return result;
+    }),
   },
 
   Mutation: {
