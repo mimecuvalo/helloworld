@@ -61,7 +61,7 @@ class Item extends PureComponent {
   async readContentRemote(read) {
     const { from_user, post_id } = this.props.contentRemote;
     const variables = { from_user, post_id, read };
-    const expectedResponse = Object.assign({}, variables, { __typename: 'ContentRemote' });
+    const expectedResponse = Object.assign({}, variables, { __typename: 'Post' });
 
     await this.props.mutate({
       variables,

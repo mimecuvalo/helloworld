@@ -91,6 +91,6 @@ export default gql`
     favoriteContentRemote(from_user: String, post_id: String!, type: String!, favorited: Boolean!): ContentRemote!
     deleteContentRemote(from_user: String, post_id: String!, type: String!, deleted: Boolean!): ContentRemote!
     markAllContentInFeedAsRead(from_user: String!): FeedCount!
-    readContentRemote(from_user: String!, post_id: String!, read: Boolean!): ContentRemote!
+    readContentRemote(from_user: String!, post_id: String!, read: Boolean!): Post!
   }
 `;

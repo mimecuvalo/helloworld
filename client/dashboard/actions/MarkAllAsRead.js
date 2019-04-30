@@ -28,7 +28,7 @@ class MarkAllAsRead extends PureComponent {
       },
       refetchQueries: [{ query: FollowingSpecialFeedCountsQuery }],
       update: (store, { data: { markAllContentInFeedAsRead } }) => {
-        const prefixId = escapeRegExp(prefixIdFromObject({ __typename: 'ContentRemote', from_user }));
+        const prefixId = escapeRegExp(prefixIdFromObject({ __typename: 'Post', from_user }));
         const regex = new RegExp(`^${prefixId}`);
         Object.keys(store.data.data).forEach(
           key => key.match(regex) && store.data.set(key, Object.assign({}, store.data.get(key), { read: true }))
