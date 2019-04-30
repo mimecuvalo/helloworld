@@ -7,9 +7,9 @@ import { NotFoundError } from '../../util/exceptions';
 import React, { createElement as RcE, PureComponent } from 'react';
 
 export default async (req, res, next) => {
-  res.type('xml');
-  res.write(`<?xml version="1.0" encoding="UTF-8"?>`);
-  return await endpointWithApollo(req, res, next, <Feed req={req} />);
+  const type = 'xml';
+  const preamble = `<?xml version="1.0" encoding="UTF-8"?>`;
+  return await endpointWithApollo(req, res, next, type, preamble, <ContentFeed req={req} />);
 };
 
 @graphql(
@@ -55,16 +55,32 @@ export default async (req, res, next) => {
     }),
   }
 )
-class Feed extends PureComponent {
+class ContentFeed extends PureComponent {
   render() {
+    const feed = this.props.data.fetchFeed;
     const contentOwner = this.props.data.fetchPublicUserData;
+    const req = this.props.req;
+    const updatedAt = feed.length && feed[0].updatedAt;
+
+    return (
+      <GenericFeed contentOwner={contentOwner} req={req} updatedAt={updatedAt}>
+        {feed.map(content => (
+          <Entry key={content.name} content={content} req={req} />
+        ))}
+      </GenericFeed>
+    );
+  }
+}
+
+export class GenericFeed extends PureComponent {
+  render() {
+    const contentOwner = this.props.contentOwner;
     if (!contentOwner) {
       throw new NotFoundError();
     }
 
-    const { req } = this.props;
-    const username = req.query.username;
-    const feed = this.props.data.fetchFeed;
+    const { req, children, isRemote, updatedAt } = this.props;
+    const username = contentOwner.username;
 
     const acct = `acct:${username}@${req.get('host')}`;
     const feedUrl = buildUrl({ req, pathname: req.originalUrl });
@@ -100,7 +116,7 @@ class Feed extends PureComponent {
               : `${constants.licenses[contentOwner.license]['name']}: ${contentOwner.license}`}
           </rights>
         ) : null}
-        {feed.length ? <updated>{new Date(feed[0].updatedAt).toISOString()}</updated> : null}
+        {updatedAt ? <updated>{new Date(updatedAt).toISOString()}</updated> : null}
         <Author contentOwner={contentOwner} profile={profile} />
         {contentOwner.logo ? <logo>{buildUrl({ req, pathname: contentOwner.logo })}</logo> : null}
         <icon>
@@ -109,9 +125,7 @@ class Feed extends PureComponent {
             : buildUrl({ req, pathname: '/favicon.ico' })}
         </icon>
 
-        {feed.map(content => (
-          <Entry key={content.name} content={content} req={req} />
-        ))}
+        {children}
       </feed>
     );
   }
@@ -167,15 +181,13 @@ class Entry extends PureComponent {
         <updated>{new Date(content.updatedAt).toISOString()}</updated>
         {RcE('activity:verb', {}, `http://activitystrea.ms/schema/1.0/post`)}
         {content.section === 'comments' ? (
-          /* we'll never get here currently because we never render main sections in our feed */
+          /* XXX(mime): we'll never get here currently because we never render main sections in our feed */
           <>
             {RcE('activity:object-type', {}, `http://activitystrea.ms/schema/1.0/comment`)}
-            {content.thread
-              ? /* XXX(mime): this doesn't work currently because React uses `ref` internally. oops. */ RcE(
-                  'thr:in-reply-to',
-                  { ref: content.thread }
-                )
-              : null}
+
+            {/* see endpoint_with_apollo for refXXX transform */}
+            {content.thread ? RcE('thr:in-reply-to', { refXXX: content.thread }) : null}
+
             {content.thread_user ? (
               <>
                 <link rel="ostatus:attention" href={content.thread_user} />

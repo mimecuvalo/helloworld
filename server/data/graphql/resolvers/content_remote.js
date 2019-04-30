@@ -113,7 +113,7 @@ export default {
 
     fetchCommentsRemote: combineResolvers(isAuthor, async (parent, { username, name }, { models }) => {
       const result = await models.Content_Remote.findAll({
-        attributes: ['avatar', 'from_user', 'link', 'post_id', 'username', 'view'],
+        attributes: ['avatar', 'createdAt', 'from_user', 'link', 'post_id', 'username', 'view'],
         where: {
           to_username: username,
           local_content_name: name,
@@ -130,7 +130,7 @@ export default {
 
     fetchFavoritesRemote: combineResolvers(isAuthor, async (parent, { username, name }, { models }) => {
       const result = await models.Content_Remote.findAll({
-        attributes: ['avatar', 'from_user', 'username'],
+        attributes: ['avatar', 'createdAt', 'from_user', 'username'],
         where: {
           to_username: username,
           local_content_name: name,

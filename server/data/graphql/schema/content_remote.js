@@ -28,6 +28,7 @@ export default gql`
 
   type Comment {
     avatar: String!
+    createdAt: Date!
     from_user: String
     link: String!
     post_id: String!
@@ -37,6 +38,7 @@ export default gql`
 
   type Favorite {
     avatar: String!
+    createdAt: Date!
     from_user: String
     username: String!
   }
