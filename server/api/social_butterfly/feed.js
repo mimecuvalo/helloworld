@@ -79,7 +79,7 @@ export class GenericFeed extends PureComponent {
       throw new NotFoundError();
     }
 
-    const { req, children, isRemote, updatedAt } = this.props;
+    const { req, children, updatedAt } = this.props;
     const username = contentOwner.username;
 
     const acct = `acct:${username}@${req.get('host')}`;

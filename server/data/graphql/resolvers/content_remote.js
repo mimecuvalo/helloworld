@@ -3,6 +3,12 @@ import { isAdmin, isAuthor } from './authorization';
 import Sequelize from 'sequelize';
 
 export default {
+  ContentRemote: {
+    __resolveType(contentRemote, context, info) {
+      return contentRemote.type[0].toUpperCase() + contentRemote.type.slice(1);
+    },
+  },
+
   Query: {
     allContentRemote: combineResolvers(isAdmin, async (parent, args, { models }) => {
       return await models.Content_Remote.findAll();
@@ -113,7 +119,18 @@ export default {
 
     fetchCommentsRemote: combineResolvers(isAuthor, async (parent, { username, name }, { models }) => {
       const result = await models.Content_Remote.findAll({
-        attributes: ['avatar', 'createdAt', 'from_user', 'link', 'post_id', 'username', 'view'],
+        attributes: [
+          'avatar',
+          'createdAt',
+          'deleted',
+          'favorited',
+          'from_user',
+          'link',
+          'post_id',
+          'type',
+          'username',
+          'view',
+        ],
         where: {
           to_username: username,
           local_content_name: name,
@@ -130,7 +147,7 @@ export default {
 
     fetchFavoritesRemote: combineResolvers(isAuthor, async (parent, { username, name }, { models }) => {
       const result = await models.Content_Remote.findAll({
-        attributes: ['avatar', 'createdAt', 'from_user', 'username'],
+        attributes: ['avatar', 'createdAt', 'from_user', 'post_id', 'type', 'username'],
         where: {
           to_username: username,
           local_content_name: name,
@@ -149,7 +166,7 @@ export default {
   Mutation: {
     favoriteContentRemote: combineResolvers(
       isAuthor,
-      async (parent, { from_user, post_id, favorited }, { currentUser, models }) => {
+      async (parent, { from_user, post_id, type, favorited }, { currentUser, models }) => {
         await models.Content_Remote.update(
           {
             favorited,
@@ -163,7 +180,27 @@ export default {
           }
         );
 
-        return { from_user, post_id, favorited };
+        return { from_user, post_id, type, favorited };
+      }
+    ),
+
+    deleteContentRemote: combineResolvers(
+      isAuthor,
+      async (parent, { from_user, post_id, type, deleted }, { currentUser, models }) => {
+        await models.Content_Remote.update(
+          {
+            deleted,
+          },
+          {
+            where: {
+              to_username: currentUser.model.username,
+              from_user,
+              post_id,
+            },
+          }
+        );
+
+        return { from_user, post_id, type, deleted };
       }
     ),
 

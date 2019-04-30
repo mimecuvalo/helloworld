@@ -7,11 +7,12 @@ import React, { PureComponent } from 'react';
 import styles from './Actions.module.css';
 
 @graphql(gql`
-  mutation favoriteContentRemote($from_user: String!, $post_id: String!, $favorited: Boolean!) {
-    favoriteContentRemote(from_user: $from_user, post_id: $post_id, favorited: $favorited) {
+  mutation favoriteContentRemote($from_user: String, $post_id: String!, $type: String!, $favorited: Boolean!) {
+    favoriteContentRemote(from_user: $from_user, post_id: $post_id, type: $type, favorited: $favorited) {
+      favorited
       from_user
       post_id
-      favorited
+      type
     }
   }
 `)
@@ -19,20 +20,22 @@ class Favorite extends PureComponent {
   handleClick = async evt => {
     evt.preventDefault();
 
-    const { favorited, from_user, post_id } = this.props.contentRemote;
-    const variables = { from_user, post_id, favorited: !favorited };
+    const { favorited, from_user, post_id, type } = this.props.contentRemote;
+    const variables = { from_user, post_id, type, favorited: !favorited };
 
     await this.props.mutate({
       variables,
       optimisticResponse: {
         __typename: 'Mutation',
-        favoriteContentRemote: Object.assign({}, variables, { __typename: 'ContentRemote' }),
+        favoriteContentRemote: Object.assign({}, variables, { __typename: type }),
       },
       update: (store, { data: { favoriteContentRemote } }) => {
-        const query = FollowingSpecialFeedCountsQuery;
-        const data = store.readQuery({ query });
-        data.fetchUserTotalCounts.favoritesCount += variables.favorited ? 1 : -1;
-        store.writeQuery({ query, data });
+        if (this.props.isDashboard) {
+          const query = FollowingSpecialFeedCountsQuery;
+          const data = store.readQuery({ query });
+          data.fetchUserTotalCounts.favoritesCount += variables.favorited ? 1 : -1;
+          store.writeQuery({ query, data });
+        }
       },
     });
   };

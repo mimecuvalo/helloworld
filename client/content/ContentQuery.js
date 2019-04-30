@@ -7,6 +7,7 @@ export default gql`
       code
       comments_count
       comments_updated
+      content
       count
       count_robot
       createdAt
@@ -21,14 +22,16 @@ export default gql`
       updatedAt
       username
       view
-      content
     }
 
     fetchCommentsRemote(username: $username, name: $name) {
       avatar
+      deleted
+      favorited
       from_user
       link
       post_id
+      type
       username
       view
     }
@@ -36,6 +39,8 @@ export default gql`
     fetchFavoritesRemote(username: $username, name: $name) {
       avatar
       from_user
+      post_id
+      type
       username
     }
 

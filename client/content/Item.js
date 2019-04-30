@@ -35,8 +35,8 @@ export default class Item extends PureComponent {
         <Header content={content} handleEdit={handleEdit} isEditing={isEditing} />
         <TemplateComponent ref={this.template} content={content} isEditing={isEditing} isFeed={this.props.isFeed} />
         <Footer content={content} />
-        <Comments comments={comments} />
-        <Favorites favorites={favorites} />
+        <Comments comments={comments} content={content} />
+        <Favorites favorites={favorites} content={content} />
       </section>
     );
   }

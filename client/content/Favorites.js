@@ -15,7 +15,7 @@ class Favorites extends PureComponent {
     return (
       <ul>
         {favorites.map(favorite => (
-          <li className={styles.favorite}>
+          <li className={styles.favorite} key={favorite.post_id}>
             <img className={styles.avatar} src={favorite.avatar || '/img/pixel.gif'} alt={ariaImgMsg} />
             <F
               msg={'{user}: favorited this post.'}

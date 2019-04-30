@@ -2,7 +2,18 @@ import { gql } from 'apollo-server-express';
 
 // Keep in sync with both models/content_remote.js and migrations/[date]-create-content-remote.js
 export default gql`
-  type ContentRemote {
+  interface ContentRemote {
+    avatar: String
+    createdAt: Date!
+    deleted: Boolean!
+    favorited: Boolean!
+    from_user: String
+    post_id: String!
+    type: String!
+    username: String!
+  }
+
+  type Post implements ContentRemote {
     to_username: String!
     local_content_name: String
     from_user: String
@@ -26,20 +37,27 @@ export default gql`
     view: String!
   }
 
-  type Comment {
-    avatar: String!
+  type Comment implements ContentRemote {
+    avatar: String
     createdAt: Date!
+    deleted: Boolean!
+    favorited: Boolean!
     from_user: String
     link: String!
     post_id: String!
+    type: String!
     username: String!
     view: String!
   }
 
-  type Favorite {
+  type Favorite implements ContentRemote {
     avatar: String!
     createdAt: Date!
+    deleted: Boolean!
+    favorited: Boolean!
     from_user: String
+    post_id: String!
+    type: String!
     username: String!
   }
 
@@ -62,7 +80,7 @@ export default gql`
       offset: Int!
       query: String
       shouldShowAllItems: Boolean
-    ): [ContentRemote!]!
+    ): [Post!]!
     fetchUserTotalCounts: UserCounts!
     fetchFeedCounts: [FeedCount!]!
     fetchCommentsRemote(username: String, name: String): [Comment!]!
@@ -70,7 +88,8 @@ export default gql`
   }
 
   extend type Mutation {
-    favoriteContentRemote(from_user: String!, post_id: String!, favorited: Boolean!): ContentRemote!
+    favoriteContentRemote(from_user: String, post_id: String!, type: String!, favorited: Boolean!): ContentRemote!
+    deleteContentRemote(from_user: String, post_id: String!, type: String!, deleted: Boolean!): ContentRemote!
     markAllContentInFeedAsRead(from_user: String!): FeedCount!
     readContentRemote(from_user: String!, post_id: String!, read: Boolean!): ContentRemote!
   }

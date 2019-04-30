@@ -61,7 +61,7 @@ class Footer extends PureComponent {
         <div className={styles.actions}>
           <Reblog contentRemote={contentRemote} getEditor={this.props.getEditor} />
           &nbsp;•&nbsp;
-          <Favorite contentRemote={contentRemote} />
+          <Favorite contentRemote={contentRemote} isDashboard={true} />
           &nbsp;•&nbsp;
           <KeepUnread keepUnreadCb={this.props.keepUnreadCb} contentRemote={contentRemote} />
           &nbsp;•&nbsp;

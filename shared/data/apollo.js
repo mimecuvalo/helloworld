@@ -4,7 +4,9 @@ export function dataIdFromObject(obj) {
   switch (obj.__typename) {
     case 'Content':
       return `${prefixIdFromObject(obj)}${obj.name}`;
-    case 'ContentRemote':
+    case 'Post':
+    case 'Comment':
+    case 'Favorite':
       return `${prefixIdFromObject(obj)}${obj.post_id}`;
     case 'UserPublic':
       return `${prefixIdFromObject(obj)}`;
@@ -23,8 +25,10 @@ export function prefixIdFromObject(obj) {
   switch (obj.__typename) {
     case 'Content':
       return `${type} ${obj.username} `;
-    case 'ContentRemote':
-      return `${type} ${obj.from_user} `;
+    case 'Post':
+    case 'Comment':
+    case 'Favorite':
+      return obj.from_user ? `${type} ${obj.from_user} ` : `${type} `;
     case 'UserPublic':
       return `${type} ${obj.username}`;
     case 'UserRemotePublic':
