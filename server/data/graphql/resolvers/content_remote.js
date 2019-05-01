@@ -1,6 +1,9 @@
 import { combineResolvers } from 'graphql-resolvers';
+import crypto from 'crypto';
 import { isAdmin, isAuthor } from './authorization';
 import Sequelize from 'sequelize';
+import socialize from '../../../api/social_butterfly/socialize';
+import uuidv4 from 'uuid/v4';
 
 export default {
   ContentRemote: {
@@ -121,11 +124,13 @@ export default {
       const result = await models.Content_Remote.findAll({
         attributes: [
           'avatar',
+          'content',
           'createdAt',
           'deleted',
           'favorited',
           'from_user',
           'link',
+          'local_content_name',
           'post_id',
           'type',
           'username',
@@ -147,7 +152,7 @@ export default {
 
     fetchFavoritesRemote: combineResolvers(isAuthor, async (parent, { username, name }, { models }) => {
       const result = await models.Content_Remote.findAll({
-        attributes: ['avatar', 'createdAt', 'from_user', 'post_id', 'type', 'username'],
+        attributes: ['avatar', 'createdAt', 'from_user', 'local_content_name', 'post_id', 'type', 'username'],
         where: {
           to_username: username,
           local_content_name: name,
@@ -164,6 +169,66 @@ export default {
   },
 
   Mutation: {
+    postComment: async (parent, { username, name, content }, { currentUser, models, req }) => {
+      const localUrl = `/${username}/remote-comments/comment-${uuidv4()}`;
+      const tagDate = new Date().toISOString().slice(0, 10);
+      const post_id = `tag:${req.get('host')},${tagDate}:${localUrl}`;
+      const protocol = req.get('x-scheme') || req.protocol;
+      const link = `${protocol}://${req.get('host')}${localUrl}`;
+
+      const userInfo = currentUser.oauth;
+      const commentUsername = userInfo.email.split('@')[0];
+      const md5 = crypto.createHash('md5');
+      const emailHash = md5.update(`mailto:${userInfo.email}`).digest('hex');
+      const gravatar = `http://www.gravatar.com/avatar/${emailHash}`;
+      const avatar = userInfo.picture || gravatar;
+
+      await models.Content_Remote.create({
+        avatar,
+        comment_user: userInfo.email,
+        content,
+        from_user: null,
+        link,
+        local_content_name: name,
+        post_id,
+        title: '',
+        to_username: username,
+        type: 'comment',
+        username: commentUsername,
+        view: '',
+      });
+
+      const commentedContent = await models.Content.findOne({
+        attributes: ['comments_count'],
+        where: { username, name },
+      });
+      const updatedCommentedContent = await models.Content.update(
+        {
+          comments_count: commentedContent.comments_count + 1,
+          comments_updated: new Date(),
+        },
+        { where: { username, name } }
+      );
+
+      if (!commentedContent.hidden) {
+        await socialize(updatedCommentedContent, req, true /* isComment */);
+      }
+
+      return {
+        avatar,
+        content,
+        deleted: false,
+        favorited: false,
+        from_user: null,
+        link,
+        local_content_name: name,
+        post_id,
+        to_username: username,
+        type: 'comment',
+        username: commentUsername,
+      };
+    },
+
     favoriteContentRemote: combineResolvers(
       isAuthor,
       async (parent, { from_user, post_id, type, favorited }, { currentUser, models }) => {
@@ -186,21 +251,27 @@ export default {
 
     deleteContentRemote: combineResolvers(
       isAuthor,
-      async (parent, { from_user, post_id, type, deleted }, { currentUser, models }) => {
-        await models.Content_Remote.update(
+      async (parent, { from_user, post_id, local_content_name, type, deleted }, { currentUser, models }) => {
+        const where = {
+          to_username: currentUser.model.username,
+          from_user,
+          post_id,
+        };
+        await models.Content_Remote.update({ deleted }, { where });
+
+        const localContentWhere = { username: currentUser.model.username, name: local_content_name };
+        const commentedContent = await models.Content.findOne({
+          attributes: ['comments_count'],
+          where: localContentWhere,
+        });
+        await models.Content.update(
           {
-            deleted,
+            comments_count: commentedContent.comments_count + (deleted ? -1 : 1),
           },
-          {
-            where: {
-              to_username: currentUser.model.username,
-              from_user,
-              post_id,
-            },
-          }
+          { where: localContentWhere }
         );
 
-        return { from_user, post_id, type, deleted };
+        return { from_user, post_id, local_content_name, type, deleted };
       }
     ),
 

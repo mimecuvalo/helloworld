@@ -22,10 +22,15 @@ body {
 }
 
 #hw-dashboard .DraftEditor-root,
+#hw-comment-editor .DraftEditor-root,
 #hw-dashboard .ReactCodeMirror {
-  width: 66vw;
   border: 1px solid #000;
   box-shadow: 1px 1px #000, 2px 2px #000, 3px 3px #000;
+}
+
+#hw-dashboard .DraftEditor-root,
+#hw-dashboard .ReactCodeMirror {
+  width: 66vw;
   margin-bottom: 20px;
 }
 
@@ -105,6 +110,11 @@ a.hw-button[href]:hover {
   margin-left: 6px;
   margin-right: 0;
   margin-bottom: 3px;
+}
+
+.hw-save {
+  float: none;
+  align-self: flex-end;
 }
 
 .hw-edit.hw-button.hw-selected {

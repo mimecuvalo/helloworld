@@ -8,46 +8,51 @@ export default gql`
     deleted: Boolean!
     favorited: Boolean!
     from_user: String
+    local_content_name: String
     post_id: String!
+    to_username: String!
     type: String!
     username: String!
   }
 
   type Post implements ContentRemote {
-    to_username: String!
-    local_content_name: String
-    from_user: String
-    comment_user: String
-    username: String!
-    creator: String
     avatar: String
-    title: String!
-    post_id: String!
-    link: String!
-    createdAt: Date!
-    updatedAt: Date
-    comments_updated: Date
+    comment_user: String
     comments_count: Int!
-    thread: String
-    type: String!
-    favorited: Boolean!
-    read: Boolean!
-    is_spam: Boolean!
+    comments_updated: Date
+    createdAt: Date!
+    creator: String
     deleted: Boolean!
+    favorited: Boolean!
+    from_user: String
+    is_spam: Boolean!
+    link: String!
+    local_content_name: String
+    post_id: String!
+    read: Boolean!
+    thread: String
+    title: String!
+    to_username: String!
+    type: String!
+    updatedAt: Date
+    username: String!
     view: String!
   }
 
   type Comment implements ContentRemote {
     avatar: String
+    content: String
     createdAt: Date!
     deleted: Boolean!
     favorited: Boolean!
     from_user: String
     link: String!
+    local_content_name: String
     post_id: String!
+    to_username: String!
     type: String!
     username: String!
-    view: String!
+    view: String
   }
 
   type Favorite implements ContentRemote {
@@ -56,7 +61,9 @@ export default gql`
     deleted: Boolean!
     favorited: Boolean!
     from_user: String
+    local_content_name: String
     post_id: String!
+    to_username: String!
     type: String!
     username: String!
   }
@@ -88,8 +95,15 @@ export default gql`
   }
 
   extend type Mutation {
+    postComment(username: String!, name: String!, content: String!): Comment!
     favoriteContentRemote(from_user: String, post_id: String!, type: String!, favorited: Boolean!): ContentRemote!
-    deleteContentRemote(from_user: String, post_id: String!, type: String!, deleted: Boolean!): ContentRemote!
+    deleteContentRemote(
+      from_user: String
+      post_id: String!
+      local_content_name: String!
+      type: String!
+      deleted: Boolean!
+    ): ContentRemote!
     markAllContentInFeedAsRead(from_user: String!): FeedCount!
     readContentRemote(from_user: String!, post_id: String!, read: Boolean!): Post!
   }

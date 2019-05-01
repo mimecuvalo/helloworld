@@ -26,10 +26,12 @@ export default gql`
 
     fetchCommentsRemote(username: $username, name: $name) {
       avatar
+      content
       deleted
       favorited
       from_user
       link
+      local_content_name
       post_id
       type
       username
@@ -39,6 +41,7 @@ export default gql`
     fetchFavoritesRemote(username: $username, name: $name) {
       avatar
       from_user
+      local_content_name
       post_id
       type
       username

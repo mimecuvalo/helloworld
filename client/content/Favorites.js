@@ -1,6 +1,6 @@
 import { defineMessages, F, injectIntl } from '../../shared/i18n';
 import React, { PureComponent } from 'react';
-import styles from './Content.module.css';
+import styles from './Comments.module.css';
 
 const messages = defineMessages({
   avatar: { msg: 'avatar' },

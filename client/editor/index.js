@@ -113,7 +113,7 @@ class HelloWorldEditor extends Component {
     this.setState({
       editorState,
       hasText,
-      hasUnsavedChanges: true,
+      hasUnsavedChanges: !this.props.dontWarnOnUnsaved,
     });
 
     this.props.onChange && this.props.onChange();
@@ -190,7 +190,12 @@ class HelloWorldEditor extends Component {
     return (
       <>
         {this.state.showEditor ? (
-          <div className={classNames({ [styles.showPlaceholder]: this.props.showPlaceholder && !this.state.hasText })}>
+          <div
+            className={classNames({
+              [styles.showPlaceholder]: this.props.showPlaceholder && !this.state.hasText,
+              [styles.commentType]: this.props.type === 'comment',
+            })}
+          >
             <Editor
               blockRendererFn={blockRenderers}
               decorators={[decorator]}

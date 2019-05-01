@@ -88,6 +88,10 @@ module.exports = {
           type: Sequelize.TEXT('medium'),
           allowNull: false,
         },
+        content: {
+          type: Sequelize.TEXT('medium'),
+          allowNull: false,
+        },
         createdAt: Sequelize.DATE,
         updatedAt: Sequelize.DATE,
       })

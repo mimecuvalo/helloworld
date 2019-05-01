@@ -24,6 +24,7 @@ import styles from './Dashboard.module.css';
         from_user
         is_spam
         link
+        local_content_name
         post_id
         read
         title

@@ -25,25 +25,3 @@
   font-size: 11px;
   text-align: center;
 }
-
-.comment,
-.favorite {
-  display: flex;
-  margin-bottom: 10px;
-  font-size: 11px;
-}
-
-.avatar {
-  max-width: 32px;
-  max-height: 32px;
-  margin: 0 10px 10px 0;
-}
-
-.author {
-  font-weight: bold;
-}
-
-.actions {
-  margin-left: 10px;
-  text-align: right;
-}

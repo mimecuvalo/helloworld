@@ -112,6 +112,10 @@ export default (sequelize, Sequelize) => {
         type: Sequelize.TEXT('medium'),
         allowNull: false,
       },
+      content: {
+        type: Sequelize.TEXT('medium'),
+        allowNull: false,
+      },
     },
     {
       freezeTableName: true,

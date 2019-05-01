@@ -75,10 +75,10 @@ module.exports = {
           defaultValue: 0,
         },
         comments_updated: { type: Sequelize.DATE },
-        favorited: {
-          type: Sequelize.BOOLEAN,
+        favorites_count: {
+          type: Sequelize.INTEGER.UNSIGNED,
           allowNull: false,
-          defaultValue: false,
+          defaultValue: 0,
         },
         thread: { type: Sequelize.TEXT('medium') },
         thread_user: { type: Sequelize.TEXT('medium') },
