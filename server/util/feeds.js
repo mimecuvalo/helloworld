@@ -173,7 +173,7 @@ async function handleEntry(feedEntry, userRemote) {
 
   // Comments and threads
   let comments_count = 0;
-  let comments_updated = undefined;
+  let comments_updated;
   const atomLinks = feedEntry['atom:link'];
   const replies = atomLinks && atomLinks instanceof Array && atomLinks?.find(el => el['@'].rel === 'replies');
   if (replies) {

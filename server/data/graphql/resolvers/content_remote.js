@@ -183,7 +183,7 @@ export default {
       const gravatar = `http://www.gravatar.com/avatar/${emailHash}`;
       const avatar = userInfo.picture || gravatar;
 
-      await models.Content_Remote.create({
+      const createdRemoteContent = await models.Content_Remote.create({
         avatar,
         comment_user: userInfo.email,
         content,
@@ -202,16 +202,17 @@ export default {
         attributes: ['comments_count'],
         where: { username, name },
       });
-      const updatedCommentedContent = await models.Content.update(
+      await models.Content.update(
         {
           comments_count: commentedContent.comments_count + 1,
           comments_updated: new Date(),
         },
         { where: { username, name } }
       );
+      const updatedCommentedContent = await models.Content.findOne({ where: { username, name } });
 
       if (!commentedContent.hidden) {
-        await socialize(updatedCommentedContent, req, true /* isComment */);
+        await socialize(req, updatedCommentedContent, createdRemoteContent, true /* isComment */);
       }
 
       return {

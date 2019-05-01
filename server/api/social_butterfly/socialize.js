@@ -1,23 +1,110 @@
 import constants from '../../../shared/constants';
 import { contentUrl } from '../../../shared/util/url_factory';
+import { convertFromRaw } from 'draft-js';
+import { comment as emailComment } from './email';
 import fetch from 'node-fetch';
+import models from '../../data/models';
 
-export default async function socialize(content, req, opt_isComment) {
-  if (content.hidden) {
+export default async function socialize(req, localContent, opt_remoteContent, opt_isComment) {
+  if (localContent.hidden) {
     return;
   }
 
-  await pubsubhubbubPush(content, req);
+  await pubsubhubbubPush(req, localContent);
 
-  // TODO(mime):
-  // if (opt_isComment) {
-  //   smtp.comment(self, from_username, post_remote.from_user,
-  //       commented_user.email, self.content_url(commented_content, host=True),
-  //       sanitized_comment)
+  await parseMentions(req, localContent, opt_remoteContent);
+
+  if (opt_isComment) {
+    const localContentUser = await models.User.findOne({ where: { username: localContent.username } });
+    emailComment(
+      req,
+      opt_remoteContent.username,
+      opt_remoteContent.comment_user,
+      localContentUser.email,
+      contentUrl(localContent, req),
+      opt_remoteContent
+    );
+  }
+}
+
+const MENTION_REGEX = /[@+](\w+)/g;
+async function parseMentions(req, content, opt_remoteContent) {
+  const users = [];
+  const mentionedUsers = [];
+
+  function addToUsersList(userRemote, shouldAddToMentions) {
+    if (!userRemote || users.find(el => el.profile_url === userRemote.profile_url)) {
+      return;
+    }
+
+    if (userRemote.webmention_url) {
+      users.push(userRemote);
+      shouldAddToMentions && mentionedUsers.push(userRemote);
+    }
+  }
+
+  // Add user from original thread as mentioned user.
+  if (content.thread) {
+    const threadContent = await models.Content_Remote.findOne({
+      where: { to_username: content.username, post_id: content.thread },
+    });
+    if (!threadContent) {
+      return;
+    }
+    const threadUserRemote = await models.User_Remote.findOne({
+      where: { local_username: content.username, profile_url: threadContent.from_user },
+    });
+    addToUsersList(threadUserRemote, true);
+  }
+
+  // Find mentions in the text.
+  // TODO(mime): support @blah@blah.com
+  const plaintext = content.content ? convertFromRaw(JSON.parse(content.content)).getPlainText() : content.view;
+  const mentions = plaintext.match(MENTION_REGEX) || [];
+  for (const mention of mentions) {
+    const userRemote = await models.User_Remote.findOne({
+      where: { local_username: content.username, username: mention.slice(1) },
+    });
+    addToUsersList(userRemote, true);
+  }
+
+  // Find all users from the comments.
+  if (content.comments_count) {
+    const comments = await models.Content_Remote.findAll({
+      where: {
+        to_username: content.username,
+        local_content_name: content.name,
+        type: 'comment',
+      },
+    });
+    for (const comment of comments) {
+      const userRemote = await models.User_Remote.findOne({
+        where: { local_username: content.username, username: comment.from_user },
+      });
+      addToUsersList(userRemote, false);
+    }
+  }
+
+  if (opt_remoteContent) {
+    // Find mentions in the comment text.
+    // TODO(mime): support @blah@blah.com
+    const plaintext = convertFromRaw(JSON.parse(opt_remoteContent.content)).getPlainText();
+    const mentions = plaintext.match(MENTION_REGEX) || [];
+    for (const mention of mentions) {
+      const userRemote = await models.User_Remote.findOne({
+        where: { local_username: content.username, username: mention.slice(1) },
+      });
+      addToUsersList(userRemote, true);
+    }
+  }
+
+  // for (const user of users) {
+  //   // TODO(mime): hookup
+  //   //webmentionReply(user, content, content.thread, mentioned_users);
   // }
 }
 
-async function pubsubhubbubPush(content, req) {
+async function pubsubhubbubPush(req, content) {
   try {
     const contentFeedUrl = contentUrl(content, req);
     await fetch(constants.pushHub, {
