@@ -83,7 +83,7 @@ export async function retrieveFeed(feedUrl) {
   return await response.text();
 }
 
-async function parseFeed(content) {
+export async function parseFeed(content) {
   const { feedEntries, feedMeta } = await new Promise((resolve, reject) => {
     const feedEntries = [];
     new TextStream({}, content)
@@ -138,6 +138,7 @@ async function handleEntry(feedEntry, userRemote) {
   // We ignore if we already have the item in our DB.
   // Also, we don't keep items that are over FEED_MAX_DAYS_OLD.
   if (
+    existingModelEntry?.type === 'comment' ||
     (existingModelEntry && +existingModelEntry.updatedAt === +dateUpdated) ||
     dateUpdated < new Date(Date.now() - FEED_MAX_DAYS_OLD)
   ) {
@@ -170,18 +171,37 @@ async function handleEntry(feedEntry, userRemote) {
   const RELATIVE_REGEXP = new RegExp(`(${HTML_ATTRIBUTES_WITH_LINKS.join('|')})(=['"])/`, 'gi');
   view = view.replace(RELATIVE_REGEXP, `$1$2${userRemote.profile_url}/`);
 
+  // Comments and threads
+  let comments_count = 0;
+  let comments_updated = undefined;
+  const atomLinks = feedEntry['atom:link'];
+  const replies = atomLinks && atomLinks instanceof Array && atomLinks?.find(el => el['@'].rel === 'replies');
+  if (replies) {
+    comments_count = parseInt(replies['@'].count);
+    comments_updated = new Date(replies['@'].updated);
+  }
+  const thread = feedEntry['thr:in-reply-to']?.['@'].ref;
+
+  // Avatar
+  const pocoPhotos = feedEntry['atom:author']?.['poco:photos'];
+  const avatar = pocoPhotos && pocoPhotos['poco:value']['#'];
+
   return {
     id: existingModelEntry ? existingModelEntry.id : undefined,
-    creator: feedEntry.author,
+    avatar,
+    comments_count,
+    comments_updated,
     createdAt: feedEntry.pubdate || new Date(),
-    updatedAt: dateUpdated,
+    creator: feedEntry.author,
     from_user: userRemote.profile_url,
     from_user_remote_id: userRemote.id,
     link: feedEntry.link || feedEntry.permalink,
     post_id: entryId,
+    thread,
     title: feedEntry.title || 'untitled',
     to_username: userRemote.local_username,
     type: 'post',
+    updatedAt: dateUpdated,
     username: userRemote.username,
     view,
   };
