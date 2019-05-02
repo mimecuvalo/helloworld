@@ -56,7 +56,7 @@ export default {
 
     destroyFeed: combineResolvers(isAuthor, async (parent, { profile_url }, { currentUser, models, req }) => {
       const userRemote = await models.User_Remote.findOne({
-        attributes: ['follower'],
+        attributes: ['follower', 'hub_url'],
         where: { local_username: currentUser.model.username, profile_url },
       });
 
@@ -83,7 +83,7 @@ export default {
         );
       }
 
-      await unfollowUser(req, currentUser, profile_url);
+      await unfollowUser(req, currentUser, userRemote.hub_url, profile_url);
 
       return true;
     }),

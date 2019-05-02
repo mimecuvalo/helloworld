@@ -1,6 +1,6 @@
 import cheerio from 'cheerio';
 import FeedParser from 'feedparser';
-import { fetchUrl, createAbsoluteUrl } from './crawler';
+import { fetchText, fetchUrl, createAbsoluteUrl } from './crawler';
 import models from '../data/models'; // TODO(mime): code smell that we should have models in a util file.
 import { NotFoundError } from '../util/exceptions';
 import { Readable } from 'stream';
@@ -9,10 +9,10 @@ import sanitizeHTML from 'sanitize-html';
 export const FEED_MAX_DAYS_OLD = 30 * 24 * 60 * 60 * 1000;
 
 export async function discoverAndParseFeedFromUrl(url) {
-  const content = await discoverAndRetrieveFeedFromUrl(url);
+  const { content, feedUrl } = await discoverAndRetrieveFeedFromUrl(url);
   const { feedEntries, feedMeta } = await parseFeed(content);
 
-  return { feedEntries, feedMeta };
+  return { feedEntries, feedMeta, feedUrl };
 }
 
 async function discoverAndRetrieveFeedFromUrl(url) {
@@ -25,7 +25,7 @@ async function discoverAndRetrieveFeedFromUrl(url) {
   }
 
   // The url is the feed already, just send that back.
-  return content;
+  return { content, feedUrl: url };
 }
 
 async function parseHtmlAndRetrieveFeed(websiteUrl, html) {
@@ -38,8 +38,8 @@ async function parseHtmlAndRetrieveFeed(websiteUrl, html) {
   }
 
   feedUrl = createAbsoluteUrl(websiteUrl, feedUrl);
-
-  return await retrieveFeed(feedUrl);
+  const content = await retrieveFeed(feedUrl);
+  return { content, feedUrl };
 }
 
 export async function parseFeedAndInsertIntoDb(userRemote, feedResponseText, logger) {
@@ -79,8 +79,7 @@ export async function mapFeedAndInsertIntoDb(userRemote, feedEntries, logger) {
 }
 
 export async function retrieveFeed(feedUrl) {
-  const response = await fetchUrl(feedUrl);
-  return await response.text();
+  return await fetchText(feedUrl);
 }
 
 export async function parseFeed(content) {
@@ -174,8 +173,8 @@ async function handleEntry(feedEntry, userRemote) {
   // Comments and threads
   let comments_count = 0;
   let comments_updated;
-  const atomLinks = feedEntry['atom:link'];
-  const replies = atomLinks && atomLinks instanceof Array && atomLinks?.find(el => el['@'].rel === 'replies');
+  const atomLinks = feedEntry['atom:link'] ? [feedEntry['atom:link']].flat(1) : [];
+  const replies = atomLinks.find(el => el['@'].rel === 'replies');
   if (replies) {
     comments_count = parseInt(replies['@'].count);
     comments_updated = new Date(replies['@'].updated);
@@ -187,10 +186,11 @@ async function handleEntry(feedEntry, userRemote) {
   const avatar = pocoPhotos && pocoPhotos['poco:value']['#'];
 
   return {
-    id: existingModelEntry ? existingModelEntry.id : undefined,
+    id: existingModelEntry?.id || undefined,
     avatar,
     comments_count,
     comments_updated,
+    content: '',
     createdAt: feedEntry.pubdate || new Date(),
     creator: feedEntry.author,
     from_user: userRemote.profile_url,

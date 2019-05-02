@@ -17,8 +17,13 @@ export async function fetchUrl(url) {
   }
 }
 
+export async function fetchText(url) {
+  const response = await fetchUrl(url);
+  return await response.text();
+}
+
 export function createAbsoluteUrl(websiteUrl, url) {
-  if (url.startsWith('/')) {
+  if (url?.startsWith('/')) {
     const parsedUrl = new URL(websiteUrl);
     url = `${parsedUrl.origin}${url}`;
   }
