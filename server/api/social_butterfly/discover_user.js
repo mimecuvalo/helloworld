@@ -111,3 +111,21 @@ export async function getUserRemoteInfo(websiteUrl, local_username) {
 
   return userRemote;
 }
+
+export function parseUsernameFromAccount(rawAcct) {
+  // The `q` parameter has either a value of the form:
+  //   acct:mime@hostname.com
+  // or:
+  //   /mime/some/url
+  const account = rawAcct.replace(/^acct:/, '');
+
+  let username;
+  if (account.indexOf('@') !== -1) {
+    username = account.split('@')[0];
+  } else {
+    const parsedUrl = new URL(account);
+    username = parsedUrl.pathname.split('/')[0];
+  }
+
+  return username;
+}

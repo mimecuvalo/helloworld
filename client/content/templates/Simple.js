@@ -35,7 +35,10 @@ export default class Simple extends PureComponent {
             </ErrorBoundary>
           </div>
         ) : (
-          <div dangerouslySetInnerHTML={{ __html: content.view }} className={classNames(styles.view, 'hw-view')} />
+          <div
+            dangerouslySetInnerHTML={{ __html: content.view }}
+            className={classNames('e-content', styles.view, 'hw-view')}
+          />
         )}
       </>
     );

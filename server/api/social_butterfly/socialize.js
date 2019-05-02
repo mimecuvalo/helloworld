@@ -4,6 +4,7 @@ import { convertFromRaw } from 'draft-js';
 import { comment as emailComment } from './email';
 import fetch from 'node-fetch';
 import models from '../../data/models';
+import { webmentionReply } from './webmention';
 
 export default async function socialize(req, localContent, opt_remoteContent, opt_isComment) {
   if (localContent.hidden) {
@@ -29,17 +30,17 @@ export default async function socialize(req, localContent, opt_remoteContent, op
 
 const MENTION_REGEX = /[@+](\w+)/g;
 async function parseMentions(req, content, opt_remoteContent) {
-  const users = [];
-  const mentionedUsers = [];
+  const remoteUsers = [];
+  const mentionedRemoteUsers = [];
 
   function addToUsersList(userRemote, shouldAddToMentions) {
-    if (!userRemote || users.find(el => el.profile_url === userRemote.profile_url)) {
+    if (!userRemote || remoteUsers.find(el => el.profile_url === userRemote.profile_url)) {
       return;
     }
 
     if (userRemote.webmention_url) {
-      users.push(userRemote);
-      shouldAddToMentions && mentionedUsers.push(userRemote);
+      remoteUsers.push(userRemote);
+      shouldAddToMentions && mentionedRemoteUsers.push(userRemote);
     }
   }
 
@@ -98,10 +99,9 @@ async function parseMentions(req, content, opt_remoteContent) {
     }
   }
 
-  // for (const user of users) {
-  //   // TODO(mime): hookup
-  //   //webmentionReply(user, content, content.thread, mentioned_users);
-  // }
+  for (const userRemote of remoteUsers) {
+    webmentionReply(req, userRemote, content, content.thread, mentionedRemoteUsers);
+  }
 }
 
 async function pubsubhubbubPush(req, content) {

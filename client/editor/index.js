@@ -191,7 +191,7 @@ class HelloWorldEditor extends Component {
       <>
         {this.state.showEditor ? (
           <div
-            className={classNames({
+            className={classNames('e-content', {
               [styles.showPlaceholder]: this.props.showPlaceholder && !this.state.hasText,
               [styles.commentType]: this.props.type === 'comment',
             })}

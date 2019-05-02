@@ -1,23 +1,11 @@
 import { buildUrl, contentUrl, profileUrl } from '../../../shared/util/url_factory';
 import models from '../../data/models';
+import { parseUsernameFromAccount } from './discover_user';
 import React, { PureComponent } from 'react';
 import { renderToString } from 'react-dom/server';
 
 export default async (req, res) => {
-  // The `q` parameter has either a value of the form:
-  //   acct:mime@hostname.com
-  // or:
-  //   /mime/some/url
-  const account = req.query.q.replace(/^acct:/, '');
-
-  let username;
-  if (account.indexOf('@') !== -1) {
-    username = account.split('@')[0];
-  } else {
-    const parsedUrl = new URL(account);
-    username = parsedUrl.pathname.split('/')[0];
-  }
-
+  const username = parseUsernameFromAccount(req.query.q);
   const user = await models.User.findOne({ attributes: ['username', 'magic_key'], where: { username } });
   if (!user) {
     return res.sendStatus(404);

@@ -26,7 +26,7 @@ class Footer extends PureComponent {
           values={{
             username: username,
             date: (
-              <time dateTime={createdAt}>
+              <time className="t-published" dateTime={createdAt}>
                 <FormattedDate
                   value={createdAt}
                   year="numeric"
@@ -47,7 +47,7 @@ class Footer extends PureComponent {
                 msg="(updated {date})"
                 values={{
                   date: (
-                    <time dateTime={updatedAt}>
+                    <time className="t-updated" dateTime={updatedAt}>
                       <FormattedDate
                         value={updatedAt}
                         year="numeric"

@@ -31,7 +31,7 @@ export default class Item extends PureComponent {
     let TemplateComponent = COMPONENT_TYPE_MAP[content.template] || Simple;
 
     return (
-      <section className="hw-item">
+      <section className="hw-item h-entry">
         <Header content={content} handleEdit={handleEdit} isEditing={isEditing} />
         <TemplateComponent ref={this.template} content={content} isEditing={isEditing} isFeed={this.props.isFeed} />
         <Footer content={content} />
