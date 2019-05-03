@@ -56,34 +56,18 @@ export default {
 
     destroyFeed: combineResolvers(isAuthor, async (parent, { profile_url }, { currentUser, models, req }) => {
       const userRemote = await models.User_Remote.findOne({
-        attributes: ['follower', 'hub_url'],
         where: { local_username: currentUser.model.username, profile_url },
       });
 
       if (!userRemote.follower) {
         // The user isn't following us. Remove them altogether.
-        await models.User_Remote.destroy({
-          where: {
-            local_username: currentUser.model.username,
-            profile_url,
-          },
-        });
+        await models.User_Remote.destroy({ where: { id: userRemote.id } });
       } else {
         // The user is following us. Keep them around.
-        await models.User_Remote.update(
-          {
-            following: false,
-          },
-          {
-            where: {
-              local_username: currentUser.model.username,
-              profile_url,
-            },
-          }
-        );
+        await models.User_Remote.update({ following: false }, { where: { id: userRemote.id } });
       }
 
-      await unfollowUser(req, currentUser, userRemote.hub_url, profile_url);
+      await unfollowUser(req, currentUser, userRemote, userRemote.hub_url, profile_url);
 
       return true;
     }),

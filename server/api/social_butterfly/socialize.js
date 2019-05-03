@@ -4,16 +4,17 @@ import { convertFromRaw } from 'draft-js';
 import { comment as emailComment } from './email';
 import fetch from 'node-fetch';
 import models from '../../data/models';
+import { reply as salmonReply } from './salmon';
 import { webmentionReply } from './webmention';
 
-export default async function socialize(req, localContent, opt_remoteContent, opt_isComment) {
+export default async function socialize(req, contentOwner, localContent, opt_remoteContent, opt_isComment) {
   if (localContent.hidden) {
     return;
   }
 
   await pubsubhubbubPush(req, localContent);
 
-  await parseMentions(req, localContent, opt_remoteContent);
+  await parseMentions(req, contentOwner, localContent, opt_remoteContent);
 
   if (opt_isComment) {
     const localContentUser = await models.User.findOne({ where: { username: localContent.username } });
@@ -29,7 +30,7 @@ export default async function socialize(req, localContent, opt_remoteContent, op
 }
 
 const MENTION_REGEX = /[@+](\w+)/g;
-async function parseMentions(req, content, opt_remoteContent) {
+async function parseMentions(req, contentOwner, content, opt_remoteContent) {
   const remoteUsers = [];
   const mentionedRemoteUsers = [];
 
@@ -101,6 +102,7 @@ async function parseMentions(req, content, opt_remoteContent) {
 
   for (const userRemote of remoteUsers) {
     webmentionReply(req, userRemote, content, content.thread, mentionedRemoteUsers);
+    salmonReply(req, contentOwner, content, userRemote.salmon_url, mentionedRemoteUsers);
   }
 }
 

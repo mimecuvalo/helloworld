@@ -2,6 +2,7 @@ import { buildUrl } from '../../../shared/util/url_factory';
 import constants from '../../../shared/constants';
 import { discoverUserRemoteInfoSaveAndSubscribe } from './discover_user';
 import express from 'express';
+import { follow as salmonFollow } from './salmon';
 import FollowConfirm from './follow_confirm';
 import { parseFeedAndInsertIntoDb, retrieveFeed } from '../../util/feeds';
 import pubSubHubSubscriber from './push';
@@ -29,6 +30,7 @@ export async function followUser(req, currentUser, profileUrl) {
     const userRemote = await discoverUserRemoteInfoSaveAndSubscribe(req, profileUrl, currentUser.model.username);
     const feedResponseText = await retrieveFeed(userRemote.feed_url);
     await parseFeedAndInsertIntoDb(userRemote, feedResponseText);
+    salmonFollow(req, currentUser.model, userRemote.salmon_url, true /* isFollow */);
     return userRemote;
   } catch (ex) {
     console.error(ex);
@@ -36,11 +38,12 @@ export async function followUser(req, currentUser, profileUrl) {
   }
 }
 
-export async function unfollowUser(req, currentUser, hub_url, profileUrl) {
+export async function unfollowUser(req, currentUser, userRemote, hub_url, profileUrl) {
   try {
     const userRemoteParams = { local_username: currentUser.model.username, profile_url: profileUrl };
     const callbackUrl = buildUrl({ req, pathname: '/pubsubhubbub', searchParams: userRemoteParams });
     await pubSubHubSubscriber.unsubscribe(hub_url, constants.pushHub, callbackUrl);
+    salmonFollow(req, currentUser.model, userRemote.salmon_url, false /* isFollow */);
   } catch (ex) {
     throw ex;
   }

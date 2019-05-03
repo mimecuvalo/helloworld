@@ -378,7 +378,7 @@ const Content = {
         const updatedContent = await models.Content.findOne({ where: { username, name } });
 
         if (!hidden) {
-          await socialize(req, updatedContent);
+          await socialize(req, currentUser.model, updatedContent);
         }
 
         return { username: currentUser.model.username, name, style, code, content };
@@ -409,7 +409,7 @@ const Content = {
         });
 
         if (!hidden) {
-          await socialize(req, createdContent);
+          await socialize(req, currentUser.model, createdContent);
         }
 
         return {

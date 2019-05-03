@@ -1,5 +1,6 @@
 import { combineResolvers } from 'graphql-resolvers';
 import crypto from 'crypto';
+import { favorite as salmonFavorite } from '../../../api/social_butterfly/salmon';
 import { isAdmin, isAuthor } from './authorization';
 import Sequelize from 'sequelize';
 import socialize from '../../../api/social_butterfly/socialize';
@@ -199,7 +200,7 @@ export default {
       });
 
       const commentedContent = await models.Content.findOne({
-        attributes: ['comments_count'],
+        attributes: ['id', 'comments_count'],
         where: { username, name },
       });
       await models.Content.update(
@@ -207,12 +208,13 @@ export default {
           comments_count: commentedContent.comments_count + 1,
           comments_updated: new Date(),
         },
-        { where: { username, name } }
+        { where: { id: commentedContent.id } }
       );
-      const updatedCommentedContent = await models.Content.findOne({ where: { username, name } });
+      const updatedCommentedContent = await models.Content.findOne({ where: { id: commentedContent.id } });
+      const contentOwner = await models.User.findOne({ where: { username } });
 
       if (!commentedContent.hidden) {
-        await socialize(req, updatedCommentedContent, createdRemoteContent, true /* isComment */);
+        await socialize(req, contentOwner, updatedCommentedContent, createdRemoteContent, true /* isComment */);
       }
 
       return {
@@ -232,19 +234,22 @@ export default {
 
     favoriteContentRemote: combineResolvers(
       isAuthor,
-      async (parent, { from_user, post_id, type, favorited }, { currentUser, models }) => {
-        await models.Content_Remote.update(
-          {
-            favorited,
+      async (parent, { from_user, post_id, type, favorited }, { currentUser, models, req }) => {
+        const remoteContentWhere = {
+          to_username: currentUser.model.username,
+          from_user,
+          post_id,
+        };
+        await models.Content_Remote.update({ favorited }, { where: remoteContentWhere });
+        const contentRemote = await models.Content_Remote.findOne({ where: remoteContentWhere });
+        const userRemote = await models.User_Remote.findOne({
+          where: {
+            local_username: currentUser.model.username,
+            profile_url: contentRemote.from_user,
           },
-          {
-            where: {
-              to_username: currentUser.model.username,
-              from_user,
-              post_id,
-            },
-          }
-        );
+        });
+
+        salmonFavorite(req, currentUser.model, contentRemote, userRemote.salmon_url, favorited);
 
         return { from_user, post_id, type, favorited };
       }

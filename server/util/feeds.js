@@ -1,10 +1,9 @@
 import cheerio from 'cheerio';
 import FeedParser from 'feedparser';
-import { fetchText, fetchUrl, createAbsoluteUrl } from './crawler';
+import { fetchText, fetchUrl, createAbsoluteUrl, sanitizeHTML } from './crawler';
 import models from '../data/models'; // TODO(mime): code smell that we should have models in a util file.
 import { NotFoundError } from '../util/exceptions';
 import { Readable } from 'stream';
-import sanitizeHTML from 'sanitize-html';
 
 export const FEED_MAX_DAYS_OLD = 30 * 24 * 60 * 60 * 1000;
 
@@ -144,14 +143,7 @@ async function handleEntry(feedEntry, userRemote) {
     return;
   }
 
-  let view = sanitizeHTML(feedEntry.description || feedEntry.summary, {
-    allowedTags: sanitizeHTML.defaults.allowedTags.concat(['img']),
-    allowedAttributes: {
-      a: ['href', 'name', 'target', 'title'],
-      img: ['src', 'srcset', 'width', 'height', 'alt', 'title'],
-      iframe: ['src', 'width', 'height', 'alt', 'title'],
-    },
-  });
+  let view = sanitizeHTML(feedEntry.description || feedEntry.summary);
 
   // XXX(mime): A shortcoming of feedparser currently is that it doesn't resolve relative urls for feeds that have
   // urls in the content, e.g. kottke.org Fix this hackily for now. It should really be looking at xml:base in the XML.
