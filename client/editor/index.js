@@ -168,7 +168,7 @@ class HelloWorldEditor extends Component {
 
       this.setState({ editorState: editorStateAndInfo.editorState });
 
-      if (editorStateAndInfo.isImg) {
+      if (editorStateAndInfo.image) {
         this.props.onMediaAdd && this.props.onMediaAdd({ fileInfos: [{ thumb: text }] });
       }
     }

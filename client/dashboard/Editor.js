@@ -26,7 +26,7 @@ class DashboardEditor extends PureComponent {
     this.editor = React.createRef();
 
     this.state = {
-      latestFileInfo: null,
+      fileInfo: null,
       // Not so clean but, meh, don't feel like implementing two separate <select>'s
       sectionAndAlbum: JSON.stringify({ section: this.props.data.fetchSiteMap[0].name, album: '' }),
       successMessage: null,
