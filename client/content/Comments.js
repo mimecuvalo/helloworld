@@ -113,30 +113,32 @@ class Comments extends Component {
                   }}
                 />
               )}
-              <ul className={styles.comments}>
-                {comments.map(comment => (
-                  <li className={styles.comment} key={comment.post_id}>
-                    <img className={styles.avatar} src={comment.avatar || '/img/pixel.gif'} alt={ariaImgMsg} />
-                    <div>
-                      {comment.from_user ? (
-                        <a href={comment.from_user} target="_blank" rel="noopener noreferrer">
-                          {comment.username}
-                        </a>
-                      ) : (
-                        <span className={styles.author}>{comment.username}: </span>
-                      )}
-                      {comment.content ? <Editor readOnly={true} content={comment} type="comment" /> : comment.view}
-                    </div>
-                    {isOwnerViewing ? (
-                      <div className={styles.actions}>
-                        <Favorite contentRemote={comment} />
-                        &nbsp;•&nbsp;
-                        <Delete contentRemote={comment} />
+              {comments ? (
+                <ul className={styles.comments}>
+                  {comments.map(comment => (
+                    <li className={styles.comment} key={comment.post_id}>
+                      <img className={styles.avatar} src={comment.avatar || '/img/pixel.gif'} alt={ariaImgMsg} />
+                      <div>
+                        {comment.from_user ? (
+                          <a href={comment.from_user} target="_blank" rel="noopener noreferrer">
+                            {comment.username}
+                          </a>
+                        ) : (
+                          <span className={styles.author}>{comment.username}: </span>
+                        )}
+                        {comment.content ? <Editor readOnly={true} content={comment} type="comment" /> : comment.view}
                       </div>
-                    ) : null}
-                  </li>
-                ))}
-              </ul>
+                      {isOwnerViewing ? (
+                        <div className={styles.actions}>
+                          <Favorite contentRemote={comment} />
+                          &nbsp;•&nbsp;
+                          <Delete contentRemote={comment} />
+                        </div>
+                      ) : null}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
             </>
           );
         }}

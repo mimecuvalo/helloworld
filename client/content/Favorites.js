@@ -12,9 +12,13 @@ class Favorites extends PureComponent {
     const { favorites } = this.props;
     const ariaImgMsg = this.props.intl.formatMessage(messages.avatar);
 
+    if (!favorites) {
+      return null;
+    }
+
     return (
       <ul>
-        {favorites.map(favorite => (
+        {favorites?.map(favorite => (
           <li className={styles.favorite} key={favorite.post_id}>
             <img className={styles.avatar} src={favorite.avatar || '/img/pixel.gif'} alt={ariaImgMsg} />
             <F
