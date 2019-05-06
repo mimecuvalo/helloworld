@@ -11,7 +11,7 @@ export default async function unfurl(url, editorState) {
     const alt = '';
     editorState = createNewBlock('IMAGE', 'img', editorState, { src, alt }, { href, src, alt });
 
-    return { editorState, isError: false, wasMediaFound: true, isImg: true };
+    return { editorState, isError: false, wasMediaFound: true, isImg: true, thumb: url };
   }
 
   let response;
@@ -31,16 +31,19 @@ export default async function unfurl(url, editorState) {
   }
 
   const json = await response.json();
+  let thumb;
   let isImg = false;
   if (json.wasMediaFound) {
     if (json.iframe) {
       editorState = createNewBlock('IFRAME', 'iframe', editorState, json.iframe, json.iframe);
+      thumb = json.image;
     } else {
       const href = json.image;
       const src = json.image;
       const alt = json.title;
       isImg = true;
       editorState = createNewBlock('IMAGE', 'img', editorState, { src, alt }, { href, src, alt });
+      thumb = json.image;
     }
 
     const titleLine = getTextForLine(editorState, 0);
@@ -49,5 +52,5 @@ export default async function unfurl(url, editorState) {
     }
   }
 
-  return { editorState, isError: false, wasMediaFound: json.wasMediaFound, isImg };
+  return { editorState, isError: false, wasMediaFound: json.wasMediaFound, isImg, thumb };
 }
