@@ -81,7 +81,8 @@ plan.remote(function(remote) {
     remote.sudo(`npm --production --prefix ${varTmpDir} install ${varTmpDir}`, { user });
   }
 
-
+  // Copy over sessions.
+  remote.sudo(`cp -R ${destDir}/sessions ${varTmpDir}`, { user, failsafe: true });
 
   remote.log('Reloading application...');
   remote.sudo(`ln -snf /var/www/resource ${varTmpDir}/resource`, { user });
@@ -90,9 +91,6 @@ plan.remote(function(remote) {
   // XXX(mime) :-/ sucks but getCSSModuleLocalIdent gives hashes based on filepaths... need to look for workaround
   remote.log('Building production files...');
   remote.sudo(`cd ${varTmpDir}; npm run build`, { user });
-
-  // Copy over sessions.
-  remote.sudo(`cp -R ${destDir}/sessions ${varTmpDir}`, { user, failsafe: true });
 
   // TODO(mime); doing `pm2 kill` is less than ideal - but pm2 doesn't know how to switch out symlinked directories :-/
   // This is done here for the sake of keeping all-the-things as zero-config as possible.
