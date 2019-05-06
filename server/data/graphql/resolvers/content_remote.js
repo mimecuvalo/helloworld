@@ -121,7 +121,7 @@ export default {
       return result;
     }),
 
-    fetchCommentsRemote: combineResolvers(isAuthor, async (parent, { username, name }, { models }) => {
+    async fetchCommentsRemote(parent, { username, name }, { models }) {
       const result = await models.Content_Remote.findAll({
         attributes: [
           'avatar',
@@ -149,9 +149,9 @@ export default {
       });
 
       return result;
-    }),
+    },
 
-    fetchFavoritesRemote: combineResolvers(isAuthor, async (parent, { username, name }, { models }) => {
+    async fetchFavoritesRemote(parent, { username, name }, { models }) {
       const result = await models.Content_Remote.findAll({
         attributes: ['avatar', 'createdAt', 'from_user', 'local_content_name', 'post_id', 'type', 'username'],
         where: {
@@ -166,7 +166,7 @@ export default {
       });
 
       return result;
-    }),
+    },
   },
 
   Mutation: {
