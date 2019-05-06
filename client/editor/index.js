@@ -169,7 +169,7 @@ class HelloWorldEditor extends Component {
       this.setState({ editorState: editorStateAndInfo.editorState });
 
       if (editorStateAndInfo.thumb) {
-        this.props.onMediaAdd && this.props.onMediaAdd({ fileInfos: [{ thumb: editorStateAndInfo.thumb }] });
+        this.props.onMediaAdd && this.props.onMediaAdd([{ thumb: editorStateAndInfo.thumb }]);
       }
     }
   };
