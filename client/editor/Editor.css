@@ -21,6 +21,9 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.public-DraftEditor-content[contenteditable='false'] > [data-contents='true'] > [data-block='true']:first-child {
+  display: none;
+}
 
 .public-DraftEditor-content > [data-contents='true'] > [data-block='true'] {
   padding: 1px 0;
