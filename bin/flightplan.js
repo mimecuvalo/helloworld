@@ -75,7 +75,7 @@ plan.remote(function(remote) {
 
   if (isNPMUnchanged.code === 0 || (isNPMUnchanged.stderr && isNPMUnchanged.stderr.indexOf('cmp: EOF') === 0 /* ignore NOEOL false positive */)) {
     remote.log('package.json is unchanged. Reusing previous node_modules folder...');
-    remote.sudo(`cp -R ${destDir}/node_modules ${varTmpDir}`, { user });
+    remote.sudo(`mv ${destDir}/node_modules ${varTmpDir}`, { user });
   } else {
     remote.log('package.json has changed. Installing dependencies...');
     remote.sudo(`npm --production --prefix ${varTmpDir} install ${varTmpDir}`, { user });
