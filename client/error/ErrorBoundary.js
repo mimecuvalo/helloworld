@@ -1,6 +1,7 @@
 import { F } from '../../shared/i18n';
 import { logError } from './error';
 import React, { PureComponent } from 'react';
+import styles from './Error.module.css';
 
 // See React's documentation: https://reactjs.org/docs/error-boundaries.html
 export default class ErrorBoundary extends PureComponent {
@@ -18,8 +19,8 @@ export default class ErrorBoundary extends PureComponent {
     if (this.state.hasError) {
       // You can render any custom fallback UI
       return (
-        <h1>
-          <F msg="Something went wrong." />
+        <h1 className={styles.errorBoundary}>
+          <F msg="Something went wrong. 😦" />
         </h1>
       );
     }

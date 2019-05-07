@@ -24,3 +24,14 @@
     transform: rotate(180deg);
   }
 }
+
+.errorBoundary {
+  border: 3px double #f00;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px;
+  font-weight: 400;
+  color: #f00;
+}
