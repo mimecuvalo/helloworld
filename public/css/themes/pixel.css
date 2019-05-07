@@ -15,7 +15,6 @@ body {
   box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf;
 }
 
-.hw-item,
 #hw-content .DraftEditor-root,
 #hw-content .ReactCodeMirror {
   width: 650px;
