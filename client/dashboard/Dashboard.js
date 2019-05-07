@@ -41,6 +41,8 @@ class Dashboard extends PureComponent {
     typeof userRemoteOrSpecialFeed === 'string'
       ? this.setState(Object.assign(newState, { specialFeed: userRemoteOrSpecialFeed, userRemote: null }))
       : this.setState(Object.assign(newState, { userRemote: userRemoteOrSpecialFeed, specialFeed: '' }));
+
+    window.scrollTo(0, 0);
   };
 
   getEditor = () => {

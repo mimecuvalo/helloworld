@@ -10,7 +10,7 @@ import ErrorBoundary from '../error/ErrorBoundary';
 import Footer from './Footer';
 import Header from './Header';
 import IconButton from '@material-ui/core/IconButton';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, withRouter } from 'react-router-dom';
 import React, { Component } from 'react';
 import Search from '../content/Search';
 import { SnackbarProvider } from 'notistack';
@@ -96,15 +96,17 @@ class App extends Component {
               <CssBaseline />
               <Header />
               <main className="App-main">
-                <Switch>
-                  <Route path={`/dashboard`} component={this.renderDashboard} />
-                  <Route path={`/:username/search/:query`} component={Search} />
-                  <Route path={`/:username/:section/:album/:name`} component={Content} />
-                  <Route path={`/:username/:section/:name`} component={Content} />
-                  <Route path={`/:username/:name`} component={Content} />
-                  <Route path={`/:username`} component={Content} />
-                  <Route path={`/`} component={Content} />
-                </Switch>
+                <ScrollToTop>
+                  <Switch>
+                    <Route path={`/dashboard`} component={this.renderDashboard} />
+                    <Route path={`/:username/search/:query`} component={Search} />
+                    <Route path={`/:username/:section/:album/:name`} component={Content} />
+                    <Route path={`/:username/:section/:name`} component={Content} />
+                    <Route path={`/:username/:name`} component={Content} />
+                    <Route path={`/:username`} component={Content} />
+                    <Route path={`/`} component={Content} />
+                  </Switch>
+                </ScrollToTop>
               </main>
               <Footer />
             </div>
@@ -112,6 +114,19 @@ class App extends Component {
         </SnackbarProvider>
       </UserContext.Provider>
     );
+  }
+}
+
+@withRouter
+class ScrollToTop extends Component {
+  componentDidUpdate(prevProps) {
+    if (this.props.location.pathname !== prevProps.location.pathname) {
+      window.scrollTo(0, 0);
+    }
+  }
+
+  render() {
+    return this.props.children;
   }
 }
 
