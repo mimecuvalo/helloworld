@@ -65,13 +65,27 @@ export default {
           replacements = { query };
         }
 
-        return await models.Content_Remote.findAll({
+        let results = await models.Content_Remote.findAll({
           where: constraints,
           order: [['createdAt', order]],
           limit,
           offset: offset * limit,
           replacements,
         });
+
+        // So, a funny UI behavior quirk of having an infinite RSS feed that has the user scrolling while
+        // marking things as read as this messes with your offset limits. Set offset to 0 if we found no results
+        // the first time.
+        if (!results.length && offset !== 0) {
+          results = await models.Content_Remote.findAll({
+            where: constraints,
+            order: [['createdAt', order]],
+            limit,
+            offset: 0,
+            replacements,
+          });
+        }
+        return results;
       }
     ),
 

@@ -48,6 +48,10 @@ import styles from './Dashboard.module.css';
   }
 )
 class Feed extends PureComponent {
+  dedupe(currentFeed, nextResults) {
+    return nextResults.filter(nextEl => !currentFeed.find(prevEl => prevEl.post_id === nextEl.post_id));
+  }
+
   render() {
     if (this.props.data.loading) {
       return null;
@@ -57,7 +61,7 @@ class Feed extends PureComponent {
     const { userRemote, query } = this.props;
 
     return (
-      <InfiniteFeed fetchMore={this.props.data.fetchMore} queryName="fetchContentRemotePaginated">
+      <InfiniteFeed deduper={this.dedupe} fetchMore={this.props.data.fetchMore} queryName="fetchContentRemotePaginated">
         {userRemote || query ? (
           <h1 className={styles.header}>
             {userRemote ? (

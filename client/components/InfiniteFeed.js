@@ -49,8 +49,12 @@ class InfiniteFeed extends PureComponent {
 
           this.setState({ fetchingMore: false });
 
+          const moreResultsWithoutDupes = this.props.deduper
+            ? this.props.deduper(prev[queryName], fetchMoreResult[queryName])
+            : fetchMoreResult[queryName];
+
           return Object.assign({}, prev, {
-            [queryName]: [...prev[queryName], ...fetchMoreResult[queryName]],
+            [queryName]: [...prev[queryName], ...moreResultsWithoutDupes],
           });
         },
       });
