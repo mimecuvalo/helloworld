@@ -50,8 +50,14 @@ router.post('/', upload.array('files', MAX_FILES), async (req, res) => {
       ensureDirectoriesExist(localOriginal, localThumb, localNormal);
       fs.renameSync(file.path, localOriginal);
 
-      await resize(localOriginal, localThumb, constants.thumbWidth, constants.thumbHeight);
-      await resize(localOriginal, localNormal, constants.normalWidth, constants.normalHeight);
+      const mimetype = mime.getType(file.originalname);
+      if (['image/apng', 'image/gif'].includes(mimetype) !== -1) {
+        fs.copyFileSync(localOriginal, localThumb);
+        fs.copyFileSync(localOriginal, localNormal);
+      } else {
+        await resize(localOriginal, localThumb, constants.thumbWidth, constants.thumbHeight);
+        await resize(localOriginal, localNormal, constants.normalWidth, constants.normalHeight);
+      }
     } catch (ex) {
       isError = true;
       console.error('Error uploading image.', ex);
