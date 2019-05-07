@@ -71,6 +71,7 @@ class HelloWorldEditor extends Component {
       errorMessage: null,
       hasText: !!state,
       hasUnsavedChanges: false,
+      shiftKeyPressed: false,
       showEditor: false,
     };
   }
@@ -152,12 +153,24 @@ class HelloWorldEditor extends Component {
     return 'handled';
   };
 
+  handleKeyDown = evt => {
+    if (evt.shiftKey) {
+      this.setState({ shiftKeyPressed: true });
+    }
+  };
+
+  handleKeyUp = evt => {
+    if (!evt.shiftKey) {
+      this.setState({ shiftKeyPressed: false });
+    }
+  };
+
   handleOnTab = evt => {
     this.setState({ editorState: RichUtils.onTab(evt, this.state.editorState, MAX_DEPTH) });
   };
 
   handlePastedText = async (text, html, editorState) => {
-    if (text.match(/^https?:\/\//)) {
+    if (!this.state.shiftKeyPressed && text.match(/^https?:\/\//)) {
       const editorStateAndInfo = await unfurl(text, editorState);
 
       if (!editorStateAndInfo.wasMediaFound) {
@@ -205,6 +218,8 @@ class HelloWorldEditor extends Component {
               [styles.showPlaceholder]: this.props.showPlaceholder && !this.state.hasText,
               [styles.commentType]: this.props.type === 'comment',
             })}
+            onKeyDown={this.handleKeyDown}
+            onKeyUp={this.handleKeyUp}
           >
             <Editor
               blockRendererFn={blockRenderers}
