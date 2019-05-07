@@ -128,7 +128,12 @@ class HelloWorldEditor extends Component {
       return;
     }
 
-    this.setState({ editorState });
+    this.setState({ editorState }, () => {
+      // XXX(mime): This is bad. The editor state isn't consistent if you try to export right
+      // after pasting. I can't tell if it's because of the `await` above or some kind of race
+      // condition. :-/
+      this.export();
+    });
 
     this.props.onMediaAdd && this.props.onMediaAdd(fileInfos);
   };
@@ -166,7 +171,12 @@ class HelloWorldEditor extends Component {
         return;
       }
 
-      this.setState({ editorState: editorStateAndInfo.editorState });
+      this.setState({ editorState: editorStateAndInfo.editorState }, () => {
+        // XXX(mime): This is bad. The editor state isn't consistent if you try to export right
+        // after pasting. I can't tell if it's because of the `await` above or some kind of race
+        // condition. :-/
+        this.export();
+      });
 
       if (editorStateAndInfo.thumb) {
         this.props.onMediaAdd && this.props.onMediaAdd([{ thumb: editorStateAndInfo.thumb }]);

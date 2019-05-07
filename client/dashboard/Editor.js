@@ -89,7 +89,7 @@ class DashboardEditor extends PureComponent {
 
     editor.clear();
 
-    this.setState({ message: messages.posted }, () => {
+    this.setState({ fileInfo: null, message: messages.posted }, () => {
       this.setState({ message: null });
     });
   };
