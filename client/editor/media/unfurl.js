@@ -4,7 +4,22 @@ import { createNewBlock } from '../utils/Blocks';
 import { getTextForLine, insertTextAtLine } from '../utils/Text';
 import mime from 'mime/lite';
 
+const IFRAME_ALLOW = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
+
 export default async function unfurl(url, editorState) {
+  if (url.match(/^<iframe /)) {
+    const iframe = {
+      src: url.match(/src=['"]([^'"]+)['"]/)[1],
+      width: url.match(/width=['"]([^'"]+)['"]/)[1] || 400,
+      height: url.match(/height=['"]([^'"]+)['"]/)[1] || 300,
+      frameBorder: 0,
+      allow: url.match(/allow=['"]([^'"]+)['"]/)[1] || IFRAME_ALLOW,
+    };
+    editorState = createNewBlock('IFRAME', 'iframe', editorState, iframe, iframe);
+
+    return { editorState, isError: false, wasMediaFound: true, isImg: false };
+  }
+
   if (mime.getType(url)?.match(/^image\//)) {
     const src = url;
     const href = url;

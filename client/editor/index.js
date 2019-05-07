@@ -170,7 +170,8 @@ class HelloWorldEditor extends Component {
   };
 
   handlePastedText = async (text, html, editorState) => {
-    if (!this.state.shiftKeyPressed && text.match(/^https?:\/\//)) {
+    const potentialLink = text.match(/^https?:\/\//) || text.match(/^<iframe /);
+    if (!this.state.shiftKeyPressed && potentialLink) {
       const editorStateAndInfo = await unfurl(text, editorState);
 
       if (!editorStateAndInfo.wasMediaFound) {
