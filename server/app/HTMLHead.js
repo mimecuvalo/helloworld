@@ -39,8 +39,8 @@ import React, { PureComponent } from 'react';
 
       return {
         variables: {
-          username: probableContentUsername,
-          name: probableContentName,
+          username: decodeURIComponent(probableContentUsername),
+          name: decodeURIComponent(probableContentName),
         },
       };
     },
