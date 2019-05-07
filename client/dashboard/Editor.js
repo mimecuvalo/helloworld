@@ -89,7 +89,6 @@ class DashboardEditor extends PureComponent {
 
     editor.clear();
 
-    this.props.enqueueSnackbar(this.props.intl.formatMessage(messages.posted), { variant: 'success' });
     this.setState({ message: messages.posted }, () => {
       this.setState({ message: null });
     });
