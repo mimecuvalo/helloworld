@@ -94,13 +94,13 @@ export async function getUserRemoteInfo(websiteUrl, local_username) {
 
   const htmlDoc = await getHTML(websiteUrl);
   const atomLinks = feedMeta['atom:link'] ? [feedMeta['atom:link']].flat(1) : [];
-  userRemote.profile_url = userRemote.profile_url || feedMeta['atom:author']?.['uri'] || websiteUrl;
+  userRemote.profile_url = userRemote.profile_url || feedMeta['atom:author']?.['uri']?.['#'] || websiteUrl;
   userRemote.hub_url = atomLinks.find(el => el['@'].rel === 'hub')?.['@'].href;
   userRemote.salmon_url = userRemote.salmon_url || atomLinks.find(el => el['@'].rel === 'salmon')?.['@'].href;
   userRemote.webmention_url = userRemote.webmention_url || htmlDoc('link[rel="webmention"]').attr('href');
   userRemote.username =
-    userRemote.username || feedMeta['atom:author']?.['poco:preferredusername']['#'] || feedMeta.title;
-  userRemote.name = feedMeta['atom:author']?.['poco:displayname']['#'] || '';
+    userRemote.username || feedMeta['atom:author']?.['poco:preferredusername']?.['#'] || feedMeta.title;
+  userRemote.name = feedMeta['atom:author']?.['poco:displayname']?.['#'] || '';
   userRemote.favicon =
     feedMeta.favicon ||
     createAbsoluteUrl(websiteUrl, htmlDoc('link[rel="shortcut icon"]')['href']) ||

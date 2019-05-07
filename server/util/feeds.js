@@ -118,6 +118,7 @@ async function mapFeedEntriesToModelEntries(feedEntries, userRemote) {
 
 async function handleEntry(feedEntry, userRemote) {
   const entryId = feedEntry.guid || feedEntry.link || feedEntry.permalink;
+  const link = feedEntry.link || feedEntry.permalink;
 
   const existingModelEntry = await models.Content_Remote.findOne({
     where: {
@@ -143,7 +144,14 @@ async function handleEntry(feedEntry, userRemote) {
     return;
   }
 
-  let view = sanitizeHTML(feedEntry.description || feedEntry.summary);
+  let view = feedEntry.description || feedEntry.summary;
+
+  const thumbnail = feedEntry['media:group']?.['media:thumbnail']?.['@']['url'];
+  if (!view && thumbnail) {
+    view = `<a href="${link}" target="_blank" rel="noopener noreferrer"><img src="${thumbnail}" alt="thumbnail" /></a>`;
+  }
+
+  view = sanitizeHTML(view);
 
   // XXX(mime): A shortcoming of feedparser currently is that it doesn't resolve relative urls for feeds that have
   // urls in the content, e.g. kottke.org Fix this hackily for now. It should really be looking at xml:base in the XML.
@@ -187,7 +195,7 @@ async function handleEntry(feedEntry, userRemote) {
     creator: feedEntry.author,
     from_user: userRemote.profile_url,
     from_user_remote_id: userRemote.id,
-    link: feedEntry.link || feedEntry.permalink,
+    link,
     post_id: entryId,
     thread,
     title: feedEntry.title || 'untitled',
