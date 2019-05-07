@@ -32,6 +32,7 @@ export default gql`
     fetchUser(id: Int!): UserPrivate
     fetchPublicUserData(username: String): UserPublic
     fetchPublicUserDataHead(username: String): UserPublic
+    fetchPublicUserDataSearch(username: String): UserPublic
   }
 
   extend type Mutation {

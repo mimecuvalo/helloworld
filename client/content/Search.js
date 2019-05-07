@@ -29,7 +29,7 @@ const messages = defineMessages({
         username
       }
 
-      fetchPublicUserData(username: $username) {
+      fetchPublicUserDataSearch(username: $username) {
         description
         title
         username
@@ -59,7 +59,7 @@ class Search extends PureComponent {
 
     const query = this.props.match.params.query;
     const results = this.props.data.searchContent;
-    const contentOwner = this.props.data.fetchPublicUserData;
+    const contentOwner = this.props.data.fetchPublicUserDataSearch;
     const pageTitle = this.props.intl.formatMessage(messages.search);
     const untitled = this.props.intl.formatMessage(messages.untitled);
 

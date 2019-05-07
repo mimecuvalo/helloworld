@@ -44,6 +44,10 @@ const User = {
     async fetchPublicUserDataHead(parent, { username }, { hostname, models }) {
       return await User.Query.fetchPublicUserData(parent, { username }, { hostname, models });
     },
+    // XXX(mime): see HTMLHead.js :(
+    async fetchPublicUserDataSearch(parent, { username }, { hostname, models }) {
+      return await User.Query.fetchPublicUserData(parent, { username }, { hostname, models });
+    },
   },
 
   // Example stubs of mutations, non-functional out of the box.
