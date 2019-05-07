@@ -54,12 +54,11 @@ export async function getHTML(url) {
 export async function discoverUserRemoteInfoSaveAndSubscribe(req, url, local_username) {
   const userRemote = await getUserRemoteInfo(url, local_username);
 
-  const existingUserRemote = await models.User_Remote.findOne({
-    where: {
-      local_username: userRemote.local_username,
-      profile_url: userRemote.profile_url,
-    },
-  });
+  const where = {
+    local_username: userRemote.local_username,
+    profile_url: userRemote.profile_url,
+  };
+  const existingUserRemote = await models.User_Remote.findOne({ where });
 
   userRemote.id = existingUserRemote?.id || undefined;
   userRemote.following = true;
@@ -71,7 +70,7 @@ export async function discoverUserRemoteInfoSaveAndSubscribe(req, url, local_use
     await pubSubHubSubscriber.subscribe(userRemote.hub_url, constants.pushHub, callbackUrl);
   }
 
-  return userRemote;
+  return await models.User_Remote.findOne({ where });
 }
 
 export async function getUserRemoteInfo(websiteUrl, local_username) {

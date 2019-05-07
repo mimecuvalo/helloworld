@@ -34,7 +34,6 @@ export async function followUser(req, currentUser, profileUrl) {
     return userRemote;
   } catch (ex) {
     console.error(ex);
-    throw ex;
   }
 }
 
@@ -45,6 +44,6 @@ export async function unfollowUser(req, currentUser, userRemote, hub_url, profil
     await pubSubHubSubscriber.unsubscribe(hub_url, constants.pushHub, callbackUrl);
     salmonFollow(req, currentUser.model, userRemote.salmon_url, false /* isFollow */);
   } catch (ex) {
-    throw ex;
+    console.error(ex);
   }
 }
