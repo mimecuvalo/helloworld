@@ -51,7 +51,13 @@ class Item extends PureComponent {
   }
 
   maybeMarkAsRead = () => {
-    if (!this.state.keepUnread && this.item.current && this.item.current.getBoundingClientRect().top < 5) {
+    const doc = document.documentElement;
+    const bottomOfFeed = doc.scrollTop + window.innerHeight >= doc.scrollHeight - 50;
+    if (
+      !this.state.keepUnread &&
+      this.item.current &&
+      (this.item.current.getBoundingClientRect().top < 5 || bottomOfFeed)
+    ) {
       this.removeEventListeners();
 
       this.readContentRemote(true);
