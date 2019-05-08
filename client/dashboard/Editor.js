@@ -42,6 +42,11 @@ class DashboardEditor extends PureComponent {
       this.reblog(img || url);
       window.location.hash = '';
     }
+
+    // On first load, set unsaved changes to false, the first change is just a focus selection change.
+    setTimeout(() => {
+      this.editor.current && this.editor.current.setUnsavedChanges(false);
+    }, 0);
   }
 
   reblog(text) {

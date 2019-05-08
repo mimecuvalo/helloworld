@@ -52,6 +52,7 @@ export default class ContentEditor extends Component {
 
   setUnsavedChanges(hasUnsavedChanges) {
     this.setState({ hasUnsavedChanges });
+    this.contentEditor.current && this.contentEditor.current.setUnsavedChanges(hasUnsavedChanges);
   }
 
   export() {

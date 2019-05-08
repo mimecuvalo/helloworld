@@ -111,13 +111,16 @@ class HelloWorldEditor extends Component {
       .getPlainText()
       .trim();
 
-    this.setState({
-      editorState,
-      hasText,
-      hasUnsavedChanges: !this.props.dontWarnOnUnsaved,
-    });
-
-    this.props.onChange && this.props.onChange();
+    this.setState(
+      {
+        editorState,
+        hasText,
+        hasUnsavedChanges: !this.props.dontWarnOnUnsaved,
+      },
+      () => {
+        this.props.onChange && this.props.onChange();
+      }
+    );
   };
 
   handleDroppedFiles = async (selection, files) => {
@@ -129,12 +132,7 @@ class HelloWorldEditor extends Component {
       return;
     }
 
-    this.setState({ editorState }, () => {
-      // XXX(mime): This is bad. The editor state isn't consistent if you try to export right
-      // after pasting. I can't tell if it's because of the `await` above or some kind of race
-      // condition. :-/
-      this.export();
-    });
+    this.onChange(editorState);
 
     this.props.onMediaAdd && this.props.onMediaAdd(fileInfos);
   };
@@ -147,7 +145,7 @@ class HelloWorldEditor extends Component {
     }
 
     if (typeof editorState === 'object') {
-      this.setState({ editorState });
+      this.onChange(editorState);
     }
 
     return 'handled';
@@ -166,7 +164,7 @@ class HelloWorldEditor extends Component {
   };
 
   handleOnTab = evt => {
-    this.setState({ editorState: RichUtils.onTab(evt, this.state.editorState, MAX_DEPTH) });
+    this.onChange(RichUtils.onTab(evt, this.state.editorState, MAX_DEPTH));
   };
 
   handlePastedText = async (text, html, editorState) => {
@@ -185,12 +183,7 @@ class HelloWorldEditor extends Component {
         return;
       }
 
-      this.setState({ editorState: editorStateAndInfo.editorState }, () => {
-        // XXX(mime): This is bad. The editor state isn't consistent if you try to export right
-        // after pasting. I can't tell if it's because of the `await` above or some kind of race
-        // condition. :-/
-        this.export();
-      });
+      this.onChange(editorStateAndInfo.editorState);
 
       if (editorStateAndInfo.thumb) {
         this.props.onMediaAdd && this.props.onMediaAdd([{ thumb: editorStateAndInfo.thumb }]);
@@ -203,11 +196,8 @@ class HelloWorldEditor extends Component {
   }
 
   clear() {
-    this.setState({
-      editorState: EditorState.createEmpty(),
-      hasText: false,
-      hasUnsavedChanges: false,
-    });
+    this.onChange(EditorState.createEmpty());
+    this.setState({ hasUnsavedChanges: false });
   }
 
   render() {
