@@ -23,6 +23,7 @@
     "draft-js-plugins-editor": "2.1.1",
     "draft-js-side-toolbar-plugin": "3.0.1",
     "feedparser": "2.2.9",
+    "js-cookie": "2.2.0",
     "magic-signatures": "2.0.0",
     "mime": "2.4.2",
     "multer": "1.4.1",

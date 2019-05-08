@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { compose, graphql } from 'react-apollo';
 import ContentEditor from '../content/ContentEditor';
 import { convertFromRaw, EditorState } from 'draft-js';
+import Cookies from 'js-cookie';
 import { defineMessages, F } from '../../shared/i18n';
 import FormControl from '@material-ui/core/FormControl';
 import { getTextForLine } from '../editor/utils/Text';
@@ -47,6 +48,11 @@ class DashboardEditor extends PureComponent {
     setTimeout(() => {
       this.editor.current && this.editor.current.setUnsavedChanges(false);
     }, 0);
+
+    const sectionAndAlbum = Cookies.get('sectionAndAlbum');
+    if (sectionAndAlbum) {
+      this.setState({ sectionAndAlbum });
+    }
   }
 
   reblog(text) {
@@ -101,6 +107,7 @@ class DashboardEditor extends PureComponent {
 
   handleSectionAndAlbumChange = evt => {
     this.setState({ [evt.target.name]: evt.target.value });
+    Cookies.set('sectionAndAlbum', evt.target.value);
   };
 
   generateSiteMapItem(item, albums, sectionName) {
