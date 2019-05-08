@@ -25,6 +25,7 @@ import React, { PureComponent } from 'react';
         theme
         title
         username
+        viewport
       }
     }
   `,
@@ -66,6 +67,7 @@ class HTMLHead extends PureComponent {
       'thr:count': content.comments_count,
       'thr:updated': new Date(content.comments_updated).toISOString(),
     };
+    let viewport = 'width=device-width, initial-scale=1, shrink-to-fit=no';
 
     if (contentOwner) {
       description = contentOwner.description && <meta name="description" content={contentOwner.description} />;
@@ -74,6 +76,7 @@ class HTMLHead extends PureComponent {
       theme = contentOwner.theme && <link rel="stylesheet" href={contentOwner.theme} />;
       title = contentOwner.title;
       username = contentOwner.username;
+      viewport = contentOwner.viewport || viewport;
     }
 
     if (!theme) {
@@ -106,7 +109,7 @@ class HTMLHead extends PureComponent {
         />
         <link rel="canonical" href={content && contentUrl(content)} />
         {rss}
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="viewport" content={viewport} />
         <meta name="theme-color" content="#000000" />
         <meta name="generator" content="Hello, world. https://github.com/mimecuvalo/helloworld" />
         {description}

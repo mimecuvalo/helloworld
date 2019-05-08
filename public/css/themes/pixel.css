@@ -192,13 +192,18 @@ button.hw-edit {
     float: none;
   }
 
-  .hw-item > header:first-child {
-    width: auto;
-    max-width: cacl(100vw - 20px);
+  article > .hw-item:first-child > header:first-child {
+    margin-top: 32px;
   }
 
-  .hw-item {
+  .hw-item > header:first-child {
     width: auto;
+    max-width: calc(100vw - 20px);
+  }
+
+  #hw-content .DraftEditor-root,
+  .hw-item {
+    width: calc(100vw - 20px);
   }
 
   .hw-item figure img {

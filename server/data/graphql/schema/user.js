@@ -11,6 +11,7 @@ const commonFields = `
   favicon: String
   logo: String
   theme: String!
+  viewport: String
 `;
 
 // Keep in sync with both models/user.js and migrations/[date]-create-user.js

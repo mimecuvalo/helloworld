@@ -35,6 +35,7 @@ const User = {
           'favicon',
           'logo',
           'theme',
+          'viewport',
         ],
         where: { username },
       });

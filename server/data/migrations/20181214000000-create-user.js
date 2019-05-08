@@ -38,6 +38,7 @@ module.exports = {
       google_analytics: { type: Sequelize.STRING(191) },
       favicon: { type: Sequelize.TEXT('medium') },
       logo: { type: Sequelize.TEXT('medium') },
+      viewport: { type: Sequelize.TEXT('tiny') },
       theme: {
         type: Sequelize.STRING(191),
         allowNull: false,

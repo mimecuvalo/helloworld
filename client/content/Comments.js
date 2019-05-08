@@ -86,7 +86,7 @@ class Comments extends Component {
           const isOwnerViewing = user?.model?.username === content.username;
 
           return (
-            <>
+            <div className="hw-comments">
               <h3 className={styles.commentsHeader}>
                 <F msg="comments" />
               </h3>
@@ -139,7 +139,7 @@ class Comments extends Component {
                   ))}
                 </ul>
               ) : null}
-            </>
+            </div>
           );
         }}
       </UserContext.Consumer>

@@ -58,6 +58,7 @@ export default (sequelize, Sequelize) => {
       },
       favicon: { type: Sequelize.TEXT('medium') },
       logo: { type: Sequelize.TEXT('medium') },
+      viewport: { type: Sequelize.TEXT('tiny') },
       theme: {
         type: Sequelize.STRING(191),
         allowNull: false,
