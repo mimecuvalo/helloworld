@@ -39,6 +39,7 @@
     "react-jss": "8.6.1",
     "sanitize-html": "1.20.0",
     "sharp": "0.21.3",
+    "swipe-listener": "1.0.7",
     "uuid": "3.3.2"
   },
   "scripts": {

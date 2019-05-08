@@ -11,6 +11,7 @@ import NotFound from '../error/404';
 import React, { Component } from 'react';
 import Simple from './templates/Simple';
 import styles from './Content.module.css';
+import SwipeListener from 'swipe-listener';
 import { withRouter } from 'react-router-dom';
 
 @withRouter
@@ -18,7 +19,10 @@ class Content extends Component {
   constructor(props) {
     super(props);
 
+    this.contentBase = React.createRef();
     this.item = React.createRef();
+    this.nav = React.createRef();
+    this.swipeListener = null;
 
     this.state = {
       isEditing: false,
@@ -37,6 +41,33 @@ class Content extends Component {
     if (currentWindowUrl.pathname !== parsedCanonicalUrl.pathname) {
       this.props.history.replace(canonicalUrl);
     }
+
+    this.setupSwipe();
+  }
+
+  componentWillUnmount() {
+    this.swipeListener && this.swipeListener.off();
+  }
+
+  componentDidUpdate() {
+    this.setupSwipe();
+  }
+
+  setupSwipe() {
+    if (this.swipeListener || !this.contentBase.current) {
+      return;
+    }
+
+    this.swipeListener = SwipeListener(this.contentBase.current);
+    this.contentBase.current.addEventListener('swipe', e => {
+      const directions = e.detail.directions;
+
+      if (directions.left) {
+        this.nav.current && this.nav.current.prev();
+      } else if (directions.right) {
+        this.nav.current && this.nav.current.next();
+      }
+    });
   }
 
   shouldComponentUpdate(nextProps) {
@@ -116,9 +147,15 @@ class Content extends Component {
     const title = (content.title ? content.title + ' – ' : '') + contentOwner.title;
 
     return (
-      <ContentBase content={content} contentOwner={contentOwner} title={title} username={content.username}>
+      <ContentBase
+        ref={this.contentBase}
+        content={content}
+        contentOwner={contentOwner}
+        title={title}
+        username={content.username}
+      >
         <article className={classNames(styles.content, 'hw-invisible-transition')}>
-          {isEditing ? null : <Nav content={content} />}
+          {isEditing ? null : <Nav ref={this.nav} content={content} />}
           {item}
         </article>
       </ContentBase>

@@ -5,37 +5,41 @@ import React from 'react';
 import SiteMap from './SiteMap';
 import styles from './Content.module.css';
 
-const ContentBase = React.memo(function ContentBase({ children, className, content, contentOwner, title, username }) {
-  return (
-    <DocumentTitle title={title}>
-      <div id="hw-content" className={classNames(styles.container, className)}>
-        <header>
-          <h1 className="p-summary">{`${contentOwner.title}` + (title ? ` - ${title}` : '')}</h1>
-          <h2>{contentOwner.description}</h2>
-        </header>
+const ContentBase = React.memo(
+  React.forwardRef((props, ref) => {
+    const { children, className, contentOwner, title, username } = props;
 
-        <div className={styles.articleNavContainer}>
-          <SiteMap username={username} />
+    return (
+      <DocumentTitle title={title}>
+        <div ref={ref} id="hw-content" className={classNames(styles.container, className)}>
+          <header>
+            <h1 className="p-summary">{`${contentOwner.title}` + (title ? ` - ${title}` : '')}</h1>
+            <h2>{contentOwner.description}</h2>
+          </header>
 
-          {children}
+          <div className={styles.articleNavContainer}>
+            <SiteMap username={username} />
+
+            {children}
+          </div>
+
+          <footer className={styles.footer}>
+            <F
+              msg="powered by {br} {link}"
+              values={{
+                br: <br />,
+                link: (
+                  <a href="https://github.com/mimecuvalo/helloworld" rel="generator">
+                    Hello, world.
+                  </a>
+                ),
+              }}
+            />
+          </footer>
         </div>
-
-        <footer className={styles.footer}>
-          <F
-            msg="powered by {br} {link}"
-            values={{
-              br: <br />,
-              link: (
-                <a href="https://github.com/mimecuvalo/helloworld" rel="generator">
-                  Hello, world.
-                </a>
-              ),
-            }}
-          />
-        </footer>
-      </div>
-    </DocumentTitle>
-  );
-});
+      </DocumentTitle>
+    );
+  })
+);
 
 export default ContentBase;

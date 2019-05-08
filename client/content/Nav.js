@@ -52,6 +52,7 @@ const NAV_FIELDS = `
         name,
       },
     }),
+    withRef: true,
   }
 )
 class Nav extends Component {
@@ -91,6 +92,14 @@ class Nav extends Component {
 
   shouldComponentUpdate(nextProps) {
     return !nextProps.data.loading;
+  }
+
+  goPrev() {
+    this.prev?.current && this.prev.current.click();
+  }
+
+  goNext() {
+    this.next?.current && this.next.current.click();
   }
 
   renderLink(contentMeta, name, msg) {
@@ -164,6 +173,23 @@ class Nav extends Component {
   }
 }
 
-const NavWithApolloClient = props => <ApolloConsumer>{client => <Nav client={client} {...props} />}</ApolloConsumer>;
+export default class NavWithApolloClient extends Component {
+  constructor(props) {
+    super(props);
 
-export default NavWithApolloClient;
+    this.nav = React.createRef();
+  }
+
+  prev() {
+    this.nav.current && this.nav.current.getWrappedInstance().goPrev();
+  }
+
+  next() {
+    console.log(this.nav.current.getWrappedInstance());
+    this.nav.current && this.nav.current.getWrappedInstance().goNext();
+  }
+
+  render() {
+    return <ApolloConsumer>{client => <Nav ref={this.nav} client={client} {...this.props} />}</ApolloConsumer>;
+  }
+}
