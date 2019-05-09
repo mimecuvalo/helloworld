@@ -21,7 +21,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.public-DraftEditor-content[contenteditable='false'] > [data-contents='true'] > [data-block='true']:first-child {
+.hw-view
+  .public-DraftEditor-content[contenteditable='false']
+  > [data-contents='true']
+  > [data-block='true']:first-child {
   display: none;
 }
 
