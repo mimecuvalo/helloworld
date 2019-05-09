@@ -5,7 +5,6 @@
   federated social web blog<br>
   using the foundation of [CRA-all-the-things](https://github.com/mimecuvalo/all-the-things)
   <br>
-  UNDER REDEVELOPMENT - DO NOT USE - NOT QUITE READY FOR BROAD USE YET!
 </blockquote>
 
 <p align="center">
@@ -54,36 +53,94 @@ npm run test
 ```
 
 ## ⚡ Features
+
 - social features:
   - RSS reader
   - oStatus stack, PuSH/Salmon/Webfinger
-  - be able to comment
-  - spam control
+  - commenting
   - api to follow/reblog content (pretty basic right now)
-  - fb/google+/twitter mirroring (backwards compatibility ;)
 - WYSIWYG editor
   - edit content in page, or add new content via dashboard
-  - media manager (get oembed/open graph info from websites)
   - rich content pasting (paste in url/embed and we'll grab the video or image)
   - tagging objects through #catvideo and people @bestfriendforevs
-  - feed/events/links/store/slideshow templates
+  - different templates (namely, albums currently)
   - CSS/JS/HTML editing via CodeMirror
-  - resumable uploads via resumable.js
-- content management
-  - drag & drop to move sections
-  - drag & drop to move content in albums
-  - have hidden content
 - technology features:
   - foundation: [CRA-all-the-things](https://github.com/mimecuvalo/all-the-things)
-  - spam control
   - Auth0 for logging
-  - data liberation, ability to port data to another site/service
 
 ## 🎯 Goals
+
 - pass [SWAT0](https://indieweb.org/SWAT0)
 - open source
 - easy to install
 - be a good, easy-to-use alternative to what's out there!
+
+## 🗺️ Roadmap
+
+### p0 (high pri)
+
+- separate packages for editor and socialize api
+- social Features
+  - verify oStatus support, follow/favorite/reply, unfollow (skip xsrf, also push/pubsub)
+  - see remote comments
+  - WebSub (pubsubhubbub)
+  - see if ostatus is still case-sensitive, if not make all lower case foaf, webfinger, host_meta, too confusing with react warnings
+- same Apollo query twice causes SSR to fail with htmlHead, wtf.
+
+### p1 (medium pri)
+
+- web components? (e.g. check out youtube.com)
+- update material-ui with proper theme (instead of pixel.css)
+- hubspot's draft-extend / draft-convert might be a better route than draft-js-plugins, maybe combine the two editors
+- links template just open embeds in lightbox?
+- editor features to bring back (from Python version)
+  - better emoji picker (can use EmojiOne's)
+  - draft.js:
+    - custom tab behavior - draft.js's default is lame
+    - add markdown
+      - https://github.com/withspectrum/draft-js-markdown-plugin
+      - https://github.com/ngs/draft-js-markdown-shortcuts-plugin
+      - --- for divider
+    - add inline-code
+    - code, use prism syntax highlighting
+    - google maps embed
+    - can’t import CSS for some reason into webpack from node_modules (from draft-js-plugins)
+    - DraftEntity.get/create deprecated
+    - multiple images - single undo instead of two (also when pasting unfurl)
+    - use something instead of ' ‘ and ‘a’ for atomic blocks
+    - convertFromHTML bug - this will fail `<figure>    <img src="">  </figure>` but w/o whitespace won’t
+    - toolbar don’t move on click (position so it doesn’t go off screen), get rid of scale
+    - checklist / tasklist
+    - dnd + align toolbars don’t actually work
+  - create new sections / albums, renames (and redirects)
+  - content rename (and redirects)
+  - draggable, be able to drag album, sitemap, followers and move to different categories
+  - simple content is uneditable
+  - audio/video uploads
+  - css/js live updates to wysiwyg
+  - figcaption
+- dashboard: better way to sandbox remote content?
+- bring back old features (from Python version)
+  - data liberation, ability to port data to another site/service
+  - themes
+  - forums
+  - events
+  - store
+  - slideshow
+  - favorites and shares
+  - spam control
+  - webfinger if http://ostatus.org/schema/1.0/subscribe present then show Follow button for user
+  - fb/google+/twitter mirroring (backwards compatibility ;)
+  - media manager: had support for video/audio/images
+  - resumable uploads
+  - edit images
+  - newsletter, google analytics, basic ads, adult content flag
+  - Structured data w movies music
+  - content management
+    - drag & drop to move sections
+    - drag & drop to move content in albums
+    - have hidden content
 
 ## 📙 Learn More
 
