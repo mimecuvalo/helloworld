@@ -2,6 +2,7 @@ import { combineResolvers } from 'graphql-resolvers';
 import { convertFromRaw } from 'draft-js';
 import { convertToHTML } from 'draft-convert';
 import draftJSExtendPlugins from '../../../../client/editor/plugins';
+import { escapeRegExp } from '../../../../shared/util/regex';
 import { isAdmin, isAuthor } from './authorization';
 import { isRobotViewing } from '../../../util/crawler';
 import nanoid from 'nanoid';
@@ -438,6 +439,7 @@ const Content = {
 export default Content;
 
 function toHTML(content, title) {
+  title = escapeRegExp(title);
   const html = draftJSExtendPlugins(convertToHTML)(convertFromRaw(JSON.parse(content)));
   return html.replace(new RegExp(`^<p>${title}</p>`), '');
 }
