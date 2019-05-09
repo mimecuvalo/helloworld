@@ -22,9 +22,9 @@ async function renderAppTree(app) {
   const apolloUrl = buildUrl({ isAbsolute: true, pathname: '/graphql' });
 
   // link to use if batching
-  // also adds a `batch: true` header to the request to prove it's a different link
+  // also adds a `batch: true` header to the request to prove it's a different link (default)
   const batchHttpLink = new BatchHttpLink({ apolloUrl });
-  // link to use if not batching (default)
+  // link to use if not batching
   const httpLink = new HttpLink({ apolloUrl });
 
   // We add the Apollo/GraphQL capabilities here (also notice ApolloProvider below).
