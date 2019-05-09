@@ -60,7 +60,7 @@ class Footer extends PureComponent {
             </>
           )}
         &nbsp;•&nbsp;
-        <a href={contentUrl(content)} target="_blank" rel="noopener noreferrer">
+        <a href={contentUrl(content)} target="_blank" rel="bookmark noopener noreferrer">
           <F msg="permalink" />
         </a>
         &nbsp;•&nbsp;

@@ -31,13 +31,13 @@ export default class Item extends PureComponent {
     let TemplateComponent = COMPONENT_TYPE_MAP[content.template] || Simple;
 
     return (
-      <section className="hw-item h-entry">
+      <article className="hw-item h-entry">
         <Header content={content} handleEdit={handleEdit} isEditing={isEditing} />
         <TemplateComponent ref={this.template} content={content} isEditing={isEditing} isFeed={isFeed} />
         <Footer content={content} />
         {!isFeed ? <Comments comments={comments} content={content} /> : null}
         {!isFeed ? <Favorites favorites={favorites} content={content} /> : null}
-      </section>
+      </article>
     );
   }
 }
