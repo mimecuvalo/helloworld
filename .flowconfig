@@ -13,5 +13,7 @@ flow-typed
 all=true
 esproposal.class_static_fields=enable
 esproposal.class_instance_fields=enable
+esproposal.decorators=ignore
+esproposal.optional_chaining=enable
 
 [strict]
