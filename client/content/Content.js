@@ -3,7 +3,9 @@ import classNames from 'classnames';
 import { compose, graphql } from 'react-apollo';
 import ContentBase from './ContentBase';
 import ContentQuery from './ContentQuery';
+import { convertFromRaw, EditorState } from 'draft-js';
 import Feed from './Feed';
+import { getTextForLine } from '../editor/utils/Text';
 import gql from 'graphql-tag';
 import Item from './Item';
 import Nav from './Nav';
@@ -90,10 +92,15 @@ class Content extends Component {
     const { username, name } = this.props.data.fetchContent;
     const editor = this.item.current.getEditor();
     const content = editor.export();
+
+    // TODO(mime): gotta be a simpler way then all this conversion.
+    const title = getTextForLine(EditorState.createWithContent(convertFromRaw(content.content)), 0);
+
     const variables = {
       username,
       name,
       hidden: false, // TODO(mime)
+      title,
       content: JSON.stringify(content.content),
       style: content.style,
       code: content.code,
@@ -177,11 +184,19 @@ export default compose(
     }),
   }),
   graphql(gql`
-    mutation saveContent($name: String!, $hidden: Boolean!, $style: String!, $code: String!, $content: String!) {
-      saveContent(name: $name, hidden: $hidden, style: $style, code: $code, content: $content) {
+    mutation saveContent(
+      $name: String!
+      $hidden: Boolean!
+      $title: String!
+      $style: String!
+      $code: String!
+      $content: String!
+    ) {
+      saveContent(name: $name, hidden: $hidden, title: $title, style: $style, code: $code, content: $content) {
         username
         name
         hidden
+        title
         style
         code
         content

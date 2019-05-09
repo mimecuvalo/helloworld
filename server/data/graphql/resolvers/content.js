@@ -361,15 +361,16 @@ const Content = {
   Mutation: {
     saveContent: combineResolvers(
       isAuthor,
-      async (parent, { name, hidden, style, code, content }, { currentUser, models, req }) => {
+      async (parent, { name, hidden, title, style, code, content }, { currentUser, models, req }) => {
         const username = currentUser.model.username;
         await models.Content.update(
           {
             hidden,
+            title,
             style,
             code,
             content,
-            view: toHTML(content),
+            view: toHTML(content, title),
           },
           {
             where: {
@@ -385,7 +386,7 @@ const Content = {
           await socialize(req, currentUser.model, updatedContent);
         }
 
-        return { username: currentUser.model.username, name, hidden, style, code, content };
+        return { username: currentUser.model.username, name, hidden, title, style, code, content };
       }
     ),
 
@@ -410,7 +411,7 @@ const Content = {
           style,
           code,
           content,
-          view: toHTML(content),
+          view: toHTML(content, title),
         });
 
         if (!hidden) {
@@ -436,8 +437,9 @@ const Content = {
 
 export default Content;
 
-function toHTML(content) {
-  return draftJSExtendPlugins(convertToHTML)(convertFromRaw(JSON.parse(content)));
+function toHTML(content, title) {
+  const html = draftJSExtendPlugins(convertToHTML)(convertFromRaw(JSON.parse(content)));
+  return html.replace(new RegExp(`^<p>${title}</p>`), '');
 }
 
 function getSQLSortType(sortType) {
