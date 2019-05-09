@@ -1,4 +1,7 @@
 import { combineResolvers } from 'graphql-resolvers';
+import { convertFromRaw } from 'draft-js';
+import { convertToHTML } from 'draft-convert';
+import draftJSExtendPlugins from '../../../../client/editor/plugins';
 import { isAdmin, isAuthor } from './authorization';
 import { isRobotViewing } from '../../../util/crawler';
 import nanoid from 'nanoid';
@@ -366,6 +369,7 @@ const Content = {
             style,
             code,
             content,
+            view: toHTML(content),
           },
           {
             where: {
@@ -381,7 +385,7 @@ const Content = {
           await socialize(req, currentUser.model, updatedContent);
         }
 
-        return { username: currentUser.model.username, name, style, code, content };
+        return { username: currentUser.model.username, name, hidden, style, code, content };
       }
     ),
 
@@ -406,6 +410,7 @@ const Content = {
           style,
           code,
           content,
+          view: toHTML(content),
         });
 
         if (!hidden) {
@@ -430,6 +435,10 @@ const Content = {
 };
 
 export default Content;
+
+function toHTML(content) {
+  return draftJSExtendPlugins(convertToHTML)(convertFromRaw(JSON.parse(content)));
+}
 
 function getSQLSortType(sortType) {
   if (sortType === 'oldest') {
