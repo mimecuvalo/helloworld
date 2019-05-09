@@ -17,6 +17,7 @@ export default gql`
       section
       style
       template
+      thread
       thumb
       title
       updatedAt

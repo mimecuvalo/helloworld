@@ -12,8 +12,6 @@ class Footer extends PureComponent {
     document.getElementById('hw-content').requestFullscreen();
   };
 
-  handleReply = evt => {};
-
   render() {
     const content = this.props.content;
     const { count, count_robot, createdAt, updatedAt, username } = content;
@@ -80,14 +78,14 @@ class Footer extends PureComponent {
           msg="{count, plural, =0 {no robot views} one {# robot view} other {# robot views}}"
           values={{ count: count_robot }}
         />
-        {!isOwnerViewing &&
-          this.context.user && (
-            <a href="#reply" onClick={this.handleReply}>
-              <F msg="reply" />
+        {content.thread ? (
+          <>
+            &nbsp;•&nbsp;
+            <a href={content.thread} target="_blank" rel="noopener noreferrer">
+              <F msg="view thread" />
             </a>
-          )}
-        {/* <CommentEntry /> TODO(mime) */}
-        {/* <Comments /> TODO(mime) */}
+          </>
+        ) : null}
       </footer>
     );
   }
