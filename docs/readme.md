@@ -19,6 +19,8 @@
   </a>
 </p>
 
+<strong>NOTE: still under active development and I'm not currently providing backwards compatibility until things stabilize.</strong>
+
 ## 📯 Description
 
 federated social web blog app. basically, i'm trying to build an open-source Tumblr (RIP). passes [SWAT0](https://indieweb.org/SWAT0)!
@@ -81,8 +83,10 @@ npm run test
 ### p0 (high pri)
 
 - separate packages for editor and socialize api
+  - take a look at lerna: https://medium.com/@luisvieira_gmr/building-large-scale-react-applications-in-a-monorepo-91cd4637c131
 - social features
   - verify oStatus support, follow/favorite/reply, unfollow (skip xsrf, also push/pubsub), with status.net (a.k.a. gnu social), friendi.ca, Pleroma, socialhome, hubzilla
+  - reference: https://ostatus.readthedocs.io/en/latest/data_structures.html
   - activitypub
     - alternate: https://github.com/dariusk/rss-to-activitypub
   - verify webmention working again
@@ -93,6 +97,7 @@ npm run test
   - WebSub (pubsubhubbub)
   - see if ostatus is still case-sensitive, if not make all lower case foaf, webfinger, host_meta, too confusing with react warnings
 - same Apollo query twice causes SSR to fail with htmlHead, wtf.
+- check out dataloader: https://github.com/graphql/dataloader
 
 ### p1 (medium pri)
 
@@ -110,6 +115,7 @@ npm run test
       - https://github.com/ngs/draft-js-markdown-shortcuts-plugin
       - --- for divider
     - add inline-code
+    - take a look at utils codebase: https://github.com/jpuri/draftjs-utils
     - code, use prism syntax highlighting
     - google maps embed
     - can’t import CSS for some reason into webpack from node_modules (from draft-js-plugins)
