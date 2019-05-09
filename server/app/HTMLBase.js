@@ -1,3 +1,4 @@
+import { buildUrl } from '../../shared/util/url_factory';
 import { F } from '../../shared/i18n';
 import HTMLHead from './HTMLHead';
 import React from 'react';
@@ -17,19 +18,11 @@ export default function HTMLBase({
   nonce,
   publicUrl,
   req,
-  urls,
   user,
 }) {
   return (
     <html lang={locale}>
-      <HTMLHead
-        appName={appName}
-        assetPathsByType={assetPathsByType}
-        nonce={nonce}
-        publicUrl={publicUrl}
-        req={req}
-        urls={urls}
-      />
+      <HTMLHead appName={appName} assetPathsByType={assetPathsByType} nonce={nonce} publicUrl={publicUrl} req={req} />
       <body>
         <div id="root">{children}</div>
         <ConfigurationScript
@@ -57,7 +50,7 @@ export default function HTMLBase({
           <script nonce={nonce} key={path} src={path} />
         ))}
 
-        <StructuredMetaData nonce={nonce} appName={appName} urls={urls} />
+        <StructuredMetaData nonce={nonce} appName={appName} req={req} />
 
         {/*
           This HTML file is a template.
@@ -151,7 +144,9 @@ function WindowErrorScript({ nonce }) {
 
 // This needs to be filled out by the developer to provide content for the site.
 // Learn more here: https://developers.google.com/search/docs/guides/intro-structured-data
-function StructuredMetaData({ appName, urls, nonce }) {
+function StructuredMetaData({ appName, req, nonce }) {
+  const url = buildUrl({ req, pathname: '/' });
+
   return (
     <script
       nonce={nonce}
@@ -163,7 +158,7 @@ function StructuredMetaData({ appName, urls, nonce }) {
           "@type": "NewsArticle",
           "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "${urls.localUrlForBrowser}"
+            "@id": "${url}"
           },
           "headline": "page title",
           "image": [
@@ -180,7 +175,7 @@ function StructuredMetaData({ appName, urls, nonce }) {
             "name": "${appName}",
             "logo": {
               "@type": "ImageObject",
-              "url": "${urls.localUrlForBrowser}favicon.ico"
+              "url": "${url}favicon.ico"
             }
           },
           "description": "page description"
