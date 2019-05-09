@@ -81,8 +81,14 @@ npm run test
 ### p0 (high pri)
 
 - separate packages for editor and socialize api
-- social Features
-  - verify oStatus support, follow/favorite/reply, unfollow (skip xsrf, also push/pubsub)
+- social features
+  - verify oStatus support, follow/favorite/reply, unfollow (skip xsrf, also push/pubsub), with status.net (a.k.a. gnu social), friendi.ca, Pleroma, socialhome, hubzilla
+  - activitypub
+    - alternate: https://github.com/dariusk/rss-to-activitypub
+  - verify webmention working again
+  - publish to fediverse.party and the-federation.info and https://en.wikipedia.org/wiki/ActivityPub and https://en.wikipedia.org/wiki/Fediverse
+  - check out https://fed.brid.gy/
+  - mastodon compatibility
   - see remote comments
   - WebSub (pubsubhubbub)
   - see if ostatus is still case-sensitive, if not make all lower case foaf, webfinger, host_meta, too confusing with react warnings
@@ -96,6 +102,7 @@ npm run test
 - links template just open embeds in lightbox?
 - editor features to bring back (from Python version)
   - better emoji picker (can use EmojiOne's)
+  - custom emojis
   - draft.js:
     - custom tab behavior - draft.js's default is lame
     - add markdown
