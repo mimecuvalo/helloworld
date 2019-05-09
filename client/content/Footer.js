@@ -15,7 +15,6 @@ class Footer extends PureComponent {
   render() {
     const content = this.props.content;
     const { count, count_robot, createdAt, updatedAt, username } = content;
-    const isOwnerViewing = this.context.user?.model?.username === username;
 
     return (
       <footer className={styles.footer}>

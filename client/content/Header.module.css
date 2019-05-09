@@ -18,4 +18,5 @@
   font-size: 12px;
   font-weight: 500;
   margin-bottom: 2px;
+  align-self: flex-start;
 }
