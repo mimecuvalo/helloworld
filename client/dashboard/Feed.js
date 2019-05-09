@@ -42,6 +42,7 @@ import styles from './Dashboard.module.css';
         offset: 0,
         query,
         shouldShowAllItems,
+        antiCache: +new Date(), // XXX(mime): see https://github.com/apollographql/react-apollo/issues/556
       },
       fetchPolicy: didFeedLoad ? 'network-only' : 'cache-first',
     }),
