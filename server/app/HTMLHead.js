@@ -67,7 +67,7 @@ class HTMLHead extends PureComponent {
       'thr:count': content.comments_count,
       'thr:updated': new Date(content.comments_updated).toISOString(),
     };
-    let viewport = 'width=device-width, initial-scale=1, shrink-to-fit=no';
+    let viewport = 'width=device-width, initial-scale=1';
 
     if (contentOwner) {
       description = contentOwner.description && <meta name="description" content={contentOwner.description} />;
