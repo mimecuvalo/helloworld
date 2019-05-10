@@ -112,6 +112,7 @@ npm run test
 - web components? (e.g. check out youtube.com)
 - update material-ui with proper theme (instead of pixel.css)
 - hubspot's draft-extend / draft-convert might be a better route than draft-js-plugins, maybe combine the two editors
+- more winston logging
 - links template just open embeds in lightbox?
 - editor features to bring back (from Python version)
   - better emoji picker (can use EmojiOne's)
@@ -134,6 +135,7 @@ npm run test
     - toolbar don’t move on click (position so it doesn’t go off screen), get rid of scale
     - checklist / tasklist
     - dnd + align toolbars don’t actually work
+    - htmlToEntity has extra data (entity and node both have the same data :-/), need to update attachment.js, unfurl.js, Iframe.js, Image.js, Blocks.js
   - create new sections / albums, renames (and redirects)
   - content rename (and redirects)
   - draggable, be able to drag album, sitemap, followers and move to different categories
