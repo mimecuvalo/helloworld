@@ -2,8 +2,6 @@ import { gql } from 'apollo-server-express';
 
 // Keep in sync with both models/content.js and migrations/[date]-create-content.js
 export default gql`
-  scalar Date
-
   type Content {
     username: String!
     section: String!
