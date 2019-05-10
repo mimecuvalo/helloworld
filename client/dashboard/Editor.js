@@ -17,6 +17,7 @@ import styles from './Dashboard.module.css';
 import Toolbar from '@material-ui/core/Toolbar';
 
 const messages = defineMessages({
+  error: { msg: 'Error posting content.' },
   posted: { msg: 'Success!' },
 });
 
@@ -90,13 +91,20 @@ class DashboardEditor extends PureComponent {
       content: JSON.stringify(content),
     };
 
-    await this.props.mutate({
-      variables,
-      optimisticResponse: {
-        __typename: 'Mutation',
-        postContent: Object.assign({}, variables, { __typename: 'Content' }),
-      },
-    });
+    try {
+      await this.props.mutate({
+        variables,
+        optimisticResponse: {
+          __typename: 'Mutation',
+          postContent: Object.assign({}, variables, { __typename: 'Content' }),
+        },
+      });
+    } catch (ex) {
+      this.setState({ message: messages.error }, () => {
+        this.setState({ message: null });
+      });
+      return;
+    }
 
     editor.clear();
 

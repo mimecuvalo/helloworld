@@ -4,6 +4,7 @@ import { compose, graphql } from 'react-apollo';
 import ContentBase from './ContentBase';
 import ContentQuery from './ContentQuery';
 import { convertFromRaw, EditorState } from 'draft-js';
+import { defineMessages, injectIntl } from '../../shared/i18n';
 import Feed from './Feed';
 import { getTextForLine } from '../editor/utils/Text';
 import gql from 'graphql-tag';
@@ -15,8 +16,15 @@ import Simple from './templates/Simple';
 import styles from './Content.module.css';
 import SwipeListener from 'swipe-listener';
 import { withRouter } from 'react-router-dom';
+import { withSnackbar } from 'notistack';
 
+const messages = defineMessages({
+  error: { msg: 'Error updating content.' },
+});
+
+@injectIntl
 @withRouter
+@withSnackbar
 class Content extends Component {
   constructor(props) {
     super(props);
@@ -106,13 +114,17 @@ class Content extends Component {
       code: content.code,
     };
 
-    await this.props.mutate({
-      variables,
-      optimisticResponse: {
-        __typename: 'Mutation',
-        saveContent: Object.assign({}, variables, { __typename: 'Content' }),
-      },
-    });
+    try {
+      await this.props.mutate({
+        variables,
+        optimisticResponse: {
+          __typename: 'Mutation',
+          saveContent: Object.assign({}, variables, { __typename: 'Content' }),
+        },
+      });
+    } catch (ex) {
+      this.props.enqueueSnackbar(this.props.intl.formatMessage(messages.error), { variant: 'error' });
+    }
   }
 
   render() {

@@ -10,9 +10,11 @@ import { graphql } from 'react-apollo';
 import React, { Component } from 'react';
 import styles from './Comments.module.css';
 import UserContext from '../app/User_Context';
+import { withSnackbar } from 'notistack';
 
 const messages = defineMessages({
   avatar: { msg: 'avatar' },
+  error: { msg: 'Error updating content.' },
 });
 
 @graphql(gql`
@@ -34,6 +36,7 @@ const messages = defineMessages({
   }
 `)
 @injectIntl
+@withSnackbar
 class Comments extends Component {
   constructor(props) {
     super(props);
@@ -55,16 +58,20 @@ class Comments extends Component {
 
     this.setState({ isPosting: true });
 
-    await this.props.mutate({
-      variables,
-      update: (store, { data: { postComment } }) => {
-        const contentVariables = { username, name };
-        const query = ContentQuery;
-        const data = store.readQuery({ query, variables: contentVariables });
-        data.fetchCommentsRemote.unshift(postComment);
-        store.writeQuery({ query, variables: contentVariables, data });
-      },
-    });
+    try {
+      await this.props.mutate({
+        variables,
+        update: (store, { data: { postComment } }) => {
+          const contentVariables = { username, name };
+          const query = ContentQuery;
+          const data = store.readQuery({ query, variables: contentVariables });
+          data.fetchCommentsRemote.unshift(postComment);
+          store.writeQuery({ query, variables: contentVariables, data });
+        },
+      });
+    } catch (ex) {
+      this.props.enqueueSnackbar(this.props.intl.formatMessage(messages.error), { variant: 'error' });
+    }
 
     this.setState({ isPosting: false });
   };
