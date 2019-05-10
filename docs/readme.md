@@ -104,6 +104,8 @@ npm run test
   - subscriptions
   - check out dataloader: https://github.com/graphql/dataloader
   - generate automatically schemas/typedefs
+- generator steps for Sequelize files
+- see if `lazy` attribute can be a good substitute for ContentThumb's delay-loading logic (chrome 75)
 
 ### p1 (medium pri)
 
