@@ -97,7 +97,13 @@ npm run test
   - WebSub (pubsubhubbub)
   - see if ostatus is still case-sensitive, if not make all lower case foaf, webfinger, host_meta, too confusing with react warnings
 - same Apollo query twice causes SSR to fail with htmlHead, wtf.
-- check out dataloader: https://github.com/graphql/dataloader
+- more GraphQL examples:
+  - fragments
+    - also, things like fetchPublicUserData should be part of the graph not separate queries
+  - local state
+  - subscriptions
+  - check out dataloader: https://github.com/graphql/dataloader
+  - generate automatically schemas/typedefs
 
 ### p1 (medium pri)
 
