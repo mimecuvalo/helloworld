@@ -32,10 +32,10 @@
     "nodemailer": "6.1.1",
     "notistack": "0.4.2",
     "pubsubhubbub": "1.0.1",
-    "react": "^16.7.0",
+    "react": "16.8.4",
     "react-codemirror": "1.0.0",
     "react-document-title": "2.0.3",
-    "react-dom": "^16.7.0",
+    "react-dom": "16.8.4",
     "react-jss": "8.6.1",
     "sanitize-html": "1.20.0",
     "sharp": "0.21.3",
@@ -56,15 +56,15 @@
     "styleguide": "start-storybook -p 9001 -c .storybook --ci --quiet"
   },
   "devDependencies": {
-    "@storybook/addon-actions": "4.0.7",
-    "@storybook/addon-links": "4.0.7",
-    "@storybook/addons": "4.0.7",
-    "@storybook/react": "4.0.7",
-    "axe-core": "3.1.2",
+    "@storybook/addon-actions": "5.1.0-beta.0",
+    "@storybook/addon-links": "5.1.0-beta.0",
+    "@storybook/addons": "5.1.0-beta.0",
+    "@storybook/react": "5.1.0-beta.0",
+    "axe-core": "3.2.2",
     "enzyme": "3.8.0",
     "enzyme-adapter-react-16": "1.7.1",
     "flightplan": "0.6.19",
-    "flow-bin": "0.86.0",
+    "flow-bin": "0.98.1",
     "flow-typed": "2.5.1",
     "husky": "1.1.2",
     "lint-staged": "8.1.0",
@@ -73,7 +73,7 @@
     "prettier": "1.14.3",
     "react-test-renderer": "16.7.0",
     "require-from-string": "2.0.2",
-    "source-map-explorer": "1.6.0"
+    "source-map-explorer": "1.8.0"
   },
   "husky": {
     "hooks": {
