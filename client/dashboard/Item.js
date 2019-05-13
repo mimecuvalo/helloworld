@@ -101,10 +101,13 @@ class Item extends PureComponent {
   render() {
     const contentRemote = this.props.contentRemote;
 
+    // Make all links open in new tab.
+    const decoratedView = contentRemote.view.replace(/<a ([^>]+)/g, '<a $1 target="_blank" rel="noreferrer noopener"');
+
     return (
       <article ref={this.item} className={classNames('hw-item', styles.item)}>
         <Header contentRemote={contentRemote} />
-        <div dangerouslySetInnerHTML={{ __html: contentRemote.view }} />
+        <div dangerouslySetInnerHTML={{ __html: decoratedView }} />
         <Footer contentRemote={contentRemote} keepUnreadCb={this.keepUnreadCb} getEditor={this.props.getEditor} />
       </article>
     );
