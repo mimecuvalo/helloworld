@@ -14,6 +14,7 @@ import draftJSExtendPlugins, {
   focusPlugin,
 } from './plugins';
 import Editor from 'draft-js-plugins-editor';
+import EditorUtils from 'draft-js-plugins-utils';
 import { convertFromRaw, convertToRaw, EditorState, RichUtils } from 'draft-js';
 import Emojis, { emojiPlugin } from './ui/autocomplete/Emojis';
 import { handleKeyCommand, keyBindingFn } from './input/keyboard';
@@ -169,29 +170,40 @@ class HelloWorldEditor extends Component {
     this.onChange(RichUtils.onTab(evt, this.state.editorState, MAX_DEPTH));
   };
 
-  handlePastedText = async (text, html, editorState) => {
+  handlePastedText = (text, html, editorState) => {
     const potentialLink = text.match(/^https?:\/\//) || text.match(/^<iframe /);
     if (!this.state.shiftKeyPressed && potentialLink) {
-      const editorStateAndInfo = await unfurl(text, editorState);
-
-      if (!editorStateAndInfo.wasMediaFound) {
-        return;
+      // Decorate text with url.
+      if (!editorState.getSelection().isCollapsed()) {
+        editorState = EditorUtils.createLinkAtSelection(editorState, text);
+        this.onChange(editorState);
+        return 'handled';
       }
 
-      if (editorStateAndInfo.isError) {
-        this.setState({ errorMessage: messages.errorUnfurl }, () => {
-          this.setState({ errorMessage: null });
-        });
-        return;
-      }
+      this.handleUnfurl(text, html, editorState);
+    }
+  };
 
-      this.onChange(editorStateAndInfo.editorState);
+  handleUnfurl = async (text, html, editorState) => {
+    const editorStateAndInfo = await unfurl(text, editorState);
 
-      if (editorStateAndInfo.thumb) {
-        const fileInfo = { thumb: editorStateAndInfo.thumb };
-        this.props.onMediaAdd && this.props.onMediaAdd([fileInfo]);
-        this.setState({ fileInfo });
-      }
+    if (!editorStateAndInfo.wasMediaFound) {
+      return;
+    }
+
+    if (editorStateAndInfo.isError) {
+      this.setState({ errorMessage: messages.errorUnfurl }, () => {
+        this.setState({ errorMessage: null });
+      });
+      return;
+    }
+
+    this.onChange(editorStateAndInfo.editorState);
+
+    if (editorStateAndInfo.thumb) {
+      const fileInfo = { thumb: editorStateAndInfo.thumb };
+      this.props.onMediaAdd && this.props.onMediaAdd([fileInfo]);
+      this.setState({ fileInfo });
     }
   };
 

@@ -124,6 +124,7 @@ npm run test
       - https://github.com/ngs/draft-js-markdown-shortcuts-plugin
       - --- for divider
     - add inline-code
+    - unfurl should have "(via link)"
     - take a look at utils codebase: https://github.com/jpuri/draftjs-utils
     - code, use prism syntax highlighting
     - google maps embed
