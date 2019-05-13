@@ -1,6 +1,7 @@
 import Avatar from './Avatar';
 import classNames from 'classnames';
 import { F } from '../../shared/i18n';
+import FollowingAllMenu from './FollowingAllMenu';
 import FollowingSpecialFeedCountsQuery from './FollowingSpecialFeedCountsQuery';
 import { FormattedNumber } from '../../shared/i18n';
 import { graphql } from 'react-apollo';
@@ -51,6 +52,7 @@ class FollowingSpecialFeeds extends PureComponent {
           <span className={styles.unreadCount}>
             <FormattedNumber value={totalCount} />
           </span>
+          <FollowingAllMenu />
         </li>
         <li className={classNames({ [styles.selected]: specialFeed === 'me' })}>
           <a href="#your-feed" onClick={this.handleMyFeedClick}>

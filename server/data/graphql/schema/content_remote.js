@@ -105,6 +105,7 @@ export default gql`
       deleted: Boolean!
     ): ContentRemote!
     markAllContentInFeedAsRead(from_user: String!): FeedCount!
+    markAllFeedsAsRead: FeedCount!
     readContentRemote(from_user: String!, post_id: String!, read: Boolean!): Post!
   }
 `;

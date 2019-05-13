@@ -311,6 +311,11 @@ export default {
       return { from_user, count: 0 };
     }),
 
+    markAllFeedsAsRead: combineResolvers(isAuthor, async (parent, variables, { currentUser, models }) => {
+      await models.Content_Remote.update({ read: true }, { where: { to_username: currentUser.model.username } });
+      return { count: 0 };
+    }),
+
     readContentRemote: combineResolvers(
       isAuthor,
       async (parent, { from_user, post_id, read }, { currentUser, models }) => {

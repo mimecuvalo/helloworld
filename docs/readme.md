@@ -146,6 +146,7 @@ npm run test
   - css/js live updates to wysiwyg
   - figcaption
 - dashboard: better way to sandbox remote content?
+- search should have InfiniteFeed
 - bring back old features (from Python version)
   - data liberation, ability to port data to another site/service
   - themes
