@@ -100,11 +100,16 @@ class App extends Component {
                   <Switch>
                     <Route path={`/dashboard`} component={this.renderDashboard} />
                     <Route path={`/:username/search/:query`} component={Search} />
-                    <Route path={`/:username/:section/:album/:name`} component={Content} />
-                    <Route path={`/:username/:section/:name`} component={Content} />
-                    <Route path={`/:username/:name`} component={Content} />
-                    <Route path={`/:username`} component={Content} />
-                    <Route path={`/`} component={Content} />
+                    <Route
+                      path={[
+                        `/:username/:section/:album/:name`,
+                        `/:username/:section/:name`,
+                        `/:username/:name`,
+                        `/:username`,
+                        `/`,
+                      ]}
+                      component={Content}
+                    />
                   </Switch>
                 </ScrollToTop>
               </main>
