@@ -207,7 +207,7 @@ function StructuredMetaData({ contentOwner, content, title, req, nonce }) {
             "@type": "WebPage",
             "@id": "${contentUrl(content, req)}"
           },
-          "headline": "${content.title}",
+          "headline": "${content?.title}",
           "image": [
             "${thumb}"
            ],
