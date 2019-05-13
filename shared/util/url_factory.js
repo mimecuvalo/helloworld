@@ -1,5 +1,5 @@
 export function contentUrl(content, reqOrIsAbsolute = false, searchParams) {
-  if (!content.name) {
+  if (!content?.name) {
     return null;
   }
 

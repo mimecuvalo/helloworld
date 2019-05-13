@@ -1,4 +1,3 @@
-import { buildUrl } from '../../shared/util/url_factory';
 import { F } from '../../shared/i18n';
 import HTMLHead from './HTMLHead';
 import React from 'react';
@@ -49,8 +48,6 @@ export default function HTMLBase({
         {assetPathsByType['js'].map(path => (
           <script nonce={nonce} key={path} src={path} />
         ))}
-
-        <StructuredMetaData nonce={nonce} appName={appName} req={req} />
 
         {/*
           This HTML file is a template.
@@ -137,50 +134,6 @@ function WindowErrorScript({ nonce }) {
           var img = new Image();
           img.src = '/api/report-error?data=' + encodeURIComponent(JSON.stringify(data));
         };`,
-      }}
-    />
-  );
-}
-
-// This needs to be filled out by the developer to provide content for the site.
-// Learn more here: https://developers.google.com/search/docs/guides/intro-structured-data
-function StructuredMetaData({ appName, req, nonce }) {
-  const url = buildUrl({ req, pathname: '/' });
-
-  return (
-    <script
-      nonce={nonce}
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{
-        __html: `
-        {
-          "@context": "http://schema.org",
-          "@type": "NewsArticle",
-          "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "${url}"
-          },
-          "headline": "page title",
-          "image": [
-            "https://example.com/photos/16x9/photo.jpg"
-           ],
-          "datePublished": "2015-02-05T08:00:00+08:00",
-          "dateModified": "2015-02-05T09:20:00+08:00",
-          "author": {
-            "@type": "Person",
-            "name": "John Doe"
-          },
-           "publisher": {
-            "@type": "Organization",
-            "name": "${appName}",
-            "logo": {
-              "@type": "ImageObject",
-              "url": "${url}favicon.ico"
-            }
-          },
-          "description": "page description"
-        }
-        `,
       }}
     />
   );

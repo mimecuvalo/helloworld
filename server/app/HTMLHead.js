@@ -13,6 +13,8 @@ import React, { PureComponent } from 'react';
         name
         thumb
         title
+        createdAt
+        updatedAt
         comments_count
         comments_updated
       }
@@ -22,6 +24,7 @@ import React, { PureComponent } from 'react';
         favicon
         google_analytics
         logo
+        name
         theme
         title
         username
@@ -113,7 +116,8 @@ class HTMLHead extends PureComponent {
         <meta name="theme-color" content="#000000" />
         <meta name="generator" content="Hello, world. https://github.com/mimecuvalo/helloworld" />
         {description}
-        <OpenGraphMetadata contentOwner={contentOwner} content={content} req={req} />
+        <OpenGraphMetadata contentOwner={contentOwner} content={content} title={title} req={req} />
+        <StructuredMetaData contentOwner={contentOwner} content={content} nonce={nonce} title={title} req={req} />
         <link
           rel="alternate"
           type="application/json+oembed"
@@ -153,7 +157,22 @@ class HTMLHead extends PureComponent {
 
 // This needs to be filled out by the developer to provide content for the site.
 // Learn more here: http://ogp.me/
-const OpenGraphMetadata = React.memo(function OpenGraphMetadata({ contentOwner, content, req }) {
+const OpenGraphMetadata = React.memo(function OpenGraphMetadata({ contentOwner, content, title, req }) {
+  const thumb = buildThumb(contentOwner, content, req);
+
+  return (
+    <>
+      <meta property="og:title" content={content?.title} />
+      <meta property="og:description" content={contentOwner?.description} />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content={content && contentUrl(content, req)} />
+      <meta property="og:site_name" content={title} />
+      <meta property="og:image" content={thumb} />
+    </>
+  );
+});
+
+function buildThumb(contentOwner, content, req) {
   let thumb;
   if (content?.thumb) {
     thumb = content.thumb;
@@ -166,17 +185,53 @@ const OpenGraphMetadata = React.memo(function OpenGraphMetadata({ contentOwner, 
     thumb = buildUrl({ req, pathname: contentOwner?.logo || contentOwner?.favicon });
   }
 
+  return thumb;
+}
+
+// This needs to be filled out by the developer to provide content for the site.
+// Learn more here: https://developers.google.com/search/docs/guides/intro-structured-data
+function StructuredMetaData({ contentOwner, content, title, req, nonce }) {
+  const url = buildUrl({ req, pathname: '/' });
+  const thumb = buildThumb(contentOwner, content, req);
+
   return (
-    <>
-      <meta property="og:title" content={content?.title} />
-      <meta property="og:description" content={contentOwner?.description} />
-      <meta property="og:type" content="website" />
-      <meta property="og:url" content={content && contentUrl(content, req)} />
-      <meta property="og:site_name" content={contentOwner?.title} />
-      <meta property="og:image" content={thumb} />
-    </>
+    <script
+      nonce={nonce}
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: `
+        {
+          "@context": "http://schema.org",
+          "@type": "NewsArticle",
+          "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "${contentUrl(content, req)}"
+          },
+          "headline": "${content.title}",
+          "image": [
+            "${thumb}"
+           ],
+          "datePublished": "${new Date(content?.createdAt || new Date()).toISOString()}",
+          "dateModified": "${new Date(content?.updatedAt || new Date()).toISOString()}",
+          "author": {
+            "@type": "Person",
+            "name": "${content?.name || content?.username}"
+          },
+           "publisher": {
+            "@type": "Organization",
+            "name": "${title}",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "${url}favicon.ico"
+            }
+          },
+          "description": "${contentOwner?.description}"
+        }
+        `,
+      }}
+    />
   );
-});
+}
 
 // TODO(mime): meh, lame that this is in the <head> but I don't feel like moving this to HTMLBase where we don't have
 // contentOwner currently.
