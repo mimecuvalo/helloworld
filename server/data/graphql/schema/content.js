@@ -83,6 +83,7 @@ export default gql`
       name: String!
       hidden: Boolean!
       title: String!
+      thumb: String!
       style: String!
       code: String!
       content: String!

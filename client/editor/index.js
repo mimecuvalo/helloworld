@@ -69,6 +69,7 @@ class HelloWorldEditor extends Component {
     this.state = {
       editorState: state ? EditorState.createWithContent(state) : EditorState.createWithContent(emptyContentState),
       errorMessage: null,
+      fileInfo: null,
       hasText: !!state,
       hasUnsavedChanges: false,
       shiftKeyPressed: false,
@@ -89,6 +90,10 @@ class HelloWorldEditor extends Component {
 
   get editorState() {
     return this.state.editorState;
+  }
+
+  get fileInfo() {
+    return this.state.fileInfo;
   }
 
   handleOnBeforeUnload = evt => {
@@ -131,6 +136,7 @@ class HelloWorldEditor extends Component {
     this.onChange(editorState);
 
     this.props.onMediaAdd && this.props.onMediaAdd(fileInfos);
+    this.setState({ fileInfo: fileInfos[0] });
   };
 
   handleKeyCommand = cmd => {
@@ -182,7 +188,9 @@ class HelloWorldEditor extends Component {
       this.onChange(editorStateAndInfo.editorState);
 
       if (editorStateAndInfo.thumb) {
-        this.props.onMediaAdd && this.props.onMediaAdd([{ thumb: editorStateAndInfo.thumb }]);
+        const fileInfo = { thumb: editorStateAndInfo.thumb };
+        this.props.onMediaAdd && this.props.onMediaAdd([fileInfo]);
+        this.setState({ fileInfo });
       }
     }
   };

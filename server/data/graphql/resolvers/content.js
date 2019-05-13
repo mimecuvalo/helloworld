@@ -362,12 +362,13 @@ const Content = {
   Mutation: {
     saveContent: combineResolvers(
       isAuthor,
-      async (parent, { name, hidden, title, style, code, content }, { currentUser, models, req }) => {
+      async (parent, { name, hidden, title, thumb, style, code, content }, { currentUser, models, req }) => {
         const username = currentUser.model.username;
         await models.Content.update(
           {
             hidden,
             title,
+            thumb,
             style,
             code,
             content,
@@ -387,7 +388,7 @@ const Content = {
           await socialize(req, currentUser.model, updatedContent);
         }
 
-        return { username: currentUser.model.username, name, hidden, title, style, code, content };
+        return { username: currentUser.model.username, name, hidden, title, thumb, style, code, content };
       }
     ),
 

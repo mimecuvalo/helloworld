@@ -96,18 +96,21 @@ class Content extends Component {
   };
 
   async saveContent() {
-    const { username, name } = this.props.data.fetchContent;
+    const { username, name, thumb } = this.props.data.fetchContent;
     const editor = this.item.current.getEditor();
     const content = editor.export();
 
     // TODO(mime): gotta be a simpler way then all this conversion.
     const title = getTextForLine(EditorState.createWithContent(convertFromRaw(content.content)), 0);
 
+    const newThumb = editor.getContentEditor().fileInfo?.thumb || thumb || '';
+
     const variables = {
       username,
       name,
       hidden: false, // TODO(mime)
       title,
+      thumb: newThumb,
       content: JSON.stringify(content.content),
       style: content.style,
       code: content.code,
@@ -199,15 +202,25 @@ export default compose(
       $name: String!
       $hidden: Boolean!
       $title: String!
+      $thumb: String!
       $style: String!
       $code: String!
       $content: String!
     ) {
-      saveContent(name: $name, hidden: $hidden, title: $title, style: $style, code: $code, content: $content) {
+      saveContent(
+        name: $name
+        hidden: $hidden
+        title: $title
+        thumb: $thumb
+        style: $style
+        code: $code
+        content: $content
+      ) {
         username
         name
         hidden
         title
+        thumb
         style
         code
         content
