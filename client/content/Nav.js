@@ -71,6 +71,10 @@ class Nav extends Component {
   }
 
   handleKeyUp = evt => {
+    if (this.props.isEditing) {
+      return;
+    }
+
     switch (evt.key) {
       case 'ArrowUp':
         this.top?.current && this.top.current.click();

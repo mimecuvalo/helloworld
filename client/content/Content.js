@@ -192,7 +192,7 @@ class Content extends Component {
         username={content.username}
       >
         <article className={styles.content}>
-          {isEditing ? null : <Nav ref={this.nav} content={content} />}
+          {isEditing ? null : <Nav ref={this.nav} content={content} isEditing={this.state.isEditing} />}
           {item}
         </article>
       </ContentBase>
