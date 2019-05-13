@@ -53,19 +53,19 @@ class Content extends Component {
 
     this.setupSwipe();
 
-    document.addEventListener('keydown', this.handleSave);
+    document.addEventListener('keydown', this.handleKeyDown);
   }
 
   componentWillUnmount() {
     this.swipeListener && this.swipeListener.off();
-    document.removeEventListener('keydown', this.handleSave);
+    document.removeEventListener('keydown', this.handleKeyDown);
   }
 
   componentDidUpdate() {
     this.setupSwipe();
   }
 
-  handleSave = evt => {
+  handleKeyDown = evt => {
     if (!this.state.isEditing) {
       return;
     }

@@ -55,14 +55,14 @@ class DashboardEditor extends PureComponent {
       this.setState({ sectionAndAlbum });
     }
 
-    document.addEventListener('keydown', this.handleSave);
+    document.addEventListener('keydown', this.handleKeyDown);
   }
 
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleSave);
+    document.removeEventListener('keydown', this.handleKeyDown);
   }
 
-  handleSave = evt => {
+  handleKeyDown = evt => {
     // TODO(mime): combine this logic somewhere. (also in keyboard.js)
     const isMac = navigator.platform.toLowerCase().indexOf('mac') !== -1;
     const isAccelKey = isMac ? evt.metaKey : evt.ctrlKey;

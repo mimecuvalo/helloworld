@@ -48,6 +48,27 @@ class Comments extends Component {
     };
   }
 
+  componentDidMount() {
+    document.addEventListener('keydown', this.handleKeyDown);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyDown);
+  }
+
+  handleKeyDown = evt => {
+    if (!this.commentEditor || !this.commentEditor.current) {
+      return;
+    }
+
+    // TODO(mime): combine this logic somewhere. (also in keyboard.js)
+    const isMac = navigator.platform.toLowerCase().indexOf('mac') !== -1;
+    const isAccelKey = isMac ? evt.metaKey : evt.ctrlKey;
+    if (isAccelKey && evt.key === 'Enter') {
+      this.handlePost();
+    }
+  };
+
   handlePost = async evt => {
     const { username, name } = this.props.content;
     const editor = this.commentEditor.current;
