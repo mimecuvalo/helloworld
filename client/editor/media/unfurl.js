@@ -53,7 +53,7 @@ export default async function unfurl(url, editorState) {
       editorState = createNewBlock('IFRAME', 'iframe', editorState, json.iframe, json.iframe);
       thumb = json.image;
     } else {
-      const href = json.image;
+      const href = url;
       const src = json.image;
       const alt = json.title;
       isImg = true;
