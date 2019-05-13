@@ -9,7 +9,7 @@ export default {
     }),
 
     fetchUserRemote: combineResolvers(isAdmin, async (parent, { id }, { models }) => {
-      return await models.User_Remote.findById(id);
+      return await models.User_Remote.findByPk(id);
     }),
 
     async fetchFollowers(parent, args, { currentUser, models }) {

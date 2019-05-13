@@ -19,7 +19,7 @@ export default {
     }),
 
     fetchContentRemote: combineResolvers(isAdmin, async (parent, { id }, { models }) => {
-      return await models.Content_Remote.findById(id);
+      return await models.Content_Remote.findByPk(id);
     }),
 
     fetchContentRemotePaginated: combineResolvers(

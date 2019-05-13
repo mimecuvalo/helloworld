@@ -7,7 +7,6 @@ config[env] = {
   username: process.env.REACT_APP_DB_USERNAME,
   password: process.env.REACT_APP_DB_PASSWORD,
   host: process.env.REACT_APP_DB_HOST,
-  operatorsAliases: false,
 };
 
 module.exports = config;
