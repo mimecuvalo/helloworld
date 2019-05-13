@@ -54,7 +54,22 @@ class DashboardEditor extends PureComponent {
     if (sectionAndAlbum) {
       this.setState({ sectionAndAlbum });
     }
+
+    document.addEventListener('keydown', this.handleSave);
   }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleSave);
+  }
+
+  handleSave = evt => {
+    // TODO(mime): combine this logic somewhere. (also in keyboard.js)
+    const isMac = navigator.platform.toLowerCase().indexOf('mac') !== -1;
+    const isAccelKey = isMac ? evt.metaKey : evt.ctrlKey;
+    if (isAccelKey && evt.key === 's') {
+      this.handlePost();
+    }
+  };
 
   reblog(text) {
     const contentEditor = this.editor.current.getContentEditor();
@@ -64,7 +79,7 @@ class DashboardEditor extends PureComponent {
   }
 
   handlePost = async evt => {
-    evt.preventDefault();
+    evt && evt.preventDefault();
 
     const editor = this.editor.current;
     const { style, code, content } = editor.export();

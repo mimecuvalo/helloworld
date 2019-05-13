@@ -52,15 +52,31 @@ class Content extends Component {
     }
 
     this.setupSwipe();
+
+    document.addEventListener('keydown', this.handleSave);
   }
 
   componentWillUnmount() {
     this.swipeListener && this.swipeListener.off();
+    document.removeEventListener('keydown', this.handleSave);
   }
 
   componentDidUpdate() {
     this.setupSwipe();
   }
+
+  handleSave = evt => {
+    if (!this.state.isEditing) {
+      return;
+    }
+
+    // TODO(mime): combine this logic somewhere. (also in keyboard.js)
+    const isMac = navigator.platform.toLowerCase().indexOf('mac') !== -1;
+    const isAccelKey = isMac ? evt.metaKey : evt.ctrlKey;
+    if (isAccelKey && evt.key === 's') {
+      this.handleEdit();
+    }
+  };
 
   setupSwipe() {
     if (this.swipeListener || !this.contentBase.current) {
@@ -84,7 +100,7 @@ class Content extends Component {
   }
 
   handleEdit = evt => {
-    evt.preventDefault();
+    evt && evt.preventDefault();
 
     if (this.state.isEditing) {
       this.saveContent();

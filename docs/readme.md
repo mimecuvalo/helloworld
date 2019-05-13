@@ -118,6 +118,7 @@ npm run test
   - better emoji picker (can use EmojiOne's)
   - custom emojis
   - draft.js:
+    - move paste code out of main index.js
     - custom tab behavior - draft.js's default is lame
     - add markdown
       - https://github.com/withspectrum/draft-js-markdown-plugin
