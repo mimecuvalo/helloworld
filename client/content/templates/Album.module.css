@@ -1,8 +1,5 @@
 .album {
   list-style: none;
-  height: 100vh;
-  overflow-y: scroll;
-  scroll-snap-type: y mandatory;
 }
 
 .loadingEmptyBox {
@@ -18,7 +15,6 @@
   padding: 3px;
   margin-bottom: 3px;
   transition: all 0.3s ease-out;
-  scroll-snap-align: start;
 }
 
 .item:hover {

@@ -1,5 +1,4 @@
 import { buildUrl, contentUrl } from '../../shared/util/url_factory';
-import classNames from 'classnames';
 import { compose, graphql } from 'react-apollo';
 import ContentBase from './ContentBase';
 import ContentQuery from './ContentQuery';
@@ -173,7 +172,7 @@ class Content extends Component {
         title={title}
         username={content.username}
       >
-        <article className={classNames(styles.content, 'hw-invisible-transition')}>
+        <article className={styles.content}>
           {isEditing ? null : <Nav ref={this.nav} content={content} />}
           {item}
         </article>
