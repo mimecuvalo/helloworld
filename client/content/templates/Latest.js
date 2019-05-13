@@ -45,7 +45,9 @@ class Latest extends PureComponent {
     if (url.searchParams.get('mode') === 'archive') {
       this.setState({ archiveMode: true });
     } else {
-      this.props.history.replace(contentUrl(this.props.data.fetchCollectionLatest));
+      // XXX(mime): we do setTimeout 0 because in Content.js we replace history with the canonical url
+      // so it's a shitty race condition :-/
+      setTimeout(() => this.props.history.replace(contentUrl(this.props.data.fetchCollectionLatest)), 0);
     }
   }
 
