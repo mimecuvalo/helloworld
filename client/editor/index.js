@@ -67,19 +67,15 @@ class HelloWorldEditor extends Component {
     }
 
     this.state = {
-      editorState: state ? EditorState.createWithContent(state) : EditorState.createEmpty(),
+      editorState: state ? EditorState.createWithContent(state) : EditorState.createWithContent(emptyContentState),
       errorMessage: null,
       hasText: !!state,
       hasUnsavedChanges: false,
       shiftKeyPressed: false,
-      showEditor: false,
     };
   }
 
   componentDidMount() {
-    // TODO(mime): for some reason editorKey isn't working - having problems with SSR.
-    this.setState({ showEditor: true });
-
     if (!this.props.readOnly) {
       window.addEventListener('beforeunload', this.handleOnBeforeUnload);
     }
@@ -203,38 +199,49 @@ class HelloWorldEditor extends Component {
   render() {
     return (
       <>
-        {this.state.showEditor ? (
-          <div
-            className={classNames('e-content', {
-              [styles.showPlaceholder]: this.props.showPlaceholder && !this.state.hasText,
-              [styles.commentType]: this.props.type === 'comment',
-            })}
-            onKeyDown={this.handleKeyDown}
-            onKeyUp={this.handleKeyUp}
-          >
-            <Editor
-              blockRendererFn={blockRenderers}
-              decorators={[decorator]}
-              editorKey="editor"
-              editorState={this.state.editorState}
-              handleDroppedFiles={this.handleDroppedFiles}
-              handleKeyCommand={this.handleKeyCommand}
-              handlePastedText={this.handlePastedText}
-              keyBindingFn={keyBindingFn}
-              onChange={this.onChange}
-              onTab={this.handleOnTab}
-              plugins={plugins}
-              readOnly={this.props.readOnly}
-            />
-            <Toolbars AlignmentTool={AlignmentTool} dividerPlugin={dividerPlugin} />
-            <Emojis />
-            <Mentions />
-          </div>
-        ) : null}
+        <div
+          className={classNames('e-content', {
+            [styles.showPlaceholder]: this.props.showPlaceholder && !this.state.hasText,
+            [styles.commentType]: this.props.type === 'comment',
+          })}
+          onKeyDown={this.handleKeyDown}
+          onKeyUp={this.handleKeyUp}
+        >
+          <Editor
+            blockRendererFn={blockRenderers}
+            decorators={[decorator]}
+            editorKey={this.props.editorKey || 'editor'}
+            editorState={this.state.editorState}
+            handleDroppedFiles={this.handleDroppedFiles}
+            handleKeyCommand={this.handleKeyCommand}
+            handlePastedText={this.handlePastedText}
+            keyBindingFn={keyBindingFn}
+            onChange={this.onChange}
+            onTab={this.handleOnTab}
+            plugins={plugins}
+            readOnly={this.props.readOnly}
+          />
+          <Toolbars AlignmentTool={AlignmentTool} dividerPlugin={dividerPlugin} />
+          <Emojis />
+          <Mentions />
+        </div>
         <HiddenSnackbarShim message={this.state.errorMessage} variant="error" />
       </>
     );
   }
 }
+
+// This keeps things stable when we render empty content for SSR.
+const emptyContentState = convertFromRaw({
+  entityMap: {},
+  blocks: [
+    {
+      text: '',
+      key: 'foo',
+      type: 'unstyled',
+      entityRanges: [],
+    },
+  ],
+});
 
 export default HelloWorldEditor;

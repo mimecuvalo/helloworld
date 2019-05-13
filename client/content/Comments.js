@@ -99,7 +99,13 @@ class Comments extends Component {
               </h3>
               {isLoggedIn ? (
                 <div id="hw-comment-editor" className={styles.commentEditorWrapper}>
-                  <Editor content={{}} ref={this.commentEditor} type="comment" dontWarnOnUnsaved={true} />
+                  <Editor
+                    editorKey="comments"
+                    content={{}}
+                    ref={this.commentEditor}
+                    type="comment"
+                    dontWarnOnUnsaved={true}
+                  />
                   <button
                     className={classNames('hw-button', 'hw-save')}
                     disabled={this.state.isPosting}
