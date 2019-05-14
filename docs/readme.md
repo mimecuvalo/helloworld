@@ -112,6 +112,8 @@ npm run test
 
 - web components? (e.g. check out youtube.com)
 - update material-ui with proper theme (instead of pixel.css)
+- should just follow self in dashboard, when posting new comment it goes to 'user remote' version.
+- add site loading/working component, say when following a feed and it's working.
 - hubspot's draft-extend / draft-convert might be a better route than draft-js-plugins, maybe combine the two editors
 - more winston logging
 - links template just open embeds in lightbox?

@@ -29,6 +29,11 @@ class FollowerMenu extends PureComponent {
     this.setState({ anchorEl: null });
   };
 
+  handleSetFeed = userRemote => {
+    this.handleClose();
+    this.props.handleSetFeed(userRemote);
+  };
+
   handleVisit = () => {
     this.handleClose();
     window.open(this.props.userRemote.profile_url, this.props.userRemote.profile_url);
@@ -37,7 +42,7 @@ class FollowerMenu extends PureComponent {
   render() {
     const { anchorEl } = this.state;
     const isOpen = Boolean(anchorEl);
-    const { handleSetFeed, userRemote } = this.props;
+    const { userRemote } = this.props;
     const menuAriaLabel = this.props.intl.formatMessage(messages.menu);
     const id = `follower-menu-${userRemote.profile_url}`;
     const { profile_url, following } = userRemote;
@@ -57,7 +62,7 @@ class FollowerMenu extends PureComponent {
           <MenuItem key="visit" onClick={this.handleVisit}>
             <F msg="visit" />
           </MenuItem>
-          {!following ? <NewFeed handleSetFeed={handleSetFeed} isButton={true} profileUrl={profile_url} /> : null}
+          {!following ? <NewFeed handleSetFeed={this.handleSetFeed} isButton={true} profileUrl={profile_url} /> : null}
         </Menu>
       </>
     );

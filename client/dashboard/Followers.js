@@ -38,7 +38,7 @@ class Followers extends PureComponent {
                 <Avatar src={follower.favicon || follower.avatar} />
                 {follower.name || follower.username}
               </button>
-              <FollowerMenu userRemote={follower} handleSetFeed={this.handleSetFeed} />
+              <FollowerMenu userRemote={follower} handleSetFeed={this.props.handleSetFeed} />
             </li>
           ))}
         </ul>
