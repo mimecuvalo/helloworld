@@ -170,6 +170,7 @@ npm run test
     - drag & drop to move content in albums
     - have hidden content
     - change section/album/thumb/hidden/template/thumb in content editor
+    - be able to delete from within content editor
 
 ### p2 (ideas)
 

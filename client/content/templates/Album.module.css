@@ -30,3 +30,9 @@
 .title {
   min-height: 1.1em;
 }
+
+.delete {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}

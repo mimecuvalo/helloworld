@@ -434,6 +434,11 @@ const Content = {
         };
       }
     ),
+
+    deleteContent: combineResolvers(isAuthor, async (parent, { name }, { currentUser, models, req }) => {
+      await models.Content.destroy({ where: { username: currentUser.model.username, name } });
+      return true;
+    }),
   },
 };
 

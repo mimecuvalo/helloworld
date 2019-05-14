@@ -99,5 +99,6 @@ export default gql`
       code: String!
       content: String!
     ): Content!
+    deleteContent(name: String!): Boolean!
   }
 `;

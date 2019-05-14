@@ -120,6 +120,8 @@ button.hw-edit {
   box-shadow: 1px 1px #09f, 2px 2px #09f, 3px 3px #09f, 4px 4px #333, 4px 3px #333, 3px 4px #333;
 }
 
+.hw-delete,
+.hw-delete:visited,
 .hw-next,
 .hw-next:visited {
   background-color: #ffe;
@@ -127,6 +129,7 @@ button.hw-edit {
   color: #f30;
   box-shadow: 1px 1px #f90, 2px 2px #f90, 3px 3px #f90, 4px 4px #333, 4px 3px #333, 3px 4px #333;
 }
+.hw-delete:hover,
 .hw-next:hover {
   border: 1px solid #f60;
   color: #f30;
