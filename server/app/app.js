@@ -13,20 +13,10 @@ import { SheetsRegistry } from 'jss';
 import { StaticRouter } from 'react-router';
 import uuid from 'uuid';
 
-export default async function render({ req, res, next, assetPathsByType, appName, publicUrl }) {
+export default async function render({ req, res, next, assetPathsByType, appName, publicUrl, gitInfo }) {
   const apolloClient = await createApolloClient(req);
   const context = {};
   const nonce = createNonceAndSetCSP(res);
-
-  // Calculate an app version and time so that we can give our clients some kind of versioning scheme.
-  // This lets us make sure that if there are bad / incompatible clients in the wild later on, we can
-  // disable certain clients using their version number and making sure they're upgraded to the
-  // latest, working version.
-  //const execPromise = util.promisify(exec);
-
-  // TODO(mime): need to rework this, causing problems on prod.
-  const gitRev = 1; // (await execPromise('git rev-parse HEAD')).stdout.trim();
-  const gitTime = 1; // (await execPromise('git log -1 --format=%cd --date=unix')).stdout.trim();
 
   const locale = getLocale(req);
   const translations = languages[locale];
@@ -66,8 +56,8 @@ export default async function render({ req, res, next, assetPathsByType, appName
         <HTMLBase
           apolloStateFn={() => apolloClient.extract()}
           appName={appName}
-          appTime={gitTime}
-          appVersion={gitRev}
+          appTime={gitInfo.gitTime}
+          appVersion={gitInfo.gitRev}
           assetPathsByType={assetPathsByType}
           csrfToken={req.csrfToken()}
           defaultLocale={DEFAULT_LOCALE}

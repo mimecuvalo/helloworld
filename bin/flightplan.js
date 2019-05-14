@@ -28,7 +28,10 @@
  * www-data:x:33:33::/var/www-data:/usr/sbin/no-login  # BAD
  */
 
+const { exec } = require('child_process');
+const fs = require('fs');
 const plan = require('flightplan');
+const { promisify } = require('util');
 
 plan.target('prod', [
   {
@@ -44,16 +47,29 @@ const DIRECTORY_NAME = 'helloworld';
 
 const time = new Date().getTime();
 const tmpDir = `${DIRECTORY_NAME}-${time}`;
-const remoteTmpDir = `/tmp/${tmpDir}`;
+const remoteTmpDir = `/tmp/${tmpDir}/`;
 
 // run commands on localhost
-plan.local(function(local) {
+plan.local(async function(local) {
   local.log('Copying files to remote hosts...');
-  local.with(`cd ..`, () => {
+
+  const gitInfoFile = '../.cra-all-the-things-prod-git-info.json';
+  async function createGitInfoFile() {
+    const execPromise = promisify(exec);
+    const gitRev = (await execPromise('git rev-parse HEAD')).stdout.trim();
+    const gitTime = (await execPromise('git log -1 --format=%cd --date=unix')).stdout.trim();
+    fs.writeFileSync(gitInfoFile, JSON.stringify({ gitRev, gitTime }));
+  }
+  createGitInfoFile();
+
+  local.with(`cd ..`, async () => {
     const filesToCopy = local.exec(`git ls-files`, { silent: true });
 
     // rsync git files to all the target's remote hosts
     local.transfer(filesToCopy, remoteTmpDir);
+
+    // Copy over .gitinfo file.
+    local.transfer([gitInfoFile], remoteTmpDir);
   });
 });
 

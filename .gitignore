@@ -10,6 +10,7 @@
 
 # production
 /build
+.cra-all-the-things-prod-git-info.json
 
 # misc
 .DS_Store
