@@ -40,20 +40,20 @@ export default class ContentEditor extends Component {
     this.setState({ loaded: true });
   };
 
-  componentDidUpdate() {
-    if (!this.state.loaded) {
+  componentDidUpdate(prevProps, prevState) {
+    if (!this.state.loaded || prevState.tabValue === this.state.tabValue) {
       return;
     }
 
     switch (this.state.tabValue) {
       case 0:
-        this.contentEditor.current.focus();
+        this.contentEditor.current && this.contentEditor.current.focus();
         break;
       case 1:
-        this.codeMirrorCSS.current.getCodeMirror().focus();
+        this.codeMirrorCSS.current && this.codeMirrorCSS.current.getCodeMirror().focus();
         break;
       case 2:
-        this.codeMirrorJS.current.getCodeMirror().focus();
+        this.codeMirrorJS.current && this.codeMirrorJS.current.getCodeMirror().focus();
         break;
       default:
         break;

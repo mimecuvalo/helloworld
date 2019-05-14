@@ -29,7 +29,7 @@
   margin: 0 5px 0 1px;
 }
 
-.remoteUsers a {
+.remoteUsers button:first-child {
   flex: 1;
   height: 24px;
   line-height: 24px;
@@ -37,10 +37,11 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  text-align: left;
   vertical-align: top;
 }
 
-.remoteUsers a:hover {
+.remoteUsers button:first-child:hover {
   text-decoration: none;
 }
 
@@ -70,12 +71,12 @@
   content: ')';
 }
 
-.remoteUsers button,
+.remoteUsers button:last-child,
 .remoteUsers li:hover .unreadCount {
   display: none;
 }
 
-.remoteUsers li:hover button {
+.remoteUsers li:hover button:last-child {
   display: inline-block;
 }
 
