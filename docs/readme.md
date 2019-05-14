@@ -167,6 +167,7 @@ npm run test
     - drag & drop to move sections
     - drag & drop to move content in albums
     - have hidden content
+    - change section/album/thumb/hidden/template/thumb in content editor
 
 ## 📙 Learn More
 

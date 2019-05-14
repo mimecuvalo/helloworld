@@ -11,9 +11,9 @@ import Footer from './Footer';
 import Header from './Header';
 import IconButton from '@material-ui/core/IconButton';
 import { Route, Switch, withRouter } from 'react-router-dom';
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import Search from '../content/Search';
-import { SnackbarProvider } from 'notistack';
+import { SnackbarProvider, withSnackbar } from 'notistack';
 import styles from './constants.module.css';
 import UserContext from './User_Context';
 
@@ -22,7 +22,6 @@ const messages = defineMessages({
 });
 
 // This is the main entry point on the client-side.
-@injectIntl
 class App extends Component {
   constructor(props) {
     super(props);
@@ -78,16 +77,10 @@ class App extends Component {
     // HACK(all-the-things): we can't get rid of FOUC in dev mode because we want hot reloading of CSS updates.
     // This hides the unsightly unstyled app. However, in dev mode, it removes the perceived gain of SSR. :-/
     const devOnlyHiddenOnLoadStyle = this.state.devOnlyHiddenOnLoad ? { opacity: 0 } : null;
-    const closeAriaLabel = this.props.intl.formatMessage(messages.close);
-    const closeButton = (
-      <IconButton key="close" className="App-snackbar-icon" color="inherit" aria-label={closeAriaLabel}>
-        <CloseIcon />
-      </IconButton>
-    );
 
     return (
       <UserContext.Provider value={this.state.userContext}>
-        <SnackbarProvider action={[closeButton]}>
+        <SnackbarProvider action={closeAction}>
           <ErrorBoundary>
             <div
               className={classNames('App', styles.app, { 'App-logged-in': this.props.user })}
@@ -121,6 +114,28 @@ class App extends Component {
     );
   }
 }
+
+@injectIntl
+@withSnackbar
+class CloseButton extends PureComponent {
+  render() {
+    const closeAriaLabel = this.props.intl.formatMessage(messages.close);
+    return (
+      <IconButton
+        key="close"
+        onClick={() => {
+          this.props.closeSnackbar(this.props.snackKey);
+        }}
+        className="App-snackbar-icon"
+        color="inherit"
+        aria-label={closeAriaLabel}
+      >
+        <CloseIcon />
+      </IconButton>
+    );
+  }
+}
+const closeAction = key => <CloseButton snackKey={key} />;
 
 @withRouter
 class ScrollToTop extends Component {
