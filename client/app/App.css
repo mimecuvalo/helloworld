@@ -1,3 +1,13 @@
 html .App-snackbar-icon {
   padding: 5px;
 }
+
+.hw-button-link {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #03c;
+  cursor: pointer;
+  font-size: inherit;
+}

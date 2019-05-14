@@ -12,21 +12,18 @@ class KeepUnread extends PureComponent {
     };
   }
   handleClick = async evt => {
-    evt.preventDefault();
-
     this.props.keepUnreadCb(!this.state.enabled);
     this.setState({ enabled: !this.state.enabled });
   };
 
   render() {
     return (
-      <a
-        href="#keep-unread"
+      <button
         onClick={this.handleClick}
-        className={classNames({ [styles.enabled]: this.state.enabled })}
+        className={classNames('hw-button-link', { [styles.enabled]: this.state.enabled })}
       >
         <F msg="keep unread" />
-      </a>
+      </button>
     );
   }
 }

@@ -30,8 +30,6 @@ import styles from './Actions.module.css';
 `)
 class Delete extends PureComponent {
   handleClick = async evt => {
-    evt.preventDefault();
-
     const { deleted, from_user, local_content_name, post_id, type } = this.props.contentRemote;
     const variables = { from_user, local_content_name, post_id, type, deleted: !deleted };
 
@@ -46,13 +44,12 @@ class Delete extends PureComponent {
 
   render() {
     return (
-      <a
-        href="#delete"
+      <button
         onClick={this.handleClick}
-        className={classNames({ [styles.enabled]: this.props.contentRemote.deleted })}
+        className={classNames('hw-button-link', { [styles.enabled]: this.props.contentRemote.deleted })}
       >
         <F msg="delete" />
-      </a>
+      </button>
     );
   }
 }

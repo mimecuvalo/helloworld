@@ -15,6 +15,7 @@ import { withRouter } from 'react-router-dom';
 const messages = defineMessages({
   logo: { msg: 'logo' },
   menu: { msg: 'Menu' },
+  search: { msg: 'search' },
 });
 
 @withRouter
@@ -127,6 +128,7 @@ class SiteMap extends PureComponent {
     const contentOwner = this.props.data.fetchPublicUserData;
     const logoAltText = this.props.intl.formatMessage(messages.logo);
     const menuButtonLabel = this.props.intl.formatMessage(messages.menu);
+    const searchLabel = this.props.intl.formatMessage(messages.search);
 
     const items = this.generateItems(siteMap);
 
@@ -167,7 +169,7 @@ class SiteMap extends PureComponent {
           </ul>
 
           <form method="get" action="/search" onSubmit={this.handleSearchSubmit} className={styles.search}>
-            <input type="search" name="q" placeholder="search" required />
+            <input aria-label={searchLabel} type="search" name="q" placeholder="search" required />
           </form>
 
           {contentOwner.license ? (

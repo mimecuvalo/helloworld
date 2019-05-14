@@ -8,7 +8,6 @@ class Footer extends PureComponent {
   static contextType = UserContext;
 
   handleFullscreen = evt => {
-    evt.preventDefault();
     document.getElementById('hw-content').requestFullscreen();
   };
 
@@ -64,9 +63,9 @@ class Footer extends PureComponent {
           <F msg="permalink" />
         </a>
         &nbsp;•&nbsp;
-        <a href="#fullscreen" onClick={this.handleFullscreen}>
+        <button className="hw-button-link" onClick={this.handleFullscreen}>
           <F msg="fullscreen" />
-        </a>
+        </button>
         &nbsp;•&nbsp;
         <F
           msg="{count, plural, =0 {no human views} one {# human view} other {# human views}}"

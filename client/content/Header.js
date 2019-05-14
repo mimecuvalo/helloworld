@@ -27,13 +27,14 @@ class Header extends PureComponent {
           </ContentLink>
 
           {isOwnerViewing ? (
-            <a
-              href="#edit"
+            <button
               onClick={handleEdit}
-              className={classNames('hw-button', 'hw-edit', styles.edit, { 'hw-selected': isEditing })}
+              className={classNames('hw-button', 'hw-button-link', 'hw-edit', styles.edit, {
+                'hw-selected': isEditing,
+              })}
             >
               <F msg="edit" />
-            </a>
+            </button>
           ) : null}
         </h1>
       </header>

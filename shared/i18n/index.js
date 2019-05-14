@@ -49,7 +49,7 @@ export const F = React.memo(function F({ id, description, msg, values }) {
 //  <F
 //    msg="Edit {link} and save to reload."
 //    values={{
-//      link: <a href="#"><F msg="this link" /></a>,
+//      link: <a href="http://somesite.com"><F msg="this link" /></a>,
 //    }}
 //  />
 // which then splits the translation into two different strings which is hell for your translation team.

@@ -5,8 +5,6 @@ import styles from './Actions.module.css';
 
 export default class Reblog extends PureComponent {
   handleClick = evt => {
-    evt.preventDefault();
-
     const type = this.props.contentRemote.type;
     if (type === 'remote-comment') {
       return;
@@ -20,13 +18,12 @@ export default class Reblog extends PureComponent {
     const type = this.props.contentRemote.type;
 
     return (
-      <a
-        href="#reblog"
+      <button
         onClick={this.handleClick}
-        className={classNames({ [styles.disabled]: type === 'remote-comment' })}
+        className={classNames('hw-button-link', { [styles.disabled]: type === 'remote-comment' })}
       >
         <F msg="reblog" />
-      </a>
+      </button>
     );
   }
 }

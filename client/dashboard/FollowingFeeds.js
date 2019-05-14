@@ -15,7 +15,6 @@ import styles from './RemoteUsers.module.css';
 })
 class FollowingFeeds extends PureComponent {
   handleClick = (evt, userRemote) => {
-    evt.preventDefault();
     this.props.handleSetFeed(userRemote);
   };
 
@@ -32,14 +31,14 @@ class FollowingFeeds extends PureComponent {
             key={userRemote.profile_url}
             className={classNames({ [styles.selected]: currentUserRemote.profile_url === userRemote.profile_url })}
           >
-            <a
-              href="#open-feed"
+            <button
+              className="hw-button-link"
               onClick={evt => this.handleClick(evt, userRemote)}
               title={userRemote.name || userRemote.username}
             >
               <Avatar src={userRemote.favicon || userRemote.avatar} />
               {userRemote.name || userRemote.username}
-            </a>
+            </button>
             <span className={styles.unreadCount}>
               {feedCountsObj[userRemote.profile_url] ? (
                 <FormattedNumber value={feedCountsObj[userRemote.profile_url].count} />

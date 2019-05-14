@@ -24,7 +24,6 @@ class Tools extends Component {
   }
 
   handleLogout = evt => {
-    evt.preventDefault();
     setUser(undefined);
   };
 
@@ -62,9 +61,9 @@ class Tools extends Component {
           </a>
         </li>
         <li>
-          <a href="#logout" onClick={this.handleLogout}>
+          <button className="hw-button-link" onClick={this.handleLogout}>
             <F msg="logout" />
-          </a>
+          </button>
         </li>
       </ul>
     );

@@ -100,8 +100,6 @@ class Content extends Component {
   }
 
   handleEdit = evt => {
-    evt && evt.preventDefault();
-
     if (this.state.isEditing) {
       this.saveContent();
     }

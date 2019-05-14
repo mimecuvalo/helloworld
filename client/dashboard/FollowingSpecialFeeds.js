@@ -18,22 +18,18 @@ class FollowingSpecialFeeds extends PureComponent {
   static contextType = UserContext;
 
   handleEntireFeedClick = evt => {
-    evt.preventDefault();
     this.props.handleSetFeed('');
   };
 
   handleMyFeedClick = evt => {
-    evt.preventDefault();
     this.props.handleSetFeed('me');
   };
 
   handleFavoritesClick = evt => {
-    evt.preventDefault();
     this.props.handleSetFeed('favorites');
   };
 
   handleCommentsClick = evt => {
-    evt.preventDefault();
     this.props.handleSetFeed('comments');
   };
 
@@ -46,34 +42,34 @@ class FollowingSpecialFeeds extends PureComponent {
     return (
       <>
         <li className={styles.readAll}>
-          <a href="#read-all" onClick={this.handleEntireFeedClick}>
+          <button className="hw-button-link" onClick={this.handleEntireFeedClick}>
             <F msg="read all" />
-          </a>
+          </button>
           <span className={styles.unreadCount}>
             <FormattedNumber value={totalCount} />
           </span>
           <FollowingAllMenu />
         </li>
         <li className={classNames({ [styles.selected]: specialFeed === 'me' })}>
-          <a href="#your-feed" onClick={this.handleMyFeedClick}>
+          <button className="hw-button-link" onClick={this.handleMyFeedClick}>
             {userAvatar}
             <F msg="your feed" />
-          </a>
+          </button>
         </li>
         <li className={classNames({ [styles.selected]: specialFeed === 'favorites' })}>
-          <a href="#your-favorites" onClick={this.handleFavoritesClick}>
+          <button className="hw-button-link" onClick={this.handleFavoritesClick}>
             {userAvatar}
             <F msg="favorites" />
-          </a>
+          </button>
           <span className={styles.unreadCount}>
             <FormattedNumber value={favoritesCount} />
           </span>
         </li>
         <li className={classNames({ [styles.selected]: specialFeed === 'comments' })}>
-          <a href="#comments" onClick={this.handleCommentsClick}>
+          <button className="hw-button-link" onClick={this.handleCommentsClick}>
             {userAvatar}
             <F msg="comments" />
-          </a>
+          </button>
           <span className={styles.unreadCount}>
             <FormattedNumber value={commentsCount} />
           </span>

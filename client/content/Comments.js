@@ -98,8 +98,6 @@ class Comments extends Component {
   };
 
   handleLogin = evt => {
-    evt.preventDefault();
-
     createLock().show();
   };
 
@@ -140,9 +138,9 @@ class Comments extends Component {
                   msg="Please {login} to leave a comment."
                   values={{
                     login: (
-                      <a href="#login" onClick={this.handleLogin}>
+                      <button className="hw-button-link" onClick={this.handleLogin}>
                         <F msg="login" />
-                      </a>
+                      </button>
                     ),
                   }}
                 />
