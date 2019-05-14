@@ -142,6 +142,7 @@ export default class ContentEditor extends Component {
         <Editor
           content={this.state.content ? this.state : content}
           ref={this.contentEditor}
+          mentions={this.props.mentions}
           onChange={this.handleContentChange}
           onMediaAdd={this.handleMediaAdd}
           showPlaceholder={this.props.showPlaceholder}

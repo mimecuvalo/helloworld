@@ -11,22 +11,28 @@ export default class Mentions extends Component {
   constructor(props) {
     super(props);
 
-    this.mentions = [
-      {
-        name: 'Mime Čuvalo',
-        link: 'https://nite-lite.net',
-        avatar: 'https://nite-lite.net/resource/mime/nightlight/Light-Bulb.jpg',
-      },
-    ];
-
     this.state = {
-      suggestions: this.mentions,
+      suggestions: this.normalizedData() || [],
     };
+  }
+
+  normalizedData() {
+    if (!this.props.mentions) {
+      return [];
+    }
+
+    return this.props.mentions.map(mention => {
+      return {
+        name: mention.name || mention.username,
+        link: mention.profile_url,
+        avatar: mention.avatar || mention.favicon,
+      };
+    });
   }
 
   onSearchChange = ({ value }) => {
     this.setState({
-      suggestions: defaultSuggestionsFilter(value, this.mentions),
+      suggestions: defaultSuggestionsFilter(value, this.normalizedData() || []),
     });
   };
 

@@ -117,6 +117,7 @@ npm run test
 - editor features to bring back (from Python version)
   - better emoji picker (can use EmojiOne's)
   - custom emojis
+  - gotta fix @-mentioning for editing content (works for dashboard only now)
   - draft.js:
     - move paste code out of main index.js
     - custom tab behavior - draft.js's default is lame

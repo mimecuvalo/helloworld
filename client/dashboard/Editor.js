@@ -202,7 +202,13 @@ class DashboardEditor extends PureComponent {
             </FormControl>
           </form>
         </Toolbar>
-        <ContentEditor ref={this.editor} showPlaceholder={true} content={null} onMediaAdd={this.handleMediaAdd} />
+        <ContentEditor
+          ref={this.editor}
+          showPlaceholder={true}
+          mentions={this.props.data.fetchFollowing}
+          content={null}
+          onMediaAdd={this.handleMediaAdd}
+        />
         <HiddenSnackbarShim message={this.state.message} variant="success" />
       </div>
     );
@@ -220,6 +226,14 @@ export default compose(
           section
           title
           username
+        }
+
+        fetchFollowing {
+          name
+          username
+          profile_url
+          avatar
+          favicon
         }
       }
     `,

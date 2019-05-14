@@ -250,7 +250,7 @@ class HelloWorldEditor extends Component {
           />
           <Toolbars AlignmentTool={AlignmentTool} dividerPlugin={dividerPlugin} />
           <Emojis />
-          <Mentions />
+          <Mentions mentions={this.props.mentions} />
         </div>
         <HiddenSnackbarShim message={this.state.errorMessage} variant="error" />
       </>
