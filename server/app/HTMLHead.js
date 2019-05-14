@@ -73,9 +73,7 @@ class HTMLHead extends PureComponent {
     let viewport = 'width=device-width, initial-scale=1';
 
     if (contentOwner) {
-      description = contentOwner.description && (
-        <meta name="description" content={contentOwner.description || 'Hello, world.'} />
-      );
+      description = <meta name="description" content={contentOwner.description || 'Hello, world.'} />;
       favicon = contentOwner.favicon;
       rss = <link rel="alternate" type="application/atom+xml" title={title} href={feedUrl} />;
       theme = contentOwner.theme && <link rel="stylesheet" href={contentOwner.theme} />;
