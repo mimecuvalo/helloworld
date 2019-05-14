@@ -22,7 +22,7 @@ class WebFinger extends PureComponent {
 
     const acct = `acct:${username}@${req.get('host')}`;
     const aboutUrl = contentUrl({ username, section: 'main', name: 'about' }, req);
-    const feedUrl = buildUrl({ req, pathname: '/api/social/rss', searchParams: { username } });
+    const feedUrl = buildUrl({ req, pathname: '/api/social/feed', searchParams: { username } });
     const foafUrl = buildUrl({ req, pathname: '/api/social/foaf', searchParams: { username } });
     const followUrl = buildUrl({ req, pathname: '/api/social/follow', searchParams: { username } });
     const salmonUrl = buildUrl({ req, pathname: '/api/social/salmon', searchParams: { q: acct } });
