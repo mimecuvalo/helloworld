@@ -26,15 +26,22 @@ router.use('/pubsubhubbub', pubSubHubSubscriber.listener());
 export default router;
 
 export async function followUser(req, currentUser, profileUrl) {
+  let userRemote;
   try {
-    const userRemote = await discoverUserRemoteInfoSaveAndSubscribe(req, profileUrl, currentUser.model.username);
+    userRemote = await discoverUserRemoteInfoSaveAndSubscribe(req, profileUrl, currentUser.model.username);
     const feedResponseText = await retrieveFeed(userRemote.feed_url);
     await parseFeedAndInsertIntoDb(userRemote, feedResponseText);
-    salmonFollow(req, currentUser.model, userRemote.salmon_url, true /* isFollow */);
-    return userRemote;
   } catch (ex) {
     console.error(ex);
   }
+
+  try {
+    salmonFollow(req, currentUser.model, userRemote.salmon_url, true /* isFollow */);
+  } catch (ex) {
+    console.error(ex);
+  }
+
+  return userRemote;
 }
 
 export async function unfollowUser(req, currentUser, userRemote, hub_url, profileUrl) {
@@ -42,6 +49,11 @@ export async function unfollowUser(req, currentUser, userRemote, hub_url, profil
     const userRemoteParams = { local_username: currentUser.model.username, profile_url: profileUrl };
     const callbackUrl = buildUrl({ req, pathname: '/pubsubhubbub', searchParams: userRemoteParams });
     await pubSubHubSubscriber.unsubscribe(hub_url, constants.pushHub, callbackUrl);
+  } catch (ex) {
+    console.error(ex);
+  }
+
+  try {
     salmonFollow(req, currentUser.model, userRemote.salmon_url, false /* isFollow */);
   } catch (ex) {
     console.error(ex);
