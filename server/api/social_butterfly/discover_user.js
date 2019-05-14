@@ -25,8 +25,8 @@ export async function getLRDD(url) {
 }
 
 // Has all the links to different feeds/data about the user. See webfinger.js for example.
-export async function getWebfinger(lrddUrl, email) {
-  const webfingerUrl = lrddUrl.replace('{uri}', encodeURIComponent(email));
+export async function getWebfinger(lrddUrl, uri) {
+  const webfingerUrl = lrddUrl.replace('{uri}', encodeURIComponent(uri));
 
   let $;
   try {
@@ -123,7 +123,7 @@ export function parseUsernameFromAccount(rawAcct) {
     username = account.split('@')[0];
   } else {
     const parsedUrl = new URL(account);
-    username = parsedUrl.pathname.split('/')[0];
+    username = parsedUrl.pathname.split('/')[1];
   }
 
   return username;
