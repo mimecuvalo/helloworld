@@ -169,6 +169,10 @@ npm run test
     - have hidden content
     - change section/album/thumb/hidden/template/thumb in content editor
 
+### p2 (ideas)
+
+- look at/switch over to React Hooks
+
 ## 📙 Learn More
 
 ### [Changelog](changelog.md)

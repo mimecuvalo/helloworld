@@ -40,6 +40,26 @@ export default class ContentEditor extends Component {
     this.setState({ loaded: true });
   };
 
+  componentDidUpdate() {
+    if (!this.state.loaded) {
+      return;
+    }
+
+    switch (this.state.tabValue) {
+      case 0:
+        this.contentEditor.current.focus();
+        break;
+      case 1:
+        this.codeMirrorCSS.current.getCodeMirror().focus();
+        break;
+      case 2:
+        this.codeMirrorJS.current.getCodeMirror().focus();
+        break;
+      default:
+        break;
+    }
+  }
+
   componentWillUnmount() {
     window.removeEventListener('beforeunload', this.handleOnBeforeUnload);
   }

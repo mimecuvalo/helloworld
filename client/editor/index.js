@@ -55,6 +55,8 @@ class HelloWorldEditor extends Component {
 
     const content = this.props.content;
 
+    this.editor = React.createRef();
+
     let state;
     if (content?.content) {
       state = convertFromRaw(typeof content.content === 'string' ? JSON.parse(content.content) : content.content);
@@ -95,6 +97,10 @@ class HelloWorldEditor extends Component {
 
   get fileInfo() {
     return this.state.fileInfo;
+  }
+
+  focus() {
+    this.editor && this.editor.current.focus();
   }
 
   handleOnBeforeUnload = evt => {
@@ -240,6 +246,7 @@ class HelloWorldEditor extends Component {
             onTab={this.handleOnTab}
             plugins={plugins}
             readOnly={this.props.readOnly}
+            ref={this.editor}
           />
           <Toolbars AlignmentTool={AlignmentTool} dividerPlugin={dividerPlugin} />
           <Emojis />
