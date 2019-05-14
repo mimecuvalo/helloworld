@@ -73,7 +73,9 @@ class HTMLHead extends PureComponent {
     let viewport = 'width=device-width, initial-scale=1';
 
     if (contentOwner) {
-      description = contentOwner.description && <meta name="description" content={contentOwner.description} />;
+      description = contentOwner.description && (
+        <meta name="description" content={contentOwner.description || 'Hello, world.'} />
+      );
       favicon = contentOwner.favicon;
       rss = <link rel="alternate" type="application/atom+xml" title={title} href={feedUrl} />;
       theme = contentOwner.theme && <link rel="stylesheet" href={contentOwner.theme} />;
@@ -110,7 +112,7 @@ class HTMLHead extends PureComponent {
           type="application/opensearchdescription+xml"
           title={title}
         />
-        <link rel="canonical" href={content && contentUrl(content)} />
+        <link rel="canonical" href={content && contentUrl(content, req)} />
         {rss}
         <meta name="viewport" content={viewport} />
         <meta name="theme-color" content="#000000" />
