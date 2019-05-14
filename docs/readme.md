@@ -96,6 +96,7 @@ npm run test
   - see remote comments
   - WebSub (pubsubhubbub)
   - see if ostatus is still case-sensitive, if not make all lower case foaf, webfinger, host_meta, too confusing with react warnings
+- prbly move comments/favorites to separate 'social' table (also need to consolidate ‘local’ and ‘remote' comments)
 - same Apollo query twice causes SSR to fail with htmlHead, wtf.
 - more GraphQL examples:
   - fragments

@@ -1,6 +1,7 @@
 import Avatar from './Avatar';
 import classNames from 'classnames';
 import { F } from '../../shared/i18n';
+import FollowerMenu from './FollowerMenu';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import React, { PureComponent } from 'react';
@@ -11,6 +12,7 @@ import styles from './RemoteUsers.module.css';
     fetchFollowers {
       avatar
       favicon
+      following
       name
       profile_url
       username
@@ -29,10 +31,14 @@ class Followers extends PureComponent {
         <ul>
           {followers.map(follower => (
             <li key={follower.profile_url}>
-              <a href={follower.profile_url} target="_blank" rel="noopener noreferrer">
+              <button
+                className="hw-button-link"
+                onClick={() => window.open(follower.profile_url, follower.profile_url, 'noopener,noreferrer')}
+              >
                 <Avatar src={follower.favicon || follower.avatar} />
                 {follower.name || follower.username}
-              </a>
+              </button>
+              <FollowerMenu userRemote={follower} handleSetFeed={this.handleSetFeed} />
             </li>
           ))}
         </ul>

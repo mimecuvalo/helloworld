@@ -1,21 +1,18 @@
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import { defineMessages, F, injectIntl } from '../../shared/i18n';
 import IconButton from '@material-ui/core/IconButton';
-import MarkAllAsRead from './actions/MarkAllAsRead';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import NewFeed from './actions/NewFeed';
 import React, { PureComponent } from 'react';
-import Sort from './actions/Sort';
 import styles from './RemoteUsers.module.css';
-import UnfollowFeed from './actions/UnfollowFeed';
-import ViewAlreadyRead from './actions/ViewAlreadyRead';
 
 const messages = defineMessages({
-  menu: { msg: 'user options' },
+  menu: { msg: 'follower options' },
 });
 
 @injectIntl
-class FollowingMenu extends PureComponent {
+class FollowerMenu extends PureComponent {
   constructor() {
     super();
 
@@ -34,14 +31,16 @@ class FollowingMenu extends PureComponent {
 
   handleVisit = () => {
     this.handleClose();
-    window.open(this.props.userRemote.profile_url, this.props.userRemote.profile_url, 'noopener,noreferrer');
+    window.open(this.props.userRemote.profile_url, this.props.userRemote.profile_url);
   };
 
   render() {
     const { anchorEl } = this.state;
     const isOpen = Boolean(anchorEl);
+    const { handleSetFeed, userRemote } = this.props;
     const menuAriaLabel = this.props.intl.formatMessage(messages.menu);
-    const id = `following-menu-${this.props.userRemote.profile_url}`;
+    const id = `follower-menu-${userRemote.profile_url}`;
+    const { profile_url, following } = userRemote;
 
     return (
       <>
@@ -58,28 +57,10 @@ class FollowingMenu extends PureComponent {
           <MenuItem key="visit" onClick={this.handleVisit}>
             <F msg="visit" />
           </MenuItem>
-          <MarkAllAsRead key="read" handleClose={this.handleClose} userRemote={this.props.userRemote} />
-          <Sort
-            key="sort"
-            handleClose={this.handleClose}
-            userRemote={this.props.userRemote}
-            handleSetFeed={this.props.handleSetFeed}
-          />
-          <ViewAlreadyRead
-            key="alreadyread"
-            handleClose={this.handleClose}
-            userRemote={this.props.userRemote}
-            handleSetFeed={this.props.handleSetFeed}
-          />
-          <UnfollowFeed
-            key="unfollow"
-            handleClose={this.handleClose}
-            userRemote={this.props.userRemote}
-            handleSetFeed={this.props.handleSetFeed}
-          />
+          {!following ? <NewFeed handleSetFeed={handleSetFeed} isButton={true} profileUrl={profile_url} /> : null}
         </Menu>
       </>
     );
   }
 }
-export default FollowingMenu;
+export default FollowerMenu;

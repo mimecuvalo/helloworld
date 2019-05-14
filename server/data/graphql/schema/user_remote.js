@@ -7,6 +7,8 @@ const commonFields = `
   profile_url: String!
   salmon_url: String
   webmention_url: String
+  follower: Boolean!
+  following: Boolean!
   feed_url: String!
   hub_url: String
   avatar: String!
@@ -19,8 +21,6 @@ export default gql`
   type UserRemotePrivate {
     ${commonFields}
     magic_key: String
-    follower: Boolean!
-    following: Boolean!
     order: Int!
   }
 

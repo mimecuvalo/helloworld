@@ -14,7 +14,7 @@ export default {
 
     async fetchFollowers(parent, args, { currentUser, models }) {
       return await models.User_Remote.findAll({
-        attributes: ['username', 'name', 'profile_url', 'avatar', 'favicon', 'sort_type'],
+        attributes: ['username', 'name', 'profile_url', 'avatar', 'favicon', 'sort_type', 'following'],
         where: { local_username: currentUser.model.username, follower: true },
         order: [['username']],
       });

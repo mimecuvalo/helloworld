@@ -69,7 +69,7 @@ class Dashboard extends PureComponent {
                     specialFeed={this.state.specialFeed}
                     userRemote={this.state.userRemote}
                   />
-                  <Followers className={styles.followers} />
+                  <Followers className={styles.followers} handleSetFeed={this.handleSetFeed} />
                 </nav>
 
                 <article className={styles.content}>
