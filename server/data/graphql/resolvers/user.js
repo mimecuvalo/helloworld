@@ -3,7 +3,7 @@ import { isAdmin } from './authorization';
 
 const User = {
   Query: {
-    allUsers: combineResolvers(isAdmin, async (parent, args, { models }) => {
+    fetchAllUsers: combineResolvers(isAdmin, async (parent, args, { models }) => {
       return await models.User.findAll();
     }),
 

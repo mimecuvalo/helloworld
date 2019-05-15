@@ -82,7 +82,7 @@ npm run test
 
 ### p0 (high pri)
 
-- split off dashboard, draft.js code, auth0, and lodash code for performance
+- split off dashboard, admin panel, draft.js code, auth0, and lodash code for performance
 - separate packages for editor and socialize api
   - take a look at lerna: https://medium.com/@luisvieira_gmr/building-large-scale-react-applications-in-a-monorepo-91cd4637c131
 - social features
@@ -97,6 +97,7 @@ npm run test
   - see remote comments
   - WebSub (pubsubhubbub)
   - see if ostatus is still case-sensitive, if not make all lower case foaf, webfinger, host_meta, too confusing with react warnings
+- getting an error in graphql seems to hang the apollo server. if so, update all-the-things, too.
 - prbly move comments/favorites to separate 'social' table (also need to consolidate ‘local’ and ‘remote' comments)
 - same Apollo query twice causes SSR to fail with htmlHead, wtf.
 - more GraphQL examples:
@@ -108,6 +109,7 @@ npm run test
   - generate automatically schemas/typedefs
 - generator steps for Sequelize files
 - see if `lazy` attribute can be a good substitute for ContentThumb's delay-loading logic (chrome 75)
+- finish up Admin panel to add/delete users
 
 ### p1 (medium pri)
 

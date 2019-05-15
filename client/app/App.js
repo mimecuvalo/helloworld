@@ -1,4 +1,5 @@
 import './App.css';
+import Admin from '../admin/Admin';
 import classNames from 'classnames';
 import clientHealthCheck from './client_health_check';
 import CloseIcon from '@material-ui/icons/Close';
@@ -92,6 +93,7 @@ class App extends Component {
                 <ScrollToTop>
                   <Switch>
                     <Route path={`/dashboard`} component={this.renderDashboard} />
+                    <Route path={`/admin`} component={Admin} />
                     <Route path={`/:username/search/:query`} component={Search} />
                     <Route
                       path={[

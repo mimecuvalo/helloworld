@@ -29,7 +29,7 @@ export default gql`
   }
 
   extend type Query {
-    allUsers: [UserPrivate!]!
+    fetchAllUsers: [UserPrivate!]!
     fetchUser(id: Int!): UserPrivate
     fetchPublicUserData(username: String): UserPublic
     fetchPublicUserDataHead(username: String): UserPublic
