@@ -1,3 +1,4 @@
+import authorization from '../util/authorization';
 import authRouter from './auth';
 import clientHealthCheckRouter from './client_health_check';
 import dataLiberation from './data_liberation';
@@ -16,17 +17,17 @@ export default function apiServerFactory({ appName }) {
   const router = express.Router();
   router.use('/auth', authRouter);
   router.use('/client-health-check', clientHealthCheckRouter);
-  router.get('/data-liberation', dataLiberation);
-  router.use('/is-user-logged-in', checkIsLoggedIn, (req, res) => {
-    // Just an example of the checkIsLoggedIn (very simplistic) capability.
+  router.get('/data-liberation', isAuthor, dataLiberation);
+  router.use('/is-user-logged-in', isAuthenticated, (req, res) => {
+    // Just an example of the isAuthenticated (very simplistic) capability.
     res.send('OK');
   });
   router.use('/opensearch', openSearchRouterFactory({ appName }));
   router.use('/report-error', errorRouter);
   router.use('/social', socialButterfly);
   router.use('/stats', stats);
-  router.use('/unfurl', unfurl);
-  router.use('/upload', upload);
+  router.use('/unfurl', isAuthor, unfurl);
+  router.use('/upload', isAuthor, upload);
   router.get('/', (req, res) => {
     res.sendStatus(404);
   });
@@ -34,10 +35,11 @@ export default function apiServerFactory({ appName }) {
   return router;
 }
 
-const checkIsLoggedIn = (req, res, next) => {
-  if (!req.session.user) {
-    res.send(401);
-  }
+const isAuthenticated = (req, res, next) =>
+  authorization.isAuthenticated(req.session.user) ? next() : res.sendStatus(401);
 
-  next();
-};
+const isAuthor = (req, res, next) =>
+  authorization.isAuthor(req.session.user) ? next() : res.status(403).send('I call shenanigans.');
+
+// const isAdmin = (req, res, next) =>
+//   authorization.isAdmin(req.session.user) ? next() : res.status(403).send('I call shenanigans.');
