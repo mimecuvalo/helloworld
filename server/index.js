@@ -8,10 +8,12 @@ import csurf from 'csurf';
 import express from 'express';
 import fs from 'fs';
 import hostMeta from './api/social_butterfly/host_meta';
+import models from './data/models';
 import path from 'path';
 import schedule from 'node-schedule';
 import session from 'express-session';
 import sessionFileStore from 'session-file-store';
+import setup from './setup';
 import updateFeeds from './tasks/update_feeds';
 import winston from 'winston';
 import WinstonDailyRotateFile from 'winston-daily-rotate-file';
@@ -89,7 +91,16 @@ export default function constructApps({ appName, productionAssetsByType, publicU
     appServer({ req, res, next, assetPathsByType, appName, publicUrl, gitInfo });
   });
 
+  checkInitialSetup();
+
   return [app, dispose];
+}
+
+async function checkInitialSetup() {
+  const anyUser = await models.User.findOne();
+  if (!anyUser) {
+    setup();
+  }
 }
 
 // Sets up winston to give us request logging on the main App server.

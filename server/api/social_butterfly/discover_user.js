@@ -64,7 +64,7 @@ export async function discoverUserRemoteInfoSaveAndSubscribe(req, url, local_use
   userRemote.following = true;
   await models.User_Remote.upsert(userRemote, { validate: true });
 
-  if (userRemote.hub_url) {
+  if (req && userRemote.hub_url) {
     const userRemoteParams = { local_username: userRemote.local_username, profile_url: userRemote.profile_url };
     const callbackUrl = buildUrl({ req, pathname: '/pubsubhubbub', searchParams: userRemoteParams });
     await pubSubHubSubscriber.subscribe(userRemote.hub_url, constants.pushHub, callbackUrl);

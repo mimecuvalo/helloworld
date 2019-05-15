@@ -25,6 +25,7 @@ router.use('/pubsubhubbub', pubSubHubSubscriber.listener());
 
 export default router;
 
+// `req` might be null if we're doing initial setup of the server.
 export async function followUser(req, currentUser, profileUrl) {
   let userRemote;
   try {
@@ -36,7 +37,7 @@ export async function followUser(req, currentUser, profileUrl) {
   }
 
   try {
-    salmonFollow(req, currentUser.model, userRemote.salmon_url, true /* isFollow */);
+    req && salmonFollow(req, currentUser.model, userRemote.salmon_url, true /* isFollow */);
   } catch (ex) {
     console.error(ex);
   }
