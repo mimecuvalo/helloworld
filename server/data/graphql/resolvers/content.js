@@ -43,7 +43,13 @@ const Content = {
         }
       }
 
-      const content = await models.Content.findOne({ where: { username, name } });
+      let content = await models.Content.findOne({ where: { username, name } });
+
+      if (!content) {
+        name = 'home';
+        // Could be that we don't have a 'main' page. Look for a 'home' page instead.
+        content = await models.Content.findOne({ where: { username, name } });
+      }
 
       // Inherit style, code, template from the album.
       if (content?.album && content.album !== 'main') {
