@@ -244,13 +244,13 @@ class HelloWorldEditor extends Component {
             keyBindingFn={keyBindingFn}
             onChange={this.onChange}
             onTab={this.handleOnTab}
-            plugins={plugins}
+            plugins={this.props.readOnly ? [] : plugins}
             readOnly={this.props.readOnly}
             ref={this.editor}
           />
-          <Toolbars AlignmentTool={AlignmentTool} dividerPlugin={dividerPlugin} />
-          <Emojis />
-          <Mentions mentions={this.props.mentions} />
+          {this.props.readOnly ? null : <Toolbars AlignmentTool={AlignmentTool} dividerPlugin={dividerPlugin} />}
+          {this.props.readOnly ? null : <Emojis />}
+          {this.props.readOnly ? null : <Mentions mentions={this.props.mentions} />}
         </div>
         <HiddenSnackbarShim message={this.state.errorMessage} variant="error" />
       </>

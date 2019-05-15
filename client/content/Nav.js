@@ -189,7 +189,6 @@ export default class NavWithApolloClient extends Component {
   }
 
   next() {
-    console.log(this.nav.current.getWrappedInstance());
     this.nav.current && this.nav.current.getWrappedInstance().goNext();
   }
 
