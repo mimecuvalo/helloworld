@@ -1,5 +1,6 @@
 import authRouter from './auth';
 import clientHealthCheckRouter from './client_health_check';
+import dataLiberation from './data_liberation';
 import errorRouter from './error';
 import express from 'express';
 import openSearchRouterFactory from './opensearch';
@@ -15,6 +16,7 @@ export default function apiServerFactory({ appName }) {
   const router = express.Router();
   router.use('/auth', authRouter);
   router.use('/client-health-check', clientHealthCheckRouter);
+  router.get('/data-liberation', dataLiberation);
   router.use('/is-user-logged-in', checkIsLoggedIn, (req, res) => {
     // Just an example of the checkIsLoggedIn (very simplistic) capability.
     res.send('OK');

@@ -82,6 +82,7 @@ npm run test
 
 ### p0 (high pri)
 
+- split off dashboard, draft.js code, auth0, and lodash code for performance
 - separate packages for editor and socialize api
   - take a look at lerna: https://medium.com/@luisvieira_gmr/building-large-scale-react-applications-in-a-monorepo-91cd4637c131
 - social features

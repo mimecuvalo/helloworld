@@ -61,6 +61,11 @@ class Tools extends Component {
           </a>
         </li>
         <li>
+          <a href="/api/data-liberation">
+            <F msg="data liberation" />
+          </a>
+        </li>
+        <li>
           <button className="hw-button-link" onClick={this.handleLogout}>
             <F msg="logout" />
           </button>
