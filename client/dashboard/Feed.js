@@ -42,8 +42,9 @@ import styles from './Dashboard.module.css';
         offset: 0,
         query,
         shouldShowAllItems,
-        // XXX(mime): this would work but has problems with SSR I think. fix later.
-        //antiCache: +new Date(), // XXX(mime): see https://github.com/apollographql/react-apollo/issues/556
+
+        // XXX(mime): see https://github.com/apollographql/react-apollo/issues/556
+        antiCache: didFeedLoad && typeof window !== 'undefined' ? +new Date() : undefined,
       },
       fetchPolicy: didFeedLoad ? 'network-only' : 'cache-first',
     }),
