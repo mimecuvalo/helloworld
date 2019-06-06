@@ -85,8 +85,21 @@ npm run test
 - split off dashboard, admin panel, draft.js code, auth0, and lodash code for performance
 - separate packages for editor and socialize api
   - take a look at lerna: https://medium.com/@luisvieira_gmr/building-large-scale-react-applications-in-a-monorepo-91cd4637c131
+  - social api:
+    - provide function to generate RSA
+    - provide function to generate <head> html
+    - get rid of local fields: comments_count and comments_updated, favorites_count, derive instead
+    - utility function for parsing 'acct:' maybe
+    - move urls to constants (foaf, webfinger, etc.)
+    - rename fields to be consistent
+      - from_user: remoteProfileUrl,
+      - local_content_name: localContentUrl,
+      - to_username: localUsername,
+      - avatar -> logo
+    - maybe get rid of underscores vs camelCase
+- prbly move comments/favorites to separate 'social' table (also need to consolidate ‘local’ and ‘remote' comments)
 - social features
-  - verify oStatus support, follow/favorite/reply, unfollow (skip xsrf, also push/pubsub), with status.net (a.k.a. gnu social), friendi.ca, Pleroma, socialhome, hubzilla
+  - verify salmon (fix todos), oStatus support, follow/favorite/reply, unfollow (skip xsrf, also push/pubsub), with status.net (a.k.a. gnu social), friendi.ca, Pleroma, socialhome, hubzilla
   - reference: https://ostatus.readthedocs.io/en/latest/data_structures.html
   - activitypub
     - alternate: https://github.com/dariusk/rss-to-activitypub
@@ -98,7 +111,6 @@ npm run test
   - WebSub (pubsubhubbub)
   - see if ostatus is still case-sensitive, if not make all lower case foaf, webfinger, host_meta, too confusing with react warnings
 - getting an error in graphql seems to hang the apollo server. if so, update all-the-things, too.
-- prbly move comments/favorites to separate 'social' table (also need to consolidate ‘local’ and ‘remote' comments)
 - same Apollo query twice causes SSR to fail with htmlHead, wtf.
 - more GraphQL examples:
   - fragments
@@ -121,6 +133,8 @@ npm run test
 - more winston logging
 - links template just open embeds in lightbox?
 - editor features to bring back (from Python version)
+  - use CSS-in-JS in editor package to avoid having to import separately
+  - add snackbar close action
   - better emoji picker (can use EmojiOne's)
   - custom emojis
   - gotta fix @-mentioning for editing content (works for dashboard only now)
@@ -132,6 +146,7 @@ npm run test
       - https://github.com/ngs/draft-js-markdown-shortcuts-plugin
       - --- for divider
     - add inline-code
+    - add empty newline always at end of doc
     - image upload progress (or indeterminate loading "spinner")
     - unfurl should have "(via link)"
     - take a look at utils codebase: https://github.com/jpuri/draftjs-utils

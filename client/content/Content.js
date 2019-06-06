@@ -4,8 +4,8 @@ import ContentBase from './ContentBase';
 import ContentQuery from './ContentQuery';
 import { convertFromRaw, EditorState } from 'draft-js';
 import { defineMessages, injectIntl } from '../../shared/i18n';
+import { EditorUtils } from 'hello-world-editor';
 import Feed from './Feed';
-import { getTextForLine } from '../editor/utils/Text';
 import gql from 'graphql-tag';
 import Item from './Item';
 import Nav from './Nav';
@@ -115,7 +115,7 @@ class Content extends Component {
     const content = editor.export();
 
     // TODO(mime): gotta be a simpler way then all this conversion.
-    const title = getTextForLine(EditorState.createWithContent(convertFromRaw(content.content)), 0);
+    const title = EditorUtils.Text.getTextForLine(EditorState.createWithContent(convertFromRaw(content.content)), 0);
 
     const newThumb = editor.getContentEditor().fileInfo?.thumb || thumb || '';
 

@@ -1,4 +1,4 @@
-import { buildUrl, contentUrl } from '../../shared/util/url_factory';
+import { buildUrl, contentUrl, profileUrl } from '../../shared/util/url_factory';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import React, { PureComponent } from 'react';
@@ -61,11 +61,13 @@ class HTMLHead extends PureComponent {
     const content = this.props.data.fetchContentHead;
 
     let description, favicon, rss, theme, title, username;
-    const acct = `acct:${username}@${req.get('host')}`;
-    const feedUrl = buildUrl({ pathname: '/api/social/feed', searchParams: { username: contentOwner?.username } });
+    const account = `acct:${username}@${req.get('host')}`;
+    const feedUrl =
+      contentOwner &&
+      buildUrl({ pathname: '/api/social/feed', searchParams: { url: profileUrl(contentOwner.username) } });
     const repliesUrl =
       content && buildUrl({ pathname: '/api/social/comments', searchParams: { url: contentUrl(content) } });
-    const webmentionUrl = buildUrl({ req, pathname: '/api/social/webmention', searchParams: { q: acct } });
+    const webmentionUrl = buildUrl({ req, pathname: '/api/social/webmention', searchParams: { account } });
     const repliesAttribs = content && {
       'thr:count': content.comments_count,
       'thr:updated': new Date(content.comments_updated).toISOString(),

@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) [year]-present [fullname] <email@gmail.com> [@githubusername](https://github.com/githubusername)
+Copyright (c) 2018-present Mime Čuvalo <mimecuvalo@gmail.com> [@mimecuvalo](https://github.com/mimecuvalo)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

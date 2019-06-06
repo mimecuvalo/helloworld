@@ -1,7 +1,7 @@
 import crypto from 'crypto';
-import { followUser } from './api/social_butterfly/follow';
 import models from './data/models';
-const NodeRSA = require('node-rsa');
+import NodeRSA from 'node-rsa';
+import socialButterfly from './social-butterfly';
 
 // TODO(mime): all this user creation logic has to go somewhere else so we can reuse it later.
 export default async function setup() {
@@ -40,7 +40,7 @@ export default async function setup() {
   ]);
 
   // Give a feed to follow to start with.
-  await followUser(null /* req */, { model: newUser }, 'https://kottke.org');
+  await socialButterfly().follow(null /* req */, { model: newUser }, 'https://kottke.org');
 }
 
 function createStubContent({ username, section, name, template, hidden, title, view }) {

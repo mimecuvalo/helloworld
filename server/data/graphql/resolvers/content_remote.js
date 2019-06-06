@@ -1,9 +1,9 @@
 import { combineResolvers } from 'graphql-resolvers';
 import crypto from 'crypto';
-import { favorite as salmonFavorite } from '../../../api/social_butterfly/salmon';
 import { isAdmin, isAuthor } from './authorization';
 import Sequelize from 'sequelize';
-import socialize from '../../../api/social_butterfly/socialize';
+import socialButterfly from '../../../social-butterfly';
+import { toHTML } from './content';
 import uuidv4 from 'uuid/v4';
 
 export default {
@@ -208,7 +208,7 @@ export default {
         to_username: username,
         type: 'comment',
         username: commentUsername,
-        view: '',
+        view: toHTML(content),
       });
 
       const commentedContent = await models.Content.findOne({
@@ -226,7 +226,13 @@ export default {
       const contentOwner = await models.User.findOne({ where: { username } });
 
       if (!commentedContent.hidden) {
-        await socialize(req, contentOwner, updatedCommentedContent, createdRemoteContent, true /* isComment */);
+        await socialButterfly().syndicate(
+          req,
+          contentOwner,
+          updatedCommentedContent,
+          createdRemoteContent,
+          true /* isComment */
+        );
       }
 
       return {
@@ -261,7 +267,7 @@ export default {
           },
         });
 
-        salmonFavorite(req, currentUser.model, contentRemote, userRemote.salmon_url, favorited);
+        socialButterfly().favorite(req, currentUser.model, contentRemote, userRemote.salmon_url, favorited);
 
         return { from_user, post_id, type, favorited };
       }

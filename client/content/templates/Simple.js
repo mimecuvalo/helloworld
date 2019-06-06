@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import ContentEditor from '../ContentEditor';
-import Editor from '../../editor';
+import { Editor } from 'hello-world-editor';
 import ErrorBoundary from '../../error/ErrorBoundary';
 import React, { PureComponent } from 'react';
 import styles from './Simple.module.css';

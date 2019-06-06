@@ -1,6 +1,6 @@
 import { combineResolvers } from 'graphql-resolvers';
-import { followUser, unfollowUser } from '../../../api/social_butterfly/follow';
 import { isAdmin, isAuthor } from './authorization';
+import socialButterfly from '../../../social-butterfly';
 
 export default {
   Query: {
@@ -31,7 +31,7 @@ export default {
 
   Mutation: {
     createUserRemote: combineResolvers(isAuthor, async (parent, { profile_url }, { currentUser, models, req }) => {
-      return await followUser(req, currentUser, profile_url);
+      return await socialButterfly().follow(req, currentUser, profile_url);
     }),
 
     toggleSortFeed: combineResolvers(
@@ -67,7 +67,7 @@ export default {
         await models.User_Remote.update({ following: false }, { where: { id: userRemote.id } });
       }
 
-      await unfollowUser(req, currentUser, userRemote, userRemote.hub_url, profile_url);
+      await socialButterfly().unfollow(req, currentUser, userRemote, userRemote.hub_url, profile_url);
 
       return true;
     }),

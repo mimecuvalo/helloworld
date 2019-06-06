@@ -7,14 +7,12 @@ import cookieParser from 'cookie-parser';
 import csurf from 'csurf';
 import express from 'express';
 import fs from 'fs';
-import hostMeta from './api/social_butterfly/host_meta';
 import models from './data/models';
 import path from 'path';
-import schedule from 'node-schedule';
 import session from 'express-session';
 import sessionFileStore from 'session-file-store';
 import setup from './setup';
-import updateFeeds from './tasks/update_feeds';
+import socialButterfly from './social-butterfly';
 import winston from 'winston';
 import WinstonDailyRotateFile from 'winston-daily-rotate-file';
 
@@ -65,7 +63,8 @@ export default function constructApps({ appName, productionAssetsByType, publicU
   const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
   app.use('/resource', express.static(resolveApp('resource')));
 
-  app.use('/.well-known/host-meta', hostMeta);
+  // Setup up the SocialButterfly server.
+  const socialDispose = socialButterfly(app);
 
   // Set up API server.
   app.use('/api', csrfMiddleware, apiServer({ appName }));
@@ -75,9 +74,8 @@ export default function constructApps({ appName, productionAssetsByType, publicU
 
   // Background requests
   const dispose = () => {
-    schedule.cancelJob('updateFeeds');
+    socialDispose();
   };
-  schedule.scheduleJob('updateFeeds', '0 1 * * *', updateFeeds);
 
   // Create logger for app server to log requests.
   const appLogger = createLogger();

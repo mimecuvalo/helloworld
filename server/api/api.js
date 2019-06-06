@@ -5,7 +5,6 @@ import dataLiberation from './data_liberation';
 import errorRouter from './error';
 import express from 'express';
 import openSearchRouterFactory from './opensearch';
-import socialButterfly from './social_butterfly';
 import stats from './stats';
 import unfurl from './unfurl';
 import upload from './upload';
@@ -24,7 +23,6 @@ export default function apiServerFactory({ appName }) {
   });
   router.use('/opensearch', openSearchRouterFactory({ appName }));
   router.use('/report-error', errorRouter);
-  router.use('/social', socialButterfly);
   router.use('/stats', stats);
   router.use('/unfurl', isAuthor, unfurl);
   router.use('/upload', isAuthor, upload);

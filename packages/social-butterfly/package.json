@@ -1,0 +1,74 @@
+{
+  "name": "social-butterfly",
+  "version": "0.8.2",
+  "description": "Incorporate federated social network protocols easily. Used with Hello, world federated blog.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mimecuvalo/helloworld.git",
+    "directory": "packages/social-butterfly"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=8.10"
+  },
+  "author": "Mime Čuvalo <mimecuvalo@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/mimecuvalo/helloworld/issues"
+  },
+  "keywords": [
+    "activitypub",
+    "atom",
+    "federated",
+    "hello-world",
+    "oembed",
+    "ostatus",
+    "pubsubhubbub",
+    "push",
+    "react",
+    "rss",
+    "salmon",
+    "social",
+    "social-butterfly",
+    "swat0",
+    "webfinger",
+    "webmention"
+  ],
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "files": [
+    "dist",
+    "readme.md"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && NODE_ENV=production babel . --out-dir dist --copy-files --ignore node_modules,__tests__,spec.js,test.js,__snapshots__"
+  },
+  "dependencies": {
+    "@babel/plugin-proposal-class-properties": "7.4.4",
+    "@babel/plugin-proposal-optional-chaining": "7.2.0",
+    "@babel/plugin-transform-modules-commonjs": "7.4.4",
+    "@babel/preset-react": "7.0.0",
+    "cheerio": "1.0.0-rc.2",
+    "express": "4.17.0",
+    "feedparser": "2.2.9",
+    "magic-signatures": "2.0.0",
+    "mime": "2.4.2",
+    "multer": "1.4.1",
+    "node-fetch": "2.6.0",
+    "node-schedule": "1.3.2",
+    "nodemailer": "6.1.1",
+    "pubsubhubbub": "1.0.1",
+    "sanitize-html": "1.20.0",
+    "sharp": "0.21.3",
+    "winston": "3.2.1",
+    "winston-daily-rotate-file": "3.9.0"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.4",
+    "react-dom": ">=16.8.4"
+  },
+  "devDependencies": {
+    "@babel/cli": "7.4.4",
+    "react": ">=16.8.4",
+    "react-dom": ">=16.8.4"
+  }
+}

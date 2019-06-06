@@ -1,13 +1,13 @@
 import { combineResolvers } from 'graphql-resolvers';
 import { convertFromRaw } from 'draft-js';
 import { convertToHTML } from 'draft-convert';
-import draftJSExtendPlugins from '../../../../client/editor/plugins';
+import { EditorPlugins } from 'hello-world-editor';
 import { escapeRegExp } from '../../../../shared/util/regex';
 import { isAdmin, isAuthor } from './authorization';
 import { isRobotViewing } from '../../../util/crawler';
 import nanoid from 'nanoid';
 import Sequelize from 'sequelize';
-import socialize from '../../../api/social_butterfly/socialize';
+import socialButterfly from '../../../social-butterfly';
 
 const ATTRIBUTES_NAVIGATION = [
   'username',
@@ -261,22 +261,6 @@ const Content = {
       });
     },
 
-    async fetchFeed(parent, { username }, { models }) {
-      const notEqualToMain = { [Sequelize.Op.ne]: 'main' };
-      const contentConstraints = {
-        username,
-        section: notEqualToMain,
-        album: notEqualToMain,
-        hidden: false,
-        redirect: false,
-      };
-      return await models.Content.findAll({
-        where: contentConstraints,
-        order: [['createdAt', 'DESC']],
-        limit: 50,
-      });
-    },
-
     async fetchCollectionLatest(parent, { username, section, name }, { currentUser, models }) {
       const isOwnerViewing = currentUser?.model?.username === username;
 
@@ -391,7 +375,7 @@ const Content = {
         const updatedContent = await models.Content.findOne({ where: { username, name } });
 
         if (!hidden) {
-          await socialize(req, currentUser.model, updatedContent);
+          await socialButterfly().syndicate(req, currentUser.model, updatedContent);
         }
 
         return { username: currentUser.model.username, name, hidden, title, thumb, style, code, content };
@@ -423,7 +407,7 @@ const Content = {
         });
 
         if (!hidden) {
-          await socialize(req, currentUser.model, createdContent);
+          await socialButterfly().syndicate(req, currentUser.model, createdContent);
         }
 
         return {
@@ -450,9 +434,9 @@ const Content = {
 
 export default Content;
 
-function toHTML(content, title) {
-  title = escapeRegExp(title);
-  const html = draftJSExtendPlugins(convertToHTML)(convertFromRaw(JSON.parse(content)));
+export function toHTML(content, title) {
+  title = title ? escapeRegExp(title) : '';
+  const html = EditorPlugins(convertToHTML)(convertFromRaw(JSON.parse(content)));
   return html.replace(new RegExp(`^<p>${title}</p>`), '');
 }
 

@@ -3,7 +3,7 @@ import ContentQuery from './ContentQuery';
 import { createLock } from '../app/auth';
 import { defineMessages, F, injectIntl } from '../../shared/i18n';
 import Delete from '../dashboard/actions/Delete';
-import Editor from '../editor';
+import { Editor } from 'hello-world-editor';
 import Favorite from '../dashboard/actions/Favorite';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';

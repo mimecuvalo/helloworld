@@ -5,11 +5,10 @@ import ContentEditor from '../content/ContentEditor';
 import { convertFromRaw, EditorState } from 'draft-js';
 import Cookies from 'js-cookie';
 import { defineMessages, F } from '../../shared/i18n';
+import { EditorUtils } from 'hello-world-editor';
 import FormControl from '@material-ui/core/FormControl';
-import { getTextForLine } from '../editor/utils/Text';
 import gql from 'graphql-tag';
 import HiddenSnackbarShim from '../components/HiddenSnackbarShim';
-import { insertTextAtLine } from '../editor/utils/Text';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { PureComponent } from 'react';
 import Select from '@material-ui/core/Select';
@@ -31,6 +30,7 @@ class DashboardEditor extends PureComponent {
       fileInfo: null,
       // Not so clean but, meh, don't feel like implementing two separate <select>'s
       sectionAndAlbum: JSON.stringify({ section: this.props.data.fetchSiteMap[0].name, album: '' }),
+      errorMessage: null,
       successMessage: null,
     };
   }
@@ -74,7 +74,7 @@ class DashboardEditor extends PureComponent {
   reblog(text) {
     const contentEditor = this.editor.current.getContentEditor();
     const editorState = contentEditor.editorState;
-    insertTextAtLine(editorState, 0, '\n');
+    EditorUtils.Text.insertTextAtLine(editorState, 0, '\n');
     contentEditor.handlePastedText(text, undefined /* html */, editorState);
   }
 
@@ -85,7 +85,7 @@ class DashboardEditor extends PureComponent {
     const { style, code, content } = editor.export();
 
     // TODO(mime): gotta be a simpler way then all this conversion.
-    const title = getTextForLine(EditorState.createWithContent(convertFromRaw(content)), 0);
+    const title = EditorUtils.Text.getTextForLine(EditorState.createWithContent(convertFromRaw(content)), 0);
 
     const username = this.props.username;
     const name = title.replace(/[^A-Za-z0-9-]/g, '-');
@@ -115,16 +115,16 @@ class DashboardEditor extends PureComponent {
         },
       });
     } catch (ex) {
-      this.setState({ message: messages.error }, () => {
-        this.setState({ message: null });
+      this.setState({ errorMessage: messages.error }, () => {
+        this.setState({ errorMessage: null });
       });
       return;
     }
 
     editor.clear();
 
-    this.setState({ fileInfo: null, message: messages.posted }, () => {
-      this.setState({ message: null });
+    this.setState({ fileInfo: null, successMessage: messages.posted }, () => {
+      this.setState({ successMessage: null });
     });
   };
 
@@ -209,7 +209,10 @@ class DashboardEditor extends PureComponent {
           content={null}
           onMediaAdd={this.handleMediaAdd}
         />
-        <HiddenSnackbarShim message={this.state.message} variant="success" />
+        <HiddenSnackbarShim
+          message={this.state.successMessage || this.state.errorMessage}
+          variant={this.state.successMessage ? 'success' : 'error'}
+        />
       </div>
     );
   }

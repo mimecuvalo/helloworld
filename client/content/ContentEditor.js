@@ -1,7 +1,9 @@
 import './CodeMirror.css';
 import AppBar from '@material-ui/core/AppBar';
+import { buildUrl } from '../../shared/util/url_factory';
 import classNames from 'classnames';
-import Editor from '../editor';
+import configuration from '../app/configuration';
+import { Editor } from 'hello-world-editor';
 import ErrorBoundary from '../error/ErrorBoundary';
 import { F } from '../../shared/i18n';
 import React, { Component } from 'react';
@@ -131,6 +133,27 @@ export default class ContentEditor extends Component {
     this.setState({ tabValue });
   };
 
+  handleMediaUpload = async body => {
+    return await fetch(buildUrl({ pathname: '/api/upload' }), {
+      method: 'POST',
+      body,
+      headers: { 'x-csrf-token': configuration.csrf },
+    });
+  };
+
+  handleLinkUnfurl = async url => {
+    return await fetch(buildUrl({ pathname: '/api/unfurl' }), {
+      method: 'POST',
+      body: JSON.stringify({
+        url,
+        _csrf: configuration.csrf,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  };
+
   render() {
     const content = this.props.content || {};
     const codeMirrorOptions = {
@@ -145,6 +168,8 @@ export default class ContentEditor extends Component {
           mentions={this.props.mentions}
           onChange={this.handleContentChange}
           onMediaAdd={this.handleMediaAdd}
+          onMediaUpload={this.handleMediaUpload}
+          onLinkUnfurl={this.handleLinkUnfurl}
           showPlaceholder={this.props.showPlaceholder}
         />
       </div>
