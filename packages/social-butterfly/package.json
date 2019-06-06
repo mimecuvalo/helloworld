@@ -40,7 +40,8 @@
     "readme.md"
   ],
   "scripts": {
-    "build": "rm -rf dist && NODE_ENV=production babel . --out-dir dist --copy-files --ignore node_modules,__tests__,spec.js,test.js,__snapshots__"
+    "build": "rm -rf dist && NODE_ENV=production babel . --out-dir dist --copy-files --ignore node_modules,__tests__,spec.js,test.js,__snapshots__",
+    "prepare": "npm run build"
   },
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "7.4.4",

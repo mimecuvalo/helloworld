@@ -94,7 +94,14 @@ plan.remote(function(remote) {
     remote.sudo(`mv ${destDir}/node_modules ${varTmpDir}`, { user });
   } else {
     remote.log('package.json has changed. Installing dependencies...');
+    remote.sudo(`lerna bootstrap --hoist -- --production --prefix ${varTmpDir} install ${varTmpDir}`, { user });
     remote.sudo(`npm --production --prefix ${varTmpDir} install ${varTmpDir}`, { user });
+
+    // TODO(mime): temporary until we get stuff up on npm
+    remote.sudo(`cd packages/hello-world-editor/dist; npm link`);
+    remote.sudo(`cd packages/social-butterfly/dist; npm link`);
+    remote.sudo(`npm link hello-world-editor`);
+    remote.sudo(`npm link social-butterfly`);
   }
 
   // Copy over sessions.
