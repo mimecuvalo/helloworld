@@ -89,10 +89,11 @@ plan.remote(function(remote) {
   remote.log('Seeing if we can just reuse the previous node_modules folder...');
   const isNPMUnchanged = remote.sudo(`cmp ${destDir}/package.json ${varTmpDir}/package.json`, { user, failsafe: true });
 
-  if (isNPMUnchanged.code === 0 || (isNPMUnchanged.stderr && isNPMUnchanged.stderr.indexOf('cmp: EOF') === 0 /* ignore NOEOL false positive */)) {
-    remote.log('package.json is unchanged. Reusing previous node_modules folder...');
-    remote.sudo(`mv ${destDir}/node_modules ${varTmpDir}`, { user });
-  } else {
+  // TODO(mime): isNPMUnchanged logic doesn't work currently with the new Lerna structure.
+  // if (isNPMUnchanged.code === 0 || (isNPMUnchanged.stderr && isNPMUnchanged.stderr.indexOf('cmp: EOF') === 0 /* ignore NOEOL false positive */)) {
+  //   remote.log('package.json is unchanged. Reusing previous node_modules folder...');
+  //   remote.sudo(`mv ${destDir}/node_modules ${varTmpDir}`, { user });
+  // } else {
     remote.log('package.json has changed. Installing dependencies...');
     remote.sudo(`lerna bootstrap --hoist -- --production --prefix ${varTmpDir} install ${varTmpDir}`, { user });
     remote.sudo(`npm --production --prefix ${varTmpDir} install ${varTmpDir}`, { user });
@@ -102,7 +103,7 @@ plan.remote(function(remote) {
     remote.sudo(`cd packages/social-butterfly/dist; npm link`);
     remote.sudo(`npm link hello-world-editor`);
     remote.sudo(`npm link social-butterfly`);
-  }
+  // }
 
   // Copy over sessions.
   remote.sudo(`cp -R ${destDir}/sessions ${varTmpDir}`, { user, failsafe: true });
