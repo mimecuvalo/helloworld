@@ -1,6 +1,6 @@
 {
   "name": "social-butterfly",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "Incorporate federated social network protocols easily. Used with Hello, world federated blog.",
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
   "main": "dist/index.js",
   "module": "dist/index.js",
   "files": [
-    "dist",
+    "dist/*",
     "readme.md"
   ],
   "scripts": {

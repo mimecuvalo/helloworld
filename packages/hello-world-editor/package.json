@@ -1,6 +1,6 @@
 {
   "name": "hello-world-editor",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "An editor built on draft.js. Used with Hello, world federated blog.",
   "repository": {
     "type": "git",
@@ -27,7 +27,7 @@
   "main": "dist/index.js",
   "module": "dist/index.js",
   "files": [
-    "dist",
+    "dist/*",
     "readme.md"
   ],
   "scripts": {

@@ -21,7 +21,7 @@
   ],
   "dependencies": {
     "cra-all-the-things": "0.8.6",
-    "hello-world-editor": "0.8.2",
+    "hello-world-editor": "0.8.3",
     "dataloader": "1.4.0",
     "nanoid": "2.0.1",
     "node-rsa": "1.0.5",
@@ -29,7 +29,7 @@
     "react-document-title": "2.0.3",
     "react-dom": "16.8.4",
     "react-jss": "8.6.1",
-    "social-butterfly": "0.8.2",
+    "social-butterfly": "0.8.3",
     "swipe-listener": "1.0.7",
     "uuid": "3.3.2"
   },
