@@ -33,14 +33,6 @@ lerna bootstrap --hoist
 npm install
 ```
 
-NOTE: Temporary instructions until we get the new packages onto npm:
-```sh
-cd packages/hello-world-editor/dist; npm link
-cd packages/social-butterfly/dist; npm link
-npm link hello-world-editor
-npm link social-butterfly
-```
-
 Then, to run your newly created server locally, **with** the Storybook styleguide server:
 
 ```sh
