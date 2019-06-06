@@ -1,4 +1,5 @@
 import { combineResolvers } from 'graphql-resolvers';
+import { contentUrl, profileUrl } from '../../../../shared/util/url_factory';
 import { convertFromRaw } from 'draft-js';
 import { convertToHTML } from 'draft-convert';
 import { EditorPlugins } from 'hello-world-editor';
@@ -375,6 +376,9 @@ const Content = {
         const updatedContent = await models.Content.findOne({ where: { username, name } });
 
         if (!hidden) {
+          // TODO(mime): hacky - how can we unify this (here and wherever we use syndicate())
+          currentUser.model.url = profileUrl(currentUser.model, req);
+          updatedContent.url = contentUrl(updatedContent, req);
           await socialButterfly().syndicate(req, currentUser.model, updatedContent);
         }
 
@@ -407,6 +411,9 @@ const Content = {
         });
 
         if (!hidden) {
+          // TODO(mime): hacky - how can we unify this (here and wherever we use syndicate())
+          currentUser.model.url = profileUrl(currentUser.model, req);
+          createdContent.url = contentUrl(createdContent, req);
           await socialButterfly().syndicate(req, currentUser.model, createdContent);
         }
 

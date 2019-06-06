@@ -1,4 +1,5 @@
 import { combineResolvers } from 'graphql-resolvers';
+import { contentUrl, profileUrl } from '../../../../shared/util/url_factory';
 import crypto from 'crypto';
 import { isAdmin, isAuthor } from './authorization';
 import Sequelize from 'sequelize';
@@ -226,6 +227,10 @@ export default {
       const contentOwner = await models.User.findOne({ where: { username } });
 
       if (!commentedContent.hidden) {
+        // TODO(mime): hacky - how can we unify this (here and wherever we use syndicate())
+        contentOwner.url = profileUrl(contentOwner, req);
+        updatedCommentedContent.url = contentUrl(updatedCommentedContent, req);
+
         await socialButterfly().syndicate(
           req,
           contentOwner,
