@@ -3,7 +3,7 @@
 </h1>
 <blockquote align="center">
   federated social web blog<br>
-  using the foundation of [CRA-all-the-things](https://github.com/mimecuvalo/all-the-things)
+  using the foundation of <a href="https://github.com/mimecuvalo/all-the-things">CRA-all-the-things</a>
   <br>
 </blockquote>
 

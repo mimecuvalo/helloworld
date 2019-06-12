@@ -7,6 +7,7 @@ import { defineMessages, injectIntl } from '../../shared/i18n';
 import { EditorUtils } from 'hello-world-editor';
 import Feed from './Feed';
 import gql from 'graphql-tag';
+import isMobile from 'is-mobile';
 import Item from './Item';
 import Nav from './Nav';
 import NotFound from '../error/404';
@@ -79,6 +80,10 @@ class Content extends Component {
   };
 
   setupSwipe() {
+    if (!isMobile({ tablet: true })) {
+      return;
+    }
+
     if (this.swipeListener || !this.contentBase.current) {
       return;
     }

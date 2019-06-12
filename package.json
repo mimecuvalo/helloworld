@@ -23,6 +23,7 @@
     "cra-all-the-things": "0.8.6",
     "hello-world-editor": "0.8.3",
     "dataloader": "1.4.0",
+    "is-mobile": "2.0.1",
     "nanoid": "2.0.1",
     "node-rsa": "1.0.5",
     "react": "16.8.4",
