@@ -158,15 +158,16 @@ class Comments extends Component {
                         ) : (
                           <span className={styles.author}>{comment.username}: </span>
                         )}
-                        {comment.content ? <Editor readOnly={true} content={comment} type="comment" /> : comment.view}
+                        <div dangerouslySetInnerHTML={{ __html: comment.view }} />
+
+                        {isOwnerViewing ? (
+                          <div className={styles.actions}>
+                            <Favorite contentRemote={comment} />
+                            &nbsp;•&nbsp;
+                            <Delete contentRemote={comment} />
+                          </div>
+                        ) : null}
                       </div>
-                      {isOwnerViewing ? (
-                        <div className={styles.actions}>
-                          <Favorite contentRemote={comment} />
-                          &nbsp;•&nbsp;
-                          <Delete contentRemote={comment} />
-                        </div>
-                      ) : null}
                     </li>
                   ))}
                 </ul>

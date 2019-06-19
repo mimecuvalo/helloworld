@@ -1,7 +1,5 @@
 import classNames from 'classnames';
 import ContentEditor from '../ContentEditor';
-import { Editor } from 'hello-world-editor';
-import ErrorBoundary from '../../error/ErrorBoundary';
 import React, { PureComponent } from 'react';
 import styles from './Simple.module.css';
 
@@ -27,19 +25,10 @@ export default class Simple extends PureComponent {
       <>
         {this.props.isFeed ? null : <div dangerouslySetInnerHTML={{ __html: content.style }} />}
         {this.props.isFeed ? null : <div dangerouslySetInnerHTML={{ __html: content.code }} />}
-
-        {content.content ? (
-          <div className={classNames(styles.view, 'hw-view')}>
-            <ErrorBoundary>
-              <Editor readOnly={true} content={content} />
-            </ErrorBoundary>
-          </div>
-        ) : (
-          <div
-            dangerouslySetInnerHTML={{ __html: content.view }}
-            className={classNames('e-content', styles.view, 'hw-view')}
-          />
-        )}
+        <div
+          dangerouslySetInnerHTML={{ __html: content.view }}
+          className={classNames('e-content', styles.view, 'hw-view')}
+        />
       </>
     );
   }
