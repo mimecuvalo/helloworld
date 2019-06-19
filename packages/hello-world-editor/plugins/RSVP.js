@@ -38,6 +38,11 @@ class Component extends PureComponent {
   render() {
     const { decoratedText } = this.props;
 
-    return <span className="p-rsvp">{decoratedText}</span>;
+    return (
+      <span className="hw-editor-rsvp-wrapper">
+        <span>RSVP </span>
+        <span className="p-rsvp">{decoratedText.slice(5)}</span>
+      </span>
+    );
   }
 }

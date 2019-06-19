@@ -405,7 +405,7 @@ button.Toolbar-module__active___1KqFt {
 }
 
 /* import from RSVP.css */
-.p-rsvp {
+.hw-editor-rsvp-wrapper {
   border: 1px solid #ccf;
   border-radius: 2px;
   color: orange;
@@ -414,7 +414,7 @@ button.Toolbar-module__active___1KqFt {
   display: inline-block;
 }
 
-.p-rsvp:before {
+.hw-editor-rsvp-wrapper:before {
   content: '📅';
 }
 

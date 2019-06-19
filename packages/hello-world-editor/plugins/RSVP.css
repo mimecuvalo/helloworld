@@ -1,4 +1,4 @@
-.p-rsvp {
+.hw-editor-rsvp-wrapper {
   border: 1px solid #ccf;
   border-radius: 2px;
   color: orange;
@@ -7,6 +7,6 @@
   display: inline-block;
 }
 
-.p-rsvp:before {
+.hw-editor-rsvp-wrapper:before {
   content: '📅';
 }
