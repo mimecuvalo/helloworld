@@ -4,18 +4,14 @@ import configuration from './configuration';
 // disable certain clients using their version number and timestamp and making sure they're upgraded to the
 // latest, working version.
 async function runCheck() {
-  const response = await fetch('/api/client-health-check', {
-    method: 'POST',
-    body: JSON.stringify({
+  const url =
+    '/api/client-health-check?' +
+    new URLSearchParams({
       appVersion: configuration.appVersion,
       appTime: configuration.appTime,
       _csrf: configuration.csrf,
-    }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
+    });
+  const response = await fetch(url);
   const data = await response.text();
 
   // We've been told that we are a bad client. We need to refresh.

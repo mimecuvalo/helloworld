@@ -11,8 +11,8 @@ import express from 'express';
  */
 
 const router = express.Router();
-router.post('/', (req, res) => {
-  if (req.body.appVersion === 'somebadid' || req.body.appTime < 0 /* or before some time you specify as bad */) {
+router.get('/', (req, res) => {
+  if (req.query.appVersion === 'somebadid' || req.query.appTime < 0 /* or before some time you specify as bad */) {
     res.send('bad');
     return;
   }
