@@ -31,7 +31,7 @@
     "react-dom": "16.8.4",
     "react-jss": "8.6.1",
     "sharp": "0.21.3",
-    "social-butterfly": "0.8.4",
+    "social-butterfly": "0.8.5",
     "swipe-listener": "1.0.7",
     "uuid": "3.3.2"
   },
