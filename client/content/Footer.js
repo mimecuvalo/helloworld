@@ -1,26 +1,33 @@
-import { contentUrl } from '../../shared/util/url_factory';
-import { F, FormattedDate } from '../../shared/i18n';
+import { contentUrl, profileUrl } from '../../shared/util/url_factory';
+import { defineMessages, F, FormattedDate, injectIntl } from '../../shared/i18n';
 import React, { PureComponent } from 'react';
 import styles from './Footer.module.css';
-import UserContext from '../app/User_Context';
 
+const messages = defineMessages({
+  logo: { msg: 'logo' },
+});
+
+@injectIntl
 class Footer extends PureComponent {
-  static contextType = UserContext;
-
   handleFullscreen = evt => {
     document.getElementById('hw-content').requestFullscreen();
   };
 
   render() {
-    const content = this.props.content;
+    const { content, contentOwner } = this.props;
     const { count, count_robot, createdAt, updatedAt, username } = content;
+    const logoAltText = this.props.intl.formatMessage(messages.logo);
 
     return (
       <footer className={styles.footer}>
+        <a href={profileUrl(username)} className="p-author h-card">
+          <img src={contentOwner.logo || contentOwner.favicon} alt={logoAltText} />
+          {contentOwner.name}
+        </a>
+        :&nbsp;
         <F
-          msg="{username} posted on {date}"
+          msg="posted on {date}"
           values={{
-            username: username,
             date: (
               <time className="t-published" dateTime={createdAt}>
                 <FormattedDate

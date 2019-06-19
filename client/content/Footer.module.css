@@ -4,3 +4,10 @@
   border-top: 1px solid #0bf;
   padding: 3px 6px 6px 3px;
 }
+
+.footer img {
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+  margin-top: -2px;
+}
