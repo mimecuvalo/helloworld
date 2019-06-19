@@ -16,7 +16,7 @@ class Header extends PureComponent {
       <header className={styles.header}>
         <h1 className={styles.title}>
           <ContentLink item={content} currentContent={content} className={styles.titleLink}>
-            {content.title || <F msg="(untitled)" />}
+            <span className="p-name">{content.title || <F msg="(untitled)" />}</span>
             {isOwnerViewing &&
               content.hidden && (
                 <span>
