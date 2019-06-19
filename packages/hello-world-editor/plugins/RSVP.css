@@ -1,0 +1,12 @@
+.p-rsvp {
+  border: 1px solid #ccf;
+  border-radius: 2px;
+  color: orange;
+  padding: 3px 3px;
+  margin-top: 1px;
+  display: inline-block;
+}
+
+.p-rsvp:before {
+  content: '📅';
+}

@@ -1,6 +1,8 @@
 import './Divider.css';
 import './Focus.css';
 import './Hashtag.css';
+import './Reply.css';
+import './RSVP.css';
 import Anchor, { anchorStrategy, AnchorDecorator } from './Anchor';
 import { compose } from 'draft-extend';
 import { composeDecorators } from 'draft-js-plugins-editor';
@@ -9,6 +11,11 @@ import createAlignmentPlugin from 'draft-js-alignment-plugin';
 import createBlockDndPlugin from 'draft-js-drag-n-drop-plugin';
 import createDividerPlugin from 'draft-js-divider-plugin';
 import createFocusPlugin from 'draft-js-focus-plugin';
+import createHashtagPlugin from 'draft-js-hashtag-plugin';
+import createLinkifyPlugin from 'draft-js-linkify-plugin';
+import { createPlugin } from 'draft-extend';
+import createReplyPlugin from './Reply';
+import createRSVPPlugin from './RSVP';
 import Iframe, { iframeBlockRendererFn } from './Iframe';
 import Image, { imageBlockRendererFn } from './Image';
 import toolbarStyles from '../ui/toolbars/Toolbar.module.css';
@@ -18,6 +25,10 @@ export const alignmentPlugin = createAlignmentPlugin({
 });
 export const blockDndPlugin = createBlockDndPlugin();
 export const focusPlugin = createFocusPlugin();
+export const hashtagPlugin = createHashtagPlugin();
+export const linkifyPlugin = createLinkifyPlugin();
+export const replyPlugin = createReplyPlugin();
+export const rsvpPlugin = createRSVPPlugin();
 
 export default compose(
   Anchor,
@@ -32,6 +43,20 @@ const componentDecorators = composeDecorators(
 );
 
 export const dividerPlugin = createDividerPlugin({ decorator: componentDecorators });
+
+export const htmlPlugins = compose(
+  Anchor,
+  Iframe,
+  Image,
+  createPlugin(replyPlugin),
+  createPlugin(rsvpPlugin),
+  // TODO(mime): enable the rest of these.
+  /*dividerPlugin,
+  hashtagPlugin,
+  mentionPlugin,
+  linkifyPlugin,*/
+  /* TODO(mime): emojiPlugin, */
+);
 
 export const decorator = new CompositeDecorator([{ strategy: anchorStrategy, component: AnchorDecorator }]);
 

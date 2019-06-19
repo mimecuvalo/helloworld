@@ -2,8 +2,6 @@ import './Draft.css';
 import './Editor.css';
 import classNames from 'classnames';
 import { convertFromHTML } from 'draft-convert';
-import createHashtagPlugin from 'draft-js-hashtag-plugin';
-import createLinkifyPlugin from 'draft-js-linkify-plugin';
 import { defineMessages } from 'react-intl';
 import draftJSExtendPlugins, {
   alignmentPlugin,
@@ -12,6 +10,10 @@ import draftJSExtendPlugins, {
   decorator,
   dividerPlugin,
   focusPlugin,
+  hashtagPlugin,
+  linkifyPlugin,
+  replyPlugin,
+  rsvpPlugin,
 } from './plugins';
 import Editor from 'draft-js-plugins-editor';
 import EditorUtils from 'draft-js-plugins-utils';
@@ -45,15 +47,28 @@ const MAX_DEPTH = 5;
 const plugins = [
   alignmentPlugin,
   blockDndPlugin,
-  createHashtagPlugin(),
-  createLinkifyPlugin(),
   dividerPlugin,
   emojiPlugin,
   focusPlugin,
+  hashtagPlugin,
   inlineToolbarPlugin,
   linkPlugin,
   mentionPlugin,
+  replyPlugin,
+  rsvpPlugin,
   sideToolbarPlugin,
+  linkifyPlugin,
+];
+
+const readOnlyPlugins = [
+  dividerPlugin,
+  emojiPlugin,
+  hashtagPlugin,
+  linkPlugin,
+  mentionPlugin,
+  replyPlugin,
+  rsvpPlugin,
+  linkifyPlugin,
 ];
 
 class HelloWorldEditor extends Component {
@@ -183,7 +198,7 @@ class HelloWorldEditor extends Component {
     this.onChange(RichUtils.onTab(evt, this.state.editorState, MAX_DEPTH));
   };
 
-  handlePastedText = (text, html, editorState) => {
+  handlePastedText = async (text, html, editorState) => {
     const potentialLink = text.match(/^https?:\/\//) || text.match(/^<iframe /);
     if (!this.state.shiftKeyPressed && potentialLink) {
       // Decorate text with url.
@@ -193,7 +208,7 @@ class HelloWorldEditor extends Component {
         return 'handled';
       }
 
-      this.handleUnfurl(text, html, editorState);
+      await this.handleUnfurl(text, html, editorState);
     }
   };
 
@@ -203,7 +218,7 @@ class HelloWorldEditor extends Component {
       return;
     }
 
-    const editorStateAndInfo = await this.props.onLinkUnfurl(text, editorState);
+    const editorStateAndInfo = await unfurl(this.props.onLinkUnfurl, text, editorState);
 
     if (!editorStateAndInfo.wasMediaFound) {
       return;
@@ -257,7 +272,7 @@ class HelloWorldEditor extends Component {
               keyBindingFn={keyBindingFn}
               onChange={this.onChange}
               onTab={this.handleOnTab}
-              plugins={this.props.readOnly ? [] : plugins}
+              plugins={this.props.readOnly ? readOnlyPlugins : plugins}
               readOnly={this.props.readOnly}
               ref={this.editor}
             />

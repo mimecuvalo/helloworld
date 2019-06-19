@@ -19,7 +19,7 @@ export function insertTextAtLine(editorState, line, text) {
     focusOffset: 0,
   });
 
-  const newContentState = Modifier.replaceText(editorState.getCurrentContent(), selectionState, text);
+  const newContentState = Modifier.insertText(editorState.getCurrentContent(), selectionState, text);
   editorState = EditorState.push(editorState, newContentState, 'insert-text');
 
   return editorState;

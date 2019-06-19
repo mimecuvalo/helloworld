@@ -393,6 +393,31 @@ button.Toolbar-module__active___1KqFt {
 .draftJsHashtagPlugin__hashtag__1wMVC {
   color: #0070e0;
 }
+
+/* import from Reply.css */
+.hw-in-reply-to {
+  display: inline-block;
+  margin-top: 1px;
+  padding: 2px 3px;
+  border: 1px solid #ccf;
+  border-radius: 2px;
+  color: orange;
+}
+
+/* import from RSVP.css */
+.p-rsvp {
+  border: 1px solid #ccf;
+  border-radius: 2px;
+  color: orange;
+  padding: 3px 3px;
+  margin-top: 1px;
+  display: inline-block;
+}
+
+.p-rsvp:before {
+  content: '📅';
+}
+
 /*  imported from Emojis.module.css  */
 
 .Emojis-module__emoji___icvd1 {

@@ -65,7 +65,7 @@ class Footer extends PureComponent {
           &nbsp;•&nbsp;
           <KeepUnread keepUnreadCb={this.props.keepUnreadCb} contentRemote={contentRemote} />
           &nbsp;•&nbsp;
-          <Reply contentRemote={contentRemote} />
+          <Reply contentRemote={contentRemote} getEditor={this.props.getEditor} />
         </div>
       </footer>
     );

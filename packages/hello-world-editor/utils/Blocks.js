@@ -1,4 +1,6 @@
 import insertAtomicBlockShim from './AtomicBlockUtilsShim';
+import React from 'react';
+import { renderToString } from 'react-dom/server';
 
 export function createNewBlock(type, tag, editorState, entityData, attribs) {
   // TODO(mime): ostensibly, you shouldn't need this since we have the data at the block level.
@@ -8,6 +10,27 @@ export function createNewBlock(type, tag, editorState, entityData, attribs) {
   const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
 
   return insertAtomicBlockShim(editorState, entityKey, ' ', { nodeName: tag, ...attribs });
+}
+
+export function decoratedBlocksToHTML(strategy, Component) {
+  return block => {
+    let indices = [];
+    strategy(block, (index, lastIndex) => {
+      indices.push({ index, lastIndex });
+    });
+
+    if (indices.length) {
+      let html = '<p>';
+      let index = 0;
+      for (const indexSet of indices) {
+        html += block.text.slice(index, indexSet.index);
+        html += renderToString(<Component decoratedText={block.text.slice(indexSet.index, indexSet.lastIndex)} />);
+        index = indexSet.lastIndex;
+      }
+      html += block.text.slice(index) + '</p>';
+      return html;
+    }
+  };
 }
 
 export default {
