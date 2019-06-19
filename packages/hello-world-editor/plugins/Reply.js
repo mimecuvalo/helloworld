@@ -8,7 +8,7 @@ linkify.add('> ', {
     const tail = text.slice(pos);
     const schemaLength = tail.indexOf('/');
     const linkLength = linkify.testSchemaAt(tail.slice(schemaLength), 'http:', 0);
-    return linkLength ? linkLength + 5 : 0;
+    return linkLength ? linkLength + schemaLength : 0;
   },
 });
 

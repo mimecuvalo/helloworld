@@ -22,7 +22,7 @@
   "dependencies": {
     "cra-all-the-things": "0.8.6",
     "dataloader": "1.4.0",
-    "hello-world-editor": "0.8.4",
+    "hello-world-editor": "0.8.5",
     "is-mobile": "2.0.1",
     "magic-signatures": "2.0.0",
     "nanoid": "2.0.1",
