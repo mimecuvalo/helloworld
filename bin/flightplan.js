@@ -107,11 +107,12 @@ plan.remote(function(remote) {
   remote.sudo(`ln -snf ${varTmpDir} ${destDir}`, { user });
 
   // XXX(mime) :-/ sucks but getCSSModuleLocalIdent gives hashes based on filepaths... need to look for workaround
+  remote.sudo(`cd ${destDir}; pm2 kill; pm2 stop helloworld`, { user });
   remote.log('Building production files...');
   remote.sudo(`cd ${varTmpDir}; npm run build`, { user });
 
   // TODO(mime); doing `pm2 kill` is less than ideal - but pm2 doesn't know how to switch out symlinked directories :-/
   // This is done here for the sake of keeping all-the-things as zero-config as possible.
   // For a cleaner deploy take a look at this doc: http://pm2.keymetrics.io/docs/tutorials/capistrano-like-deployments
-  remote.sudo(`cd ${destDir}; pm2 kill; pm2 startOrReload ecosystem.config.js`, { user });
+  remote.sudo(`cd ${destDir}; pm2 startOrReload ecosystem.config.js`, { user });
 });
