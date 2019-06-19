@@ -50,6 +50,9 @@ export default gql`
 
     fetchPublicUserData(username: $username) {
       description
+      favicon
+      logo
+      name
       title
     }
   }

@@ -27,14 +27,14 @@ export default class Item extends PureComponent {
   }
 
   render() {
-    const { content, comments, favorites, handleEdit, isEditing, isFeed } = this.props;
+    const { content, contentOwner, comments, favorites, handleEdit, isEditing, isFeed } = this.props;
     let TemplateComponent = COMPONENT_TYPE_MAP[content.template] || Simple;
 
     return (
       <article className="hw-item h-entry">
         <Header content={content} handleEdit={handleEdit} isEditing={isEditing} />
         <TemplateComponent ref={this.template} content={content} isEditing={isEditing} isFeed={isFeed} />
-        <Footer content={content} />
+        <Footer content={content} contentOwner={contentOwner} />
         {!isFeed ? <Comments comments={comments} content={content} /> : null}
         {!isFeed ? <Favorites favorites={favorites} content={content} /> : null}
       </article>

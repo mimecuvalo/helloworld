@@ -177,6 +177,7 @@ class Content extends Component {
       ) : (
         <Item
           content={content}
+          contentOwner={contentOwner}
           comments={comments}
           favorites={favorites}
           handleEdit={this.handleEdit}

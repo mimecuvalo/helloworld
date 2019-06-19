@@ -13,7 +13,7 @@ const ContentBase = React.memo(
       <DocumentTitle title={title}>
         <div ref={ref} id="hw-content" className={classNames(styles.container, className)}>
           <header>
-            <h1 className="p-summary">{`${contentOwner.title}` + (title ? ` - ${title}` : '')}</h1>
+            <h1>{`${contentOwner.title}` + (title ? ` - ${title}` : '')}</h1>
             <h2>{contentOwner.description}</h2>
           </header>
 

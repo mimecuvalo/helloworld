@@ -31,6 +31,14 @@ import React, { PureComponent } from 'react';
         view
         content
       }
+
+      fetchPublicUserData(username: $username) {
+        description
+        favicon
+        logo
+        name
+        title
+      }
     }
   `,
   {
@@ -52,6 +60,7 @@ class Feed extends PureComponent {
     }
 
     const collection = this.props.data.fetchCollectionPaginated;
+    const contentOwner = this.props.data.fetchPublicUserData;
 
     if (!collection.length) {
       return <F msg="Nothing to read right now!" />;
@@ -60,7 +69,7 @@ class Feed extends PureComponent {
     return (
       <InfiniteFeed fetchMore={this.props.data.fetchMore} queryName="fetchCollectionPaginated">
         {collection.map(item => (
-          <Item key={item.name} content={item} isFeed={true} />
+          <Item key={item.name} content={item} contentOwner={contentOwner} isFeed={true} />
         ))}
       </InfiniteFeed>
     );
