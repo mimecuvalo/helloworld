@@ -79,7 +79,7 @@ export async function getUserRemoteInfo(websiteUrl, local_username) {
       .attr('href')
       .replace('data:application/magic-public-key,', '');
     userRemote.username = webfingerDoc('Property[type="http://apinamespace.org/atom/username"]').text();
-    userRemote.profile_url = webfingerDoc('alias').text();
+    userRemote.profile_url = webfingerDoc('alias').first().text();
   }
 
   const { feedMeta, feedUrl } = await discoverAndParseFeedFromUrl(userRemote.feed_url || websiteUrl);
