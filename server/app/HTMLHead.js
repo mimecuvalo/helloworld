@@ -60,14 +60,9 @@ class HTMLHead extends PureComponent {
     const contentOwner = this.props.data.fetchPublicUserDataHead;
     const content = this.props.data.fetchContentHead;
 
-    let description, favicon, rss, theme, title, username;
-    const account = `acct:${username}@${req.get('host')}`;
-    const feedUrl =
-      contentOwner &&
-      buildUrl({ pathname: '/api/social/feed', searchParams: { url: profileUrl(contentOwner.username) } });
+    let description, favicon, rss, theme, title, username, webmentionUrl;
     const repliesUrl =
       content && buildUrl({ pathname: '/api/social/comments', searchParams: { url: contentUrl(content) } });
-    const webmentionUrl = buildUrl({ req, pathname: '/api/social/webmention', searchParams: { account } });
     const repliesAttribs = content && {
       'thr:count': content.comments_count,
       'thr:updated': new Date(content.comments_updated).toISOString(),
@@ -75,13 +70,16 @@ class HTMLHead extends PureComponent {
     let viewport = 'width=device-width, initial-scale=1';
 
     if (contentOwner) {
+      username = contentOwner.username;
+      const account = `acct:${username}@${req.get('host')}`;
       description = <meta name="description" content={contentOwner.description || 'Hello, world.'} />;
       favicon = contentOwner.favicon;
+      const feedUrl = buildUrl({ pathname: '/api/social/feed', searchParams: { url: profileUrl(username) } });
       rss = <link rel="alternate" type="application/atom+xml" title={title} href={feedUrl} />;
       theme = contentOwner.theme && <link rel="stylesheet" href={contentOwner.theme} />;
       title = contentOwner.title;
-      username = contentOwner.username;
       viewport = contentOwner.viewport || viewport;
+      webmentionUrl = buildUrl({ req, pathname: '/api/social/webmention', searchParams: { account } });
     }
 
     if (!theme) {
@@ -96,9 +94,7 @@ class HTMLHead extends PureComponent {
       <head>
         <meta charSet="utf-8" />
         <link rel="author" href={`${publicUrl}humans.txt`} />
-        {contentOwner ? (
-          <link rel="author" href={contentUrl({ username: contentOwner.username, section: 'main', name: 'about' })} />
-        ) : null}
+        {contentOwner ? <link rel="author" href={contentUrl({ username, section: 'main', name: 'about' })} /> : null}
         <link rel="shortcut icon" href={favicon || `${publicUrl}favicon.ico`} />
         {assetPathsByType['css'].map(path => (
           <link nonce={nonce} rel="stylesheet" key={path} href={path} />
@@ -126,7 +122,7 @@ class HTMLHead extends PureComponent {
           href={buildUrl({ pathname: '/api/social/oembed', searchParams: { url: content && contentUrl(content) } })}
           title={content?.title}
         />
-        {content ? <link rel="webmention" href={webmentionUrl} /> : null}
+        {content && webmentionUrl ? <link rel="webmention" href={webmentionUrl} /> : null}
         {content?.comments_count ? (
           <link rel="replies" type="application/atom+xml" href={repliesUrl} {...repliesAttribs} />
         ) : null}
@@ -217,7 +213,7 @@ function StructuredMetaData({ contentOwner, content, title, req, nonce }) {
           "dateModified": "${new Date(content?.updatedAt || new Date()).toISOString()}",
           "author": {
             "@type": "Person",
-            "name": "${content?.name || content?.username}"
+            "name": "${content?.username}"
           },
            "publisher": {
             "@type": "Organization",
