@@ -1,6 +1,6 @@
 import crypto from 'crypto';
+import magic from 'magic-signatures';
 import models from './data/models';
-import NodeRSA from 'node-rsa';
 import socialButterfly from './social-butterfly';
 
 // TODO(mime): all this user creation logic has to go somewhere else so we can reuse it later.
@@ -58,7 +58,7 @@ function createStubContent({ username, section, name, template, hidden, title, v
 }
 
 function generateMagicKey() {
-  const { privateKey } = crypto.generateKeyPairSync('rsa', {
+  const key = crypto.generateKeyPairSync('rsa', {
     modulusLength: 1024,
     publicKeyEncoding: {
       type: 'pkcs1',
@@ -69,30 +69,8 @@ function generateMagicKey() {
       format: 'pem',
     },
   });
-
-  const nodePrivateKey = new NodeRSA(privateKey);
-  const privateComponents = nodePrivateKey.exportKey('components');
-
-  const n = urlSafeBase64(privateComponents.n);
-  const e = urlSafeBase64(convertNumberToBuffer(privateComponents.e));
-  const d = urlSafeBase64(privateComponents.d);
-  const magic_key = `RSA.${n}.${e}`;
-  const private_key = d;
+  const magic_key = magic.RSAToMagic(key.publicKey);
+  const private_key = key.privateKey;
 
   return { magic_key, private_key };
-}
-
-function urlSafeBase64(buffer) {
-  return buffer
-    .toString('base64')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
-}
-
-function convertNumberToBuffer(i) {
-  const byteArray = [i >>> 24, (i >>> 16) & 0xff, (i >>> 8) & 0xff, i & 0xff];
-  const firstNonZero = byteArray.findIndex(num => num);
-
-  return Buffer.from(byteArray.slice(firstNonZero));
 }
