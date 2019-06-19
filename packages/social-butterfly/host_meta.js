@@ -15,7 +15,7 @@ export default function hostMeta(req, res) {
   res.send(`<?xml version="1.0" encoding="UTF-8"?>
     <XRD xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0">
       <hm:Host xmlns="http://host-meta.net/xrd/1.0">${buildUrl({ req, pathname: '' })}</hm:Host>
-      <Link rel="lrdd" template="${webfingerUrl}?q={uri}">
+      <Link rel="lrdd" template="${webfingerUrl}?account={uri}">
         <Title>Resource Descriptor</Title>
       </Link>
     </XRD>`);
