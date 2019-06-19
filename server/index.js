@@ -25,7 +25,8 @@ export default function constructApps({ appName, productionAssetsByType, publicU
   // Add basics: gzip, body parsing, cookie parsing.
   app.use(compression());
   app.use(bodyParser.urlencoded({ extended: false }));
-  app.use(bodyParser.json());
+  app.use(bodyParser.json({ type: ['application/*+json', 'application/json'] }));
+  app.use(bodyParser.text({ type: 'application/magic-envelope+xml' }));
   app.use(cookieParser());
 
   // Session store.
