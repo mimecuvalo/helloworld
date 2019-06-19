@@ -1,6 +1,7 @@
 import cheerio from 'cheerio';
 import fetch from 'node-fetch';
-import { fetchText } from './util/crawler';
+import { fetchText, sanitizeHTML } from './util/crawler';
+import { getUserRemoteInfo } from './discover_user';
 import { mention as emailMention } from './email';
 
 export async function webmentionReply(req, userRemote, content, thread, mentionedRemoteUsers) {
@@ -26,21 +27,19 @@ export async function webmentionReply(req, userRemote, content, thread, mentione
 }
 
 export default (options) => async (req, res) => {
-  // TODO(mime): make sure xsrf check here is disabled.
   if (!req.query.account || !req.body.source || !req.body.target) {
     return res.sendStatus(400);
   }
   const user = await options.getLocalUser(req.query.account);
-  const content = await options.getLocalContent(req.body.source);
-  if (!user || !content) {
+  if (!user) {
     return res.sendStatus(404);
   }
 
-  await handleMention(req, content, req.body.source, req.body.target);
+  await handleMention(req, options, user, req.body.source, req.body.target);
   res.sendStatus(202);
 };
 
-async function handleMention(req, content, sourceUrl, targetUrl) {
+async function handleMention(req, options, user, sourceUrl, targetUrl) {
   const html = await fetchText(sourceUrl);
   const $ = cheerio.load(html);
 
@@ -48,24 +47,29 @@ async function handleMention(req, content, sourceUrl, targetUrl) {
     return;
   }
 
-  const existingModelEntry = await options.getRemoteContent(content.username, sourceUrl);
-  await options.saveRemoteContent(Object.assign({}, existingModelEntry, {
+  const userRemoteInfo = await getUserRemoteInfo(sourceUrl, user.username);
+  let userRemote = await options.getRemoteUser(userRemoteInfo.username, userRemoteInfo.profile_url);
+  if (!userRemote) {
+    await options.saveRemoteUser(userRemoteInfo);
+    userRemote = await options.getRemoteUser(user.username, userRemoteInfo.profile_url);
+  }
+
+  const existingModelEntry = await options.getRemoteContent(user.username, sourceUrl);
+  await options.saveRemoteContent(Object.assign({}, existingModelEntry?.dataValues, {
     id: existingModelEntry?.id || undefined,
-    avatar: '', // TODO(mime)
+    avatar: userRemote.avatar,
     date_created: new Date($('.h-entry .t-published').attr('datetime') || new Date()),
     date_updated: new Date($('.h-entry .t-updated').attr('datetime') || new Date()),
-    from_user: sourceUrl, // XXX(mime): this can't be right...
+    from_user: userRemote.profile_url,
     link: sourceUrl,
-    local_content_name: content.name,
+    local_content_name: '',
     post_id: sourceUrl,
-    title: $('.h-entry .p-summary').text(),
-    to_username: content.username,
+    title: $('.h-entry .p-name').text() || $('.h-entry .p-summary').text(),
+    to_username: user.username,
     type: 'comment',
-    username: 'Remote User', // TODO(mime)
-    view: $('.h-entry .e-content').html(),
+    username: user.username,
+    view: sanitizeHTML($('.h-entry .e-content').html()),
   }));
 
-  const user = await options.getLocalUser(content.url);
-
-  emailMention(req, 'Remote User', sourceUrl /* XXX(mime): can't be right */, user.email, sourceUrl);
+  emailMention(req, user.username, undefined /* fromEmail */, user.email, sourceUrl);
 }

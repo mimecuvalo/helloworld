@@ -1,6 +1,8 @@
+import cheerio from 'cheerio';
 import { convertFromRaw } from 'draft-js';
 import { comment as emailComment } from './email';
 import fetch from 'node-fetch';
+import { fetchText } from './util/crawler';
 import { reply as salmonReply } from './salmon';
 import { webmentionReply } from './webmention';
 
@@ -11,7 +13,7 @@ export default (options) => async function syndicate(req, contentOwner, localCon
 
   await pubsubhubbubPush(req, options, localContent);
 
-  await parseMentions(req, contentOwner, localContent, opt_remoteContent);
+  await parseMentions(req, options, contentOwner, localContent, opt_remoteContent);
 
   if (opt_isComment) {
     const localContentUser = await options.getLocalUser(localContent.url);
@@ -26,17 +28,38 @@ export default (options) => async function syndicate(req, contentOwner, localCon
   }
 }
 
-const MENTION_REGEX = /[@+](\w+)/g;
-async function parseMentions(req, contentOwner, content, opt_remoteContent) {
+function findMentionsInDraftJS(draftJsContent) {
+  const contentState = convertFromRaw(JSON.parse(draftJsContent));
+
+  return Object.keys(contentState.entityMap)
+      .map(key => contentState.getEntity(contentState.entityMap[key]))
+      .filter(entity => entity.type === 'mention' || entity.type === 'rsvp')
+      .map(entity => entity.data.mention.link);
+}
+
+async function parseMentions(req, options, contentOwner, content, opt_remoteContent) {
   const remoteUsers = [];
   const mentionedRemoteUsers = [];
 
-  function addToUsersList(userRemote, shouldAddToMentions) {
+  async function addToUsersList(userRemote, threadUrl, shouldAddToMentions) {
+    if (!userRemote) {
+      const webpage = await fetchText(threadUrl);
+      const $ = cheerio.load(webpage);
+      const webmention_url = $('link[rel="webmention"]').attr('href');
+
+      // TODO(mime): pretty funky smell. refactor.
+      if (webmention_url) {
+        userRemote = {
+          webmention_url,
+        };
+      }
+    }
+
     if (!userRemote || remoteUsers.find(el => el.profile_url === userRemote.profile_url)) {
       return;
     }
 
-    if (userRemote.webmention_url) {
+    if (userRemote.salmon_url || userRemote.webmention_url) {
       remoteUsers.push(userRemote);
       shouldAddToMentions && mentionedRemoteUsers.push(userRemote);
     }
@@ -45,45 +68,46 @@ async function parseMentions(req, contentOwner, content, opt_remoteContent) {
   // Add user from original thread as mentioned user.
   if (content.thread) {
     const threadContent = await options.getRemoteContent(content.username, content.thread);
-    if (!threadContent) {
-      return;
+    let threadUserRemote;
+    if (threadContent) {
+      threadUserRemote = await options.getRemoteUser(content.username, threadContent.from_user);
     }
-    const threadUserRemote = await options.getRemoteUser(content.username, threadContent.from_user); // XXX (mime): not right.
-    addToUsersList(threadUserRemote, true);
+    await addToUsersList(threadUserRemote, content.thread, true);
   }
 
   // Find mentions in the text.
   // TODO(mime): support @blah@blah.com
-  const plaintext = content.content ? convertFromRaw(JSON.parse(content.content)).getPlainText() : content.view;
-  const mentions = plaintext.match(MENTION_REGEX) || [];
+  const mentions = (content.content && findMentionsInDraftJS(content.content)) || [];
   for (const mention of mentions) {
-    const userRemote = await options.getRemoteUser(content.username, mention.slice(1)); // XXX(mime): not right.
-    addToUsersList(userRemote, true);
+    const userRemote = await options.getRemoteUser(content.username, mention);
+    await addToUsersList(userRemote, undefined /* threadUrl */, true);
   }
 
   // Find all users from the comments.
   if (content.comments_count) {
     const comments = await options.getRemoteCommentsOnLocalContent(content.url);
     for (const comment of comments) {
-      const userRemote = await options.getRemoteUser(content.username, comment.from_user); // XXX(mime): not right.
-      addToUsersList(userRemote, false);
+      const userRemote = await options.getRemoteUser(content.username, comment.from_user);
+      await addToUsersList(userRemote, undefined /* threadUrl */, false);
     }
   }
 
   if (opt_remoteContent) {
     // Find mentions in the comment text.
     // TODO(mime): support @blah@blah.com
-    const plaintext = convertFromRaw(JSON.parse(opt_remoteContent.content)).getPlainText();
-    const mentions = plaintext.match(MENTION_REGEX) || [];
+    const mentions = (opt_remoteContent.content && findMentionsInDraftJS(opt_remoteContent.content)) || [];
     for (const mention of mentions) {
-      const userRemote = await options.getRemoteUser(content.username, mention.slice(1)); // XXX(mime): not right.
-      addToUsersList(userRemote, true);
+      const userRemote = await options.getRemoteUser(content.username, mention);
+      await addToUsersList(userRemote, undefined /* threadUrl */, true);
     }
   }
 
   for (const userRemote of remoteUsers) {
     webmentionReply(req, userRemote, content, content.thread, mentionedRemoteUsers);
-    salmonReply(req, contentOwner, content, userRemote.salmon_url, mentionedRemoteUsers);
+
+    if (userRemote.salmon_url) {
+      salmonReply(req, contentOwner, content, userRemote.salmon_url, mentionedRemoteUsers);
+    }
   }
 }
 

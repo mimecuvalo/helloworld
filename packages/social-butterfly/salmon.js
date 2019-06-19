@@ -16,7 +16,7 @@ export async function follow(req, contentOwner, salmonUrl, isFollow) {
     req,
     contentOwner,
     salmonUrl,
-    <Salmon req={req} action={action} title={action} atomContent={action} verb={action} />
+    <Salmon req={req} action={action} contentOwner={contentOwner} title={action} atomContent={action} verb={action} />
   );
 }
 
@@ -26,7 +26,7 @@ export async function favorite(req, contentOwner, contentRemote, salmonUrl, isFa
     'activity:object',
     {},
     RcE('activity:object-type', {}, 'http://activitystrea.ms/schema/1.0/note'),
-    <id>{contentRemote.post_id}</id>,
+    <id>{contentRemote.link}</id>,
     <title />,
     <content type="html" />
   );
@@ -38,6 +38,7 @@ export async function favorite(req, contentOwner, contentRemote, salmonUrl, isFa
       req={req}
       activityObject={activityObject}
       action={action}
+      contentOwner={contentOwner}
       title={action}
       atomContent={action}
       verb={action}
@@ -48,17 +49,17 @@ export async function favorite(req, contentOwner, contentRemote, salmonUrl, isFa
 export async function reply(req, contentOwner, content, salmonUrl, mentionedRemoteUsers) {
   const objectType = content.section === 'comments' ? 'comment' : 'note';
   const repliesUrl = buildUrl({ pathname: '/api/social/comments', searchParams: { url: content.url } });
+  const mentionedUsers = [];
+  mentionedRemoteUsers.forEach((mentionedRemoteUser, index) => {
+    mentionedUsers.push(<link key={`ostatus${index}`} href={mentionedRemoteUser.profile_url} rel="ostatus:attention" />);
+    mentionedUsers.push(<link key={`webmention${index}`} href={mentionedRemoteUser.profile_url} rel="mentioned" />);
+  };
+
   const activityObject = (
     <>
       {RcE('activity:object-type', {}, `http://activitystrea.ms/schema/1.0/${objectType}`)}
       <link href={content.url} rel="alternate" type="text/html" />
-      {mentionedRemoteUsers.map(mentionedRemoteUser => (
-        <>
-          <link href={mentionedRemoteUser.profile_url} rel="ostatus:attention" />
-          <link href={mentionedRemoteUser.profile_url} rel="mentioned" />
-        </>
-      ))}
-
+      {mentionedUsers}
       {/* see endpoint_with_apollo for refXXX transform */}
       {content.thread ? RcE('thr:in-reply-to', { refXXX: content.thread }) : null}
       {content.comments_count
@@ -82,6 +83,7 @@ export async function reply(req, contentOwner, content, salmonUrl, mentionedRemo
       id={content.url}
       action={'post'}
       content={content}
+      contentOwner={contentOwner}
       title={content.title}
       atomContent={content.view}
       verb={'post'}
@@ -94,16 +96,18 @@ async function send(req, contentOwner, salmonUrl, tree) {
     return;
   }
 
-  let renderedTree = renderToString(tree);
+  let renderedTree = `<?xml version='1.0' encoding='UTF-8'?>` + renderToString(tree);
   // XXX(mime): in the feeds I have some attributes that are `ref`. However, ref isn't allowed in React,
   // so in the DOM they are `refXXX`. Return them to normal here, sigh.
   renderedTree = renderedTree.replace(/refXXX="([^"]+)"/g, 'ref="$1"');
 
   const body = magic.sign({ data: renderedTree, data_type: 'application/atom+xml' }, contentOwner.private_key);
+  body.sigs[0].value = magic.btob64u(body.sigs[0].value);
+
   try {
     await fetch(salmonUrl, {
       method: 'POST',
-      body,
+      body: magic.toXML(body),
       headers: {
         'Content-Type': 'application/magic-envelope+xml',
       },
@@ -116,7 +120,7 @@ async function send(req, contentOwner, salmonUrl, tree) {
 
 class Salmon extends PureComponent {
   render() {
-    const { req, activityObject, atomContent, content, id, title, verb } = this.props;
+    const { req, activityObject, atomContent, content, contentOwner, id, title, verb } = this.props;
     const namespaces = {
       xmlLang: 'en-US',
       xmlns: 'http://www.w3.org/2005/Atom',
@@ -127,6 +131,10 @@ class Salmon extends PureComponent {
 
     return (
       <entry {...namespaces}>
+        <author>
+          <name>{contentOwner.name || contentOwner.username}</name>
+          <uri>{contentOwner.url}</uri>
+        </author>
         <title type="html">{title}</title>
         <id>{`tag:${req.get('host')},${tagDate}:${id || new Date().toISOString()}`}</id>
         <content type="html" dangerouslySetInnerHTML={{ __html: atomContent }} />
@@ -140,7 +148,6 @@ class Salmon extends PureComponent {
 }
 
 export default (options) => async (req, res) => {
-  // TODO(mime): make sure xsrf check here is disabled.
   if (!req.query.account) {
     return res.sendStatus(400);
   }
@@ -150,16 +157,19 @@ export default (options) => async (req, res) => {
   }
 
   const magicJsonBody = magic.fromXML(req.body);
-  const websiteUrl = magicJsonBody.author.uri;
+  const rawData = magic.b64utob(magicJsonBody.data).toString('utf8');
+  const $ = cheerio.load(rawData);
+  const websiteUrl = $('author > uri').first().text();
   let userRemote = await options.getRemoteUser(user.username, websiteUrl);
   if (!userRemote) {
     const userRemoteInfo = await getUserRemoteInfo(websiteUrl, user.username);
-    userRemote = await options.saveRemoteUser(userRemoteInfo);
+    await options.saveRemoteUser(userRemoteInfo);
+    userRemote = await options.getRemoteUser(user.username, websiteUrl);
   }
 
-  const env = magic.verify(magicJsonBody, userRemote.magic_key);
-  const $ = cheerio.load(env);
-  const verb = $('activity:verb').text();
+  magic.verify(magicJsonBody, userRemote.magic_key);
+
+  const verb = $('activity\\:verb').text();
 
   switch (verb) {
     case 'http://activitystrea.ms/schema/1.0/follow':
@@ -191,11 +201,11 @@ export default (options) => async (req, res) => {
 
 async function receiveFollow(options, req, user, userRemote, isFollow) {
   if (isFollow) {
-    await options.saveRemoteUser(Object.assign({}, userRemote, { follower: true }));
+    await options.saveRemoteUser(Object.assign({}, userRemote.dataValues, { follower: true }));
     emailFollow(req, user.username, user.email, userRemote.profile_url);
   } else {
     if (userRemote.following) {
-      await options.saveRemoteUser(Object.assign({}, userRemote, { follower: false }));
+      await options.saveRemoteUser(Object.assign({}, userRemote.dataValues, { follower: false }));
     } else {
       await options.removeRemoteUser(userRemote);
     }
@@ -203,22 +213,25 @@ async function receiveFollow(options, req, user, userRemote, isFollow) {
 }
 
 async function receiveFavorite(options, res, $, websiteUrl, userRemote, isFavorite) {
-  const atomId = $('activity:object atom:id').text();
-  const localContentUrl = atomId.split(':')[2];
+  const localContentUrl = $('activity\\:object id').text();
   const { username, name } = await options.getLocalContent(localContentUrl);
 
-  // XXX(mime): this is all wrong. Need to get a proper postId for this favorite.
-  const postId = 'XXXfavoritePost';
+  if (!name) {
+    return res.sendStatus(400);
+  }
+
+  const postId = `${userRemote.profile_url},${localContentUrl},favorite`;
   const remoteContent = {
     from_user: websiteUrl,
     local_content_name: name,
+    post_id: postId,
     to_username: username,
     type: 'favorite',
-    name,
+    username: userRemote.username,
   };
 
   if (!isFavorite) {
-    await options.removeOldRemoteContent(remoteContent);
+    await options.removeRemoteContent(remoteContent);
     return;
   }
 
@@ -227,57 +240,46 @@ async function receiveFavorite(options, res, $, websiteUrl, userRemote, isFavori
     return;
   }
 
-  if (!content) {
-    return res.sendStatus(400);
-  }
-
-  await options.saveRemoteContent({
+  await options.saveRemoteContent(Object.assign({}, remoteContent, {
     content: '',
-    createdAt: new Date($('atom:updated').text() || new Date()),
-    from_user: websiteUrl,
+    createdAt: new Date($('updated').text() || new Date()),
     link: '',
-    local_content_name: content.name,
-    post_id: '',
     title: '',
-    to_username: username,
-    type: 'favorite',
-    username: userRemote.username,
     view: '',
-  });
+  }));
 }
 
 async function receivePostOrComment(options, req, res, $, user, userRemote, websiteUrl) {
-  const atomContent = sanitizeHTML($('atom:content').text());
+  const atomContent = sanitizeHTML($('content').text());
 
-  // XXX(mime): this is all wrong. Need to get a proper postId for this favorite.
-  const postId = 'XXXpost';
+  const postId = $('id').text();
   const existingContentRemote = await options.getRemoteContent(user.username, postId)
 
   const contentRemote = {
     id: existingContentRemote?.id || undefined,
     avatar: userRemote.avatar,
-    comments_count: parseInt($('thr:replies').attr('count')),
-    comments_updated: new Date($('thr:replies').attr('updated') || new Date()),
+    comments_count: parseInt($('thr\\:replies').attr('count')),
+    comments_updated: new Date($('thr\\:replies').attr('updated') || new Date()),
     content: '',
-    createdAt: new Date($('atom:published').text() || new Date()),
+    createdAt: new Date($('published').text() || new Date()),
     from_user: websiteUrl,
-    link: $('atom:link[rel="alternate"]').attr('href'),
-    post_id: $('atom:id').text(),
-    title: $('atom:title').text(),
+    link: $('link[rel="alternate"]').attr('href'),
+    post_id: postId,
+    title: $('title').text(),
     to_username: user.username,
-    updatedAt: new Date($('atom:updated').text() || new Date()),
+    updatedAt: new Date($('updated').text() || new Date()),
     username: userRemote.username,
     view: atomContent,
   };
 
-  const thread = $('thr:in-reply-to');
+  const thread = $('thr\\:in-reply-to');
   if (thread) {
     handlePost(options, req, res, contentRemote, user, $);
   } else {
     handleComment(options, req, res, contentRemote, thread);
   }
 
-  //const replies = $('thr:replies');
+  //const replies = $('thr\\:replies');
   // if (replies) {
   //   // TODO(mime): these used to be known as 'remote-comment' types.
   //   // need to refactor this.
@@ -288,8 +290,8 @@ async function receivePostOrComment(options, req, res, $, user, userRemote, webs
 
 async function handlePost(options, req, res, contentRemote, user, $) {
   const wasUserMentioned =
-    $('atom:link[rel="mentioned"]').find(e => e.attr('href') === user.url) ||
-    $('atom:link[rel="ostatus:attention"]').find(e => e.attr('href') === user.url);
+    $('link[rel="mentioned"]').find(e => e.attr('href') === user.url) ||
+    $('link[rel="ostatus:attention"]').find(e => e.attr('href') === user.url);
 
   contentRemote.type = 'post';
   await options.saveRemoteContent(contentRemote);
@@ -298,7 +300,7 @@ async function handlePost(options, req, res, contentRemote, user, $) {
     emailMention(
       req,
       'Remote User',
-      contentRemote.link /* XXX(mime): can't be right */,
+      undefined /* fromEmail */,
       user.email,
       contentRemote.link
     );

@@ -228,7 +228,7 @@ export default {
 
       if (!commentedContent.hidden) {
         // TODO(mime): hacky - how can we unify this (here and wherever we use syndicate())
-        contentOwner.url = profileUrl(contentOwner, req);
+        contentOwner.url = profileUrl(contentOwner.username, req);
         updatedCommentedContent.url = contentUrl(updatedCommentedContent, req);
 
         await socialButterfly().syndicate(
@@ -272,6 +272,8 @@ export default {
           },
         });
 
+        // TODO(mime): hacky - how can we unify this (here and wherever we use syndicate())
+        currentUser.model.url = profileUrl(currentUser.model.username, req);
         socialButterfly().favorite(req, currentUser.model, contentRemote, userRemote.salmon_url, favorited);
 
         return { from_user, post_id, type, favorited };

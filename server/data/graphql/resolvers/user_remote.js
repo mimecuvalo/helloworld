@@ -1,5 +1,6 @@
 import { combineResolvers } from 'graphql-resolvers';
 import { isAdmin, isAuthor } from './authorization';
+import { profileUrl } from '../../../../shared/util/url_factory';
 import socialButterfly from '../../../social-butterfly';
 
 export default {
@@ -31,6 +32,8 @@ export default {
 
   Mutation: {
     createUserRemote: combineResolvers(isAuthor, async (parent, { profile_url }, { currentUser, models, req }) => {
+      // TODO(mime): hacky - how can we unify this (here and wherever we use syndicate())
+      currentUser.model.url = profileUrl(currentUser.model.username, req);
       return await socialButterfly().follow(req, currentUser, profile_url);
     }),
 

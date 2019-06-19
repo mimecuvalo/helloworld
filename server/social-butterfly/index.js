@@ -33,6 +33,7 @@ export default app => {
     getRemoteContent,
     saveRemoteContent,
     removeOldRemoteContent,
+    removeRemoteContent,
     getRemoteCommentsOnLocalContent,
   });
 
@@ -57,7 +58,10 @@ export default app => {
 async function getLocalUser(usernameOrUrl, req) {
   const username = parseContentUrl(usernameOrUrl).username;
   const localUser = await models.User.findOne({ where: { username } });
-  localUser.url = profileUrl(username, req);
+  if (localUser) {
+    localUser.url = profileUrl(username, req);
+  }
+
   return localUser;
 }
 
@@ -82,7 +86,10 @@ async function getLocalUser(usernameOrUrl, req) {
 async function getLocalContent(localContentUrl, req) {
   const { username, name } = parseContentUrl(localContentUrl);
   const localContent = await models.Content.findOne({ where: { username, name } });
-  localContent.url = contentUrl(localContent, req);
+  if (localContent) {
+    localContent.url = contentUrl(localContent, req);
+  }
+
   return localContent;
 }
 
@@ -128,8 +135,10 @@ async function getLocalLatestContent(localContentUrl, req) {
  */
 async function getRemoteUser(local_username, profile_url) {
   return await models.User_Remote.findOne({
-    local_username,
-    profile_url,
+    where: {
+      local_username,
+      profile_url,
+    },
   });
 }
 
@@ -205,6 +214,12 @@ async function removeOldRemoteContent(remoteContent) {
       local_content_name: '',
       createdAt: { [Sequelize.Op.lt]: Date.now() - FEED_MAX_DAYS_OLD },
     },
+  });
+}
+
+async function removeRemoteContent(remoteContent) {
+  return await models.Content_Remote.destroy({
+    where: remoteContent,
   });
 }
 

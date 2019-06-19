@@ -56,7 +56,7 @@ export default gql`
   }
 
   type Favorite implements ContentRemote {
-    avatar: String!
+    avatar: String
     createdAt: Date!
     deleted: Boolean!
     favorited: Boolean!

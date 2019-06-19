@@ -1,8 +1,9 @@
+import cheerio from 'cheerio';
 import { combineResolvers } from 'graphql-resolvers';
 import { contentUrl, profileUrl } from '../../../../shared/util/url_factory';
 import { convertFromRaw } from 'draft-js';
 import { convertToHTML } from 'draft-convert';
-import { EditorPlugins } from 'hello-world-editor';
+import { EditorHTMLPlugins } from 'hello-world-editor';
 import { escapeRegExp } from '../../../../shared/util/regex';
 import { isAdmin, isAuthor } from './authorization';
 import { isRobotViewing } from '../../../util/crawler';
@@ -355,15 +356,19 @@ const Content = {
       isAuthor,
       async (parent, { name, hidden, title, thumb, style, code, content }, { currentUser, models, req }) => {
         const username = currentUser.model.username;
+        const view = toHTML(content, title);
+        const thread = discoverThreadInHTML(view);
+
         await models.Content.update(
           {
             hidden,
             title,
             thumb,
             style,
+            thread,
             code,
             content,
-            view: toHTML(content, title),
+            view,
           },
           {
             where: {
@@ -377,7 +382,7 @@ const Content = {
 
         if (!hidden) {
           // TODO(mime): hacky - how can we unify this (here and wherever we use syndicate())
-          currentUser.model.url = profileUrl(currentUser.model, req);
+          currentUser.model.url = profileUrl(currentUser.model.username, req);
           updatedContent.url = contentUrl(updatedContent, req);
           await socialButterfly().syndicate(req, currentUser.model, updatedContent);
         }
@@ -396,6 +401,9 @@ const Content = {
         name = (name || 'untitled') + '-' + nanoid(10);
         name = name.replace(/[^A-Za-z0-9-]/, '-');
 
+        const view = toHTML(content, title);
+        const thread = discoverThreadInHTML(view);
+
         const createdContent = await models.Content.create({
           username: currentUser.model.username,
           section,
@@ -403,16 +411,17 @@ const Content = {
           name,
           title,
           thumb,
+          thread,
           hidden,
           style,
           code,
           content,
-          view: toHTML(content, title),
+          view,
         });
 
         if (!hidden) {
           // TODO(mime): hacky - how can we unify this (here and wherever we use syndicate())
-          currentUser.model.url = profileUrl(currentUser.model, req);
+          currentUser.model.url = profileUrl(currentUser.model.username, req);
           createdContent.url = contentUrl(createdContent, req);
           await socialButterfly().syndicate(req, currentUser.model, createdContent);
         }
@@ -443,8 +452,15 @@ export default Content;
 
 export function toHTML(content, title) {
   title = title ? escapeRegExp(title) : '';
-  const html = EditorPlugins(convertToHTML)(convertFromRaw(JSON.parse(content)));
+  const html = EditorHTMLPlugins(convertToHTML)(convertFromRaw(JSON.parse(content)));
   return html.replace(new RegExp(`^<p>${title}</p>`), '');
+}
+
+function discoverThreadInHTML(html) {
+  const $ = cheerio.load(html);
+  return $('a.u-in-reply-to')
+    .first()
+    .attr('href');
 }
 
 function getSQLSortType(sortType) {
