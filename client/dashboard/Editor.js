@@ -41,7 +41,7 @@ class DashboardEditor extends PureComponent {
       const url = searchParams.get('reblog');
       const img = searchParams.get('img');
 
-      this.reblog(img || url);
+      this.reblog(img || url, url);
       window.location.hash = '';
     }
 
@@ -71,11 +71,23 @@ class DashboardEditor extends PureComponent {
     }
   };
 
-  reblog(text) {
+  async reblog(text, opt_url) {
     const contentEditor = this.editor.current.getContentEditor();
-    const editorState = contentEditor.editorState;
-    EditorUtils.Text.insertTextAtLine(editorState, 0, '\n');
-    contentEditor.handlePastedText(text, undefined /* html */, editorState);
+    let editorState = contentEditor.editorState;
+    editorState = EditorUtils.Text.insertTextAtLine(editorState, 0, '\n');
+    await contentEditor.handlePastedText(text, undefined /* html */, editorState);
+
+    if (opt_url) {
+      editorState = EditorUtils.Text.insertTextAtLine(contentEditor.editorState, 2, opt_url);
+      contentEditor.onChange(editorState);
+    }
+  }
+
+  insertText(text) {
+    const contentEditor = this.editor.current.getContentEditor();
+    let editorState = contentEditor.editorState;
+    editorState = EditorUtils.Text.insertTextAtLine(editorState, 1, `\n${text}\n`);
+    contentEditor.onChange(editorState);
   }
 
   handlePost = async evt => {
