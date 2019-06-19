@@ -1,4 +1,4 @@
-import { buildUrl } from './util/url_factory';
+import { buildUrl, ensureAbsoluteUrl } from './util/url_factory';
 import cheerio from 'cheerio';
 import { discoverAndParseFeedFromUrl } from './util/feeds';
 import { fetchText, createAbsoluteUrl } from './util/crawler';
@@ -82,6 +82,7 @@ export async function getUserRemoteInfo(websiteUrl, local_username) {
     userRemote.profile_url = webfingerDoc('alias').first().text();
   }
 
+  userRemote.feed_url = ensureAbsoluteUrl(websiteUrl, userRemote.feed_url);
   const { feedMeta, feedUrl } = await discoverAndParseFeedFromUrl(userRemote.feed_url || websiteUrl);
   userRemote.feed_url = feedUrl;
 
@@ -100,6 +101,12 @@ export async function getUserRemoteInfo(websiteUrl, local_username) {
     createAbsoluteUrl(websiteUrl, '/favicon.ico');
   userRemote.avatar = feedMeta.image?.url || userRemote.favicon;
   userRemote.order = Math.pow(2, 31) - 1;
+
+  userRemote.salmon_url = ensureAbsoluteUrl(hostnameAndProtocol, userRemote.salmon_url);
+  userRemote.webmention_url = ensureAbsoluteUrl(hostnameAndProtocol, userRemote.webmention_url);
+  userRemote.profile_url = ensureAbsoluteUrl(hostnameAndProtocol, userRemote.profile_url);
+  userRemote.feed_url = ensureAbsoluteUrl(hostnameAndProtocol, userRemote.feed_url);
+  userRemote.hub_url = ensureAbsoluteUrl(hostnameAndProtocol, userRemote.hub_url);
 
   return userRemote;
 }

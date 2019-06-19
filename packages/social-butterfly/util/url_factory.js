@@ -20,3 +20,11 @@ export function buildUrl({ req, isAbsolute, pathname, searchParams }) {
 export function prettifyUrl(url) {
   return url.replace(/ /g, '+');
 }
+
+export function ensureAbsoluteUrl(basisAbsoluteUrl, urlOrPath) {
+  const parsedUrl = new URL(basisAbsoluteUrl);
+  const hostnameAndProtocol = `${parsedUrl.protocol}//${parsedUrl.host}`;
+
+  urlOrPath = urlOrPath || '';
+  return urlOrPath[0] === '/' ? `${hostnameAndProtocol}${urlOrPath}` : urlOrPath;
+}

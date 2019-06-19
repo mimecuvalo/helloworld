@@ -1,6 +1,7 @@
 import cheerio from 'cheerio';
 import { convertFromRaw } from 'draft-js';
 import { comment as emailComment } from './email';
+import { ensureAbsoluteUrl } from './util/url_factory';
 import fetch from 'node-fetch';
 import { fetchText } from './util/crawler';
 import { reply as salmonReply } from './salmon';
@@ -45,7 +46,8 @@ async function parseMentions(req, options, contentOwner, content, opt_remoteCont
     if (!userRemote) {
       const webpage = await fetchText(threadUrl);
       const $ = cheerio.load(webpage);
-      const webmention_url = $('link[rel="webmention"]').attr('href');
+      let webmention_url = $('link[rel="webmention"]').attr('href');
+      webmention_url = ensureAbsoluteUrl(threadUrl, webmention_url);
 
       // TODO(mime): pretty funky smell. refactor.
       if (webmention_url) {
