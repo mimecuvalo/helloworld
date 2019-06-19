@@ -51,6 +51,18 @@ npm --production install
 npm run serve:prod
 ```
 
+To locally develop the packages `hello-world-editor` and `social-butterfly`, run:
+```sh
+./bin/setup_local_dev_environment.sh
+
+# To live update hello-world-editor code:
+cd packages/hello-world-editor; npm run build
+
+# To live update social-butterfly code:
+cd packages/social-butterfly; npm run build
+```
+
+
 To run tests:
 ```sh
 npm run test
@@ -99,7 +111,9 @@ npm run test
       - to_username: localUsername,
       - avatar -> logo
     - maybe get rid of underscores vs camelCase
+    - should go into a retry queue, async
 - prbly move comments/favorites to separate 'social' table (also need to consolidate ‘local’ and ‘remote' comments)
+- make install instructions dead-simple, one-liner with mysql mock db setup.
 - social features
   - verify salmon (fix todos), oStatus support, follow/favorite/reply, unfollow (skip xsrf, also push/pubsub), with status.net (a.k.a. gnu social), friendi.ca, Pleroma, socialhome, hubzilla
   - reference: https://ostatus.readthedocs.io/en/latest/data_structures.html
@@ -111,7 +125,9 @@ npm run test
   - mastodon compatibility
   - see remote comments
   - WebSub (pubsubhubbub)
+  - hacky URI decorations
   - see if ostatus is still case-sensitive, if not make all lower case foaf, webfinger, host_meta, too confusing with react warnings
+- render HTML with inline styling
 - getting an error in graphql seems to hang the apollo server. if so, update all-the-things, too.
 - same Apollo query twice causes SSR to fail with htmlHead, wtf.
 - more GraphQL examples:
@@ -124,6 +140,9 @@ npm run test
 - generator steps for Sequelize files
 - see if `lazy` attribute can be a good substitute for ContentThumb's delay-loading logic (chrome 75)
 - finish up Admin panel to add/delete users
+- prefer JSON for webfinger, easier
+- loading state when following someone new
+- invalid url (i.e. with http:) follow error on dashboard
 
 ### p1 (medium pri)
 
@@ -194,6 +213,10 @@ npm run test
     - have hidden content
     - change section/album/thumb/hidden/template/thumb in content editor
     - be able to delete from within content editor
+- friendica, other webfinger/host-meta tech
+  - check out oexchange (see friendica)
+  - check out amcd (see friendica)
+  - why does friendica have salmon magic-key at top level host-meta file?
 
 ### p2 (ideas)
 
