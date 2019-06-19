@@ -53,7 +53,7 @@ export async function reply(req, contentOwner, content, salmonUrl, mentionedRemo
   mentionedRemoteUsers.forEach((mentionedRemoteUser, index) => {
     mentionedUsers.push(<link key={`ostatus${index}`} href={mentionedRemoteUser.profile_url} rel="ostatus:attention" />);
     mentionedUsers.push(<link key={`webmention${index}`} href={mentionedRemoteUser.profile_url} rel="mentioned" />);
-  };
+  });
 
   const activityObject = (
     <>
