@@ -141,6 +141,7 @@ npm run test
 - see if `lazy` attribute can be a good substitute for ContentThumb's delay-loading logic (chrome 75)
 - finish up Admin panel to add/delete users
 - prefer JSON for webfinger, easier
+- webfinger - place at .well-known/webfinger
 - loading state when following someone new
 - invalid url (i.e. with http:) follow error on dashboard
 
