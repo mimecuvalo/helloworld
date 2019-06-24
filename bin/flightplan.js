@@ -107,7 +107,7 @@ plan.remote(function(remote) {
   remote.sudo(`ln -snf ${varTmpDir} ${destDir}`, { user });
 
   // XXX(mime) :-/ sucks but getCSSModuleLocalIdent gives hashes based on filepaths... need to look for workaround
-  remote.sudo(`cd ${destDir}; pm2 kill; pm2 stop helloworld`, { user });
+  remote.sudo(`cd ${destDir}; pm2 kill; pm2 stop helloworld`, { user, failsafe: true });
   remote.log('Building production files...');
   remote.sudo(`cd ${varTmpDir}; npm run build`, { user });
 
