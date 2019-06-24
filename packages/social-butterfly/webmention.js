@@ -12,13 +12,10 @@ export async function webmentionReply(req, userRemote, content, thread, mentione
   try {
     await fetch(userRemote.webmention_url, {
       method: 'POST',
-      body: JSON.stringify({
+      body: new URLSearchParams({
         source: content.url,
         target: content.thread || userRemote.profile_url,
       }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
     });
   } catch (ex) {
     // Not a big deal if this fails.
