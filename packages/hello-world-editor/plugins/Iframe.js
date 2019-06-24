@@ -32,7 +32,7 @@ export default createPlugin({
       const { src, width, height, frameBorder, allow } = entity.data;
       return (
         `<iframe src="${src}" height="${height}" width="${width}" ` +
-        `frameborder="${frameBorder}" allow="${allow}" allowfullscreen />`
+        `frameborder="${frameBorder}" allow="${allow}" allowfullscreen></iframe>`
       );
     }
   },
