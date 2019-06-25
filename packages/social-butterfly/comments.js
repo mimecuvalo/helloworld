@@ -3,11 +3,11 @@ import React, { createElement as RcE, PureComponent } from 'react';
 import { renderToString } from 'react-dom/server';
 
 export default (options) => async (req, res, next) => {
-  const contentOwner = await options.getLocalUser(req.query.url, req);
+  const contentOwner = await options.getLocalUser(req.query.resource, req);
   if (!contentOwner) {
     return res.sendStatus(404);
   }
-  const comments = await options.getRemoteCommentsOnLocalContent(req.query.url);
+  const comments = await options.getRemoteCommentsOnLocalContent(req.query.resource);
 
   let renderedTree = `<?xml version='1.0' encoding='UTF-8'?>` +
     renderToString(<Comments contentOwner={contentOwner} comments={comments} req={req} constants={options.constants} />);
@@ -38,7 +38,7 @@ class Comment extends PureComponent {
     const { comment, req } = this.props;
     const html = '<![CDATA[' + comment.view + ']]>';
     const tagDate = new Date().toISOString().slice(0, 10);
-    const threadUrl = `tag:${req.get('host')},${tagDate}:${req.query.url}`;
+    const threadUrl = `tag:${req.get('host')},${tagDate}:${req.query.resource}`;
 
     return (
       <entry>

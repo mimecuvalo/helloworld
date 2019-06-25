@@ -48,7 +48,7 @@ export function mention(req, fromUsername, fromEmail, toEmail, remoteUrl) {
 }
 
 export function follow(req, fromUsername, toEmail, blogUrl) {
-  const followUrl = buildUrl({ req, pathname: '/api/social/follow', searchParams: { url: blogUrl } });
+  const followUrl = buildUrl({ req, pathname: '/api/social/follow', searchParams: { resource: blogUrl } });
 
   send(
     req,

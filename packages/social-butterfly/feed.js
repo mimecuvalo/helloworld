@@ -39,11 +39,11 @@ const LICENSES = {
 };
 
 export default (options) => async (req, res, next) => {
-  const contentOwner = await options.getLocalUser(req.query.url, req);
+  const contentOwner = await options.getLocalUser(req.query.resource, req);
   if (!contentOwner) {
     return res.sendStatus(404);
   }
-  const feed = await options.getLocalLatestContent(req.query.url, req);
+  const feed = await options.getLocalLatestContent(req.query.resource, req);
 
   let renderedTree = `<?xml version='1.0' encoding='UTF-8'?>` +
     renderToString(<ContentFeed req={req} feed={feed} contentOwner={contentOwner} constants={options.constants} />);
@@ -78,11 +78,8 @@ export class GenericFeed extends PureComponent {
     }
 
     const { req, children, constants, updatedAt } = this.props;
-    const username = contentOwner.username;
-
-    const account = `acct:${username}@${req.get('host')}`;
     const feedUrl = buildUrl({ req, pathname: req.originalUrl });
-    const salmonUrl = buildUrl({ req, pathname: '/api/social/salmon', searchParams: { account } });
+    const salmonUrl = buildUrl({ req, pathname: '/api/social/salmon', searchParams: { resource: contentOwner.url } });
 
     const namespaces = {
       xmlLang: 'en-US',
@@ -152,12 +149,12 @@ const Author = ({ contentOwner }) => (
 class Entry extends PureComponent {
   render() {
     const { content, req } = this.props;
-    const statsImgSrc = buildUrl({ req, pathname: '/api/stats', searchParams: { url: content.url } });
+    const statsImgSrc = buildUrl({ req, pathname: '/api/stats', searchParams: { resource: content.url } });
     const statsImg = `<img src="${statsImgSrc}" />`;
     const absoluteUrlReplacement = buildUrl({ req, pathname: '/resource' });
     const html =
       '<![CDATA[' + content.view.replace(/(['"])\/resource/gm, `$1${absoluteUrlReplacement}`) + statsImg + ']]>';
-    const repliesUrl = buildUrl({ pathname: '/api/social/comments', searchParams: { url: content.url } });
+    const repliesUrl = buildUrl({ pathname: '/api/social/comments', searchParams: { resource: content.url } });
     const repliesAttribs = {
       'thr:count': content.comments_count,
       'thr:updated': new Date(content.comments_updated).toISOString(),

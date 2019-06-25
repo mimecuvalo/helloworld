@@ -3,8 +3,8 @@ import { buildUrl } from './util/url_factory';
 export default (options) => async (req, res, next) => {
   const { constants, getLocalUser, getLocalContent } = options;
 
-  const contentOwner = await getLocalUser(req.query.url, req);
-  const content = await getLocalContent(req.query.url, req);
+  const contentOwner = await getLocalUser(req.query.resource, req);
+  const content = await getLocalContent(req.query.resource, req);
 
   if (!contentOwner || !content) {
     return res.sendStatus(404);
@@ -18,7 +18,7 @@ export default (options) => async (req, res, next) => {
   htmlContent = htmlContent.replace(/</g, '\u003c').replace(/>/g, '\u003e');
 
   // If your server has a hookup to listen to /api/stats you can get info on amount of times your content has been read.
-  const statsUrl = buildUrl({ req, pathname: '/api/stats', searchParams: { url: content.url } });
+  const statsUrl = buildUrl({ req, pathname: '/api/stats', searchParams: { resource: content.url } });
   const statsImg = `<img src="${statsUrl}" alt="stats" />`;
 
   res.type('application/json+oembed');

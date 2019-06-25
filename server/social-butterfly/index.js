@@ -55,8 +55,12 @@ export default app => {
  *  magic_key (required if you want the Salmon protocol to work)
  *  private_key (required if you want the Salmon protocol to work)
  */
-async function getLocalUser(usernameOrUrl, req) {
-  const username = parseContentUrl(usernameOrUrl).username;
+async function getLocalUser(localUserUrl, req) {
+  if (!localUserUrl) {
+    return null;
+  }
+
+  const username = parseContentUrl(localUserUrl).username;
   const localUser = await models.User.findOne({ where: { username } });
   if (localUser) {
     localUser.url = profileUrl(username, req);

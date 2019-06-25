@@ -30,12 +30,6 @@ export function contentUrl(content, reqOrIsAbsolute = false, searchParams) {
 }
 
 export function parseContentUrl(url) {
-  // Some urls are of the form 'acct:username@domain.com'
-  url = url.replace(/^acct:/, '');
-  if (url.indexOf('@') !== -1) {
-    url = '/' + url.split('@')[0];
-  }
-
   url = url.startsWith('/') ? url : new URL(url).pathname;
   const splitUrl = url.split('/');
   const username = splitUrl[1];

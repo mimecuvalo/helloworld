@@ -10,13 +10,13 @@ import { renderToString } from 'react-dom/server';
 const followFactory = (options) => {
   const followRouter = express.Router();
   followRouter.get('/', async (req, res) => {
-    const { url } = req.query;
+    const { resource } = req.query;
 
-    res.send(`<!doctype html>` + renderToString(<FollowConfirm req={req} url={url} />));
+    res.send(`<!doctype html>` + renderToString(<FollowConfirm req={req} resource={resource} />));
   });
 
   followRouter.post('/', async (req, res) => {
-    await follow(req, req.session.user, req.query.url);
+    await follow(req, req.session.user, req.query.resource);
     res.redirect('/');
   });
 

@@ -4,12 +4,12 @@ import React, { PureComponent } from 'react';
 import { renderToString } from 'react-dom/server';
 
 export default (options) => async (req, res) => {
-  const user = await options.getLocalUser(req.query.url, req);
+  const user = await options.getLocalUser(req.query.resource, req);
   if (!user) {
     return res.sendStatus(404);
   }
 
-  const [followers, following] = await options.getRemoteFriends(req.query.url);
+  const [followers, following] = await options.getRemoteFriends(req.query.resource);
 
   res.type('application/rdf+xml');
   res.send(

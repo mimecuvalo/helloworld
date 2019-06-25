@@ -62,7 +62,7 @@ class HTMLHead extends PureComponent {
 
     let description, favicon, rss, theme, title, username, webmentionUrl;
     const repliesUrl =
-      content && buildUrl({ pathname: '/api/social/comments', searchParams: { url: contentUrl(content) } });
+      content && buildUrl({ pathname: '/api/social/comments', searchParams: { resource: contentUrl(content) } });
     const repliesAttribs = content && {
       'thr:count': content.comments_count,
       'thr:updated': new Date(content.comments_updated).toISOString(),
@@ -71,15 +71,15 @@ class HTMLHead extends PureComponent {
 
     if (contentOwner) {
       username = contentOwner.username;
-      const account = `acct:${username}@${req.get('host')}`;
+      const resource = profileUrl(username, req);
       description = <meta name="description" content={contentOwner.description || 'Hello, world.'} />;
       favicon = contentOwner.favicon;
-      const feedUrl = buildUrl({ pathname: '/api/social/feed', searchParams: { url: profileUrl(username) } });
+      const feedUrl = buildUrl({ pathname: '/api/social/feed', searchParams: { resource } });
       rss = <link rel="alternate" type="application/atom+xml" title={title} href={feedUrl} />;
       theme = contentOwner.theme && <link rel="stylesheet" href={contentOwner.theme} />;
       title = contentOwner.title;
       viewport = contentOwner.viewport || viewport;
-      webmentionUrl = buildUrl({ req, pathname: '/api/social/webmention', searchParams: { account } });
+      webmentionUrl = buildUrl({ req, pathname: '/api/social/webmention', searchParams: { resource } });
     }
 
     if (!theme) {
@@ -119,7 +119,10 @@ class HTMLHead extends PureComponent {
         <link
           rel="alternate"
           type="application/json+oembed"
-          href={buildUrl({ pathname: '/api/social/oembed', searchParams: { url: content && contentUrl(content) } })}
+          href={buildUrl({
+            pathname: '/api/social/oembed',
+            searchParams: { resource: content && contentUrl(content) },
+          })}
           title={content?.title}
         />
         {content && webmentionUrl ? <link rel="webmention" href={webmentionUrl} /> : null}

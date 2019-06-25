@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 import { renderToString } from 'react-dom/server';
 
 export default (options) => async (req, res) => {
-  const user = await options.getLocalUser(req.query.account, req);
+  const user = await options.getLocalUser(req.query.resource, req);
   if (!user) {
     return res.sendStatus(404);
   }
@@ -91,14 +91,15 @@ function sendWebfingerAsJson(req, res, user) {
 
 function getAccountInfo(req, user) {
   const { username, magic_key, url } = user;
+  const resource = url;
 
   const account = `acct:${username}@${req.get('host')}`;
-  const feedUrl = buildUrl({ req, pathname: '/api/social/feed', searchParams: { url } });
-  const foafUrl = buildUrl({ req, pathname: '/api/social/foaf', searchParams: { url } });
-  const followUrl = buildUrl({ req, pathname: '/api/social/follow', searchParams: { url } });
-  const salmonUrl = buildUrl({ req, pathname: '/api/social/salmon', searchParams: { account } });
-  const webfingerUrl = buildUrl({ req, pathname: '/api/social/webfinger', searchParams: { account } });
-  const webmentionUrl = buildUrl({ req, pathname: '/api/social/webmention', searchParams: { account } });
+  const feedUrl = buildUrl({ req, pathname: '/api/social/feed', searchParams: { resource } });
+  const foafUrl = buildUrl({ req, pathname: '/api/social/foaf', searchParams: { resource } });
+  const followUrl = buildUrl({ req, pathname: '/api/social/follow', searchParams: { resource } });
+  const salmonUrl = buildUrl({ req, pathname: '/api/social/salmon', searchParams: { resource } });
+  const webfingerUrl = buildUrl({ req, pathname: '/api/social/webfinger', searchParams: { resource } });
+  const webmentionUrl = buildUrl({ req, pathname: '/api/social/webmention', searchParams: { resource } });
 
   return {
     account,

@@ -6,7 +6,7 @@ import path from 'path';
 
 const router = express.Router();
 router.get('/', async (req, res) => {
-  const { username, name } = parseContentUrl(req.query.url);
+  const { username, name } = parseContentUrl(req.query.resource);
   const content = await models.Content.findOne({ where: { username, name } });
 
   const attributes = isRobotViewing(req) ? { count_robot: content.count_robot + 1 } : { count: content.count + 1 };

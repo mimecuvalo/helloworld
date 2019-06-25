@@ -24,10 +24,10 @@ export async function webmentionReply(req, userRemote, content, thread, mentione
 }
 
 export default (options) => async (req, res) => {
-  if (!req.query.account || !req.body.source || !req.body.target) {
+  if (!req.query.resource || !req.body.source || !req.body.target) {
     return res.sendStatus(400);
   }
-  const user = await options.getLocalUser(req.query.account);
+  const user = await options.getLocalUser(req.query.resource);
   if (!user) {
     return res.sendStatus(404);
   }

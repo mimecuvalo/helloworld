@@ -48,7 +48,7 @@ export async function favorite(req, contentOwner, contentRemote, salmonUrl, isFa
 
 export async function reply(req, contentOwner, content, salmonUrl, mentionedRemoteUsers) {
   const objectType = content.section === 'comments' ? 'comment' : 'note';
-  const repliesUrl = buildUrl({ pathname: '/api/social/comments', searchParams: { url: content.url } });
+  const repliesUrl = buildUrl({ pathname: '/api/social/comments', searchParams: { resource: content.url } });
   const mentionedUsers = [];
   mentionedRemoteUsers.forEach((mentionedRemoteUser, index) => {
     mentionedUsers.push(<link key={`ostatus${index}`} href={mentionedRemoteUser.profile_url} rel="ostatus:attention" />);
@@ -148,10 +148,10 @@ class Salmon extends PureComponent {
 }
 
 export default (options) => async (req, res) => {
-  if (!req.query.account) {
+  if (!req.query.resource) {
     return res.sendStatus(400);
   }
-  const user = await options.getLocalUser(req.query.account);
+  const user = await options.getLocalUser(req.query.resource);
   if (!user) {
     return res.sendStatus(404);
   }

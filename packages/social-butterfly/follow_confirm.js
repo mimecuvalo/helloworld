@@ -3,8 +3,8 @@ import React, { PureComponent } from 'react';
 
 export default class Follow extends PureComponent {
   render() {
-    const { req, url } = this.props;
-    const actionUrl = buildUrl({ pathname: '/api/social/follow', searchParams: { url } });
+    const { req, resource } = this.props;
+    const actionUrl = buildUrl({ pathname: '/api/social/follow', searchParams: { resource } });
 
     // TODO(mime): good candidate to make a `SimpleHTMLBase` template.
     // TODO(mime): add i18n
