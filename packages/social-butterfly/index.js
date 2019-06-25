@@ -31,6 +31,7 @@ export default socialButterfly;
 function setupApi(options) {
   const { app } = options;
   app.use('/.well-known/host-meta', HostMeta);
+  app.get('/.well-known/webfinger', WebFinger(options));
 
   const { followRouter, follow, unfollow } = Follow(options);
 
@@ -41,7 +42,6 @@ function setupApi(options) {
   subRouter.use('/follow', followRouter);
   subRouter.get('/oembed', OEmbed(options));
   subRouter.post('/salmon', Salmon(options));
-  subRouter.get('/webfinger', WebFinger(options));
   subRouter.post('/webmention', WebMention(options));
 
   const apiRouter = express.Router();

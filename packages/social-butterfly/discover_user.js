@@ -5,6 +5,7 @@ import { fetchText, createAbsoluteUrl } from './util/crawler';
 
 // Get the /.well-known/host-meta resource.
 // In other words, get the link to the WebFinger resource.
+// We prefer JSON, or XML if JSON is not found.
 export async function getLRDD(url) {
   const parsedUrl = new URL(url);
   const hostMetaUrl = `${parsedUrl.protocol}//${parsedUrl.host}/.well-known/host-meta`;
@@ -13,9 +14,13 @@ export async function getLRDD(url) {
   try {
     const hostMetaXML = await fetchText(hostMetaUrl);
     const $ = cheerio.load(hostMetaXML);
-    lrddUrl = $('link[rel="lrdd"]').attr('template');
+    lrddUrl = $('link[rel="lrdd"][type="application/json"]').attr('template');
   } catch (ex) {
-    return null;
+    try {
+      lrddUrl = $('link[rel="lrdd"]').attr('template');
+    } catch (ex) {
+      return null;
+    }
   }
 
   return lrddUrl;
@@ -25,15 +30,44 @@ export async function getLRDD(url) {
 export async function getWebfinger(lrddUrl, uri) {
   const webfingerUrl = lrddUrl.replace('{uri}', encodeURIComponent(uri));
 
-  let $;
+  let webfingerDoc, webfingerInfo;
   try {
-    const webfingerXML = await fetchText(webfingerUrl);
-    $ = cheerio.load(webfingerXML);
+    webfingerDoc = await fetchText(webfingerUrl);
   } catch (ex) {
     return null;
   }
 
-  return $;
+  try {
+    const json = JSON.parse(webfingerDoc);
+    const linkMap = {};
+    json.links.map(link => linkMap[link.rel] = link);
+
+    webfingerInfo = {
+      feed_url: linkMap['http://schemas.google.com/g/2010#updates-from']?.href,
+      salmon_url: linkMap['salmon']?.href,
+      webmention_url: linkMap['webmention']?.href,
+      magic_key: (linkMap['magic-public-key']?.href || '').replace('data:application/magic-public-key,', ''),
+      profile_url: json.aliases[0],
+    };
+  } catch (ex) {
+    // Fall-through, and try XML parsing.
+  }
+
+  try {
+    const $ = cheerio.load(webfingerDoc);
+
+    webfingerInfo = {
+      feed_url: $('link[rel="http://schemas.google.com/g/2010#updates-from"]').attr('href'),
+      salmon_url: $('link[rel="salmon"]').attr('href'),
+      webmention_url: $('link[rel="webmention"]').attr('href'),
+      magic_key: $('link[rel="magic-public-key"]').attr('href').replace('data:application/magic-public-key,', ''),
+      profile_url: $('alias').first().text(),
+    };
+  } catch (ex) {
+    return null;
+  }
+
+  return webfingerInfo;
 }
 
 export async function getHTML(url) {
@@ -67,19 +101,12 @@ export async function discoverUserRemoteInfoSaveAndSubscribe(req, options, url, 
 }
 
 export async function getUserRemoteInfo(websiteUrl, local_username) {
-  const userRemote = { local_username };
+  let userRemote = { local_username };
 
   const lrddUrl = await getLRDD(websiteUrl);
   if (lrddUrl) {
-    const webfingerDoc = await getWebfinger(lrddUrl, websiteUrl);
-    userRemote.feed_url = webfingerDoc('link[rel="http://schemas.google.com/g/2010#updates-from"]').attr('href');
-    userRemote.salmon_url = webfingerDoc('link[rel="salmon"]').attr('href');
-    userRemote.webmention_url = webfingerDoc('link[rel="webmention"]').attr('href');
-    userRemote.magic_key = webfingerDoc('link[rel="magic-public-key"]')
-      .attr('href')
-      .replace('data:application/magic-public-key,', '');
-    userRemote.username = webfingerDoc('Property[type="http://apinamespace.org/atom/username"]').text();
-    userRemote.profile_url = webfingerDoc('alias').first().text();
+    const webfingerInfo = await getWebfinger(lrddUrl, websiteUrl);
+    userRemote = Object.assign({}, userRemote, webfingerInfo);
   }
 
   userRemote.feed_url = ensureAbsoluteUrl(websiteUrl, userRemote.feed_url);
