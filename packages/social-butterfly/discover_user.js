@@ -129,11 +129,11 @@ export async function getUserRemoteInfo(websiteUrl, local_username) {
   userRemote.avatar = feedMeta.image?.url || userRemote.favicon;
   userRemote.order = Math.pow(2, 31) - 1;
 
-  userRemote.salmon_url = ensureAbsoluteUrl(hostnameAndProtocol, userRemote.salmon_url);
-  userRemote.webmention_url = ensureAbsoluteUrl(hostnameAndProtocol, userRemote.webmention_url);
-  userRemote.profile_url = ensureAbsoluteUrl(hostnameAndProtocol, userRemote.profile_url);
-  userRemote.feed_url = ensureAbsoluteUrl(hostnameAndProtocol, userRemote.feed_url);
-  userRemote.hub_url = ensureAbsoluteUrl(hostnameAndProtocol, userRemote.hub_url);
+  userRemote.salmon_url = ensureAbsoluteUrl(websiteUrl, userRemote.salmon_url);
+  userRemote.webmention_url = ensureAbsoluteUrl(websiteUrl, userRemote.webmention_url);
+  userRemote.profile_url = ensureAbsoluteUrl(websiteUrl, userRemote.profile_url);
+  userRemote.feed_url = ensureAbsoluteUrl(websiteUrl, userRemote.feed_url);
+  userRemote.hub_url = ensureAbsoluteUrl(websiteUrl, userRemote.hub_url);
 
   return userRemote;
 }

@@ -53,11 +53,11 @@ function sendWebfingerAsJson(req, res, user) {
       },
       {
         "rel": "http://ostatus.org/schema/1.0/subscribe",
-        "template": accountInfo.followUrl,
+        "href": accountInfo.followUrl,
       },
       {
         "rel": "webmention",
-        "template": accountInfo.webmentionUrl,
+        "href": accountInfo.webmentionUrl,
       },
       {
         "rel": "magic-public-key",
@@ -132,9 +132,9 @@ class WebFinger extends PureComponent {
         <XML.Link rel="https://webfinger.net/rel/profile-page" href={user.url} type="text/html" />
         <XML.Link rel="https://webfinger.net/rel/avatar" href={logo} type="image/jpeg" />
         <XML.Link rel="http://schemas.google.com/g/2010#updates-from" href={accountInfo.feedUrl} type="application/atom+xml" />
-        <XML.Link rel="http://ostatus.org/schema/1.0/subscribe" template={accountInfo.followUrl} />
-        <XML.Link rel="http://microformats.org/profile/hcard" template={user.url} type="text/html" />
-        <XML.Link rel="self" template={user.url} type="application/activity+json" />
+        <XML.Link rel="http://ostatus.org/schema/1.0/subscribe" href={accountInfo.followUrl} />
+        <XML.Link rel="http://microformats.org/profile/hcard" href={user.url} type="text/html" />
+        <XML.Link rel="self" href={user.url} type="application/activity+json" />
       </XML.XRD>
     );
   }
