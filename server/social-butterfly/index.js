@@ -17,8 +17,8 @@ export default app => {
     app,
     constants: {
       feedMaxDaysOld: FEED_MAX_DAYS_OLD,
-      pushHub: 'https://pubsubhubbub.appspot.com/',
-      pushSecret: process.env.REACT_APP_PUSH_SECRET,
+      webSubHub: 'https://pubsubhubbub.appspot.com/',
+      webSubSecret: process.env.REACT_APP_WEBSUB_SECRET,
       thumbWidth: 154,
       thumbHeight: 115,
     },

@@ -98,7 +98,7 @@ export class GenericFeed extends PureComponent {
         <subtitle>a hello world site.</subtitle>
         <link rel="self" href={feedUrl} />
         <link rel="alternate" type="text/html" href={contentOwner.url} />
-        <link rel="hub" href={constants.pushHub} />
+        <link rel="hub" href={constants.webSubHub} />
         <link rel="salmon" href={salmonUrl} />
         <link rel="http://salmon-protocol.org/ns/salmon-replies" href={salmonUrl} />
         <link rel="http://salmon-protocol.org/ns/salmon-mention" href={salmonUrl} />

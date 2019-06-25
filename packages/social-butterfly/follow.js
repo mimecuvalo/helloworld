@@ -20,7 +20,7 @@ const followFactory = (options) => {
     res.redirect('/');
   });
 
-  followRouter.use('/pubsubhubbub', options.pushSubscriberServer.listener());
+  followRouter.use('/websub', options.webSubSubscriberServer.listener());
 
   // `req` might be null if we're doing initial setup of the server.
   async function follow(req, currentUser, profileUrl) {
@@ -45,8 +45,8 @@ const followFactory = (options) => {
   async function unfollow(req, currentUser, userRemote, hub_url, profileUrl) {
     try {
       const userRemoteParams = { localUsername: currentUser.model.username, remoteProfileUrl: profileUrl };
-      const callbackUrl = buildUrl({ req, pathname: '/pubsubhubbub', searchParams: userRemoteParams });
-      await options.pushSubscriberServer.unsubscribe(hub_url, options.constants.pushHub, callbackUrl);
+      const callbackUrl = buildUrl({ req, pathname: '/websub', searchParams: userRemoteParams });
+      await options.webSubSubscriberServer.unsubscribe(hub_url, options.constants.webSubHub, callbackUrl);
     } catch (ex) {
       console.error(ex);
     }

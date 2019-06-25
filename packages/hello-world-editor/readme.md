@@ -72,7 +72,7 @@ npm run test
 
 - social features:
   - RSS reader
-  - oStatus stack, PuSH/Salmon/Webfinger
+  - oStatus stack, WebSub/Salmon/Webfinger
   - commenting
   - api to follow/reblog content (pretty basic right now)
 - WYSIWYG editor

@@ -5,16 +5,16 @@ import FOAF from './foaf';
 import Follow from './follow';
 import HostMeta from './host_meta';
 import OEmbed from './oembed';
-import push from './push';
 import Salmon, { favorite } from './salmon';
 import schedule from 'node-schedule';
 import syndicate from './syndicate';
 import updateFeeds from './update_feeds';
 import WebFinger from './webfinger';
 import WebMention from './webmention';
+import WebSub from './websub';
 
 const socialButterfly = (options) => {
-  options.pushSubscriberServer = push(options);
+  options.webSubSubscriberServer = WebSub(options);
 
   const { apiRouter, follow, unfollow } = setupApi(options);
   setupTasks(options);

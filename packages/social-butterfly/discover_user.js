@@ -93,8 +93,8 @@ export async function discoverUserRemoteInfoSaveAndSubscribe(req, options, url, 
 
   if (req && userRemote.hub_url) {
     const userRemoteParams = { localUsername: userRemote.local_username, remoteProfileUrl: userRemote.profile_url };
-    const callbackUrl = buildUrl({ req, pathname: '/pubsubhubbub', searchParams: userRemoteParams });
-    await options.pushSubscriberServer.subscribe(userRemote.hub_url, options.constants.pushHub, callbackUrl);
+    const callbackUrl = buildUrl({ req, pathname: '/websub', searchParams: userRemoteParams });
+    await options.webSubSubscriberServer.subscribe(userRemote.hub_url, options.constants.webSubHub, callbackUrl);
   }
 
   return await options.getRemoteUser(userRemote.local_username, userRemote.profile_url);

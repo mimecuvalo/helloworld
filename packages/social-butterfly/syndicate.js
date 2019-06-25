@@ -12,7 +12,7 @@ export default (options) => async function syndicate(req, contentOwner, localCon
     return;
   }
 
-  await pubsubhubbubPush(req, options, localContent);
+  await webSubPush(req, options, localContent);
 
   await parseMentions(req, options, contentOwner, localContent, opt_remoteContent);
 
@@ -113,9 +113,9 @@ async function parseMentions(req, options, contentOwner, content, opt_remoteCont
   }
 }
 
-async function pubsubhubbubPush(req, options, content) {
+async function webSubPush(req, options, content) {
   try {
-    await fetch(options.constants.pushHub, {
+    await fetch(options.constants.webSubHub, {
       method: 'POST',
       body: new URLSearchParams({ 'hub.url': content.url, 'hub.mode': 'publish' }),
     });
