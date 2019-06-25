@@ -1,13 +1,8 @@
 import { contentUrl, profileUrl } from '../../shared/util/url_factory';
-import { defineMessages, F, FormattedDate, injectIntl } from '../../shared/i18n';
+import { F, FormattedDate } from '../../shared/i18n';
 import React, { PureComponent } from 'react';
 import styles from './Footer.module.css';
 
-const messages = defineMessages({
-  logo: { msg: 'logo' },
-});
-
-@injectIntl
 class Footer extends PureComponent {
   handleFullscreen = evt => {
     document.getElementById('hw-content').requestFullscreen();
@@ -16,16 +11,16 @@ class Footer extends PureComponent {
   render() {
     const { content, contentOwner } = this.props;
     const { count, count_robot, createdAt, updatedAt, username } = content;
-    const logoAltText = this.props.intl.formatMessage(messages.logo);
+    const name = contentOwner.name || username;
 
     return (
       <footer className={styles.footer}>
         <span className="p-author h-card">
           <a key="img" href={profileUrl(username)} className="u-url icon-container">
-            <img className="u-photo" src={contentOwner.logo || contentOwner.favicon} alt={logoAltText} />
+            <img className="u-photo" src={contentOwner.logo || contentOwner.favicon} alt={name} />
           </a>
           <a key="name" href={profileUrl(username)} className="p-name fn u-url url">
-            {contentOwner.name}
+            {name}
           </a>
         </span>
         :&nbsp;

@@ -13,7 +13,6 @@ import styles from './SiteMap.module.css';
 import { withRouter } from 'react-router-dom';
 
 const messages = defineMessages({
-  logo: { msg: 'logo' },
   menu: { msg: 'Menu' },
   search: { msg: 'search' },
 });
@@ -126,7 +125,6 @@ class SiteMap extends PureComponent {
     const username = this.props.username;
     const siteMap = this.props.data.fetchSiteMap;
     const contentOwner = this.props.data.fetchPublicUserData;
-    const logoAltText = this.props.intl.formatMessage(messages.logo);
     const menuButtonLabel = this.props.intl.formatMessage(messages.menu);
     const searchLabel = this.props.intl.formatMessage(messages.search);
 
@@ -149,9 +147,9 @@ class SiteMap extends PureComponent {
         >
           <ul>
             {contentOwner.logo ? (
-              <li>
-                <a id="hw-sitemap-logo" href={profileUrl(username)}>
-                  <img src={contentOwner.logo} title={contentOwner.title} alt={logoAltText} />
+              <li className="h-card">
+                <a id="hw-sitemap-logo" href={profileUrl(username)} className="u-photo">
+                  <img src={contentOwner.logo} title={contentOwner.title} alt={contentOwner.name || username} />
                 </a>
               </li>
             ) : null}
