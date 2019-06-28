@@ -140,6 +140,7 @@ export default {
       const result = await models.Content_Remote.findAll({
         attributes: [
           'avatar',
+          'creator',
           'content',
           'createdAt',
           'deleted',
@@ -274,7 +275,7 @@ export default {
 
         // TODO(mime): hacky - how can we unify this (here and wherever we use syndicate())
         currentUser.model.url = profileUrl(currentUser.model.username, req);
-        socialButterfly().favorite(req, currentUser.model, contentRemote, userRemote.salmon_url, favorited);
+        socialButterfly().like(req, currentUser.model, contentRemote, userRemote, favorited);
 
         return { from_user, post_id, type, favorited };
       }

@@ -1,16 +1,15 @@
 import fetch from 'node-fetch';
-import { NotFoundError } from './exceptions';
+import { HTTPError } from './exceptions';
 import sanitizer from 'sanitize-html';
 
-export async function fetchUrl(url) {
+export async function fetchUrl(url, opt_headers) {
   try {
-    const response = await fetch(url, {
-      headers: {
-        'user-agent': 'hello, world bot.',
-      },
-    });
-    if (response.status !== 200) {
-      throw new NotFoundError();
+    const headers = Object.assign({
+      'user-agent': 'hello, world bot.',
+    }, (opt_headers || {}));
+    const response = await fetch(url, { headers });
+    if (response.status >= 400) {
+      throw new HTTPError(response.status, url);
     }
     return response;
   } catch (ex) {
@@ -18,9 +17,14 @@ export async function fetchUrl(url) {
   }
 }
 
-export async function fetchText(url) {
+export async function fetchText(url, opt_headers) {
   const response = await fetchUrl(url);
   return await response.text();
+}
+
+export async function fetchJSON(url, opt_headers) {
+  const response = await fetchUrl(url, opt_headers);
+  return await response.json();
 }
 
 export function createAbsoluteUrl(websiteUrl, url) {

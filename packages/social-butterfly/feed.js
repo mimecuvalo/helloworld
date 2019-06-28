@@ -1,5 +1,5 @@
 import { buildUrl } from './util/url_factory';
-import { NotFoundError } from './util/exceptions';
+import { HTTPError } from './util/exceptions';
 import React, { createElement as RcE, PureComponent } from 'react';
 import { renderToString } from 'react-dom/server';
 
@@ -74,7 +74,7 @@ export class GenericFeed extends PureComponent {
   render() {
     const contentOwner = this.props.contentOwner;
     if (!contentOwner) {
-      throw new NotFoundError();
+      throw new HTTPError(404, undefined, 'feed: no content owner');
     }
 
     const { req, children, constants, updatedAt } = this.props;
@@ -152,6 +152,8 @@ class Entry extends PureComponent {
     const statsImgSrc = buildUrl({ req, pathname: '/api/stats', searchParams: { resource: content.url } });
     const statsImg = `<img src="${statsImgSrc}" />`;
     const absoluteUrlReplacement = buildUrl({ req, pathname: '/resource' });
+
+    // TODO(mime): this replacement is nite-lite specific...
     const html =
       '<![CDATA[' + content.view.replace(/(['"])\/resource/gm, `$1${absoluteUrlReplacement}`) + statsImg + ']]>';
     const repliesUrl = buildUrl({ pathname: '/api/social/comments', searchParams: { resource: content.url } });
@@ -165,9 +167,7 @@ class Entry extends PureComponent {
         <title>{content.title}</title>
         <link href={content.url} />
         <id>
-          {`tag:${req.hostname}` +
-            `,${new Date(content.createdAt).toISOString().slice(0, 10)}` +
-            `:${content.url}`}
+          {content.url}
         </id>
         <content type="html" dangerouslySetInnerHTML={{ __html: html }} />
         <published>{new Date(content.createdAt).toISOString()}</published>

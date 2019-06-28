@@ -153,10 +153,10 @@ class Comments extends Component {
                       <div>
                         {comment.from_user ? (
                           <a href={comment.from_user} target="_blank" rel="noopener noreferrer">
-                            {comment.username}
+                            {comment.creator || comment.username}
                           </a>
                         ) : (
-                          <span className={styles.author}>{comment.username}: </span>
+                          <span className={styles.author}>{comment.creator || comment.username}: </span>
                         )}
                         <div dangerouslySetInnerHTML={{ __html: comment.view }} />
 

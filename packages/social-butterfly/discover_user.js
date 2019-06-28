@@ -1,7 +1,7 @@
 import { buildUrl, ensureAbsoluteUrl } from './util/url_factory';
 import cheerio from 'cheerio';
 import { discoverAndParseFeedFromUrl } from './util/feeds';
-import { fetchText, createAbsoluteUrl } from './util/crawler';
+import { fetchJSON, fetchText, createAbsoluteUrl } from './util/crawler';
 
 // Get the /.well-known/host-meta resource.
 // In other words, get the link to the WebFinger resource.
@@ -10,10 +10,10 @@ export async function getLRDD(url) {
   const parsedUrl = new URL(url);
   const hostMetaUrl = `${parsedUrl.protocol}//${parsedUrl.host}/.well-known/host-meta`;
 
-  let lrddUrl;
+  let lrddUrl, $;
   try {
     const hostMetaXML = await fetchText(hostMetaUrl);
-    const $ = cheerio.load(hostMetaXML);
+    $ = cheerio.load(hostMetaXML);
     lrddUrl = $('link[rel="lrdd"][type="application/json"]').attr('template');
   } catch (ex) {
     try {
@@ -37,37 +37,63 @@ export async function getWebfinger(lrddUrl, uri) {
     return null;
   }
 
+  let success = false;
   try {
     const json = JSON.parse(webfingerDoc);
     const linkMap = {};
     json.links.map(link => linkMap[link.rel] = link);
+    const activityPubActorUrl = json.links.find(link => link.rel === 'self' && link.type === 'application/activity+json');
 
     webfingerInfo = {
       feed_url: linkMap['http://schemas.google.com/g/2010#updates-from']?.href,
       salmon_url: linkMap['salmon']?.href,
+      activitypub_actor_url: activityPubActorUrl?.href,
       webmention_url: linkMap['webmention']?.href,
       magic_key: (linkMap['magic-public-key']?.href || '').replace('data:application/magic-public-key,', ''),
       profile_url: json.aliases[0],
     };
+    success = true;
   } catch (ex) {
     // Fall-through, and try XML parsing.
   }
 
-  try {
-    const $ = cheerio.load(webfingerDoc);
+  if (!success) {
+    try {
+      const $ = cheerio.load(webfingerDoc);
 
-    webfingerInfo = {
-      feed_url: $('link[rel="http://schemas.google.com/g/2010#updates-from"]').attr('href'),
-      salmon_url: $('link[rel="salmon"]').attr('href'),
-      webmention_url: $('link[rel="webmention"]').attr('href'),
-      magic_key: $('link[rel="magic-public-key"]').attr('href').replace('data:application/magic-public-key,', ''),
-      profile_url: $('alias').first().text(),
-    };
-  } catch (ex) {
-    return null;
+      webfingerInfo = {
+        feed_url: $('link[rel="http://schemas.google.com/g/2010#updates-from"]').attr('href'),
+        salmon_url: $('link[rel="salmon"]').attr('href'),
+        activitypub_actor_url: $('link[rel="self"][type="application/activity+json"]').attr('href'),
+        webmention_url: $('link[rel="webmention"]').attr('href'),
+        magic_key: $('link[rel="magic-public-key"]').attr('href').replace('data:application/magic-public-key,', ''),
+        profile_url: $('alias').first().text(),
+      };
+    } catch (ex) {
+      return null;
+    }
+  }
+
+  if (webfingerInfo.activitypub_actor_url) {
+    try {
+      const actorJSON = await getActivityPubActor(webfingerInfo.activitypub_actor_url);
+
+      // TODO(mime): not the cleanest naming, we're overwriting the magic_key and preferring the PEM from
+      // the actor JSON. should rename this field to reflect that it is has magic or PEM format for public key.
+      webfingerInfo.magic_key = actorJSON['publicKey']['publicKeyPem'];
+      webfingerInfo.activitypub_inbox_url = actorJSON['inbox'];
+    } catch (ex) {
+      // Ignore, if we can't get the actor info.
+    }
   }
 
   return webfingerInfo;
+}
+
+export async function getActivityPubActor(url) {
+  return await fetchJSON(url, {
+    'Accept': 'application/activity+json',
+  });
 }
 
 export async function getHTML(url) {
@@ -129,7 +155,12 @@ export async function getUserRemoteInfo(websiteUrl, local_username) {
   userRemote.avatar = feedMeta.image?.url || userRemote.favicon;
   userRemote.order = Math.pow(2, 31) - 1;
 
+  // If activitypub_actor_url, fallback to profile_url. Used in Salmon lookups. 
+  userRemote.activitypub_actor_url = userRemote.activitypub_actor_url || userRemote.profile_url;
+
   userRemote.salmon_url = ensureAbsoluteUrl(websiteUrl, userRemote.salmon_url);
+  userRemote.activitypub_actor_url = ensureAbsoluteUrl(websiteUrl, userRemote.activitypub_actor_url);
+  userRemote.activitypub_inbox_url = ensureAbsoluteUrl(websiteUrl, userRemote.activitypub_inbox_url);
   userRemote.webmention_url = ensureAbsoluteUrl(websiteUrl, userRemote.webmention_url);
   userRemote.profile_url = ensureAbsoluteUrl(websiteUrl, userRemote.profile_url);
   userRemote.feed_url = ensureAbsoluteUrl(websiteUrl, userRemote.feed_url);

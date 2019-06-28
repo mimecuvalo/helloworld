@@ -72,7 +72,7 @@ npm run test
 
 - social features:
   - RSS reader
-  - oStatus stack, PuSH/Salmon/Webfinger
+  - oStatus stack, WebSub/Salmon/Webfinger
   - commenting
   - api to follow/reblog content (pretty basic right now)
 - WYSIWYG editor
@@ -97,37 +97,46 @@ npm run test
 ### p0 (high pri)
 
 - split off dashboard, admin panel, draft.js code, auth0, and lodash code for performance
-- separate packages for editor and socialize api
-  - take a look at lerna: https://medium.com/@luisvieira_gmr/building-large-scale-react-applications-in-a-monorepo-91cd4637c131
-  - social api:
-    - provide function to generate RSA
-    - provide function to generate <head> html
-    - get rid of local fields: comments_count and comments_updated, favorites_count, derive instead
-    - utility function for parsing 'acct:' maybe
-    - move urls to constants (foaf, webfinger, etc.)
-    - rename fields to be consistent
-      - from_user: remoteProfileUrl,
-      - local_content_name: localContentUrl,
-      - to_username: localUsername,
-      - avatar -> logo
-    - maybe get rid of underscores vs camelCase
-    - should go into a retry queue, async
-- prbly move comments/favorites to separate 'social' table (also need to consolidate ‘local’ and ‘remote' comments)
-- make install instructions dead-simple, one-liner with mysql mock db setup.
-- social features
-  - verify salmon (fix todos), oStatus support, follow/favorite/reply, unfollow (skip xsrf, also push/pubsub), with status.net (a.k.a. gnu social), friendi.ca, Pleroma, socialhome, hubzilla
-  - reference: https://ostatus.readthedocs.io/en/latest/data_structures.html
-  - activitypub
-    - alternate: https://github.com/dariusk/rss-to-activitypub
-  - verify webmention working again
+- social api:
+  - provide function to generate RSA
+  - provide function to generate <head> html
+  - get rid of local fields: comments_count and comments_updated, favorites_count, derive instead
+  - move urls to constants (foaf, webfinger, etc.)
+  - rename fields to be consistent
+    - from_user: remoteProfileUrl,
+    - local_content_name: localContentUrl,
+    - to_username: localUsername,
+    - logo -> avatar
+  - maybe get rid of underscores vs camelCase
+  - should go into a retry queue, async
+  - remove FOAF probably
+  - prbly move comments/favorites to separate 'social' table (also need to consolidate ‘local’ and ‘remote' comments)
   - publish to fediverse.party and the-federation.info and https://en.wikipedia.org/wiki/ActivityPub and https://en.wikipedia.org/wiki/Fediverse
   - check out https://fed.brid.gy/
-  - mastodon compatibility
   - see remote comments
-  - WebSub (pubsubhubbub)
   - hacky URI decorations
-  - see if ostatus is still case-sensitive, if not make all lower case foaf, webfinger, host_meta, too confusing with react warnings
-- render HTML with inline styling
+  - activitypub
+    - verifyMessage - Digest header of body
+    - undo (unfollow/unfavorite)
+    - outbox
+    - followers
+    - ostatus:attention/mentioned (a la salmon)
+    - thr:replies (a la salmon)
+    - add salmon 'comment' type back for content.section === 'comment'
+    - Linked Data Signatures for forwarded payloads.
+    -  if payload contains an attribution verify both actors
+    - check out https://docs.joinmastodon.org/development/activitypub/
+      - object IDs must use the https:// schema.
+      - Servers must offer a WebFinger endpoint for turning usernames into actors.
+      - Activities attributed to an actor must have an ID on the same host as the actor
+      - https://activitypub.rocks/implementation-report/ (test suite broken?)
+  - websub
+    - switch to https://www.npmjs.com/package/websub-hub
+    - or https://www.npmjs.com/package/websub
+- fix linting / compilation checks in packages
+- get rid of trailing slash on profile page
+- make install instructions dead-simple, one-liner with mysql mock db setup.
+- render HTML with inline styling (e.g. mentions)
 - getting an error in graphql seems to hang the apollo server. if so, update all-the-things, too.
 - same Apollo query twice causes SSR to fail with htmlHead, wtf.
 - more GraphQL examples:
@@ -140,8 +149,6 @@ npm run test
 - generator steps for Sequelize files
 - see if `lazy` attribute can be a good substitute for ContentThumb's delay-loading logic (chrome 75)
 - finish up Admin panel to add/delete users
-- prefer JSON for webfinger, easier
-- webfinger - place at .well-known/webfinger
 - loading state when following someone new
 - invalid url (i.e. with http:) follow error on dashboard
 

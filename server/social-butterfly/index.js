@@ -26,6 +26,7 @@ export default app => {
     getLocalContent,
     getLocalLatestContent,
     getRemoteUser,
+    getRemoteUserByActor,
     saveRemoteUser,
     removeRemoteUser,
     getRemoteAllUsers,
@@ -130,6 +131,8 @@ async function getLocalLatestContent(localContentUrl, req) {
  *  feed_url
  *  magic_key
  *  salmon_url
+ *  activitypub_actor_url
+ *  activitypub_inbox_url
  *  webmention_url
  *  hub_url
  *  follower
@@ -142,6 +145,16 @@ async function getRemoteUser(local_username, profile_url) {
     where: {
       local_username,
       profile_url,
+    },
+  });
+}
+
+/* @see getRemoteUser above. difference here is the url we're referencing. */
+async function getRemoteUserByActor(local_username, activitypub_actor_url) {
+  return await models.User_Remote.findOne({
+    where: {
+      local_username,
+      activitypub_actor_url,
     },
   });
 }
@@ -193,11 +206,11 @@ async function getRemoteFriends(usernameOrUrl) {
  *  favorited
  *  content
  */
-async function getRemoteContent(localUsername, postId) {
+async function getRemoteContent(localUsername, link) {
   return await models.Content_Remote.findOne({
     where: {
       to_username: localUsername,
-      post_id: postId,
+      link,
     },
   });
 }

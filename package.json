@@ -22,7 +22,7 @@
   "dependencies": {
     "cra-all-the-things": "0.8.6",
     "dataloader": "1.4.0",
-    "hello-world-editor": "0.8.5",
+    "hello-world-editor": "0.8.6",
     "is-mobile": "2.0.1",
     "magic-signatures": "2.0.0",
     "nanoid": "2.0.1",
@@ -31,7 +31,7 @@
     "react-dom": "16.8.4",
     "react-jss": "8.6.1",
     "sharp": "0.21.3",
-    "social-butterfly": "0.8.5",
+    "social-butterfly": "0.8.6",
     "swipe-listener": "1.0.7",
     "uuid": "3.3.2"
   },

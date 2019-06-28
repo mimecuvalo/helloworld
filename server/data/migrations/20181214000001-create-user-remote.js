@@ -33,6 +33,8 @@ module.exports = {
         },
         magic_key: { type: Sequelize.TEXT('medium') },
         salmon_url: { type: Sequelize.TEXT('medium') },
+        activitypub_actor_url: { type: Sequelize.TEXT('medium') },
+        activitypub_inbox_url: { type: Sequelize.TEXT('medium') },
         webmention_url: { type: Sequelize.TEXT('medium') },
         hub_url: { type: Sequelize.TEXT('medium') },
         follower: {

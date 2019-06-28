@@ -1,11 +1,13 @@
+import ActivityPub from './activitypub';
 import Comments from './comments';
 import express from 'express';
 import Feed from './feed';
 import FOAF from './foaf';
 import Follow from './follow';
 import HostMeta from './host_meta';
+import { like } from './activitystreams';
 import OEmbed from './oembed';
-import Salmon, { favorite } from './salmon';
+import Salmon from './salmon';
 import schedule from 'node-schedule';
 import syndicate from './syndicate';
 import updateFeeds from './update_feeds';
@@ -24,7 +26,7 @@ const socialButterfly = (options) => {
     schedule.cancelJob('updateFeeds');
   };
 
-  return { dispose, apiRouter, favorite, follow, syndicate: syndicateWithOptions, unfollow };
+  return { apiRouter, dispose, follow, like, syndicate: syndicateWithOptions, unfollow };
 };
 export default socialButterfly;
 
@@ -36,6 +38,7 @@ function setupApi(options) {
   const { followRouter, follow, unfollow } = Follow(options);
 
   const subRouter = express.Router();
+  subRouter.use('/activitypub', ActivityPub(options));
   subRouter.get('/comments', Comments(options));
   subRouter.get('/feed', Feed(options));
   subRouter.get('/foaf', FOAF(options));

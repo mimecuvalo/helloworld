@@ -21,7 +21,7 @@ export default async function render({ req, res, next, assetPathsByType, appName
   const locale = getLocale(req);
   const translations = languages[locale];
 
-  const FILTERED_KEYS = ['id', 'magic_key', 'private_key'];
+  const FILTERED_KEYS = ['id', 'private_key'];
   const filteredUser = req.session.user
     ? {
         oauth: req.session.user.oauth,

@@ -1,7 +1,7 @@
 import cheerio from 'cheerio';
 import FeedParser from 'feedparser';
 import { fetchText, fetchUrl, createAbsoluteUrl, sanitizeHTML } from './crawler';
-import { NotFoundError } from './exceptions';
+import { HTTPError } from './exceptions';
 import { Readable } from 'stream';
 
 export async function discoverAndParseFeedFromUrl(url) {
@@ -30,7 +30,7 @@ async function parseHtmlAndRetrieveFeed(websiteUrl, html) {
 
   let feedUrl = links.first().attr('href');
   if (!feedUrl) {
-    throw new NotFoundError();
+    throw new HTTPError(404, websiteUrl, 'feed: no feed url');
   }
 
   feedUrl = createAbsoluteUrl(websiteUrl, feedUrl);

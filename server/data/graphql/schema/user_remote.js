@@ -6,7 +6,10 @@ const commonFields = `
   name: String!
   profile_url: String!
   salmon_url: String
+  activitypub_actor_url: String
+  activitypub_inbox_url: String
   webmention_url: String
+  magic_key: String
   follower: Boolean!
   following: Boolean!
   feed_url: String!
@@ -20,7 +23,6 @@ const commonFields = `
 export default gql`
   type UserRemotePrivate {
     ${commonFields}
-    magic_key: String
     order: Int!
   }
 

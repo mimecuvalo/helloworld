@@ -1,7 +1,7 @@
 import { buildUrl } from './util/url_factory';
 import { discoverUserRemoteInfoSaveAndSubscribe } from './discover_user';
 import express from 'express';
-import { follow as salmonFollow } from './salmon';
+import { follow as activityStreamsFollow } from './activitystreams';
 import FollowConfirm from './follow_confirm';
 import { parseFeedAndInsertIntoDb, retrieveFeed } from './util/feeds';
 import React from 'react';
@@ -33,11 +33,7 @@ const followFactory = (options) => {
       console.error(ex);
     }
 
-    try {
-      req && salmonFollow(req, currentUser.model, userRemote.salmon_url, true /* isFollow */);
-    } catch (ex) {
-      console.error(ex);
-    }
+    req && activityStreamsFollow(req, currentUser.model, userRemote, true /* isFollow */);
 
     return userRemote;
   }
@@ -51,11 +47,7 @@ const followFactory = (options) => {
       console.error(ex);
     }
 
-    try {
-      salmonFollow(req, currentUser.model, userRemote.salmon_url, false /* isFollow */);
-    } catch (ex) {
-      console.error(ex);
-    }
+    activityStreamsFollow(req, currentUser.model, userRemote, false /* isFollow */);
   }
 
   return { followRouter, follow, unfollow };

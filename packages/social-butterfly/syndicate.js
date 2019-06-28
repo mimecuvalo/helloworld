@@ -4,8 +4,8 @@ import { comment as emailComment } from './email';
 import { ensureAbsoluteUrl } from './util/url_factory';
 import fetch from 'node-fetch';
 import { fetchText } from './util/crawler';
-import { reply as salmonReply } from './salmon';
-import { webmentionReply } from './webmention';
+import { reply as activityStreamsReply } from './activitystreams';
+import { reply as webmentionReply } from './webmention';
 
 export default (options) => async function syndicate(req, contentOwner, localContent, opt_remoteContent, opt_isComment) {
   if (localContent.hidden) {
@@ -17,7 +17,7 @@ export default (options) => async function syndicate(req, contentOwner, localCon
   await parseMentions(req, options, contentOwner, localContent, opt_remoteContent);
 
   if (opt_isComment) {
-    const localContentUser = await options.getLocalUser(localContent.url);
+    const localContentUser = await options.getLocalUser(localContent.url, req);
     emailComment(
       req,
       opt_remoteContent.username,
@@ -61,7 +61,7 @@ async function parseMentions(req, options, contentOwner, content, opt_remoteCont
       return;
     }
 
-    if (userRemote.salmon_url || userRemote.webmention_url) {
+    if (userRemote.salmon_url || userRemote.activitypub_inbox_url || userRemote.webmention_url) {
       remoteUsers.push(userRemote);
       shouldAddToMentions && mentionedRemoteUsers.push(userRemote);
     }
@@ -105,10 +105,10 @@ async function parseMentions(req, options, contentOwner, content, opt_remoteCont
   }
 
   for (const userRemote of remoteUsers) {
-    webmentionReply(req, userRemote, content, content.thread, mentionedRemoteUsers);
-
-    if (userRemote.salmon_url) {
-      salmonReply(req, contentOwner, content, userRemote.salmon_url, mentionedRemoteUsers);
+    if (userRemote.activitypub_inbox_url || userRemote.salmon_url) {
+      activityStreamsReply(req, contentOwner, content, userRemote, mentionedRemoteUsers);
+    } else if (userRemote.webmention_url) {
+      webmentionReply(req, contentOwner, content, userRemote, mentionedRemoteUsers);
     }
   }
 }

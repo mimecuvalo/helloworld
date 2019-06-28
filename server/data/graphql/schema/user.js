@@ -8,6 +8,7 @@ const commonFields = `
   description: String
   license: String
   google_analytics: String
+  magic_key: String!
   favicon: String
   logo: String
   theme: String!
@@ -20,7 +21,6 @@ export default gql`
     ${commonFields}
     superuser: Boolean!
     hostname: String
-    magic_key: String!
     private_key: String!
   }
 

@@ -21,67 +21,67 @@ function sendWebfingerAsJson(req, res, user) {
   const logo = buildUrl({ req, pathname: user.logo || user.favicon });
 
   const json = {
-    "subject": accountInfo.account,
-    "aliases": [user.url],
-    "links": [
+    subject: accountInfo.account,
+    aliases: [user.url],
+    links: [
       {
-        "rel": "http://schemas.google.com/g/2010#updates-from",
-        "type": "application/atom+xml",
-        "href": accountInfo.feedUrl,
+        rel: 'http://schemas.google.com/g/2010#updates-from',
+        type: 'application/atom+xml',
+        href: accountInfo.feedUrl,
       },
       {
-        "rel": "http://webfinger.net/rel/profile-page",
-        "type": "text/html",
-        "href": user.url
+        rel: 'http://webfinger.net/rel/profile-page',
+        type: 'text/html',
+        href: user.url
       },
       {
-        "rel": "http://webfinger.net/rel/avatar",
-        "type": "image/jpeg",
-        "href": logo,
+        rel: 'http://webfinger.net/rel/avatar',
+        type: 'image/jpeg',
+        href: logo,
       },
       {
-        "rel": "salmon",
-        "href": accountInfo.salmonUrl
+        rel: 'salmon',
+        href: accountInfo.salmonUrl
       },
       {
-        "rel": "http://salmon-protocol.org/ns/salmon-replies",
-        "href": accountInfo.salmonUrl
+        rel: 'http://salmon-protocol.org/ns/salmon-replies',
+        href: accountInfo.salmonUrl
       },
       {
-        "rel": "http://salmon-protocol.org/ns/salmon-mention",
-        "href": accountInfo.salmonUrl
+        rel: 'http://salmon-protocol.org/ns/salmon-mention',
+        href: accountInfo.salmonUrl
       },
       {
-        "rel": "http://ostatus.org/schema/1.0/subscribe",
-        "href": accountInfo.followUrl,
+        rel: 'http://ostatus.org/schema/1.0/subscribe',
+        href: accountInfo.followUrl,
       },
       {
-        "rel": "webmention",
-        "href": accountInfo.webmentionUrl,
+        rel: 'webmention',
+        href: accountInfo.webmentionUrl,
       },
       {
-        "rel": "magic-public-key",
-        "href": `data:application/magic-public-key,${user.magic_key}`,
+        rel: 'magic-public-key',
+        href: `data:application/magic-public-key,${user.magic_key}`,
       },
       {
-        "rel": "describedby",
-        "type": "application/rdf+xml",
-        "href": accountInfo.foafUrl,
+        rel: 'describedby',
+        type: 'application/rdf+xml',
+        href: accountInfo.foafUrl,
       },
       {
-        "rel": "describedby",
-        "type": "application/json",
-        "href": accountInfo.webfingerUrl,
+        rel: 'describedby',
+        type: 'application/json',
+        href: accountInfo.webfingerUrl,
       },
       {
-        "rel": "http://microformats.org/profile/hcard",
-        "type": "text/html",
-        "href": user.url,
+        rel: 'http://microformats.org/profile/hcard',
+        type: 'text/html',
+        href: user.url,
       },
       {
-        "rel": "self",
-        "type": "application/activity+json",
-        "href": user.url,
+        rel: 'self',
+        type: 'application/activity+json',
+        href: accountInfo.actorUrl,
       },
     ]
   };
@@ -94,6 +94,7 @@ function getAccountInfo(req, user) {
   const resource = url;
 
   const account = `acct:${username}@${req.get('host')}`;
+  const actorUrl = buildUrl({ req, pathname: '/api/social/activitypub/actor', searchParams: { resource } });
   const feedUrl = buildUrl({ req, pathname: '/api/social/feed', searchParams: { resource } });
   const foafUrl = buildUrl({ req, pathname: '/api/social/foaf', searchParams: { resource } });
   const followUrl = buildUrl({ req, pathname: '/api/social/follow', searchParams: { resource } });
@@ -103,6 +104,7 @@ function getAccountInfo(req, user) {
 
   return {
     account,
+    actorUrl,
     feedUrl,
     foafUrl,
     followUrl,
@@ -134,7 +136,7 @@ class WebFinger extends PureComponent {
         <XML.Link rel="http://schemas.google.com/g/2010#updates-from" href={accountInfo.feedUrl} type="application/atom+xml" />
         <XML.Link rel="http://ostatus.org/schema/1.0/subscribe" href={accountInfo.followUrl} />
         <XML.Link rel="http://microformats.org/profile/hcard" href={user.url} type="text/html" />
-        <XML.Link rel="self" href={user.url} type="application/activity+json" />
+        <XML.Link rel="self" href={accountInfo.actorUrl} type="application/activity+json" />
       </XML.XRD>
     );
   }
