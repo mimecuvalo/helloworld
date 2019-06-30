@@ -16,10 +16,10 @@ class Footer extends PureComponent {
     return (
       <footer className={styles.footer}>
         <span className="p-author h-card">
-          <a key="img" href={profileUrl(username)} className="u-url icon-container">
+          <a key="img" href={profileUrl(username)} className="u-url u-uid icon-container">
             <img className="u-photo" src={contentOwner.logo || contentOwner.favicon} alt={name} />
           </a>
-          <a key="name" href={profileUrl(username)} className="p-name fn u-url url">
+          <a key="name" href={profileUrl(username)} className="p-name fn u-url u-uid url">
             {name}
           </a>
         </span>

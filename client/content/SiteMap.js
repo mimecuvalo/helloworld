@@ -36,6 +36,7 @@ const messages = defineMessages({
         license
         logo
         name
+        sidebar_html
       }
     }
   `,
@@ -148,8 +149,13 @@ class SiteMap extends PureComponent {
           <ul>
             {contentOwner.logo ? (
               <li className="h-card">
-                <a id="hw-sitemap-logo" href={profileUrl(username)} className="u-photo">
-                  <img src={contentOwner.logo} title={contentOwner.title} alt={contentOwner.name || username} />
+                <a id="hw-sitemap-logo" href={profileUrl(username)} className="u-url u-uid">
+                  <img
+                    className="u-photo"
+                    src={contentOwner.logo}
+                    title={contentOwner.title}
+                    alt={contentOwner.name || username}
+                  />
                 </a>
               </li>
             ) : null}
@@ -181,6 +187,8 @@ class SiteMap extends PureComponent {
               )}
             </div>
           ) : null}
+
+          {contentOwner.sidebar_html ? <div dangerouslySetInnerHTML={{ __html: contentOwner.sidebar_html }} /> : null}
         </nav>
       </>
     );
