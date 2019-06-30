@@ -13,6 +13,7 @@ const commonFields = `
   logo: String
   theme: String!
   viewport: String
+  sidebar_html: String
 `;
 
 // Keep in sync with both models/user.js and migrations/[date]-create-user.js
