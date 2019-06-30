@@ -59,6 +59,11 @@ const Inbox = (options) => async (req, res, next) => {
 
   const userRemote = await findUserRemote(options, req.body, res, user);
 
+  if (!userRemote) {
+    console.log('activitypub fail: ', req.body);
+    return res.sendStatus(401);
+  }
+
   const success = verifyMessage(req, userRemote);
   if (!success) {
     return res.sendStatus(401);

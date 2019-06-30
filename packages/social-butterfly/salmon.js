@@ -28,6 +28,11 @@ export default (options) => async (req, res) => {
 
   const userRemote = await findUserRemote(options, activityPubJSON, res, user);
 
+  if (!userRemote) {
+    console.log('salmon fail: ', activityPubJSON);
+    return res.sendStatus(401);
+  }
+
   try {
     magic.verify(req.body, userRemote.magic_key);
   } catch (ex) {
