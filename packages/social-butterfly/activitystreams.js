@@ -1,4 +1,5 @@
 import { buildUrl } from './util/url_factory';
+import { fetchJSON } from './util/crawler';
 import { follow as emailFollow } from './email';
 import { getActivityPubActor, getUserRemoteInfo } from './discover_user';
 import { mention as emailMention } from './email';
@@ -17,7 +18,12 @@ export async function accept(req, contentOwner, userRemote) {
 export async function like(req, contentOwner, contentRemote, userRemote, isFavorite) {
   // TODO(mime): add back unfavorite
   const id = buildUrl({ req, pathname: '/api/social/activitypub/like', searchParams: { id: nanoid(10), resource: contentRemote.link }});
-  const message = createGenericMessage('Like', req, id, contentOwner, contentRemote.link);
+  const message = createGenericMessage('Like', req, id, contentOwner, {
+     type: 'Post',
+     id: contentRemote.link,
+     displayName: contentRemote.title,
+     url: contentRemote.link
+  });
   send(req, userRemote, contentOwner, message);
 }
 
@@ -29,7 +35,7 @@ export async function follow(req, contentOwner, userRemote, isFollow) {
 }
 
 export async function reply(req, contentOwner, content, userRemote, mentionedRemoteUsers) {
-  const message = createArticle(req, content, contentOwner, userRemote, mentionedRemoteUsers);
+  const message = await createArticle(req, content, contentOwner, mentionedRemoteUsers);
   send(req, userRemote, contentOwner, message);
 }
 
@@ -50,20 +56,21 @@ export function createGenericMessage(type, req, id, localUser, object, opt_follo
   const actor = buildUrl({ req, pathname: '/api/social/activitypub/actor', searchParams: { resource: localUser.url } });
 
   const json = {
-  	'@context': 'https://www.w3.org/ns/activitystreams',
-  	id,
-  	type,
-  	actor,
+    '@context': 'https://www.w3.org/ns/activitystreams',
+    type,
+    id,
+    actor,
     to: ['https://www.w3.org/ns/activitystreams#Public'],
-    cc: opt_follower ? [opt_follower] : undefined,
+    cc: opt_follower ? [opt_follower.profile_url] : undefined,
     object,
   };
 
   return json;
 }
 
-export function createArticle(req, localContent, localUser, userRemote, opt_follower) {
+export async function createArticle(req, localContent, localUser, opt_follower) {
   const messageUrl = buildUrl({ req, pathname: '/api/social/activitypub/message', searchParams: { resource: localContent.url } });
+  const actorUrl = buildUrl({ req, pathname: '/api/social/activitypub/actor', searchParams: { resource: localUser.url } });
   const statsImgSrc = buildUrl({ req, pathname: '/api/stats', searchParams: { resource: localContent.url } });
   const statsImg = `<img src="${statsImgSrc}" />`;
   const absoluteUrlReplacement = buildUrl({ req, pathname: '/resource' });
@@ -71,13 +78,26 @@ export function createArticle(req, localContent, localUser, userRemote, opt_foll
   // TODO(mime): this replacement is nite-lite specific...
   const view = localContent.view.replace(/(['"])\/resource/gm, `$1${absoluteUrlReplacement}`) + statsImg;
 
+  let inReplyTo = localContent.thread;
+  if (localContent.thread) {
+    try {
+      const activityObject = await fetchJSON(localContent.thread, {
+        'Accept': 'application/activity+json',
+      });
+      if (activityObject) {
+        inReplyTo = activityObject.id;
+      }
+    } catch (ex) { }
+  }
+
   return createGenericMessage('Create', req, messageUrl, localUser, {
-		id: localContent.url,
+		id: messageUrl,
+		url: localContent.url,
 		type: 'Article',
 		published: new Date(localContent.createdAt).toISOString(),
 		updated: new Date(localContent.updatedAt).toISOString(),
-		attributedTo: userRemote.activitypub_actor_url,
-		inReplyTo: localContent.thread,
+		attributedTo: actorUrl,
+		inReplyTo,
     title: localContent.title,
 		content: view,
 		to: 'https://www.w3.org/ns/activitystreams#Public',

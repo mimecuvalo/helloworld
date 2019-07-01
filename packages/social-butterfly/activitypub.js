@@ -83,7 +83,9 @@ const Message = (options) => async (req, res, next) => {
     return res.sendStatus(404);
   }
 
-  res.json(createArticle(req, content, user));
+  const json = (await createArticle(req, content, user)).object;
+  json['@context'] = 'https://www.w3.org/ns/activitystreams';
+  res.json(json);
 };
 
 export async function send(req, userRemote, contentOwner, message) {

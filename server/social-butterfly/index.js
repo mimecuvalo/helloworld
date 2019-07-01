@@ -171,7 +171,7 @@ async function removeRemoteUser(remoteUser) {
  * Same structure as RemoteUser above. Used to retrieve feeds for local users.
  */
 async function getRemoteAllUsers() {
-  return await models.User_Remote.findAll();
+  return await models.User_Remote.findAll({ where: { following: true } });
 }
 
 /**

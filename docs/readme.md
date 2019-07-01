@@ -100,6 +100,9 @@ npm run test
 - social api:
   - provide function to generate RSA
   - provide function to generate <head> html
+  - remove XML version of webfinger
+  - add JSON feeds
+  - deprecate salmon, get rid of magic_keys - just stick with public keys
   - get rid of local fields: comments_count and comments_updated, favorites_count, derive instead
   - move urls to constants (foaf, webfinger, etc.)
   - rename fields to be consistent
@@ -110,6 +113,7 @@ npm run test
   - maybe get rid of underscores vs camelCase
   - should go into a retry queue, async
   - remove FOAF probably
+  - look at https://github.com/jasnell/activitystrea.ms library
   - prbly move comments/favorites to separate 'social' table (also need to consolidate ‘local’ and ‘remote' comments)
   - publish to fediverse.party and the-federation.info and https://en.wikipedia.org/wiki/ActivityPub and https://en.wikipedia.org/wiki/Fediverse
   - check out https://fed.brid.gy/
@@ -123,6 +127,7 @@ npm run test
     - ostatus:attention/mentioned (a la salmon)
     - thr:replies (a la salmon)
     - add salmon 'comment' type back for content.section === 'comment'
+    - needs more work for gnusocial/friendica/pleroma/hubzilla interoperability
     - Linked Data Signatures for forwarded payloads.
     -  if payload contains an attribution verify both actors
     - check out https://docs.joinmastodon.org/development/activitypub/

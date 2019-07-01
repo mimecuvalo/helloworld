@@ -1,6 +1,6 @@
 {
   "name": "social-butterfly",
-  "version": "0.8.6",
+  "version": "0.8.7",
   "description": "Incorporate federated social network protocols easily. Used with Hello, world federated blog.",
   "repository": {
     "type": "git",

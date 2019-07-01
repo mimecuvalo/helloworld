@@ -15,12 +15,11 @@ export async function getLRDD(url) {
     const hostMetaXML = await fetchText(hostMetaUrl);
     $ = cheerio.load(hostMetaXML);
     lrddUrl = $('link[rel="lrdd"][type="application/json"]').attr('template');
-  } catch (ex) {
-    try {
+
+    if (!lrddUrl) {
       lrddUrl = $('link[rel="lrdd"]').attr('template');
-    } catch (ex) {
-      return null;
     }
+  } catch (ex) {
   }
 
   return lrddUrl;
@@ -34,7 +33,15 @@ export async function getWebfinger(lrddUrl, uri) {
   try {
     webfingerDoc = await fetchText(webfingerUrl);
   } catch (ex) {
-    return null;
+    try {
+      // Fallback to probing for username@hostname if possible. Some sites like socialhome require this.
+      const parsedUrl = new URL(uri);
+      const acct = `${parsedUrl.pathname.split('/').filter(p => !!p).slice(-1)}@${parsedUrl.hostname}`;
+      const acctWebfingerUrl = lrddUrl.replace('{uri}', encodeURIComponent(acct));
+      webfingerDoc = await fetchText(acctWebfingerUrl);
+    } catch (ex) {
+      return null;
+    }
   }
 
   let success = false;
@@ -50,7 +57,7 @@ export async function getWebfinger(lrddUrl, uri) {
       activitypub_actor_url: activityPubActorUrl?.href,
       webmention_url: linkMap['webmention']?.href,
       magic_key: (linkMap['magic-public-key']?.href || '').replace('data:application/magic-public-key,', ''),
-      profile_url: json.aliases[0],
+      profile_url: json.aliases.find(alias => alias.startsWith('https:') || alias.startsWith('http:')),
     };
     success = true;
   } catch (ex) {
@@ -67,7 +74,9 @@ export async function getWebfinger(lrddUrl, uri) {
         activitypub_actor_url: $('link[rel="self"][type="application/activity+json"]').attr('href'),
         webmention_url: $('link[rel="webmention"]').attr('href'),
         magic_key: $('link[rel="magic-public-key"]').attr('href').replace('data:application/magic-public-key,', ''),
-        profile_url: $('alias').first().text(),
+        profile_url: $('alias').first().text().startsWith('https:')
+            || $('alias').first().text().startsWith('http:')
+            || $('alias').last().text(),
       };
     } catch (ex) {
       return null;
@@ -155,7 +164,7 @@ export async function getUserRemoteInfo(websiteUrl, local_username) {
   userRemote.avatar = feedMeta.image?.url || userRemote.favicon;
   userRemote.order = Math.pow(2, 31) - 1;
 
-  // If activitypub_actor_url, fallback to profile_url. Used in Salmon lookups. 
+  // If activitypub_actor_url not found, fallback to profile_url. Used in Salmon lookups.
   userRemote.activitypub_actor_url = userRemote.activitypub_actor_url || userRemote.profile_url;
 
   userRemote.salmon_url = ensureAbsoluteUrl(websiteUrl, userRemote.salmon_url);
