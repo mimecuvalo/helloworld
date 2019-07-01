@@ -36,6 +36,7 @@ const User = {
           'logo',
           'theme',
           'viewport',
+          'sidebar_html',
         ],
         where: { username },
       });
