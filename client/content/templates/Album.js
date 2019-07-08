@@ -84,8 +84,8 @@ class Album extends PureComponent {
                 x
               </button>
             ) : null}
-            <ContentThumb item={item} currentContent={content} />
-            {item.externalLink ? (
+            <ContentThumb isEditing={this.props.isEditing} item={item} currentContent={content} />
+            {!this.props.isEditing && item.externalLink ? (
               <a
                 className={classNames('hw-album-title', styles.title, styles.link)}
                 href={item.externalLink}

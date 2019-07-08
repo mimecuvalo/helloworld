@@ -22,21 +22,34 @@ class Thumb extends PureComponent {
     const currentContent = this.props.currentContent || {};
     const thumbAltText = this.props.intl.formatMessage(messages.thumbnail);
 
+    const thumb = (
+      <img
+        loading="lazy"
+        src={item.thumb || '/img/pixel.gif'}
+        ref={this.image}
+        alt={thumbAltText}
+        className={styles.thumb}
+      />
+    );
+
     // We're using the fancy new "loading" attribute for images to lazy load thumbs. Woo!
-    return (
+    return !this.props.isEditing && item.externalLink ? (
+      <a
+        className={classNames(styles.thumbLink, this.props.className)}
+        href={item.externalLink}
+        target="_blank"
+        rel="noreferrer noopener"
+      >
+        {thumb}
+      </a>
+    ) : (
       <Link
         to={contentUrl(item)}
         className={classNames(styles.thumbLink, this.props.className)}
         title={item.title}
         target={item.forceRefresh || currentContent.forceRefresh ? '_self' : ''}
       >
-        <img
-          loading="lazy"
-          src={item.thumb || '/img/pixel.gif'}
-          ref={this.image}
-          alt={thumbAltText}
-          className={styles.thumb}
-        />
+        {thumb}
       </Link>
     );
   }
