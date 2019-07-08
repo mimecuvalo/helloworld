@@ -43,4 +43,5 @@ logs/*.log
 logs/*.log.gz
 
 # private resources for users of hello, world
+resource
 resource/

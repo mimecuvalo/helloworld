@@ -16,6 +16,7 @@ const FetchCollection = gql`
   query($username: String!, $section: String!, $album: String!, $name: String!) {
     fetchCollection(username: $username, section: $section, album: $album, name: $name) {
       album
+      externalLink
       forceRefresh
       hidden
       name
@@ -84,13 +85,24 @@ class Album extends PureComponent {
               </button>
             ) : null}
             <ContentThumb item={item} currentContent={content} />
-            <ContentLink
-              item={item}
-              currentContent={content}
-              className={classNames('hw-album-title', styles.title, styles.link)}
-            >
-              {item.title}
-            </ContentLink>
+            {item.externalLink ? (
+              <a
+                className={classNames('hw-album-title', styles.title, styles.link)}
+                href={item.externalLink}
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                {item.title}
+              </a>
+            ) : (
+              <ContentLink
+                item={item}
+                currentContent={content}
+                className={classNames('hw-album-title', styles.title, styles.link)}
+              >
+                {item.title}
+              </ContentLink>
+            )}
           </li>
         ))}
       </ul>

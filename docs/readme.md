@@ -102,6 +102,10 @@ npm run test
   - provide function to generate <head> html
   - remove XML version of webfinger
   - add JSON feeds
+  - microsub/micropub
+    - to test suite https://micropub.rocks/
+  - litepub?
+  - list library on indieweb wiki later when more mature
   - deprecate salmon, get rid of magic_keys - just stick with public keys
   - get rid of local fields: comments_count and comments_updated, favorites_count, derive instead
   - move urls to constants (foaf, webfinger, etc.)
@@ -114,11 +118,20 @@ npm run test
   - should go into a retry queue, async
   - remove FOAF probably
   - look at https://github.com/jasnell/activitystrea.ms library
+    - https://test.activitypub.rocks/
+  - look at https://github.com/glennjones/microformat-node
+  - maybe indieauth - but probably not, hard to integrate into social-butterfly
+  - maybe vouch or salmention? https://spec.indieweb.org/
+  - fix https://indieweb-endpoints.cc for site
   - prbly move comments/favorites to separate 'social' table (also need to consolidate ‘local’ and ‘remote' comments)
   - publish to fediverse.party and the-federation.info and https://en.wikipedia.org/wiki/ActivityPub and https://en.wikipedia.org/wiki/Fediverse
   - check out https://fed.brid.gy/
   - see remote comments
   - hacky URI decorations
+  - look into making a fed bridgy/granary translation
+  - webmention: add like, other action verbs
+    - should verify source
+    - https://webmention.rocks/ to test suite
   - activitypub
     - verifyMessage - Digest header of body
     - undo (unfollow/unfavorite)

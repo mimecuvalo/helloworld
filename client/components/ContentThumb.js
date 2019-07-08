@@ -30,7 +30,13 @@ class Thumb extends PureComponent {
         title={item.title}
         target={item.forceRefresh || currentContent.forceRefresh ? '_self' : ''}
       >
-        <img loading="lazy" src={item.thumb} ref={this.image} alt={thumbAltText} className={styles.thumb} />
+        <img
+          loading="lazy"
+          src={item.thumb || '/img/pixel.gif'}
+          ref={this.image}
+          alt={thumbAltText}
+          className={styles.thumb}
+        />
       </Link>
     );
   }

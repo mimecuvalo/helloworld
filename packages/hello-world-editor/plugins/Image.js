@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { createPlugin } from 'draft-extend';
 import React, { PureComponent } from 'react';
 
@@ -34,7 +35,7 @@ export default createPlugin({
   entityToHTML: (entity, originalText) => {
     if (entity.type === ENTITY_TYPE) {
       const { src, alt } = entity.data;
-      return `<img src="${src}" alt="${alt}" title="${alt}" />`;
+      return `<img className="u-photo" src="${src}" alt="${alt}" title="${alt}" />`;
     }
   },
 });
@@ -45,7 +46,7 @@ class Image extends PureComponent {
     const data = block.getData();
     return (
       <a href={data.get('href')}>
-        <img className={className} src={data.get('src')} alt={data.get('alt')} title={data.get('alt')} />
+        <img className={classNames('u-photo', className)} src={data.get('src')} alt={data.get('alt')} title={data.get('alt')} />
       </a>
     );
   }

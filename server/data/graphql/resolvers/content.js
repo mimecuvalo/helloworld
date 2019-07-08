@@ -182,12 +182,15 @@ const Content = {
         constraints['hidden'] = false;
       }
 
+      // For links section, we grab the anchor url in the view.
+      const attributes = section === 'links' ? ATTRIBUTES_NAVIGATION.concat('view') : ATTRIBUTES_NAVIGATION;
+
       let collection = [];
       // Check first to see if this is an album and grab items within it.
       if (section !== 'main') {
         const contentConstraints = { username, section, album: name };
         collection = await models.Content.findAll({
-          attributes: ATTRIBUTES_NAVIGATION,
+          attributes,
           where: Object.assign({}, constraints, contentConstraints),
           order,
         });
@@ -197,7 +200,7 @@ const Content = {
       if (!collection.length) {
         const contentConstraints = { username, section: name, album: 'main' };
         collection = await models.Content.findAll({
-          attributes: ATTRIBUTES_NAVIGATION,
+          attributes,
           where: Object.assign({}, constraints, contentConstraints),
           order,
         });
@@ -218,7 +221,7 @@ const Content = {
         // Then, it combines with top-level items in the section (not in an album).
         const topLevelContentConstraints = { username, section: name, album: '' };
         const topLevelItems = await models.Content.findAll({
-          attributes: ATTRIBUTES_NAVIGATION,
+          attributes,
           where: Object.assign({}, constraints, topLevelContentConstraints),
           order,
         });
@@ -232,6 +235,14 @@ const Content = {
           attributes: ATTRIBUTES_NAVIGATION,
           where: Object.assign({}, constraints, contentConstraints),
           order,
+        });
+      }
+
+      if (section === 'links') {
+        collection.forEach(item => {
+          const link = item.view.match(/https?:\/\/[^"']+/);
+          const youTubeMatch = link?.[0].match(/youtube.com\/embed\/([^?]+)/);
+          item.externalLink = youTubeMatch ? `https://youtu.be/${youTubeMatch[1]}` : link?.[0];
         });
       }
 
