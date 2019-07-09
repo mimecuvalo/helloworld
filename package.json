@@ -1,6 +1,6 @@
 {
   "name": "hello-world-blog",
-  "version": "0.8.4",
+  "version": "0.8.7",
   "description": "hello, world. a federated blog with feed reader.",
   "repository": "mimecuvalo/helloworld",
   "license": "MIT",
@@ -22,7 +22,7 @@
   "dependencies": {
     "cra-all-the-things": "0.8.6",
     "dataloader": "1.4.0",
-    "hello-world-editor": "0.8.6",
+    "hello-world-editor": "0.8.7",
     "is-mobile": "2.0.1",
     "magic-signatures": "2.0.0",
     "nanoid": "2.0.1",
