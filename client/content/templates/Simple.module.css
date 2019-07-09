@@ -9,4 +9,9 @@
 .view embed {
   max-width: 600px;
   max-height: 450px;
+  margin: 10px;
+}
+
+.view figure img:hover {
+  outline: 3px solid #0bf;
 }
