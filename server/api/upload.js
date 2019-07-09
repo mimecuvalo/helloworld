@@ -118,7 +118,7 @@ function getUniqueFilenames(req, file, username) {
       'original',
       testFilename
     );
-    const testOriginal = path.join(process.cwd(), 'public', testPublicOriginal);
+    const testOriginal = path.join(process.cwd(), testPublicOriginal);
     try {
       fs.statSync(testOriginal);
       ++index;
@@ -132,8 +132,8 @@ function getUniqueFilenames(req, file, username) {
 
   const publicThumb = path.join('/', 'resource', username, section || '', album || '', 'thumbs', filename);
   const publicNormal = path.join('/', 'resource', username, section || '', album || '', filename);
-  const localThumb = path.join(process.cwd(), 'public', publicThumb);
-  const localNormal = path.join(process.cwd(), 'public', publicNormal);
+  const localThumb = path.join(process.cwd(), publicThumb);
+  const localNormal = path.join(process.cwd(), publicNormal);
   return { localOriginal, localThumb, localNormal, publicOriginal, publicThumb, publicNormal };
 }
 
