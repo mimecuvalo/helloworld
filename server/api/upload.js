@@ -41,6 +41,7 @@ router.post('/', upload.array('files', MAX_FILES), async (req, res) => {
   const fileInfo = [];
   for (const file of req.files) {
     const { localOriginal, localThumb, localNormal, publicOriginal, publicThumb, publicNormal } = getUniqueFilenames(
+      req,
       file,
       currentUser.model.username
     );
@@ -51,7 +52,7 @@ router.post('/', upload.array('files', MAX_FILES), async (req, res) => {
       fs.renameSync(file.path, localOriginal);
 
       const mimetype = mime.getType(file.originalname);
-      if (['image/apng', 'image/gif'].includes(mimetype) !== -1) {
+      if (['image/apng', 'image/gif'].includes(mimetype)) {
         fs.copyFileSync(localOriginal, localThumb);
         fs.copyFileSync(localOriginal, localNormal);
       } else {
@@ -98,16 +99,25 @@ function ensureDirectoriesExist(localOriginal, localThumb, localNormal) {
   }
 }
 
-function getUniqueFilenames(file, username) {
+function getUniqueFilenames(req, file, username) {
   let localOriginal, filename, publicOriginal;
   let index = 0;
+  const { section, album } = req.body;
 
   while (!localOriginal) {
     const cleanedName = cleanFilename(file.originalname);
     const extension = path.extname(cleanedName);
     const testFilename = path.posix.basename(cleanedName, extension) + (index ? `-${index}` : '') + extension;
 
-    const testPublicOriginal = path.join('/', 'resource', username, 'original', testFilename);
+    const testPublicOriginal = path.join(
+      '/',
+      'resource',
+      username,
+      section || '',
+      album || '',
+      'original',
+      testFilename
+    );
     const testOriginal = path.join(process.cwd(), 'public', testPublicOriginal);
     try {
       fs.statSync(testOriginal);
@@ -120,8 +130,8 @@ function getUniqueFilenames(file, username) {
     }
   }
 
-  const publicThumb = path.join('/', 'resource', username, 'thumbs', filename);
-  const publicNormal = path.join('/', 'resource', username, filename);
+  const publicThumb = path.join('/', 'resource', username, section || '', album || '', 'thumbs', filename);
+  const publicNormal = path.join('/', 'resource', username, section || '', album || '', filename);
   const localThumb = path.join(process.cwd(), 'public', publicThumb);
   const localNormal = path.join(process.cwd(), 'public', publicNormal);
   return { localOriginal, localThumb, localNormal, publicOriginal, publicThumb, publicNormal };

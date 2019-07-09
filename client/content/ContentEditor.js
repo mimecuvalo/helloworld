@@ -134,6 +134,9 @@ export default class ContentEditor extends Component {
   };
 
   handleMediaUpload = async body => {
+    body.append('section', this.props.content?.section || this.props.section);
+    body.append('album', this.props.content?.album || this.props.album);
+
     return await fetch(buildUrl({ pathname: '/api/upload' }), {
       method: 'POST',
       body,

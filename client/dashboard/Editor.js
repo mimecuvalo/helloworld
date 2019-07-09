@@ -190,6 +190,8 @@ class DashboardEditor extends PureComponent {
   };
 
   render() {
+    const { section, album } = JSON.parse(this.state.sectionAndAlbum);
+
     return (
       <div className={styles.editor}>
         <Toolbar>
@@ -219,6 +221,8 @@ class DashboardEditor extends PureComponent {
           showPlaceholder={true}
           mentions={this.props.data.fetchFollowing}
           content={null}
+          section={section}
+          album={album}
           onMediaAdd={this.handleMediaAdd}
         />
         <HiddenSnackbarShim
