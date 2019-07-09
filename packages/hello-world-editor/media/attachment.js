@@ -36,7 +36,7 @@ async function handleUploadComplete(editorState, response) {
     const src = fileInfo.normal;
     const alt = '';
 
-    editorState = createNewBlock('IMAGE', 'img', editorState, { src, alt }, { href, src, alt });
+    editorState = createNewBlock('IMAGE', 'img', editorState, { href, src, alt }, { href, src, alt });
   }
 
   return { editorState, fileInfos, isError: false };

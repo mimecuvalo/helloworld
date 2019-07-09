@@ -34,8 +34,8 @@ export default createPlugin({
   },
   entityToHTML: (entity, originalText) => {
     if (entity.type === ENTITY_TYPE) {
-      const { src, alt } = entity.data;
-      return `<img className="u-photo" src="${src}" alt="${alt}" title="${alt}" />`;
+      const { src, alt, href } = entity.data;
+      return `<a href="${href || src}"><img class="u-photo" src="${src}" alt="${alt}" title="${alt}" /></a>`;
     }
   },
 });
