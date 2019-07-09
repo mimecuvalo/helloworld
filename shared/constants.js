@@ -34,8 +34,8 @@ export default {
     },
   },
   reservedNames: ['admin', 'api', 'dashboard', 'graphql', 'public', 'search'],
-  thumbWidth: 154,
-  thumbHeight: 115,
-  normalWidth: 650,
-  normalHeight: 525,
+  thumbWidth: 480,
+  thumbHeight: 360,
+  normalWidth: 1280,
+  normalHeight: 720,
 };
