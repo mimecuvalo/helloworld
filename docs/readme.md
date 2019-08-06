@@ -151,6 +151,16 @@ npm run test
   - websub
     - switch to https://www.npmjs.com/package/websub-hub
     - or https://www.npmjs.com/package/websub
+- twitter embed support
+- editor
+  - onbeforeleave fix after posting once
+  - drop anywhere on page
+  - don’t replace when uploading twice
+  - don’t allow links to be clicked in editor
+  - something wrong with toolbars editing (multiple)
+  - grab thumb from first image (if pasted in)
+  - when finishing editing doesn’t show new version
+  - show uploading spinner
 - fix linting / compilation checks in packages
 - get rid of trailing slash on profile page
 - make install instructions dead-simple, one-liner with mysql mock db setup.
