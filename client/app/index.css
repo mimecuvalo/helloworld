@@ -34,6 +34,11 @@ img {
   vertical-align: middle;
 }
 
+ul,
+ol {
+  padding-inline-start: 40px;
+}
+
 nav ul,
 nav ol {
   list-style: none;
