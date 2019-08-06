@@ -241,7 +241,7 @@ const Content = {
       if (section === 'links') {
         collection.forEach(item => {
           const link = item.view.match(/https?:\/\/[^"']+/);
-          const youTubeMatch = link?.[0].match(/youtube.com\/embed\/([^?]+)/);
+          const youTubeMatch = link?.[0].match(/youtube.com\/embed\/([^?<]+)/);
           item.externalLink = youTubeMatch ? `https://youtu.be/${youTubeMatch[1]}` : link?.[0];
         });
       }
