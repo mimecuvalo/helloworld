@@ -37,5 +37,5 @@ export default {
   thumbWidth: 480,
   thumbHeight: 360,
   normalWidth: 1280,
-  normalHeight: 720,
+  normalHeight: 960,
 };
