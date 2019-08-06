@@ -223,7 +223,7 @@ async function saveRemoteContent(remoteContent) {
   }
 }
 
-async function removeOldRemoteContent(remoteContent) {
+async function removeOldRemoteContent() {
   return await models.Content_Remote.destroy({
     where: {
       type: 'post',

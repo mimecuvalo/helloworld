@@ -19,7 +19,7 @@ export default async function updateFeeds(options) {
   await getFreshContent(options);
 }
 
-async function pruneOlderContent() {
+async function pruneOlderContent(options) {
   try {
     const rowsDeletedCount = await options.removeOldRemoteContent();
     updateFeedsLogger.info(`pruned ${rowsDeletedCount} entries.`);
