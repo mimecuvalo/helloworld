@@ -26,12 +26,17 @@
 }
 
 .item ul,
-.item ol {
+.item ol,
+.item blockquote {
   margin-block-start: 1em;
   margin-block-end: 1em;
   margin-inline-start: 0px;
   margin-inline-end: 0px;
-  padding-inline-start: 40px;
+  padding-inline-start: 20px;
+}
+
+.item blockquote {
+  border: 1px solid #666;
 }
 
 .item a {
