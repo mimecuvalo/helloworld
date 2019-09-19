@@ -96,6 +96,9 @@ npm run test
 
 ### p0 (high pri)
 
+- npm audit again - broke prod last time...
+- Email is formatted wrong when getting webmention (says self sent email)
+- don't update updatedAt for view
 - split off dashboard, admin panel, draft.js code, auth0, and lodash code for performance
 - social api:
   - provide function to generate RSA
