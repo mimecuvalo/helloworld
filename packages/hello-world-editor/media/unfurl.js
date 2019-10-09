@@ -23,7 +23,7 @@ export default async function unfurl(onLinkUnfurl, url, editorState) {
     const src = url;
     const href = url;
     const alt = '';
-    editorState = createNewBlock('IMAGE', 'img', editorState, { src, alt }, { href, src, alt });
+    editorState = createNewBlock('IMAGE', 'img', editorState, { href, src, alt }, { href, src, alt });
 
     return { editorState, isError: false, wasMediaFound: true, isImg: true, thumb: url };
   }
@@ -47,7 +47,7 @@ export default async function unfurl(onLinkUnfurl, url, editorState) {
       const src = json.image;
       const alt = json.title;
       isImg = true;
-      editorState = createNewBlock('IMAGE', 'img', editorState, { src, alt }, { href, src, alt });
+      editorState = createNewBlock('IMAGE', 'img', editorState, { href, src, alt }, { href, src, alt });
       thumb = json.image;
     }
 
