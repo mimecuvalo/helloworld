@@ -1,6 +1,7 @@
 import { createPlugin } from 'draft-extend';
 import React from 'react';
 
+// TODO(mime): can't we just use LINK? i forget why we're using ANCHOR separately..., something with images probably :-/
 const ENTITY_TYPE = 'ANCHOR';
 
 // TODO(mime): one day, maybe switch wholesale to draft-extend. for now, we have a weird hybrid
@@ -16,8 +17,8 @@ export default createPlugin({
 
   entityToHTML: (entity, originalText) => {
     if (entity.type === ENTITY_TYPE) {
-      const { href, target } = entity.data;
-      return `<a href="${href}" target="${target}">${originalText}</a>`;
+      const { href } = entity.data;
+      return `<a href="${href}" target="_blank" rel="noopener noreferrer">${originalText}</a>`;
     }
 
     return originalText;
@@ -25,9 +26,9 @@ export default createPlugin({
 });
 
 export const AnchorDecorator = props => {
-  const { href, target } = props.contentState.getEntity(props.entityKey).getData();
+  const { href } = props.contentState.getEntity(props.entityKey).getData();
   return (
-    <a href={href} target={target}>
+    <a href={href} target="_blank" rel="noopener noreferrer">
       {props.children}
     </a>
   );

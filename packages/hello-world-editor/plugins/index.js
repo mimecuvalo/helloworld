@@ -16,6 +16,7 @@ import createLinkifyPlugin from 'draft-js-linkify-plugin';
 import { createPlugin } from 'draft-extend';
 import createReplyPlugin from './Reply';
 import createRSVPPlugin from './RSVP';
+import { decoratedBlocksToHTML } from '../utils/Blocks';
 import Iframe, { iframeBlockRendererFn } from './Iframe';
 import Image, { imageBlockRendererFn } from './Image';
 import toolbarStyles from '../ui/toolbars/Toolbar.module.css';
@@ -53,8 +54,21 @@ export const htmlPlugins = compose(
   // TODO(mime): enable the rest of these.
   /*dividerPlugin,
   hashtagPlugin,
-  mentionPlugin,
-  linkifyPlugin,*/
+  mentionPlugin,*/
+  createPlugin(Object.assign(
+    {},
+    {
+      entityToHTML: (entity, originalText) => { // TODO(mime): frankenstein stuff here b/c linkifyPlugin is 3rd party...
+        if (entity.type === 'LINK') {
+          const { href } = entity.data;
+          return `<a href="${href}" target="_blank" rel="noopener noreferrer">${originalText}</a>`;
+        }
+
+        return originalText;
+      }
+    },
+    linkifyPlugin
+  )),
   /* TODO(mime): emojiPlugin, */
 );
 
