@@ -48,6 +48,7 @@ npm run serve:dev
 To run in production (or better yet check out bin/flightplan.js)
 ```sh
 npm --production install
+npm run build
 npm run serve:prod
 ```
 
@@ -96,6 +97,14 @@ npm run test
 
 ### p0 (high pri)
 
+- when done with editing doesn’t have latest version
+- don't have edit link on feed page / or redirect to content page
+- graphql errors should surface to top
+- think about igor's feedback re css and other stuff
+- high-res picture load in app, not new link
+- hw loading old entries if purged prbly
+- pasting iframe into editor doesn’t work (npr video embed)
+- fix img sizes in comments (too big - see example on nite-lite about page)
 - npm audit again - broke prod last time...
 - Email is formatted wrong when getting webmention (says self sent email)
 - don't update updatedAt for view
