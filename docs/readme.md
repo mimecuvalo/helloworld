@@ -97,6 +97,7 @@ npm run test
 
 ### p0 (high pri)
 
+- freeze HMR when re-building
 - when done with editing doesn’t have latest version
 - don't have edit link on feed page / or redirect to content page
 - graphql errors should surface to top

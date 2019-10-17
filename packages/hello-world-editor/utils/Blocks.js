@@ -15,6 +15,11 @@ export function createNewBlock(type, tag, editorState, entityData, attribs) {
 export function decoratedBlocksToHTML(strategy, Component) {
   return block => {
     let indices = [];
+
+    // XXX(mime): Backwards compatibility with draft-js-plugins, e.g. linkifyPlugin
+    // Ugh, what a frankenstein mess.
+    block = Object.assign({}, block, { get: key => block[key]});
+
     strategy(block, (index, lastIndex) => {
       indices.push({ index, lastIndex });
     });
@@ -24,7 +29,8 @@ export function decoratedBlocksToHTML(strategy, Component) {
       let index = 0;
       for (const indexSet of indices) {
         html += block.text.slice(index, indexSet.index);
-        html += renderToString(<Component decoratedText={block.text.slice(indexSet.index, indexSet.lastIndex)} />);
+        const decoratedText = block.text.slice(indexSet.index, indexSet.lastIndex);
+        html += renderToString(<Component decoratedText={decoratedText}>{decoratedText}</Component>);
         index = indexSet.lastIndex;
       }
       html += block.text.slice(index) + '</p>';

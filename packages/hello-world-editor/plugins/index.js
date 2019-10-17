@@ -49,16 +49,19 @@ export const htmlPlugins = compose(
   Anchor,
   Iframe,
   Image,
-  createPlugin(replyPlugin),
-  createPlugin(rsvpPlugin),
   // TODO(mime): enable the rest of these.
   /*dividerPlugin,
   hashtagPlugin,
   mentionPlugin,*/
   createPlugin(Object.assign(
     {},
+    // TODO(mime): frankenstein stuff here b/c linkifyPlugin is 3rd party...
     {
-      entityToHTML: (entity, originalText) => { // TODO(mime): frankenstein stuff here b/c linkifyPlugin is 3rd party...
+      // This handles linkify content actually typed in (not pasted in from another editor).
+      blockToHTML: decoratedBlocksToHTML(linkifyPlugin.decorators[0].strategy, linkifyPlugin.decorators[0].component),
+
+      // This handles LINK entities (actually, unrelated to the linkify plugin, e.g. pasted in from another editor).
+      entityToHTML: (entity, originalText) => {
         if (entity.type === 'LINK') {
           const { href } = entity.data;
           return `<a href="${href}" target="_blank" rel="noopener noreferrer">${originalText}</a>`;
@@ -69,6 +72,8 @@ export const htmlPlugins = compose(
     },
     linkifyPlugin
   )),
+  createPlugin(replyPlugin),
+  createPlugin(rsvpPlugin),
   /* TODO(mime): emojiPlugin, */
 );
 
