@@ -97,10 +97,16 @@ npm run test
 
 ### p0 (high pri)
 
+- cra: debug menu is busted  
+- Multiple app capable
+- Fault tolerant http
+- Package directories build sanely
+- Reader WordPress alt Tumblr alternative
 - freeze HMR when re-building
 - when done with editing doesn’t have latest version
 - don't have edit link on feed page / or redirect to content page
 - graphql errors should surface to top
+- use rebound?
 - think about igor's feedback re css and other stuff
 - high-res picture load in app, not new link
 - hw loading old entries if purged prbly

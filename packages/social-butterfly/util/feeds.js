@@ -130,7 +130,7 @@ async function handleEntry(options, feedEntry, userRemote) {
   if (
     existingModelEntry?.type === 'comment' ||
     (existingModelEntry && +existingModelEntry.updatedAt === +dateUpdated) ||
-    dateUpdated < new Date(Date.now() - options.feedMaxDaysOld)
+    dateUpdated < new Date(Date.now() - options.constants.feedMaxDaysOld)
   ) {
     return;
   }
