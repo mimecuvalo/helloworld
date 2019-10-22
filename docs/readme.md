@@ -97,7 +97,7 @@ npm run test
 
 ### p0 (high pri)
 
-- cra: debug menu is busted  
+- apostrophe in title makes it not hidden, e.g. Don-t-deploy-on-Fridays-wRXma4oxja
 - Multiple app capable
 - Fault tolerant http
 - Package directories build sanely
@@ -107,6 +107,8 @@ npm run test
 - don't have edit link on feed page / or redirect to content page
 - graphql errors should surface to top
 - use rebound?
+- kill debugger on run, just in case?
+- bin / fly prod should have npm corresponding command
 - think about igor's feedback re css and other stuff
 - high-res picture load in app, not new link
 - hw loading old entries if purged prbly

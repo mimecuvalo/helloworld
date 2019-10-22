@@ -14,7 +14,7 @@ import { StaticRouter } from 'react-router';
 import uuid from 'uuid';
 
 export default async function render({ req, res, next, assetPathsByType, appName, publicUrl, gitInfo }) {
-  const apolloClient = await createApolloClient(req);
+  const apolloClient = createApolloClient(req);
   const context = {};
   const nonce = createNonceAndSetCSP(res);
 

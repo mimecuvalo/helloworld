@@ -7,7 +7,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import { onError } from 'apollo-link-error';
 
 // We create an Apollo client here on the server so that we can get server-side rendering in properly.
-export default async function createApolloClient(req) {
+export default function createApolloClient(req) {
   const errorLink = onError(({ graphQLErrors, networkError }) => {
     if (graphQLErrors) {
       graphQLErrors.map(({ message, locations, path }) =>
