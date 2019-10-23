@@ -38,6 +38,7 @@ Then, to run your newly created server locally, **with** the Storybook styleguid
 ```sh
 npm start
 ```
+*Prerequisites: Node 13+ if you want proper internationalization (i18n) support (via full-icu).*
 
 Or, to run locally **without** the Storybook styleguide server:
 
