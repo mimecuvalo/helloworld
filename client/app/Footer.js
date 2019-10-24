@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import Debug from '../internal/Debug';
 //import { F } from '../../shared/i18n';
 import Help from './Help';
 import React, {
@@ -9,6 +8,11 @@ import React, {
 } from 'react';
 import styles from './Footer.module.css';
 import { withRouter } from 'react-router-dom';
+
+let Debug = () => null;
+if (process.env.NODE_ENV === 'development') {
+  Debug = require('../internal/Debug').default;
+}
 
 @withRouter
 class Footer extends PureComponent {
