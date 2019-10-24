@@ -1,5 +1,5 @@
 import { buildUrl, contentUrl } from '../../shared/util/url_factory';
-import { compose, graphql } from 'react-apollo';
+import compose from 'lodash.flowright';
 import ContentBase from './ContentBase';
 import ContentQuery from './ContentQuery';
 import { convertFromRaw, EditorState } from 'draft-js';
@@ -7,6 +7,7 @@ import { defineMessages, injectIntl } from '../../shared/i18n';
 import { EditorUtils } from 'hello-world-editor';
 import Feed from './Feed';
 import gql from 'graphql-tag';
+import { graphql } from 'react-apollo';
 import isMobile from 'is-mobile';
 import Item from './Item';
 import Nav from './Nav';

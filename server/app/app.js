@@ -8,7 +8,6 @@ import * as languages from '../../shared/i18n/languages';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { ServerStyleSheets, ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import { SheetsRegistry } from 'jss';
 import { StaticRouter } from 'react-router';
 import uuid from 'uuid';
 

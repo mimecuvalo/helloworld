@@ -1,4 +1,5 @@
 import ApolloClient from 'apollo-client';
+import { ApolloLink, split } from 'apollo-link';
 import { ApolloProvider } from 'react-apollo';
 import App from './App';
 import { BatchHttpLink } from 'apollo-link-batch-http';
@@ -11,10 +12,10 @@ import { HttpLink } from 'apollo-link-http';
 import './index.css';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { IntlProvider } from 'react-intl';
+import { onError } from 'apollo-link-error';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
-import { split } from 'apollo-link';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 async function renderAppTree(app) {
@@ -36,9 +37,7 @@ async function renderAppTree(app) {
     <IntlProvider locale={configuration.locale} messages={translations}>
       <ApolloProvider client={client}>
         <Router>
-          <JssProvider generateClassName={generateClassName}>
-            <ThemeProvider theme={theme}>{app}</ThemeProvider>
-          </JssProvider>
+          <ThemeProvider theme={theme}>{app}</ThemeProvider>
         </Router>
       </ApolloProvider>
     </IntlProvider>

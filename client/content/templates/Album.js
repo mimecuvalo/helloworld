@@ -1,9 +1,10 @@
 import classNames from 'classnames';
-import { compose, graphql } from 'react-apollo';
+import compose from 'lodash.flowright';
 import ContentLink from '../../components/ContentLink';
 import ContentThumb from '../../components/ContentThumb';
 import { defineMessages, F, injectIntl } from '../../../shared/i18n';
 import gql from 'graphql-tag';
+import { graphql } from 'react-apollo';
 import React, { PureComponent } from 'react';
 import styles from './Album.module.css';
 import { withSnackbar } from 'notistack';
