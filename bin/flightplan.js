@@ -96,7 +96,6 @@ plan.remote(function(remote) {
   // } else {
     remote.log('package.json has changed. Installing dependencies...');
     remote.sudo(`cd ${varTmpDir}; lerna bootstrap --hoist -- --production`, { user });
-    remote.sudo(`npm --production --prefix ${varTmpDir} install ${varTmpDir}`, { user });
   // }
 
   // Copy over sessions.
