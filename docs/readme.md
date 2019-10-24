@@ -122,7 +122,6 @@ REACT_APP_SSR_PORT=3001
 - hw loading old entries if purged prbly
 - pasting iframe into editor doesn’t work (npr video embed)
 - fix img sizes in comments (too big - see example on nite-lite about page)
-- npm audit again - broke prod last time...
 - Email is formatted wrong when getting webmention (says self sent email)
 - don't update updatedAt for view
 - split off dashboard, admin panel, draft.js code, auth0, and lodash code for performance
