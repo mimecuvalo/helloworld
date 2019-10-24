@@ -4,11 +4,10 @@ import createApolloClient from '../data/apollo_client';
 import { DEFAULT_LOCALE, getLocale } from './locale';
 import HTMLBase from './HTMLBase';
 import { IntlProvider } from 'react-intl';
-import JssProvider from 'react-jss/lib/JssProvider';
 import * as languages from '../../shared/i18n/languages';
-import { MuiThemeProvider, createMuiTheme, createGenerateClassName } from '@material-ui/core/styles';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
+import { ServerStyleSheets, ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { SheetsRegistry } from 'jss';
 import { StaticRouter } from 'react-router';
 import uuid from 'uuid';
@@ -37,9 +36,7 @@ export default async function render({ req, res, next, assetPathsByType, appName
     : null;
 
   // For Material UI setup.
-  const sheetsRegistry = new SheetsRegistry();
-  const sheetsManager = new Map();
-  const generateClassName = createGenerateClassName();
+  const sheets = new ServerStyleSheets();
   const theme = createMuiTheme({
     typography: {
       useNextVariants: true,
@@ -68,15 +65,7 @@ export default async function render({ req, res, next, assetPathsByType, appName
           user={filteredUser}
         >
           <StaticRouter location={req.url} context={context}>
-            {!isApolloTraversal ? (
-              <JssProvider registry={sheetsRegistry} generateClassName={generateClassName}>
-                <MuiThemeProvider theme={theme} sheetsManager={sheetsManager}>
-                  {coreApp}
-                </MuiThemeProvider>
-              </JssProvider>
-            ) : (
-              coreApp
-            )}
+            {!isApolloTraversal ? sheets.collect(<ThemeProvider theme={theme}>{coreApp}</ThemeProvider>) : coreApp}
           </StaticRouter>
         </HTMLBase>
       </ApolloProvider>
@@ -97,7 +86,7 @@ export default async function render({ req, res, next, assetPathsByType, appName
     return;
   }
 
-  const materialUICSS = sheetsRegistry.toString();
+  const materialUICSS = sheets.toString();
 
   /*
     XXX(mime): Material UI's server-side rendering for CSS doesn't allow for inserting CSS the same way we do

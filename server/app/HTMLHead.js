@@ -95,7 +95,7 @@ class HTMLHead extends PureComponent {
         <meta charSet="utf-8" />
         <link rel="author" href={`${publicUrl}humans.txt`} />
         {contentOwner ? <link rel="author" href={contentUrl({ username, section: 'main', name: 'about' })} /> : null}
-        <link rel="shortcut icon" href={favicon || `${publicUrl}favicon.ico`} />
+        <link rel="icon" href={favicon || `${publicUrl}favicon.ico`} />
         {assetPathsByType['css'].map(path => (
           <link nonce={nonce} rel="stylesheet" key={path} href={path} />
         ))}

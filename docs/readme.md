@@ -70,6 +70,13 @@ To run tests:
 npm run test
 ```
 
+To change port, in an `.env` change the values to what you desire:
+
+```sh
+PORT=3000
+REACT_APP_SSR_PORT=3001
+```
+
 ## ⚡ Features
 
 - social features:

@@ -160,6 +160,7 @@ export async function getUserRemoteInfo(websiteUrl, local_username) {
   userRemote.favicon =
     feedMeta.favicon ||
     createAbsoluteUrl(websiteUrl, htmlDoc('link[rel="shortcut icon"]')['href']) ||
+    createAbsoluteUrl(websiteUrl, htmlDoc('link[rel="icon"]')['href']) ||
     createAbsoluteUrl(websiteUrl, '/favicon.ico');
   userRemote.avatar = feedMeta.image?.url || userRemote.favicon;
   userRemote.order = Math.pow(2, 31) - 1;
