@@ -105,6 +105,7 @@ REACT_APP_SSR_PORT=3001
 
 ### p0 (high pri)
 
+- possible to pause compilation while building package?
 - apostrophe in title makes it not hidden, e.g. Don-t-deploy-on-Fridays-wRXma4oxja
 - Multiple app capable
 - Fault tolerant http
