@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import clientHealthCheck from './client_health_check';
 import CloseIcon from '@material-ui/icons/Close';
 import Content from '../content/Content';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import Dashboard from '../dashboard/Dashboard';
 import { defineMessages, injectIntl } from '../../shared/i18n';
 import ErrorBoundary from '../error/ErrorBoundary';
@@ -88,7 +87,6 @@ class App extends Component {
               className={classNames('App', styles.app, { 'App-logged-in': this.props.user })}
               style={devOnlyHiddenOnLoadStyle}
             >
-              <CssBaseline />
               <Header />
               <main className="App-main">
                 <ScrollToTop>
