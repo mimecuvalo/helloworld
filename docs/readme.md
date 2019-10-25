@@ -30,7 +30,6 @@ federated social web blog app. basically, i'm trying to build an open-source Tum
 ```sh
 npm i lerna -g
 lerna bootstrap --hoist
-npm install
 ```
 
 Then, to run your newly created server locally, **with** the Storybook styleguide server:
@@ -109,6 +108,7 @@ REACT_APP_SSR_PORT=3001
 - apostrophe in title makes it not hidden, e.g. Don-t-deploy-on-Fridays-wRXma4oxja
 - Multiple app capable
 - Fault tolerant http
+- rm antiCache with migration to hooks
 - Package directories build sanely
 - Reader WordPress alt Tumblr alternative
 - freeze HMR when re-building

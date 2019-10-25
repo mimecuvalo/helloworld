@@ -1,7 +1,6 @@
 import {
   defineMessages as originalDefineMessages,
   FormattedDate as originalFormattedDate,
-  FormattedHTMLMessage,
   FormattedMessage,
   FormattedNumber as originalFormattedNumber,
   injectIntl as originalInjectIntl,
@@ -23,41 +22,21 @@ export function generateId(id = '', msg = '', description = '') {
 }
 
 // The main way to translate a string.
+// To include HTML in the string you can do:
+// <F
+//   msg="To buy a shoe, <a>visit our website</a> and <cta>eat a shoe</cta>"
+//   values={{
+//     a: msg => (
+//       <a class="external_link" target="_blank" rel="noopener noreferrer" href="https://www.shoe.com/">
+//         {msg}
+//       </a>
+//     ),
+//     cta: msg => <strong class="important">{msg}</strong>,
+//   }}
+// />
 export const F = React.memo(function F({ id, description, msg, values }) {
   return (
     <FormattedMessage
-      id={generateId(id, msg, description)}
-      description={description}
-      defaultMessage={msg}
-      values={values}
-    />
-  );
-});
-
-// The main way to translate a string, but with HTML included.
-//
-// *DANGER* Use sparingly. This uses dangerouslySetInnerHTML underneath.
-// Whenever possible, you should do something like:
-//  <F
-//    msg="Edit {code} and save to reload."
-//    values={{
-//      code: <code>src/App.js</code>,
-//    }}
-//  />
-//
-// The annoying thing is that you have examples like this:
-//  <F
-//    msg="Edit {link} and save to reload."
-//    values={{
-//      link: <a href="http://somesite.com"><F msg="this link" /></a>,
-//    }}
-//  />
-// which then splits the translation into two different strings which is hell for your translation team.
-// That's where FHTML comes in. But use only if you don't have any user-set information included since it would
-// be an XSS vector.
-export const FHTML = React.memo(function FHTML({ id, description, msg, values }) {
-  return (
-    <FormattedHTMLMessage
       id={generateId(id, msg, description)}
       description={description}
       defaultMessage={msg}

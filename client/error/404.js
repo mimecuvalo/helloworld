@@ -1,4 +1,4 @@
-import { defineMessages, F, FHTML, injectIntl } from '../../shared/i18n';
+import { defineMessages, F, injectIntl } from '../../shared/i18n';
 import React from 'react';
 import styles from './Error.module.css';
 
@@ -20,7 +20,7 @@ const NotFound = React.memo(function NotFound({ intl }) {
       <div>
         <F msg="i'm sorry, dave. i'm afraid i can't do that." />
         <br />
-        <FHTML msg="try going back to the <a href='/'>beginning</a>." />
+        <F msg="try going back to the <a>beginning</a>." values={{ a: msg => <a href="/">{msg}</a> }} />
       </div>
     </div>
   );
