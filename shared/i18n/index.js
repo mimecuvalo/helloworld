@@ -27,11 +27,11 @@ export function generateId(id = '', msg = '', description = '') {
 //   msg="To buy a shoe, <a>visit our website</a> and <cta>eat a shoe</cta>"
 //   values={{
 //     a: msg => (
-//       <a class="external_link" target="_blank" rel="noopener noreferrer" href="https://www.shoe.com/">
+//       <a className="external-link" target="_blank" rel="noopener noreferrer" href="https://www.shoe.com/">
 //         {msg}
 //       </a>
 //     ),
-//     cta: msg => <strong class="important">{msg}</strong>,
+//     cta: msg => <strong>{msg}</strong>,
 //   }}
 // />
 export const F = React.memo(function F({ id, description, msg, values }) {
