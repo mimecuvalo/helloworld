@@ -1,7 +1,7 @@
 let configuration;
 
 if (typeof window !== 'undefined') {
-  configuration = window.configuration;
+  configuration = window.configuration || {};
 } else {
   configuration = {};
 }
