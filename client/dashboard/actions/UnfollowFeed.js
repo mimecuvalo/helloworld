@@ -2,21 +2,25 @@ import { F } from '../../../shared/i18n';
 import FollowingQuery from '../FollowingQuery';
 import FollowingSpecialFeedCountsQuery from '../FollowingSpecialFeedCountsQuery';
 import gql from 'graphql-tag';
-import { graphql } from 'react-apollo';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { PureComponent } from 'react';
+import React from 'react';
+import { useMutation } from '@apollo/react-hooks';
 
-@graphql(gql`
+const DESTROY_FEED = gql`
   mutation destroyFeed($profile_url: String!) {
     destroyFeed(profile_url: $profile_url)
   }
-`)
-class UnfollowFeed extends PureComponent {
-  handleClick = async () => {
-    this.props.handleClose();
+`;
 
-    const profile_url = this.props.userRemote.profile_url;
-    await this.props.mutate({
+export default function UnfollowFeed(props) {
+  const profile_url = props.userRemote.profile_url;
+
+  const [destroyFeed, result] = useMutation(DESTROY_FEED);
+
+  const handleClick = async () => {
+    props.handleClose();
+
+    await destroyFeed({
       variables: { profile_url },
       refetchQueries: [{ query: FollowingSpecialFeedCountsQuery }],
       update: (store, { data }) => {
@@ -29,17 +33,12 @@ class UnfollowFeed extends PureComponent {
         });
       },
     });
-
-    this.props.handleSetFeed('');
+    props.handleSetFeed('');
   };
 
-  render() {
-    return (
-      <MenuItem onClick={this.handleClick}>
-        <F msg="unfollow" />
-      </MenuItem>
-    );
-  }
+  return (
+    <MenuItem onClick={handleClick}>
+      <F msg="unfollow" />
+    </MenuItem>
+  );
 }
-
-export default UnfollowFeed;

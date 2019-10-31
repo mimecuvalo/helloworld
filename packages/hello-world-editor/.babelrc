@@ -2,7 +2,6 @@
   "presets": ["@babel/preset-react"],
   "plugins": [
     "@babel/plugin-proposal-optional-chaining",
-    ["@babel/plugin-proposal-decorators", { "legacy": true }],
     "@babel/plugin-transform-modules-commonjs",
     "@babel/plugin-proposal-class-properties",
     ["css-modules-transform", {

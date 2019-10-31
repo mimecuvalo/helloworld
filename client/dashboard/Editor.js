@@ -1,6 +1,5 @@
 import Button from '@material-ui/core/Button';
 import classNames from 'classnames';
-import compose from 'lodash.flowright';
 import ContentEditor from '../content/ContentEditor';
 import { convertFromRaw, EditorState } from 'draft-js';
 import Cookies from 'js-cookie';
@@ -8,72 +7,151 @@ import { defineMessages, F } from '../../shared/i18n';
 import { EditorUtils } from 'hello-world-editor';
 import FormControl from '@material-ui/core/FormControl';
 import gql from 'graphql-tag';
-import { graphql } from 'react-apollo';
 import HiddenSnackbarShim from '../components/HiddenSnackbarShim';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { PureComponent } from 'react';
+import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import Select from '@material-ui/core/Select';
 import styles from './Dashboard.module.css';
 import Toolbar from '@material-ui/core/Toolbar';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 
 const messages = defineMessages({
   error: { msg: 'Error posting content.' },
   posted: { msg: 'Success!' },
 });
 
-class DashboardEditor extends PureComponent {
-  constructor(props) {
-    super(props);
+const SITE_MAP_AND_USER_QUERY = gql`
+  query SiteMapAndUserQuery($username: String!) {
+    fetchSiteMap(username: $username) {
+      album
+      hidden
+      name
+      section
+      title
+      username
+    }
 
-    this.editor = React.createRef();
-
-    this.state = {
-      fileInfo: null,
-      // Not so clean but, meh, don't feel like implementing two separate <select>'s
-      sectionAndAlbum: JSON.stringify({ section: this.props.data.fetchSiteMap[0].name, album: '' }),
-      errorMessage: null,
-      successMessage: null,
-    };
+    fetchFollowing {
+      name
+      username
+      profile_url
+      avatar
+      favicon
+    }
   }
+`;
 
-  componentDidMount() {
+const POST_CONTENT = gql`
+  mutation postContent(
+    $section: String!
+    $album: String!
+    $name: String!
+    $title: String!
+    $hidden: Boolean!
+    $thumb: String!
+    $style: String!
+    $code: String!
+    $content: String!
+  ) {
+    postContent(
+      section: $section
+      album: $album
+      name: $name
+      title: $title
+      hidden: $hidden
+      thumb: $thumb
+      style: $style
+      code: $code
+      content: $content
+    ) {
+      username
+      section
+      album
+      name
+      title
+      hidden
+      thumb
+      style
+      code
+      content
+    }
+  }
+`;
+
+export default function DashboardEditor({ username }) {
+  const { data } = useQuery(SITE_MAP_AND_USER_QUERY, {
+    variables: {
+      username: username,
+    },
+  });
+  const [postContent, result] = useMutation(POST_CONTENT);
+
+  const editor = useRef(null);
+  const [fileInfo, setFileInfo] = useState(null);
+  // Not so clean but, meh, don't feel like implementing two separate <select>'s
+  const [sectionAndAlbum, setSectionAndAlbum] = useState(
+    JSON.stringify({ section: data.fetchSiteMap[0].name, album: '' })
+  );
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [didSetUnsavedChanges, setDidSetUnsavedChanges] = useState(false);
+
+  const handleKeyDown = evt => {
+    // TODO(mime): combine this logic somewhere. (also in keyboard.js)
+    const isMac = navigator.platform.toLowerCase().indexOf('mac') !== -1;
+    const isAccelKey = isMac ? evt.metaKey : evt.ctrlKey;
+    if (isAccelKey && evt.key === 's') {
+      handlePost();
+    }
+  };
+
+  useEffect(() => {
     if (window.location.hash.startsWith('#reblog')) {
       const searchParams = new URLSearchParams(window.location.hash.slice(1));
       const url = searchParams.get('reblog');
       const img = searchParams.get('img');
 
-      this.reblog(img || url, url);
+      reblog(img || url, url);
       window.location.hash = '';
     }
 
     // On first load, set unsaved changes to false, the first change is just a focus selection change.
-    setTimeout(() => {
-      this.editor.current && this.editor.current.setUnsavedChanges(false);
-    }, 0);
+    if (!didSetUnsavedChanges) {
+      setDidSetUnsavedChanges(true);
+
+      setTimeout(() => {
+        editor.current && editor.current.setUnsavedChanges(false);
+      }, 0);
+    }
 
     const sectionAndAlbum = Cookies.get('sectionAndAlbum');
     if (sectionAndAlbum) {
-      this.setState({ sectionAndAlbum });
+      setSectionAndAlbum(sectionAndAlbum);
     }
 
-    document.addEventListener('keydown', this.handleKeyDown);
-  }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [didSetUnsavedChanges, errorMessage, successMessage, fileInfo]);
 
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyDown);
-  }
+  useEffect(() => {
+    setErrorMessage(null);
+  }, [errorMessage]);
 
-  handleKeyDown = evt => {
-    // TODO(mime): combine this logic somewhere. (also in keyboard.js)
-    const isMac = navigator.platform.toLowerCase().indexOf('mac') !== -1;
-    const isAccelKey = isMac ? evt.metaKey : evt.ctrlKey;
-    if (isAccelKey && evt.key === 's') {
-      this.handlePost();
-    }
-  };
+  useEffect(() => {
+    setSuccessMessage(null);
+  }, [successMessage]);
 
-  async reblog(text, opt_url) {
-    const contentEditor = this.editor.current.getContentEditor();
+  useImperativeHandle(editor, () => ({
+    insertText: text => {
+      const contentEditor = editor.current.getContentEditor();
+      let editorState = contentEditor.editorState;
+      editorState = EditorUtils.Text.insertTextAtLine(editorState, 1, `\n${text}\n`);
+      contentEditor.onChange(editorState);
+    },
+  }));
+
+  async function reblog(text, opt_url) {
+    const contentEditor = editor.current.getContentEditor();
     let editorState = contentEditor.editorState;
     editorState = EditorUtils.Text.insertTextAtLine(editorState, 0, '\n');
     await contentEditor.handlePastedText(text, undefined /* html */, editorState);
@@ -84,27 +162,19 @@ class DashboardEditor extends PureComponent {
     }
   }
 
-  insertText(text) {
-    const contentEditor = this.editor.current.getContentEditor();
-    let editorState = contentEditor.editorState;
-    editorState = EditorUtils.Text.insertTextAtLine(editorState, 1, `\n${text}\n`);
-    contentEditor.onChange(editorState);
-  }
-
-  handlePost = async evt => {
+  const handlePost = async evt => {
     evt && evt.preventDefault();
 
-    const editor = this.editor.current;
-    const { style, code, content } = editor.export();
+    const editorRef = editor.current;
+    const { style, code, content } = editorRef.export();
 
     // TODO(mime): gotta be a simpler way then all this conversion.
     const title = EditorUtils.Text.getTextForLine(EditorState.createWithContent(convertFromRaw(content)), 0);
 
-    const username = this.props.username;
     const name = title.replace(/[^A-Za-z0-9-]/g, '-');
-    const { section, album } = JSON.parse(this.state.sectionAndAlbum);
+    const { section, album } = JSON.parse(sectionAndAlbum);
 
-    const thumb = this.state.fileInfo?.thumb || '';
+    const thumb = fileInfo?.thumb || '';
 
     const variables = {
       username,
@@ -120,7 +190,7 @@ class DashboardEditor extends PureComponent {
     };
 
     try {
-      await this.props.mutate({
+      await postContent({
         variables,
         optimisticResponse: {
           __typename: 'Mutation',
@@ -128,25 +198,22 @@ class DashboardEditor extends PureComponent {
         },
       });
     } catch (ex) {
-      this.setState({ errorMessage: messages.error }, () => {
-        this.setState({ errorMessage: null });
-      });
+      setErrorMessage(messages.error);
       return;
     }
 
-    editor.clear();
+    editorRef.clear();
 
-    this.setState({ fileInfo: null, successMessage: messages.posted }, () => {
-      this.setState({ successMessage: null });
-    });
+    setFileInfo(null);
+    setSuccessMessage(messages.posted);
   };
 
-  handleSectionAndAlbumChange = evt => {
-    this.setState({ [evt.target.name]: evt.target.value });
+  const handleSectionAndAlbumChange = evt => {
+    setSectionAndAlbum(evt.target.value);
     Cookies.set('sectionAndAlbum', evt.target.value);
   };
 
-  generateSiteMapItem(item, albums, sectionName) {
+  function generateSiteMapItem(item, albums, sectionName) {
     const value = {
       section: sectionName || item.name,
       album: sectionName ? item.name : '',
@@ -159,7 +226,7 @@ class DashboardEditor extends PureComponent {
     );
   }
 
-  generateSiteMap(siteMap) {
+  function generateSiteMap(siteMap) {
     let items = [];
     for (let i = 0; i < siteMap.length; ++i) {
       const item = siteMap[i];
@@ -170,7 +237,7 @@ class DashboardEditor extends PureComponent {
         for (i += 1; i < siteMap.length; ++i) {
           const albumItem = siteMap[i];
           if (albumItem.album === 'main') {
-            albums.push(this.generateSiteMapItem(albumItem, undefined, item.name));
+            albums.push(generateSiteMapItem(albumItem, undefined, item.name));
           } else {
             i -= 1;
             break;
@@ -178,131 +245,50 @@ class DashboardEditor extends PureComponent {
         }
       }
 
-      items.push(this.generateSiteMapItem(item, albums));
+      items.push(generateSiteMapItem(item, albums));
       items = items.concat(albums);
     }
 
     return items;
   }
 
-  handleMediaAdd = fileInfos => {
+  const handleMediaAdd = fileInfos => {
     // We currently just grab the first one and disregard the other ones for purposes of getting the thumb.
-    this.setState({ fileInfo: fileInfos[0] });
+    setFileInfo(fileInfos[0]);
   };
 
-  render() {
-    const { section, album } = JSON.parse(this.state.sectionAndAlbum);
+  const { section, album } = JSON.parse(sectionAndAlbum);
 
-    return (
-      <div className={styles.editor}>
-        <Toolbar>
-          <form autoComplete="off" className={styles.editorForm}>
-            <FormControl className={styles.editorToolbar}>
-              <Select
-                value={this.state.sectionAndAlbum}
-                onChange={this.handleSectionAndAlbumChange}
-                inputProps={{
-                  name: 'sectionAndAlbum',
-                }}
-              >
-                {this.generateSiteMap(this.props.data.fetchSiteMap)}
-              </Select>
-              <Button
-                type="submit"
-                onClick={this.handlePost}
-                className={classNames('hw-button', 'hw-edit', styles.post)}
-              >
-                <F msg="post" />
-              </Button>
-            </FormControl>
-          </form>
-        </Toolbar>
-        <ContentEditor
-          ref={this.editor}
-          showPlaceholder={true}
-          mentions={this.props.data.fetchFollowing}
-          content={null}
-          section={section}
-          album={album}
-          onMediaAdd={this.handleMediaAdd}
-        />
-        <HiddenSnackbarShim
-          message={this.state.successMessage || this.state.errorMessage}
-          variant={this.state.successMessage ? 'success' : 'error'}
-        />
-      </div>
-    );
-  }
+  return (
+    <div className={styles.editor}>
+      <Toolbar>
+        <form autoComplete="off" className={styles.editorForm}>
+          <FormControl className={styles.editorToolbar}>
+            <Select
+              value={sectionAndAlbum}
+              onChange={handleSectionAndAlbumChange}
+              inputProps={{
+                name: 'sectionAndAlbum',
+              }}
+            >
+              {generateSiteMap(data.fetchSiteMap)}
+            </Select>
+            <Button type="submit" onClick={handlePost} className={classNames('hw-button', 'hw-edit', styles.post)}>
+              <F msg="post" />
+            </Button>
+          </FormControl>
+        </form>
+      </Toolbar>
+      <ContentEditor
+        ref={editor}
+        showPlaceholder={true}
+        mentions={data.fetchFollowing}
+        content={null}
+        section={section}
+        album={album}
+        onMediaAdd={handleMediaAdd}
+      />
+      <HiddenSnackbarShim message={successMessage || errorMessage} variant={successMessage ? 'success' : 'error'} />
+    </div>
+  );
 }
-
-export default compose(
-  graphql(
-    gql`
-      query SiteMapAndUserQuery($username: String!) {
-        fetchSiteMap(username: $username) {
-          album
-          hidden
-          name
-          section
-          title
-          username
-        }
-
-        fetchFollowing {
-          name
-          username
-          profile_url
-          avatar
-          favicon
-        }
-      }
-    `,
-    {
-      options: ({ username }) => ({
-        variables: {
-          username: username,
-        },
-      }),
-      withRef: true,
-    }
-  ),
-  graphql(
-    gql`
-      mutation postContent(
-        $section: String!
-        $album: String!
-        $name: String!
-        $title: String!
-        $hidden: Boolean!
-        $thumb: String!
-        $style: String!
-        $code: String!
-        $content: String!
-      ) {
-        postContent(
-          section: $section
-          album: $album
-          name: $name
-          title: $title
-          hidden: $hidden
-          thumb: $thumb
-          style: $style
-          code: $code
-          content: $content
-        ) {
-          username
-          section
-          album
-          name
-          title
-          hidden
-          thumb
-          style
-          code
-          content
-        }
-      }
-    `,
-    { withRef: true }
-  )
-)(DashboardEditor);

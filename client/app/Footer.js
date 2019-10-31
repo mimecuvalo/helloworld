@@ -1,22 +1,19 @@
 import classNames from 'classnames';
 //import { F } from '../../shared/i18n';
 import Help from './Help';
-import React, {
-  PureComponent,
-  //lazy,
-  //Suspense
-} from 'react';
+import React from 'react'; //Suspense //lazy,
 import styles from './Footer.module.css';
-import { withRouter } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 let Debug = () => null;
 if (process.env.NODE_ENV === 'development') {
   Debug = require('../internal/Debug').default;
 }
 
-@withRouter
-class Footer extends PureComponent {
-  renderDebugMenu() {
+export default function Footer() {
+  const routerLocation = useLocation();
+
+  function renderDebugMenu() {
     // Conditionally compile this code. Should not appear in production.
     if (process.env.NODE_ENV === 'development') {
       // TODO(mime): Suspense and lazy aren't supported by ReactDOMServer yet (breaks SSR).
@@ -48,7 +45,7 @@ class Footer extends PureComponent {
     return null;
   }
 
-  renderHelp() {
+  function renderHelp() {
     // Conditionally compile this code. Should not appear in production.
     if (process.env.NODE_ENV === 'development') {
       return <Help />;
@@ -57,18 +54,14 @@ class Footer extends PureComponent {
     return null;
   }
 
-  render() {
-    return (
-      <footer
-        className={classNames(styles.footer, {
-          [styles.dashboardFooter]: this.props.location.pathname === '/dashboard',
-        })}
-      >
-        {this.renderDebugMenu()}
-        {this.renderHelp()}
-      </footer>
-    );
-  }
+  return (
+    <footer
+      className={classNames(styles.footer, {
+        [styles.dashboardFooter]: routerLocation.pathname === '/dashboard',
+      })}
+    >
+      {renderDebugMenu()}
+      {renderHelp()}
+    </footer>
+  );
 }
-
-export default Footer;

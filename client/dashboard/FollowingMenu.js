@@ -1,10 +1,10 @@
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import { defineMessages, F, injectIntl } from '../../shared/i18n';
+import { defineMessages, F, useIntl } from '../../shared/i18n';
 import IconButton from '@material-ui/core/IconButton';
 import MarkAllAsRead from './actions/MarkAllAsRead';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 import Sort from './actions/Sort';
 import styles from './RemoteUsers.module.css';
 import UnfollowFeed from './actions/UnfollowFeed';
@@ -14,72 +14,57 @@ const messages = defineMessages({
   menu: { msg: 'user options' },
 });
 
-@injectIntl
-class FollowingMenu extends PureComponent {
-  constructor() {
-    super();
+export default function FollowingMenu(props) {
+  const intl = useIntl();
+  const [anchorEl, setAnchorEl] = useState(null);
 
-    this.state = {
-      anchorEl: null,
-    };
-  }
-
-  handleMenuOpenerClick = event => {
-    this.setState({ anchorEl: event.currentTarget });
+  const handleMenuOpenerClick = event => {
+    setAnchorEl(event.currentTarget);
   };
 
-  handleClose = () => {
-    this.setState({ anchorEl: null });
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
-  handleVisit = () => {
-    this.handleClose();
-    window.open(this.props.userRemote.profile_url, this.props.userRemote.profile_url, 'noopener,noreferrer');
+  const handleVisit = () => {
+    handleClose();
+    window.open(props.userRemote.profile_url, props.userRemote.profile_url, 'noopener,noreferrer');
   };
 
-  render() {
-    const { anchorEl } = this.state;
-    const isOpen = Boolean(anchorEl);
-    const menuAriaLabel = this.props.intl.formatMessage(messages.menu);
-    const id = `following-menu-${this.props.userRemote.profile_url}`;
+  const isOpen = Boolean(anchorEl);
+  const menuAriaLabel = intl.formatMessage(messages.menu);
+  const id = `following-menu-${props.userRemote.profile_url}`;
 
-    return (
-      <>
-        <IconButton
-          className={styles.menu}
-          aria-label={menuAriaLabel}
-          aria-owns={isOpen ? id : undefined}
-          aria-haspopup="true"
-          onClick={this.handleMenuOpenerClick}
-        >
-          <ArrowDropDownIcon />
-        </IconButton>
-        <Menu id={id} anchorEl={anchorEl} open={isOpen} onClose={this.handleClose} transitionDuration={0}>
-          <MenuItem key="visit" onClick={this.handleVisit}>
-            <F msg="visit" />
-          </MenuItem>
-          <MarkAllAsRead key="read" handleClose={this.handleClose} userRemote={this.props.userRemote} />
-          <Sort
-            key="sort"
-            handleClose={this.handleClose}
-            userRemote={this.props.userRemote}
-            handleSetFeed={this.props.handleSetFeed}
-          />
-          <ViewAlreadyRead
-            key="alreadyread"
-            handleClose={this.handleClose}
-            userRemote={this.props.userRemote}
-            handleSetFeed={this.props.handleSetFeed}
-          />
-          <UnfollowFeed
-            key="unfollow"
-            handleClose={this.handleClose}
-            userRemote={this.props.userRemote}
-            handleSetFeed={this.props.handleSetFeed}
-          />
-        </Menu>
-      </>
-    );
-  }
+  return (
+    <>
+      <IconButton
+        className={styles.menu}
+        aria-label={menuAriaLabel}
+        aria-owns={isOpen ? id : undefined}
+        aria-haspopup="true"
+        onClick={handleMenuOpenerClick}
+      >
+        <ArrowDropDownIcon />
+      </IconButton>
+      <Menu id={id} anchorEl={anchorEl} open={isOpen} onClose={handleClose} transitionDuration={0}>
+        <MenuItem key="visit" onClick={handleVisit}>
+          <F msg="visit" />
+        </MenuItem>
+        <MarkAllAsRead key="read" handleClose={handleClose} userRemote={props.userRemote} />
+        <Sort key="sort" handleClose={handleClose} userRemote={props.userRemote} handleSetFeed={props.handleSetFeed} />
+        <ViewAlreadyRead
+          key="alreadyread"
+          handleClose={handleClose}
+          userRemote={props.userRemote}
+          handleSetFeed={props.handleSetFeed}
+        />
+        <UnfollowFeed
+          key="unfollow"
+          handleClose={handleClose}
+          userRemote={props.userRemote}
+          handleSetFeed={props.handleSetFeed}
+        />
+      </Menu>
+    </>
+  );
 }
-export default FollowingMenu;

@@ -2,25 +2,28 @@ import { escapeRegExp } from '../../../shared/util/regex';
 import { F } from '../../../shared/i18n';
 import FollowingSpecialFeedCountsQuery from '../FollowingSpecialFeedCountsQuery';
 import gql from 'graphql-tag';
-import { graphql } from 'react-apollo';
 import MenuItem from '@material-ui/core/MenuItem';
 import { prefixIdFromObject } from '../../../shared/data/apollo';
-import React, { PureComponent } from 'react';
+import React from 'react';
+import { useMutation } from '@apollo/react-hooks';
 
-@graphql(gql`
+const MARK_ALL_CONTENT_IN_FEED_AS_READ = gql`
   mutation markAllContentInFeedAsRead($from_user: String!) {
     markAllContentInFeedAsRead(from_user: $from_user) {
       from_user
       count
     }
   }
-`)
-class MarkAllAsRead extends PureComponent {
-  handleClick = async () => {
-    this.props.handleClose();
+`;
 
-    const from_user = this.props.userRemote.profile_url;
-    await this.props.mutate({
+export default function MarkAllAsRead(props) {
+  const [markAllContentInFeedAsRead, result] = useMutation(MARK_ALL_CONTENT_IN_FEED_AS_READ);
+  const from_user = props.userRemote.profile_url;
+
+  const handleClick = () => {
+    props.handleClose();
+
+    markAllContentInFeedAsRead({
       variables: { from_user },
       optimisticResponse: {
         __typename: 'Mutation',
@@ -37,13 +40,9 @@ class MarkAllAsRead extends PureComponent {
     });
   };
 
-  render() {
-    return (
-      <MenuItem onClick={this.handleClick}>
-        <F msg="mark all as read" />
-      </MenuItem>
-    );
-  }
+  return (
+    <MenuItem onClick={handleClick}>
+      <F msg="mark all as read" />
+    </MenuItem>
+  );
 }
-
-export default MarkAllAsRead;

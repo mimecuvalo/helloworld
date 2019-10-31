@@ -3,62 +3,53 @@ import classNames from 'classnames';
 import CloseIcon from '@material-ui/icons/Close';
 import constants from '../../shared/constants';
 import ContentLink from '../components/ContentLink';
-import { defineMessages, F, injectIntl } from '../../shared/i18n';
+import { defineMessages, F, useIntl } from '../../shared/i18n';
 import gql from 'graphql-tag';
-import { graphql } from 'react-apollo';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 import styles from './SiteMap.module.css';
-import { withRouter } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import { useQuery } from '@apollo/react-hooks';
 
 const messages = defineMessages({
   menu: { msg: 'Menu' },
   search: { msg: 'search' },
 });
 
-@withRouter
-@injectIntl
-@graphql(
-  gql`
-    query SiteMapAndUserQuery($username: String!) {
-      fetchSiteMap(username: $username) {
-        album
-        forceRefresh
-        hidden
-        name
-        section
-        title
-        username
-      }
-
-      fetchPublicUserData(username: $username) {
-        license
-        logo
-        name
-        sidebar_html
-      }
+const SITE_MAP_AND_USER_QUERY = gql`
+  query SiteMapAndUserQuery($username: String!) {
+    fetchSiteMap(username: $username) {
+      album
+      forceRefresh
+      hidden
+      name
+      section
+      title
+      username
     }
-  `,
-  {
-    options: ({ username }) => ({
-      variables: {
-        username,
-      },
-    }),
-  }
-)
-class SiteMap extends PureComponent {
-  constructor(props) {
-    super(props);
 
-    this.state = {
-      forceMenuOpen: false,
-    };
+    fetchPublicUserData(username: $username) {
+      license
+      logo
+      name
+      sidebar_html
+    }
   }
+`;
 
-  generateItem(item, albums) {
-    const content = this.props.content || {};
+export default function SiteMap({ content, username }) {
+  const routerHistory = useHistory();
+  const intl = useIntl();
+  const [forceMenuOpen, setForceMenuOpen] = useState(false);
+  const { loading, data } = useQuery(SITE_MAP_AND_USER_QUERY, {
+    variables: {
+      username,
+    },
+  });
+
+  function generateItem(item, albums) {
+    content = content || {};
 
     const isSelected = item.name === content.name || item.name === content.album || item.name === content.section;
     return (
@@ -75,7 +66,7 @@ class SiteMap extends PureComponent {
     );
   }
 
-  generateItems(siteMap) {
+  function generateItems(siteMap) {
     const items = [];
     for (let i = 0; i < siteMap.length; ++i) {
       const item = siteMap[i];
@@ -87,7 +78,7 @@ class SiteMap extends PureComponent {
         for (i += 1; i < siteMap.length; ++i) {
           const albumItem = siteMap[i];
           if (albumItem.album === 'main') {
-            albumItems.push(this.generateItem(albumItem));
+            albumItems.push(generateItem(albumItem));
           } else {
             i -= 1;
             break;
@@ -96,103 +87,97 @@ class SiteMap extends PureComponent {
         albums = <ul className={styles.album}>{albumItems}</ul>;
       }
 
-      items.push(this.generateItem(item, albums));
+      items.push(generateItem(item, albums));
     }
 
     return items;
   }
 
-  handleMobileClick = () => {
-    this.setState({ forceMenuOpen: !this.state.forceMenuOpen });
+  const handleMobileClick = () => {
+    setForceMenuOpen(!forceMenuOpen);
   };
 
-  handleSearchSubmit = evt => {
+  const handleSearchSubmit = evt => {
     evt.preventDefault();
 
     const form = evt.target;
     const formUrl = new URL(form.action);
-    const username = this.props.username;
     const query = form.q.value;
     const url = buildUrl({ pathname: `/${username}${formUrl.pathname}/${query}` });
-    this.props.history.push(url);
+    routerHistory.push(url);
   };
 
-  render() {
-    if (this.props.data.loading) {
-      return null;
-    }
+  if (loading) {
+    return null;
+  }
 
-    const content = this.props.content || {};
-    const username = this.props.username;
-    const siteMap = this.props.data.fetchSiteMap;
-    const contentOwner = this.props.data.fetchPublicUserData;
-    const menuButtonLabel = this.props.intl.formatMessage(messages.menu);
-    const searchLabel = this.props.intl.formatMessage(messages.search);
+  content = content || {};
+  const siteMap = data.fetchSiteMap;
+  const contentOwner = data.fetchPublicUserData;
+  const menuButtonLabel = intl.formatMessage(messages.menu);
+  const searchLabel = intl.formatMessage(messages.search);
 
-    const items = this.generateItems(siteMap);
+  const items = generateItems(siteMap);
 
-    return (
-      <>
-        <IconButton
-          className={classNames(styles.hamburger, 'hw-sitemap-hamburger')}
-          aria-label={menuButtonLabel}
-          onClick={this.handleMobileClick}
-        >
-          {this.state.forceMenuOpen ? <CloseIcon /> : <MenuIcon />}
-        </IconButton>
-        <nav
-          id="hw-sitemap"
-          className={classNames(styles.sitemap, {
-            'hw-sitemap-open': this.state.forceMenuOpen,
-          })}
-        >
-          <ul>
-            {contentOwner.logo ? (
-              <li className="h-card">
-                <a id="hw-sitemap-logo" href={profileUrl(username)} className="u-url u-uid">
-                  <img
-                    className="u-photo"
-                    src={contentOwner.logo}
-                    title={contentOwner.title}
-                    alt={contentOwner.name || username}
-                  />
-                </a>
-              </li>
-            ) : null}
-            <li>
-              <a
-                id="hw-sitemap-home"
-                href={profileUrl(username)}
-                className={classNames({ 'hw-selected': content.name === 'home' })}
-              >
-                <F msg="home" />
+  return (
+    <>
+      <IconButton
+        className={classNames(styles.hamburger, 'hw-sitemap-hamburger')}
+        aria-label={menuButtonLabel}
+        onClick={handleMobileClick}
+      >
+        {forceMenuOpen ? <CloseIcon /> : <MenuIcon />}
+      </IconButton>
+      <nav
+        id="hw-sitemap"
+        className={classNames(styles.sitemap, {
+          'hw-sitemap-open': forceMenuOpen,
+        })}
+      >
+        <ul>
+          {contentOwner.logo ? (
+            <li className="h-card">
+              <a id="hw-sitemap-logo" href={profileUrl(username)} className="u-url u-uid">
+                <img
+                  className="u-photo"
+                  src={contentOwner.logo}
+                  title={contentOwner.title}
+                  alt={contentOwner.name || username}
+                />
               </a>
             </li>
-
-            {items}
-          </ul>
-
-          <form method="get" action="/search" onSubmit={this.handleSearchSubmit} className={styles.search}>
-            <input aria-label={searchLabel} type="search" name="q" placeholder="search" required />
-          </form>
-
-          {contentOwner.license ? (
-            <div className={styles.license}>
-              {contentOwner.license === 'http://purl.org/atompub/license#unspecified' ? (
-                `Copyright ${new Date().getFullYear()} by ${contentOwner.name}`
-              ) : (
-                <a href={contentOwner.license} target="_blank" rel="noopener noreferrer">
-                  <img src={constants.licenses[contentOwner.license].img} alt="license" />
-                </a>
-              )}
-            </div>
           ) : null}
+          <li>
+            <a
+              id="hw-sitemap-home"
+              href={profileUrl(username)}
+              className={classNames({ 'hw-selected': content.name === 'home' })}
+            >
+              <F msg="home" />
+            </a>
+          </li>
 
-          {contentOwner.sidebar_html ? <div dangerouslySetInnerHTML={{ __html: contentOwner.sidebar_html }} /> : null}
-        </nav>
-      </>
-    );
-  }
+          {items}
+        </ul>
+
+        <form method="get" action="/search" onSubmit={handleSearchSubmit} className={styles.search}>
+          <input aria-label={searchLabel} type="search" name="q" placeholder="search" required />
+        </form>
+
+        {contentOwner.license ? (
+          <div className={styles.license}>
+            {contentOwner.license === 'http://purl.org/atompub/license#unspecified' ? (
+              `Copyright ${new Date().getFullYear()} by ${contentOwner.name}`
+            ) : (
+              <a href={contentOwner.license} target="_blank" rel="noopener noreferrer">
+                <img src={constants.licenses[contentOwner.license].img} alt="license" />
+              </a>
+            )}
+          </div>
+        ) : null}
+
+        {contentOwner.sidebar_html ? <div dangerouslySetInnerHTML={{ __html: contentOwner.sidebar_html }} /> : null}
+      </nav>
+    </>
+  );
 }
-
-export default SiteMap;

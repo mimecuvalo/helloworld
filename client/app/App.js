@@ -6,15 +6,15 @@ import clientHealthCheck from './client_health_check';
 import CloseIcon from '@material-ui/icons/Close';
 import Content from '../content/Content';
 import Dashboard from '../dashboard/Dashboard';
-import { defineMessages, injectIntl } from '../../shared/i18n';
+import { defineMessages, useIntl } from '../../shared/i18n';
 import ErrorBoundary from '../error/ErrorBoundary';
 import Footer from './Footer';
 import Header from './Header';
 import IconButton from '@material-ui/core/IconButton';
-import { Route, Switch, withRouter } from 'react-router-dom';
-import React, { Component, PureComponent } from 'react';
+import { Route, Switch, useLocation } from 'react-router-dom';
+import React, { Component, useEffect, useRef } from 'react';
 import Search from '../content/Search';
-import { SnackbarProvider, withSnackbar } from 'notistack';
+import { SnackbarProvider, useSnackbar } from 'notistack';
 import styles from './constants.module.css';
 import UserContext from './User_Context';
 
@@ -23,7 +23,7 @@ const messages = defineMessages({
 });
 
 // This is the main entry point on the client-side.
-class App extends Component {
+export default class App extends Component {
   constructor(props) {
     super(props);
 
@@ -81,7 +81,7 @@ class App extends Component {
 
     return (
       <UserContext.Provider value={this.state.userContext}>
-        <SnackbarProvider action={closeAction}>
+        <SnackbarProvider action={CloseButton}>
           <ErrorBoundary>
             <div
               className={classNames('App', styles.app, { 'App-logged-in': this.props.user })}
@@ -116,39 +116,34 @@ class App extends Component {
   }
 }
 
-@injectIntl
-@withSnackbar
-class CloseButton extends PureComponent {
-  render() {
-    const closeAriaLabel = this.props.intl.formatMessage(messages.close);
-    return (
-      <IconButton
-        key="close"
-        onClick={() => {
-          this.props.closeSnackbar(this.props.snackKey);
-        }}
-        className="App-snackbar-icon"
-        color="inherit"
-        aria-label={closeAriaLabel}
-      >
-        <CloseIcon />
-      </IconButton>
-    );
-  }
-}
-const closeAction = key => <CloseButton snackKey={key} />;
+function CloseButton(snackKey) {
+  const intl = useIntl();
+  const snackbar = useSnackbar();
+  const closeAriaLabel = intl.formatMessage(messages.close);
 
-@withRouter
-class ScrollToTop extends Component {
-  componentDidUpdate(prevProps) {
-    if (this.props.location.pathname !== prevProps.location.pathname) {
+  return (
+    <IconButton
+      key="close"
+      onClick={() => snackbar.closeSnackbar(snackKey)}
+      className="App-snackbar-icon"
+      color="inherit"
+      aria-label={closeAriaLabel}
+    >
+      <CloseIcon />
+    </IconButton>
+  );
+}
+
+function ScrollToTop({ children }) {
+  const routerLocation = useLocation();
+  const prevLocationPathname = useRef();
+
+  useEffect(() => {
+    if (routerLocation.pathname !== prevLocationPathname) {
       window.scrollTo(0, 0);
     }
-  }
+    prevLocationPathname.current = routerLocation.pathname;
+  });
 
-  render() {
-    return this.props.children;
-  }
+  return children;
 }
-
-export default App;

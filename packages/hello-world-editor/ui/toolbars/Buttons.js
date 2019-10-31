@@ -1,7 +1,7 @@
 import Button from '@material-ui/core/Button';
 import classNames from 'classnames';
 import CodeIcon from '@material-ui/icons/Code';
-import { defineMessages, injectIntl } from 'react-intl';
+import { defineMessages, useIntl } from 'react-intl';
 import FormatBoldIcon from '@material-ui/icons/FormatBold';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered';
@@ -14,7 +14,7 @@ import React, { Component } from 'react';
 import { RichUtils } from 'draft-js';
 import styles from './Toolbar.module.css';
 import uploadFiles from '../../media/attachment';
-import { withSnackbar } from 'notistack';
+import { useSnackbar } from 'notistack';
 
 const messages = defineMessages({
   bold: {
@@ -55,61 +55,60 @@ const messages = defineMessages({
   },
 });
 
-@injectIntl
-class StyleButton extends Component {
-  handleMouseDown = evt => evt.preventDefault();
+function StyleButton(props) {
+  const intl = useIntl();
 
-  handleClick = evt => {
+  const handleMouseDown = evt => evt.preventDefault();
+
+  const handleClick = evt => {
     evt.preventDefault();
 
-    this.props.setEditorState(
-      (this.props.isBlock ? RichUtils.toggleBlockType : RichUtils.toggleInlineStyle)(
-        this.props.getEditorState(),
-        this.props.formatStyle
+    props.setEditorState(
+      (props.isBlock ? RichUtils.toggleBlockType : RichUtils.toggleInlineStyle)(
+        props.getEditorState(),
+        props.formatStyle
       )
     );
   };
 
-  isActive() {
-    if (!this.props.getEditorState) {
+  function isActive() {
+    if (!props.getEditorState) {
       return false;
     }
 
-    if (!this.props.isBlock) {
-      return this.props
+    if (!props.isBlock) {
+      return props
         .getEditorState()
         .getCurrentInlineStyle()
-        .has(this.props.formatStyle);
+        .has(props.formatStyle);
     }
 
-    const editorState = this.props.getEditorState();
+    const editorState = props.getEditorState();
     const type = editorState
       .getCurrentContent()
       .getBlockForKey(editorState.getSelection().getStartKey())
       .getType();
-    if (this.props.formatStyle.indexOf('header') === 0) {
+    if (props.formatStyle.indexOf('header') === 0) {
       return type.indexOf('header') === 0;
     }
-    return type === this.props.formatStyle;
+    return type === props.formatStyle;
   }
 
-  render() {
-    const buttonAriaLabel = this.props.intl.formatMessage(this.props.ariaLabel);
+  const buttonAriaLabel = intl.formatMessage(props.ariaLabel);
 
-    return (
-      <Button
-        className={classNames(styles.button, { [styles.active]: this.isActive() })}
-        disableFocusRipple
-        disableRipple
-        size="small"
-        aria-label={buttonAriaLabel}
-        onMouseDown={this.handleMouseDown}
-        onClick={this.handleClick}
-      >
-        {this.props.children}
-      </Button>
-    );
-  }
+  return (
+    <Button
+      className={classNames(styles.button, { [styles.active]: isActive() })}
+      disableFocusRipple
+      disableRipple
+      size="small"
+      aria-label={buttonAriaLabel}
+      onMouseDown={handleMouseDown}
+      onClick={handleClick}
+    >
+      {props.children}
+    </Button>
+  );
 }
 
 export class BoldButton extends Component {
@@ -204,51 +203,49 @@ export class CodeBlockButton extends Component {
 const IMAGE_FORM_NAME = 'insert-image-form';
 const IMAGE_INPUT_NAME = 'photo[]';
 
-@withSnackbar
-@injectIntl
-class ImageButtonComponent extends Component {
-  handleMouseDown = evt => evt.preventDefault();
+export function ImageButton(props) {
+  const intl = useIntl();
+  const snackbar = useSnackbar();
 
-  handleClick = evt => {
+  const handleMouseDown = evt => evt.preventDefault();
+
+  const handleClick = evt => {
     evt.preventDefault();
 
     document.forms[IMAGE_FORM_NAME].elements[IMAGE_INPUT_NAME].click();
   };
 
-  handleFileChange = async (evt, files) => {
-    const { editorState, isError } = await uploadFiles(this.props.onMediaUpload, this.props.getEditorState(), evt.target.files);
+  const handleFileChange = async (evt, files) => {
+    const { editorState, isError } = await uploadFiles(props.onMediaUpload, props.getEditorState(), evt.target.files);
 
     document.forms[IMAGE_FORM_NAME].elements[IMAGE_INPUT_NAME].value = null;
 
     if (isError) {
-      this.props.enqueueSnackbar(this.props.intl.formatMessage(messages.errorMedia), { variant: 'error' });
+      snackbar.enqueueSnackbar(intl.formatMessage(messages.errorMedia), { variant: 'error' });
       return;
     }
 
-    this.props.setEditorState(editorState);
+    props.setEditorState(editorState);
   };
 
-  render() {
-    const buttonAriaLabel = this.props.intl.formatMessage(messages.image);
+  const buttonAriaLabel = intl.formatMessage(messages.image);
 
-    return (
-      <>
-        <Button
-          className={classNames(styles.button)}
-          disableFocusRipple
-          disableRipple
-          size="small"
-          aria-label={buttonAriaLabel}
-          onMouseDown={this.handleMouseDown}
-          onClick={this.handleClick}
-        >
-          <PhotoIcon />
-        </Button>
-        <form name={IMAGE_FORM_NAME} className={styles.insertImageForm}>
-          <input multiple type="file" name={IMAGE_INPUT_NAME} accept="image/*" onChange={this.handleFileChange} />
-        </form>
-      </>
-    );
-  }
+  return (
+    <>
+      <Button
+        className={classNames(styles.button)}
+        disableFocusRipple
+        disableRipple
+        size="small"
+        aria-label={buttonAriaLabel}
+        onMouseDown={handleMouseDown}
+        onClick={handleClick}
+      >
+        <PhotoIcon />
+      </Button>
+      <form name={IMAGE_FORM_NAME} className={styles.insertImageForm}>
+        <input multiple type="file" name={IMAGE_INPUT_NAME} accept="image/*" onChange={handleFileChange} />
+      </form>
+    </>
+  );
 }
-export const ImageButton = ImageButtonComponent;
