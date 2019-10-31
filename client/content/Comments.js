@@ -41,7 +41,7 @@ export default function Comments({ comments, content }) {
   const snackbar = useSnackbar();
   const commentEditor = useRef(null);
   const [isPosting, setIsPosting] = useState(false);
-  const [postComment, result] = useMutation(POST_COMMENT);
+  const [postComment] = useMutation(POST_COMMENT);
 
   const handleKeyDown = evt => {
     if (!commentEditor || !commentEditor.current) {

@@ -9,7 +9,7 @@ import FormControl from '@material-ui/core/FormControl';
 import gql from 'graphql-tag';
 import HiddenSnackbarShim from '../components/HiddenSnackbarShim';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import Select from '@material-ui/core/Select';
 import styles from './Dashboard.module.css';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -81,10 +81,10 @@ const POST_CONTENT = gql`
 export default function DashboardEditor({ username }) {
   const { data } = useQuery(SITE_MAP_AND_USER_QUERY, {
     variables: {
-      username: username,
+      username,
     },
   });
-  const [postContent, result] = useMutation(POST_CONTENT);
+  const [postContent] = useMutation(POST_CONTENT);
 
   const editor = useRef(null);
   const [fileInfo, setFileInfo] = useState(null);
@@ -96,14 +96,66 @@ export default function DashboardEditor({ username }) {
   const [successMessage, setSuccessMessage] = useState(null);
   const [didSetUnsavedChanges, setDidSetUnsavedChanges] = useState(false);
 
-  const handleKeyDown = evt => {
-    // TODO(mime): combine this logic somewhere. (also in keyboard.js)
-    const isMac = navigator.platform.toLowerCase().indexOf('mac') !== -1;
-    const isAccelKey = isMac ? evt.metaKey : evt.ctrlKey;
-    if (isAccelKey && evt.key === 's') {
-      handlePost();
-    }
-  };
+  const handlePost = useCallback(
+    async evt => {
+      evt && evt.preventDefault();
+
+      const editorRef = editor.current;
+      const { style, code, content } = editorRef.export();
+
+      // TODO(mime): gotta be a simpler way then all this conversion.
+      const title = EditorUtils.Text.getTextForLine(EditorState.createWithContent(convertFromRaw(content)), 0);
+
+      const name = title.replace(/[^A-Za-z0-9-]/g, '-');
+      const { section, album } = JSON.parse(sectionAndAlbum);
+
+      const thumb = fileInfo?.thumb || '';
+
+      const variables = {
+        username,
+        section,
+        album,
+        name,
+        title,
+        hidden: false, // TODO(mime)
+        thumb,
+        style,
+        code,
+        content: JSON.stringify(content),
+      };
+
+      try {
+        await postContent({
+          variables,
+          optimisticResponse: {
+            __typename: 'Mutation',
+            postContent: Object.assign({}, variables, { __typename: 'Content' }),
+          },
+        });
+      } catch (ex) {
+        setErrorMessage(messages.error);
+        return;
+      }
+
+      editorRef.clear();
+
+      setFileInfo(null);
+      setSuccessMessage(messages.posted);
+    },
+    [fileInfo, postContent, sectionAndAlbum, username]
+  );
+
+  const handleKeyDown = useCallback(
+    evt => {
+      // TODO(mime): combine this logic somewhere. (also in keyboard.js)
+      const isMac = navigator.platform.toLowerCase().indexOf('mac') !== -1;
+      const isAccelKey = isMac ? evt.metaKey : evt.ctrlKey;
+      if (isAccelKey && evt.key === 's') {
+        handlePost();
+      }
+    },
+    [handlePost]
+  );
 
   useEffect(() => {
     if (window.location.hash.startsWith('#reblog')) {
@@ -131,7 +183,7 @@ export default function DashboardEditor({ username }) {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [didSetUnsavedChanges, errorMessage, successMessage, fileInfo]);
+  }, [didSetUnsavedChanges, handleKeyDown]);
 
   useEffect(() => {
     setErrorMessage(null);
@@ -161,52 +213,6 @@ export default function DashboardEditor({ username }) {
       contentEditor.onChange(editorState);
     }
   }
-
-  const handlePost = async evt => {
-    evt && evt.preventDefault();
-
-    const editorRef = editor.current;
-    const { style, code, content } = editorRef.export();
-
-    // TODO(mime): gotta be a simpler way then all this conversion.
-    const title = EditorUtils.Text.getTextForLine(EditorState.createWithContent(convertFromRaw(content)), 0);
-
-    const name = title.replace(/[^A-Za-z0-9-]/g, '-');
-    const { section, album } = JSON.parse(sectionAndAlbum);
-
-    const thumb = fileInfo?.thumb || '';
-
-    const variables = {
-      username,
-      section,
-      album,
-      name,
-      title,
-      hidden: false, // TODO(mime)
-      thumb,
-      style,
-      code,
-      content: JSON.stringify(content),
-    };
-
-    try {
-      await postContent({
-        variables,
-        optimisticResponse: {
-          __typename: 'Mutation',
-          postContent: Object.assign({}, variables, { __typename: 'Content' }),
-        },
-      });
-    } catch (ex) {
-      setErrorMessage(messages.error);
-      return;
-    }
-
-    editorRef.clear();
-
-    setFileInfo(null);
-    setSuccessMessage(messages.posted);
-  };
 
   const handleSectionAndAlbumChange = evt => {
     setSectionAndAlbum(evt.target.value);

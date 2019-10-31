@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import styles from './ContentLink.module.css';
 import UserContext from '../app/User_Context';
 
-class ContentLink extends PureComponent {
+export default class ContentLink extends PureComponent {
   static contextType = UserContext;
 
   render() {
@@ -30,5 +30,3 @@ class ContentLink extends PureComponent {
     );
   }
 }
-
-export default ContentLink;

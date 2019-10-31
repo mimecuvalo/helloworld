@@ -7,7 +7,7 @@ import { parseFeedAndInsertIntoDb, retrieveFeed } from './util/feeds';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 
-const followFactory = (options) => {
+export default (options) => {
   const followRouter = express.Router();
   followRouter.get('/', async (req, res) => {
     const { resource } = req.query;
@@ -52,5 +52,3 @@ const followFactory = (options) => {
 
   return { followRouter, follow, unfollow };
 }
-
-export default followFactory;

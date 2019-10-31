@@ -31,7 +31,7 @@ const CREATE_USER_REMOTE = gql`
 export default function NewFeed(props) {
   const snackbar = useSnackbar();
   const intl = useIntl();
-  const [createUserRemote, result] = useMutation(CREATE_USER_REMOTE);
+  const [createUserRemote] = useMutation(CREATE_USER_REMOTE);
 
   // when NewFeed is used as an input field.
   const handleNewFeedPaste = evt => {

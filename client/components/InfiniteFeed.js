@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { PureComponent } from 'react';
 
-class InfiniteFeed extends PureComponent {
+export default class InfiniteFeed extends PureComponent {
   constructor(props) {
     super(props);
 
@@ -65,5 +65,3 @@ class InfiniteFeed extends PureComponent {
     return <>{this.props.children}</>;
   }
 }
-
-export default InfiniteFeed;

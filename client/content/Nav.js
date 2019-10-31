@@ -1,4 +1,4 @@
-import { ApolloConsumer } from 'react-apollo';
+import { ApolloConsumer } from '@apollo/react-hooks';
 import ContentLink from '../components/ContentLink';
 import ContentQuery from './ContentQuery';
 import { contentUrl } from '../../shared/util/url_factory';
@@ -44,6 +44,7 @@ const FETCH_CONTENT_NEIGHBORS = gql`
   `;
 
 function Nav({ apolloClient, content, isEditing }) {
+  const { username, section, album, name } = content;
   const { loading, data } = useQuery(FETCH_CONTENT_NEIGHBORS, {
     variables: {
       username,
@@ -158,14 +159,13 @@ function Nav({ apolloClient, content, isEditing }) {
     return <div className={styles.loadingEmptyBox} />;
   }
 
-  const { first, prev, top, next, last } = data.fetchContentNeighbors;
   return (
     <nav className={styles.nav}>
-      {renderLink(last, 'last', <F msg="last" />)}
-      {renderLink(next, 'next', <F msg="next" />)}
-      {renderLink(top, 'top', top?.name)}
-      {renderLink(prev, 'prev', <F msg="prev" />)}
-      {renderLink(first, 'first', <F msg="first" />)}
+      {renderLink(data.fetchContentNeighbors.last, 'last', <F msg="last" />)}
+      {renderLink(data.fetchContentNeighbors.next, 'next', <F msg="next" />)}
+      {renderLink(data.fetchContentNeighbors.top, 'top', top?.name)}
+      {renderLink(data.fetchContentNeighbors.prev, 'prev', <F msg="prev" />)}
+      {renderLink(data.fetchContentNeighbors.first, 'first', <F msg="first" />)}
     </nav>
   );
 }

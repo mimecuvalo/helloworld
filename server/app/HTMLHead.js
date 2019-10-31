@@ -41,12 +41,16 @@ export default function HTMLHead(props) {
   const probableContentUsername = splitPath[1];
   const probableContentName = splitPath[splitPath.length - 1];
 
-  const { data } = useQuery(CONTENT_AND_USER_QUERY, {
+  const { loading, data } = useQuery(CONTENT_AND_USER_QUERY, {
     variables: {
       username: decodeURIComponent(probableContentUsername),
       name: decodeURIComponent(probableContentName),
     },
   });
+
+  if (loading) {
+    return null;
+  }
 
   // XXX(mime): terrible hack until i figure out what's going on.
   // seems that having the same query twice in a tree while doing SSR will prevent rendering of the first

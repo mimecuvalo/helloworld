@@ -3,7 +3,7 @@ import { F } from '../../../shared/i18n';
 import React, { PureComponent } from 'react';
 import styles from './Actions.module.css';
 
-class KeepUnread extends PureComponent {
+export default class KeepUnread extends PureComponent {
   constructor(props) {
     super(props);
 
@@ -27,5 +27,3 @@ class KeepUnread extends PureComponent {
     );
   }
 }
-
-export default KeepUnread;

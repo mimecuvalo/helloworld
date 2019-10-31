@@ -1,4 +1,4 @@
-import { defineMessages, F, injectIntl } from '../../shared/i18n';
+import { defineMessages, F, useIntl } from '../../shared/i18n';
 import React from 'react';
 import styles from './Error.module.css';
 
@@ -6,7 +6,8 @@ const messages = defineMessages({
   upsideDownFace: { msg: 'upside down face' },
 });
 
-const NotFound = React.memo(function NotFound({ intl }) {
+export default function NotFound() {
+  const intl = useIntl();
   const emojiAriaLabel = intl.formatMessage(messages.upsideDownFace);
 
   return (
@@ -24,6 +25,4 @@ const NotFound = React.memo(function NotFound({ intl }) {
       </div>
     </div>
   );
-});
-
-export default injectIntl(NotFound);
+}

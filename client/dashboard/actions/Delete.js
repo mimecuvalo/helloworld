@@ -33,7 +33,7 @@ export default function Delete(props) {
   const { deleted, from_user, local_content_name, post_id, type } = props.contentRemote;
   const variables = { from_user, local_content_name, post_id, type, deleted: !deleted };
 
-  const [deleteContentRemote, result] = useMutation(DELETE_CONTENT_REMOTE);
+  const [deleteContentRemote] = useMutation(DELETE_CONTENT_REMOTE);
 
   const handleClick = evt =>
     deleteContentRemote({

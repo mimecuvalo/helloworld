@@ -15,7 +15,7 @@ const DESTROY_FEED = gql`
 export default function UnfollowFeed(props) {
   const profile_url = props.userRemote.profile_url;
 
-  const [destroyFeed, result] = useMutation(DESTROY_FEED);
+  const [destroyFeed] = useMutation(DESTROY_FEED);
 
   const handleClick = async () => {
     props.handleClose();

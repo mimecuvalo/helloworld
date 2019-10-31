@@ -5,9 +5,9 @@ import FollowingSpecialFeedCountsQuery from './FollowingSpecialFeedCountsQuery';
 import Footer from './Footer';
 import gql from 'graphql-tag';
 import Header from './Header';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from './Item.module.css';
-import { useEffect, useMutation, useRef } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 
 const READ_CONTENT_REMOTE = gql`
   mutation readContentRemote($from_user: String!, $post_id: String!, $read: Boolean!) {
@@ -20,7 +20,7 @@ const READ_CONTENT_REMOTE = gql`
 `;
 
 export default function Item(props) {
-  const [readContentRemote, result] = useMutation(READ_CONTENT_REMOTE);
+  const [readContentRemote] = useMutation(READ_CONTENT_REMOTE);
   const [keepUnread, setKeepUnread] = useState(false);
   const item = useRef(null);
 

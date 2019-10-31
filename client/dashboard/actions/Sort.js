@@ -14,7 +14,7 @@ const TOGGLE_SORT_FEED = gql`
 `;
 
 export default function Sort(props) {
-  const [toggleSortFeed, result] = useMutation(TOGGLE_SORT_FEED);
+  const [toggleSortFeed] = useMutation(TOGGLE_SORT_FEED);
 
   const handleClick = async () => {
     props.handleClose();

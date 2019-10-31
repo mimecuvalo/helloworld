@@ -48,7 +48,7 @@ export default function Album({ content, isEditing }) {
     },
   });
 
-  const [deleteContent, result] = useMutation(DELETE_CONTENT);
+  const [deleteContent] = useMutation(DELETE_CONTENT);
 
   const handleClick = async item => {
     const variables = { name: item.name };

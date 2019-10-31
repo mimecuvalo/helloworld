@@ -12,22 +12,24 @@ const messages = defineMessages({
 });
 
 const FETCH_ALL_USERS = gql`
-  fetchAllUsers {
-    description
-    email
-    favicon
-    google_analytics
-    hostname
-    license
-    logo
-    magic_key
-    name
-    private_key
-    superuser
-    theme
-    title
-    username
-    viewport
+  {
+    fetchAllUsers {
+      description
+      email
+      favicon
+      google_analytics
+      hostname
+      license
+      logo
+      magic_key
+      name
+      private_key
+      superuser
+      theme
+      title
+      username
+      viewport
+    }
   }
 `;
 

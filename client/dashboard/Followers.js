@@ -8,13 +8,15 @@ import styles from './RemoteUsers.module.css';
 import { useQuery } from '@apollo/react-hooks';
 
 const FETCH_FOLLOWERS = gql`
-  fetchFollowers {
-    avatar
-    favicon
-    following
-    name
-    profile_url
-    username
+  {
+    fetchFollowers {
+      avatar
+      favicon
+      following
+      name
+      profile_url
+      username
+    }
   }
 `;
 

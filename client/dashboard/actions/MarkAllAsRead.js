@@ -17,7 +17,7 @@ const MARK_ALL_CONTENT_IN_FEED_AS_READ = gql`
 `;
 
 export default function MarkAllAsRead(props) {
-  const [markAllContentInFeedAsRead, result] = useMutation(MARK_ALL_CONTENT_IN_FEED_AS_READ);
+  const [markAllContentInFeedAsRead] = useMutation(MARK_ALL_CONTENT_IN_FEED_AS_READ);
   const from_user = props.userRemote.profile_url;
 
   const handleClick = () => {

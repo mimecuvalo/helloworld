@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { defineMessages, F, useIntl } from '../../shared/i18n';
-import React, { PureComponent } from 'react';
+import React from 'react';
 import styles from './Header.module.css';
 
 const messages = defineMessages({

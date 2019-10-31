@@ -21,7 +21,7 @@ export default function Favorite(props) {
   const { favorited, from_user, post_id, type } = props.contentRemote;
   const variables = { from_user, post_id, type, favorited: !favorited };
 
-  const [favoriteContentRemote, result] = useMutation(FAVORITE_CONTENT_REMOTE);
+  const [favoriteContentRemote] = useMutation(FAVORITE_CONTENT_REMOTE);
 
   const handleClick = evt =>
     favoriteContentRemote({

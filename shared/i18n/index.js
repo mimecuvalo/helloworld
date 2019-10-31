@@ -3,7 +3,7 @@ import {
   FormattedDate as originalFormattedDate,
   FormattedMessage,
   FormattedNumber as originalFormattedNumber,
-  injectIntl as originalInjectIntl,
+  useIntl as originalUseIntl,
 } from 'react-intl';
 import React from 'react';
 
@@ -56,6 +56,6 @@ export function defineMessages(values) {
   return originalDefineMessages(values);
 }
 
-export const injectIntl = originalInjectIntl;
+export const useIntl = originalUseIntl;
 export const FormattedDate = originalFormattedDate;
 export const FormattedNumber = originalFormattedNumber;

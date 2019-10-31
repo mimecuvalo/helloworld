@@ -71,7 +71,7 @@ const readOnlyPlugins = [
   linkifyPlugin,
 ];
 
-class HelloWorldEditor extends Component {
+export default class HelloWorldEditor extends Component {
   constructor(props) {
     super(props);
 
@@ -299,5 +299,3 @@ const emptyContentState = convertFromRaw({
     },
   ],
 });
-
-export default HelloWorldEditor;

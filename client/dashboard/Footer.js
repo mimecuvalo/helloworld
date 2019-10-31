@@ -6,7 +6,7 @@ import Reblog from './actions/Reblog';
 import Reply from './actions/Reply';
 import styles from './Footer.module.css';
 
-class Footer extends PureComponent {
+export default class Footer extends PureComponent {
   render() {
     const contentRemote = this.props.contentRemote;
     const { createdAt, link, updatedAt, username } = contentRemote;
@@ -33,29 +33,28 @@ class Footer extends PureComponent {
                 ),
               }}
             />
-            {updatedAt &&
-              updatedAt !== createdAt && (
-                <>
-                  &nbsp;
-                  <F
-                    msg="(updated {date})"
-                    values={{
-                      date: (
-                        <time dateTime={updatedAt}>
-                          <FormattedDate
-                            value={updatedAt}
-                            year="numeric"
-                            month="long"
-                            day="2-digit"
-                            hour="2-digit"
-                            minute="2-digit"
-                          />
-                        </time>
-                      ),
-                    }}
-                  />
-                </>
-              )}
+            {updatedAt && updatedAt !== createdAt && (
+              <>
+                &nbsp;
+                <F
+                  msg="(updated {date})"
+                  values={{
+                    date: (
+                      <time dateTime={updatedAt}>
+                        <FormattedDate
+                          value={updatedAt}
+                          year="numeric"
+                          month="long"
+                          day="2-digit"
+                          hour="2-digit"
+                          minute="2-digit"
+                        />
+                      </time>
+                    ),
+                  }}
+                />
+              </>
+            )}
           </a>
         </div>
         <div className={styles.actions}>
@@ -71,5 +70,3 @@ class Footer extends PureComponent {
     );
   }
 }
-
-export default Footer;

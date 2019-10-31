@@ -74,7 +74,7 @@ export default function Content(props) {
       name: username ? name || 'home' : '',
     },
   });
-  const [saveContent, result] = useMutation(SAVE_CONTENT);
+  const [saveContent] = useMutation(SAVE_CONTENT);
 
   useEffect(() => {
     if (loading || !data.fetchContent) {
@@ -100,7 +100,7 @@ export default function Content(props) {
   });
 
   useEffect(() => {
-    item.current.getEditor() && item.current.getEditor().setUnsavedChanges(!isEditing);
+    item?.current?.getEditor() && item.current.getEditor().setUnsavedChanges(!isEditing);
   }, [isEditing]);
 
   const handleKeyDown = evt => {

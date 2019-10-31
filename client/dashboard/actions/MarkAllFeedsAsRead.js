@@ -17,7 +17,7 @@ const MARK_ALL_FEEDS_AS_READ = gql`
 `;
 
 export default function MarkAllFeedsAsRead({ handleClose }) {
-  const [markAllFeedsAsRead, result] = useMutation(MARK_ALL_FEEDS_AS_READ);
+  const [markAllFeedsAsRead] = useMutation(MARK_ALL_FEEDS_AS_READ);
 
   const handleClick = () => {
     handleClose();

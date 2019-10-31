@@ -2,7 +2,7 @@ import { F } from '../../../shared/i18n';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { PureComponent } from 'react';
 
-class ViewAlreadyRead extends PureComponent {
+export default class ViewAlreadyRead extends PureComponent {
   handleClick = async () => {
     this.props.handleClose();
 
@@ -17,5 +17,3 @@ class ViewAlreadyRead extends PureComponent {
     );
   }
 }
-
-export default ViewAlreadyRead;

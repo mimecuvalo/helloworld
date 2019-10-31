@@ -1,4 +1,4 @@
-import { defineMessages, F, injectIntl } from '../../shared/i18n';
+import { defineMessages, F, useIntl } from '../../shared/i18n';
 import React from 'react';
 import styles from './Error.module.css';
 
@@ -6,7 +6,8 @@ const messages = defineMessages({
   personGesturingNo: { msg: 'person gesturing no' },
 });
 
-const Unauthorized = React.memo(function Unauthorized({ intl }) {
+export default function Unauthorized() {
+  const intl = useIntl();
   const emojiAriaLabel = intl.formatMessage(messages.personGesturingNo);
 
   return (
@@ -24,6 +25,4 @@ const Unauthorized = React.memo(function Unauthorized({ intl }) {
       </div>
     </div>
   );
-});
-
-export default injectIntl(Unauthorized);
+}
