@@ -79,18 +79,19 @@ const POST_CONTENT = gql`
 `;
 
 export default function DashboardEditor({ username }) {
-  const { data } = useQuery(SITE_MAP_AND_USER_QUERY, {
+  const { loading, data } = useQuery(SITE_MAP_AND_USER_QUERY, {
     variables: {
       username,
     },
   });
+
   const [postContent] = useMutation(POST_CONTENT);
 
   const editor = useRef(null);
   const [fileInfo, setFileInfo] = useState(null);
   // Not so clean but, meh, don't feel like implementing two separate <select>'s
   const [sectionAndAlbum, setSectionAndAlbum] = useState(
-    JSON.stringify({ section: data.fetchSiteMap[0].name, album: '' })
+    JSON.stringify({ section: data?.fetchSiteMap[0].name, album: '' })
   );
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
@@ -201,6 +202,10 @@ export default function DashboardEditor({ username }) {
       contentEditor.onChange(editorState);
     },
   }));
+
+  if (loading) {
+    return null;
+  }
 
   async function reblog(text, opt_url) {
     const contentEditor = editor.current.getContentEditor();

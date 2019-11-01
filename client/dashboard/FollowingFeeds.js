@@ -9,9 +9,13 @@ import styles from './RemoteUsers.module.css';
 import { useQuery } from '@apollo/react-hooks';
 
 export default function FollowingFeeds(props) {
-  const { data } = useQuery(FollowingFeedCountsQuery, {
+  const { loading, data } = useQuery(FollowingFeedCountsQuery, {
     pollInterval: props.pollInterval,
   });
+
+  if (loading) {
+    return null;
+  }
 
   const handleClick = (evt, userRemote) => {
     props.handleSetFeed(userRemote);

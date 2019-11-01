@@ -16,8 +16,12 @@ const POLL_INTERVAL = 60 * 1000;
 
 export default function Following(props) {
   const intl = useIntl();
-  const { data } = useQuery(FollowingQuery);
   const searchInput = useRef(null);
+  const { loading, data } = useQuery(FollowingQuery);
+
+  if (loading) {
+    return null;
+  }
 
   const handleSearchKeyUp = evt => {
     if (evt.key === 'Enter') {

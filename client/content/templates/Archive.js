@@ -23,7 +23,7 @@ const FETCH_COLLECTION = gql`
 
 export default function Archive({ content }) {
   const { username, section, album, name } = content;
-  const user = useContext(UserContext);
+  const user = useContext(UserContext).user;
   const { loading, data } = useQuery(FETCH_COLLECTION, {
     variables: {
       username,

@@ -1,9 +1,9 @@
 import { defineMessages, F, useIntl } from '../../shared/i18n';
 import DocumentTitle from 'react-document-title';
 import gql from 'graphql-tag';
+import Forbidden from '../error/403';
 import React, { useContext } from 'react';
 import styles from './Admin.module.css';
-import Unauthorized from '../error/401';
 import UserContext from '../app/User_Context';
 import { useQuery } from '@apollo/react-hooks';
 
@@ -35,14 +35,18 @@ const FETCH_ALL_USERS = gql`
 
 export default function Admin() {
   const intl = useIntl();
-  const user = useContext(UserContext);
-  const { data } = useQuery(FETCH_ALL_USERS);
+  const user = useContext(UserContext).user;
+  const { loading, data } = useQuery(FETCH_ALL_USERS);
+
+  if (loading) {
+    return null;
+  }
 
   const title = intl.formatMessage(messages.title);
   const allUsers = data.fetchAllUsers;
 
   if (!user?.model?.superuser) {
-    return <Unauthorized />;
+    return <Forbidden />;
   }
 
   return (
@@ -55,33 +59,35 @@ export default function Admin() {
         <article className={styles.content}>
           <table>
             <thead>
-              <th>
-                <strong>username</strong>
-              </th>
-              {Object.keys(allUsers[0])
-                .filter(k => k !== 'username')
-                .map(key => (
-                  <th>
-                    <strong>{key}</strong>
-                  </th>
-                ))}
+              <tr>
+                <th>
+                  <strong>username</strong>
+                </th>
+                {Object.keys(allUsers[0])
+                  .filter(k => k !== 'username')
+                  .map(key => (
+                    <th key={key}>
+                      <strong>{key}</strong>
+                    </th>
+                  ))}
+              </tr>
             </thead>
             <tbody>
               {allUsers.map(user => {
                 return (
-                  <tr>
+                  <tr key={user.username}>
                     <td>
                       <input readOnly type="text" value={user['username']} />
                     </td>
                     {Object.keys(user)
                       .filter(k => k !== 'username')
                       .map(key => (
-                        <td>
+                        <td key={key}>
                           <input
                             readOnly
                             type={typeof user[key] === 'boolean' ? 'checkbox' : 'text'}
                             checked={typeof user[key] === 'boolean' ? user[key] : null}
-                            value={user[key]}
+                            value={user[key] || ''}
                           />
                         </td>
                       ))}

@@ -10,10 +10,14 @@ import { useQuery } from '@apollo/react-hooks';
 import UserContext from '../app/User_Context';
 
 export default function FollowingSpecialFeeds(props) {
-  const user = useContext(UserContext);
-  const { data } = useQuery(FollowingSpecialFeedCountsQuery, {
+  const user = useContext(UserContext).user;
+  const { loading, data } = useQuery(FollowingSpecialFeedCountsQuery, {
     pollInterval: props.pollInterval,
   });
+
+  if (loading) {
+    return null;
+  }
 
   const handleEntireFeedClick = evt => {
     props.handleSetFeed('');

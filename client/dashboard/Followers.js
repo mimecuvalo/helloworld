@@ -21,7 +21,12 @@ const FETCH_FOLLOWERS = gql`
 `;
 
 export default function Followers(props) {
-  const { data } = useQuery(FETCH_FOLLOWERS);
+  const { loading, data } = useQuery(FETCH_FOLLOWERS);
+
+  if (loading) {
+    return null;
+  }
+
   const followers = data.fetchFollowers;
 
   return (
