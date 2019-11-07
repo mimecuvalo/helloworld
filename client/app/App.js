@@ -81,7 +81,7 @@ export default class App extends Component {
 
     return (
       <UserContext.Provider value={this.state.userContext}>
-        <SnackbarProvider action={CloseButton}>
+        <SnackbarProvider action={<CloseButton />}>
           <ErrorBoundary>
             <div
               className={classNames('App', styles.app, { 'App-logged-in': this.props.user })}

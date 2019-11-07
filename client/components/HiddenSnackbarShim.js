@@ -7,6 +7,10 @@ export default function HiddenSnackbarShim({ message, variant }) {
   const snackbar = useSnackbar();
 
   useEffect(() => {
+    if (!message) {
+      return null;
+    }
+
     snackbar.enqueueSnackbar(intl.formatMessage(message), { variant });
   });
 

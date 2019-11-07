@@ -55,7 +55,7 @@ export default function Item(props) {
 
   function readContentRemoteCall(read) {
     const { from_user, post_id } = props.contentRemote;
-    const variables = { from_user, post_id };
+    const variables = { from_user, post_id, read };
     const expectedResponse = Object.assign({}, variables, { __typename: 'Post' });
 
     readContentRemote({

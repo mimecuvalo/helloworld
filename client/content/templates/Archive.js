@@ -21,7 +21,7 @@ const FETCH_COLLECTION = gql`
   }
 `;
 
-export default function Archive({ content }) {
+export default React.forwardRef(({ content }, ref) => {
   const { username, section, album, name } = content;
   const user = useContext(UserContext).user;
   const { loading, data } = useQuery(FETCH_COLLECTION, {
@@ -63,4 +63,4 @@ export default function Archive({ content }) {
         ))}
     </ul>
   );
-}
+});

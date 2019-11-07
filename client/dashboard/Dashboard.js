@@ -41,8 +41,7 @@ export default function Dashboard(props) {
   };
 
   const getEditor = () => {
-    // Oof :-/
-    return editor.current.getWrappedInstance().getWrappedInstance();
+    return editor.current;
   };
 
   const title = intl.formatMessage(messages.title);

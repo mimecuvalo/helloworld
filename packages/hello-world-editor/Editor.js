@@ -21,6 +21,7 @@ import { convertFromRaw, convertToRaw, EditorState, RichUtils } from 'draft-js';
 import Emojis, { emojiPlugin } from './ui/autocomplete/Emojis';
 import { handleKeyCommand, keyBindingFn } from './input/keyboard';
 import HiddenSnackbarShim from './ui/HiddenSnackbarShim';
+import { IntlProvider } from 'react-intl';
 import Mentions, { mentionPlugin } from './ui/autocomplete/Mentions';
 import React, { Component } from 'react';
 import { SnackbarProvider } from 'notistack';
@@ -194,10 +195,6 @@ export default class HelloWorldEditor extends Component {
     }
   };
 
-  handleOnTab = evt => {
-    this.onChange(RichUtils.onTab(evt, this.state.editorState, MAX_DEPTH));
-  };
-
   handlePastedText = async (text, html, editorState) => {
     const potentialLink = text.match(/^https?:\/\//) || text.match(/^<iframe /);
     if (!this.state.shiftKeyPressed && potentialLink) {
@@ -251,7 +248,7 @@ export default class HelloWorldEditor extends Component {
 
   render() {
     return (
-      <>
+      <IntlProvider locale={this.props.locale}>
         <SnackbarProvider>
           <div
             className={classNames('e-content', {
@@ -271,7 +268,6 @@ export default class HelloWorldEditor extends Component {
               handlePastedText={this.handlePastedText}
               keyBindingFn={keyBindingFn}
               onChange={this.onChange}
-              onTab={this.handleOnTab}
               plugins={this.props.readOnly ? readOnlyPlugins : plugins}
               readOnly={this.props.readOnly}
               ref={this.editor}
@@ -280,9 +276,9 @@ export default class HelloWorldEditor extends Component {
             {this.props.readOnly ? null : <Emojis />}
             {this.props.readOnly ? null : <Mentions mentions={this.props.mentions} />}
           </div>
-          <HiddenSnackbarShim message={this.state.errorMessage} variant="error" />
+          {this.state.errorMessage ? <HiddenSnackbarShim message={this.state.errorMessage} variant="error" /> : null}
         </SnackbarProvider>
-      </>
+      </IntlProvider>
     );
   }
 }

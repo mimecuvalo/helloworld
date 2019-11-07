@@ -51,6 +51,10 @@ body {
   box-shadow: 1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0;
 }
 
+#hw-content > header > h1 {
+  margin: 3px 3px 3px 0;
+}
+
 a.hw-button {
   text-decoration: line-through;
 }

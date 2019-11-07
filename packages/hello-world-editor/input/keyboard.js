@@ -1,6 +1,8 @@
 import { getDefaultKeyBinding, KeyBindingUtil } from 'draft-js';
 import { RichUtils } from 'draft-js';
 
+const MAX_DEPTH = 5;
+
 const { hasCommandModifier } = KeyBindingUtil;
 export function keyBindingFn(evt) {
   // Accel + Alt
@@ -63,6 +65,10 @@ export function keyBindingFn(evt) {
     }
   }
 
+  if (evt.key === 'Tab') {
+    return evt.shiftKey ? 'format-outdent' : 'format-indent';
+  }
+
   return getDefaultKeyBinding(evt);
 }
 
@@ -93,6 +99,9 @@ export function handleKeyCommand(cmd, editorState) {
     case 'format-link':
       document.querySelector('#editor-toolbar-link button').click();
       return 'handled';
+    case 'format-indent':
+    case 'format-outdent':
+      return RichUtils.onTab({ preventDefault: () => {}, shiftKey: cmd === 'format-outdent' }, editorState, MAX_DEPTH);
     default:
       return RichUtils.handleKeyCommand(editorState, cmd);
   }

@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import configuration from '../app/configuration';
 import ContentQuery from './ContentQuery';
 import { createLock } from '../app/auth';
 import { defineMessages, F, useIntl } from '../../shared/i18n';
@@ -109,7 +110,14 @@ export default function Comments({ comments, content }) {
             </h3>
             {isLoggedIn ? (
               <div id="hw-comment-editor" className={styles.commentEditorWrapper}>
-                <Editor editorKey="comments" content={{}} ref={commentEditor} type="comment" dontWarnOnUnsaved={true} />
+                <Editor
+                  editorKey="comments"
+                  content={{}}
+                  ref={commentEditor}
+                  type="comment"
+                  dontWarnOnUnsaved={true}
+                  locale={configuration.locale}
+                />
                 <button className={classNames('hw-button', 'hw-save')} disabled={isPosting} onClick={handlePost}>
                   <F msg="post" />
                 </button>

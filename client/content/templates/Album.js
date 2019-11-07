@@ -34,7 +34,7 @@ const DELETE_CONTENT = gql`
   }
 `;
 
-export default function Album({ content, isEditing }) {
+export default React.forwardRef(({ content, isEditing }, ref) => {
   const { username, section, album, name } = content;
   const intl = useIntl();
   const snackbar = useSnackbar();
@@ -119,4 +119,4 @@ export default function Album({ content, isEditing }) {
       ))}
     </ul>
   );
-}
+});

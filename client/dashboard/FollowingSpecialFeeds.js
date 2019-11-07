@@ -56,6 +56,7 @@ export default function FollowingSpecialFeeds(props) {
           {userAvatar}
           <F msg="your feed" />
         </button>
+        <span />
       </li>
       <li className={classNames({ [styles.selected]: specialFeed === 'favorites' })}>
         <button className="hw-button-link" onClick={handleFavoritesClick}>

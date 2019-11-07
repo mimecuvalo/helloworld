@@ -78,7 +78,7 @@ const POST_CONTENT = gql`
   }
 `;
 
-export default function DashboardEditor({ username }) {
+export default React.forwardRef(({ username }, ref) => {
   const { loading, data } = useQuery(SITE_MAP_AND_USER_QUERY, {
     variables: {
       username,
@@ -194,7 +194,7 @@ export default function DashboardEditor({ username }) {
     setSuccessMessage(null);
   }, [successMessage]);
 
-  useImperativeHandle(editor, () => ({
+  useImperativeHandle(ref, () => ({
     insertText: text => {
       const contentEditor = editor.current.getContentEditor();
       let editorState = contentEditor.editorState;
@@ -299,7 +299,9 @@ export default function DashboardEditor({ username }) {
         album={album}
         onMediaAdd={handleMediaAdd}
       />
-      <HiddenSnackbarShim message={successMessage || errorMessage} variant={successMessage ? 'success' : 'error'} />
+      {successMessage || errorMessage ? (
+        <HiddenSnackbarShim message={successMessage || errorMessage} variant={successMessage ? 'success' : 'error'} />
+      ) : null}
     </div>
   );
-}
+});

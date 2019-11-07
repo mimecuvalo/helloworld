@@ -20,7 +20,7 @@ const FETCH_COLLECTION_LINKS = gql`
   }
 `;
 
-export default function Latest({ content }) {
+export default React.forwardRef(({ content }, ref) => {
   const { username, section, name } = content;
   const routerHistory = useHistory();
   const [archiveMode, setArchiveMode] = useState(false);
@@ -52,4 +52,4 @@ export default function Latest({ content }) {
   }
 
   return <Simple content={data.fetchCollectionLatest} />;
-}
+});

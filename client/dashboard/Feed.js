@@ -36,15 +36,12 @@ const FETCH_CONTENT_REMOTE_PAGINATED = gql`
 `;
 
 export default function Feed({ getEditor, userRemote, specialFeed, query, shouldShowAllItems, didFeedLoad }) {
-  const { loading, data } = useQuery(FETCH_CONTENT_REMOTE_PAGINATED, {
+  const { loading, data, fetchMore } = useQuery(FETCH_CONTENT_REMOTE_PAGINATED, {
     variables: {
       profileUrlOrSpecialFeed: userRemote ? userRemote.profile_url : specialFeed,
       offset: 0,
       query,
       shouldShowAllItems,
-
-      // XXX(mime): see https://github.com/apollographql/react-apollo/issues/556
-      antiCache: didFeedLoad && typeof window !== 'undefined' ? +new Date() : undefined,
     },
     fetchPolicy: didFeedLoad ? 'network-only' : 'cache-first',
   });
@@ -60,7 +57,7 @@ export default function Feed({ getEditor, userRemote, specialFeed, query, should
   const feed = data.fetchContentRemotePaginated;
 
   return (
-    <InfiniteFeed deduper={dedupe} fetchMore={data.fetchMore} queryName="fetchContentRemotePaginated">
+    <InfiniteFeed deduper={dedupe} fetchMore={fetchMore} queryName="fetchContentRemotePaginated">
       {userRemote || query ? (
         <h1 className={styles.header}>
           {userRemote ? (
