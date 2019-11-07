@@ -1,6 +1,6 @@
 import ApolloClient from 'apollo-client';
 import { ApolloLink, split } from 'apollo-link';
-import { ApolloProvider } from 'react-apollo';
+import { ApolloProvider } from '@apollo/react-hooks';
 import App from './App';
 import { BatchHttpLink } from 'apollo-link-batch-http';
 import { BrowserRouter as Router } from 'react-router-dom';

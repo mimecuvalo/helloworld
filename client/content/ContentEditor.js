@@ -174,6 +174,7 @@ export default class ContentEditor extends Component {
           onMediaUpload={this.handleMediaUpload}
           onLinkUnfurl={this.handleLinkUnfurl}
           showPlaceholder={this.props.showPlaceholder}
+          locale={configuration.locale}
         />
       </div>
     );

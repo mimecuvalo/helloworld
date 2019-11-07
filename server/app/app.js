@@ -1,7 +1,8 @@
-import { ApolloProvider, getDataFromTree } from 'react-apollo';
+import { ApolloProvider } from '@apollo/react-common';
 import App from '../../client/app/App';
 import createApolloClient from '../data/apollo_client';
 import { DEFAULT_LOCALE, getLocale } from './locale';
+import { getDataFromTree } from '@apollo/react-ssr';
 import HTMLBase from './HTMLBase';
 import { IntlProvider } from 'react-intl';
 import * as languages from '../../shared/i18n/languages';
@@ -44,7 +45,7 @@ export default async function render({ req, res, next, assetPathsByType, appName
 
   const coreApp = <App user={filteredUser} />;
   // We need to set leave out Material-UI classname generation when traversing the React tree for
-  // react-apollo data. a) it speeds things up, but b) if we didn't do this, on prod, it can cause
+  // Apollo data. a) it speeds things up, but b) if we didn't do this, on prod, it can cause
   // classname hydration mismatches.
   const completeApp = isApolloTraversal => (
     <IntlProvider locale={locale} messages={translations}>

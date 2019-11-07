@@ -4,12 +4,12 @@ import FollowingFeedCountsQuery from './FollowingFeedCountsQuery';
 import FollowingSpecialFeedCountsQuery from './FollowingSpecialFeedCountsQuery';
 import Footer from './Footer';
 import gql from 'graphql-tag';
-import { graphql } from 'react-apollo';
 import Header from './Header';
-import React, { PureComponent } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from './Item.module.css';
+import { useMutation } from '@apollo/react-hooks';
 
-@graphql(gql`
+const READ_CONTENT_REMOTE = gql`
   mutation readContentRemote($from_user: String!, $post_id: String!, $read: Boolean!) {
     readContentRemote(from_user: $from_user, post_id: $post_id, read: $read) {
       from_user
@@ -17,59 +17,48 @@ import styles from './Item.module.css';
       read
     }
   }
-`)
-class Item extends PureComponent {
-  constructor(props) {
-    super(props);
+`;
 
-    this.state = {
-      keepUnread: false,
-    };
+export default function Item(props) {
+  const [readContentRemote] = useMutation(READ_CONTENT_REMOTE);
+  const [keepUnread, setKeepUnread] = useState(false);
+  const item = useRef(null);
 
-    this.item = React.createRef();
-    this.throttledMaybeMarkAsRead = _.throttle(this.maybeMarkAsRead, 100);
-  }
-
-  componentDidMount() {
-    if (!this.props.contentRemote.read) {
-      this.addEventListeners();
+  useEffect(() => {
+    if (!props.contentRemote.read) {
+      addEventListeners();
     }
-  }
 
-  componentWillUnmount() {
-    this.removeEventListeners();
-  }
+    return () => removeEventListeners();
+  });
 
-  addEventListeners() {
-    window.addEventListener('scroll', this.throttledMaybeMarkAsRead, { passive: true });
-    window.addEventListener('resize', this.throttledMaybeMarkAsRead, { passive: true });
-  }
-
-  removeEventListeners() {
-    window.removeEventListener('scroll', this.throttledMaybeMarkAsRead);
-    window.removeEventListener('resize', this.throttledMaybeMarkAsRead);
-  }
-
-  maybeMarkAsRead = () => {
+  const maybeMarkAsRead = () => {
     const doc = document.documentElement;
     const bottomOfFeed = doc.scrollTop + window.innerHeight >= doc.scrollHeight - 50;
-    if (
-      !this.state.keepUnread &&
-      this.item.current &&
-      (this.item.current.getBoundingClientRect().top < 5 || bottomOfFeed)
-    ) {
-      this.removeEventListeners();
+    if (!keepUnread && item.current && (item.current.getBoundingClientRect().top < 5 || bottomOfFeed)) {
+      removeEventListeners();
 
-      this.readContentRemote(true);
+      readContentRemoteCall(true);
     }
   };
+  const throttledMaybeMarkAsRead = _.throttle(maybeMarkAsRead, 100);
 
-  async readContentRemote(read) {
-    const { from_user, post_id } = this.props.contentRemote;
+  function addEventListeners() {
+    window.addEventListener('scroll', throttledMaybeMarkAsRead, { passive: true });
+    window.addEventListener('resize', throttledMaybeMarkAsRead, { passive: true });
+  }
+
+  function removeEventListeners() {
+    window.removeEventListener('scroll', throttledMaybeMarkAsRead);
+    window.removeEventListener('resize', throttledMaybeMarkAsRead);
+  }
+
+  function readContentRemoteCall(read) {
+    const { from_user, post_id } = props.contentRemote;
     const variables = { from_user, post_id, read };
     const expectedResponse = Object.assign({}, variables, { __typename: 'Post' });
 
-    await this.props.mutate({
+    readContentRemote({
       variables,
       optimisticResponse: {
         __typename: 'Mutation',
@@ -78,7 +67,7 @@ class Item extends PureComponent {
       update: (store, { data: { readContentRemote } }) => {
         const specialQuery = FollowingSpecialFeedCountsQuery;
         const specialData = store.readQuery({ query: specialQuery });
-        specialData.fetchUserTotalCounts.totalCount += read ? -1 : 1;
+        specialData.fetchUserTotalCounts.totalCount += variables.read ? -1 : 1;
         store.writeQuery({ query: specialQuery, data: specialData });
 
         const query = FollowingFeedCountsQuery;
@@ -89,29 +78,25 @@ class Item extends PureComponent {
     });
   }
 
-  keepUnreadCb = keepUnread => {
-    if (keepUnread && this.props.contentRemote.read) {
-      this.readContentRemote(false);
-      this.addEventListeners();
+  const keepUnreadCb = keepUnread => {
+    if (keepUnread && props.contentRemote.read) {
+      readContentRemoteCall(false);
+      addEventListeners();
     }
 
-    this.setState({ keepUnread });
+    setKeepUnread(keepUnread);
   };
 
-  render() {
-    const contentRemote = this.props.contentRemote;
+  const contentRemote = props.contentRemote;
 
-    // Make all links open in new tab.
-    const decoratedView = contentRemote.view.replace(/<a ([^>]+)/g, '<a $1 target="_blank" rel="noreferrer noopener"');
+  // Make all links open in new tab.
+  const decoratedView = contentRemote.view.replace(/<a ([^>]+)/g, '<a $1 target="_blank" rel="noreferrer noopener"');
 
-    return (
-      <article ref={this.item} className={classNames('hw-item', styles.item)}>
-        <Header contentRemote={contentRemote} />
-        <div dangerouslySetInnerHTML={{ __html: decoratedView }} />
-        <Footer contentRemote={contentRemote} keepUnreadCb={this.keepUnreadCb} getEditor={this.props.getEditor} />
-      </article>
-    );
-  }
+  return (
+    <article ref={item} className={classNames('hw-item', styles.item)}>
+      <Header contentRemote={contentRemote} />
+      <div dangerouslySetInnerHTML={{ __html: decoratedView }} />
+      <Footer contentRemote={contentRemote} keepUnreadCb={keepUnreadCb} getEditor={props.getEditor} />
+    </article>
+  );
 }
-
-export default Item;

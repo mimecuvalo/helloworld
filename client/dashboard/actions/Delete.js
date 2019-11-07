@@ -1,11 +1,11 @@
 import classNames from 'classnames';
 import { F } from '../../../shared/i18n';
 import gql from 'graphql-tag';
-import { graphql } from 'react-apollo';
-import React, { PureComponent } from 'react';
+import React from 'react';
 import styles from './Actions.module.css';
+import { useMutation } from '@apollo/react-hooks';
 
-@graphql(gql`
+const DELETE_CONTENT_REMOTE = gql`
   mutation deleteContentRemote(
     $from_user: String
     $local_content_name: String!
@@ -27,31 +27,29 @@ import styles from './Actions.module.css';
       type
     }
   }
-`)
-class Delete extends PureComponent {
-  handleClick = async evt => {
-    const { deleted, from_user, local_content_name, post_id, type } = this.props.contentRemote;
-    const variables = { from_user, local_content_name, post_id, type, deleted: !deleted };
+`;
 
-    await this.props.mutate({
+export default function Delete(props) {
+  const { deleted, from_user, local_content_name, post_id, type } = props.contentRemote;
+  const variables = { from_user, local_content_name, post_id, type, deleted: !deleted };
+
+  const [deleteContentRemote] = useMutation(DELETE_CONTENT_REMOTE);
+
+  const handleClick = evt =>
+    deleteContentRemote({
       variables,
       optimisticResponse: {
         __typename: 'Mutation',
         deleteContentRemote: Object.assign({}, variables, { __typename: type }),
       },
     });
-  };
 
-  render() {
-    return (
-      <button
-        onClick={this.handleClick}
-        className={classNames('hw-button-link', { [styles.enabled]: this.props.contentRemote.deleted })}
-      >
-        <F msg="delete" />
-      </button>
-    );
-  }
+  return (
+    <button
+      onClick={handleClick}
+      className={classNames('hw-button-link', { [styles.enabled]: props.contentRemote.deleted })}
+    >
+      <F msg="delete" />
+    </button>
+  );
 }
-
-export default Delete;

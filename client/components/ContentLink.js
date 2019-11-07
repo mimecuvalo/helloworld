@@ -5,18 +5,18 @@ import React, { PureComponent } from 'react';
 import styles from './ContentLink.module.css';
 import UserContext from '../app/User_Context';
 
-class ContentLink extends PureComponent {
+export default class ContentLink extends PureComponent {
   static contextType = UserContext;
 
   render() {
     const item = this.props.item;
     const currentContent = this.props.currentContent || {};
     const isOwnerViewing = this.context.user?.model?.username === item.username;
-    const { rel, innerRef } = this.props;
+    const { rel, innerRef, url } = this.props;
 
     return (
       <Link
-        to={contentUrl(item)}
+        to={url || contentUrl(item)}
         title={item.title}
         className={classNames(this.props.className, {
           [styles.hidden]: isOwnerViewing && item.hidden,
@@ -30,5 +30,3 @@ class ContentLink extends PureComponent {
     );
   }
 }
-
-export default ContentLink;

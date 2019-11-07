@@ -3,7 +3,7 @@ import { F, FormattedDate } from '../../shared/i18n';
 import React, { PureComponent } from 'react';
 import styles from './Footer.module.css';
 
-class Footer extends PureComponent {
+export default class Footer extends PureComponent {
   handleFullscreen = evt => {
     document.getElementById('hw-content').requestFullscreen();
   };
@@ -41,29 +41,28 @@ class Footer extends PureComponent {
             ),
           }}
         />
-        {updatedAt &&
-          updatedAt !== createdAt && (
-            <>
-              &nbsp;
-              <F
-                msg="(updated {date})"
-                values={{
-                  date: (
-                    <time className="t-updated" dateTime={updatedAt}>
-                      <FormattedDate
-                        value={updatedAt}
-                        year="numeric"
-                        month="long"
-                        day="2-digit"
-                        hour="2-digit"
-                        minute="2-digit"
-                      />
-                    </time>
-                  ),
-                }}
-              />
-            </>
-          )}
+        {updatedAt && updatedAt !== createdAt && (
+          <>
+            &nbsp;
+            <F
+              msg="(updated {date})"
+              values={{
+                date: (
+                  <time className="t-updated" dateTime={updatedAt}>
+                    <FormattedDate
+                      value={updatedAt}
+                      year="numeric"
+                      month="long"
+                      day="2-digit"
+                      hour="2-digit"
+                      minute="2-digit"
+                    />
+                  </time>
+                ),
+              }}
+            />
+          </>
+        )}
         &nbsp;•&nbsp;
         <a href={contentUrl(content)} target="_blank" rel="bookmark noopener noreferrer">
           <F msg="permalink" />
@@ -94,5 +93,3 @@ class Footer extends PureComponent {
     );
   }
 }
-
-export default Footer;

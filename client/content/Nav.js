@@ -1,12 +1,11 @@
-import { ApolloConsumer } from 'react-apollo';
 import ContentLink from '../components/ContentLink';
 import ContentQuery from './ContentQuery';
 import { contentUrl } from '../../shared/util/url_factory';
 import { F } from '../../shared/i18n';
 import gql from 'graphql-tag';
-import { graphql } from 'react-apollo';
-import React, { Component } from 'react';
+import React, { useEffect, useImperativeHandle, useRef } from 'react';
 import styles from './Nav.module.css';
+import { useQuery } from '@apollo/react-hooks';
 
 const NAV_FIELDS = `
   album
@@ -18,8 +17,7 @@ const NAV_FIELDS = `
   username
 `;
 
-@graphql(
-  gql`
+const FETCH_CONTENT_NEIGHBORS = gql`
     query($username: String!, $section: String!, $album: String!, $name: String!) {
       fetchContentNeighbors(username: $username, section: $section, album: $album, name: $name) {
         first {
@@ -42,71 +40,61 @@ const NAV_FIELDS = `
         }
       }
     }
-  `,
-  {
-    options: ({ content: { username, section, album, name } }) => ({
-      variables: {
-        username,
-        section,
-        album,
-        name,
-      },
-    }),
-    withRef: true,
-  }
-)
-class Nav extends Component {
-  constructor(props) {
-    super(props);
+  `;
 
-    this.last = React.createRef();
-    this.next = React.createRef();
-    this.top = React.createRef();
-    this.prev = React.createRef();
-    this.first = React.createRef();
-  }
+export default React.forwardRef(({ content, isEditing }, ref) => {
+  const { username, section, album, name } = content;
+  const { loading, data, client } = useQuery(FETCH_CONTENT_NEIGHBORS, {
+    variables: {
+      username,
+      section,
+      album,
+      name,
+    },
+  });
 
-  componentDidMount() {
-    window.addEventListener('keyup', this.handleKeyUp.bind(this));
-  }
+  const last = useRef(null);
+  const next = useRef(null);
+  const top = useRef(null);
+  const prev = useRef(null);
+  const first = useRef(null);
+  const navigationActions = { last, next, top, prev, first };
 
-  handleKeyUp = evt => {
-    if (this.props.isEditing) {
+  useEffect(() => {
+    window.addEventListener('keyup', handleKeyUp);
+    return () => window.removeEventListener('keyup', handleKeyUp);
+  });
+
+  useImperativeHandle(ref, () => ({
+    prev: () => {
+      prev?.current && prev.current.click();
+    },
+    next: () => {
+      next?.current && next.current.click();
+    },
+  }));
+
+  const handleKeyUp = evt => {
+    if (isEditing) {
       return;
     }
 
     switch (evt.key) {
       case 'ArrowUp':
-        this.top?.current && this.top.current.click();
+        top?.current && top.current.click();
         break;
       case 'ArrowLeft':
-        this.next?.current && this.next.current.click();
+        next?.current && next.current.click();
         break;
       case 'ArrowRight':
-        this.prev?.current && this.prev.current.click();
+        prev?.current && prev.current.click();
         break;
       default:
         break;
     }
   };
 
-  componentWillUnmount() {
-    window.removeEventListener('keyup', this.handleKeyUp);
-  }
-
-  shouldComponentUpdate(nextProps) {
-    return !nextProps.data.loading;
-  }
-
-  goPrev() {
-    this.prev?.current && this.prev.current.click();
-  }
-
-  goNext() {
-    this.next?.current && this.next.current.click();
-  }
-
-  renderLink(contentMeta, name, msg) {
+  function renderLink(contentMeta, name, msg) {
     contentMeta = contentMeta || {};
 
     const url = contentUrl(
@@ -116,7 +104,13 @@ class Nav extends Component {
     );
     if (!url) {
       return (
-        <a href={url} rel={name} ref={this[name]} className={`hw-${name} hw-button`} title={contentMeta.title}>
+        <a
+          href={url}
+          rel={name}
+          ref={navigationActions[name]}
+          className={`hw-${name} hw-button`}
+          title={contentMeta.title}
+        >
           {msg}
         </a>
       );
@@ -124,7 +118,7 @@ class Nav extends Component {
 
     // Preload surrounding content. We preload the GraphQL data here. Then, we also preload the images.
     if (['prev', 'next'].indexOf(name) !== -1) {
-      this.props.client.query({
+      client.query({
         query: ContentQuery,
         variables: { username: contentMeta.username, name: contentMeta.name },
       });
@@ -138,10 +132,11 @@ class Nav extends Component {
 
     return (
       <ContentLink
+        url={url}
         item={contentMeta}
-        currentContent={this.props.content}
+        currentContent={content}
         rel={name}
-        innerRef={this[name]}
+        innerRef={navigationActions[name]}
         className={`hw-${name} hw-button`}
       >
         {msg}
@@ -149,50 +144,26 @@ class Nav extends Component {
     );
   }
 
-  render() {
-    const content = this.props.content;
-    if (
-      content.template === 'feed' ||
-      content.section === 'main' ||
-      content.album === 'main' ||
-      content.name === 'main'
-    ) {
-      return null;
-    }
-
-    if (this.props.data.loading) {
-      return <div className={styles.loadingEmptyBox} />;
-    }
-
-    const { first, prev, top, next, last } = this.props.data.fetchContentNeighbors;
-    return (
-      <nav className={styles.nav}>
-        {this.renderLink(last, 'last', <F msg="last" />)}
-        {this.renderLink(next, 'next', <F msg="next" />)}
-        {this.renderLink(top, 'top', top?.name)}
-        {this.renderLink(prev, 'prev', <F msg="prev" />)}
-        {this.renderLink(first, 'first', <F msg="first" />)}
-      </nav>
-    );
-  }
-}
-
-export default class NavWithApolloClient extends Component {
-  constructor(props) {
-    super(props);
-
-    this.nav = React.createRef();
+  if (
+    content.template === 'feed' ||
+    content.section === 'main' ||
+    content.album === 'main' ||
+    content.name === 'main'
+  ) {
+    return null;
   }
 
-  prev() {
-    this.nav.current && this.nav.current.getWrappedInstance().goPrev();
+  if (loading) {
+    return <div className={styles.loadingEmptyBox} />;
   }
 
-  next() {
-    this.nav.current && this.nav.current.getWrappedInstance().goNext();
-  }
-
-  render() {
-    return <ApolloConsumer>{client => <Nav ref={this.nav} client={client} {...this.props} />}</ApolloConsumer>;
-  }
-}
+  return (
+    <nav className={styles.nav}>
+      {renderLink(data.fetchContentNeighbors.last, 'last', <F msg="last" />)}
+      {renderLink(data.fetchContentNeighbors.next, 'next', <F msg="next" />)}
+      {renderLink(data.fetchContentNeighbors.top, 'top', data.fetchContentNeighbors.top?.name)}
+      {renderLink(data.fetchContentNeighbors.prev, 'prev', <F msg="prev" />)}
+      {renderLink(data.fetchContentNeighbors.first, 'first', <F msg="first" />)}
+    </nav>
+  );
+});

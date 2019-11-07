@@ -1,58 +1,43 @@
 import classNames from 'classnames';
 import { contentUrl } from '../../shared/util/url_factory';
-import { defineMessages, injectIntl } from '../../shared/i18n';
+import { defineMessages, useIntl } from '../../shared/i18n';
 import { Link } from 'react-router-dom';
-import React, { PureComponent } from 'react';
+import React, { useRef } from 'react';
 import styles from './ContentThumb.module.css';
 
 const messages = defineMessages({
   thumbnail: { msg: 'thumbnail' },
 });
 
-@injectIntl
-class Thumb extends PureComponent {
-  constructor() {
-    super();
+export default function Thumb({ className, item, currentContent, isEditing }) {
+  const intl = useIntl();
+  const image = useRef();
 
-    this.image = React.createRef();
-  }
+  currentContent = currentContent || {};
+  const thumbAltText = intl.formatMessage(messages.thumbnail);
 
-  render() {
-    const item = this.props.item;
-    const currentContent = this.props.currentContent || {};
-    const thumbAltText = this.props.intl.formatMessage(messages.thumbnail);
+  const thumb = (
+    <img loading="lazy" src={item.thumb || '/img/pixel.gif'} ref={image} alt={thumbAltText} className={styles.thumb} />
+  );
 
-    const thumb = (
-      <img
-        loading="lazy"
-        src={item.thumb || '/img/pixel.gif'}
-        ref={this.image}
-        alt={thumbAltText}
-        className={styles.thumb}
-      />
-    );
-
-    // We're using the fancy new "loading" attribute for images to lazy load thumbs. Woo!
-    return !this.props.isEditing && item.externalLink ? (
-      <a
-        className={classNames(styles.thumbLink, this.props.className)}
-        href={item.externalLink}
-        target="_blank"
-        rel="noreferrer noopener"
-      >
-        {thumb}
-      </a>
-    ) : (
-      <Link
-        to={contentUrl(item)}
-        className={classNames(styles.thumbLink, this.props.className)}
-        title={item.title}
-        target={item.forceRefresh || currentContent.forceRefresh ? '_self' : ''}
-      >
-        {thumb}
-      </Link>
-    );
-  }
+  // We're using the fancy new "loading" attribute for images to lazy load thumbs. Woo!
+  return !isEditing && item.externalLink ? (
+    <a
+      className={classNames(styles.thumbLink, className)}
+      href={item.externalLink}
+      target="_blank"
+      rel="noreferrer noopener"
+    >
+      {thumb}
+    </a>
+  ) : (
+    <Link
+      to={contentUrl(item)}
+      className={classNames(styles.thumbLink, className)}
+      title={item.title}
+      target={item.forceRefresh || currentContent.forceRefresh ? '_self' : ''}
+    >
+      {thumb}
+    </Link>
+  );
 }
-
-export default Thumb;

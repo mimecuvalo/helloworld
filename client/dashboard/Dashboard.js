@@ -1,11 +1,11 @@
 import DashboardEditor from './Editor';
-import { defineMessages, injectIntl } from '../../shared/i18n';
+import { defineMessages, useIntl } from '../../shared/i18n';
 import DocumentTitle from 'react-document-title';
 import Feed from './Feed';
 import Followers from './Followers';
 import Following from './Following';
 import MyFeed from '../content/Feed';
-import React, { PureComponent } from 'react';
+import React, { useState, useRef } from 'react';
 import styles from './Dashboard.module.css';
 import Tools from './Tools';
 import Unauthorized from '../error/401';
@@ -15,88 +15,78 @@ const messages = defineMessages({
   title: { msg: 'Dashboard' },
 });
 
-@injectIntl
-class Dashboard extends PureComponent {
-  constructor(props) {
-    super(props);
+export default function Dashboard(props) {
+  const intl = useIntl();
+  const editor = useRef(null);
+  const [shouldShowAllItems, setShouldShowAllItems] = useState(false);
+  const [didFeedLoad, setDidFeedLoad] = useState(false);
+  const [query, setQuery] = useState(null);
+  const [specialFeed, setSpecialFeed] = useState('');
+  const [userRemote, setUserRemote] = useState(null);
 
-    this.editor = React.createRef();
+  const handleSetFeed = (userRemoteOrSpecialFeed, opt_query, opt_allItems) => {
+    setDidFeedLoad(true);
+    setQuery(opt_query);
+    setShouldShowAllItems(!!opt_allItems);
 
-    this.state = {
-      shouldShowAllItems: false,
-      didFeedLoad: false,
-      query: null,
-      specialFeed: '',
-      userRemote: null,
-    };
-  }
-
-  handleSetFeed = (userRemoteOrSpecialFeed, opt_query, opt_allItems) => {
-    const newState = {
-      didFeedLoad: true,
-      query: opt_query,
-      shouldShowAllItems: !!opt_allItems,
-    };
-
-    typeof userRemoteOrSpecialFeed === 'string'
-      ? this.setState(Object.assign(newState, { specialFeed: userRemoteOrSpecialFeed, userRemote: null }))
-      : this.setState(Object.assign(newState, { userRemote: userRemoteOrSpecialFeed, specialFeed: '' }));
+    if (typeof userRemoteOrSpecialFeed === 'string') {
+      setSpecialFeed(userRemoteOrSpecialFeed);
+      setUserRemote(null);
+    } else {
+      setSpecialFeed('');
+      setUserRemote(userRemoteOrSpecialFeed);
+    }
 
     window.scrollTo(0, 0);
   };
 
-  getEditor = () => {
-    // Oof :-/
-    return this.editor.current.getWrappedInstance().getWrappedInstance();
+  const getEditor = () => {
+    return editor.current;
   };
 
-  render() {
-    const title = this.props.intl.formatMessage(messages.title);
+  const title = intl.formatMessage(messages.title);
 
-    return (
-      <UserContext.Consumer>
-        {({ user }) =>
-          !user ? (
-            <Unauthorized />
-          ) : (
-            <DocumentTitle title={title}>
-              <div id="hw-dashboard" className={styles.container}>
-                <nav className={styles.nav}>
-                  <Tools className={styles.tools} />
-                  <Following
-                    className={styles.following}
-                    handleSetFeed={this.handleSetFeed}
-                    specialFeed={this.state.specialFeed}
-                    userRemote={this.state.userRemote}
+  return (
+    <UserContext.Consumer>
+      {({ user }) =>
+        !user ? (
+          <Unauthorized />
+        ) : (
+          <DocumentTitle title={title}>
+            <div id="hw-dashboard" className={styles.container}>
+              <nav className={styles.nav}>
+                <Tools className={styles.tools} />
+                <Following
+                  className={styles.following}
+                  handleSetFeed={handleSetFeed}
+                  specialFeed={specialFeed}
+                  userRemote={userRemote}
+                />
+                <Followers className={styles.followers} handleSetFeed={handleSetFeed} />
+              </nav>
+
+              <article className={styles.content}>
+                <DashboardEditor ref={editor} username={user.model.username} />
+                {specialFeed === 'me' ? (
+                  <MyFeed
+                    content={{ username: user.model.username, section: 'main', name: 'home' }}
+                    didFeedLoad={didFeedLoad}
                   />
-                  <Followers className={styles.followers} handleSetFeed={this.handleSetFeed} />
-                </nav>
-
-                <article className={styles.content}>
-                  <DashboardEditor ref={this.editor} username={user.model.username} />
-                  {this.state.specialFeed === 'me' ? (
-                    <MyFeed
-                      content={{ username: user.model.username, section: 'main', name: 'home' }}
-                      didFeedLoad={this.state.didFeedLoad}
-                    />
-                  ) : (
-                    <Feed
-                      didFeedLoad={this.state.didFeedLoad}
-                      getEditor={this.getEditor}
-                      query={this.state.query}
-                      shouldShowAllItems={this.state.shouldShowAllItems}
-                      specialFeed={this.state.specialFeed}
-                      userRemote={this.state.userRemote}
-                    />
-                  )}
-                </article>
-              </div>
-            </DocumentTitle>
-          )
-        }
-      </UserContext.Consumer>
-    );
-  }
+                ) : (
+                  <Feed
+                    didFeedLoad={didFeedLoad}
+                    getEditor={getEditor}
+                    query={query}
+                    shouldShowAllItems={shouldShowAllItems}
+                    specialFeed={specialFeed}
+                    userRemote={userRemote}
+                  />
+                )}
+              </article>
+            </div>
+          </DocumentTitle>
+        )
+      }
+    </UserContext.Consumer>
+  );
 }
-
-export default Dashboard;

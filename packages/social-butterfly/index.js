@@ -15,7 +15,7 @@ import WebFinger from './webfinger';
 import WebMention from './webmention';
 import WebSub from './websub';
 
-const socialButterfly = (options) => {
+export default (options) => {
   options.webSubSubscriberServer = WebSub(options);
 
   const { apiRouter, follow, unfollow } = setupApi(options);
@@ -28,7 +28,6 @@ const socialButterfly = (options) => {
 
   return { apiRouter, dispose, follow, like, syndicate: syndicateWithOptions, unfollow };
 };
-export default socialButterfly;
 
 function setupApi(options) {
   const { app } = options;

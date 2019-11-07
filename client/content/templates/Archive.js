@@ -2,56 +2,54 @@ import classNames from 'classnames';
 import ContentLink from '../../components/ContentLink';
 import { F } from '../../../shared/i18n';
 import gql from 'graphql-tag';
-import { graphql } from 'react-apollo';
-import React, { PureComponent } from 'react';
+import React, { useContext } from 'react';
 import styles from './Archive.module.css';
+import { useQuery } from '@apollo/react-hooks';
 import UserContext from '../../app/User_Context';
 
-@graphql(
-  gql`
-    query($username: String!, $section: String!, $album: String!, $name: String!) {
-      fetchCollection(username: $username, section: $section, album: $album, name: $name) {
-        album
-        forceRefresh
-        hidden
-        name
-        section
-        title
-        username
-      }
+const FETCH_COLLECTION = gql`
+  query($username: String!, $section: String!, $album: String!, $name: String!) {
+    fetchCollection(username: $username, section: $section, album: $album, name: $name) {
+      album
+      forceRefresh
+      hidden
+      name
+      section
+      title
+      username
     }
-  `,
-  {
-    options: ({ content: { username, section, album, name } }) => ({
-      variables: {
-        username,
-        section,
-        album,
-        name,
-      },
-    }),
   }
-)
-class Archive extends PureComponent {
-  static contextType = UserContext;
+`;
 
-  render() {
-    if (this.props.data.loading) {
-      return <div className={styles.loadingEmptyBox} />;
-    }
+export default React.forwardRef(({ content }, ref) => {
+  const { username, section, album, name } = content;
+  const user = useContext(UserContext).user;
+  const { loading, data } = useQuery(FETCH_COLLECTION, {
+    variables: {
+      username,
+      section,
+      album,
+      name,
+    },
+  });
 
-    const content = this.props.content;
-    const isOwnerViewing = this.context.user?.model?.username === content.username;
-    const collection = this.props.data.fetchCollection;
+  if (loading) {
+    return <div className={styles.loadingEmptyBox} />;
+  }
 
-    return (
-      <ul className={styles.archive}>
-        {!collection.length && (
-          <li>
-            <F msg="No content here yet." />
-          </li>
-        )}
-        {collection.filter(item => item.name !== content.name).map(item => (
+  const isOwnerViewing = user?.model?.username === content.username;
+  const collection = data.fetchCollection;
+
+  return (
+    <ul className={styles.archive}>
+      {!collection.length && (
+        <li>
+          <F msg="No content here yet." />
+        </li>
+      )}
+      {collection
+        .filter(item => item.name !== content.name)
+        .map(item => (
           <li
             key={item.name}
             className={classNames('hw-content-item', {
@@ -63,9 +61,6 @@ class Archive extends PureComponent {
             </ContentLink>
           </li>
         ))}
-      </ul>
-    );
-  }
-}
-
-export default Archive;
+    </ul>
+  );
+});

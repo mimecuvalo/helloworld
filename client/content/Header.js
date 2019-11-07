@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import styles from './Header.module.css';
 import UserContext from '../app/User_Context';
 
-class Header extends PureComponent {
+export default class Header extends PureComponent {
   static contextType = UserContext;
 
   render() {
@@ -17,13 +17,12 @@ class Header extends PureComponent {
         <h1 className={styles.title}>
           <ContentLink item={content} currentContent={content} className={styles.titleLink}>
             <span className="p-name">{content.title || <F msg="(untitled)" />}</span>
-            {isOwnerViewing &&
-              content.hidden && (
-                <span>
-                  &nbsp;
-                  <F msg="(hidden)" />
-                </span>
-              )}
+            {isOwnerViewing && content.hidden && (
+              <span>
+                &nbsp;
+                <F msg="(hidden)" />
+              </span>
+            )}
           </ContentLink>
 
           {isOwnerViewing ? (
@@ -41,5 +40,3 @@ class Header extends PureComponent {
     );
   }
 }
-
-export default Header;

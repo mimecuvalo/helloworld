@@ -2,11 +2,11 @@ import classNames from 'classnames';
 import { F } from '../../../shared/i18n';
 import FollowingSpecialFeedCountsQuery from '../FollowingSpecialFeedCountsQuery';
 import gql from 'graphql-tag';
-import { graphql } from 'react-apollo';
-import React, { PureComponent } from 'react';
+import React from 'react';
 import styles from './Actions.module.css';
+import { useMutation } from '@apollo/react-hooks';
 
-@graphql(gql`
+const FAVORITE_CONTENT_REMOTE = gql`
   mutation favoriteContentRemote($from_user: String, $post_id: String!, $type: String!, $favorited: Boolean!) {
     favoriteContentRemote(from_user: $from_user, post_id: $post_id, type: $type, favorited: $favorited) {
       favorited
@@ -15,20 +15,23 @@ import styles from './Actions.module.css';
       type
     }
   }
-`)
-class Favorite extends PureComponent {
-  handleClick = async evt => {
-    const { favorited, from_user, post_id, type } = this.props.contentRemote;
-    const variables = { from_user, post_id, type, favorited: !favorited };
+`;
 
-    await this.props.mutate({
+export default function Favorite(props) {
+  const { favorited, from_user, post_id, type } = props.contentRemote;
+  const variables = { from_user, post_id, type, favorited: !favorited };
+
+  const [favoriteContentRemote] = useMutation(FAVORITE_CONTENT_REMOTE);
+
+  const handleClick = evt =>
+    favoriteContentRemote({
       variables,
       optimisticResponse: {
         __typename: 'Mutation',
         favoriteContentRemote: Object.assign({}, variables, { __typename: type }),
       },
       update: (store, { data: { favoriteContentRemote } }) => {
-        if (this.props.isDashboard) {
+        if (props.isDashboard) {
           const query = FollowingSpecialFeedCountsQuery;
           const data = store.readQuery({ query });
           data.fetchUserTotalCounts.favoritesCount += variables.favorited ? 1 : -1;
@@ -36,18 +39,13 @@ class Favorite extends PureComponent {
         }
       },
     });
-  };
 
-  render() {
-    return (
-      <button
-        onClick={this.handleClick}
-        className={classNames('hw-button-link', { [styles.enabled]: this.props.contentRemote.favorited })}
-      >
-        <F msg="favorite" />
-      </button>
-    );
-  }
+  return (
+    <button
+      onClick={handleClick}
+      className={classNames('hw-button-link', { [styles.enabled]: props.contentRemote.favorited })}
+    >
+      <F msg="favorite" />
+    </button>
+  );
 }
-
-export default Favorite;

@@ -1,98 +1,88 @@
 import ContentBase from './ContentBase';
 import ContentLink from '../components/ContentLink';
 import ContentThumb from '../components/ContentThumb';
-import { defineMessages, injectIntl } from '../../shared/i18n';
+import { defineMessages, useIntl } from '../../shared/i18n';
 import gql from 'graphql-tag';
-import { graphql } from 'react-apollo';
-import React, { PureComponent } from 'react';
+import React from 'react';
 import styles from './Search.module.css';
-import UserContext from '../app/User_Context';
+import { useQuery } from '@apollo/react-hooks';
 
 const messages = defineMessages({
   search: { msg: 'search' },
   untitled: { msg: 'untitled' },
 });
 
-@injectIntl
-@graphql(
-  gql`
-    query SearchAndUserQuery($username: String!, $query: String!) {
-      searchContent(username: $username, query: $query) {
-        album
-        forceRefresh
-        hidden
-        name
-        preview
-        section
-        thumb
-        title
-        username
-      }
-
-      fetchPublicUserDataSearch(username: $username) {
-        description
-        title
-        username
-      }
+const SEARCH_AND_USER_QUERY = gql`
+  query SearchAndUserQuery($username: String!, $query: String!) {
+    searchContent(username: $username, query: $query) {
+      album
+      forceRefresh
+      hidden
+      name
+      preview
+      section
+      thumb
+      title
+      username
     }
-  `,
-  {
-    options: ({
-      match: {
-        params: { username, query },
-      },
-    }) => ({
-      variables: {
-        username,
-        query,
-      },
-    }),
+
+    fetchPublicUserDataSearch(username: $username) {
+      description
+      title
+      username
+    }
   }
-)
-class Search extends PureComponent {
-  static contextType = UserContext;
+`;
 
-  render() {
-    if (this.props.data.loading) {
-      return null;
-    }
+export default function Search({ match }) {
+  const {
+    params: { username, query },
+  } = match;
+  const intl = useIntl();
+  const { loading, data } = useQuery(SEARCH_AND_USER_QUERY, {
+    variables: {
+      username,
+      query,
+    },
+  });
 
-    const query = this.props.match.params.query;
-    const results = this.props.data.searchContent;
-    const contentOwner = this.props.data.fetchPublicUserDataSearch;
-    const pageTitle = this.props.intl.formatMessage(messages.search);
-    const untitled = this.props.intl.formatMessage(messages.untitled);
+  if (loading) {
+    return null;
+  }
 
-    return (
-      <ContentBase
-        className={styles.search}
-        contentOwner={contentOwner}
-        title={pageTitle}
-        username={contentOwner.username}
-      >
-        <ol id="hw-results" className={styles.list}>
-          {results.map(item => (
-            <li key={item.name}>
-              <div className={styles.innerList}>
-                {item.thumb ? <ContentThumb className={styles.thumbLink} item={item} /> : null}
-                <div>
-                  <ContentLink item={item} className={styles.title}>
-                    <Highlight str={item.title || untitled} term={query} />
-                  </ContentLink>
-                  <div className={styles.preview}>
-                    <Highlight str={item.preview} term={query} />
-                  </div>
+  const results = data.searchContent;
+  const contentOwner = data.fetchPublicUserDataSearch;
+  const pageTitle = intl.formatMessage(messages.search);
+  const untitled = intl.formatMessage(messages.untitled);
+
+  return (
+    <ContentBase
+      className={styles.search}
+      contentOwner={contentOwner}
+      title={pageTitle}
+      username={contentOwner.username}
+    >
+      <ol id="hw-results" className={styles.list}>
+        {results.map(item => (
+          <li key={item.name}>
+            <div className={styles.innerList}>
+              {item.thumb ? <ContentThumb className={styles.thumbLink} item={item} /> : null}
+              <div>
+                <ContentLink item={item} className={styles.title}>
+                  <Highlight str={item.title || untitled} term={query} />
+                </ContentLink>
+                <div className={styles.preview}>
+                  <Highlight str={item.preview} term={query} />
                 </div>
               </div>
-              <div className={styles.clear} />
-            </li>
-          ))}
-        </ol>
-      </ContentBase>
-    );
-  }
+            </div>
+            <div className={styles.clear} />
+          </li>
+        ))}
+      </ol>
+    </ContentBase>
+  );
 }
-export default Search;
 
 const Highlight = React.memo(function Highlight({ str, term }) {
   const regex = new RegExp(`(${term})`, 'gi');

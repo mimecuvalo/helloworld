@@ -1,74 +1,110 @@
 import { buildUrl, contentUrl } from '../../shared/util/url_factory';
-import compose from 'lodash.flowright';
 import ContentBase from './ContentBase';
 import ContentQuery from './ContentQuery';
 import { convertFromRaw, EditorState } from 'draft-js';
-import { defineMessages, injectIntl } from '../../shared/i18n';
+import { defineMessages, useIntl } from '../../shared/i18n';
 import { EditorUtils } from 'hello-world-editor';
 import Feed from './Feed';
 import gql from 'graphql-tag';
-import { graphql } from 'react-apollo';
 import isMobile from 'is-mobile';
 import Item from './Item';
 import Nav from './Nav';
 import NotFound from '../error/404';
-import React, { Component } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Simple from './templates/Simple';
 import styles from './Content.module.css';
 import SwipeListener from 'swipe-listener';
-import { withRouter } from 'react-router-dom';
-import { withSnackbar } from 'notistack';
+import { useHistory } from 'react-router-dom';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useSnackbar } from 'notistack';
 
 const messages = defineMessages({
   error: { msg: 'Error updating content.' },
 });
 
-@injectIntl
-@withRouter
-@withSnackbar
-class Content extends Component {
-  constructor(props) {
-    super(props);
-
-    this.contentBase = React.createRef();
-    this.item = React.createRef();
-    this.nav = React.createRef();
-    this.swipeListener = null;
-
-    this.state = {
-      isEditing: false,
-    };
+const SAVE_CONTENT = gql`
+  mutation saveContent(
+    $name: String!
+    $hidden: Boolean!
+    $title: String!
+    $thumb: String!
+    $style: String!
+    $code: String!
+    $content: String!
+  ) {
+    saveContent(
+      name: $name
+      hidden: $hidden
+      title: $title
+      thumb: $thumb
+      style: $style
+      code: $code
+      content: $content
+    ) {
+      username
+      name
+      hidden
+      title
+      thumb
+      style
+      code
+      content
+    }
   }
+`;
 
-  componentDidMount() {
-    if (this.props.data.loading || !this.props.data.fetchContent) {
+export default function Content(props) {
+  const {
+    match: {
+      params: { username, name },
+    },
+  } = props;
+  const intl = useIntl();
+  const routerHistory = useHistory();
+  const snackbar = useSnackbar();
+  const contentBase = useRef(null);
+  const item = useRef(null);
+  const nav = useRef(null);
+  const swipeListener = useRef(null);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const { loading, data } = useQuery(ContentQuery, {
+    variables: {
+      username: username || '',
+      name: username ? name || 'home' : '',
+    },
+  });
+  const [saveContent] = useMutation(SAVE_CONTENT);
+
+  useEffect(() => {
+    if (loading || !data.fetchContent) {
       return;
     }
 
-    const canonicalUrl = contentUrl(this.props.data.fetchContent);
+    const canonicalUrl = contentUrl(data.fetchContent);
     const absoluteCanonicalUrl = buildUrl({ isAbsolute: true, pathname: canonicalUrl });
     const parsedCanonicalUrl = new URL(absoluteCanonicalUrl);
     const currentWindowUrl = new URL(window.location.href);
     if (currentWindowUrl.pathname !== parsedCanonicalUrl.pathname) {
-      this.props.history.replace(canonicalUrl);
+      routerHistory.replace(canonicalUrl);
     }
 
-    this.setupSwipe();
+    setupSwipe();
 
-    document.addEventListener('keydown', this.handleKeyDown);
-  }
+    document.addEventListener('keydown', handleKeyDown);
 
-  componentWillUnmount() {
-    this.swipeListener && this.swipeListener.off();
-    document.removeEventListener('keydown', this.handleKeyDown);
-  }
+    return () => {
+      swipeListener?.current && swipeListener.current.off();
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  });
 
-  componentDidUpdate() {
-    this.setupSwipe();
-  }
+  useEffect(() => {
+    item?.current?.getEditor() && item.current.getEditor().setUnsavedChanges(!isEditing);
+  }, [isEditing]);
 
-  handleKeyDown = evt => {
-    if (!this.state.isEditing) {
+  const handleKeyDown = evt => {
+    if (!isEditing) {
       return;
     }
 
@@ -76,48 +112,42 @@ class Content extends Component {
     const isMac = navigator.platform.toLowerCase().indexOf('mac') !== -1;
     const isAccelKey = isMac ? evt.metaKey : evt.ctrlKey;
     if (isAccelKey && evt.key === 's') {
-      this.handleEdit();
+      handleEdit();
     }
   };
 
-  setupSwipe() {
+  function setupSwipe() {
     if (!isMobile({ tablet: true })) {
       return;
     }
 
-    if (this.swipeListener || !this.contentBase.current) {
+    if (swipeListener?.current || !contentBase.current) {
       return;
     }
 
-    this.swipeListener = SwipeListener(this.contentBase.current);
-    this.contentBase.current.addEventListener('swipe', e => {
+    swipeListener.current = SwipeListener(contentBase.current);
+    contentBase.current.addEventListener('swipe', e => {
       const directions = e.detail.directions;
 
       if (directions.left) {
-        this.nav.current && this.nav.current.prev();
+        nav.current && nav.current.prev();
       } else if (directions.right) {
-        this.nav.current && this.nav.current.next();
+        nav.current && nav.current.next();
       }
     });
   }
 
-  shouldComponentUpdate(nextProps) {
-    return !nextProps.data.loading;
-  }
-
-  handleEdit = evt => {
-    if (this.state.isEditing) {
-      this.saveContent();
+  const handleEdit = evt => {
+    if (isEditing) {
+      performSaveContent();
     }
 
-    this.setState({ isEditing: !this.state.isEditing }, () => {
-      this.item.current.getEditor() && this.item.current.getEditor().setUnsavedChanges(!this.state.isEditing);
-    });
+    setIsEditing(!isEditing);
   };
 
-  async saveContent() {
-    const { username, name, thumb } = this.props.data.fetchContent;
-    const editor = this.item.current.getEditor();
+  async function performSaveContent() {
+    const { username, name, thumb } = data.fetchContent;
+    const editor = item.current.getEditor();
     const content = editor.export();
 
     // TODO(mime): gotta be a simpler way then all this conversion.
@@ -137,7 +167,7 @@ class Content extends Component {
     };
 
     try {
-      await this.props.mutate({
+      await saveContent({
         variables,
         optimisticResponse: {
           __typename: 'Mutation',
@@ -145,107 +175,59 @@ class Content extends Component {
         },
       });
     } catch (ex) {
-      this.props.enqueueSnackbar(this.props.intl.formatMessage(messages.error), { variant: 'error' });
+      snackbar.enqueueSnackbar(intl.formatMessage(messages.error), { variant: 'error' });
     }
   }
 
-  render() {
-    if (this.props.data.loading) {
-      return null;
-    }
+  if (loading) {
+    return null;
+  }
 
-    const content = this.props.data.fetchContent;
+  const content = data.fetchContent;
 
-    if (!content) {
-      return <NotFound />;
-    }
+  if (!content) {
+    return <NotFound />;
+  }
 
-    if (content.template === 'blank') {
-      return (
-        <div id="hw-content">
-          <Simple content={content} />
-        </div>
-      );
-    }
-
-    const isEditing = this.state.isEditing;
-    const contentOwner = this.props.data.fetchPublicUserData;
-    const comments = this.props.data.fetchCommentsRemote;
-    const favorites = this.props.data.fetchFavoritesRemote;
-    const item =
-      content.template === 'feed' ? (
-        <Feed content={content} />
-      ) : (
-        <Item
-          content={content}
-          contentOwner={contentOwner}
-          comments={comments}
-          favorites={favorites}
-          handleEdit={this.handleEdit}
-          isEditing={isEditing}
-          ref={this.item}
-        />
-      );
-    const title = (content.title ? content.title + ' – ' : '') + contentOwner.title;
-
+  if (content.template === 'blank') {
     return (
-      <ContentBase
-        ref={this.contentBase}
-        content={content}
-        contentOwner={contentOwner}
-        title={title}
-        username={content.username}
-      >
-        <article className={styles.content}>
-          {isEditing ? null : <Nav ref={this.nav} content={content} isEditing={this.state.isEditing} />}
-          {item}
-        </article>
-      </ContentBase>
+      <div id="hw-content">
+        <Simple content={content} />
+      </div>
     );
   }
-}
 
-export default compose(
-  graphql(ContentQuery, {
-    options: ({
-      match: {
-        params: { username, name },
-      },
-    }) => ({
-      variables: {
-        username: username || '',
-        name: username ? name || 'home' : '',
-      },
-    }),
-  }),
-  graphql(gql`
-    mutation saveContent(
-      $name: String!
-      $hidden: Boolean!
-      $title: String!
-      $thumb: String!
-      $style: String!
-      $code: String!
-      $content: String!
-    ) {
-      saveContent(
-        name: $name
-        hidden: $hidden
-        title: $title
-        thumb: $thumb
-        style: $style
-        code: $code
-        content: $content
-      ) {
-        username
-        name
-        hidden
-        title
-        thumb
-        style
-        code
-        content
-      }
-    }
-  `)
-)(Content);
+  const contentOwner = data.fetchPublicUserData;
+  const comments = data.fetchCommentsRemote;
+  const favorites = data.fetchFavoritesRemote;
+  const itemEl =
+    content.template === 'feed' ? (
+      <Feed content={content} />
+    ) : (
+      <Item
+        content={content}
+        contentOwner={contentOwner}
+        comments={comments}
+        favorites={favorites}
+        handleEdit={handleEdit}
+        isEditing={isEditing}
+        ref={item}
+      />
+    );
+  const title = (content.title ? content.title + ' – ' : '') + contentOwner.title;
+
+  return (
+    <ContentBase
+      ref={contentBase}
+      content={content}
+      contentOwner={contentOwner}
+      title={title}
+      username={content.username}
+    >
+      <article className={styles.content}>
+        {isEditing ? null : <Nav ref={nav} content={content} isEditing={isEditing} />}
+        {itemEl}
+      </article>
+    </ContentBase>
+  );
+}

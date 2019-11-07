@@ -20,11 +20,10 @@
     "swat0"
   ],
   "dependencies": {
-    "cra-all-the-things": "0.9.2",
+    "cra-all-the-things": "0.9.4",
     "dataloader": "1.4.0",
     "hello-world-editor": "0.8.10",
     "is-mobile": "2.1.0",
-    "lodash.flowright": "3.5.0",
     "magic-signatures": "2.0.0",
     "nanoid": "2.1.5",
     "react": "16.11.0",

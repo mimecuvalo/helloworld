@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { setUser } from '../app/auth';
 import UserContext from '../app/User_Context';
 
-class Tools extends Component {
+export default class Tools extends Component {
   static contextType = UserContext;
 
   constructor(props) {
@@ -74,5 +74,3 @@ class Tools extends Component {
     );
   }
 }
-
-export default Tools;

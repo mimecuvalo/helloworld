@@ -62,7 +62,6 @@
     "@babel/plugin-transform-modules-commonjs": "7.6.0",
     "@babel/preset-react": "7.6.3",
     "babel-plugin-css-modules-transform": "1.6.2",
-    "generic-names": "2.0.1",
-    "react": ">=16.11.0"
+    "generic-names": "2.0.1"
   }
 }

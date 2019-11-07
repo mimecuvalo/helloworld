@@ -4,54 +4,53 @@ import classNames from 'classnames';
 import { FormattedNumber } from '../../shared/i18n';
 import FollowingFeedCountsQuery from './FollowingFeedCountsQuery';
 import FollowingMenu from './FollowingMenu';
-import { graphql } from 'react-apollo';
-import React, { PureComponent } from 'react';
+import React from 'react';
 import styles from './RemoteUsers.module.css';
+import { useQuery } from '@apollo/react-hooks';
 
-@graphql(FollowingFeedCountsQuery, {
-  options: ({ pollInterval }) => ({
-    pollInterval,
-  }),
-})
-class FollowingFeeds extends PureComponent {
-  handleClick = (evt, userRemote) => {
-    this.props.handleSetFeed(userRemote);
+export default function FollowingFeeds(props) {
+  const { loading, data } = useQuery(FollowingFeedCountsQuery, {
+    pollInterval: props.pollInterval,
+  });
+
+  if (loading) {
+    return null;
+  }
+
+  const handleClick = (evt, userRemote) => {
+    props.handleSetFeed(userRemote);
   };
 
-  render() {
-    const following = this.props.following;
-    const feedCounts = this.props.data.fetchFeedCounts;
-    const feedCountsObj = _.keyBy(feedCounts, 'from_user');
-    const currentUserRemote = this.props.currentUserRemote || {};
+  const following = props.following;
+  const feedCounts = data.fetchFeedCounts;
+  const feedCountsObj = _.keyBy(feedCounts, 'from_user');
+  const currentUserRemote = props.currentUserRemote || {};
 
-    return (
-      <>
-        {following.map(userRemote => (
-          <li
-            key={userRemote.profile_url}
-            className={classNames({ [styles.selected]: currentUserRemote.profile_url === userRemote.profile_url })}
+  return (
+    <>
+      {following.map(userRemote => (
+        <li
+          key={userRemote.profile_url}
+          className={classNames({ [styles.selected]: currentUserRemote.profile_url === userRemote.profile_url })}
+        >
+          <button
+            className="hw-button-link"
+            onClick={evt => handleClick(evt, userRemote)}
+            title={userRemote.name || userRemote.username}
           >
-            <button
-              className="hw-button-link"
-              onClick={evt => this.handleClick(evt, userRemote)}
-              title={userRemote.name || userRemote.username}
-            >
-              <Avatar src={userRemote.favicon || userRemote.avatar} />
-              {userRemote.name || userRemote.username}
-            </button>
-            <span className={styles.unreadCount}>
-              {feedCountsObj[userRemote.profile_url] ? (
-                <FormattedNumber value={feedCountsObj[userRemote.profile_url].count} />
-              ) : (
-                '0'
-              )}
-            </span>
-            <FollowingMenu userRemote={userRemote} handleSetFeed={this.props.handleSetFeed} />
-          </li>
-        ))}
-      </>
-    );
-  }
+            <Avatar src={userRemote.favicon || userRemote.avatar} />
+            {userRemote.name || userRemote.username}
+          </button>
+          <span className={styles.unreadCount}>
+            {feedCountsObj[userRemote.profile_url] ? (
+              <FormattedNumber value={feedCountsObj[userRemote.profile_url].count} />
+            ) : (
+              '0'
+            )}
+          </span>
+          <FollowingMenu userRemote={userRemote} handleSetFeed={props.handleSetFeed} />
+        </li>
+      ))}
+    </>
+  );
 }
-
-export default FollowingFeeds;

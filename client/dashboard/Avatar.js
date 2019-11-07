@@ -1,29 +1,19 @@
-import { defineMessages, injectIntl } from '../../shared/i18n';
-import React, { PureComponent } from 'react';
+import { defineMessages, useIntl } from '../../shared/i18n';
+import React, { useEffect, useState } from 'react';
 
 const messages = defineMessages({
   avatar: { msg: 'user avatar' },
 });
 
-@injectIntl
-class Avatar extends PureComponent {
-  constructor() {
-    super();
+export default function Avatar({ src }) {
+  const intl = useIntl();
+  const [validSrc, setValidSrc] = useState('/img/pixel.gif');
 
-    this.state = {
-      src: '/img/pixel.gif',
-    };
-  }
-
-  componentDidMount() {
+  useEffect(() => {
     const img = new Image();
-    img.onload = () => img.naturalWidth && this.setState({ src: this.props.src });
-    img.src = this.props.src;
-  }
+    img.onload = () => img.naturalWidth && setValidSrc(src);
+    img.src = src;
+  }, [src]);
 
-  render() {
-    return <img src={this.state.src} alt={this.props.intl.formatMessage(messages.avatar)} />;
-  }
+  return <img src={validSrc} alt={intl.formatMessage(messages.avatar)} />;
 }
-
-export default Avatar;

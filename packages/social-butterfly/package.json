@@ -65,8 +65,6 @@
     "react-dom": ">=16.11.0"
   },
   "devDependencies": {
-    "@babel/cli": "7.6.4",
-    "react": ">=16.11.0",
-    "react-dom": ">=16.11.0"
+    "@babel/cli": "7.6.4"
   }
 }

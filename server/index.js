@@ -18,6 +18,9 @@ import WinstonDailyRotateFile from 'winston-daily-rotate-file';
 
 const FileStore = sessionFileStore(session);
 
+// react-intl's requires DOMParser to be available globally so that XML message parsing is done correctly.
+global.DOMParser = new (require('jsdom')).JSDOM().window.DOMParser;
+
 // Called from scripts/serve.js to create the three apps we currently support: the main App, API, and Apollo servers.
 export default function constructApps({ appName, productionAssetsByType, publicUrl, gitInfo }) {
   const app = express.Router();

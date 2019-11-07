@@ -43,7 +43,7 @@ async function parseMentions(req, options, contentOwner, content, opt_remoteCont
   const mentionedRemoteUsers = [];
 
   async function addToUsersList(userRemote, threadUrl, shouldAddToMentions) {
-    if (!userRemote) {
+    if (!userRemote && threadUrl) {
       const webpage = await fetchText(threadUrl);
       const $ = cheerio.load(webpage);
       let webmention_url = $('link[rel="webmention"]').attr('href');

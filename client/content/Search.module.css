@@ -26,7 +26,6 @@
 }
 
 .innerList {
-  float: left;
   display: flex;
 }
 

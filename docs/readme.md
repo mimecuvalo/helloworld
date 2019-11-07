@@ -8,15 +8,9 @@
 </blockquote>
 
 <p align="center">
-  <a href="https://travis-ci.org/mimecuvalo/helloworld">
-    <img src="https://img.shields.io/travis/mimecuvalo/helloworld.svg" alt="CI status" />
-  </a>
-  <a href="https://github.com/prettier/prettier">
-    <img src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg" alt="CI status" />
-  </a>
-  <a href="https://github.com/username/project/docs/license.md">
-    <img src="https://img.shields.io/badge/license-MIT-brightgreen.svg" alt="license" />
-  </a>
+  <a href="https://travis-ci.org/mimecuvalo/helloworld"><img src="https://img.shields.io/travis/mimecuvalo/helloworld.svg" alt="CI status" /></a>
+  <a href="https://github.com/prettier/prettier"><img src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg" alt="CI status" /></a>
+  <a href="https://github.com/username/project/docs/license.md"><img src="https://img.shields.io/badge/license-MIT-brightgreen.svg" alt="license" /></a>
 </p>
 
 <strong>NOTE: still under active development and I'm not currently providing backwards compatibility until things stabilize.</strong>
@@ -104,11 +98,13 @@ REACT_APP_SSR_PORT=3001
 
 ### p0 (high pri)
 
+- creating comment doesn't load in comment properly (text missing)
+- replying from dashboard when body of editor isn't selected throws error
 - possible to pause compilation while building package?
 - apostrophe in title makes it not hidden, e.g. Don-t-deploy-on-Fridays-wRXma4oxja
 - Multiple app capable
 - Fault tolerant http
-- rm antiCache with migration to hooks
+- rm antiCache with migration to hooks <- needed anymore?
 - Package directories build sanely
 - Reader WordPress alt Tumblr alternative
 - freeze HMR when re-building
@@ -121,6 +117,7 @@ REACT_APP_SSR_PORT=3001
 - think about igor's feedback re css and other stuff
 - high-res picture load in app, not new link
 - hw loading old entries if purged prbly
+- sorting should refresh feed
 - pasting iframe into editor doesn’t work (npr video embed)
 - fix img sizes in comments (too big - see example on nite-lite about page)
 - Email is formatted wrong when getting webmention (says self sent email)
@@ -218,6 +215,7 @@ REACT_APP_SSR_PORT=3001
 - hubspot's draft-extend / draft-convert might be a better route than draft-js-plugins, maybe combine the two editors
 - more winston logging
 - links template just open embeds in lightbox?
+- images open in lightbox
 - editor features to bring back (from Python version)
   - use CSS-in-JS in editor package to avoid having to import separately
   - add snackbar close action

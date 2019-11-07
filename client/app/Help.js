@@ -1,48 +1,42 @@
-import { defineMessages, F, injectIntl } from '../../shared/i18n';
+import { defineMessages, F, useIntl } from '../../shared/i18n';
 import HelpOutlineRoundedIcon from '@material-ui/icons/HelpOutlineRounded';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 import styles from './Help.module.css';
 
 const messages = defineMessages({
   help: { msg: 'Help' },
 });
 
-@injectIntl
-class Help extends PureComponent {
-  constructor() {
-    super();
+export default function Help() {
+  const intl = useIntl();
+  const [anchorEl, setAnchorEl] = useState(null);
 
-    this.state = {
-      anchorEl: null,
-    };
-  }
-
-  handleMenuOpenerClick = event => {
-    this.setState({ anchorEl: event.currentTarget });
+  const handleMenuOpenerClick = event => {
+    setAnchorEl(event.currentTarget);
   };
 
-  handleStyleguide = () => {
-    this.handleClose();
+  const handleStyleguide = () => {
+    handleClose();
     window.open('http://localhost:9001', 'styleguide');
   };
 
-  handleLanguage = () => {
-    this.handleClose();
+  const handleLanguage = () => {
+    handleClose();
     window.location.href = '/?lang=fr';
   };
 
-  handleClose = () => {
-    this.setState({ anchorEl: null });
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
-  renderStyleguide() {
+  function renderStyleguide() {
     // Conditionally compile this code. Should not appear in production.
     if (process.env.NODE_ENV === 'development') {
       return (
-        <MenuItem key="styleguide" onClick={this.handleStyleguide}>
+        <MenuItem key="styleguide" onClick={handleStyleguide}>
           Styleguide
         </MenuItem>
       );
@@ -51,43 +45,38 @@ class Help extends PureComponent {
     return null;
   }
 
-  render() {
-    const { anchorEl } = this.state;
-    const isOpen = Boolean(anchorEl);
-    const helpAriaLabel = this.props.intl.formatMessage(messages.help);
+  const isOpen = Boolean(anchorEl);
+  const helpAriaLabel = intl.formatMessage(messages.help);
 
-    return (
-      <div className={styles.helpContainer}>
-        <IconButton
-          aria-label={helpAriaLabel}
-          aria-owns={isOpen ? 'help-menu' : undefined}
-          aria-haspopup="true"
-          onClick={this.handleMenuOpenerClick}
-        >
-          <HelpOutlineRoundedIcon className={styles.helpIcon} />
-        </IconButton>
-        <Menu
-          id="help-menu"
-          anchorEl={anchorEl}
-          open={isOpen}
-          onClose={this.handleClose}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          transformOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right',
-          }}
-        >
-          {this.renderStyleguide()}
-          <MenuItem key="language" onClick={this.handleLanguage}>
-            <F msg="Test language alternative" />
-          </MenuItem>
-        </Menu>
-      </div>
-    );
-  }
+  return (
+    <div className={styles.helpContainer}>
+      <IconButton
+        aria-label={helpAriaLabel}
+        aria-owns={isOpen ? 'help-menu' : undefined}
+        aria-haspopup="true"
+        onClick={handleMenuOpenerClick}
+      >
+        <HelpOutlineRoundedIcon className={styles.helpIcon} />
+      </IconButton>
+      <Menu
+        id="help-menu"
+        anchorEl={anchorEl}
+        open={isOpen}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+      >
+        {renderStyleguide()}
+        <MenuItem key="language" onClick={handleLanguage}>
+          <F msg="Test language alternative" />
+        </MenuItem>
+      </Menu>
+    </div>
+  );
 }
-
-export default Help;

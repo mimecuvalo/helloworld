@@ -5,7 +5,7 @@ import React from 'react';
 import SiteMap from './SiteMap';
 import styles from './Content.module.css';
 
-const ContentBase = React.memo(
+export default React.memo(
   React.forwardRef((props, ref) => {
     const { children, className, contentOwner, title, username } = props;
 
@@ -41,5 +41,3 @@ const ContentBase = React.memo(
     );
   })
 );
-
-export default ContentBase;
