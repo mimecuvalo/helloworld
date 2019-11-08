@@ -7,7 +7,7 @@ import Delete from '../dashboard/actions/Delete';
 import { Editor } from 'hello-world-editor';
 import Favorite from '../dashboard/actions/Favorite';
 import gql from 'graphql-tag';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import styles from './Comments.module.css';
 import UserContext from '../app/User_Context';
 import { useMutation } from '@apollo/react-hooks';
@@ -43,6 +43,7 @@ export default function Comments({ comments, content }) {
   const commentEditor = useRef(null);
   const [isPosting, setIsPosting] = useState(false);
   const [postComment] = useMutation(POST_COMMENT);
+  const user = useContext(UserContext).user;
 
   const handleKeyDown = evt => {
     if (!commentEditor || !commentEditor.current) {
@@ -96,74 +97,67 @@ export default function Comments({ comments, content }) {
   };
 
   const ariaImgMsg = intl.formatMessage(messages.avatar);
+  const isLoggedIn = !!user;
+  const isOwnerViewing = user?.model?.username === content.username;
 
   return (
-    <UserContext.Consumer>
-      {({ user }) => {
-        const isLoggedIn = !!user;
-        const isOwnerViewing = user?.model?.username === content.username;
+    <div className="hw-comments">
+      <h3 className={styles.commentsHeader}>
+        <F msg="comments" />
+      </h3>
+      {isLoggedIn ? (
+        <div id="hw-comment-editor" className={styles.commentEditorWrapper}>
+          <Editor
+            editorKey="comments"
+            content={{}}
+            ref={commentEditor}
+            type="comment"
+            dontWarnOnUnsaved={true}
+            locale={configuration.locale}
+          />
+          <button className={classNames('hw-button', 'hw-save')} disabled={isPosting} onClick={handlePost}>
+            <F msg="post" />
+          </button>
+        </div>
+      ) : (
+        <F
+          msg="Please {login} to leave a comment."
+          values={{
+            login: (
+              <button className="hw-button-link" onClick={handleLogin}>
+                <F msg="login" />
+              </button>
+            ),
+          }}
+        />
+      )}
+      {comments ? (
+        <ul className={styles.comments}>
+          {comments.map(comment => (
+            <li className={styles.comment} key={comment.post_id}>
+              <img className={styles.avatar} src={comment.avatar || '/img/pixel.gif'} alt={ariaImgMsg} />
+              <div>
+                {comment.from_user ? (
+                  <a href={comment.from_user} target="_blank" rel="noopener noreferrer">
+                    {comment.creator || comment.username}
+                  </a>
+                ) : (
+                  <span className={styles.author}>{comment.creator || comment.username}: </span>
+                )}
+                <div dangerouslySetInnerHTML={{ __html: comment.view }} />
 
-        return (
-          <div className="hw-comments">
-            <h3 className={styles.commentsHeader}>
-              <F msg="comments" />
-            </h3>
-            {isLoggedIn ? (
-              <div id="hw-comment-editor" className={styles.commentEditorWrapper}>
-                <Editor
-                  editorKey="comments"
-                  content={{}}
-                  ref={commentEditor}
-                  type="comment"
-                  dontWarnOnUnsaved={true}
-                  locale={configuration.locale}
-                />
-                <button className={classNames('hw-button', 'hw-save')} disabled={isPosting} onClick={handlePost}>
-                  <F msg="post" />
-                </button>
+                {isOwnerViewing ? (
+                  <div className={styles.actions}>
+                    <Favorite contentRemote={comment} />
+                    &nbsp;•&nbsp;
+                    <Delete contentRemote={comment} />
+                  </div>
+                ) : null}
               </div>
-            ) : (
-              <F
-                msg="Please {login} to leave a comment."
-                values={{
-                  login: (
-                    <button className="hw-button-link" onClick={handleLogin}>
-                      <F msg="login" />
-                    </button>
-                  ),
-                }}
-              />
-            )}
-            {comments ? (
-              <ul className={styles.comments}>
-                {comments.map(comment => (
-                  <li className={styles.comment} key={comment.post_id}>
-                    <img className={styles.avatar} src={comment.avatar || '/img/pixel.gif'} alt={ariaImgMsg} />
-                    <div>
-                      {comment.from_user ? (
-                        <a href={comment.from_user} target="_blank" rel="noopener noreferrer">
-                          {comment.creator || comment.username}
-                        </a>
-                      ) : (
-                        <span className={styles.author}>{comment.creator || comment.username}: </span>
-                      )}
-                      <div dangerouslySetInnerHTML={{ __html: comment.view }} />
-
-                      {isOwnerViewing ? (
-                        <div className={styles.actions}>
-                          <Favorite contentRemote={comment} />
-                          &nbsp;•&nbsp;
-                          <Delete contentRemote={comment} />
-                        </div>
-                      ) : null}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </div>
-        );
-      }}
-    </UserContext.Consumer>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
   );
 }

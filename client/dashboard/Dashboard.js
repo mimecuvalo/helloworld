@@ -5,7 +5,7 @@ import Feed from './Feed';
 import Followers from './Followers';
 import Following from './Following';
 import MyFeed from '../content/Feed';
-import React, { useState, useRef } from 'react';
+import React, { useContext, useState, useRef } from 'react';
 import styles from './Dashboard.module.css';
 import Tools from './Tools';
 import Unauthorized from '../error/401';
@@ -23,6 +23,11 @@ export default function Dashboard(props) {
   const [query, setQuery] = useState(null);
   const [specialFeed, setSpecialFeed] = useState('');
   const [userRemote, setUserRemote] = useState(null);
+  const user = useContext(UserContext).user;
+
+  if (!user) {
+    return <Unauthorized />;
+  }
 
   const handleSetFeed = (userRemoteOrSpecialFeed, opt_query, opt_allItems) => {
     setDidFeedLoad(true);
@@ -47,46 +52,38 @@ export default function Dashboard(props) {
   const title = intl.formatMessage(messages.title);
 
   return (
-    <UserContext.Consumer>
-      {({ user }) =>
-        !user ? (
-          <Unauthorized />
-        ) : (
-          <DocumentTitle title={title}>
-            <div id="hw-dashboard" className={styles.container}>
-              <nav className={styles.nav}>
-                <Tools className={styles.tools} />
-                <Following
-                  className={styles.following}
-                  handleSetFeed={handleSetFeed}
-                  specialFeed={specialFeed}
-                  userRemote={userRemote}
-                />
-                <Followers className={styles.followers} handleSetFeed={handleSetFeed} />
-              </nav>
+    <DocumentTitle title={title}>
+      <div id="hw-dashboard" className={styles.container}>
+        <nav className={styles.nav}>
+          <Tools className={styles.tools} />
+          <Following
+            className={styles.following}
+            handleSetFeed={handleSetFeed}
+            specialFeed={specialFeed}
+            userRemote={userRemote}
+          />
+          <Followers className={styles.followers} handleSetFeed={handleSetFeed} />
+        </nav>
 
-              <article className={styles.content}>
-                <DashboardEditor ref={editor} username={user.model.username} />
-                {specialFeed === 'me' ? (
-                  <MyFeed
-                    content={{ username: user.model.username, section: 'main', name: 'home' }}
-                    didFeedLoad={didFeedLoad}
-                  />
-                ) : (
-                  <Feed
-                    didFeedLoad={didFeedLoad}
-                    getEditor={getEditor}
-                    query={query}
-                    shouldShowAllItems={shouldShowAllItems}
-                    specialFeed={specialFeed}
-                    userRemote={userRemote}
-                  />
-                )}
-              </article>
-            </div>
-          </DocumentTitle>
-        )
-      }
-    </UserContext.Consumer>
+        <article className={styles.content}>
+          <DashboardEditor ref={editor} username={user.model.username} />
+          {specialFeed === 'me' ? (
+            <MyFeed
+              content={{ username: user.model.username, section: 'main', name: 'home' }}
+              didFeedLoad={didFeedLoad}
+            />
+          ) : (
+            <Feed
+              didFeedLoad={didFeedLoad}
+              getEditor={getEditor}
+              query={query}
+              shouldShowAllItems={shouldShowAllItems}
+              specialFeed={specialFeed}
+              userRemote={userRemote}
+            />
+          )}
+        </article>
+      </div>
+    </DocumentTitle>
   );
 }
