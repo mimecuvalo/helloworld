@@ -106,7 +106,7 @@ export default React.forwardRef(({ content, isEditing }, ref) => {
             >
               {item.title}
             </a>
-          ) : (
+          ) : item.title ? (
             <ContentLink
               item={item}
               currentContent={content}
@@ -114,7 +114,7 @@ export default React.forwardRef(({ content, isEditing }, ref) => {
             >
               {item.title}
             </ContentLink>
-          )}
+          ) : null}
         </li>
       ))}
     </ul>
