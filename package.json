@@ -20,7 +20,7 @@
     "swat0"
   ],
   "dependencies": {
-    "cra-all-the-things": "0.9.5",
+    "cra-all-the-things": "0.9.6",
     "dataloader": "1.4.0",
     "hello-world-editor": "0.8.11",
     "is-mobile": "2.1.0",
