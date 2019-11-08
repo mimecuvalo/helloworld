@@ -1,53 +1,47 @@
 import Button from '@material-ui/core/Button';
 import Popover from '@material-ui/core/Popover';
-import React, { PureComponent } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './Performance.module.css';
 
 // Provides insight into how long the initial render took.
 // Relies heavily on window['performance'] for now.
 // Could be improved with some more server-side stats and with some metrics on
 // ajax navigations.
-export default class Performance extends PureComponent {
-  constructor() {
-    super();
+export default function Performance() {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [duration, setDuration] = useState(0);
+  const [navigationEntry, setNavigationEntry] = useState(null);
+  const [loaded, setLoaded] = useState(false);
 
-    this.state = {
-      anchorEl: null,
-      duration: 0,
-      navigationEntry: null,
-    };
-  }
-
-  handleClick = event => {
-    this.setState({
-      anchorEl: event.currentTarget,
-    });
+  const handleClick = event => {
+    setAnchorEl(event.currentTarget);
   };
 
-  handleClose = () => {
-    this.setState({
-      anchorEl: null,
-    });
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
-  calculatePerfInfo() {
+  function calculatePerfInfo() {
     console.log('[perf]: calculating perf info...');
     if (window['performance']) {
       const navigationEntry = window['performance'].getEntriesByType('navigation')[0];
-      this.setState({
-        duration: navigationEntry.duration,
-        navigationEntry,
-      });
+      setDuration(navigationEntry.duration);
+      setNavigationEntry(navigationEntry);
     }
   }
 
-  componentDidMount() {
+  useEffect(() => {
+    if (loaded) {
+      return;
+    }
     // Wait a tick until the page more or less finishes rendering.
-    setTimeout(() => this.calculatePerfInfo(), 0);
-  }
+    // XXX(mime): 100 is arbitrary. Look for better way to wait.
+    setTimeout(() => calculatePerfInfo(), 100);
+    setLoaded(true);
+  }, [loaded]);
 
-  renderPerfInfo() {
-    if (!this.state.navigationEntry || !this.state.anchorEl) {
+  function renderPerfInfo() {
+    if (!navigationEntry || !anchorEl) {
       return null;
     }
 
@@ -73,48 +67,47 @@ export default class Performance extends PureComponent {
 
     return (
       <table className={styles.performanceList}>
-        {timingsInOrder.filter(timing => !!this.state.navigationEntry[timing]).map(timing => (
-          <tr key={timing}>
-            <td className={styles.entryType}>{timing}</td>
-            <td className={styles.entryData}>{this.state.navigationEntry[timing].toFixed(1)}</td>
-          </tr>
-        ))}
+        {timingsInOrder
+          .filter(timing => !!navigationEntry[timing])
+          .map(timing => (
+            <tr key={timing}>
+              <td className={styles.entryType}>{timing}</td>
+              <td className={styles.entryData}>{navigationEntry[timing].toFixed(1)}</td>
+            </tr>
+          ))}
       </table>
     );
   }
 
-  render() {
-    const { anchorEl } = this.state;
-    const open = Boolean(anchorEl);
+  const open = Boolean(anchorEl);
 
-    return (
-      <span>
-        <Button
-          aria-owns={open ? 'perf-info-popover' : undefined}
-          aria-haspopup="true"
-          variant="outlined"
-          onClick={this.handleClick}
-          className={this.state.duration > 5000 ? styles.slowPerformanceButton : styles.performanceButton}
-        >
-          {this.state.duration ? this.state.duration.toFixed(1) + 'ms' : '…'}
-        </Button>
-        <Popover
-          id="perf-info-popover"
-          open={open}
-          anchorEl={anchorEl}
-          onClose={this.handleClose}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'center',
-          }}
-          transformOrigin={{
-            vertical: 'bottom',
-            horizontal: 'center',
-          }}
-        >
-          {this.renderPerfInfo()}
-        </Popover>
-      </span>
-    );
-  }
+  return (
+    <span>
+      <Button
+        aria-owns={open ? 'perf-info-popover' : undefined}
+        aria-haspopup="true"
+        variant="outlined"
+        onClick={handleClick}
+        className={duration > 5000 ? styles.slowPerformanceButton : styles.performanceButton}
+      >
+        {duration ? duration.toFixed(1) + 'ms' : '…'}
+      </Button>
+      <Popover
+        id="perf-info-popover"
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+      >
+        {renderPerfInfo()}
+      </Popover>
+    </span>
+  );
 }
