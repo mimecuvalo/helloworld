@@ -11,7 +11,6 @@ export default function Performance() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [duration, setDuration] = useState(0);
   const [navigationEntry, setNavigationEntry] = useState(null);
-  const [loaded, setLoaded] = useState(false);
 
   const handleClick = event => {
     setAnchorEl(event.currentTarget);
@@ -31,14 +30,10 @@ export default function Performance() {
   }
 
   useEffect(() => {
-    if (loaded) {
-      return;
-    }
     // Wait a tick until the page more or less finishes rendering.
     // XXX(mime): 100 is arbitrary. Look for better way to wait.
     setTimeout(() => calculatePerfInfo(), 100);
-    setLoaded(true);
-  }, [loaded]);
+  }, []);
 
   function renderPerfInfo() {
     if (!navigationEntry || !anchorEl) {
