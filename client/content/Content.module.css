@@ -16,7 +16,7 @@
 .content {
   margin: var(--app-margin);
   padding: 0 3px 10px 3px;
-  width: 50vw;
+  width: 70vw;
 }
 
 @media only screen and (max-width: 600px) {
