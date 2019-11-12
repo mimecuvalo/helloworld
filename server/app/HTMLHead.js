@@ -94,6 +94,7 @@ export default function HTMLHead(props) {
       <link rel="author" href={`${publicUrl}humans.txt`} />
       {contentOwner ? <link rel="author" href={contentUrl({ username, section: 'main', name: 'about' })} /> : null}
       <link rel="icon" href={favicon || `${publicUrl}favicon.ico`} />
+      <link rel="apple-touch-icon" href={favicon || `${publicUrl}favicon.ico`} />
       {assetPathsByType['css'].map(path => (
         <link nonce={nonce} rel="stylesheet" key={path} href={path} />
       ))}
