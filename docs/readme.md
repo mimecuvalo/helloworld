@@ -103,6 +103,7 @@ REACT_APP_SSR_PORT=3001
 - possible to pause compilation while building package?
 - apostrophe in title makes it not hidden, e.g. Don-t-deploy-on-Fridays-wRXma4oxja
 - Multiple app capable
+- getting negative counts on dashboard - regression
 - Fault tolerant http
 - rm antiCache with migration to hooks <- needed anymore?
 - Package directories build sanely
@@ -280,6 +281,7 @@ REACT_APP_SSR_PORT=3001
   - check out oexchange (see friendica)
   - check out amcd (see friendica)
   - why does friendica have salmon magic-key at top level host-meta file?
+- dashboard/item.js update() is called so much there's a race condition and sometimes the apollo store gets -1
 
 ### p2 (ideas)
 

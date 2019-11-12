@@ -22,10 +22,11 @@ const READ_CONTENT_REMOTE = gql`
 export default function Item(props) {
   const [readContentRemote] = useMutation(READ_CONTENT_REMOTE);
   const [keepUnread, setKeepUnread] = useState(false);
+  const [manuallyMarkedAsRead, setManuallyMarkedAsRead] = useState(props.contentRemote.read);
   const item = useRef(null);
 
   useEffect(() => {
-    if (!props.contentRemote.read) {
+    if (!manuallyMarkedAsRead) {
       addEventListeners();
     }
 
@@ -36,8 +37,7 @@ export default function Item(props) {
     const doc = document.documentElement;
     const bottomOfFeed = doc.scrollTop + window.innerHeight >= doc.scrollHeight - 50;
     if (!keepUnread && item.current && (item.current.getBoundingClientRect().top < 5 || bottomOfFeed)) {
-      removeEventListeners();
-
+      setManuallyMarkedAsRead(true);
       readContentRemoteCall(true);
     }
   };
@@ -81,7 +81,7 @@ export default function Item(props) {
   const keepUnreadCb = keepUnread => {
     if (keepUnread && props.contentRemote.read) {
       readContentRemoteCall(false);
-      addEventListeners();
+      setManuallyMarkedAsRead(false);
     }
 
     setKeepUnread(keepUnread);
