@@ -57,7 +57,6 @@ cd packages/hello-world-editor; npm run build
 cd packages/social-butterfly; npm run build
 ```
 
-
 To run tests:
 ```sh
 npm run test
@@ -69,6 +68,13 @@ To change port, in an `.env` change the values to what you desire:
 PORT=3000
 REACT_APP_SSR_PORT=3001
 ```
+
+To run migrations:
+
+```sh
+npx sequelize db:migrate && npx sequelize db:seed:all
+```
+To learn more about Sequelize and migrations, read the docs [here](https://sequelize.org/master/manual/migrations.html).
 
 ## ⚡ Features
 
