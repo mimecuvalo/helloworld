@@ -16,6 +16,7 @@ import { onError } from 'apollo-link-error';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
+import theme from '../../shared/theme';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 async function renderAppTree(app) {
@@ -25,13 +26,6 @@ async function renderAppTree(app) {
   if (configuration.locale !== configuration.defaultLocale) {
     translations = (await import(`../../shared/i18n/${configuration.locale}`)).default;
   }
-
-  // For Material UI setup.
-  const theme = createMuiTheme({
-    typography: {
-      useNextVariants: true,
-    },
-  });
 
   return (
     <IntlProvider locale={configuration.locale} messages={translations}>

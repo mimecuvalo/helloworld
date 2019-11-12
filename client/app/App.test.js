@@ -7,7 +7,8 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import { IntlProvider } from 'react-intl';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import theme from '../../shared/theme';
+import { ThemeProvider } from '@material-ui/core/styles';
 
 it('renders without crashing', () => {
   window.scrollTo = () => {}; // Used in app/App.js
@@ -17,12 +18,6 @@ it('renders without crashing', () => {
   const client = new ApolloClient({
     link: new HttpLink({ apolloUrl: '/graphql' }),
     cache: new InMemoryCache(),
-  });
-
-  const theme = createMuiTheme({
-    typography: {
-      useNextVariants: true,
-    },
   });
 
   ReactDOM.render(

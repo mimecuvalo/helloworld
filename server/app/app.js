@@ -8,8 +8,9 @@ import { IntlProvider } from 'react-intl';
 import * as languages from '../../shared/i18n/languages';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import { ServerStyleSheets, ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { ServerStyleSheets, ThemeProvider } from '@material-ui/core/styles';
 import { StaticRouter } from 'react-router';
+import theme from '../../shared/theme';
 import uuid from 'uuid';
 
 export default async function render({ req, res, next, assetPathsByType, appName, publicUrl, gitInfo }) {
@@ -37,11 +38,6 @@ export default async function render({ req, res, next, assetPathsByType, appName
 
   // For Material UI setup.
   const sheets = new ServerStyleSheets();
-  const theme = createMuiTheme({
-    typography: {
-      useNextVariants: true,
-    },
-  });
 
   const coreApp = <App user={filteredUser} />;
   // We need to set leave out Material-UI classname generation when traversing the React tree for
