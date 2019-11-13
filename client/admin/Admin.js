@@ -3,6 +3,7 @@ import gql from 'graphql-tag';
 import Forbidden from '../error/403';
 import React, { useContext } from 'react';
 import styles from './Admin.module.css';
+import Unauthorized from '../error/401';
 import UserContext from '../app/User_Context';
 import useDocumentTitle from '../app/title';
 import { useQuery } from '@apollo/react-hooks';
@@ -34,8 +35,21 @@ const FETCH_ALL_USERS = gql`
 `;
 
 export default function Admin() {
-  const intl = useIntl();
   const user = useContext(UserContext).user;
+
+  if (!user) {
+    return <Unauthorized />;
+  }
+
+  if (!user?.model?.superuser) {
+    return <Forbidden />;
+  }
+
+  return <AdminApp />;
+}
+
+function AdminApp() {
+  const intl = useIntl();
   const { loading, data } = useQuery(FETCH_ALL_USERS);
 
   const title = intl.formatMessage(messages.title);
@@ -46,10 +60,6 @@ export default function Admin() {
   }
 
   const allUsers = data.fetchAllUsers;
-
-  if (!user?.model?.superuser) {
-    return <Forbidden />;
-  }
 
   return (
     <div id="hw-admin" className={styles.container}>
