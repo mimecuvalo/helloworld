@@ -1,16 +1,27 @@
 import Button from '@material-ui/core/Button';
 import { F } from '../../shared/i18n';
+import gql from 'graphql-tag';
 import LoginLogoutButton from '../components/login';
-import React, { useContext } from 'react';
+import React from 'react';
 import styles from './Header.module.css';
-import UserContext from '../app/User_Context';
+import { useQuery } from '@apollo/react-hooks';
 import { useLocation } from 'react-router-dom';
+
+const USER_QUERY = gql`
+  {
+    user @client {
+      model {
+        username
+      }
+    }
+  }
+`;
 
 export default function Header() {
   const routerLocation = useLocation();
-  const user = useContext(UserContext).user;
-  const isLoggedIn = !!user;
-  const isAuthor = !!user?.model;
+  const { data } = useQuery(USER_QUERY);
+  const isLoggedIn = !!data?.user;
+  const isAuthor = !!data?.user?.model;
 
   return (
     <header className={styles.header}>

@@ -4,6 +4,7 @@ import createApolloClient from '../data/apollo_client';
 import { DEFAULT_LOCALE, getLocale } from './locale';
 import { getDataFromTree } from '@apollo/react-ssr';
 import HTMLBase from './HTMLBase';
+import { initializeCurrentUser } from '../../shared/data/local_state';
 import { IntlProvider } from 'react-intl';
 import * as languages from '../../shared/i18n/languages';
 import React from 'react';
@@ -14,13 +15,6 @@ import theme from '../../shared/theme';
 import uuid from 'uuid';
 
 export default async function render({ req, res, next, assetPathsByType, appName, publicUrl, gitInfo }) {
-  const apolloClient = createApolloClient(req);
-  const context = {};
-  const nonce = createNonceAndSetCSP(res);
-
-  const locale = getLocale(req);
-  const translations = languages[locale];
-
   const FILTERED_KEYS = ['id', 'private_key'];
   const filteredUser = req.session.user
     ? {
@@ -35,6 +29,14 @@ export default async function render({ req, res, next, assetPathsByType, appName
             }, {}),
       }
     : null;
+  initializeCurrentUser(filteredUser);
+
+  const apolloClient = createApolloClient(req);
+  const context = {};
+  const nonce = createNonceAndSetCSP(res);
+
+  const locale = getLocale(req);
+  const translations = languages[locale];
 
   // For Material UI setup.
   const sheets = new ServerStyleSheets();

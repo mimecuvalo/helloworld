@@ -136,6 +136,7 @@ To learn more about Sequelize and migrations, read the docs [here](https://seque
 - fix img sizes in comments (too big - see example on nite-lite about page)
 - Email is formatted wrong when getting webmention (says self sent email)
 - don't update updatedAt for view
+- migrate from user context to local state
 - split off dashboard, admin panel, draft.js code, auth0, and lodash code for performance
 - social api:
   - provide function to generate RSA

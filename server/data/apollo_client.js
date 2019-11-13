@@ -5,6 +5,7 @@ import fetch from 'node-fetch';
 import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { onError } from 'apollo-link-error';
+import { typeDefs, resolvers } from '../../shared/data/local_state';
 
 // We create an Apollo client here on the server so that we can get server-side rendering in properly.
 export default function createApolloClient(req) {
@@ -38,6 +39,8 @@ export default function createApolloClient(req) {
     ssrMode: true,
     link,
     cache: new InMemoryCache({ dataIdFromObject }),
+    typeDefs,
+    resolvers,
   });
 
   return client;
