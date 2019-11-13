@@ -7,8 +7,8 @@ const User = {
       return await models.User.findAll();
     }),
 
-    fetchUser: combineResolvers(isAdmin, async (parent, { id }, { models }) => {
-      return await models.User.findByPk(id);
+    fetchUser: combineResolvers(isAdmin, async (parent, { id }, { loaders, models }) => {
+      return loaders.users.load(id);
     }),
 
     async fetchPublicUserData(parent, { username }, { hostname, models }) {
