@@ -1,10 +1,9 @@
 cd packages/hello-world-editor
-npm link
+npm install
+npm run build
 
 cd ../../packages/social-butterfly
-npm link
+npm install
+npm run build
 
 cd ../../
-
-npm link hello-world-editor
-npm link social-butterfly

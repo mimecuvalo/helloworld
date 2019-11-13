@@ -74,6 +74,13 @@ To run migrations:
 ```sh
 npx sequelize db:migrate && npx sequelize db:seed:all
 ```
+
+To create a new migration:
+
+```sh
+npx sequelize migration:generate --name [migration_name]
+```
+
 To learn more about Sequelize and migrations, read the docs [here](https://sequelize.org/master/manual/migrations.html).
 
 ## ⚡ Features
