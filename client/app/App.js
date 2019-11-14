@@ -76,31 +76,37 @@ export default function App({ user }) {
   // This hides the unsightly unstyled app. However, in dev mode, it removes the perceived gain of SSR. :-/
   const devOnlyHiddenOnLoadStyle = devOnlyHiddenOnLoad ? { opacity: 0 } : null;
 
+  const isOffline = typeof navigator !== 'undefined' && !navigator.onLine;
+
+  const main = (
+    <main className="App-main">
+      <ScrollToTop>
+        <Switch>
+          <Route path={`/dashboard`} component={renderDashboard} />
+          <Route path={`/admin`} component={Admin} />
+          <Route path={`/:username/search/:query`} component={Search} />
+          <Route
+            path={[
+              `/:username/:section/:album/:name`,
+              `/:username/:section/:name`,
+              `/:username/:name`,
+              `/:username`,
+              `/`,
+            ]}
+            component={Content}
+          />
+        </Switch>
+      </ScrollToTop>
+    </main>
+  );
+
   return (
     <UserContext.Provider value={userContext}>
       <SnackbarProvider action={<CloseButton />}>
         <ErrorBoundary>
           <div className={classNames('App', styles.app, { 'App-logged-in': user })} style={devOnlyHiddenOnLoadStyle}>
             <Header />
-            <main className="App-main">
-              <ScrollToTop>
-                <Switch>
-                  <Route path={`/dashboard`} component={renderDashboard} />
-                  <Route path={`/admin`} component={Admin} />
-                  <Route path={`/:username/search/:query`} component={Search} />
-                  <Route
-                    path={[
-                      `/:username/:section/:album/:name`,
-                      `/:username/:section/:name`,
-                      `/:username/:name`,
-                      `/:username`,
-                      `/`,
-                    ]}
-                    component={Content}
-                  />
-                </Switch>
-              </ScrollToTop>
-            </main>
+            {isOffline ? <div>Running offline with service worker.</div> : main}
             <Footer />
           </div>
         </ErrorBoundary>

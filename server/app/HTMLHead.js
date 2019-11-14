@@ -32,6 +32,7 @@ const CONTENT_AND_USER_QUERY = gql`
   }
 `;
 
+// NOTE: Keep in sync with index.html for service workers!
 export default function HTMLHead(props) {
   const { appName, assetPathsByType, nonce, publicUrl, req } = props;
   // The username is either the first part of the path (e.g. hostname.com/mime/section/album/name)

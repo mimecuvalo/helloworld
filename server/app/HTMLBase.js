@@ -4,6 +4,7 @@ import React from 'react';
 
 // The main wrapper around all of our app's code.
 // It's React all the way down!
+// NOTE: Keep in sync with index.html for service workers!
 export default function HTMLBase({
   apolloStateFn,
   appName,
