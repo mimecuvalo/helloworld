@@ -1,9 +1,27 @@
 import classNames from 'classnames';
+import { createUseStyles } from 'react-jss';
 //import { F } from '../../shared/i18n';
 import Help from './Help';
 import React from 'react'; //Suspense //lazy,
-import styles from './Footer.module.css';
 import { useLocation } from 'react-router-dom';
+
+const useStyles = createUseStyles({
+  footer: {
+    position: 'fixed',
+    bottom: '0',
+    right: '0',
+    clear: 'both',
+  },
+
+  dashboardFooter: {
+    position: 'static',
+    textAlign: 'right',
+  },
+
+  'footer button': {
+    marginLeft: '10px',
+  },
+});
 
 let Debug = () => null;
 if (process.env.NODE_ENV === 'development') {
@@ -12,6 +30,7 @@ if (process.env.NODE_ENV === 'development') {
 
 export default function Footer() {
   const routerLocation = useLocation();
+  const styles = useStyles();
 
   function renderDebugMenu() {
     // Conditionally compile this code. Should not appear in production.

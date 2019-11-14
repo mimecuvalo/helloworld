@@ -149,7 +149,7 @@ export default function HTMLHead(props) {
         Apollo's data (see apolloStateFn in HTMLBase). So for now, we just do a string replace, sigh.
         See related hacky code in server/app/app.js
       */}
-      <style id="jss-ssr" dangerouslySetInnerHTML={{ __html: `<!--MATERIAL-UI-CSS-SSR-REPLACE-->` }} />
+      <style id="jss-ssr" dangerouslySetInnerHTML={{ __html: `<!--CSS-SSR-REPLACE-->` }} />
       {contentOwner ? <GoogleAnalytics nonce={nonce} contentOwner={contentOwner} /> : null}
     </head>
   );

@@ -1,6 +1,6 @@
 import { defineMessages, F, useIntl } from '../../shared/i18n';
 import React from 'react';
-import styles from './Error.module.css';
+import useStyles from './error-styles';
 
 const messages = defineMessages({
   personGesturingNo: { msg: 'person gesturing no' },
@@ -9,6 +9,7 @@ const messages = defineMessages({
 export default function Forbidden() {
   const intl = useIntl();
   const emojiAriaLabel = intl.formatMessage(messages.personGesturingNo);
+  const styles = useStyles();
 
   return (
     <div className={styles.message}>

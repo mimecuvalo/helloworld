@@ -86,32 +86,22 @@ plan.remote(function(remote) {
   remote.log('Copying .env file over...');
   remote.sudo(`cp ${destDir}/.env ${varTmpDir}/`, { user, failsafe: true });
 
-  remote.log('Seeing if we can just reuse the previous node_modules folder...');
-  const isNPMUnchanged = remote.sudo(`cmp ${destDir}/package.json ${varTmpDir}/package.json`, { user, failsafe: true });
-
-  // TODO(mime): isNPMUnchanged logic doesn't work currently with the new Lerna structure.
-  // if (isNPMUnchanged.code === 0 || (isNPMUnchanged.stderr && isNPMUnchanged.stderr.indexOf('cmp: EOF') === 0 /* ignore NOEOL false positive */)) {
-  //   remote.log('package.json is unchanged. Reusing previous node_modules folder...');
-  //   remote.sudo(`mv ${destDir}/node_modules ${varTmpDir}`, { user });
-  // } else {
-    remote.log('package.json has changed. Installing dependencies...');
-    remote.sudo(`cd ${varTmpDir}; lerna bootstrap --hoist -- --production`, { user });
-  // }
+  remote.log('Installing dependencies...');
+  remote.sudo(`cd ${varTmpDir}; lerna bootstrap --hoist -- --production`, { user });
 
   // Copy over sessions.
   remote.sudo(`cp -R ${destDir}/sessions ${varTmpDir}`, { user, failsafe: true });
+
+  remote.log('Building production files...');
+  remote.sudo(`cd ${varTmpDir}; npm run build`, { user });
 
   remote.log('Reloading application...');
   remote.sudo(`ln -snf /var/www/resource ${varTmpDir}/resource`, { user });
   remote.sudo(`ln -snf ${varTmpDir} ${destDir}`, { user });
 
-  // XXX(mime) :-/ sucks but getCSSModuleLocalIdent gives hashes based on filepaths... need to look for workaround
-  remote.sudo(`cd ${destDir}; pm2 kill; pm2 stop helloworld`, { user, failsafe: true });
-  remote.log('Building production files...');
-  remote.sudo(`cd ${varTmpDir}; npm run build`, { user });
-
   // TODO(mime); doing `pm2 kill` is less than ideal - but pm2 doesn't know how to switch out symlinked directories :-/
   // This is done here for the sake of keeping all-the-things as zero-config as possible.
   // For a cleaner deploy take a look at this doc: http://pm2.keymetrics.io/docs/tutorials/capistrano-like-deployments
+  remote.sudo(`cd ${destDir}; pm2 kill; pm2 stop helloworld`, { user, failsafe: true });
   remote.sudo(`cd ${destDir}; pm2 startOrReload ecosystem.config.js`, { user });
 });

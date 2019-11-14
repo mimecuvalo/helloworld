@@ -1,7 +1,19 @@
 import { F } from '../../shared/i18n';
 import { logError } from './error';
 import React, { PureComponent } from 'react';
-import styles from './Error.module.css';
+
+const styles = {
+  errorBoundary: {
+    border: '3px double #f00',
+    borderRadius: '3px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: '10px',
+    fontWeight: '400',
+    color: '#f00',
+  },
+};
 
 // See React's documentation: https://reactjs.org/docs/error-boundaries.html
 export default class ErrorBoundary extends PureComponent {

@@ -21,7 +21,6 @@
   ],
   "dependencies": {
     "cra-all-the-things": "0.9.6",
-    "dataloader": "1.4.0",
     "hello-world-editor": "file:packages/hello-world-editor",
     "is-mobile": "2.1.0",
     "magic-signatures": "2.0.0",

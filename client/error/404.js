@@ -1,6 +1,6 @@
 import { defineMessages, F, useIntl } from '../../shared/i18n';
 import React from 'react';
-import styles from './Error.module.css';
+import useStyles from './error-styles';
 
 const messages = defineMessages({
   upsideDownFace: { msg: 'upside down face' },
@@ -9,6 +9,7 @@ const messages = defineMessages({
 export default function NotFound() {
   const intl = useIntl();
   const emojiAriaLabel = intl.formatMessage(messages.upsideDownFace);
+  const styles = useStyles();
 
   return (
     <div className={styles.message}>

@@ -1,10 +1,20 @@
+import { createUseStyles } from 'react-jss';
 import { defineMessages, F, useIntl } from '../../shared/i18n';
 import HelpOutlineRoundedIcon from '@material-ui/icons/HelpOutlineRounded';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { useState } from 'react';
-import styles from './Help.module.css';
+
+const useStyles = createUseStyles({
+  helpContainer: {
+    display: 'inline-block',
+  },
+
+  helpIcon: {
+    color: '#fff',
+  },
+});
 
 const messages = defineMessages({
   help: { msg: 'Help' },
@@ -13,6 +23,7 @@ const messages = defineMessages({
 export default function Help() {
   const intl = useIntl();
   const [anchorEl, setAnchorEl] = useState(null);
+  const styles = useStyles();
 
   const handleMenuOpenerClick = event => {
     setAnchorEl(event.currentTarget);

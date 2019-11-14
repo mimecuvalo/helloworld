@@ -1,8 +1,30 @@
 import axe from 'axe-core';
 import Button from '@material-ui/core/Button';
+import { createUseStyles } from 'react-jss';
 import Popover from '@material-ui/core/Popover';
 import React, { useEffect, useState } from 'react';
-import styles from './A11y.module.css';
+
+const useStyles = createUseStyles({
+  a11yPopover: {
+    padding: '10px',
+    maxWidth: '40vw',
+    maxHeight: '40vh',
+  },
+
+  typeFilter: {
+    textTransform: 'capitalize',
+  },
+
+  a11yViolations: {
+    color: 'red',
+  },
+
+  rerun: {
+    position: 'absolute',
+    top: '10px',
+    right: '10px',
+  },
+});
 
 // Provides information about the app's shortcomings when it comes to accessibility.
 // This uses the `axe-core` package underneath to provide the info.
@@ -12,6 +34,7 @@ export default function A11y() {
   const [errorCount, setErrorCount] = useState(0);
   const [results, setResults] = useState(null);
   const [loaded, setLoaded] = useState(false);
+  const styles = useStyles();
 
   const handleClick = event => {
     setAnchorEl(event.currentTarget);
