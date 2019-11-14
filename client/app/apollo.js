@@ -38,7 +38,7 @@ export default function createApolloClient() {
   );
   const link = ApolloLink.from([errorLink, splitLink]);
 
-  initializeCurrentUser(window.configuration.user);
+  initializeCurrentUser(configuration.user);
   const client = new ApolloClient({
     request: async op => {
       op.setContext({

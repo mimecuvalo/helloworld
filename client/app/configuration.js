@@ -2,7 +2,7 @@ let configuration;
 
 if (typeof window !== 'undefined') {
   configuration = window.configuration || {};
-} else {
+} else if (process.env.NODE_ENV === 'test') {
   configuration = {
     locale: 'en',
   };
