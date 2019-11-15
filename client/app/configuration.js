@@ -6,6 +6,11 @@ if (typeof window !== 'undefined') {
   configuration = {
     locale: 'en',
   };
+} else {
+  // TODO(mime): move to local_state? and/or set on the server-side somewhere.
+  configuration = {
+    locale: 'en',
+  };
 }
 
 export default configuration;

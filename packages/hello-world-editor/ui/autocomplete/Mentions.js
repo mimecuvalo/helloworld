@@ -12,6 +12,14 @@ const mentionStyles = {
   textDecoration: 'none',
 };
 
+const entryStyles = {
+  padding: '7px 10px 3px 10px',
+  transition: 'background-color 0.4s cubic-bezier(0.27, 1.27, 0.48, 0.56)',
+  '&:active': {
+    backgroundColor: '#cce7ff'
+  },
+};
+
 const styles = {
   mention: {
     extend: mentionStyles,
@@ -29,14 +37,10 @@ const styles = {
     },
   },
   mentionSuggestionsEntry: {
-    padding: '7px 10px 3px 10px',
-    transition: 'background-color 0.4s cubic-bezier(0.27, 1.27, 0.48, 0.56)',
-    '&:active': {
-      backgroundColor: '#cce7ff'
-    },
+    extend: entryStyles,
   },
   mentionSuggestionsEntryFocused: {
-    composes: '$mentionSuggestionsEntry',
+    extend: entryStyles,
     backgroundColor: '#e6f3ff'
   },
   mentionSuggestionsEntryText: {
@@ -78,7 +82,8 @@ const styles = {
 };
 
 export const mentionPlugin = createMentionPlugin({
-  theme: styles,
+  // TODO(mime): theme migration
+  //theme: styles,
 });
 const { MentionSuggestions } = mentionPlugin;
 

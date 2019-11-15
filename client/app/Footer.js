@@ -11,15 +11,14 @@ const useStyles = createUseStyles({
     bottom: '0',
     right: '0',
     clear: 'both',
+    '& button': {
+      marginLeft: '10px',
+    },
   },
 
   dashboardFooter: {
     position: 'static',
     textAlign: 'right',
-  },
-
-  'footer button': {
-    marginLeft: '10px',
   },
 });
 

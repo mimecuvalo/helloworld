@@ -13,6 +13,7 @@ const toolbarStyles = {
 
 /* TODO(mime): need to use variables here */
 export const styles = {
+  active: {},
   toolbar: {
     extend: toolbarStyles,
     '&, & input': {
@@ -67,7 +68,7 @@ export const styles = {
         background: '#1b2733',
         outline: '0'
       },
-      '&:hover, &.active': {
+      '&:hover, &$active': {
         color: '#fff'
       },
     }

@@ -21,14 +21,14 @@ const useStyles = createUseStyles({
     width: '100%',
   },
   editorToolbar: {
-    'div.&': {
+    'div&': {
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'flex-end',
     },
   },
   post: {
-    'button.&': {
+    'button&': {
       marginLeft: '12px',
     },
   },

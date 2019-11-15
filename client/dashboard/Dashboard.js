@@ -24,7 +24,7 @@ const useStyles = createUseStyles({
   },
   content: {
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'row',
     flexFlow: 'wrap',
     alignItems: 'flex-start',
     width: '82%',

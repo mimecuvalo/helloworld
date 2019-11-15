@@ -45,6 +45,14 @@ const entryStyles = {
   transition: 'background-color 0.4s cubic-bezier(0.27, 1.27, 0.48, 0.56)'
 };
 
+const entryShared = {
+  padding: '5px 10px 1px 10px',
+  transition: 'background-color 0.4s cubic-bezier(0.27, 1.27, 0.48, 0.56)',
+  '&:active': {
+    backgroundColor: '#cce7ff'
+  },
+};
+
 const styles = {
   emoji: {
     backgroundPosition: 'center',
@@ -61,14 +69,10 @@ const styles = {
     minWidth: '1em'
   },
   emojiSuggestionsEntry: {
-    padding: '5px 10px 1px 10px',
-    transition: 'background-color 0.4s cubic-bezier(0.27, 1.27, 0.48, 0.56)',
-    '&:active': {
-      backgroundColor: '#cce7ff'
-    },
+    extend: entryStyles,
   },
   emojiSuggestionsEntryFocused: {
-    composes: '$emojiSuggestionsEntry',
+    extend: entryStyles,
     backgroundColor: '#e6f3ff'
   },
   emojiSuggestionsEntryText: {
@@ -110,10 +114,10 @@ const styles = {
     display: 'inline-block'
   },
   emojiSelectButton: {
-    extend: emojiButtonStyles,
+    extend: entryShared,
   },
   emojiSelectButtonPressed: {
-    extend: emojiButtonStyles,
+    extend: entryShared,
     background: '#ededed',
   },
   emojiSelectPopover: {
@@ -250,7 +254,8 @@ const styles = {
 };
 
 export const emojiPlugin = createEmojiPlugin({
-  theme: styles,
+  // TODO(mime): theme migration
+  //theme: styles,
 });
 const { EmojiSuggestions } = emojiPlugin;
 

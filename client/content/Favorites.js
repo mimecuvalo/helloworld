@@ -1,6 +1,6 @@
 import { defineMessages, F, useIntl } from '../../shared/i18n';
 import React from 'react';
-import useStyles from './Comments';
+import { useStyles } from './Comments';
 
 const messages = defineMessages({
   avatar: { msg: 'avatar' },

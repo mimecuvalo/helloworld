@@ -22,7 +22,8 @@ import Image, { imageBlockRendererFn } from './Image';
 import { styles as toolbarStyles } from '../ui/toolbars/toolbarStyles';
 
 export const alignmentPlugin = createAlignmentPlugin({
-  theme: { alignmentToolStyles: toolbarStyles, buttonStyles: toolbarStyles },
+  // TODO(mime): theme migration
+  //theme: { alignmentToolStyles: toolbarStyles, buttonStyles: toolbarStyles },
 });
 export const blockDndPlugin = createBlockDndPlugin();
 export const focusPlugin = createFocusPlugin();

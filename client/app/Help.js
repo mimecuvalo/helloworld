@@ -10,10 +10,6 @@ const useStyles = createUseStyles({
   helpContainer: {
     display: 'inline-block',
   },
-
-  helpIcon: {
-    color: '#fff',
-  },
 });
 
 const messages = defineMessages({
@@ -67,7 +63,7 @@ export default function Help() {
         aria-haspopup="true"
         onClick={handleMenuOpenerClick}
       >
-        <HelpOutlineRoundedIcon className={styles.helpIcon} />
+        <HelpOutlineRoundedIcon />
       </IconButton>
       <Menu
         id="help-menu"

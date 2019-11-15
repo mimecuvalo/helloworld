@@ -37,15 +37,15 @@ const useStyles = createUseStyles({
     },
   },
   commentType: {
-    'div.&': {
+    'div&': {
       marginBottom: '4px'
     },
-    'div.& [data-contents=true] > [data-block=true]:first-child': {
+    'div& [data-contents=true] > [data-block=true]:first-child': {
       fontSize: 'unset',
       lineHeight: 'unset'
     },
     /* TODO(mime): too delicate of a rule. */
-    'ul div.& > div > div': {
+    'ul div& > div > div': {
       padding: '0'
     }
   },
@@ -92,7 +92,7 @@ const readOnlyPlugins = [
 ];
 
 export default React.forwardRef((props, ref) => {
-  const { content, dontWarnOnUnsaved, editorKey, locale, mentions, onLinkUnfurl, onMediaAdd, onMediaUpload, readOnly, showPlaceholder, type } = props;
+  const { content, dontWarnOnUnsaved, editorKey, locale, mentions, onChange: propOnChange, onLinkUnfurl, onMediaAdd, onMediaUpload, readOnly, showPlaceholder, type } = props;
   const editor = useRef(null);
   const [editorState, setEditorState] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -116,7 +116,9 @@ export default React.forwardRef((props, ref) => {
     }
     setEditorState(state ? EditorState.createWithContent(state) : EditorState.createWithContent(emptyContentState));
     setHasText(!!state);
-  }, [content]);
+    // XXX(mime): using [] is probably not the right fix but I just want this to run onload and it has a tied
+    // entanglement with the propOnChange call below. Need to come up with a better solution.
+  }, []);
 
   useEffect(() => {
     if (!readOnly) {
@@ -131,10 +133,6 @@ export default React.forwardRef((props, ref) => {
   });
 
   useEffect(() => {
-    props.onChange && props.onChange();
-  });
-
-  useEffect(() => {
     if (errorMessage) {
       setErrorMessage(null);
     }
@@ -146,11 +144,15 @@ export default React.forwardRef((props, ref) => {
       setHasUnsavedChanges(false);
     },
     editorState: () => editorState,
-    export: () => convertToRaw(editorState.getCurrentContent()),
+    export: () => editorState && convertToRaw(editorState.getCurrentContent()),
     fileInfo: () => fileInfo,
-    focus: () => editor && editor.current.focus(),
+    focus: () => editor.current && editor.current.focus(),
     setUnsavedChanges: (hasUnsavedChanges) => setHasUnsavedChanges(hasUnsavedChanges)
   }));
+
+  if (!editorState) {
+    return null;
+  }
 
   const handleOnBeforeUnload = evt => {
     if (hasUnsavedChanges) {
@@ -167,6 +169,10 @@ export default React.forwardRef((props, ref) => {
     setEditorState(newEditorState);
     setHasText(hasText);
     setHasUnsavedChanges(!dontWarnOnUnsaved);
+
+    // XXX(mime): tied with hack above setEditorState change above. This should be happening *after*
+    // the state changes is completed, not before...
+    propOnChange && propOnChange();
   };
 
   const handleDroppedFiles = async (selection, files) => {

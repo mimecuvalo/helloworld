@@ -9,7 +9,7 @@ import { F } from '../../shared/i18n';
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import useStyles from './templates/Simple';
+import { useStyles } from './templates/Simple';
 
 let CodeMirror;
 
@@ -34,6 +34,9 @@ export default React.forwardRef((props, ref) => {
       await import('codemirror/mode/javascript/javascript');
     }
     getCodeMirror();
+  }, []);
+
+  useEffect(() => {
     setLoaded(true);
 
     const handleOnBeforeUnload = evt => {
