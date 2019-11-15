@@ -6,9 +6,9 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { useState } from 'react';
 import Sort from './actions/Sort';
-import styles from './RemoteUsers.module.css';
 import UnfollowFeed from './actions/UnfollowFeed';
 import ViewAlreadyRead from './actions/ViewAlreadyRead';
+import useStyles from './remoteUsersStyles';
 
 const messages = defineMessages({
   menu: { msg: 'user options' },
@@ -17,6 +17,7 @@ const messages = defineMessages({
 export default function FollowingMenu(props) {
   const intl = useIntl();
   const [anchorEl, setAnchorEl] = useState(null);
+  const styles = useStyles();
 
   const handleMenuOpenerClick = event => {
     setAnchorEl(event.currentTarget);

@@ -5,8 +5,8 @@ import FollowingQuery from './FollowingQuery';
 import FollowingSpecialFeeds from './FollowingSpecialFeeds';
 import NewFeed from './actions/NewFeed';
 import React, { useRef } from 'react';
-import styles from './RemoteUsers.module.css';
 import { useQuery } from '@apollo/react-hooks';
+import useStyles from './remoteUsersStyles';
 
 const messages = defineMessages({
   search: { msg: 'search' },
@@ -18,6 +18,7 @@ export default function Following(props) {
   const intl = useIntl();
   const searchInput = useRef(null);
   const { loading, data } = useQuery(FollowingQuery);
+  const styles = useStyles();
 
   if (loading) {
     return null;

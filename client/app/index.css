@@ -2,6 +2,12 @@
 @import 'sanitize/forms';
 @import 'sanitize/typography';
 
+html:root {
+  --app-margin: 6px;
+  --thumb-width: 154px;
+  --thumb-height: 115px;
+}
+
 body {
   font-size: 13px;
   line-height: 1.15;

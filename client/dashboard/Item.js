@@ -1,13 +1,66 @@
 import _ from 'lodash';
 import classNames from 'classnames';
+import { createUseStyles } from 'react-jss';
 import FollowingFeedCountsQuery from './FollowingFeedCountsQuery';
 import FollowingSpecialFeedCountsQuery from './FollowingSpecialFeedCountsQuery';
 import Footer from './Footer';
 import gql from 'graphql-tag';
 import Header from './Header';
 import React, { useEffect, useRef, useState } from 'react';
-import styles from './Item.module.css';
 import { useMutation } from '@apollo/react-hooks';
+
+const useStyles = createUseStyles({
+  /* Reset some sane defaults for web content. Taken from Chrome's User Agent defaults. */
+  item: {
+    clear: 'both',
+    zoom: '0.75',
+    marginRight: '32px',
+    flex: '0 1',
+    maxHeight: '90vh',
+    minWidth: '34vw',
+    overflowY: 'scroll',
+    padding: '6px',
+    paddingBottom: '0',
+    marginBottom: '32px',
+    boxShadow: '1px 1px 2px #ccc',
+    transition: 'box-shadow 100ms',
+
+    '&:hover': {
+      boxShadow: '1px 1px 2px #999',
+    },
+    '& p': {
+      marginBlockStart: '1em',
+      marginBlockEnd: '1em',
+      marginInlineStart: '0px',
+      marginInlineEnd: '0px',
+    },
+    '& ul, & ol, & blockquote': {
+      marginBlockStart: '1em',
+      marginBlockEnd: '1em',
+      marginInlineStart: '0px',
+      marginInlineEnd: '0px',
+      paddingInlineStart: '20px',
+    },
+    '& blockquote': {
+      borderLeft: '1px solid #666',
+    },
+    '& a': {
+      wordBreak: 'break-word',
+    },
+    '& pre': {
+      whiteSpace: 'pre-wrap',
+      wordBreak: 'break-word',
+    },
+    '& img': {
+      maxWidth: '100%',
+      height: 'auto',
+    },
+    '& iframe': {
+      border: '0',
+      maxWidth: '100%',
+    },
+  },
+});
 
 const READ_CONTENT_REMOTE = gql`
   mutation readContentRemote($from_user: String!, $post_id: String!, $read: Boolean!) {
@@ -24,6 +77,7 @@ export default function Item(props) {
   const [keepUnread, setKeepUnread] = useState(false);
   const [manuallyMarkedAsRead, setManuallyMarkedAsRead] = useState(props.contentRemote.read);
   const item = useRef(null);
+  const styles = useStyles();
 
   useEffect(() => {
     if (!manuallyMarkedAsRead) {

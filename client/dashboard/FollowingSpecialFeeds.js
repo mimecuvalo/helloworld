@@ -5,15 +5,16 @@ import FollowingAllMenu from './FollowingAllMenu';
 import FollowingSpecialFeedCountsQuery from './FollowingSpecialFeedCountsQuery';
 import { FormattedNumber } from '../../shared/i18n';
 import React, { useContext } from 'react';
-import styles from './RemoteUsers.module.css';
 import { useQuery } from '@apollo/react-hooks';
 import UserContext from '../app/User_Context';
+import useStyles from './remoteUsersStyles';
 
 export default function FollowingSpecialFeeds(props) {
   const user = useContext(UserContext).user;
   const { loading, data } = useQuery(FollowingSpecialFeedCountsQuery, {
     pollInterval: props.pollInterval,
   });
+  const styles = useStyles();
 
   if (loading) {
     return null;

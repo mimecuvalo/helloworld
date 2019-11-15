@@ -1,12 +1,19 @@
 import classNames from 'classnames';
 import { contentUrl } from '../../shared/util/url_factory';
+import { createUseStyles } from 'react-jss';
 import { Link } from 'react-router-dom';
 import React, { useContext } from 'react';
-import styles from './ContentLink.module.css';
 import UserContext from '../app/User_Context';
+
+const useStyles = createUseStyles({
+  hidden: {
+    fontStyle: 'italic',
+  },
+});
 
 export default function ContentLink(props) {
   const user = useContext(UserContext).user;
+  const styles = useStyles();
 
   const item = props.item;
   const currentContent = props.currentContent || {};

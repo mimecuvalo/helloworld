@@ -1,3 +1,4 @@
+import { createUseStyles } from 'react-jss';
 import DashboardEditor from './Editor';
 import { defineMessages, useIntl } from '../../shared/i18n';
 import Feed from './Feed';
@@ -5,11 +6,54 @@ import Followers from './Followers';
 import Following from './Following';
 import MyFeed from '../content/Feed';
 import React, { useContext, useState, useRef } from 'react';
-import styles from './Dashboard.module.css';
 import Tools from './Tools';
 import Unauthorized from '../error/401';
 import useDocumentTitle from '../app/title';
 import UserContext from '../app/User_Context';
+
+const boxStyles = {
+  width: 'calc(100% - 20px)',
+  padding: '5px',
+  marginBottom: '10px',
+};
+
+const useStyles = createUseStyles({
+  container: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+  content: {
+    display: 'flex',
+    flexDirection: 'column',
+    flexFlow: 'wrap',
+    alignItems: 'flex-start',
+    width: '82%',
+    margin: '6px',
+  },
+  nav: {
+    position: 'sticky',
+    top: '0',
+    width: '235px',
+    height: '100vh',
+    padding: 'var(--app-margin)',
+    overflow: 'scroll',
+  },
+  tools: {
+    extend: boxStyles,
+    border: '1px solid #c0f',
+    boxShadow: '1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f',
+  },
+  following: {
+    extend: boxStyles,
+    border: '1px solid #0c0',
+    boxShadow: '1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0',
+  },
+  followers: {
+    extend: boxStyles,
+    border: '1px solid #fa0',
+    boxShadow: '1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0',
+  },
+});
 
 const messages = defineMessages({
   title: { msg: 'Dashboard' },
@@ -24,6 +68,7 @@ export default function Dashboard(props) {
   const [specialFeed, setSpecialFeed] = useState('');
   const [userRemote, setUserRemote] = useState(null);
   const user = useContext(UserContext).user;
+  const styles = useStyles();
 
   const title = intl.formatMessage(messages.title);
   useDocumentTitle(title);

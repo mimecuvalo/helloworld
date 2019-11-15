@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import ContentEditor from '../content/ContentEditor';
 import { convertFromRaw, EditorState } from 'draft-js';
 import Cookies from 'js-cookie';
+import { createUseStyles } from 'react-jss';
 import { defineMessages, F } from '../../shared/i18n';
 import { EditorUtils } from 'hello-world-editor';
 import FormControl from '@material-ui/core/FormControl';
@@ -11,9 +12,27 @@ import HiddenSnackbarShim from '../components/HiddenSnackbarShim';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import Select from '@material-ui/core/Select';
-import styles from './Dashboard.module.css';
 import Toolbar from '@material-ui/core/Toolbar';
 import { useMutation, useQuery } from '@apollo/react-hooks';
+
+const useStyles = createUseStyles({
+  editor: {},
+  editorForm: {
+    width: '100%',
+  },
+  editorToolbar: {
+    'div.&': {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+    },
+  },
+  post: {
+    'button.&': {
+      marginLeft: '12px',
+    },
+  },
+});
 
 const messages = defineMessages({
   error: { msg: 'Error posting content.' },
@@ -96,6 +115,7 @@ export default React.forwardRef(({ username }, ref) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [didSetUnsavedChanges, setDidSetUnsavedChanges] = useState(false);
+  const styles = useStyles();
 
   const handlePost = useCallback(
     async evt => {

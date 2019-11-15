@@ -1,11 +1,21 @@
 import classNames from 'classnames';
 import ContentLink from '../../components/ContentLink';
+import { createUseStyles } from 'react-jss';
 import { F } from '../../../shared/i18n';
 import gql from 'graphql-tag';
 import React, { useContext } from 'react';
-import styles from './Archive.module.css';
 import { useQuery } from '@apollo/react-hooks';
 import UserContext from '../../app/User_Context';
+
+const useStyles = createUseStyles({
+  archive: {
+    listStyle: 'inside square',
+    padding: '10px',
+  },
+  loadingEmptyBox: {
+    minHeight: '100vh',
+  },
+});
 
 const FETCH_COLLECTION = gql`
   query($username: String!, $section: String!, $album: String!, $name: String!) {
@@ -32,6 +42,7 @@ export default React.forwardRef(({ content }, ref) => {
       name,
     },
   });
+  const styles = useStyles();
 
   if (loading) {
     return <div className={styles.loadingEmptyBox} />;

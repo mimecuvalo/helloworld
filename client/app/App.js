@@ -15,7 +15,6 @@ import { Route, Switch, useLocation } from 'react-router-dom';
 import React, { useEffect, useRef, useState } from 'react';
 import Search from '../content/Search';
 import { SnackbarProvider, useSnackbar } from 'notistack';
-import styles from './constants.module.css';
 import UserContext from './User_Context';
 
 const messages = defineMessages({
@@ -48,7 +47,6 @@ export default function App({ user }) {
 
   function renderDashboard() {
     return <Dashboard />;
-    // TODO(mime): Can't get Suspense/lazy to play nicely with CSS modules yet.
     // TODO(mime): Suspense and lazy aren't supported by ReactDOMServer yet (breaks SSR).
     // const IS_CLIENT = typeof window !== 'undefined';
     // const Fallback = (
@@ -104,7 +102,7 @@ export default function App({ user }) {
     <UserContext.Provider value={userContext}>
       <SnackbarProvider action={<CloseButton />}>
         <ErrorBoundary>
-          <div className={classNames('App', styles.app, { 'App-logged-in': user })} style={devOnlyHiddenOnLoadStyle}>
+          <div className={classNames('App', { 'App-logged-in': user })} style={devOnlyHiddenOnLoadStyle}>
             <Header />
             {isOffline ? <div>Running offline with service worker.</div> : main}
             <Footer />

@@ -1,35 +1,42 @@
 import classNames from 'classnames';
 import ContentEditor from '../ContentEditor';
-import React, { PureComponent } from 'react';
-import styles from './Simple.module.css';
+import { createUseStyles } from 'react-jss';
+import React, { useImperativeHandle, useRef } from 'react';
 
-export default class Simple extends PureComponent {
-  constructor(props) {
-    super(props);
+export const useStyles = createUseStyles({
+  view: {
+    position: 'relative',
+    clear: 'both',
+    '& img, & iframe, & object, & embed': {
+      maxHeight: '82vh',
+      margin: '10px',
+    },
+    '& figure img:hover': {
+      outline: '3px solid #0bf',
+    },
+  },
+});
 
-    this.editor = React.createRef();
+export default React.forwardRef(({ content, isEditing, isFeed }, ref) => {
+  const editor = useRef(null);
+  const styles = useStyles();
+
+  useImperativeHandle(ref, () => ({
+    getEditor: () => editor.current,
+  }));
+
+  if (isEditing) {
+    return <ContentEditor ref={editor} content={content} />;
   }
 
-  getEditor() {
-    return this.editor.current;
-  }
-
-  render() {
-    const { content, isEditing } = this.props;
-
-    if (isEditing) {
-      return <ContentEditor ref={this.editor} content={content} />;
-    }
-
-    return (
-      <>
-        {this.props.isFeed ? null : <div dangerouslySetInnerHTML={{ __html: content.style }} />}
-        {this.props.isFeed ? null : <div dangerouslySetInnerHTML={{ __html: content.code }} />}
-        <div
-          dangerouslySetInnerHTML={{ __html: content.view }}
-          className={classNames('e-content', styles.view, 'hw-view')}
-        />
-      </>
-    );
-  }
-}
+  return (
+    <>
+      {isFeed ? null : <div dangerouslySetInnerHTML={{ __html: content.style }} />}
+      {isFeed ? null : <div dangerouslySetInnerHTML={{ __html: content.code }} />}
+      <div
+        dangerouslySetInnerHTML={{ __html: content.view }}
+        className={classNames('e-content', styles.view, 'hw-view')}
+      />
+    </>
+  );
+});

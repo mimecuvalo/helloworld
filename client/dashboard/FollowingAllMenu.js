@@ -4,7 +4,7 @@ import IconButton from '@material-ui/core/IconButton';
 import MarkAllFeedsAsRead from './actions/MarkAllFeedsAsRead';
 import Menu from '@material-ui/core/Menu';
 import React, { useState } from 'react';
-import styles from './RemoteUsers.module.css';
+import useStyles from './remoteUsersStyles';
 
 const messages = defineMessages({
   menu: { msg: 'user options' },
@@ -13,6 +13,7 @@ const messages = defineMessages({
 export default function FollowingAllMenu(props) {
   const intl = useIntl();
   const [anchorEl, setAnchorEl] = useState(null);
+  const styles = useStyles();
 
   const handleMenuOpenerClick = event => {
     setAnchorEl(event.currentTarget);

@@ -1,10 +1,23 @@
+import { createUseStyles } from 'react-jss';
 import { F } from '../../shared/i18n';
 import gql from 'graphql-tag';
 import InfiniteFeed from '../components/InfiniteFeed';
 import Item from './Item';
 import React from 'react';
-import styles from './Dashboard.module.css';
 import { useQuery } from '@apollo/react-hooks';
+
+const useStyles = createUseStyles({
+  header: {
+    border: '1px solid #0cf',
+    boxShadow: '1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf',
+    width: '80%',
+    marginBottom: '25px',
+    padding: '3px 6px',
+  },
+  empty: {
+    width: '100%',
+  },
+});
 
 const FETCH_CONTENT_REMOTE_PAGINATED = gql`
   query($profileUrlOrSpecialFeed: String!, $offset: Int!, $query: String, $shouldShowAllItems: Boolean) {
@@ -45,6 +58,7 @@ export default function Feed({ getEditor, userRemote, specialFeed, query, should
     },
     fetchPolicy: didFeedLoad ? 'network-only' : 'cache-first',
   });
+  const styles = useStyles();
 
   function dedupe(currentFeed, nextResults) {
     return nextResults.filter(nextEl => !currentFeed.find(prevEl => prevEl.post_id === nextEl.post_id));

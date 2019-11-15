@@ -12,9 +12,9 @@ import InsertLinkIcon from '@material-ui/icons/InsertLink';
 import PhotoIcon from '@material-ui/icons/Photo';
 import React, { Component } from 'react';
 import { RichUtils } from 'draft-js';
-import styles from './Toolbar.module.css';
 import uploadFiles from '../../media/attachment';
 import { useSnackbar } from 'notistack';
+import { useStyles } from './toolbarStyles';
 
 const messages = defineMessages({
   bold: {
@@ -57,6 +57,7 @@ const messages = defineMessages({
 
 function StyleButton(props) {
   const intl = useIntl();
+  const styles = useStyles();
 
   const handleMouseDown = evt => evt.preventDefault();
 
@@ -206,6 +207,7 @@ const IMAGE_INPUT_NAME = 'photo[]';
 export function ImageButton(props) {
   const intl = useIntl();
   const snackbar = useSnackbar();
+  const styles = useStyles();
 
   const handleMouseDown = evt => evt.preventDefault();
 

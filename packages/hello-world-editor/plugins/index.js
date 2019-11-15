@@ -19,7 +19,7 @@ import createRSVPPlugin from './RSVP';
 import { decoratedBlocksToHTML } from '../utils/Blocks';
 import Iframe, { iframeBlockRendererFn } from './Iframe';
 import Image, { imageBlockRendererFn } from './Image';
-import toolbarStyles from '../ui/toolbars/Toolbar.module.css';
+import { styles as toolbarStyles } from '../ui/toolbars/toolbarStyles';
 
 export const alignmentPlugin = createAlignmentPlugin({
   theme: { alignmentToolStyles: toolbarStyles, buttonStyles: toolbarStyles },

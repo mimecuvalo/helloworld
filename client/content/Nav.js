@@ -1,11 +1,24 @@
 import ContentLink from '../components/ContentLink';
 import ContentQuery from './ContentQuery';
 import { contentUrl } from '../../shared/util/url_factory';
+import { createUseStyles } from 'react-jss';
 import { F } from '../../shared/i18n';
 import gql from 'graphql-tag';
 import React, { useEffect, useImperativeHandle, useRef } from 'react';
-import styles from './Nav.module.css';
 import { useQuery } from '@apollo/react-hooks';
+
+const useStyles = createUseStyles({
+  nav: {
+    float: 'right',
+    padding: '4px 0',
+    whiteSpace: 'nowrap',
+  },
+
+  loadingEmptyBox: {
+    float: 'right',
+    height: '32px',
+  },
+});
 
 const NAV_FIELDS = `
   album
@@ -118,6 +131,8 @@ export default React.forwardRef(({ content, isEditing }, ref) => {
 // Otherwise, it's a bit jarring when the navigation menu disappears everytime you click next/prev.
 const PersistedNav = React.memo(
   function PersistedNav({ loading, navigationActions, client, content, data }) {
+    const styles = useStyles();
+
     if (loading) {
       return <div className={styles.loadingEmptyBox} />;
     }

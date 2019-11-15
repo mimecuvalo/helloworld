@@ -6,136 +6,116 @@ import configuration from '../app/configuration';
 import { Editor } from 'hello-world-editor';
 import ErrorBoundary from '../error/ErrorBoundary';
 import { F } from '../../shared/i18n';
-import React, { Component } from 'react';
-import styles from './templates/Simple.module.css';
+import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import useStyles from './templates/Simple';
 
 let CodeMirror;
 
-export default class ContentEditor extends Component {
-  constructor(props) {
-    super(props);
+export default React.forwardRef((props, ref) => {
+  const { album, content = {}, mentions, onMediaAdd, section, showPlaceholder } = props;
+  const contentEditor = useRef(null);
+  const codeMirrorCSS = useRef(null);
+  const codeMirrorJS = useRef(null);
+  const [code, setCode] = useState(null);
+  const [editorContent, setEditorContent] = useState(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [style, setStyle] = useState(null);
+  const [tabValue, setTabValue] = useState(0);
+  const styles = useStyles();
 
-    this.contentEditor = React.createRef();
-    this.codeMirrorCSS = React.createRef();
-    this.codeMirrorJS = React.createRef();
+  useEffect(() => {
+    async function getCodeMirror() {
+      // We don't import this at the top because server-side, holy god, what a mess.
+      CodeMirror = (await import('react-codemirror')).default;
+      await import('codemirror/mode/css/css');
+      await import('codemirror/mode/javascript/javascript');
+    }
+    getCodeMirror();
+    setLoaded(true);
 
-    this.state = {
-      code: null,
-      content: null,
-      hasUnsavedChanges: false,
-      loaded: false,
-      style: null,
-      tabValue: 0,
+    const handleOnBeforeUnload = evt => {
+      if (hasUnsavedChanges) {
+        evt.returnValue = 'You have unfinished changes!';
+      }
     };
-  }
+    window.addEventListener('beforeunload', handleOnBeforeUnload);
 
-  componentDidMount = async () => {
-    window.addEventListener('beforeunload', this.handleOnBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleOnBeforeUnload);
+  }, [hasUnsavedChanges, setLoaded]);
 
-    // We don't import this at the top because server-side, holy god, what a mess.
-    CodeMirror = (await import('react-codemirror')).default;
-    await import('codemirror/mode/css/css');
-    await import('codemirror/mode/javascript/javascript');
-
-    this.setState({ loaded: true });
-  };
-
-  componentDidUpdate(prevProps, prevState) {
-    if (!this.state.loaded || prevState.tabValue === this.state.tabValue) {
+  useEffect(() => {
+    if (!loaded) {
       return;
     }
 
-    switch (this.state.tabValue) {
+    switch (tabValue) {
       case 0:
-        this.contentEditor.current && this.contentEditor.current.focus();
+        contentEditor.current && contentEditor.current.focus();
         break;
       case 1:
-        this.codeMirrorCSS.current && this.codeMirrorCSS.current.getCodeMirror().focus();
+        codeMirrorCSS.current && codeMirrorCSS.current.getCodeMirror().focus();
         break;
       case 2:
-        this.codeMirrorJS.current && this.codeMirrorJS.current.getCodeMirror().focus();
+        codeMirrorJS.current && codeMirrorJS.current.getCodeMirror().focus();
         break;
       default:
         break;
     }
-  }
+  }, [tabValue, loaded]);
 
-  componentWillUnmount() {
-    window.removeEventListener('beforeunload', this.handleOnBeforeUnload);
-  }
+  useImperativeHandle(ref, () => ({
+    setUnsavedChanges: hasUnsavedChanges => {
+      setHasUnsavedChanges(hasUnsavedChanges);
+      contentEditor.current && contentEditor.current.setUnsavedChanges(hasUnsavedChanges);
+    },
 
-  handleOnBeforeUnload = evt => {
-    if (this.state.hasUnsavedChanges) {
-      evt.returnValue = 'You have unfinished changes!';
-    }
+    export: () => {
+      return {
+        style: style || content.style || '',
+        code: code || content.code || '',
+        content: editorContent || content.content,
+      };
+    },
+
+    clear: () => {
+      setHasUnsavedChanges(false);
+      setStyle(null);
+      setCode(null);
+      setEditorContent(null);
+
+      contentEditor.current && contentEditor.current.clear();
+      codeMirrorCSS.current && codeMirrorCSS.current.getCodeMirror().setValue('');
+      codeMirrorJS.current && codeMirrorJS.current.getCodeMirror().setValue('');
+    },
+
+    getContentEditor: () => contentEditor.current,
+  }));
+
+  const handleStyleChange = style => {
+    setHasUnsavedChanges(true);
+    setStyle(style);
   };
 
-  setUnsavedChanges(hasUnsavedChanges) {
-    this.setState({ hasUnsavedChanges });
-    this.contentEditor.current && this.contentEditor.current.setUnsavedChanges(hasUnsavedChanges);
-  }
-
-  export() {
-    const content = this.props.content || {};
-
-    return {
-      style: this.state.style || content.style || '',
-      code: this.state.code || content.code || '',
-      content: this.state.content || content.content,
-    };
-  }
-
-  clear() {
-    this.setState({
-      hasUnsavedChanges: false,
-      style: null,
-      code: null,
-      content: null,
-    });
-
-    this.contentEditor.current && this.contentEditor.current.clear();
-    this.codeMirrorCSS.current && this.codeMirrorCSS.current.getCodeMirror().setValue('');
-    this.codeMirrorJS.current && this.codeMirrorJS.current.getCodeMirror().setValue('');
-  }
-
-  getContentEditor() {
-    return this.contentEditor.current;
-  }
-
-  handleStyleChange = style => {
-    this.setState({
-      hasUnsavedChanges: true,
-      style,
-    });
+  const handleCodeChange = code => {
+    setHasUnsavedChanges(true);
+    setCode(code);
   };
 
-  handleCodeChange = code => {
-    this.setState({
-      hasUnsavedChanges: true,
-      code,
-    });
+  const handleContentChange = () => {
+    setHasUnsavedChanges(true);
+    setEditorContent(contentEditor.current.export());
   };
 
-  handleContentChange = () => {
-    this.setState({
-      hasUnsavedChanges: true,
-      content: this.contentEditor.current.export(),
-    });
-  };
+  const handleMediaAdd = fileInfos => onMediaAdd && onMediaAdd(fileInfos);
 
-  handleMediaAdd = fileInfos => {
-    this.props.onMediaAdd && this.props.onMediaAdd(fileInfos);
-  };
+  const handleTabChange = (evt, tabValue) => setTabValue(tabValue);
 
-  handleTabChange = (evt, tabValue) => {
-    this.setState({ tabValue });
-  };
-
-  handleMediaUpload = async body => {
-    body.append('section', this.props.content?.section || this.props.section);
-    body.append('album', this.props.content?.album || this.props.album);
+  const handleMediaUpload = async body => {
+    body.append('section', content?.section || section);
+    body.append('album', content?.album || album);
 
     return await fetch(buildUrl({ pathname: '/api/upload' }), {
       method: 'POST',
@@ -144,7 +124,7 @@ export default class ContentEditor extends Component {
     });
   };
 
-  handleLinkUnfurl = async url => {
+  const handleLinkUnfurl = async url => {
     return await fetch(buildUrl({ pathname: '/api/unfurl' }), {
       method: 'POST',
       body: JSON.stringify({
@@ -157,69 +137,66 @@ export default class ContentEditor extends Component {
     });
   };
 
-  render() {
-    const content = this.props.content || {};
-    const codeMirrorOptions = {
-      lineNumbers: true,
-    };
+  const codeMirrorOptions = {
+    lineNumbers: true,
+  };
 
-    let tab = (
-      <div key="content" className={classNames(styles.view, 'hw-view')}>
-        <Editor
-          content={this.state.content ? this.state : content}
-          ref={this.contentEditor}
-          mentions={this.props.mentions}
-          onChange={this.handleContentChange}
-          onMediaAdd={this.handleMediaAdd}
-          onMediaUpload={this.handleMediaUpload}
-          onLinkUnfurl={this.handleLinkUnfurl}
-          showPlaceholder={this.props.showPlaceholder}
-          locale={configuration.locale}
-        />
-      </div>
-    );
+  let tab = (
+    <div key="content" className={classNames(styles.view, 'hw-view')}>
+      <Editor
+        content={editorContent ? { content: editorContent, style, code } : content}
+        ref={contentEditor}
+        mentions={mentions}
+        onChange={handleContentChange}
+        onMediaAdd={handleMediaAdd}
+        onMediaUpload={handleMediaUpload}
+        onLinkUnfurl={handleLinkUnfurl}
+        showPlaceholder={showPlaceholder}
+        locale={configuration.locale}
+      />
+    </div>
+  );
 
-    if (this.state.loaded) {
-      switch (this.state.tabValue) {
-        case 1:
-          tab = (
-            <CodeMirror
-              ref={this.codeMirrorCSS}
-              key="css"
-              value={this.state.style || content.style}
-              onChange={this.handleStyleChange}
-              options={Object.assign({ mode: 'css' }, codeMirrorOptions)}
-            />
-          );
-          break;
-        case 2:
-          tab = (
-            <CodeMirror
-              ref={this.codeMirrorJS}
-              key="js"
-              value={this.state.code || content.code}
-              onChange={this.handleCodeChange}
-              options={Object.assign({ mode: 'javascript' }, codeMirrorOptions)}
-            />
-          );
-          break;
-        default:
-          break;
-      }
+  if (loaded) {
+    switch (tabValue) {
+      case 1:
+        tab = (
+          <CodeMirror
+            ref={codeMirrorCSS}
+            key="css"
+            value={style || content.style}
+            onChange={handleStyleChange}
+            options={Object.assign({ mode: 'css' }, codeMirrorOptions)}
+          />
+        );
+        break;
+      case 2:
+        tab = (
+          <CodeMirror
+            ref={codeMirrorJS}
+            key="js"
+            value={code || content.code}
+            onChange={handleCodeChange}
+            options={Object.assign({ mode: 'javascript' }, codeMirrorOptions)}
+          />
+        );
+        break;
+      default:
+        break;
     }
-
-    return (
-      <>
-        <AppBar position="static">
-          <Tabs value={this.state.tabValue} onChange={this.handleTabChange}>
-            <Tab label={<F msg="Content" />} />
-            <Tab label={<F msg="CSS" />} />
-            <Tab label={<F msg="JS" />} />
-          </Tabs>
-        </AppBar>
-
-        <ErrorBoundary>{tab}</ErrorBoundary>
-      </>
-    );
   }
-}
+
+  return (
+    <>
+      <AppBar position="static">
+        <Tabs value={tabValue} onChange={handleTabChange}>
+          <Tab label={<F msg="Content" />} />
+          <Tab label={<F msg="CSS" />} />
+          <Tab label={<F msg="JS" />} />
+        </Tabs>
+      </AppBar>
+
+      <ErrorBoundary>{tab}</ErrorBoundary>
+    </>
+  );
+});

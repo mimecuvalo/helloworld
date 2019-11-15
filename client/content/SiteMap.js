@@ -3,14 +3,42 @@ import classNames from 'classnames';
 import CloseIcon from '@material-ui/icons/Close';
 import constants from '../../shared/constants';
 import ContentLink from '../components/ContentLink';
+import { createUseStyles } from 'react-jss';
 import { defineMessages, F, useIntl } from '../../shared/i18n';
 import gql from 'graphql-tag';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import React, { useState } from 'react';
-import styles from './SiteMap.module.css';
 import { useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
+
+const useStyles = createUseStyles({
+  sitemap: {
+    margin: 'var(--app-margin)',
+    width: '155px',
+    padding: '6px',
+  },
+  album: {
+    paddingLeft: '7px',
+  },
+  selected: {
+    fontWeight: 'bold',
+  },
+  item: {
+    wordWrap: 'break-word',
+  },
+  search: {
+    margin: '20px 0 10px 0',
+  },
+  license: {
+    margin: '20px 0 10px 0',
+    textAlign: 'center',
+    fontSize: '10px',
+  },
+  hamburger: {
+    display: 'none !important',
+  },
+});
 
 const messages = defineMessages({
   menu: { msg: 'Menu' },
@@ -47,6 +75,7 @@ export default function SiteMap({ content, username }) {
       username,
     },
   });
+  const styles = useStyles();
 
   function generateItem(item, albums) {
     content = content || {};

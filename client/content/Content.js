@@ -2,6 +2,7 @@ import { buildUrl, contentUrl } from '../../shared/util/url_factory';
 import ContentBase from './ContentBase';
 import ContentQuery from './ContentQuery';
 import { convertFromRaw, EditorState } from 'draft-js';
+import { createUseStyles } from 'react-jss';
 import { defineMessages, useIntl } from '../../shared/i18n';
 import { EditorUtils } from 'hello-world-editor';
 import Feed from './Feed';
@@ -12,11 +13,23 @@ import Nav from './Nav';
 import NotFound from '../error/404';
 import React, { useEffect, useRef, useState } from 'react';
 import Simple from './templates/Simple';
-import styles from './Content.module.css';
 import SwipeListener from 'swipe-listener';
 import { useHistory } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { useSnackbar } from 'notistack';
+
+const useStyles = createUseStyles({
+  content: {
+    margin: 'var(--app-margin)',
+    padding: '0 3px 10px 3px',
+    width: '70vw',
+    '@media only screen and (max-width: 600px)': {
+      '&': {
+        width: 'auto',
+      },
+    },
+  },
+});
 
 const messages = defineMessages({
   error: { msg: 'Error updating content.' },
@@ -84,6 +97,7 @@ const PersistedContent = React.memo(
     const [isEditing, setIsEditing] = useState(false);
     const [currentCanonicalUrl, setCurrentCanonicalUrl] = useState(null);
     const [saveContent] = useMutation(SAVE_CONTENT);
+    const styles = useStyles();
 
     useEffect(() => {
       if (loading || !data.fetchContent) {

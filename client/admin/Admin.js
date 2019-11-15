@@ -1,12 +1,37 @@
+import { createUseStyles } from 'react-jss';
 import { defineMessages, F, useIntl } from '../../shared/i18n';
 import gql from 'graphql-tag';
 import Forbidden from '../error/403';
 import React, { useContext } from 'react';
-import styles from './Admin.module.css';
 import Unauthorized from '../error/401';
 import UserContext from '../app/User_Context';
 import useDocumentTitle from '../app/title';
 import { useQuery } from '@apollo/react-hooks';
+
+const useStyles = createUseStyles({
+  container: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    margin: '64px 8px',
+  },
+  content: {
+    display: 'flex',
+    flexDirection: 'column',
+    flexFlow: 'wrap',
+    alignItems: 'flex-start',
+    width: '82%',
+    margin: '6px',
+    overflowX: 'scroll',
+  },
+  nav: {
+    position: 'sticky',
+    top: '0',
+    width: '235px',
+    height: '100vh',
+    padding: 'var(--app-margin)',
+    overflow: 'scroll',
+  },
+});
 
 const messages = defineMessages({
   title: { msg: 'Admin' },
@@ -51,6 +76,7 @@ export default function Admin() {
 function AdminApp() {
   const intl = useIntl();
   const { loading, data } = useQuery(FETCH_ALL_USERS);
+  const styles = useStyles();
 
   const title = intl.formatMessage(messages.title);
   useDocumentTitle(title);

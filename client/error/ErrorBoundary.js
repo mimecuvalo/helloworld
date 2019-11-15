@@ -31,7 +31,7 @@ export default class ErrorBoundary extends PureComponent {
     if (this.state.hasError) {
       // You can render any custom fallback UI
       return (
-        <h1 className={styles.errorBoundary}>
+        <h1 style={styles.errorBoundary}>
           <F msg="Something went wrong. 😦" />
         </h1>
       );

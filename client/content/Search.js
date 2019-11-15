@@ -1,11 +1,57 @@
 import ContentBase from './ContentBase';
 import ContentLink from '../components/ContentLink';
 import ContentThumb from '../components/ContentThumb';
+import { createUseStyles } from 'react-jss';
 import { defineMessages, useIntl } from '../../shared/i18n';
 import gql from 'graphql-tag';
 import React from 'react';
-import styles from './Search.module.css';
 import { useQuery } from '@apollo/react-hooks';
+
+const useStyles = createUseStyles({
+  search: {
+    '--search-header-height': '32px',
+    '& > header': {
+      display: 'block',
+      position: 'absolute',
+      top: 'var(--app-margin)',
+      left: '180px',
+      height: 'var(--search-header-height)',
+    },
+  },
+  list: {
+    marginTop: 'calc(var(--app-margin) + var(--search-header-height) + 10px)',
+    marginLeft: '25px',
+    '& > li': {
+      padding: '7px 0',
+      borderTop: '1px solid #ccc',
+      clear: 'both',
+    },
+    '& > li:first-child': {
+      borderTop: '0',
+    },
+  },
+  innerList: {
+    display: 'flex',
+  },
+  thumbLink: {
+    minHeight: 'auto',
+    width: 'auto',
+    marginRight: '5px',
+    '& > img': {
+      minHeight: 'auto',
+      maxHeight: '48px',
+    },
+  },
+  preview: {
+    maxWidth: '50vw',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+  },
+  clear: {
+    clear: 'both',
+  },
+});
 
 const messages = defineMessages({
   search: { msg: 'search' },
@@ -45,6 +91,7 @@ export default function Search({ match }) {
       query,
     },
   });
+  const styles = useStyles();
 
   if (loading) {
     return null;

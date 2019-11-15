@@ -5,13 +5,14 @@ import { FormattedNumber } from '../../shared/i18n';
 import FollowingFeedCountsQuery from './FollowingFeedCountsQuery';
 import FollowingMenu from './FollowingMenu';
 import React from 'react';
-import styles from './RemoteUsers.module.css';
 import { useQuery } from '@apollo/react-hooks';
+import useStyles from './remoteUsersStyles';
 
 export default function FollowingFeeds(props) {
   const { loading, data } = useQuery(FollowingFeedCountsQuery, {
     pollInterval: props.pollInterval,
   });
+  const styles = useStyles();
 
   if (loading) {
     return null;

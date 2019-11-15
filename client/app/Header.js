@@ -1,11 +1,26 @@
 import Button from '@material-ui/core/Button';
+import { createUseStyles } from 'react-jss';
 import { F } from '../../shared/i18n';
 import gql from 'graphql-tag';
 import LoginLogoutButton from '../components/login';
 import React from 'react';
-import styles from './Header.module.css';
 import { useQuery } from '@apollo/react-hooks';
 import { useLocation } from 'react-router-dom';
+
+const useStyles = createUseStyles({
+  header: {
+    display: 'block',
+    position: 'fixed',
+    top: '10px',
+    right: '10px',
+    '& a,  & a:visited': {
+      color: '#fff',
+    },
+    '& button': {
+      marginLeft: '10px',
+    },
+  },
+});
 
 const USER_QUERY = gql`
   {
@@ -22,6 +37,7 @@ export default function Header() {
   const { data } = useQuery(USER_QUERY);
   const isLoggedIn = !!data?.user;
   const isAuthor = !!data?.user?.model;
+  const styles = useStyles();
 
   return (
     <header className={styles.header}>

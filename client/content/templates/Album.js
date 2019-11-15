@@ -1,12 +1,47 @@
 import classNames from 'classnames';
 import ContentLink from '../../components/ContentLink';
 import ContentThumb from '../../components/ContentThumb';
+import { createUseStyles } from 'react-jss';
 import { defineMessages, F, useIntl } from '../../../shared/i18n';
 import gql from 'graphql-tag';
 import React from 'react';
-import styles from './Album.module.css';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { useSnackbar } from 'notistack';
+
+const useStyles = createUseStyles({
+  album: {
+    listStyle: 'none',
+  },
+  loadingEmptyBox: {
+    minHeight: '100vh',
+  },
+  item: {
+    position: 'relative',
+    display: 'inline-block',
+    overflow: 'hidden',
+    verticalAlign: 'top',
+    textAlign: 'center',
+    padding: '3px',
+    marginBottom: '3px',
+    transition: 'all 0.3s ease-out',
+    '&:hover': {
+      boxShadow: '2px 2px 6px #666',
+    },
+  },
+  link: {
+    display: 'block',
+    width: 'var(--thumb-width)',
+    maxWidth: 'var(--thumb-width)',
+  },
+  title: {
+    minHeight: '1.1em',
+  },
+  delete: {
+    position: 'absolute',
+    top: '5px',
+    right: '5px',
+  },
+});
 
 const messages = defineMessages({
   error: { msg: 'Error deleting content.' },
@@ -38,6 +73,7 @@ export default React.forwardRef(({ content, isEditing }, ref) => {
   const { username, section, album, name } = content;
   const intl = useIntl();
   const snackbar = useSnackbar();
+  const styles = useStyles();
 
   const { loading, data } = useQuery(FETCH_COLLECTION, {
     variables: {

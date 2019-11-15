@@ -1,6 +1,6 @@
 import { defineMessages, F, useIntl } from '../../shared/i18n';
 import React from 'react';
-import useStyles from './error-styles';
+import useStyles from './errorStyles';
 
 const messages = defineMessages({
   personGesturingNo: { msg: 'person gesturing no' },

@@ -2,16 +2,52 @@ import classNames from 'classnames';
 import configuration from '../app/configuration';
 import ContentQuery from './ContentQuery';
 import { createLock } from '../app/auth';
+import { createUseStyles } from 'react-jss';
 import { defineMessages, F, useIntl } from '../../shared/i18n';
 import Delete from '../dashboard/actions/Delete';
 import { Editor } from 'hello-world-editor';
 import Favorite from '../dashboard/actions/Favorite';
 import gql from 'graphql-tag';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import styles from './Comments.module.css';
 import UserContext from '../app/User_Context';
 import { useMutation } from '@apollo/react-hooks';
 import { useSnackbar } from 'notistack';
+
+export const useStyles = createUseStyles({
+  commentEditorWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  comment: {
+    display: 'flex',
+    marginBottom: '10px',
+    clear: 'both',
+    fontSize: '11px',
+  },
+  favorite: {
+    display: 'flex',
+    marginBottom: '10px',
+    clear: 'both',
+    fontSize: '11px',
+  },
+  commentsHeader: {
+    borderBottom: '1px solid #ccc',
+    paddingBottom: '3px',
+    marginBottom: '10px',
+    fontWeight: '500',
+  },
+  comments: {
+    marginTop: '10px',
+  },
+  avatar: {
+    maxWidth: '32px',
+    maxHeight: '32px',
+    margin: '0 10px 0 0',
+  },
+  author: {
+    fontWeight: 'bold',
+  },
+});
 
 const messages = defineMessages({
   avatar: { msg: 'avatar' },
@@ -44,6 +80,7 @@ export default function Comments({ comments, content }) {
   const [isPosting, setIsPosting] = useState(false);
   const [postComment] = useMutation(POST_COMMENT);
   const user = useContext(UserContext).user;
+  const styles = useStyles();
 
   const handleKeyDown = evt => {
     if (!commentEditor || !commentEditor.current) {

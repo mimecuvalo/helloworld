@@ -14,23 +14,23 @@ import createLinkPlugin from 'draft-js-anchor-plugin';
 import createSideToolbarPlugin from 'draft-js-side-toolbar-plugin';
 import React, { Component } from 'react';
 import { Separator } from 'draft-js-inline-toolbar-plugin';
-import sideToolbarStyles from './SideToolbar.module.css';
-import styles from './Toolbar.module.css';
+import { styles as toolbarStyles, useStyles as useToolbarStyles } from './toolbarStyles';
 import Toolbar from '@material-ui/core/Toolbar';
+import { styles as sideToolbarStyles, useStyles as useSideToolbarStyles } from './sideToolbarStyles';
 
 // TODO(mime): rewrite this one day. it's annoying to work with.
 // Plus, this probably conflicts with plugins/Anchor.js :-/
 export const linkPlugin = createLinkPlugin({ theme: {} });
 
 export const inlineToolbarPlugin = createInlineToolbarPlugin({
-  theme: { toolbarStyles: styles },
+  theme: { toolbarStyles: toolbarStyles },
 });
 const { InlineToolbar } = inlineToolbarPlugin;
 export const sideToolbarPlugin = createSideToolbarPlugin({
   position: 'right',
   theme: {
-    buttonStyles: styles,
-    toolbarStyles: Object.assign({}, styles, sideToolbarStyles),
+    buttonStyles: toolbarStyles,
+    toolbarStyles: Object.assign({}, toolbarStyles, sideToolbarStyles),
     blockTypeSelectStyles: sideToolbarStyles,
   },
 });
@@ -40,6 +40,8 @@ export default class Toolbars extends Component {
   render() {
     const { AlignmentTool, dividerPlugin } = this.props;
     const { DividerButton } = dividerPlugin;
+    const styles = useToolbarStyles();
+    const sideStyles = useSideToolbarStyles();
 
     return (
       <>
@@ -59,7 +61,7 @@ export default class Toolbars extends Component {
         </InlineToolbar>
         <SideToolbar>
           {externalProps => (
-            <Toolbar className={sideToolbarStyles.materialUIToolbar} disableGutters>
+            <Toolbar className={sideStyles.materialUIToolbar} disableGutters>
               <ImageButton {...externalProps} />
               <HeaderButton {...externalProps} />
               <DividerButton {...externalProps} />

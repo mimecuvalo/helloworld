@@ -5,7 +5,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import NewFeed from './actions/NewFeed';
 import React, { useState } from 'react';
-import styles from './RemoteUsers.module.css';
+import useStyles from './remoteUsersStyles';
 
 const messages = defineMessages({
   menu: { msg: 'follower options' },
@@ -14,6 +14,7 @@ const messages = defineMessages({
 export default function FollowerMenu(props) {
   const intl = useIntl();
   const [anchorEl, setAnchorEl] = useState(null);
+  const styles = useStyles();
 
   const handleMenuOpenerClick = event => {
     setAnchorEl(event.currentTarget);

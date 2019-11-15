@@ -6,9 +6,9 @@ import FollowingQuery from '../FollowingQuery';
 import FollowingSpecialFeedCountsQuery from '../FollowingSpecialFeedCountsQuery';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
-import styles from './Actions.module.css';
 import { useMutation } from '@apollo/react-hooks';
 import { useSnackbar } from 'notistack';
+import useStyles from './actionsStyles';
 
 const messages = defineMessages({
   error: { msg: 'Error subscribing to new feed.' },
@@ -32,6 +32,7 @@ export default function NewFeed(props) {
   const snackbar = useSnackbar();
   const intl = useIntl();
   const [createUserRemote] = useMutation(CREATE_USER_REMOTE);
+  const styles = useStyles();
 
   // when NewFeed is used as an input field.
   const handleNewFeedPaste = evt => {

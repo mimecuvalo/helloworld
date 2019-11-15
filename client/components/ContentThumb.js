@@ -1,9 +1,25 @@
 import classNames from 'classnames';
 import { contentUrl } from '../../shared/util/url_factory';
+import { createUseStyles } from 'react-jss';
 import { defineMessages, useIntl } from '../../shared/i18n';
 import { Link } from 'react-router-dom';
 import React, { useRef } from 'react';
-import styles from './ContentThumb.module.css';
+
+const useStyles = createUseStyles({
+  thumbLink: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 'var(--thumb-width)',
+    maxWidth: 'var(--thumb-width)',
+    minHeight: 'var(--thumb-height)',
+  },
+  thumb: {
+    display: 'inline-block',
+    maxWidth: 'var(--thumb-width)',
+    maxHeight: 'var(--thumb-height)',
+  },
+});
 
 const messages = defineMessages({
   thumbnail: { msg: 'thumbnail' },
@@ -12,6 +28,7 @@ const messages = defineMessages({
 export default function Thumb({ className, item, currentContent, isEditing }) {
   const intl = useIntl();
   const image = useRef();
+  const styles = useStyles();
 
   currentContent = currentContent || {};
   const thumbAltText = intl.formatMessage(messages.thumbnail);

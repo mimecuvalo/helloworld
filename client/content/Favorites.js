@@ -1,6 +1,6 @@
 import { defineMessages, F, useIntl } from '../../shared/i18n';
 import React from 'react';
-import styles from './Comments.module.css';
+import useStyles from './Comments';
 
 const messages = defineMessages({
   avatar: { msg: 'avatar' },
@@ -9,6 +9,7 @@ const messages = defineMessages({
 export default function Favorites({ favorites }) {
   const intl = useIntl();
   const ariaImgMsg = intl.formatMessage(messages.avatar);
+  const styles = useStyles();
 
   if (!favorites) {
     return null;

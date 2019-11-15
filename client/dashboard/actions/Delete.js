@@ -2,8 +2,8 @@ import classNames from 'classnames';
 import { F } from '../../../shared/i18n';
 import gql from 'graphql-tag';
 import React from 'react';
-import styles from './Actions.module.css';
 import { useMutation } from '@apollo/react-hooks';
+import useStyles from './actionsStyles';
 
 const DELETE_CONTENT_REMOTE = gql`
   mutation deleteContentRemote(
@@ -34,6 +34,7 @@ export default function Delete(props) {
   const variables = { from_user, local_content_name, post_id, type, deleted: !deleted };
 
   const [deleteContentRemote] = useMutation(DELETE_CONTENT_REMOTE);
+  const styles = useStyles();
 
   const handleClick = evt =>
     deleteContentRemote({

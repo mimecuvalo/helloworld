@@ -3,8 +3,8 @@ import { F } from '../../../shared/i18n';
 import FollowingSpecialFeedCountsQuery from '../FollowingSpecialFeedCountsQuery';
 import gql from 'graphql-tag';
 import React from 'react';
-import styles from './Actions.module.css';
 import { useMutation } from '@apollo/react-hooks';
+import useStyles from './actionsStyles';
 
 const FAVORITE_CONTENT_REMOTE = gql`
   mutation favoriteContentRemote($from_user: String, $post_id: String!, $type: String!, $favorited: Boolean!) {
@@ -22,6 +22,7 @@ export default function Favorite(props) {
   const variables = { from_user, post_id, type, favorited: !favorited };
 
   const [favoriteContentRemote] = useMutation(FAVORITE_CONTENT_REMOTE);
+  const styles = useStyles();
 
   const handleClick = evt =>
     favoriteContentRemote({

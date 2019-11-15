@@ -1,14 +1,37 @@
 import classNames from 'classnames';
+import { createUseStyles } from 'react-jss';
 import { F } from '../../shared/i18n';
 import React from 'react';
 import SiteMap from './SiteMap';
-import styles from './Content.module.css';
 import useDocumentTitle from '../app/title';
+
+const useStyles = createUseStyles({
+  container: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    flexDirection: 'column',
+    '& > header': {
+      display: 'none',
+    },
+  },
+  articleNavContainer: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+  footer: {
+    width: '154px',
+    marginLeft: '6px',
+    padding: '10px 0',
+    fontSize: '11px',
+    textAlign: 'center',
+  },
+});
 
 export default React.memo(
   React.forwardRef((props, ref) => {
     const { children, className, contentOwner, title, username } = props;
     useDocumentTitle(title);
+    const styles = useStyles();
 
     return (
       <div ref={ref} id="hw-content" className={classNames(styles.container, className)}>

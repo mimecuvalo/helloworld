@@ -4,8 +4,8 @@ import { F } from '../../shared/i18n';
 import FollowerMenu from './FollowerMenu';
 import gql from 'graphql-tag';
 import React from 'react';
-import styles from './RemoteUsers.module.css';
 import { useQuery } from '@apollo/react-hooks';
+import useStyles from './remoteUsersStyles';
 
 const FETCH_FOLLOWERS = gql`
   {
@@ -22,6 +22,7 @@ const FETCH_FOLLOWERS = gql`
 
 export default function Followers(props) {
   const { loading, data } = useQuery(FETCH_FOLLOWERS);
+  const styles = useStyles();
 
   if (loading) {
     return null;

@@ -1,13 +1,38 @@
 import classNames from 'classnames';
 import ContentLink from '../components/ContentLink';
+import { createUseStyles } from 'react-jss';
 import { F } from '../../shared/i18n';
 import React, { useContext } from 'react';
-import styles from './Header.module.css';
 import UserContext from '../app/User_Context';
+
+const useStyles = createUseStyles({
+  header: {
+    marginBottom: '6px',
+    padding: '0 6px',
+    width: '290px',
+  },
+  title: {
+    display: 'flex',
+    margin: '3px 3px 3px 0',
+  },
+  titleLink: {
+    flex: '1',
+  },
+  edit: {
+    lineHeight: '14px',
+    fontSize: '12px',
+    fontWeight: '500',
+    marginBottom: '2px',
+    padding: '0 7px',
+    color: '#060',
+    alignSelf: 'flex-start',
+  },
+});
 
 export default function Header({ content, handleEdit, isEditing }) {
   const user = useContext(UserContext).user;
   const isOwnerViewing = user?.model?.username === content.username;
+  const styles = useStyles();
 
   return (
     <header className={styles.header}>
