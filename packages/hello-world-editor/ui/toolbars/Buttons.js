@@ -10,7 +10,7 @@ import FormatSizeIcon from '@material-ui/icons/FormatSize';
 import FormatStrikethroughIcon from '@material-ui/icons/FormatStrikethrough';
 import InsertLinkIcon from '@material-ui/icons/InsertLink';
 import PhotoIcon from '@material-ui/icons/Photo';
-import React, { Component } from 'react';
+import React from 'react';
 import { RichUtils } from 'draft-js';
 import uploadFiles from '../../media/attachment';
 import { useSnackbar } from 'notistack';
@@ -112,93 +112,77 @@ function StyleButton(props) {
   );
 }
 
-export class BoldButton extends Component {
-  render() {
-    return (
-      <StyleButton ariaLabel={messages.bold} formatStyle="BOLD" {...this.props}>
-        <FormatBoldIcon />
-      </StyleButton>
-    );
-  }
+export function BoldButton(props) {
+  return (
+    <StyleButton ariaLabel={messages.bold} formatStyle="BOLD" {...props}>
+      <FormatBoldIcon />
+    </StyleButton>
+  );
 }
 
-export class StrikethroughButton extends Component {
-  render() {
-    return (
-      <StyleButton ariaLabel={messages.strikethrough} formatStyle="STRIKETHROUGH" {...this.props}>
-        <FormatStrikethroughIcon />
-      </StyleButton>
-    );
-  }
+export function StrikethroughButton(props) {
+  return (
+    <StyleButton ariaLabel={messages.strikethrough} formatStyle="STRIKETHROUGH" {...props}>
+      <FormatStrikethroughIcon />
+    </StyleButton>
+  );
 }
 
-export class LinkButton extends Component {
-  render() {
-    return (
-      <StyleButton ariaLabel={messages.link} formatStyle="link" {...this.props}>
-        <InsertLinkIcon />
-      </StyleButton>
-    );
-  }
+export function LinkButton(props) {
+  return (
+    <StyleButton ariaLabel={messages.link} formatStyle="link" {...props}>
+      <InsertLinkIcon />
+    </StyleButton>
+  );
 }
 
-export class HeaderButton extends Component {
-  render() {
-    const editorState = this.props.getEditorState();
-    const type =
-      editorState &&
-      editorState
-        .getCurrentContent()
-        .getBlockForKey(editorState.getSelection().getStartKey())
-        .getType();
-    const formatStyle = type === 'header-one' ? 'header-two' : type === 'header-two' ? 'header-two' : 'header-one';
+export function HeaderButton(props) {
+  const editorState = props.getEditorState();
+  const type =
+    editorState &&
+    editorState
+      .getCurrentContent()
+      .getBlockForKey(editorState.getSelection().getStartKey())
+      .getType();
+  const formatStyle = type === 'header-one' ? 'header-two' : type === 'header-two' ? 'header-two' : 'header-one';
 
-    return (
-      <StyleButton isBlock={true} ariaLabel={messages.header} formatStyle={formatStyle} {...this.props}>
-        <FormatSizeIcon />
-      </StyleButton>
-    );
-  }
+  return (
+    <StyleButton isBlock={true} ariaLabel={messages.header} formatStyle={formatStyle} {...props}>
+      <FormatSizeIcon />
+    </StyleButton>
+  );
 }
 
-export class BulletedListButton extends Component {
-  render() {
-    return (
-      <StyleButton isBlock={true} ariaLabel={messages.bulleted} formatStyle="unordered-list-item" {...this.props}>
-        <FormatListBulletedIcon />
-      </StyleButton>
-    );
-  }
+export function BulletedListButton(props) {
+  return (
+    <StyleButton isBlock={true} ariaLabel={messages.bulleted} formatStyle="unordered-list-item" {...props}>
+      <FormatListBulletedIcon />
+    </StyleButton>
+  );
 }
 
-export class NumberedListButton extends Component {
-  render() {
-    return (
-      <StyleButton isBlock={true} ariaLabel={messages.numbered} formatStyle="ordered-list-item" {...this.props}>
-        <FormatListNumberedIcon />
-      </StyleButton>
-    );
-  }
+export function NumberedListButton(props) {
+  return (
+    <StyleButton isBlock={true} ariaLabel={messages.numbered} formatStyle="ordered-list-item" {...props}>
+      <FormatListNumberedIcon />
+    </StyleButton>
+  );
 }
 
-export class BlockquoteButton extends Component {
-  render() {
-    return (
-      <StyleButton isBlock={true} ariaLabel={messages.bulleted} formatStyle="blockquote" {...this.props}>
-        <FormatQuoteIcon />
-      </StyleButton>
-    );
-  }
+export function BlockquoteButton(props) {
+  return (
+    <StyleButton isBlock={true} ariaLabel={messages.bulleted} formatStyle="blockquote" {...props}>
+      <FormatQuoteIcon />
+    </StyleButton>
+  );
 }
 
-export class CodeBlockButton extends Component {
-  render() {
-    return (
-      <StyleButton isBlock={true} ariaLabel={messages.code} formatStyle="code-block" {...this.props}>
-        <CodeIcon />
-      </StyleButton>
-    );
-  }
+export function CodeBlockButton(props) {
+  return (
+    <StyleButton isBlock={true} ariaLabel={messages.code} formatStyle="code-block" {...props}>
+      <CodeIcon />
+    </StyleButton>
+  );
 }
 
 const IMAGE_FORM_NAME = 'insert-image-form';

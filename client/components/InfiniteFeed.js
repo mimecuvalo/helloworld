@@ -1,67 +1,61 @@
 import _ from 'lodash';
-import React, { PureComponent } from 'react';
+import React, { useEffect, useState } from 'react';
 
-export default class InfiniteFeed extends PureComponent {
-  constructor(props) {
-    super(props);
+export default function InfiniteFeed({ children, deduper, fetchMore, queryName }) {
+  const [didReachEndOfFeed, setDidReachEndOfFeed] = useState(false);
+  const [fetchingMore, setFetchingMore] = useState(false);
+  const [offset, setOffset] = useState(0);
 
-    this.state = {
-      didReachEndOfFeed: false,
-      fetchingMore: false,
-      offset: 0,
+  useEffect(() => {
+    const maybeLoadMoreContent = () => {
+      if (fetchingMore || didReachEndOfFeed) {
+        return;
+      }
+
+      // We check to see if we're close to the bottom of the feed, three window-fulls of content ahead.
+      if (document.documentElement.scrollTop + window.innerHeight * 3 < document.documentElement.scrollHeight) {
+        return;
+      }
+
+      setOffset(offset + 1);
+      setFetchingMore(true);
     };
 
-    React.createRef(); // XXX(mime): import React lint error above since we're just using <> elements below :-/
-    this.throttledMaybeLoadMoreContent = _.throttle(this.maybeLoadMoreContent, 100);
-  }
+    const throttledMaybeLoadMoreContent = _.throttle(maybeLoadMoreContent, 100);
+    window.addEventListener('scroll', throttledMaybeLoadMoreContent, { passive: true });
+    window.addEventListener('resize', throttledMaybeLoadMoreContent, { passive: true });
 
-  componentDidMount() {
-    window.addEventListener('scroll', this.throttledMaybeLoadMoreContent, { passive: true });
-    window.addEventListener('resize', this.throttledMaybeLoadMoreContent, { passive: true });
-  }
+    return () => {
+      window.removeEventListener('scroll', throttledMaybeLoadMoreContent);
+      window.removeEventListener('resize', throttledMaybeLoadMoreContent);
+    };
+  }, [fetchingMore, didReachEndOfFeed, offset]);
 
-  componentWillUnmount() {
-    window.removeEventListener('scroll', this.throttledMaybeLoadMoreContent);
-    window.removeEventListener('resize', this.throttledMaybeLoadMoreContent);
-  }
-
-  maybeLoadMoreContent = () => {
-    if (this.state.fetchingMore || this.state.didReachEndOfFeed) {
+  useEffect(() => {
+    if (!fetchingMore) {
       return;
     }
 
-    // We check to see if we're close to the bottom of the feed, three window-fulls of content ahead.
-    if (document.documentElement.scrollTop + window.innerHeight * 3 < document.documentElement.scrollHeight) {
-      return;
-    }
+    fetchMore({
+      variables: { offset },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult || !fetchMoreResult[queryName].length) {
+          setDidReachEndOfFeed(true);
+          return prev;
+        }
 
-    const queryName = this.props.queryName;
-    this.setState({ fetchingMore: true, offset: this.state.offset + 1 }, () => {
-      this.props.fetchMore({
-        variables: {
-          offset: this.state.offset,
-        },
-        updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult || !fetchMoreResult[queryName].length) {
-            this.setState({ didReachEndOfFeed: true });
-            return prev;
-          }
+        setFetchingMore(false);
 
-          this.setState({ fetchingMore: false });
+        const moreResultsWithoutDupes = deduper
+          ? deduper(prev[queryName], fetchMoreResult[queryName])
+          : fetchMoreResult[queryName];
 
-          const moreResultsWithoutDupes = this.props.deduper
-            ? this.props.deduper(prev[queryName], fetchMoreResult[queryName])
-            : fetchMoreResult[queryName];
-
-          return Object.assign({}, prev, {
-            [queryName]: [...prev[queryName], ...moreResultsWithoutDupes],
-          });
-        },
-      });
+        return Object.assign({}, prev, {
+          [queryName]: [...prev[queryName], ...moreResultsWithoutDupes],
+        });
+      },
     });
-  };
+  }, [deduper, fetchMore, fetchingMore, offset, queryName]);
 
-  render() {
-    return <>{this.props.children}</>;
-  }
+  return <>{children}</>;
 }

@@ -1,19 +1,17 @@
 import { F } from '../../../shared/i18n';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { PureComponent } from 'react';
+import React from 'react';
 
-export default class ViewAlreadyRead extends PureComponent {
-  handleClick = async () => {
-    this.props.handleClose();
+export default function ViewAlreadyRead({ handleClose, handleSetFeed, userRemote }) {
+  const handleClick = async () => {
+    handleClose();
 
-    this.props.handleSetFeed(this.props.userRemote, undefined /* query */, true /* all items */);
+    handleSetFeed(userRemote, undefined /* query */, true /* all items */);
   };
 
-  render() {
-    return (
-      <MenuItem onClick={this.handleClick}>
-        <F msg="view all items" />
-      </MenuItem>
-    );
-  }
+  return (
+    <MenuItem onClick={handleClick}>
+      <F msg="view all items" />
+    </MenuItem>
+  );
 }

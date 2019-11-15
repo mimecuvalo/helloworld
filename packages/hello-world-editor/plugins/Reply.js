@@ -1,6 +1,6 @@
 import { decoratedBlocksToHTML } from '../utils/Blocks';
 import linkifyit from 'linkify-it';
-import React, { PureComponent } from 'react';
+import React from 'react';
 
 const linkify = linkifyit();
 linkify.add('> ', {
@@ -34,19 +34,16 @@ function strategy(contentBlock, callback) {
   }
 };
 
-class Component extends PureComponent {
-  render() {
-    const { decoratedText } = this.props;
-    const links = linkify.match(decoratedText || '');
-    const href = links?.length && links[0].url.slice(2);
+function Component({ decoratedText }) {
+  const links = linkify.match(decoratedText || '');
+  const href = links?.length && links[0].url.slice(2);
 
-    return (
-      <span className="hw-in-reply-to">
-        &gt;&nbsp;
-        <a href={href} target="_blank" rel="noreferrer noopener" className="u-in-reply-to">
-          {decoratedText.slice(2)}
-        </a>
-      </span>
-    );
-  }
+  return (
+    <span className="hw-in-reply-to">
+      &gt;&nbsp;
+      <a href={href} target="_blank" rel="noreferrer noopener" className="u-in-reply-to">
+        {decoratedText.slice(2)}
+      </a>
+    </span>
+  );
 }

@@ -1,5 +1,5 @@
 import { createPlugin } from 'draft-extend';
-import React, { PureComponent } from 'react';
+import React from 'react';
 
 const BLOCK_TYPE = 'atomic';
 const ENTITY_TYPE = 'IFRAME';
@@ -38,23 +38,20 @@ export default createPlugin({
   },
 });
 
-class Iframe extends PureComponent {
-  render() {
-    const { block, /*children,*/ className } = this.props;
-    const data = block.getData();
-    return (
-      <iframe
-        className={className}
-        title={data.get('src')}
-        src={data.get('src')}
-        height={data.get('height')}
-        width={data.get('width')}
-        frameBorder={data.get('frameBorder')}
-        allow={data.get('allow')}
-        allowFullScreen
-      />
-    );
-  }
+function Iframe({ block, /*children,*/ className }) {
+  const data = block.getData();
+  return (
+    <iframe
+      className={className}
+      title={data.get('src')}
+      src={data.get('src')}
+      height={data.get('height')}
+      width={data.get('width')}
+      frameBorder={data.get('frameBorder')}
+      allow={data.get('allow')}
+      allowFullScreen
+    />
+  );
 }
 
 export const iframeBlockRendererFn = componentDecorators => {

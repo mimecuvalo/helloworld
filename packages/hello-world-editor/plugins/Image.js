@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { createPlugin } from 'draft-extend';
-import React, { PureComponent } from 'react';
+import React from 'react';
 
 const BLOCK_TYPE = 'atomic';
 const ENTITY_TYPE = 'IMAGE';
@@ -40,16 +40,13 @@ export default createPlugin({
   },
 });
 
-class Image extends PureComponent {
-  render() {
-    const { block, /*children,*/ className } = this.props;
-    const data = block.getData();
-    return (
-      <a href={data.get('href')}>
-        <img className={classNames('u-photo', className)} src={data.get('src')} alt={data.get('alt')} title={data.get('alt')} />
-      </a>
-    );
-  }
+function Image({ block, /*children,*/ className }) {
+  const data = block.getData();
+  return (
+    <a href={data.get('href')}>
+      <img className={classNames('u-photo', className)} src={data.get('src')} alt={data.get('alt')} title={data.get('alt')} />
+    </a>
+  );
 }
 
 export const imageBlockRendererFn = componentDecorators => {

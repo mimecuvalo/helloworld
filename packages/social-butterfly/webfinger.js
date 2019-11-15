@@ -1,5 +1,5 @@
 import { buildUrl } from './util/url_factory';
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { renderToString } from 'react-dom/server';
 
 export default (options) => async (req, res) => {
@@ -114,32 +114,29 @@ function getAccountInfo(req, user) {
   };
 }
 
-class WebFinger extends PureComponent {
-  render() {
-    const { req, user } = this.props;
-    const accountInfo = getAccountInfo(req, user);
-    const logo = buildUrl({ req, pathname: user.logo || user.favicon });
+function WebFinger({ req, user }) {
+  const accountInfo = getAccountInfo(req, user);
+  const logo = buildUrl({ req, pathname: user.logo || user.favicon });
 
-    return (
-      <XML.XRD xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0">
-        <XML.Subject>{accountInfo.account}</XML.Subject>
-        <XML.Alias>{user.url}</XML.Alias>
-        <XML.Link rel="describedby" href={accountInfo.foafUrl} type="application/rdf+xml" />
-        <XML.Link rel="describedby" href={accountInfo.webfingerUrl} type="application/xrd+xml" />
-        <XML.Link rel="salmon" href={accountInfo.salmonUrl} />
-        <XML.Link rel="http://salmon-protocol.org/ns/salmon-replies" href={accountInfo.salmonUrl} />
-        <XML.Link rel="http://salmon-protocol.org/ns/salmon-mention" href={accountInfo.salmonUrl} />
-        <XML.Link rel="magic-public-key" href={`data:application/magic-public-key,${user.magic_key}`} />
-        <XML.Link rel="webmention" href={accountInfo.webmentionUrl} />
-        <XML.Link rel="http://webfinger.net/rel/profile-page" href={user.url} type="text/html" />
-        <XML.Link rel="http://webfinger.net/rel/avatar" href={logo} type="image/jpeg" />
-        <XML.Link rel="http://schemas.google.com/g/2010#updates-from" href={accountInfo.feedUrl} type="application/atom+xml" />
-        <XML.Link rel="http://ostatus.org/schema/1.0/subscribe" href={accountInfo.followUrl} />
-        <XML.Link rel="http://microformats.org/profile/hcard" href={user.url} type="text/html" />
-        <XML.Link rel="self" href={accountInfo.actorUrl} type="application/activity+json" />
-      </XML.XRD>
-    );
-  }
+  return (
+    <XML.XRD xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0">
+      <XML.Subject>{accountInfo.account}</XML.Subject>
+      <XML.Alias>{user.url}</XML.Alias>
+      <XML.Link rel="describedby" href={accountInfo.foafUrl} type="application/rdf+xml" />
+      <XML.Link rel="describedby" href={accountInfo.webfingerUrl} type="application/xrd+xml" />
+      <XML.Link rel="salmon" href={accountInfo.salmonUrl} />
+      <XML.Link rel="http://salmon-protocol.org/ns/salmon-replies" href={accountInfo.salmonUrl} />
+      <XML.Link rel="http://salmon-protocol.org/ns/salmon-mention" href={accountInfo.salmonUrl} />
+      <XML.Link rel="magic-public-key" href={`data:application/magic-public-key,${user.magic_key}`} />
+      <XML.Link rel="webmention" href={accountInfo.webmentionUrl} />
+      <XML.Link rel="http://webfinger.net/rel/profile-page" href={user.url} type="text/html" />
+      <XML.Link rel="http://webfinger.net/rel/avatar" href={logo} type="image/jpeg" />
+      <XML.Link rel="http://schemas.google.com/g/2010#updates-from" href={accountInfo.feedUrl} type="application/atom+xml" />
+      <XML.Link rel="http://ostatus.org/schema/1.0/subscribe" href={accountInfo.followUrl} />
+      <XML.Link rel="http://microformats.org/profile/hcard" href={user.url} type="text/html" />
+      <XML.Link rel="self" href={accountInfo.actorUrl} type="application/activity+json" />
+    </XML.XRD>
+  );
 }
 
 const createElementFactory = type => p => {
