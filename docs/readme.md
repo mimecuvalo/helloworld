@@ -19,6 +19,23 @@
 
 federated social web blog app. basically, i'm trying to build an open-source Tumblr (RIP). passes [SWAT0](https://indieweb.org/SWAT0)!
 
+## ⚡ Features
+
+- social features:
+  - RSS reader
+  - oStatus stack, WebSub/Salmon/Webfinger
+  - commenting
+  - api to follow/reblog content (pretty basic right now)
+- WYSIWYG editor
+  - edit content in page, or add new content via dashboard
+  - rich content pasting (paste in url/embed and we'll grab the video or image)
+  - tagging objects through #catvideo and people @bestfriendforevs
+  - different templates (namely, albums currently)
+  - CSS/JS/HTML editing via CodeMirror
+- technology features:
+  - foundation: [CRA-all-the-things](https://github.com/mimecuvalo/all-the-things)
+  - Auth0 for logging
+
 ## 💾 Install
 
 ```sh
@@ -82,23 +99,6 @@ npx sequelize migration:generate --name [migration_name]
 ```
 
 To learn more about Sequelize and migrations, read the docs [here](https://sequelize.org/master/manual/migrations.html).
-
-## ⚡ Features
-
-- social features:
-  - RSS reader
-  - oStatus stack, WebSub/Salmon/Webfinger
-  - commenting
-  - api to follow/reblog content (pretty basic right now)
-- WYSIWYG editor
-  - edit content in page, or add new content via dashboard
-  - rich content pasting (paste in url/embed and we'll grab the video or image)
-  - tagging objects through #catvideo and people @bestfriendforevs
-  - different templates (namely, albums currently)
-  - CSS/JS/HTML editing via CodeMirror
-- technology features:
-  - foundation: [CRA-all-the-things](https://github.com/mimecuvalo/all-the-things)
-  - Auth0 for logging
 
 ## 🎯 Goals
 

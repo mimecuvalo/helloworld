@@ -38,7 +38,9 @@ export default function createApolloClient(req) {
   const client = new ApolloClient({
     ssrMode: true,
     link,
-    cache: new InMemoryCache({ dataIdFromObject }),
+    cache: new InMemoryCache({ dataIdFromObject, freezeResults: true }),
+    // TODO(mime): assumeImmutableResults and freezeResults will be default true in Apollo 3.0
+    assumeImmutableResults: true,
     typeDefs,
     resolvers,
   });

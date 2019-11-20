@@ -50,7 +50,8 @@
     "linkify-it": "2.2.0",
     "notistack": "0.9.5",
     "react-codemirror": "1.0.0",
-    "react-intl": "3.4.0"
+    "react-intl": "3.4.0",
+    "react-jss": "10.0.0"
   },
   "peerDependencies": {
     "react": ">=16.11.0"
