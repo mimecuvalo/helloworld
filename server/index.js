@@ -4,11 +4,13 @@ import appServer from './app/app';
 import bodyParser from 'body-parser';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
+import * as cron from './cron';
 import csurf from 'csurf';
 import express from 'express';
 import fs from 'fs';
 import models from './data/models';
 import path from 'path';
+import * as Sentry from '@sentry/node';
 import session from 'express-session';
 import sessionFileStore from 'session-file-store';
 import setup from './setup';
@@ -77,9 +79,25 @@ export default function constructApps({ appName, productionAssetsByType, publicU
   apolloServer(app);
 
   // Background requests
+  cron.startup();
   const dispose = () => {
     socialDispose();
+    cron.shutdown();
   };
+
+  if (process.env.REACT_APP_SENTRY_DSN) {
+    Sentry.init({ dsn: process.env.REACT_APP_SENTRY_DSN, debug: process.env.NODE_ENV !== 'production' });
+    app.use(Sentry.Handlers.requestHandler());
+    app.use(async function(req, res, next) {
+      if (req.session.user) {
+        Sentry.configureScope(scope => {
+          scope.setUser({ id: req.session.user.model?.id, email: req.session.user.oauth.email });
+        });
+      }
+      next();
+    });
+    app.use(Sentry.Handlers.errorHandler());
+  }
 
   // Create logger for app server to log requests.
   const appLogger = createLogger();
