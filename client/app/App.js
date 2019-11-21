@@ -70,7 +70,7 @@ export default function App({ user }) {
     // return SuspenseWithTemporaryWorkaround;
   }
 
-  // HACK(all-the-things): we can't get rid of FOUC in dev mode because we want hot reloading of CSS updates.
+  // XXX(all-the-things): we can't get rid of FOUC in dev mode because we want hot reloading of CSS updates.
   // This hides the unsightly unstyled app. However, in dev mode, it removes the perceived gain of SSR. :-/
   const devOnlyHiddenOnLoadStyle = devOnlyHiddenOnLoad ? { opacity: 0 } : null;
 

@@ -36,11 +36,8 @@ export default function HTMLBase({
         />
         <WindowErrorScript nonce={nonce} />
 
-        {/*
-          TODO(mime): This would be blocked by a CSP policy that doesn't allow inline scripts.
-          Try to get a nonce here instead.
-        */}
         <script
+          nonce={nonce}
           dangerouslySetInnerHTML={{
             __html: `window.__APOLLO_STATE__ = ${JSON.stringify(apolloStateFn()).replace(/</g, '\\u003c')};`,
           }}

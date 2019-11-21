@@ -13,9 +13,8 @@ import { renderToString } from 'react-dom/server';
 import { ServerStyleSheets, ThemeProvider } from '@material-ui/core/styles';
 import { StaticRouter } from 'react-router';
 import theme from '../../shared/theme';
-import uuid from 'uuid';
 
-export default async function render({ req, res, next, assetPathsByType, appName, publicUrl, gitInfo }) {
+export default async function render({ req, res, next, assetPathsByType, appName, nonce, publicUrl, gitInfo }) {
   const FILTERED_KEYS = ['id', 'private_key'];
   const filteredUser = req.session.user
     ? {
@@ -34,7 +33,6 @@ export default async function render({ req, res, next, assetPathsByType, appName
 
   const apolloClient = createApolloClient(req);
   const context = {};
-  const nonce = createNonceAndSetCSP(res);
 
   const locale = getLocale(req);
   const translations = languages[locale];
@@ -107,28 +105,4 @@ export default async function render({ req, res, next, assetPathsByType, appName
   res.write('<!doctype html>');
   res.write(renderedAppWithCSS);
   res.end();
-}
-
-function createNonceAndSetCSP(res) {
-  // nonce is used in conjunction with a CSP policy to only execute scripts that have the correct nonce attribute.
-  // see https://content-security-policy.com
-  const nonce = uuid.v4();
-
-  // If you wish to enable CSP, here's a sane policy to start with.
-  // NOTE! this *won't* work with webpack currently!!!
-  // TODO(mime): fix this. see https://webpack.js.org/guides/csp/
-  // res.set('Content-Security-Policy',
-  //     `upgrade-insecure-requests; ` +
-  //     `default-src 'none'; ` +
-  //     `script-src 'self' 'nonce-${nonce}'; ` +
-  //     `style-src 'self' https://* 'nonce-${nonce}'; ` +
-  //     `font-src 'self' https://*; ` +
-  //     `connect-src 'self'; ` +
-  //     `frame-ancestors 'self'; ` +
-  //     `frame-src 'self' http://* https://*; ` +
-  //     `media-src 'self' blob:; ` +
-  //     `img-src https: http: data:; ` +
-  //     `object-src 'self';`);
-
-  return nonce;
 }

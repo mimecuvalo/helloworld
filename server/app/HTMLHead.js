@@ -113,6 +113,13 @@ export default function HTMLHead(props) {
       <meta name="viewport" content={viewport} />
       <meta name="theme-color" content="#000000" />
       <meta name="generator" content="Hello, world. https://github.com/mimecuvalo/helloworld" />
+      <meta property="csp-nonce" content={nonce} />
+      <script
+        nonce={nonce}
+        dangerouslySetInnerHTML={{
+          __html: `__webpack_nonce__ = '${nonce}'`,
+        }}
+      />
       {description}
       <OpenGraphMetadata contentOwner={contentOwner} content={content} title={title} req={req} />
       <StructuredMetaData contentOwner={contentOwner} content={content} nonce={nonce} title={title} req={req} />
@@ -149,7 +156,7 @@ export default function HTMLHead(props) {
         Apollo's data (see apolloStateFn in HTMLBase). So for now, we just do a string replace, sigh.
         See related hacky code in server/app/app.js
       */}
-      <style id="jss-ssr" dangerouslySetInnerHTML={{ __html: `<!--CSS-SSR-REPLACE-->` }} />
+      <style id="jss-ssr" nonce={nonce} dangerouslySetInnerHTML={{ __html: `<!--CSS-SSR-REPLACE-->` }} />
       {contentOwner ? <GoogleAnalytics nonce={nonce} contentOwner={contentOwner} /> : null}
     </head>
   );
