@@ -102,7 +102,13 @@ export default function App({ user }) {
     <UserContext.Provider value={userContext}>
       <SnackbarProvider action={<CloseButton />}>
         <ErrorBoundary>
-          <div className={classNames('App', { 'App-logged-in': user })} style={devOnlyHiddenOnLoadStyle}>
+          <div
+            className={classNames('App', {
+              'App-logged-in': user,
+              'App-is-development': process.env.NODE_ENV === 'development',
+            })}
+            style={devOnlyHiddenOnLoadStyle}
+          >
             <Header />
             {isOffline ? <div>Running offline with service worker.</div> : main}
             <Footer />

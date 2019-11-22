@@ -1,4 +1,5 @@
 import Button from '@material-ui/core/Button';
+import classNames from 'classnames';
 import { createUseStyles } from 'react-jss';
 import Popover from '@material-ui/core/Popover';
 import React, { useEffect, useState } from 'react';
@@ -110,7 +111,7 @@ export default function Performance() {
         aria-haspopup="true"
         variant="outlined"
         onClick={handleClick}
-        className={duration > 5000 ? styles.slowPerformanceButton : styles.performanceButton}
+        className={classNames(duration > 5000 ? styles.slowPerformanceButton : styles.performanceButton, 'i18n-msg')}
       >
         {duration ? duration.toFixed(1) + 'ms' : '…'}
       </Button>

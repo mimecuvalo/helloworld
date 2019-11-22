@@ -36,12 +36,14 @@ export function generateId(id = '', msg = '', description = '') {
 // />
 export const F = React.memo(function F({ id, description, msg, values }) {
   return (
-    <FormattedMessage
-      id={generateId(id, msg, description)}
-      description={description}
-      defaultMessage={msg}
-      values={values}
-    />
+    <span className="i18n-msg">
+      <FormattedMessage
+        id={generateId(id, msg, description)}
+        description={description}
+        defaultMessage={msg}
+        values={values}
+      />
+    </span>
   );
 });
 

@@ -11,3 +11,13 @@ html .App-snackbar-icon {
   cursor: pointer;
   font-size: inherit;
 }
+
+/* In development, highlight untranslated strings. */
+.App-is-development * {
+  text-shadow: 3px 3px red;
+}
+
+.App-is-development .i18n-msg,
+.App-is-development .i18n-msg * {
+  text-shadow: none;
+}
