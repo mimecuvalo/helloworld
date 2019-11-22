@@ -5,6 +5,7 @@ import configuration from '../app/configuration';
 import createApolloClient from './apollo';
 import './index.css';
 import { IntlProvider } from 'react-intl';
+import { isInternalLocale } from '../../shared/i18n/locale';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
@@ -15,12 +16,12 @@ async function renderAppTree(app) {
   const client = createApolloClient();
 
   let translations = {};
-  if (configuration.locale !== configuration.defaultLocale) {
+  if (configuration.locale !== configuration.defaultLocale && !isInternalLocale(configuration.locale)) {
     translations = (await import(`../../shared/i18n/${configuration.locale}`)).default;
   }
 
   return (
-    <IntlProvider locale={configuration.locale} messages={translations}>
+    <IntlProvider defaultLocale={configuration.locale} locale={configuration.locale} messages={translations}>
       <ApolloProvider client={client}>
         <Router>
           <ThemeProvider theme={theme}>{app}</ThemeProvider>

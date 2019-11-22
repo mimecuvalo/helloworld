@@ -1,7 +1,7 @@
 import { ApolloProvider } from '@apollo/react-common';
 import App from '../../client/app/App';
 import createApolloClient from '../data/apollo_client';
-import { DEFAULT_LOCALE, getLocale } from './locale';
+import { DEFAULT_LOCALE, getLocale } from '../../shared/i18n/locale';
 import { getDataFromTree } from '@apollo/react-ssr';
 import HTMLBase from './HTMLBase';
 import { initializeCurrentUser } from '../../shared/data/local_state';
@@ -47,7 +47,7 @@ export default async function render({ req, res, next, assetPathsByType, appName
   // Apollo data. a) it speeds things up, but b) if we didn't do this, on prod, it can cause
   // classname hydration mismatches.
   const completeApp = isApolloTraversal => (
-    <IntlProvider locale={locale} messages={translations}>
+    <IntlProvider defaultLocale={locale} locale={locale} messages={translations}>
       <ApolloProvider client={apolloClient}>
         <HTMLBase
           apolloStateFn={() => apolloClient.extract()}

@@ -1,6 +1,7 @@
 export const DEFAULT_LOCALE = 'en';
 
 export const LOCALES = ['en', 'fr'];
+export const INTERNAL_LOCALES = ['xx-AE', 'xx-LS'];
 
 // Based on the request object (and other metrics, if you so chose) deduce the locale
 // that the app should be rendered with.
@@ -49,5 +50,9 @@ function findRelevantLocale(locale) {
 
 // Whether the locale is found in our supported locale list. Must be exact.
 export function isValidLocale(locale) {
-  return LOCALES.indexOf(locale) !== -1;
+  return LOCALES.indexOf(locale) !== -1 || isInternalLocale(locale);
+}
+
+export function isInternalLocale(locale) {
+  return process.env.NODE_ENV === 'development' && INTERNAL_LOCALES.indexOf(locale) !== -1;
 }
