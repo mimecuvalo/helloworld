@@ -100,6 +100,12 @@ npx sequelize migration:generate --name [migration_name]
 
 To learn more about Sequelize and migrations, read the docs [here](https://sequelize.org/master/manual/migrations.html).
 
+To extract i18n messages (they go into the folder `build/messages`):
+
+```sh
+npm run extract-messages
+```
+
 ## 🎯 Goals
 
 - pass [SWAT0](https://indieweb.org/SWAT0)

@@ -1,0 +1,43 @@
+{
+  "name": "react-intl-wrapper",
+  "version": "1.0.1",
+  "description": "A wrapper around react-intl made for ease of use.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mimecuvalo/all-the-things.git",
+    "directory": "packages/react-scripts/template/shared/i18n"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=8.10"
+  },
+  "author": "Mime Čuvalo <mimecuvalo@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/mimecuvalo/all-the-things/issues"
+  },
+  "keywords": [
+    "i18n",
+    "react",
+    "react-intl"
+  ],
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && NODE_ENV=production babel index.js extraction.js --out-dir dist --copy-files --ignore node_modules,__tests__,spec.js,test.js,__snapshots__",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "react-intl": "3.4.0"
+  },
+  "peerDependencies": {
+    "react": ">=16.11.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "7.6.4",
+    "@babel/plugin-transform-modules-commonjs": "7.6.0",
+    "@babel/preset-react": "7.6.3"
+  }
+}

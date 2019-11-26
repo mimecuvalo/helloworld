@@ -47,7 +47,8 @@
     "flow": "flow",
     "postinstall": "if test \"$NODE_ENV\" = \"development\" ; then flow-typed install; fi",
     "build-storybook": "build-storybook -s public",
-    "styleguide": "start-storybook -p 9001 -c .storybook --ci --quiet"
+    "styleguide": "start-storybook -p 9001 -c .storybook --ci --quiet",
+    "extract-messages": "NODE_ENV=development extract-messages -l=en -o build/messages --flat --moduleSourceName react-intl-wrapper --additionalComponentNames F 'template/**/!(*.test).js'"
   },
   "devDependencies": {
     "@storybook/addon-actions": "5.2.5",
@@ -57,6 +58,7 @@
     "axe-core": "3.4.0",
     "enzyme": "3.10.0",
     "enzyme-adapter-react-16": "1.15.1",
+    "extract-react-intl-messages": "2.2.1",
     "flightplan": "0.6.20",
     "flow-bin": "0.110.0",
     "flow-typed": "2.6.2",

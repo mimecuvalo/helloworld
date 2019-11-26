@@ -1,15 +1,17 @@
-import {
-  defineMessages as originalDefineMessages,
-  FormattedDate as originalFormattedDate,
-  FormattedMessage,
-  FormattedNumber as originalFormattedNumber,
-  useIntl as originalUseIntl,
-} from 'react-intl';
+import { defineMessages as originalDefineMessages, FormattedMessage, useIntl as originalUseIntl } from 'react-intl';
+import extraction from './extraction';
 import React from 'react';
+
+// Re-export everything and override below what we want to override.
+export * from 'react-intl';
+
+// For the Babel transform plugin.
+export default extraction;
 
 // Our i18n implementation tries to simplify the workflow for the developer
 // such that they don't have to explicitly provide an ID every time which can be cumbersome.
 // Nonetheless, it's still required by react-intl so we programmatically create an ID based on the message.
+// NOTE: This is in sync with i18n-extraction/index.js id generation.
 export function generateId(id = '', msg = '', description = '') {
   if (id) {
     return id;
@@ -45,66 +47,45 @@ export function F({ id, description, fallback, msg, values }) {
 
   msg = transformInternalLocaleMsg(intl.locale, msg);
 
+  // XXX(mime): Workaround. We do this destructuring of props like this to avoid detection by the
+  // i18n message extractor (which would otherwise error here and complain of not
+  // having static values for FormattedMessage).
+  const props = { id: generatedId, description, defaultMessage: msg, values };
+
   return (
     <span className="i18n-msg">
-      <FormattedMessage id={generatedId} description={description} defaultMessage={msg} values={values} />
+      <FormattedMessage {...props} />
     </span>
   );
 }
 
 const ACCENTS = {
-  a: 'ä',
-  b: 'b̂',
-  c: 'ç',
+  a: 'ã',
+  b: 'b́',
+  c: 'č',
   d: 'đ',
-  e: 'è',
-  f: 'ḟ',
-  g: 'ğ',
-  h: 'ȟ',
-  i: 'î',
-  j: 'j̊',
-  k: 'ⱪ',
+  e: 'ĕ',
+  f: 'f́',
+  g: 'ġ',
+  h: 'ĥ',
+  i: 'ĩ',
+  j: 'ĵ',
+  k: 'ķ',
   l: 'ĺ',
   m: 'ḿ',
   n: 'ñ',
   o: 'ø',
   p: 'ƥ',
   q: 'ʠ',
-  r: 'r̆',
+  r: 'ř',
   s: 'š',
-  t: 'ț',
-  u: 'ü',
+  t: 't́',
+  u: 'ū',
   v: 'v̂',
-  w: 'ẘ',
+  w: 'ŵ',
   x: 'x̄',
   y: 'ẙ',
-  z: 'ż',
-  A: 'Ä',
-  B: 'B̂',
-  C: 'Ç',
-  D: 'Đ',
-  E: 'È',
-  F: 'Ḟ',
-  G: 'Ğ',
-  H: 'Ȟ',
-  I: 'Î',
-  J: 'J̊',
-  K: 'Ⱪ',
-  L: 'Ĺ',
-  M: 'Ḿ',
-  N: 'Ñ',
-  O: 'Ø',
-  P: 'Ƥ',
-  Q: 'ʠ',
-  R: 'R̆',
-  S: 'Š',
-  T: 'Ț',
-  U: 'Ü',
-  V: 'V̂',
-  W: 'W̊',
-  X: 'X̄',
-  Y: 'Y̊',
-  Z: 'Ż',
+  z: 'ž',
 };
 
 function transformInternalLocaleMsg(locale, msg) {
@@ -118,7 +99,11 @@ function transformInternalLocaleMsg(locale, msg) {
       if (msg[i] === '>' || msg[i] === '}') {
         inBracket = false;
       }
-      newMsg += !inBracket && /[a-zA-Z]/.test(msg[i]) ? ACCENTS[msg[i]] : msg[i];
+      if (!inBracket && /[a-zA-Z]/.test(msg[i])) {
+        newMsg += /[a-z]/.test(msg[i]) ? ACCENTS[msg[i]] : ACCENTS[msg[i]].toUpperCase();
+      } else {
+        newMsg = msg[i];
+      }
     }
     msg = newMsg;
   }
@@ -162,6 +147,3 @@ export function useIntl() {
 
   return intl;
 }
-
-export const FormattedDate = originalFormattedDate;
-export const FormattedNumber = originalFormattedNumber;
