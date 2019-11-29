@@ -13,10 +13,12 @@ html .App-snackbar-icon {
 }
 
 /* In development, highlight untranslated strings. */
-.App-is-development * {
+.App-is-development *:not(.notranslate) {
   text-shadow: 3px 3px red;
 }
 
+.App-is-development .notranslate,
+.App-is-development .notranslate *,
 .App-is-development .i18n-msg,
 .App-is-development .i18n-msg * {
   text-shadow: none;

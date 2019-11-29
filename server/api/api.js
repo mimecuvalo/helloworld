@@ -1,3 +1,4 @@
+import adminRouter from './admin';
 import authorization from '../util/authorization';
 import authRouter from './auth';
 import clientHealthCheckRouter from './client_health_check';
@@ -14,6 +15,7 @@ import upload from './upload';
  */
 export default function apiServerFactory({ appName }) {
   const router = express.Router();
+  router.use('/admin', isAdmin, adminRouter);
   router.use('/auth', authRouter);
   router.use('/client-health-check', clientHealthCheckRouter);
   router.get('/data-liberation', isAuthor, dataLiberation);
@@ -39,5 +41,5 @@ const isAuthenticated = (req, res, next) =>
 const isAuthor = (req, res, next) =>
   authorization.isAuthor(req.session.user) ? next() : res.status(403).send('I call shenanigans.');
 
-// const isAdmin = (req, res, next) =>
-//   authorization.isAdmin(req.session.user) ? next() : res.status(403).send('I call shenanigans.');
+const isAdmin = (req, res, next) =>
+  authorization.isAdmin(req.session.user) ? next() : res.status(403).send('I call shenanigans.');

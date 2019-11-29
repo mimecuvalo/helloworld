@@ -13,8 +13,8 @@ const clientsideErrorsLogger = winston.createLogger({
   format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
   transports: [
     new WinstonDailyRotateFile({
-      name: 'clientside-errors',
-      filename: path.resolve(process.cwd(), 'logs', 'clientside-errors-%DATE%.log'),
+      name: 'clientside-exceptions',
+      filename: path.resolve(process.cwd(), 'logs', 'clientside-exceptions-%DATE%.log'),
       zippedArchive: true,
     }),
   ],
