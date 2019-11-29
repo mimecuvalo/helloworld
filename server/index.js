@@ -3,6 +3,7 @@ import apolloServer from './data/apollo';
 import appServer from './app/app';
 import bodyParser from 'body-parser';
 import compression from 'compression';
+import connectRedis from 'connect-redis';
 import cookieParser from 'cookie-parser';
 import * as cron from './cron';
 import csurf from 'csurf';
@@ -77,9 +78,21 @@ export default function constructApps({ appName, productionAssetsByType, publicU
   const SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30 days.
   const sessionsSecret =
     process.env.REACT_APP_SESSION_SECRET || (process.env.NODE_ENV === 'development' ? 'dumbsecret' : null);
+
+  let store;
+  if (process.env.REACT_APP_REDIS_HOST && process.env.REACT_APP_REDIS_PORT) {
+    const RedisStore = connectRedis(session);
+    store = new RedisStore({
+      host: process.env.REACT_APP_REDIS_HOST,
+      port: process.env.REACT_APP_REDIS_PORT,
+    });
+  } else {
+    store = new FileStore({ ttl: SESSION_MAX_AGE, logFn: () => {} });
+  }
+
   app.use(
     session({
-      store: new FileStore({ ttl: SESSION_MAX_AGE, logFn: () => {} }),
+      store,
       secret: sessionsSecret,
       resave: false,
       saveUninitialized: false,

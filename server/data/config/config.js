@@ -7,6 +7,8 @@ const config = {
     username: process.env.REACT_APP_DB_USERNAME,
     password: process.env.REACT_APP_DB_PASSWORD,
     host: process.env.REACT_APP_DB_HOST,
+    port: process.env.REACT_APP_DB_PORT,
+    seederStorage: 'sequelize',
   },
   test: {
     dialect: 'mysql',
@@ -14,6 +16,8 @@ const config = {
     username: process.env.REACT_APP_DB_USERNAME,
     password: process.env.REACT_APP_DB_PASSWORD,
     host: process.env.REACT_APP_DB_HOST,
+    port: process.env.REACT_APP_DB_PORT,
+    seederStorage: 'sequelize',
   },
   production: {
     dialect: 'mysql',
@@ -21,6 +25,8 @@ const config = {
     username: process.env.REACT_APP_DB_USERNAME,
     password: process.env.REACT_APP_DB_PASSWORD,
     host: process.env.REACT_APP_DB_HOST,
+    port: process.env.REACT_APP_DB_PORT,
+    seederStorage: 'sequelize',
   },
 };
 

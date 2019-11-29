@@ -106,6 +106,14 @@ To extract i18n messages (they go into the folder `build/messages`):
 npm run extract-messages
 ```
 
+To use [Docker](https://docs.docker.com/compose/install/):
+
+```sh
+npm run dev
+```
+and then MySQL will be available on port 3002 (with username/password/database name all being `allthethings`).
+Redis will be on port 3003. To set up Redis be sure to set REACT_APP_REDIS_HOST and REACT_APP_REDIS_PORT.
+
 ## 🎯 Goals
 
 - pass [SWAT0](https://indieweb.org/SWAT0)

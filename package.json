@@ -21,6 +21,7 @@
   ],
   "dependencies": {
     "@sentry/node": "5.9.0",
+    "connect-redis": "4.0.3",
     "cra-all-the-things": "0.9.7",
     "hello-world-editor": "file:packages/hello-world-editor",
     "is-mobile": "2.1.0",
@@ -48,7 +49,8 @@
     "postinstall": "if test \"$NODE_ENV\" = \"development\" ; then flow-typed install; fi",
     "build-storybook": "build-storybook -s public",
     "styleguide": "start-storybook -p 9001 -c .storybook --ci --quiet",
-    "extract-messages": "NODE_ENV=development extract-messages -l=en -o build/messages --flat --moduleSourceName react-intl-wrapper --additionalComponentNames F 'template/**/!(*.test).js'"
+    "extract-messages": "NODE_ENV=development extract-messages -l=en -o build/messages --flat --moduleSourceName react-intl-wrapper --additionalComponentNames F 'template/**/!(*.test).js'",
+    "dev": "npm install && docker-compose up -d && npx sequelize db:migrate && npx sequelize db:seed:all"
   },
   "devDependencies": {
     "@storybook/addon-actions": "5.2.5",
