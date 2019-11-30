@@ -62,6 +62,11 @@ export default function Help() {
     window.location.reload();
   };
 
+  const handleAdmin = () => {
+    handleClose();
+    window.location.href = '/admin';
+  };
+
   const handleMenuOpenerClick = event => {
     setAnchorEl(event.currentTarget);
   };
