@@ -1,7 +1,8 @@
 import _ from 'lodash';
+import express from 'express';
 import fs from 'fs';
 import path from 'path';
-import express from 'express';
+import { REGISTERED_EXPERIMENTS } from '../../server/app/experiments';
 
 const router = express.Router();
 router.post('/repl', async (req, res) => {
@@ -40,6 +41,10 @@ router.get('/clientside-exceptions', async (req, res) => {
   const groupedExceptions = _.groupBy(individualExceptions, 'message');
 
   res.json({ exceptions: groupedExceptions });
+});
+
+router.get('/experiments', async (req, res) => {
+  res.json({ experiments: REGISTERED_EXPERIMENTS });
 });
 
 export default router;

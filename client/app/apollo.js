@@ -5,7 +5,7 @@ import { buildUrl } from '../../shared/util/url_factory';
 import configuration from '../app/configuration';
 import { dataIdFromObject } from '../../shared/data/apollo';
 import { HttpLink } from 'apollo-link-http';
-import { initializeCurrentUser } from '../../shared/data/local_state';
+import { initializeLocalState } from '../../shared/data/local_state';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { onError } from 'apollo-link-error';
 import { typeDefs, resolvers } from '../../shared/data/local_state';
@@ -38,7 +38,7 @@ export default function createApolloClient() {
   );
   const link = ApolloLink.from([errorLink, splitLink]);
 
-  initializeCurrentUser(configuration.user);
+  initializeLocalState(configuration.user, configuration.experiments);
   const client = new ApolloClient({
     request: async op => {
       op.setContext({

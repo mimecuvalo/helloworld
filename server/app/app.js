@@ -3,8 +3,9 @@ import App from '../../client/app/App';
 import createApolloClient from '../data/apollo_client';
 import { DEFAULT_LOCALE, getLocale } from '../../shared/i18n/locale';
 import { getDataFromTree } from '@apollo/react-ssr';
+import getExperiments from './experiments';
 import HTMLBase from './HTMLBase';
-import { initializeCurrentUser } from '../../shared/data/local_state';
+import { initializeLocalState } from '../../shared/data/local_state';
 import { IntlProvider } from 'react-intl';
 import { JssProvider, SheetsRegistry, createGenerateId } from 'react-jss';
 import * as languages from '../../shared/i18n/languages';
@@ -29,7 +30,8 @@ export default async function render({ req, res, next, assetPathsByType, appName
             }, {}),
       }
     : null;
-  initializeCurrentUser(filteredUser);
+  const experiments = getExperiments(req);
+  initializeLocalState(filteredUser, experiments);
 
   const apolloClient = createApolloClient(req);
   const context = {};
@@ -57,6 +59,7 @@ export default async function render({ req, res, next, assetPathsByType, appName
           assetPathsByType={assetPathsByType}
           csrfToken={req.csrfToken()}
           defaultLocale={DEFAULT_LOCALE}
+          experiments={experiments}
           locale={locale}
           nonce={nonce}
           publicUrl={publicUrl}
