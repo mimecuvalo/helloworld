@@ -1,4 +1,5 @@
 import adminRouter from './admin';
+import analyticsRouter from './analytics';
 import authorization from '../util/authorization';
 import authRouter from './auth';
 import clientHealthCheckRouter from './client_health_check';
@@ -16,6 +17,7 @@ import upload from './upload';
 export default function apiServerFactory({ appName }) {
   const router = express.Router();
   router.use('/admin', isAdmin, adminRouter);
+  router.use('/analytics', analyticsRouter);
   router.use('/auth', authRouter);
   router.use('/client-health-check', clientHealthCheckRouter);
   router.get('/data-liberation', isAuthor, dataLiberation);

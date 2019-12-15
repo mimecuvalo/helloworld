@@ -1,4 +1,5 @@
 import AdminApp from '../admin';
+import './analytics';
 import './App.css';
 import '../content/EditorPlugin.css'; // XXX(mime): this is a complete hack for now.
 import classNames from 'classnames';

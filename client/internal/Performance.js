@@ -48,16 +48,20 @@ export default function Performance() {
     setAnchorEl(null);
   };
 
-  function calculatePerfInfo() {
-    console.log('[perf]: calculating perf info...');
-    if (window['performance']) {
-      const navigationEntry = window['performance'].getEntriesByType('navigation')[0];
-      setDuration(navigationEntry.duration);
-      setNavigationEntry(navigationEntry);
-    }
-  }
-
   useEffect(() => {
+    function calculatePerfInfo() {
+      console.log('[perf]: calculating perf info...');
+      if (window['performance']) {
+        const navigationEntry = window['performance'].getEntriesByType('navigation')[0];
+        if (!navigationEntry.duration) {
+          // XXX(mime): why does this take a while?!
+          setTimeout(() => calculatePerfInfo(), 100);
+        }
+        setDuration(navigationEntry.duration);
+        setNavigationEntry(navigationEntry);
+      }
+    }
+
     // Wait a tick until the page more or less finishes rendering.
     // XXX(mime): 100 is arbitrary. Look for better way to wait.
     setTimeout(() => calculatePerfInfo(), 100);

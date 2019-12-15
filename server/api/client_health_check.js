@@ -18,7 +18,7 @@ router.get('/', (req, res) => {
   }
 
   // Otherwise, the client is good.
-  res.send('ok');
+  res.status(204).send('ok');
 });
 
 export default router;
