@@ -14,9 +14,9 @@ export default function createApolloClient() {
   const apolloUrl = buildUrl({ isAbsolute: true, pathname: '/graphql' });
   // link to use if batching
   // also adds a `batch: true` header to the request to prove it's a different link (default)
-  const batchHttpLink = new BatchHttpLink({ apolloUrl });
+  const batchHttpLink = new BatchHttpLink({ uri: apolloUrl });
   // link to use if not batching
-  const httpLink = new HttpLink({ apolloUrl });
+  const httpLink = new HttpLink({ uri: apolloUrl });
 
   // We add the Apollo/GraphQL capabilities here (also notice ApolloProvider below).
   const cache = new InMemoryCache({ dataIdFromObject, freezeResults: true }).restore(window['__APOLLO_STATE__']);

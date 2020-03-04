@@ -45,11 +45,11 @@ const useStyles = createUseStyles({
       borderLeft: '1px solid #666',
     },
     '& a': {
-      wordBreak: 'break-word',
+      wordWrap: 'break-word',
     },
     '& pre': {
       whiteSpace: 'pre-wrap',
-      wordBreak: 'break-word',
+      wordWrap: 'break-word',
     },
     '& img': {
       maxWidth: '100%',
