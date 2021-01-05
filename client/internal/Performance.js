@@ -78,7 +78,7 @@ export default function Performance() {
       entries[entry.name] = entry.startTime;
     });
 
-    const timingsInOrder = [
+    const relevantTimingKeys = [
       'redirectStart',
       'redirectEnd',
       'fetchStart',
@@ -102,8 +102,9 @@ export default function Performance() {
 
     return (
       <table className={styles.performanceList}>
-        {timingsInOrder
+        {relevantTimingKeys
           .filter(timing => !!entries[timing])
+          .sort((a, b) => entries[a] - entries[b])
           .map(timing => (
             <tr key={timing}>
               <td className={styles.entryType}>{timing}</td>
