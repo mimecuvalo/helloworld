@@ -242,7 +242,12 @@ const Content = {
         collection.forEach(item => {
           const link = item.view.match(/https?:\/\/[^"']+/);
           const youTubeMatch = link?.[0].match(/youtube.com\/embed\/([^?<]+)/);
-          item.externalLink = youTubeMatch ? `https://youtu.be/${youTubeMatch[1]}` : link?.[0];
+          const youTubeSeriesMatch = link?.[0].match(/youtube.com\/embed\/videoseries\?list=([^?<]+)/);
+          item.externalLink = youTubeSeriesMatch
+            ? `https://www.youtube.com/playlist?list=${youTubeSeriesMatch[1]}`
+            : youTubeMatch
+            ? `https://youtu.be/${youTubeMatch[1]}`
+            : link?.[0];
         });
       }
 
