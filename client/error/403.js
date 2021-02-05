@@ -1,4 +1,4 @@
-import { defineMessages, F, useIntl } from '../../shared/i18n';
+import { defineMessages, F, useIntl } from 'react-intl-wrapper';
 import React from 'react';
 import useStyles from './errorStyles';
 

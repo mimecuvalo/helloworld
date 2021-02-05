@@ -1,6 +1,6 @@
 import { createUseStyles } from 'react-jss';
 import DashboardEditor from './Editor';
-import { defineMessages, useIntl } from '../../shared/i18n';
+import { defineMessages, useIntl } from 'react-intl-wrapper';
 import Feed from './Feed';
 import Followers from './Followers';
 import Following from './Following';

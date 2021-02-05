@@ -4,7 +4,7 @@ import ContentEditor from '../content/ContentEditor';
 import { convertFromRaw, EditorState } from 'draft-js';
 import Cookies from 'js-cookie';
 import { createUseStyles } from 'react-jss';
-import { defineMessages, F } from '../../shared/i18n';
+import { defineMessages, F } from 'react-intl-wrapper';
 import { EditorUtils } from 'hello-world-editor';
 import FormControl from '@material-ui/core/FormControl';
 import gql from 'graphql-tag';

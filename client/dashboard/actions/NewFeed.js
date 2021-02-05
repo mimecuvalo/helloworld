@@ -1,5 +1,5 @@
-import { defineMessages, useIntl } from '../../../shared/i18n';
-import { F } from '../../../shared/i18n';
+import { defineMessages, useIntl } from 'react-intl-wrapper';
+import { F } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
 import FollowingFeedCountsQuery from '../FollowingFeedCountsQuery';
 import FollowingQuery from '../FollowingQuery';

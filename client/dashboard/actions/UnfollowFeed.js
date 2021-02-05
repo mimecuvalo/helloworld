@@ -1,4 +1,4 @@
-import { F } from '../../../shared/i18n';
+import { F } from 'react-intl-wrapper';
 import FollowingQuery from '../FollowingQuery';
 import FollowingSpecialFeedCountsQuery from '../FollowingSpecialFeedCountsQuery';
 import gql from 'graphql-tag';

@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import configuration from '../app/configuration';
 import { Editor } from 'hello-world-editor';
 import ErrorBoundary from '../error/ErrorBoundary';
-import { F } from '../../shared/i18n';
+import { F } from 'react-intl-wrapper';
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';

@@ -1,4 +1,4 @@
-import { F } from '../../shared/i18n';
+import { F } from 'react-intl-wrapper';
 import { profileUrl } from '../../shared/util/url_factory';
 import React, { useContext, useEffect, useState } from 'react';
 import { setUser } from '../app/auth';

@@ -1,5 +1,5 @@
 import { createUseStyles } from 'react-jss';
-import { F, FormattedDate } from '../../shared/i18n';
+import { F, FormattedDate } from 'react-intl-wrapper';
 import Favorite from './actions/Favorite';
 import KeepUnread from './actions/KeepUnread';
 import React from 'react';

@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { createUseStyles } from 'react-jss';
-import { F } from '../../shared/i18n';
+import { F } from 'react-intl-wrapper';
 import React from 'react';
 import SiteMap from './SiteMap';
 import useDocumentTitle from '../app/title';

@@ -1,6 +1,6 @@
 import Button from '@material-ui/core/Button';
 import { createUseStyles } from 'react-jss';
-import { F } from '../../shared/i18n';
+import { F } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
 import LoginLogoutButton from '../components/login';
 import React from 'react';

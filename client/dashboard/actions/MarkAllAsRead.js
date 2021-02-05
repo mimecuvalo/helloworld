@@ -1,5 +1,5 @@
 import { escapeRegExp } from '../../../shared/util/regex';
-import { F } from '../../../shared/i18n';
+import { F } from 'react-intl-wrapper';
 import FollowingSpecialFeedCountsQuery from '../FollowingSpecialFeedCountsQuery';
 import gql from 'graphql-tag';
 import MenuItem from '@material-ui/core/MenuItem';

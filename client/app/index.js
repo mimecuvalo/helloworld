@@ -1,23 +1,28 @@
 import { ApolloProvider } from '@apollo/react-hooks';
 import App from './App';
 import { BrowserRouter as Router } from 'react-router-dom';
-import configuration from '../app/configuration';
+import configuration from './configuration';
 import createApolloClient from './apollo';
 import './index.css';
-import { IntlProvider } from 'react-intl';
-import { isInternalLocale } from '../../shared/i18n/locale';
+import { IntlProvider, isInternalLocale, setLocales } from 'react-intl-wrapper';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
 import theme from '../../shared/theme';
 import { ThemeProvider } from '@material-ui/core/styles';
 
+setLocales({
+  defaultLocale: configuration.defaultLocale,
+  locales: configuration.locales,
+});
+
 async function renderAppTree(app) {
   const client = createApolloClient();
 
   let translations = {};
+  // This is to dynamically load language packs as needed. We don't need them all client-side.
   if (configuration.locale !== configuration.defaultLocale && !isInternalLocale(configuration.locale)) {
-    translations = (await import(`../../shared/i18n/${configuration.locale}`)).default;
+    translations = (await import(`../../shared/i18n-lang-packs/${configuration.locale}`)).default;
   }
 
   return (

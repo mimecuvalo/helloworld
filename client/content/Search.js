@@ -2,7 +2,7 @@ import ContentBase from './ContentBase';
 import ContentLink from '../components/ContentLink';
 import ContentThumb from '../components/ContentThumb';
 import { createUseStyles } from 'react-jss';
-import { defineMessages, useIntl } from '../../shared/i18n';
+import { defineMessages, useIntl } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
 import React from 'react';
 import { useQuery } from '@apollo/react-hooks';

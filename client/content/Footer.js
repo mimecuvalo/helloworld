@@ -1,6 +1,6 @@
 import { contentUrl, profileUrl } from '../../shared/util/url_factory';
 import { createUseStyles } from 'react-jss';
-import { F, FormattedDate } from '../../shared/i18n';
+import { F, FormattedDate } from 'react-intl-wrapper';
 import React from 'react';
 
 const useStyles = createUseStyles({

@@ -3,7 +3,7 @@ import configuration from '../app/configuration';
 import ContentQuery from './ContentQuery';
 import { createLock } from '../app/auth';
 import { createUseStyles } from 'react-jss';
-import { defineMessages, F, useIntl } from '../../shared/i18n';
+import { defineMessages, F, useIntl } from 'react-intl-wrapper';
 import Delete from '../dashboard/actions/Delete';
 import { Editor } from 'hello-world-editor';
 import Favorite from '../dashboard/actions/Favorite';

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import Avatar from './Avatar';
 import classNames from 'classnames';
-import { FormattedNumber } from '../../shared/i18n';
+import { FormattedNumber } from 'react-intl-wrapper';
 import FollowingFeedCountsQuery from './FollowingFeedCountsQuery';
 import FollowingMenu from './FollowingMenu';
 import React from 'react';

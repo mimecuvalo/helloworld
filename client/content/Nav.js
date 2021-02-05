@@ -2,7 +2,7 @@ import ContentLink from '../components/ContentLink';
 import ContentQuery from './ContentQuery';
 import { contentUrl } from '../../shared/util/url_factory';
 import { createUseStyles } from 'react-jss';
-import { F } from '../../shared/i18n';
+import { F } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
 import React, { useEffect, useImperativeHandle, useRef } from 'react';
 import { useQuery } from '@apollo/react-hooks';

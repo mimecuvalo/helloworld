@@ -3,7 +3,7 @@ import ContentBase from './ContentBase';
 import ContentQuery from './ContentQuery';
 import { convertFromRaw, EditorState } from 'draft-js';
 import { createUseStyles } from 'react-jss';
-import { defineMessages, useIntl } from '../../shared/i18n';
+import { defineMessages, useIntl } from 'react-intl-wrapper';
 import { EditorUtils } from 'hello-world-editor';
 import Feed from './Feed';
 import gql from 'graphql-tag';

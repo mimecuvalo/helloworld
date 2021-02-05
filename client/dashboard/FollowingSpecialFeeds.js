@@ -1,9 +1,9 @@
 import Avatar from './Avatar';
 import classNames from 'classnames';
-import { F } from '../../shared/i18n';
+import { F } from 'react-intl-wrapper';
 import FollowingAllMenu from './FollowingAllMenu';
 import FollowingSpecialFeedCountsQuery from './FollowingSpecialFeedCountsQuery';
-import { FormattedNumber } from '../../shared/i18n';
+import { FormattedNumber } from 'react-intl-wrapper';
 import React, { useContext } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import UserContext from '../app/User_Context';

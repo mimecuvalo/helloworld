@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { defineMessages, F, useIntl } from '../../shared/i18n';
+import { defineMessages, F, useIntl } from 'react-intl-wrapper';
 import FollowingFeeds from './FollowingFeeds';
 import FollowingQuery from './FollowingQuery';
 import FollowingSpecialFeeds from './FollowingSpecialFeeds';

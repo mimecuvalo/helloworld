@@ -1,4 +1,4 @@
-import { useIntl } from 'react-intl';
+import { useIntl } from 'react-intl-wrapper';
 import { useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 

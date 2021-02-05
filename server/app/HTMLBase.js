@@ -1,4 +1,4 @@
-import { F } from '../../shared/i18n';
+import { F } from 'react-intl-wrapper';
 import HTMLHead from './HTMLHead';
 import React from 'react';
 
@@ -16,6 +16,7 @@ export default function HTMLBase({
   defaultLocale,
   experiments,
   locale,
+  locales,
   nonce,
   publicUrl,
   req,
@@ -33,6 +34,7 @@ export default function HTMLBase({
           defaultLocale={defaultLocale}
           experiments={experiments}
           locale={locale}
+          locales={locales}
           nonce={nonce}
           user={user}
         />
@@ -84,7 +86,17 @@ export default function HTMLBase({
 }
 
 // Passes key initial, bootstrap data to the client.
-function ConfigurationScript({ appTime, appVersion, csrfToken, defaultLocale, experiments, locale, nonce, user }) {
+function ConfigurationScript({
+  appTime,
+  appVersion,
+  csrfToken,
+  defaultLocale,
+  experiments,
+  locale,
+  locales,
+  nonce,
+  user,
+}) {
   return (
     <script
       nonce={nonce}
@@ -99,6 +111,7 @@ function ConfigurationScript({ appTime, appVersion, csrfToken, defaultLocale, ex
             defaultLocale: '${defaultLocale}',
             experiments: ${JSON.stringify(experiments)},
             locale: '${locale}',
+            locales: '${locales}',
             user: ${JSON.stringify(user)},
           };
         `,

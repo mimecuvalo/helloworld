@@ -1,5 +1,5 @@
 import { escapeRegExp } from '../../../shared/util/regex';
-import { F } from '../../../shared/i18n';
+import { F } from 'react-intl-wrapper';
 import FollowingFeedCountsQuery from '../FollowingFeedCountsQuery';
 import FollowingSpecialFeedCountsQuery from '../FollowingSpecialFeedCountsQuery';
 import gql from 'graphql-tag';

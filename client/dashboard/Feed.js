@@ -1,5 +1,5 @@
 import { createUseStyles } from 'react-jss';
-import { F } from '../../shared/i18n';
+import { F } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
 import InfiniteFeed from '../components/InfiniteFeed';
 import Item from './Item';

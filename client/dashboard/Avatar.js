@@ -1,4 +1,4 @@
-import { defineMessages, useIntl } from '../../shared/i18n';
+import { defineMessages, useIntl } from 'react-intl-wrapper';
 import React, { useEffect, useState } from 'react';
 
 const messages = defineMessages({

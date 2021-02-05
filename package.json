@@ -30,6 +30,7 @@
     "node-schedule": "1.3.2",
     "react": "16.11.0",
     "react-dom": "16.11.0",
+    "react-intl-wrapper": "1.1.2",
     "sharp": "0.23.1",
     "social-butterfly": "file:packages/social-butterfly",
     "swipe-listener": "1.1.0",
@@ -49,7 +50,7 @@
     "postinstall": "if test \"$NODE_ENV\" = \"development\" ; then flow-typed install; fi",
     "build-storybook": "build-storybook -s public",
     "styleguide": "start-storybook -p 9001 -c .storybook --ci --quiet",
-    "extract-messages": "NODE_ENV=development extract-messages -l=en -o build/messages --flat --moduleSourceName react-intl-wrapper --additionalComponentNames F 'template/**/!(*.test).js'",
+    "extract-messages": "NODE_ENV=development extract-messages -l=en -o build/messages --flat --moduleSourceName react-intl-wrapper --additionalComponentNames F '**/!(*.test).js'",
     "dev": "npm install && docker-compose up -d && npx sequelize db:migrate && npx sequelize db:seed:all"
   },
   "devDependencies": {

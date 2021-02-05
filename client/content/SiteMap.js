@@ -4,7 +4,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import constants from '../../shared/constants';
 import ContentLink from '../components/ContentLink';
 import { createUseStyles } from 'react-jss';
-import { defineMessages, F, useIntl } from '../../shared/i18n';
+import { defineMessages, F, useIntl } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
