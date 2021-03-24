@@ -22,7 +22,7 @@
   "dependencies": {
     "@sentry/node": "5.9.0",
     "connect-redis": "4.0.3",
-    "cra-all-the-things": "0.9.7",
+    "cra-all-the-things": "0.9.8",
     "hello-world-editor": "file:packages/hello-world-editor",
     "is-mobile": "2.1.0",
     "magic-signatures": "2.0.0",
