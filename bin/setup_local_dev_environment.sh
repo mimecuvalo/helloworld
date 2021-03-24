@@ -1,7 +1,10 @@
 cd packages/hello-world-editor
-npm install
+npm link
 
 cd ../../packages/social-butterfly
-npm install
+npm link
 
 cd ../../
+
+npm link hello-world-editor
+npm link social-butterfly

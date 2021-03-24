@@ -23,7 +23,7 @@
     "@sentry/node": "5.9.0",
     "connect-redis": "4.0.3",
     "cra-all-the-things": "0.10.0",
-    "hello-world-editor": "file:packages/hello-world-editor",
+    "hello-world-editor": "0.8.11",
     "is-mobile": "2.1.0",
     "magic-signatures": "2.0.0",
     "nanoid": "2.1.5",
@@ -32,7 +32,7 @@
     "react-dom": "16.11.0",
     "react-intl-wrapper": "1.1.2",
     "sharp": "0.23.1",
-    "social-butterfly": "file:packages/social-butterfly",
+    "social-butterfly": "0.8.11",
     "swipe-listener": "1.1.0",
     "uuid": "3.3.3"
   },

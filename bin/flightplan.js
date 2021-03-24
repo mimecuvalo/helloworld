@@ -45,7 +45,7 @@ plan.target('prod', [
 
 const DIRECTORY_NAME = 'helloworld';
 
-const time = new Date().getTime();
+const time = new Date().toISOString().replace(/\W/g, '-');
 const tmpDir = `${DIRECTORY_NAME}-${time}`;
 const remoteTmpDir = `/tmp/${tmpDir}/`;
 
