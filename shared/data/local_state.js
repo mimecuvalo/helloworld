@@ -79,8 +79,10 @@ export function initializeLocalState(user, experiments) {
     oauth: Object.assign({ __typename: 'UserOAuth' }, user.oauth),
   };
 
-  LOCAL_STATE.experiments = experiments.map(name => ({
-    __typename: 'Experiment',
-    name,
-  }));
+  LOCAL_STATE.experiments =
+    experiments &&
+    experiments.map(name => ({
+      __typename: 'Experiment',
+      name,
+    }));
 }
