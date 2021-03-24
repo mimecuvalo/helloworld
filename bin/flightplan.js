@@ -103,5 +103,5 @@ plan.remote(function(remote) {
   // This is done here for the sake of keeping all-the-things as zero-config as possible.
   // For a cleaner deploy take a look at this doc: http://pm2.keymetrics.io/docs/tutorials/capistrano-like-deployments
   remote.sudo(`cd ${destDir}; pm2 kill; pm2 stop helloworld`, { user, failsafe: true });
-  remote.sudo(`cd ${destDir}; pm2 startOrReload ecosystem.config.js`, { user });
+  remote.sudo(`cd ${destDir}; pm2 startOrReload ecosystem.config.js --env production`, { user });
 });
