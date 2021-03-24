@@ -1,6 +1,3 @@
-// XXX(mime): wtf this causes server/client mismatch if i don't include it ARGH
-import Forbidden from '../error/403'; // eslint-disable-line no-unused-vars
-
 import AdminApp from '../admin';
 import './analytics';
 import './App.css';
