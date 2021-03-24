@@ -3,15 +3,30 @@ import AppBar from '@material-ui/core/AppBar';
 import { buildUrl } from '../../shared/util/url_factory';
 import classNames from 'classnames';
 import configuration from '../app/configuration';
+import { createUseStyles } from 'react-jss';
 import { Editor } from 'hello-world-editor';
 import ErrorBoundary from '../error/ErrorBoundary';
 import { F } from 'react-intl-wrapper';
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import { useStyles } from './templates/Simple';
 
 let CodeMirror;
+
+// TODO(mime): move this somewhere more re-usable - same as Simple.js - keep in sync.
+const useStyles = createUseStyles({
+  view: {
+    position: 'relative',
+    clear: 'both',
+    '& img, & iframe, & object, & embed': {
+      maxHeight: '82vh',
+      margin: '10px',
+    },
+    '& figure img:hover': {
+      outline: '3px solid #0bf',
+    },
+  },
+});
 
 export default React.forwardRef((props, ref) => {
   const { album, content = {}, mentions, onMediaAdd, section, showPlaceholder } = props;

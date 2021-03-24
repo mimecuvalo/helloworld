@@ -3,6 +3,7 @@ import ContentEditor from '../ContentEditor';
 import { createUseStyles } from 'react-jss';
 import React, { useImperativeHandle, useRef } from 'react';
 
+// TODO(mime): move this somewhere more re-usable - same as ContentEditor.js - keep in sync.
 export const useStyles = createUseStyles({
   view: {
     position: 'relative',
