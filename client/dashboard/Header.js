@@ -46,7 +46,7 @@ export default function Header({ contentRemote }) {
     <>
       {title ? (
         <header className={styles.header}>
-          <h1 className={classNames(styles.title, { [styles.isRead]: read })}>
+          <h1 className={classNames(styles.title, { [styles.isRead]: read }, 'notranslate')}>
             <a href={link} target="_blank" rel="noopener noreferrer">
               {title}
             </a>

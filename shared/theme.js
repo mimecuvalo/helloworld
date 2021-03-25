@@ -11,7 +11,7 @@ const theme = createMuiTheme({
     MuiButton: {
       root: {
         fontSize: '13px',
-        lineHeight: '1.1',
+        lineHeight: '1.5',
         fontWeight: '400',
         margin: '0 3px 6px 3px',
         padding: '0 7px',
@@ -23,13 +23,13 @@ const theme = createMuiTheme({
         borderRadius: '3px',
         color: '#060',
         textShadow: '0 1px 0 #fff',
-        backgroundImage: 'linear-gradient(to bottom, #fff 0, #e0e0e0 100%)',
-        boxShadow: '1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0, 4px 4px #333, 4px 3px #333, 3px 4px #333',
+        boxShadow: 'none',
 
         '&:hover, &:active': {
+          backgroundColor: '#eff',
           border: '1px solid #090',
           color: '#060',
-          boxShadow: '1px 1px #090, 2px 2px #090, 3px 3px #090, 4px 4px #333, 4px 3px #333, 3px 4px #333',
+          boxShadow: 'none',
         },
       },
     },

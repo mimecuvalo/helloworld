@@ -1,4 +1,5 @@
 import { buildUrl, contentUrl } from '../../shared/util/url_factory';
+import classNames from 'classnames';
 import ContentBase from './ContentBase';
 import ContentQuery from './ContentQuery';
 import { convertFromRaw, EditorState } from 'draft-js';
@@ -22,12 +23,19 @@ const useStyles = createUseStyles({
   content: {
     margin: 'var(--app-margin)',
     padding: '0 3px 10px 3px',
-    width: '70vw',
+    width: '100%',
     '@media only screen and (max-width: 600px)': {
       '&': {
         width: 'auto',
       },
     },
+  },
+
+  feedWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexFlow: 'wrap',
+    alignItems: 'flex-start',
   },
 });
 
@@ -253,7 +261,7 @@ const PersistedContent = React.memo(
         title={title}
         username={content.username}
       >
-        <article className={styles.content}>
+        <article className={classNames(styles.content, { [styles.feedWrapper]: content.template === 'feed' })}>
           {isEditing ? null : <Nav ref={nav} content={content} isEditing={isEditing} />}
           {itemEl}
         </article>

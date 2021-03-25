@@ -6,9 +6,10 @@ import React from 'react';
 const useStyles = createUseStyles({
   footer: {
     fontSize: '11px',
-    margin: '6px 6px 48px 0',
+    color: '#666',
+    margin: '6px 6px 0 0',
     borderTop: '1px solid #0bf',
-    padding: '3px 6px 6px 3px',
+    padding: '8px 6px 6px 3px',
     '& img': {
       width: '16px',
       height: '16px',

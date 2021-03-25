@@ -1,5 +1,6 @@
 import Album from './templates/Album';
 import Archive from './templates/Archive';
+import classNames from 'classnames';
 import Comments from './Comments';
 import Favorites from './Favorites';
 import Footer from './Footer';
@@ -24,11 +25,11 @@ export default React.forwardRef((props, ref) => {
     },
   }));
 
-  const { content, contentOwner, comments, favorites, handleEdit, isEditing, isFeed } = props;
+  const { className, content, contentOwner, comments, favorites, handleEdit, isEditing, isFeed } = props;
   let TemplateComponent = COMPONENT_TYPE_MAP[content.template] || Simple;
 
   return (
-    <article className="hw-item h-entry">
+    <article className={classNames('hw-item', 'h-entry', className)}>
       <Header content={content} handleEdit={handleEdit} isEditing={isEditing} />
       <TemplateComponent ref={template} content={content} isEditing={isEditing} isFeed={isFeed} />
       <Footer content={content} contentOwner={contentOwner} />

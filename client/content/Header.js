@@ -19,6 +19,10 @@ const useStyles = createUseStyles({
   titleLink: {
     flex: '1',
     color: '#000',
+
+    '&:visited': {
+      color: '#000',
+    },
   },
   edit: {
     lineHeight: '14px',
@@ -40,9 +44,7 @@ export default function Header({ content, handleEdit, isEditing }) {
     <header className={styles.header}>
       <h1 className={styles.title}>
         <ContentLink item={content} currentContent={content} className={styles.titleLink}>
-          <span className="p-name">
-            {content.title ? <span className="notranslate">{content.title}</span> : <F msg="(untitled)" />}
-          </span>
+          <span className="p-name">{content.title && <span className="notranslate">{content.title}</span>}</span>
           {isOwnerViewing && content.hidden && (
             <span>
               &nbsp;

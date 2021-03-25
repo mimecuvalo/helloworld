@@ -15,7 +15,7 @@ import { useQuery } from '@apollo/react-hooks';
 const useStyles = createUseStyles({
   sitemap: {
     margin: 'var(--app-margin)',
-    width: '155px',
+    minWidth: '155px',
     padding: '6px',
   },
   album: {
@@ -40,6 +40,13 @@ const useStyles = createUseStyles({
   },
   hamburger: {
     display: 'none !important',
+  },
+  logoWrapper: {
+    textAlign: 'center',
+  },
+  logo: {
+    borderRadius: '50%',
+    marginBottom: '10px',
   },
 });
 
@@ -168,10 +175,10 @@ export default function SiteMap({ content, username }) {
       >
         <ul>
           {contentOwner.logo ? (
-            <li className="h-card">
+            <li className={classNames(styles.logoWrapper, 'h-card')}>
               <a id="hw-sitemap-logo" href={profileUrl(username)} className="u-url u-uid">
                 <img
-                  className="u-photo"
+                  className={classNames(styles.logo, 'u-photo')}
                   src={contentOwner.logo}
                   title={contentOwner.title}
                   alt={contentOwner.name || username}

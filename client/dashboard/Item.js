@@ -149,7 +149,7 @@ export default function Item(props) {
   return (
     <article ref={item} className={classNames('hw-item', styles.item)}>
       <Header contentRemote={contentRemote} />
-      <div dangerouslySetInnerHTML={{ __html: decoratedView }} />
+      <div className="notranslate" dangerouslySetInnerHTML={{ __html: decoratedView }} />
       <Footer contentRemote={contentRemote} keepUnreadCb={keepUnreadCb} getEditor={props.getEditor} />
     </article>
   );
