@@ -60,7 +60,7 @@ export default function Following(props) {
       <NewFeed handleSetFeed={handleSetFeed} />
 
       <input
-        className={styles.search}
+        className={classNames(styles.search, 'notranslate')}
         type="search"
         onKeyUp={handleSearchKeyUp}
         onChange={handleSearchChange}

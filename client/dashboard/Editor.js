@@ -162,6 +162,7 @@ export default React.forwardRef(({ username }, ref) => {
 
       setFileInfo(null);
       setSuccessMessage(messages.posted);
+      editor.current && editor.current.setUnsavedChanges(false);
     },
     [fileInfo, postContent, sectionAndAlbum, username]
   );
@@ -190,9 +191,11 @@ export default React.forwardRef(({ username }, ref) => {
 
     // On first load, set unsaved changes to false, the first change is just a focus selection change.
     if (!didSetUnsavedChanges) {
+      console.log('wat');
       setDidSetUnsavedChanges(true);
 
       setTimeout(() => {
+        console.log('here');
         editor.current && editor.current.setUnsavedChanges(false);
       }, 0);
     }
@@ -296,6 +299,7 @@ export default React.forwardRef(({ username }, ref) => {
         <form autoComplete="off" className={styles.editorForm}>
           <FormControl className={styles.editorToolbar}>
             <Select
+              className="notranslate"
               value={sectionAndAlbum}
               onChange={handleSectionAndAlbumChange}
               inputProps={{

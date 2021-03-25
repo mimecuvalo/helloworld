@@ -20,6 +20,7 @@ const useStyles = createUseStyles({
     clear: 'both',
     '& img, & iframe, & object, & embed': {
       maxHeight: '82vh',
+      maxWidth: '50vw',
       margin: '10px',
     },
     '& figure img:hover': {
@@ -92,9 +93,9 @@ export default React.forwardRef((props, ref) => {
 
     export: () => {
       return {
-        style: style || content.style || '',
-        code: code || content.code || '',
-        content: editorContent || content.content,
+        style: style || content?.style || '',
+        code: code || content?.code || '',
+        content: editorContent || content?.content,
       };
     },
 

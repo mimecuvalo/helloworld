@@ -35,7 +35,7 @@ export default function FollowingFeeds(props) {
           className={classNames({ [styles.selected]: currentUserRemote.profile_url === userRemote.profile_url })}
         >
           <button
-            className="hw-button-link"
+            className="hw-button-link notranslate"
             onClick={evt => handleClick(evt, userRemote)}
             title={userRemote.name || userRemote.username}
           >

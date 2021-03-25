@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { defineMessages, useIntl } from 'react-intl-wrapper';
 import { F } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
@@ -84,5 +85,11 @@ export default function NewFeed(props) {
     );
   }
 
-  return <input className={styles.newFeed} placeholder={followPlaceholder} onPaste={handleNewFeedPaste} />;
+  return (
+    <input
+      className={classNames(styles.newFeed, 'notranslate')}
+      placeholder={followPlaceholder}
+      onPaste={handleNewFeedPaste}
+    />
+  );
 }

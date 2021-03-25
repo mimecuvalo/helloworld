@@ -9,14 +9,16 @@ const useStyles = createUseStyles({
   header: {
     marginBottom: '6px',
     padding: '0 6px',
-    width: '290px',
   },
   title: {
     display: 'flex',
     margin: '3px 3px 3px 0',
+    fontSize: '32px',
+    fontWeight: '400',
   },
   titleLink: {
     flex: '1',
+    color: '#000',
   },
   edit: {
     lineHeight: '14px',

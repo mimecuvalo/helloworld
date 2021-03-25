@@ -14,7 +14,7 @@ const useStyles = createUseStyles({
     top: '10px',
     right: '10px',
     '& a,  & a:visited': {
-      color: '#fff',
+      color: '#060',
     },
     '& button': {
       marginLeft: '10px',

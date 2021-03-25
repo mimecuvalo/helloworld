@@ -10,6 +10,7 @@ export const useStyles = createUseStyles({
     clear: 'both',
     '& img, & iframe, & object, & embed': {
       maxHeight: '82vh',
+      maxWidth: '50vw',
       margin: '10px',
     },
     '& figure img:hover': {
@@ -36,7 +37,7 @@ export default React.forwardRef(({ content, isEditing, isFeed }, ref) => {
       {isFeed ? null : <div dangerouslySetInnerHTML={{ __html: content.code }} />}
       <div
         dangerouslySetInnerHTML={{ __html: content.view }}
-        className={classNames('e-content', styles.view, 'hw-view')}
+        className={classNames('e-content', styles.view, 'hw-view', 'notranslate')}
       />
     </>
   );

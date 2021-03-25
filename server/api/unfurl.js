@@ -67,8 +67,8 @@ async function retrieveOEmbedData(oEmbedUrl) {
       })
     );
     iframe['src'] = iframe['src'] || '';
-    iframe['width'] = iframe['width'] || 400;
-    iframe['height'] = iframe['height'] || 300;
+    iframe['width'] = iframe['width'] && iframe['width'] >= 400 ? iframe['width'] : 480;
+    iframe['height'] = iframe['height'] && iframe['height'] >= 300 ? iframe['height'] : 270;
     iframe['frameBorder'] = 0;
     iframe['allow'] = iframe['allow'] || IFRAME_ALLOW;
   }
