@@ -33,11 +33,11 @@ export default function Footer({ content, contentOwner }) {
         <a key="img" href={profileUrl(username)} className="u-url u-uid icon-container">
           <img className="u-photo" src={contentOwner.logo || contentOwner.favicon} alt={name} />
         </a>
-        <a key="name" href={profileUrl(username)} className="p-name fn u-url u-uid url">
+        <a key="name" href={profileUrl(username)} className="p-name fn u-url u-uid url notranslate">
           {name}
         </a>
       </span>
-      :&nbsp;
+      <span className="notranslate">:&nbsp;</span>
       <F
         msg="posted on {date}"
         values={{
@@ -77,27 +77,27 @@ export default function Footer({ content, contentOwner }) {
           />
         </>
       )}
-      &nbsp;•&nbsp;
+      <span className="notranslate">&nbsp;•&nbsp;</span>
       <a href={contentUrl(content)} target="_blank" rel="bookmark noopener noreferrer">
         <F msg="permalink" />
       </a>
-      &nbsp;•&nbsp;
+      <span className="notranslate">&nbsp;•&nbsp;</span>
       <button className="hw-button-link" onClick={handleFullscreen}>
         <F msg="fullscreen" />
       </button>
-      &nbsp;•&nbsp;
+      <span className="notranslate">&nbsp;•&nbsp;</span>
       <F
         msg="{count, plural, =0 {no human views} one {# human view} other {# human views}}"
         values={{ count: count }}
       />
-      &nbsp;•&nbsp;
+      <span className="notranslate">&nbsp;•&nbsp;</span>
       <F
         msg="{count, plural, =0 {no robot views} one {# robot view} other {# robot views}}"
         values={{ count: count_robot }}
       />
       {content.thread ? (
         <>
-          &nbsp;•&nbsp;
+          <span className="notranslate">&nbsp;•&nbsp;</span>
           <a href={content.thread} target="_blank" rel="noopener noreferrer">
             <F msg="view thread" />
           </a>

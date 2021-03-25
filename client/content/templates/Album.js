@@ -135,7 +135,7 @@ export default React.forwardRef(({ content, isEditing }, ref) => {
           <ContentThumb isEditing={isEditing} item={item} currentContent={content} />
           {!isEditing && item.externalLink ? (
             <a
-              className={classNames('hw-album-title', styles.title, styles.link)}
+              className={classNames('hw-album-title', styles.title, styles.link, 'notranslate')}
               href={item.externalLink}
               target="_blank"
               rel="noreferrer noopener"
@@ -146,7 +146,7 @@ export default React.forwardRef(({ content, isEditing }, ref) => {
             <ContentLink
               item={item}
               currentContent={content}
-              className={classNames('hw-album-title', styles.title, styles.link)}
+              className={classNames('hw-album-title', styles.title, styles.link, 'notranslate')}
             >
               {item.title}
             </ContentLink>

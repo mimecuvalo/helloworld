@@ -30,6 +30,9 @@ const useStyles = createUseStyles({
   search: {
     margin: '20px 0 10px 0',
   },
+  searchInput: {
+    width: '100%',
+  },
   license: {
     margin: '20px 0 10px 0',
     textAlign: 'center',
@@ -86,7 +89,7 @@ export default function SiteMap({ content, username }) {
         <ContentLink
           item={item}
           currentContent={content}
-          className={classNames({ 'hw-selected': isSelected, [styles.selected]: isSelected })}
+          className={classNames({ 'hw-selected': isSelected, [styles.selected]: isSelected }, 'notranslate')}
         >
           {item.title}
         </ContentLink>
@@ -189,12 +192,24 @@ export default function SiteMap({ content, username }) {
           {items}
         </ul>
 
-        <form method="get" action="/search" onSubmit={handleSearchSubmit} className={styles.search}>
-          <input aria-label={searchLabel} type="search" name="q" placeholder="search" required />
+        <form
+          method="get"
+          action="/search"
+          onSubmit={handleSearchSubmit}
+          className={classNames(styles.search, 'notranslate')}
+        >
+          <input
+            aria-label={searchLabel}
+            type="search"
+            name="q"
+            placeholder="search"
+            required
+            className={styles.searchInput}
+          />
         </form>
 
         {contentOwner.license ? (
-          <div className={styles.license}>
+          <div className={classNames(styles.license, 'notranslate')}>
             {contentOwner.license === 'http://purl.org/atompub/license#unspecified' ? (
               `Copyright ${new Date().getFullYear()} by ${contentOwner.name}`
             ) : (
@@ -205,7 +220,9 @@ export default function SiteMap({ content, username }) {
           </div>
         ) : null}
 
-        {contentOwner.sidebar_html ? <div dangerouslySetInnerHTML={{ __html: contentOwner.sidebar_html }} /> : null}
+        {contentOwner.sidebar_html ? (
+          <div className="notranslate" dangerouslySetInnerHTML={{ __html: contentOwner.sidebar_html }} />
+        ) : null}
       </nav>
     </>
   );

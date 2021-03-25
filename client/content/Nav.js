@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import ContentLink from '../components/ContentLink';
 import ContentQuery from './ContentQuery';
 import { contentUrl } from '../../shared/util/url_factory';
@@ -151,7 +152,7 @@ const PersistedNav = React.memo(
             href={url}
             rel={name}
             ref={navigationActions[name]}
-            className={`hw-${name} hw-button`}
+            className={classNames(`hw-${name} hw-button`, { notranslate: name === 'top' })}
             title={contentMeta.title}
           >
             {msg}
@@ -180,7 +181,7 @@ const PersistedNav = React.memo(
           currentContent={content}
           rel={name}
           innerRef={navigationActions[name]}
-          className={`hw-${name} hw-button`}
+          className={classNames(`hw-${name} hw-button`, { notranslate: name === 'top' })}
         >
           {msg}
         </ContentLink>
