@@ -13,7 +13,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import Select from '@material-ui/core/Select';
 import Toolbar from '@material-ui/core/Toolbar';
-import { useMutation, useQuery } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/client';
 
 const useStyles = createUseStyles({
   editor: {},

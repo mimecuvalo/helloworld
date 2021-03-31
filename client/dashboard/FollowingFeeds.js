@@ -5,7 +5,7 @@ import { FormattedNumber } from 'react-intl-wrapper';
 import FollowingFeedCountsQuery from './FollowingFeedCountsQuery';
 import FollowingMenu from './FollowingMenu';
 import React from 'react';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import useStyles from './remoteUsersStyles';
 
 export default function FollowingFeeds(props) {

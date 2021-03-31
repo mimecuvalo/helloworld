@@ -3,7 +3,7 @@ import { F } from 'react-intl-wrapper';
 import FollowingSpecialFeedCountsQuery from '../FollowingSpecialFeedCountsQuery';
 import gql from 'graphql-tag';
 import React from 'react';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import useStyles from './actionsStyles';
 
 const FAVORITE_CONTENT_REMOTE = gql`

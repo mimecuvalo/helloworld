@@ -5,7 +5,7 @@ import FollowingQuery from './FollowingQuery';
 import FollowingSpecialFeeds from './FollowingSpecialFeeds';
 import NewFeed from './actions/NewFeed';
 import React, { useRef } from 'react';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import useStyles from './remoteUsersStyles';
 
 const messages = defineMessages({

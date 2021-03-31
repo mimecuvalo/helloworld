@@ -10,7 +10,7 @@ import Favorite from '../dashboard/actions/Favorite';
 import gql from 'graphql-tag';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import UserContext from '../app/User_Context';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { useSnackbar } from 'notistack';
 
 export const useStyles = createUseStyles({

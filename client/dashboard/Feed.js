@@ -4,7 +4,7 @@ import gql from 'graphql-tag';
 import InfiniteFeed from '../components/InfiniteFeed';
 import Item from './Item';
 import React from 'react';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 
 const useStyles = createUseStyles({
   header: {

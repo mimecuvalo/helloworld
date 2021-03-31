@@ -1,7 +1,7 @@
 import { buildUrl, contentUrl, profileUrl } from '../../shared/util/url_factory';
 import gql from 'graphql-tag';
 import React from 'react';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 
 const CONTENT_AND_USER_QUERY = gql`
   query ContentAndUserQuery($username: String!, $name: String!) {

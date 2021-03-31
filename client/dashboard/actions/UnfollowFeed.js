@@ -4,7 +4,7 @@ import FollowingSpecialFeedCountsQuery from '../FollowingSpecialFeedCountsQuery'
 import gql from 'graphql-tag';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 
 const DESTROY_FEED = gql`
   mutation destroyFeed($profile_url: String!) {

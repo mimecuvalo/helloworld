@@ -5,7 +5,7 @@ import { createUseStyles } from 'react-jss';
 import { defineMessages, F, useIntl } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
 import React from 'react';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/client';
 import { useSnackbar } from 'notistack';
 
 const useStyles = createUseStyles({

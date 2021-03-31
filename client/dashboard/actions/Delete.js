@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { F } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
 import React from 'react';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import useStyles from './actionsStyles';
 
 const DELETE_CONTENT_REMOTE = gql`

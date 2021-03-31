@@ -16,7 +16,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Simple from './templates/Simple';
 import SwipeListener from 'swipe-listener';
 import { useHistory } from 'react-router-dom';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/client';
 import { useSnackbar } from 'notistack';
 
 const useStyles = createUseStyles({

@@ -5,7 +5,7 @@ import FollowingAllMenu from './FollowingAllMenu';
 import FollowingSpecialFeedCountsQuery from './FollowingSpecialFeedCountsQuery';
 import { FormattedNumber } from 'react-intl-wrapper';
 import React, { useContext } from 'react';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import UserContext from '../app/User_Context';
 import useStyles from './remoteUsersStyles';
 

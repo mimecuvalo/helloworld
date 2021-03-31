@@ -1,7 +1,7 @@
-import { ApolloProvider } from '@apollo/react-common';
+import { ApolloProvider } from '@apollo/client';
 import App from '../../client/app/App';
 import createApolloClient from '../data/apollo_client';
-import { getDataFromTree } from '@apollo/react-ssr';
+import { getDataFromTree } from '@apollo/client/react/ssr';
 import getExperiments from './experiments';
 import HTMLBase from './HTMLBase';
 import { initializeLocalState } from '../../shared/data/local_state';

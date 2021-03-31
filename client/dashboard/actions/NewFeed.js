@@ -7,7 +7,7 @@ import FollowingQuery from '../FollowingQuery';
 import FollowingSpecialFeedCountsQuery from '../FollowingSpecialFeedCountsQuery';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { useSnackbar } from 'notistack';
 import useStyles from './actionsStyles';
 

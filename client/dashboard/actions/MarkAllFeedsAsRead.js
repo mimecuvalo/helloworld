@@ -6,7 +6,7 @@ import gql from 'graphql-tag';
 import MenuItem from '@material-ui/core/MenuItem';
 import { prefixIdFromObject } from '../../../shared/data/apollo';
 import React from 'react';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 
 const MARK_ALL_FEEDS_AS_READ = gql`
   mutation markAllFeedsAsRead {

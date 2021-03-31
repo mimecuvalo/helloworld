@@ -4,7 +4,7 @@ import { createUseStyles } from 'react-jss';
 import { F } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
 import React, { useContext } from 'react';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import UserContext from '../../app/User_Context';
 
 const useStyles = createUseStyles({

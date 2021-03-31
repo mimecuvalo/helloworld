@@ -2,7 +2,7 @@ import { F } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 
 const TOGGLE_SORT_FEED = gql`
   mutation toggleSortFeed($profile_url: String!, $current_sort_type: String!) {

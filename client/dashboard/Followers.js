@@ -4,7 +4,7 @@ import { F } from 'react-intl-wrapper';
 import FollowerMenu from './FollowerMenu';
 import gql from 'graphql-tag';
 import React from 'react';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import useStyles from './remoteUsersStyles';
 
 const FETCH_FOLLOWERS = gql`

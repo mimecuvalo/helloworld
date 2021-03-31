@@ -10,7 +10,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { useEffect, useState } from 'react';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 
 const useStyles = createUseStyles({
   helpContainer: {

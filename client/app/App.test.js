@@ -1,6 +1,6 @@
 import App from './App';
 import ApolloClient from 'apollo-client';
-import { ApolloProvider } from '@apollo/react-hooks';
+import { ApolloProvider } from '@apollo/client';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';

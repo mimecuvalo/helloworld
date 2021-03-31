@@ -7,7 +7,7 @@ import Footer from './Footer';
 import gql from 'graphql-tag';
 import Header from './Header';
 import React, { useEffect, useRef, useState } from 'react';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 
 const useStyles = createUseStyles({
   /* Reset some sane defaults for web content. Taken from Chrome's User Agent defaults. */

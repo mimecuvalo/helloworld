@@ -1,4 +1,4 @@
-import { ApolloProvider } from '@apollo/react-hooks';
+import { ApolloProvider } from '@apollo/client';
 import App from './App';
 import { BrowserRouter as Router } from 'react-router-dom';
 import configuration from './configuration';

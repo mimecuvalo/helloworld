@@ -6,7 +6,7 @@ import React, { useContext } from 'react';
 import Unauthorized from '../error/401';
 import UserContext from '../app/User_Context';
 import useDocumentTitle from '../app/title';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 
 const useStyles = createUseStyles({
   container: {
