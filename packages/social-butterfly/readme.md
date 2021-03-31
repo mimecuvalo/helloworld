@@ -8,7 +8,7 @@
 </blockquote>
 
 <p align="center">
-  <a href="https://travis-ci.org/mimecuvalo/helloworld">
+  <a href="https://travis-ci.com/mimecuvalo/helloworld">
     <img src="https://img.shields.io/travis/mimecuvalo/helloworld.svg" alt="CI status" />
   </a>
   <a href="https://github.com/prettier/prettier">

@@ -8,7 +8,7 @@
 </blockquote>
 
 <p align="center">
-  <a href="https://travis-ci.org/mimecuvalo/helloworld"><img src="https://img.shields.io/travis/mimecuvalo/helloworld.svg" alt="CI status" /></a>
+  <a href="https://travis-ci.com/mimecuvalo/helloworld"><img src="https://img.shields.io/travis/mimecuvalo/helloworld.svg" alt="CI status" /></a>
   <a href="https://github.com/prettier/prettier"><img src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg" alt="CI status" /></a>
   <a href="https://github.com/username/project/docs/license.md"><img src="https://img.shields.io/badge/license-MIT-brightgreen.svg" alt="license" /></a>
 </p>
