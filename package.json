@@ -100,7 +100,8 @@
     "build-storybook": "build-storybook -s public",
     "styleguide": "start-storybook -p 9001 -c .storybook --ci --quiet",
     "extract-messages": "NODE_ENV=development extract-messages -l=en -o build/messages --flat --moduleSourceName react-intl-wrapper --additionalComponentNames F '**/!(*.test).js'",
-    "dev": "npm install && docker-compose up -d && npx sequelize db:migrate && npx sequelize db:seed:all"
+    "dev": "npm install && docker-compose up -d && npx sequelize db:migrate && npx sequelize db:seed:all",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@storybook/addon-actions": "6.2.2",
@@ -114,7 +115,7 @@
     "flightplan": "0.6.20",
     "flow-bin": "0.110.0",
     "flow-typed": "3.3.1",
-    "husky": "6.0.0",
+    "husky": "^6.0.0",
     "lerna": "^4.0.0",
     "lint-staged": "10.5.4",
     "npm-run-all": "4.1.5",
@@ -123,12 +124,10 @@
     "source-map-explorer": "2.5.2"
   },
   "eslintConfig": {
-    "extends": ["react-app", "react-app/jest"]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "lint-staged": {
     "(client|server|shared)/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
