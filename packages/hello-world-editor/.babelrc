@@ -1,7 +1,6 @@
 {
   "presets": ["@babel/preset-react"],
   "plugins": [
-    "@babel/plugin-proposal-optional-chaining",
     "@babel/plugin-transform-modules-commonjs",
     "@babel/plugin-proposal-class-properties",
     ["css-modules-transform", {

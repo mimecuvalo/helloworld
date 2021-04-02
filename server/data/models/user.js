@@ -1,5 +1,5 @@
 // Keep in sync with both graphql/schema/user.js and migrations/[date]-create-user.js
-export default (sequelize, Sequelize) => {
+export default function User(sequelize, Sequelize) {
   const User = sequelize.define(
     'User',
     {

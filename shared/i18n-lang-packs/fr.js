@@ -1,1 +1,2 @@
-export default {};
+const translations = {};
+export default translations;

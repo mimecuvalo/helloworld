@@ -1,5 +1,5 @@
 // Keep in sync with both graphql/schema/content_remote.js and migrations/[date]-create-content-remote.js
-export default (sequelize, Sequelize) => {
+export default function ContentRemote(sequelize, Sequelize) {
   const Content_Remote = sequelize.define(
     'Content_Remote',
     {

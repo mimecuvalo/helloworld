@@ -1,5 +1,5 @@
 // Keep in sync with both graphql/schema/content.js and migrations/[date]-create-content.js
-export default (sequelize, Sequelize) => {
+export default function Content(sequelize, Sequelize) {
   const Content = sequelize.define(
     'Content',
     {

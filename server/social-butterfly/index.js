@@ -8,7 +8,7 @@ let memoizedExports = {};
 
 const FEED_MAX_DAYS_OLD = 30 * 24 * 60 * 60 * 1000; // 30 days
 
-export default app => {
+export default function SocialButterflyMemoized(app) {
   if (isSetup) {
     return memoizedExports;
   }

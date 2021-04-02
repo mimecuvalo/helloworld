@@ -3,7 +3,7 @@ import { isAdmin, isAuthor } from './authorization';
 import { profileUrl } from '../../../../shared/util/url_factory';
 import socialButterfly from '../../../social-butterfly';
 
-export default {
+const UserRemote = {
   Query: {
     allUsersRemote: combineResolvers(isAdmin, async (parent, args, { models }) => {
       return await models.User_Remote.findAll();
@@ -76,3 +76,4 @@ export default {
     }),
   },
 };
+export default UserRemote;

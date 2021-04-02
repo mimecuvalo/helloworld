@@ -4,8 +4,9 @@ export const isAuthenticated = currentUser => !!currentUser;
 export const isAuthor = currentUser => !!currentUser?.model;
 export const isAdmin = currentUser => !!currentUser?.model?.superuser;
 
-export default {
+const authorization = {
   isAuthenticated,
   isAuthor,
   isAdmin,
 };
+export default authorization;

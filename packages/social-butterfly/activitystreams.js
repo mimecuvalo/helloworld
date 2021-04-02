@@ -3,7 +3,7 @@ import { fetchJSON } from './util/crawler';
 import { follow as emailFollow } from './email';
 import { getActivityPubActor, getUserRemoteInfo } from './discover_user';
 import { mention as emailMention } from './email';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid'
 import { sanitizeHTML } from './util/crawler';
 import { send as activityPubSend } from './activitypub';
 import { send as salmonSend } from './salmon';

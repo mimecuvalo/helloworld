@@ -5,9 +5,9 @@ import { isAdmin, isAuthor } from './authorization';
 import Sequelize from 'sequelize';
 import socialButterfly from '../../../social-butterfly';
 import { toHTML } from './content';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 
-export default {
+const contentRemote = {
   ContentRemote: {
     __resolveType(contentRemote, context, info) {
       return contentRemote.type[0].toUpperCase() + contentRemote.type.slice(1);
@@ -349,3 +349,5 @@ export default {
     ),
   },
 };
+
+export default contentRemote;

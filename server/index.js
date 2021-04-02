@@ -17,7 +17,7 @@ import session from 'express-session';
 import sessionFileStore from 'session-file-store';
 import setup from './setup';
 import socialButterfly from './social-butterfly';
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import winston from 'winston';
 import WinstonDailyRotateFile from 'winston-daily-rotate-file';
 
@@ -40,7 +40,7 @@ export default function constructApps({ appName, productionAssetsByType, publicU
   // Helmet sets security headers via HTTP headers.
   // Learn more here: https://helmetjs.github.io/docs/
   app.use(function(req, res, next) {
-    res.locals.nonce = uuid.v4();
+    res.locals.nonce = uuidv4();
     next();
   });
   app.use(

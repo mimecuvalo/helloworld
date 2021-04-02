@@ -28,4 +28,5 @@ const exampleResolvers = {
   },
 };
 
-export default [exampleResolvers, contentResolvers, contentRemoteResolvers, userRemoteResolvers, userResolvers];
+const resolvers = [exampleResolvers, contentResolvers, contentRemoteResolvers, userRemoteResolvers, userResolvers];
+export default resolvers;

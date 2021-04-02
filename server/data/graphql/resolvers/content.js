@@ -7,7 +7,7 @@ import { EditorHTMLPlugins } from 'hello-world-editor';
 import { escapeRegExp } from '../../../../shared/util/regex';
 import { isAdmin, isAuthor } from './authorization';
 import { isRobotViewing } from '../../../util/crawler';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid'
 import Sequelize from 'sequelize';
 import socialButterfly from '../../../social-butterfly';
 

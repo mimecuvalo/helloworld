@@ -1,5 +1,5 @@
 // Keep in sync with both graphql/schema/user_remote.js and migrations/[date]-create-user-remote.js
-export default (sequelize, Sequelize) => {
+export default function UserRemote(sequelize, Sequelize) {
   const User_Remote = sequelize.define(
     'User_Remote',
     {

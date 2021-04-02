@@ -30,10 +30,10 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "classnames": "2.2.6",
-    "draft-convert": "2.1.8",
-    "draft-extend": "1.6.4",
-    "draft-js": "0.11.1",
+    "classnames": "2.3.0",
+    "draft-convert": "2.1.10",
+    "draft-extend": "1.6.5",
+    "draft-js": "0.11.7",
     "draft-js-alignment-plugin": "2.0.6",
     "draft-js-anchor-plugin": "2.0.3",
     "draft-js-divider-plugin": "0.2.1",
@@ -46,22 +46,22 @@
     "draft-js-mention-plugin": "3.1.5",
     "draft-js-plugins-editor": "3.0.0",
     "draft-js-side-toolbar-plugin": "3.0.2",
-    "linkify-it": "2.2.0",
-    "notistack": "0.9.5",
+    "linkify-it": "3.0.2",
+    "notistack": "1.0.5",
     "react-codemirror": "1.0.0",
-    "react-intl": "3.4.0",
-    "react-jss": "10.0.0"
+    "react-intl": "5.15.5",
+    "react-jss": "10.6.0"
   },
   "peerDependencies": {
-    "react": ">=16.11.0"
+    "react": ">=17.0.2"
   },
   "devDependencies": {
-    "@babel/cli": "7.6.4",
-    "@babel/plugin-proposal-class-properties": "7.5.5",
-    "@babel/plugin-proposal-optional-chaining": "7.6.0",
-    "@babel/plugin-transform-modules-commonjs": "7.6.0",
-    "@babel/preset-react": "7.6.3",
+    "@babel/cli": "7.13.14",
+    "@babel/plugin-proposal-class-properties": "7.13.0",
+    "@babel/plugin-proposal-optional-chaining": "7.13.12",
+    "@babel/plugin-transform-modules-commonjs": "7.13.8",
+    "@babel/preset-react": "7.13.13",
     "babel-plugin-css-modules-transform": "1.6.2",
-    "generic-names": "2.0.1"
+    "generic-names": "3.0.0"
   }
 }

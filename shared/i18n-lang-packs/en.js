@@ -1,3 +1,5 @@
-export default {
+const translations = {
   test: 'test',
 };
+
+export default translations;

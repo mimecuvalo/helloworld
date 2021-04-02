@@ -1,4 +1,4 @@
-export default {
+const constants = {
   licenses: {
     'http://creativecommons.org/licenses/by/3.0/': {
       name: 'Creative Commons Attribution 3.0 Unported License',
@@ -39,3 +39,4 @@ export default {
   normalWidth: 1280,
   normalHeight: 960,
 };
+export default constants;
