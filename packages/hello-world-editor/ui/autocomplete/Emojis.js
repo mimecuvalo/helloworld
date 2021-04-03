@@ -1,4 +1,4 @@
-import createEmojiPlugin from '@draft-js-plugins/emoji"';
+import createEmojiPlugin from '@draft-js-plugins/emoji';
 
 const emojiButtonStyles = {
   margin: '0',
