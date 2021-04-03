@@ -34,6 +34,7 @@
     "webmention"
   ],
   "exports": "dist/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "rm -rf dist && NODE_ENV=production babel . --out-dir dist --copy-files --ignore node_modules,__tests__,spec.js,test.js,__snapshots__",
     "prepare": "npm run build"

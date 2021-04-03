@@ -16,8 +16,8 @@ import draftJSExtendPlugins, {
   replyPlugin,
   rsvpPlugin,
 } from './plugins';
-import Editor from 'draft-js-plugins-editor';
-import EditorUtils from 'draft-js-plugins-utils';
+import Editor from '@draft-js-plugins/editor';
+import EditorUtils from '@draft-js-plugins/utils';
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js';
 import Emojis, { emojiPlugin } from './ui/autocomplete/Emojis';
 import { handleKeyCommand, keyBindingFn } from './input/keyboard';
