@@ -24,7 +24,7 @@ import WinstonDailyRotateFile from 'winston-daily-rotate-file';
 const FileStore = sessionFileStore(session);
 
 // react-intl's requires DOMParser to be available globally so that XML message parsing is done correctly.
-global.DOMParser = new (require('jsdom')).JSDOM().window.DOMParser;
+global.DOMParser = new (require('jsdom').JSDOM)().window.DOMParser;
 
 // Called from scripts/serve.js to create the three apps we currently support: the main App, API, and Apollo servers.
 export default function constructApps({ appName, productionAssetsByType, publicUrl, gitInfo }) {
@@ -39,7 +39,7 @@ export default function constructApps({ appName, productionAssetsByType, publicU
 
   // Helmet sets security headers via HTTP headers.
   // Learn more here: https://helmetjs.github.io/docs/
-  app.use(function(req, res, next) {
+  app.use(function (req, res, next) {
     res.locals.nonce = uuidv4();
     next();
   });
@@ -58,7 +58,7 @@ export default function constructApps({ appName, productionAssetsByType, publicU
           objectSrc: ["'self'"],
           reportUri: '/api/report-violation',
           scriptSrc: ["'self'", 'https://cdn.auth0.com', (req, res) => `'nonce-${res.locals.nonce}'`],
-          upgradeInsecureRequests: true,
+          upgradeInsecureRequests: [],
 
           // XXX(mime): we have inline styles around - can we pass nonce around the app properly?
           styleSrc: ["'self'", 'https:', "'unsafe-inline'"], //(req, res) => `'nonce-${res.locals.nonce}'`],
@@ -116,7 +116,7 @@ export default function constructApps({ appName, productionAssetsByType, publicU
 
   // The resource directory has the users' assets.
   const appDirectory = fs.realpathSync(process.cwd());
-  const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
+  const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
   app.use('/resource', express.static(resolveApp('resource')));
 
   // Setup up the SocialButterfly server.
@@ -138,9 +138,9 @@ export default function constructApps({ appName, productionAssetsByType, publicU
   if (process.env.REACT_APP_SENTRY_DSN) {
     Sentry.init({ dsn: process.env.REACT_APP_SENTRY_DSN, debug: process.env.NODE_ENV !== 'production' });
     app.use(Sentry.Handlers.requestHandler());
-    app.use(async function(req, res, next) {
+    app.use(async function (req, res, next) {
       if (req.session.user) {
-        Sentry.configureScope(scope => {
+        Sentry.configureScope((scope) => {
           scope.setUser({ id: req.session.user.model?.id, email: req.session.user.oauth.email });
         });
       }
