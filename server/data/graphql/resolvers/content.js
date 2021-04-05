@@ -3,11 +3,11 @@ import { combineResolvers } from 'graphql-resolvers';
 import { contentUrl, profileUrl } from '../../../../shared/util/url_factory';
 import { convertFromRaw } from 'draft-js';
 import { convertToHTML } from 'draft-convert';
-import { EditorHTMLPlugins } from 'hello-world-editor';
+//import { EditorHTMLPlugins } from 'hello-world-editor';
 import { escapeRegExp } from '../../../../shared/util/regex';
 import { isAdmin, isAuthor } from './authorization';
 import { isRobotViewing } from '../../../util/crawler';
-import { nanoid } from 'nanoid'
+import { nanoid } from 'nanoid';
 import Sequelize from 'sequelize';
 import socialButterfly from '../../../social-butterfly';
 
@@ -145,7 +145,7 @@ const Content = {
         order,
       });
 
-      const contentIndex = collection.findIndex(i => i.name === name);
+      const contentIndex = collection.findIndex((i) => i.name === name);
 
       const collectionItemConstraints = {
         username,
@@ -239,7 +239,7 @@ const Content = {
       }
 
       if (section === 'links') {
-        collection.forEach(item => {
+        collection.forEach((item) => {
           const link = item.view.match(/https?:\/\/[^"']+/);
           const youTubeMatch = link?.[0].match(/youtube.com\/embed\/([^?<]+)/);
           const youTubeSeriesMatch = link?.[0].match(/youtube.com\/embed\/videoseries\?list=([^?<]+)/);
@@ -468,15 +468,13 @@ export default Content;
 
 export function toHTML(content, title) {
   title = title ? escapeRegExp(title) : '';
-  const html = EditorHTMLPlugins(convertToHTML)(convertFromRaw(JSON.parse(content)));
+  const html = ''; //EditorHTMLPlugins(convertToHTML)(convertFromRaw(JSON.parse(content)));
   return html.replace(new RegExp(`^<p>${title}</p>`), '');
 }
 
 function discoverThreadInHTML(html) {
   const $ = cheerio.load(html);
-  return $('a.u-in-reply-to')
-    .first()
-    .attr('href');
+  return $('a.u-in-reply-to').first().attr('href');
 }
 
 function getSQLSortType(sortType) {
@@ -507,7 +505,7 @@ function decorateWithRefreshFlag(item) {
 
 function decoratePrefetchImages(item) {
   if (item) {
-    item.prefetchImages = (item.view.match(/src=['"][^'"]+['"]/g) || []).map(i => i.slice(5, -1));
+    item.prefetchImages = (item.view.match(/src=['"][^'"]+['"]/g) || []).map((i) => i.slice(5, -1));
   }
 
   return item;

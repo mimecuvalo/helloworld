@@ -5,7 +5,7 @@ import { convertFromRaw, EditorState } from 'draft-js';
 import Cookies from 'js-cookie';
 import { createUseStyles } from 'react-jss';
 import { defineMessages, F } from 'react-intl-wrapper';
-import { EditorUtils } from 'hello-world-editor';
+//import { EditorUtils } from 'hello-world-editor';
 import FormControl from '@material-ui/core/FormControl';
 import gql from 'graphql-tag';
 import HiddenSnackbarShim from '../components/HiddenSnackbarShim';
@@ -118,14 +118,14 @@ export default React.forwardRef(({ username }, ref) => {
   const styles = useStyles();
 
   const handlePost = useCallback(
-    async evt => {
+    async (evt) => {
       evt && evt.preventDefault();
 
       const editorRef = editor.current;
       const { style, code, content } = editorRef.export();
 
       // TODO(mime): gotta be a simpler way then all this conversion.
-      const title = EditorUtils.Text.getTextForLine(EditorState.createWithContent(convertFromRaw(content)), 0);
+      const title = ''; //EditorUtils.Text.getTextForLine(EditorState.createWithContent(convertFromRaw(content)), 0);
 
       const name = title.replace(/[^A-Za-z0-9-]/g, '-');
       const { section, album } = JSON.parse(sectionAndAlbum);
@@ -168,7 +168,7 @@ export default React.forwardRef(({ username }, ref) => {
   );
 
   const handleKeyDown = useCallback(
-    evt => {
+    (evt) => {
       // TODO(mime): combine this logic somewhere. (also in keyboard.js)
       const isMac = navigator.platform.toLowerCase().indexOf('mac') !== -1;
       const isAccelKey = isMac ? evt.metaKey : evt.ctrlKey;
@@ -218,10 +218,10 @@ export default React.forwardRef(({ username }, ref) => {
   }, [successMessage]);
 
   useImperativeHandle(ref, () => ({
-    insertText: text => {
+    insertText: (text) => {
       const contentEditor = editor.current.getContentEditor();
       let editorState = contentEditor.editorState;
-      editorState = EditorUtils.Text.insertTextAtLine(editorState, 1, `\n${text}\n`);
+      editorState = ''; //EditorUtils.Text.insertTextAtLine(editorState, 1, `\n${text}\n`);
       contentEditor.onChange(editorState);
     },
   }));
@@ -233,16 +233,16 @@ export default React.forwardRef(({ username }, ref) => {
   async function reblog(text, opt_url) {
     const contentEditor = editor.current.getContentEditor();
     let editorState = contentEditor.editorState;
-    editorState = EditorUtils.Text.insertTextAtLine(editorState, 0, '\n');
+    editorState = ''; //EditorUtils.Text.insertTextAtLine(editorState, 0, '\n');
     await contentEditor.handlePastedText(text, undefined /* html */, editorState);
 
     if (opt_url) {
-      editorState = EditorUtils.Text.insertTextAtLine(contentEditor.editorState, 2, opt_url);
+      editorState = ''; //EditorUtils.Text.insertTextAtLine(contentEditor.editorState, 2, opt_url);
       contentEditor.onChange(editorState);
     }
   }
 
-  const handleSectionAndAlbumChange = evt => {
+  const handleSectionAndAlbumChange = (evt) => {
     setSectionAndAlbum(evt.target.value);
     Cookies.set('sectionAndAlbum', evt.target.value);
   };
@@ -286,7 +286,7 @@ export default React.forwardRef(({ username }, ref) => {
     return items;
   }
 
-  const handleMediaAdd = fileInfos => {
+  const handleMediaAdd = (fileInfos) => {
     // We currently just grab the first one and disregard the other ones for purposes of getting the thumb.
     setFileInfo(fileInfos[0]);
   };

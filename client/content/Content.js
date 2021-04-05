@@ -5,7 +5,7 @@ import ContentQuery from './ContentQuery';
 import { convertFromRaw, EditorState } from 'draft-js';
 import { createUseStyles } from 'react-jss';
 import { defineMessages, useIntl } from 'react-intl-wrapper';
-import { EditorUtils } from 'hello-world-editor';
+//import { EditorUtils } from 'hello-world-editor';
 import Feed from './Feed';
 import gql from 'graphql-tag';
 import isMobile from 'is-mobile';
@@ -140,7 +140,7 @@ const PersistedContent = React.memo(
       item?.current?.getEditor() && item.current.getEditor().setUnsavedChanges(!isEditing);
     }, [isEditing]);
 
-    const handleKeyDown = evt => {
+    const handleKeyDown = (evt) => {
       if (!isEditing) {
         return;
       }
@@ -163,7 +163,7 @@ const PersistedContent = React.memo(
       }
 
       swipeListener.current = SwipeListener(contentBase.current);
-      contentBase.current.addEventListener('swipe', e => {
+      contentBase.current.addEventListener('swipe', (e) => {
         const directions = e.detail.directions;
 
         if (directions.left) {
@@ -174,7 +174,7 @@ const PersistedContent = React.memo(
       });
     }
 
-    const handleEdit = evt => {
+    const handleEdit = (evt) => {
       if (isEditing) {
         performSaveContent();
       }
@@ -188,7 +188,7 @@ const PersistedContent = React.memo(
       const content = editor.export();
 
       // TODO(mime): gotta be a simpler way then all this conversion.
-      const title = EditorUtils.Text.getTextForLine(EditorState.createWithContent(convertFromRaw(content.content)), 0);
+      const title = ''; //EditorUtils.Text.getTextForLine(EditorState.createWithContent(convertFromRaw(content.content)), 0);
 
       const newThumb = editor.getContentEditor().fileInfo?.thumb || thumb || '';
 

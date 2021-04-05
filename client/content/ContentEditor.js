@@ -4,7 +4,7 @@ import { buildUrl } from '../../shared/util/url_factory';
 import classNames from 'classnames';
 import configuration from '../app/configuration';
 import { createUseStyles } from 'react-jss';
-import { Editor } from 'hello-world-editor';
+//import { Editor } from 'hello-world-editor';
 import ErrorBoundary from '../error/ErrorBoundary';
 import { F } from 'react-intl-wrapper';
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
@@ -55,7 +55,7 @@ export default React.forwardRef((props, ref) => {
   useEffect(() => {
     setLoaded(true);
 
-    const handleOnBeforeUnload = evt => {
+    const handleOnBeforeUnload = (evt) => {
       if (hasUnsavedChanges) {
         evt.returnValue = 'You have unfinished changes!';
       }
@@ -86,7 +86,7 @@ export default React.forwardRef((props, ref) => {
   }, [tabValue, loaded]);
 
   useImperativeHandle(ref, () => ({
-    setUnsavedChanges: hasUnsavedChanges => {
+    setUnsavedChanges: (hasUnsavedChanges) => {
       setHasUnsavedChanges(hasUnsavedChanges);
       contentEditor.current && contentEditor.current.setUnsavedChanges(hasUnsavedChanges);
     },
@@ -113,12 +113,12 @@ export default React.forwardRef((props, ref) => {
     getContentEditor: () => contentEditor.current,
   }));
 
-  const handleStyleChange = style => {
+  const handleStyleChange = (style) => {
     setHasUnsavedChanges(true);
     setStyle(style);
   };
 
-  const handleCodeChange = code => {
+  const handleCodeChange = (code) => {
     setHasUnsavedChanges(true);
     setCode(code);
   };
@@ -128,11 +128,11 @@ export default React.forwardRef((props, ref) => {
     setEditorContent(contentEditor.current.export());
   };
 
-  const handleMediaAdd = fileInfos => onMediaAdd && onMediaAdd(fileInfos);
+  const handleMediaAdd = (fileInfos) => onMediaAdd && onMediaAdd(fileInfos);
 
   const handleTabChange = (evt, tabValue) => setTabValue(tabValue);
 
-  const handleMediaUpload = async body => {
+  const handleMediaUpload = async (body) => {
     body.append('section', content?.section || section);
     body.append('album', content?.album || album);
 
@@ -143,7 +143,7 @@ export default React.forwardRef((props, ref) => {
     });
   };
 
-  const handleLinkUnfurl = async url => {
+  const handleLinkUnfurl = async (url) => {
     return await fetch(buildUrl({ pathname: '/api/unfurl' }), {
       method: 'POST',
       body: JSON.stringify({
@@ -162,7 +162,7 @@ export default React.forwardRef((props, ref) => {
 
   let tab = (
     <div key="content" className={classNames(styles.view, 'hw-view')}>
-      <Editor
+      {/* <Editor
         content={editorContent ? { content: editorContent, style, code } : content}
         ref={contentEditor}
         mentions={mentions}
@@ -172,7 +172,7 @@ export default React.forwardRef((props, ref) => {
         onLinkUnfurl={handleLinkUnfurl}
         showPlaceholder={showPlaceholder}
         locale={configuration.locale}
-      />
+      /> */}
     </div>
   );
 

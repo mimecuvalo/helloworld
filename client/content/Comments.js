@@ -5,7 +5,7 @@ import { createLock } from '../app/auth';
 import { createUseStyles } from 'react-jss';
 import { defineMessages, F, useIntl } from 'react-intl-wrapper';
 import Delete from '../dashboard/actions/Delete';
-import { Editor } from 'hello-world-editor';
+//import { Editor } from 'hello-world-editor';
 import Favorite from '../dashboard/actions/Favorite';
 import gql from 'graphql-tag';
 import React, { useContext, useEffect, useRef, useState } from 'react';
@@ -82,7 +82,7 @@ export default function Comments({ comments, content }) {
   const user = useContext(UserContext).user;
   const styles = useStyles();
 
-  const handleKeyDown = evt => {
+  const handleKeyDown = (evt) => {
     if (!commentEditor || !commentEditor.current) {
       return;
     }
@@ -101,7 +101,7 @@ export default function Comments({ comments, content }) {
     return () => document.removeEventListener('keydown', handleKeyDown);
   });
 
-  const handlePost = async evt => {
+  const handlePost = async (evt) => {
     const { username, name } = content;
     const editor = commentEditor.current;
     const commentContent = JSON.stringify(editor.export());
@@ -129,7 +129,7 @@ export default function Comments({ comments, content }) {
     setIsPosting(false);
   };
 
-  const handleLogin = evt => {
+  const handleLogin = (evt) => {
     createLock().show();
   };
 
@@ -144,14 +144,14 @@ export default function Comments({ comments, content }) {
       </h3>
       {isLoggedIn ? (
         <div id="hw-comment-editor" className={styles.commentEditorWrapper}>
-          <Editor
+          {/* <Editor
             editorKey="comments"
             content={{}}
             ref={commentEditor}
             type="comment"
             dontWarnOnUnsaved={true}
             locale={configuration.locale}
-          />
+          /> */}
           <button className={classNames('hw-button', 'hw-save')} disabled={isPosting} onClick={handlePost}>
             <F msg="post" />
           </button>
@@ -170,7 +170,7 @@ export default function Comments({ comments, content }) {
       )}
       {comments ? (
         <ul className={styles.comments}>
-          {comments.map(comment => (
+          {comments.map((comment) => (
             <li className={styles.comment} key={comment.post_id}>
               <img className={styles.avatar} src={comment.avatar || '/img/pixel.gif'} alt={ariaImgMsg} />
               <div>
