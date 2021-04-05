@@ -1,6 +1,5 @@
 import { decoratedBlocksToHTML } from '../utils/Blocks';
 import linkifyit from 'linkify-it';
-import React from 'react';
 
 const linkify = linkifyit();
 linkify.add('> ', {
@@ -32,7 +31,7 @@ function strategy(contentBlock, callback) {
       callback(links[i].index, links[i].lastIndex);
     }
   }
-};
+}
 
 function Component({ decoratedText }) {
   const links = linkify.match(decoratedText || '');

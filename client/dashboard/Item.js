@@ -6,7 +6,7 @@ import FollowingSpecialFeedCountsQuery from './FollowingSpecialFeedCountsQuery';
 import Footer from './Footer';
 import gql from 'graphql-tag';
 import Header from './Header';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useMutation } from '@apollo/client';
 
 const useStyles = createUseStyles({
@@ -126,13 +126,13 @@ export default function Item(props) {
 
         const query = FollowingFeedCountsQuery;
         const data = store.readQuery({ query });
-        data.fetchFeedCounts.find(i => i.from_user === from_user).count += read ? -1 : 1;
+        data.fetchFeedCounts.find((i) => i.from_user === from_user).count += read ? -1 : 1;
         store.writeQuery({ query, data });
       },
     });
   }
 
-  const keepUnreadCb = keepUnread => {
+  const keepUnreadCb = (keepUnread) => {
     if (keepUnread && props.contentRemote.read) {
       readContentRemoteCall(false);
       setManuallyMarkedAsRead(false);

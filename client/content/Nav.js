@@ -5,7 +5,7 @@ import { contentUrl } from '../../shared/util/url_factory';
 import { createUseStyles } from 'react-jss';
 import { F } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
-import React, { useEffect, useImperativeHandle, useRef } from 'react';
+import { forwardRef, memo, useEffect, useImperativeHandle, useRef } from 'react';
 import { useQuery } from '@apollo/client';
 
 const useStyles = createUseStyles({
@@ -56,7 +56,7 @@ const FETCH_CONTENT_NEIGHBORS = gql`
     }
   `;
 
-export default React.forwardRef(({ content, isEditing }, ref) => {
+export default forwardRef(({ content, isEditing }, ref) => {
   const { username, section, album, name } = content;
   const { loading, data, client } = useQuery(FETCH_CONTENT_NEIGHBORS, {
     variables: {
@@ -88,7 +88,7 @@ export default React.forwardRef(({ content, isEditing }, ref) => {
     },
   }));
 
-  const handleKeyUp = evt => {
+  const handleKeyUp = (evt) => {
     if (isEditing) {
       return;
     }
@@ -130,7 +130,7 @@ export default React.forwardRef(({ content, isEditing }, ref) => {
 
 // This is separate and memoized so that we don't re-render while loading.
 // Otherwise, it's a bit jarring when the navigation menu disappears everytime you click next/prev.
-const PersistedNav = React.memo(
+const PersistedNav = memo(
   function PersistedNav({ loading, navigationActions, client, content, data }) {
     const styles = useStyles();
 

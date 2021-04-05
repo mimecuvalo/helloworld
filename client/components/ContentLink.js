@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { contentUrl } from '../../shared/util/url_factory';
 import { createUseStyles } from 'react-jss';
 import { Link } from 'react-router-dom';
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import UserContext from '../app/User_Context';
 
 const useStyles = createUseStyles({

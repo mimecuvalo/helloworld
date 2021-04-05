@@ -24,7 +24,7 @@ import { handleKeyCommand, keyBindingFn } from './input/keyboard';
 import HiddenSnackbarShim from './ui/HiddenSnackbarShim';
 import { IntlProvider } from 'react-intl';
 import Mentions, { mentionPlugin } from './ui/autocomplete/Mentions';
-import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { SnackbarProvider } from 'notistack';
 import Toolbars, { inlineToolbarPlugin, linkPlugin, sideToolbarPlugin } from './ui/toolbars';
 import unfurl from './media/unfurl';
@@ -91,7 +91,7 @@ const readOnlyPlugins = [
   linkifyPlugin,
 ];
 
-export default React.forwardRef((props, ref) => {
+export default forwardRef((props, ref) => {
   const { content, dontWarnOnUnsaved, editorKey, locale, mentions, onChange: propOnChange, onLinkUnfurl, onMediaAdd, onMediaUpload, readOnly, showPlaceholder, type } = props;
   const editor = useRef(null);
   const [editorState, setEditorState] = useState(null);

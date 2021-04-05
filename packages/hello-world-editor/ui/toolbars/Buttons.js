@@ -10,7 +10,6 @@ import FormatSizeIcon from '@material-ui/icons/FormatSize';
 import FormatStrikethroughIcon from '@material-ui/icons/FormatStrikethrough';
 import InsertLinkIcon from '@material-ui/icons/InsertLink';
 import PhotoIcon from '@material-ui/icons/Photo';
-import React from 'react';
 import { RichUtils } from 'draft-js';
 import uploadFiles from '../../media/attachment';
 import { useSnackbar } from 'notistack';

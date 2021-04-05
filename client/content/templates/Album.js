@@ -4,7 +4,7 @@ import ContentThumb from '../../components/ContentThumb';
 import { createUseStyles } from 'react-jss';
 import { defineMessages, F, useIntl } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
-import React from 'react';
+import { forwardRef } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { useSnackbar } from 'notistack';
 
@@ -69,7 +69,7 @@ const DELETE_CONTENT = gql`
   }
 `;
 
-export default React.forwardRef(({ content, isEditing }, ref) => {
+export default forwardRef(({ content, isEditing }, ref) => {
   const { username, section, album, name } = content;
   const intl = useIntl();
   const snackbar = useSnackbar();
@@ -86,7 +86,7 @@ export default React.forwardRef(({ content, isEditing }, ref) => {
 
   const [deleteContent] = useMutation(DELETE_CONTENT);
 
-  const handleClick = async item => {
+  const handleClick = async (item) => {
     const variables = { name: item.name };
 
     try {
@@ -102,7 +102,7 @@ export default React.forwardRef(({ content, isEditing }, ref) => {
           const data = store.readQuery({ query: FETCH_COLLECTION, variables: queryVariables });
           store.writeQuery({
             query: FETCH_COLLECTION,
-            data: { fetchCollection: data.fetchCollection.filter(i => i.name !== item.name) },
+            data: { fetchCollection: data.fetchCollection.filter((i) => i.name !== item.name) },
             variables: queryVariables,
           });
         },
@@ -125,7 +125,7 @@ export default React.forwardRef(({ content, isEditing }, ref) => {
           <F msg="No content here yet." />
         </li>
       )}
-      {collection.map(item => (
+      {collection.map((item) => (
         <li key={item.name} className={styles.item}>
           {isEditing ? (
             <button className={classNames('hw-button', 'hw-delete', styles.delete)} onClick={() => handleClick(item)}>

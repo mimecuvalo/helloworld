@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { createPlugin } from 'draft-extend';
-import React from 'react';
+import { isValidElement, cloneElement } from 'react';
 
 const BLOCK_TYPE = 'atomic';
 const ENTITY_TYPE = 'IMAGE';
@@ -27,8 +27,8 @@ export default createPlugin({
   },
   blockToHTML: next => block => {
     const result = next(block);
-    if (block.data && React.isValidElement(result)) {
-      return React.cloneElement(result, {});
+    if (block.data && isValidElement(result)) {
+      return cloneElement(result, {});
     }
     return result;
   },

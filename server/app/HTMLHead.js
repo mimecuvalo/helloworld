@@ -1,6 +1,6 @@
 import { buildUrl, contentUrl, profileUrl } from '../../shared/util/url_factory';
 import gql from 'graphql-tag';
-import React from 'react';
+import { memo } from 'react';
 import { useQuery } from '@apollo/client';
 
 const CONTENT_AND_USER_QUERY = gql`
@@ -96,7 +96,7 @@ export default function HTMLHead(props) {
       {contentOwner ? <link rel="author" href={contentUrl({ username, section: 'main', name: 'about' })} /> : null}
       <link rel="icon" href={favicon || `${publicUrl}favicon.ico`} />
       <link rel="apple-touch-icon" href={favicon || `${publicUrl}favicon.ico`} />
-      {assetPathsByType['css'].map(path => (
+      {assetPathsByType['css'].map((path) => (
         <link nonce={nonce} rel="stylesheet" key={path} href={path} />
       ))}
       {theme}
@@ -164,7 +164,7 @@ export default function HTMLHead(props) {
 
 // This needs to be filled out by the developer to provide content for the site.
 // Learn more here: http://ogp.me/
-const OpenGraphMetadata = React.memo(function OpenGraphMetadata({ contentOwner, content, title, req }) {
+const OpenGraphMetadata = memo(function OpenGraphMetadata({ contentOwner, content, title, req }) {
   const thumb = buildThumb(contentOwner, content, req);
 
   return (

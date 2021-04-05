@@ -1,7 +1,6 @@
 import { contentUrl, profileUrl } from '../../shared/util/url_factory';
 import { createUseStyles } from 'react-jss';
 import { F, FormattedDate } from 'react-intl-wrapper';
-import React from 'react';
 
 const useStyles = createUseStyles({
   footer: {
@@ -24,7 +23,7 @@ export default function Footer({ content, contentOwner }) {
   const name = contentOwner.name || username;
   const styles = useStyles();
 
-  const handleFullscreen = evt => {
+  const handleFullscreen = (evt) => {
     document.getElementById('hw-content').requestFullscreen();
   };
 

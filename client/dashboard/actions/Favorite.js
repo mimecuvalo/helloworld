@@ -2,7 +2,6 @@ import classNames from 'classnames';
 import { F } from 'react-intl-wrapper';
 import FollowingSpecialFeedCountsQuery from '../FollowingSpecialFeedCountsQuery';
 import gql from 'graphql-tag';
-import React from 'react';
 import { useMutation } from '@apollo/client';
 import useStyles from './actionsStyles';
 
@@ -24,7 +23,7 @@ export default function Favorite(props) {
   const [favoriteContentRemote] = useMutation(FAVORITE_CONTENT_REMOTE);
   const styles = useStyles();
 
-  const handleClick = evt =>
+  const handleClick = (evt) =>
     favoriteContentRemote({
       variables,
       optimisticResponse: {

@@ -1,5 +1,4 @@
 import insertAtomicBlockShim from './AtomicBlockUtilsShim';
-import React from 'react';
 import { renderToString } from 'react-dom/server';
 
 export function createNewBlock(type, tag, editorState, entityData, attribs) {

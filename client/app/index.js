@@ -5,7 +5,6 @@ import configuration from './configuration';
 import createApolloClient from './apollo';
 import './index.css';
 import { IntlProvider, isInternalLocale, setLocales } from 'react-intl-wrapper';
-import React from 'react';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
 import theme from '../../shared/theme';

@@ -5,7 +5,7 @@ import Feed from './Feed';
 import Followers from './Followers';
 import Following from './Following';
 import MyFeed from '../content/Feed';
-import React, { useContext, useState, useRef } from 'react';
+import { useContext, useState, useRef } from 'react';
 import Tools from './Tools';
 import Unauthorized from '../error/401';
 import useDocumentTitle from '../app/title';

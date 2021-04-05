@@ -2,7 +2,6 @@ import classNames from 'classnames';
 import { createUseStyles } from 'react-jss';
 //import { F } from 'react-intl-wrapper';
 import Help from './Help';
-import React from 'react'; //Suspense //lazy,
 import { useLocation } from 'react-router-dom';
 
 const useStyles = createUseStyles({

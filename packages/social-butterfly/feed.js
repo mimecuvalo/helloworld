@@ -1,6 +1,6 @@
 import { buildUrl } from './util/url_factory';
 import { HTTPError } from './util/exceptions';
-import React, { createElement as RcE } from 'react';
+import { createElement as RcE } from 'react';
 import { renderToString } from 'react-dom/server';
 
 const LICENSES = {

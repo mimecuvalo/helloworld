@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import ContentLink from '../components/ContentLink';
 import { createUseStyles } from 'react-jss';
 import { F } from 'react-intl-wrapper';
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import UserContext from '../app/User_Context';
 
 const useStyles = createUseStyles({

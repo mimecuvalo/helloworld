@@ -8,7 +8,7 @@ import { defineMessages, F, useIntl } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 
@@ -136,7 +136,7 @@ export default function SiteMap({ content, username }) {
     setForceMenuOpen(!forceMenuOpen);
   };
 
-  const handleSearchSubmit = evt => {
+  const handleSearchSubmit = (evt) => {
     evt.preventDefault();
 
     const form = evt.target;

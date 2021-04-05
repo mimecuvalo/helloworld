@@ -1,13 +1,12 @@
 import classNames from 'classnames';
 import { F } from 'react-intl-wrapper';
-import React from 'react';
 import useStyles from './actionsStyles';
 
 export default function Reblog({ contentRemote, getEditor }) {
   const type = contentRemote.type;
   const styles = useStyles();
 
-  const handleClick = evt => {
+  const handleClick = (evt) => {
     const type = contentRemote.type;
     if (type === 'remote-comment') {
       return;

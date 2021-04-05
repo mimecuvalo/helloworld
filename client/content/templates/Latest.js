@@ -1,7 +1,7 @@
 import Archive from './Archive';
 import { contentUrl } from '../../../shared/util/url_factory';
 import gql from 'graphql-tag';
-import React, { useEffect, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import Simple from './Simple';
 import { useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
@@ -20,7 +20,7 @@ const FETCH_COLLECTION_LINKS = gql`
   }
 `;
 
-export default React.forwardRef(({ content }, ref) => {
+export default forwardRef(({ content }, ref) => {
   const { username, section, name } = content;
   const routerHistory = useHistory();
   const [archiveMode, setArchiveMode] = useState(false);

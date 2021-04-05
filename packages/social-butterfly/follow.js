@@ -4,7 +4,6 @@ import express from 'express';
 import { follow as activityStreamsFollow } from './activitystreams';
 import FollowConfirm from './follow_confirm';
 import { parseFeedAndInsertIntoDb, retrieveFeed } from './util/feeds';
-import React from 'react';
 import { renderToString } from 'react-dom/server';
 
 export default (options) => {

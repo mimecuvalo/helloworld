@@ -5,7 +5,6 @@ import FollowingSpecialFeedCountsQuery from '../FollowingSpecialFeedCountsQuery'
 import gql from 'graphql-tag';
 import MenuItem from '@material-ui/core/MenuItem';
 import { prefixIdFromObject } from '../../../shared/data/apollo';
-import React from 'react';
 import { useMutation } from '@apollo/client';
 
 const MARK_ALL_FEEDS_AS_READ = gql`
@@ -31,7 +30,7 @@ export default function MarkAllFeedsAsRead({ handleClose }) {
         const prefixId = escapeRegExp(prefixIdFromObject({ __typename: 'Post' }));
         const regex = new RegExp(`^${prefixId}`);
         Object.keys(store.data.data).forEach(
-          key => key.match(regex) && store.data.set(key, Object.assign({}, store.data.get(key), { read: true }))
+          (key) => key.match(regex) && store.data.set(key, Object.assign({}, store.data.get(key), { read: true }))
         );
       },
     });

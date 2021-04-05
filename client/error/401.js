@@ -1,6 +1,5 @@
 import { createLock } from '../app/auth';
 import { defineMessages, F, useIntl } from 'react-intl-wrapper';
-import React from 'react';
 import useStyles from './errorStyles';
 
 const messages = defineMessages({
@@ -31,7 +30,7 @@ export default function Unauthorized() {
         <F
           msg="try <a>logging in</a>."
           values={{
-            a: msg => (
+            a: (msg) => (
               <a href="#login" onClick={handleLogin}>
                 {msg}
               </a>

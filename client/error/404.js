@@ -1,5 +1,4 @@
 import { defineMessages, F, useIntl } from 'react-intl-wrapper';
-import React from 'react';
 import useStyles from './errorStyles';
 
 const messages = defineMessages({
@@ -22,7 +21,7 @@ export default function NotFound() {
       <div>
         <F msg="i'm sorry, dave. i'm afraid i can't do that." />
         <br />
-        <F msg="try going back to the <a>beginning</a>." values={{ a: msg => <a href="/">{msg}</a> }} />
+        <F msg="try going back to the <a>beginning</a>." values={{ a: (msg) => <a href="/">{msg}</a> }} />
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import { createPlugin } from 'draft-extend';
-import React from 'react';
+import { isValidElement, cloneElement } from 'react';
 
 const BLOCK_TYPE = 'atomic';
 const ENTITY_TYPE = 'IFRAME';
@@ -22,8 +22,8 @@ export default createPlugin({
   },
   blockToHTML: next => block => {
     const result = next(block);
-    if (block.data && React.isValidElement(result)) {
-      return React.cloneElement(result, {});
+    if (block.data && isValidElement(result)) {
+      return cloneElement(result, {});
     }
     return result;
   },

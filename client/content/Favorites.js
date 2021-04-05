@@ -1,5 +1,4 @@
 import { defineMessages, F, useIntl } from 'react-intl-wrapper';
-import React from 'react';
 import { useStyles } from './Comments';
 
 const messages = defineMessages({
@@ -17,7 +16,7 @@ export default function Favorites({ favorites }) {
 
   return (
     <ul>
-      {favorites?.map(favorite => (
+      {favorites?.map((favorite) => (
         <li className={styles.favorite} key={favorite.post_id}>
           <img className={styles.avatar} src={favorite.avatar || '/img/pixel.gif'} alt={ariaImgMsg} />
           <F

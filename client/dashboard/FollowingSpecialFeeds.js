@@ -4,7 +4,7 @@ import { F } from 'react-intl-wrapper';
 import FollowingAllMenu from './FollowingAllMenu';
 import FollowingSpecialFeedCountsQuery from './FollowingSpecialFeedCountsQuery';
 import { FormattedNumber } from 'react-intl-wrapper';
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { useQuery } from '@apollo/client';
 import UserContext from '../app/User_Context';
 import useStyles from './remoteUsersStyles';
@@ -20,19 +20,19 @@ export default function FollowingSpecialFeeds(props) {
     return null;
   }
 
-  const handleEntireFeedClick = evt => {
+  const handleEntireFeedClick = (evt) => {
     props.handleSetFeed('');
   };
 
-  const handleMyFeedClick = evt => {
+  const handleMyFeedClick = (evt) => {
     props.handleSetFeed('me');
   };
 
-  const handleFavoritesClick = evt => {
+  const handleFavoritesClick = (evt) => {
     props.handleSetFeed('favorites');
   };
 
-  const handleCommentsClick = evt => {
+  const handleCommentsClick = (evt) => {
     props.handleSetFeed('comments');
   };
 

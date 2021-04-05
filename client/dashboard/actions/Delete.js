@@ -1,7 +1,6 @@
 import classNames from 'classnames';
 import { F } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
-import React from 'react';
 import { useMutation } from '@apollo/client';
 import useStyles from './actionsStyles';
 
@@ -36,7 +35,7 @@ export default function Delete(props) {
   const [deleteContentRemote] = useMutation(DELETE_CONTENT_REMOTE);
   const styles = useStyles();
 
-  const handleClick = evt =>
+  const handleClick = (evt) =>
     deleteContentRemote({
       variables,
       optimisticResponse: {

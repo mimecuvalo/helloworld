@@ -10,7 +10,7 @@ import FormControl from '@material-ui/core/FormControl';
 import gql from 'graphql-tag';
 import HiddenSnackbarShim from '../components/HiddenSnackbarShim';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import Select from '@material-ui/core/Select';
 import Toolbar from '@material-ui/core/Toolbar';
 import { useMutation, useQuery } from '@apollo/client';
@@ -97,7 +97,7 @@ const POST_CONTENT = gql`
   }
 `;
 
-export default React.forwardRef(({ username }, ref) => {
+export default forwardRef(({ username }, ref) => {
   const { loading, data } = useQuery(SITE_MAP_AND_USER_QUERY, {
     variables: {
       username,

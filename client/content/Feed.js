@@ -3,7 +3,7 @@ import { F } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
 import InfiniteFeed from '../components/InfiniteFeed';
 import Item from './Item';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import useWindowSize from '../components/windowSize';
 
@@ -128,7 +128,7 @@ export default function Feed({ content: { username, section, name }, didFeedLoad
 
   return (
     <InfiniteFeed fetchMore={fetchMore} queryName="fetchCollectionPaginated">
-      {collection.map(item => (
+      {collection.map((item) => (
         <Item
           key={item.name}
           className={isDesktop && styles.item}

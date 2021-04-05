@@ -1,5 +1,4 @@
 import { defineMessages, F, useIntl } from 'react-intl-wrapper';
-import React from 'react';
 
 const messages = defineMessages({
   reply: { msg: 'replying to' },
@@ -8,7 +7,7 @@ const messages = defineMessages({
 export default function Reply(props) {
   const intl = useIntl();
 
-  const handleClick = evt => {
+  const handleClick = (evt) => {
     const { type, link } = props.contentRemote;
     if (type === 'remote-comment') {
       window.open(link, link, 'noopener,noreferrer');

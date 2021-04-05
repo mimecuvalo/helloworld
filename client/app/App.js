@@ -10,7 +10,7 @@ import ErrorBoundary from '../error/ErrorBoundary';
 import IconButton from '@material-ui/core/IconButton';
 import MainApp from './Main';
 import { Route, Switch } from 'react-router-dom';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import UserContext from './User_Context';
 

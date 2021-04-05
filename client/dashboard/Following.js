@@ -4,7 +4,7 @@ import FollowingFeeds from './FollowingFeeds';
 import FollowingQuery from './FollowingQuery';
 import FollowingSpecialFeeds from './FollowingSpecialFeeds';
 import NewFeed from './actions/NewFeed';
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { useQuery } from '@apollo/client';
 import useStyles from './remoteUsersStyles';
 
@@ -24,14 +24,14 @@ export default function Following(props) {
     return null;
   }
 
-  const handleSearchKeyUp = evt => {
+  const handleSearchKeyUp = (evt) => {
     if (evt.key === 'Enter') {
       props.handleSetFeed('', searchInput.current.value);
     }
   };
 
   // It'd be nice to listen to the 'search' event for the (x) cancel button but it doesn't work w/ React?
-  const handleSearchChange = evt => {
+  const handleSearchChange = (evt) => {
     if (!searchInput.current.value) {
       props.handleSetFeed('', searchInput.current.value);
     }

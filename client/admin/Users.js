@@ -2,7 +2,7 @@ import { createUseStyles } from 'react-jss';
 import { defineMessages, F, useIntl } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
 import Forbidden from '../error/403';
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import Unauthorized from '../error/401';
 import UserContext from '../app/User_Context';
 import useDocumentTitle from '../app/title';
@@ -101,8 +101,8 @@ function AdminApp() {
                 <strong>username</strong>
               </th>
               {Object.keys(allUsers[0])
-                .filter(k => k !== 'username')
-                .map(key => (
+                .filter((k) => k !== 'username')
+                .map((key) => (
                   <th key={key}>
                     <strong>{key}</strong>
                   </th>
@@ -110,15 +110,15 @@ function AdminApp() {
             </tr>
           </thead>
           <tbody>
-            {allUsers.map(user => {
+            {allUsers.map((user) => {
               return (
                 <tr key={user.username}>
                   <td>
                     <input readOnly type="text" value={user['username']} />
                   </td>
                   {Object.keys(user)
-                    .filter(k => k !== 'username')
-                    .map(key => (
+                    .filter((k) => k !== 'username')
+                    .map((key) => (
                       <td key={key}>
                         <input
                           readOnly

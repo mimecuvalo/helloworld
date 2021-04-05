@@ -7,7 +7,6 @@ import gql from 'graphql-tag';
 import { Link, Route, Switch, useLocation, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import NotFound from '../error/404';
-import React from 'react';
 import REPL from './REPL';
 import ScrollToTop from '../app/ScrollToTop';
 import SystemInfo from './SystemInfo';
@@ -17,7 +16,7 @@ import { useQuery } from '@apollo/client';
 
 const drawerWidth = 240;
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     textAlign: 'left',
     display: 'flex',

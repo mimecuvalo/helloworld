@@ -4,7 +4,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import NewFeed from './actions/NewFeed';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import useStyles from './remoteUsersStyles';
 
 const messages = defineMessages({
@@ -16,7 +16,7 @@ export default function FollowerMenu(props) {
   const [anchorEl, setAnchorEl] = useState(null);
   const styles = useStyles();
 
-  const handleMenuOpenerClick = event => {
+  const handleMenuOpenerClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -24,7 +24,7 @@ export default function FollowerMenu(props) {
     setAnchorEl(null);
   };
 
-  const handleSetFeed = userRemote => {
+  const handleSetFeed = (userRemote) => {
     handleClose();
     props.handleSetFeed(userRemote);
   };

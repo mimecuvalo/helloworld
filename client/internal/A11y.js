@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button';
 import classNames from 'classnames';
 import { createUseStyles } from 'react-jss';
 import Popover from '@material-ui/core/Popover';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const useStyles = createUseStyles({
   a11yPopover: {
@@ -37,7 +37,7 @@ export default function A11y() {
   const [loaded, setLoaded] = useState(false);
   const styles = useStyles();
 
-  const handleClick = event => {
+  const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -45,7 +45,7 @@ export default function A11y() {
     setAnchorEl(null);
   };
 
-  const handleRerun = event => {
+  const handleRerun = (event) => {
     setErrorCount(0);
     setResults(null);
     setLoaded(false);
@@ -82,7 +82,7 @@ export default function A11y() {
   }
 
   function renderViolationByType(typeFilter) {
-    const violationsByType = results.violations.filter(violation => violation.impact === typeFilter);
+    const violationsByType = results.violations.filter((violation) => violation.impact === typeFilter);
     if (!violationsByType.length) {
       return null;
     }
@@ -91,11 +91,11 @@ export default function A11y() {
       <div>
         <h3 className={styles.typeFilter}>{typeFilter}</h3>
         <ul>
-          {violationsByType.map(violation => (
+          {violationsByType.map((violation) => (
             <li key={violation.id}>
               <strong>{violation.id}</strong>: {violation.description}
               &nbsp;(
-              <em>{violation.nodes.map(node => node.target).join(', ')}</em>)
+              <em>{violation.nodes.map((node) => node.target).join(', ')}</em>)
             </li>
           ))}
         </ul>

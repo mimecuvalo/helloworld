@@ -2,7 +2,6 @@ import { createUseStyles } from 'react-jss';
 import { F, FormattedDate } from 'react-intl-wrapper';
 import Favorite from './actions/Favorite';
 import KeepUnread from './actions/KeepUnread';
-import React from 'react';
 import Reblog from './actions/Reblog';
 import Reply from './actions/Reply';
 

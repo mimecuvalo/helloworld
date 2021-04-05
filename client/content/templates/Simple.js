@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import ContentEditor from '../ContentEditor';
 import { createUseStyles } from 'react-jss';
-import React, { useImperativeHandle, useRef } from 'react';
+import { forwardRef, useImperativeHandle, useRef } from 'react';
 
 // TODO(mime): move this somewhere more re-usable - same as ContentEditor.js - keep in sync.
 export const useStyles = createUseStyles({
@@ -19,7 +19,7 @@ export const useStyles = createUseStyles({
   },
 });
 
-export default React.forwardRef(({ content, isEditing, isFeed }, ref) => {
+export default forwardRef(({ content, isEditing, isFeed }, ref) => {
   const editor = useRef(null);
   const styles = useStyles();
 

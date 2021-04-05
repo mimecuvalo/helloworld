@@ -1,13 +1,13 @@
 import classNames from 'classnames';
 import { F } from 'react-intl-wrapper';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import useStyles from './actionsStyles';
 
 export default function KeepUnread({ keepUnreadCb }) {
   const [enabled, setEnabled] = useState(false);
   const styles = useStyles();
 
-  const handleClick = async evt => {
+  const handleClick = async (evt) => {
     keepUnreadCb(!enabled);
     setEnabled(!enabled);
   };

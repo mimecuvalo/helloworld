@@ -8,7 +8,6 @@ import { initializeLocalState } from '../../shared/data/local_state';
 import { IntlProvider, getDefaultLocale, getLocaleFromRequest, getLocales, setLocales } from 'react-intl-wrapper';
 import { JssProvider, SheetsRegistry, createGenerateId } from 'react-jss';
 import * as languages from '../../shared/i18n-lang-packs';
-import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { ServerStyleSheets, ThemeProvider } from '@material-ui/core/styles';
 import { StaticRouter } from 'react-router';
@@ -27,7 +26,7 @@ export default async function render({ req, res, next, assetPathsByType, appName
         model:
           req.session.user.model &&
           Object.keys(req.session.user.model)
-            .filter(key => !FILTERED_KEYS.includes(key))
+            .filter((key) => !FILTERED_KEYS.includes(key))
             .reduce((obj, key) => {
               obj[key] = req.session.user.model[key];
               return obj;
@@ -52,7 +51,7 @@ export default async function render({ req, res, next, assetPathsByType, appName
   // We need to set leave out Material-UI classname generation when traversing the React tree for
   // Apollo data. a) it speeds things up, but b) if we didn't do this, on prod, it can cause
   // classname hydration mismatches.
-  const completeApp = isApolloTraversal => (
+  const completeApp = (isApolloTraversal) => (
     <IntlProvider defaultLocale={locale} locale={locale} messages={translations}>
       <ApolloProvider client={apolloClient}>
         <HTMLBase

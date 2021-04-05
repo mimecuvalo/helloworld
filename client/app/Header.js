@@ -3,7 +3,6 @@ import { createUseStyles } from 'react-jss';
 import { F } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
 import LoginLogoutButton from '../components/login';
-import React from 'react';
 import { useQuery } from '@apollo/client';
 import { useLocation } from 'react-router-dom';
 

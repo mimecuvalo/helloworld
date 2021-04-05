@@ -2,7 +2,7 @@ import Button from '@material-ui/core/Button';
 import classNames from 'classnames';
 import { createUseStyles } from 'react-jss';
 import Popover from '@material-ui/core/Popover';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const useStyles = createUseStyles({
   performanceList: {
@@ -42,7 +42,7 @@ export default function Performance() {
 
   const styles = useStyles();
 
-  const handleClick = event => {
+  const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -55,7 +55,7 @@ export default function Performance() {
       return;
     }
 
-    const observer = new PerformanceObserver(list => {
+    const observer = new PerformanceObserver((list) => {
       const perfNavigationEntry = window['performance'].getEntriesByType('navigation')[0];
       const perfPaintEntries = window['performance'].getEntriesByType('paint');
       setDuration(perfNavigationEntry.duration);
@@ -74,7 +74,7 @@ export default function Performance() {
     }
 
     const entries = { ...navigationEntry.toJSON() };
-    paintEntries.forEach(entry => {
+    paintEntries.forEach((entry) => {
       entries[entry.name] = entry.startTime;
     });
 
@@ -103,9 +103,9 @@ export default function Performance() {
     return (
       <table className={styles.performanceList}>
         {relevantTimingKeys
-          .filter(timing => !!entries[timing])
+          .filter((timing) => !!entries[timing])
           .sort((a, b) => entries[a] - entries[b])
-          .map(timing => (
+          .map((timing) => (
             <tr key={timing}>
               <td className={styles.entryType}>{timing}</td>
               <td className={styles.entryData}>{entries[timing].toFixed(1)}</td>

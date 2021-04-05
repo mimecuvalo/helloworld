@@ -5,7 +5,6 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { IntlProvider } from 'react-intl-wrapper';
-import React from 'react';
 import ReactDOM from 'react-dom';
 import theme from '../../shared/theme';
 import { ThemeProvider } from '@material-ui/core/styles';

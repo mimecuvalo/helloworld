@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function InfiniteFeed({ children, deduper, fetchMore, queryName }) {
   const [didReachEndOfFeed, setDidReachEndOfFeed] = useState(false);

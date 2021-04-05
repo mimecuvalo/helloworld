@@ -3,7 +3,7 @@ import ContentLink from '../../components/ContentLink';
 import { createUseStyles } from 'react-jss';
 import { F } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
-import React, { useContext } from 'react';
+import { forwardRef, useContext } from 'react';
 import { useQuery } from '@apollo/client';
 import UserContext from '../../app/User_Context';
 
@@ -31,7 +31,7 @@ const FETCH_COLLECTION = gql`
   }
 `;
 
-export default React.forwardRef(({ content }, ref) => {
+export default forwardRef(({ content }, ref) => {
   const { username, section, album, name } = content;
   const user = useContext(UserContext).user;
   const { loading, data } = useQuery(FETCH_COLLECTION, {
@@ -59,8 +59,8 @@ export default React.forwardRef(({ content }, ref) => {
         </li>
       )}
       {collection
-        .filter(item => item.name !== content.name)
-        .map(item => (
+        .filter((item) => item.name !== content.name)
+        .map((item) => (
           <li
             key={item.name}
             className={classNames('hw-content-item', {

@@ -1,5 +1,4 @@
 import { createPlugin } from 'draft-extend';
-import React from 'react';
 
 // TODO(mime): can't we just use LINK? i forget why we're using ANCHOR separately..., something with images probably :-/
 const ENTITY_TYPE = 'ANCHOR';

@@ -3,7 +3,7 @@ import { defineMessages, useIntl } from 'react-intl-wrapper';
 import IconButton from '@material-ui/core/IconButton';
 import MarkAllFeedsAsRead from './actions/MarkAllFeedsAsRead';
 import Menu from '@material-ui/core/Menu';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import useStyles from './remoteUsersStyles';
 
 const messages = defineMessages({
@@ -15,7 +15,7 @@ export default function FollowingAllMenu(props) {
   const [anchorEl, setAnchorEl] = useState(null);
   const styles = useStyles();
 
-  const handleMenuOpenerClick = event => {
+  const handleMenuOpenerClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 

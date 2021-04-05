@@ -3,7 +3,6 @@ import FollowingQuery from '../FollowingQuery';
 import FollowingSpecialFeedCountsQuery from '../FollowingSpecialFeedCountsQuery';
 import gql from 'graphql-tag';
 import MenuItem from '@material-ui/core/MenuItem';
-import React from 'react';
 import { useMutation } from '@apollo/client';
 
 const DESTROY_FEED = gql`
@@ -28,7 +27,7 @@ export default function UnfollowFeed(props) {
         store.writeQuery({
           query: FollowingQuery,
           data: {
-            fetchFollowing: followingData.fetchFollowing.filter(i => i.profile_url !== profile_url),
+            fetchFollowing: followingData.fetchFollowing.filter((i) => i.profile_url !== profile_url),
           },
         });
       },

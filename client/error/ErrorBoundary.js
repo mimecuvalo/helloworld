@@ -1,6 +1,6 @@
 import { F } from 'react-intl-wrapper';
 import { logError } from './error';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 
 const styles = {
   errorBoundary: {

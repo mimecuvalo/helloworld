@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { createUseStyles } from 'react-jss';
 import { F } from 'react-intl-wrapper';
-import React from 'react';
+import { memo, forwardRef } from 'react';
 import SiteMap from './SiteMap';
 import useDocumentTitle from '../app/title';
 
@@ -27,8 +27,8 @@ const useStyles = createUseStyles({
   },
 });
 
-export default React.memo(
-  React.forwardRef((props, ref) => {
+export default memo(
+  forwardRef((props, ref) => {
     const { children, className, contentOwner, title, username } = props;
     useDocumentTitle(title);
     const styles = useStyles();

@@ -1,5 +1,4 @@
 import { buildUrl } from './util/url_factory';
-import React from 'react';
 
 export default function Follow({ req, resource }) {
   const actionUrl = buildUrl({ pathname: '/api/social/follow', searchParams: { resource } });

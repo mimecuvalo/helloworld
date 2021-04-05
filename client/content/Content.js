@@ -12,7 +12,7 @@ import isMobile from 'is-mobile';
 import Item from './Item';
 import Nav from './Nav';
 import NotFound from '../error/404';
-import React, { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import Simple from './templates/Simple';
 import SwipeListener from 'swipe-listener';
 import { useHistory } from 'react-router-dom';
@@ -93,7 +93,7 @@ export default function Content(props) {
 
 // This is separate and memoized so that we don't re-render while loading.
 // Otherwise, it's a bit jarring when the content structure disappears everytime you click next/prev.
-const PersistedContent = React.memo(
+const PersistedContent = memo(
   function PersistedContent({ loading, data }) {
     const intl = useIntl();
     const routerHistory = useHistory();

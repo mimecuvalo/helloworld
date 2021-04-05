@@ -1,5 +1,5 @@
 import { buildUrl } from './util/url_factory';
-import React from 'react';
+import { createElement } from 'react';
 import { renderToString } from 'react-dom/server';
 
 export default (options) => async (req, res) => {
@@ -141,7 +141,7 @@ function WebFinger({ req, user }) {
 
 const createElementFactory = type => p => {
   const { children, ...props } = p;
-  return React.createElement(type, props, children);
+  return createElement(type, props, children);
 };
 
 const XML = {};

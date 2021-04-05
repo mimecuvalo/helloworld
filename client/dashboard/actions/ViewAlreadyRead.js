@@ -1,6 +1,5 @@
 import { F } from 'react-intl-wrapper';
 import MenuItem from '@material-ui/core/MenuItem';
-import React from 'react';
 
 export default function ViewAlreadyRead({ handleClose, handleSetFeed, userRemote }) {
   const handleClick = async () => {

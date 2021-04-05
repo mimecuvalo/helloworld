@@ -1,5 +1,5 @@
 import createMentionPlugin, { defaultSuggestionsFilter } from '@draft-js-plugins/mention';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const mentionStyles = {
   color: '#575f67',

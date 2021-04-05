@@ -4,7 +4,7 @@ import ContentThumb from '../components/ContentThumb';
 import { createUseStyles } from 'react-jss';
 import { defineMessages, useIntl } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
-import React from 'react';
+import { memo } from 'react';
 import { useQuery } from '@apollo/client';
 
 const useStyles = createUseStyles({
@@ -110,7 +110,7 @@ export default function Search({ match }) {
       username={contentOwner.username}
     >
       <ol id="hw-results" className={styles.list}>
-        {results.map(item => (
+        {results.map((item) => (
           <li key={item.name}>
             <div className={styles.innerList}>
               {item.thumb ? <ContentThumb className={styles.thumbLink} item={item} /> : null}
@@ -131,10 +131,10 @@ export default function Search({ match }) {
   );
 }
 
-const Highlight = React.memo(function Highlight({ str, term }) {
+const Highlight = memo(function Highlight({ str, term }) {
   const regex = new RegExp(`(${term})`, 'gi');
   return str
     .split(regex)
-    .filter(i => i)
+    .filter((i) => i)
     .map((part, index) => (part.match(regex) ? <mark key={index}>{part}</mark> : <span key={index}>{part}</span>));
 });

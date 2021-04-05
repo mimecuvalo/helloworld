@@ -3,7 +3,6 @@ import { F } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
 import InfiniteFeed from '../components/InfiniteFeed';
 import Item from './Item';
-import React from 'react';
 import { useQuery } from '@apollo/client';
 
 const useStyles = createUseStyles({
@@ -61,7 +60,7 @@ export default function Feed({ getEditor, userRemote, specialFeed, query, should
   const styles = useStyles();
 
   function dedupe(currentFeed, nextResults) {
-    return nextResults.filter(nextEl => !currentFeed.find(prevEl => prevEl.post_id === nextEl.post_id));
+    return nextResults.filter((nextEl) => !currentFeed.find((prevEl) => prevEl.post_id === nextEl.post_id));
   }
 
   if (loading) {
@@ -90,7 +89,7 @@ export default function Feed({ getEditor, userRemote, specialFeed, query, should
           <F msg="Nothing to read right now!" />
         </div>
       ) : (
-        feed.map(item => <Item key={item.post_id} contentRemote={item} getEditor={getEditor} />)
+        feed.map((item) => <Item key={item.post_id} contentRemote={item} getEditor={getEditor} />)
       )}
     </InfiniteFeed>
   );

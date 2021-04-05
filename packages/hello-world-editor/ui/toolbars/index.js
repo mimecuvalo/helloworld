@@ -12,7 +12,6 @@ import {
 import createInlineToolbarPlugin from '@draft-js-plugins/inline-toolbar';
 import createLinkPlugin from '@draft-js-plugins/anchor';
 import createSideToolbarPlugin from '@draft-js-plugins/side-toolbar';
-import React from 'react';
 import { Separator } from '@draft-js-plugins/inline-toolbar';
 import { styles as toolbarStyles, useStyles as useToolbarStyles } from './toolbarStyles';
 import Toolbar from '@material-ui/core/Toolbar';

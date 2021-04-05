@@ -7,7 +7,7 @@ import { createUseStyles } from 'react-jss';
 //import { Editor } from 'hello-world-editor';
 import ErrorBoundary from '../error/ErrorBoundary';
 import { F } from 'react-intl-wrapper';
-import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
@@ -29,7 +29,7 @@ const useStyles = createUseStyles({
   },
 });
 
-export default React.forwardRef((props, ref) => {
+export default forwardRef((props, ref) => {
   const { album, content = {}, mentions, onMediaAdd, section, showPlaceholder } = props;
   const contentEditor = useRef(null);
   const codeMirrorCSS = useRef(null);

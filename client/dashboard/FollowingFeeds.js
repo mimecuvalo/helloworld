@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { FormattedNumber } from 'react-intl-wrapper';
 import FollowingFeedCountsQuery from './FollowingFeedCountsQuery';
 import FollowingMenu from './FollowingMenu';
-import React from 'react';
 import { useQuery } from '@apollo/client';
 import useStyles from './remoteUsersStyles';
 
@@ -29,14 +28,14 @@ export default function FollowingFeeds(props) {
 
   return (
     <>
-      {following.map(userRemote => (
+      {following.map((userRemote) => (
         <li
           key={userRemote.profile_url}
           className={classNames({ [styles.selected]: currentUserRemote.profile_url === userRemote.profile_url })}
         >
           <button
             className="hw-button-link notranslate"
-            onClick={evt => handleClick(evt, userRemote)}
+            onClick={(evt) => handleClick(evt, userRemote)}
             title={userRemote.name || userRemote.username}
           >
             <Avatar src={userRemote.favicon || userRemote.avatar} />

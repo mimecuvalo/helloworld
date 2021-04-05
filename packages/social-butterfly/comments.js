@@ -1,5 +1,5 @@
 import { GenericFeed } from './feed';
-import React, { createElement as RcE } from 'react';
+import { createElement as RcE } from 'react';
 import { renderToString } from 'react-dom/server';
 
 export default (options) => async (req, res, next) => {

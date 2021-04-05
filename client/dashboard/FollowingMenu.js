@@ -4,7 +4,7 @@ import IconButton from '@material-ui/core/IconButton';
 import MarkAllAsRead from './actions/MarkAllAsRead';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Sort from './actions/Sort';
 import UnfollowFeed from './actions/UnfollowFeed';
 import ViewAlreadyRead from './actions/ViewAlreadyRead';
@@ -19,7 +19,7 @@ export default function FollowingMenu(props) {
   const [anchorEl, setAnchorEl] = useState(null);
   const styles = useStyles();
 
-  const handleMenuOpenerClick = event => {
+  const handleMenuOpenerClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 

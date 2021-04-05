@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import React from 'react';
+import { Children } from 'react';
 import { useQuery } from '@apollo/client';
 
 const EXPERIMENTS_QUERY = gql`
@@ -19,14 +19,14 @@ export function useExperiment(name) {
     return false;
   }
 
-  return experiments.map(exp => exp.name).includes(name);
+  return experiments.map((exp) => exp.name).includes(name);
 }
 
 export function Experiment({ children, name }) {
   const isExperimentOn = useExperiment(name);
 
   const filteredChildren = [];
-  React.Children.map(children, child => {
+  Children.map(children, (child) => {
     if (
       (isExperimentOn && (child.type.name !== 'Variant' || child.props.name.toLowerCase() !== 'off')) ||
       (!isExperimentOn && child.type.name === 'Variant' && child.props.name.toLowerCase() === 'off')

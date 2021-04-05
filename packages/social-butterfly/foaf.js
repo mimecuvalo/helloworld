@@ -1,6 +1,6 @@
 import { buildUrl } from './util/url_factory';
 import crypto from 'crypto';
-import React from 'react';
+import { createElement } from 'react';
 import { renderToString } from 'react-dom/server';
 
 export default (options) => async (req, res) => {
@@ -115,7 +115,7 @@ function Agent({ follower, user }) {
 
 const createElementFactory = type => p => {
   const { children, ...props } = p;
-  return React.createElement(type, props, children);
+  return createElement(type, props, children);
 };
 
 const RDF = createElementFactory('rdf:RDF');

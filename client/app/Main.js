@@ -2,7 +2,6 @@ import Content from '../content/Content';
 import Dashboard from '../dashboard/Dashboard';
 import Footer from './Footer';
 import Header from './Header';
-import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import ScrollToTop from './ScrollToTop';
 import Search from '../content/Search';

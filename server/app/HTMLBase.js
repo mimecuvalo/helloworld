@@ -1,6 +1,5 @@
 import { F } from 'react-intl-wrapper';
 import HTMLHead from './HTMLHead';
-import React from 'react';
 
 // The main wrapper around all of our app's code.
 // It's React all the way down!
@@ -47,7 +46,7 @@ export default function HTMLBase({
           }}
         />
 
-        {assetPathsByType['js'].map(path => (
+        {assetPathsByType['js'].map((path) => (
           <script nonce={nonce} key={path} src={path} />
         ))}
 

@@ -6,7 +6,6 @@ import FollowingFeedCountsQuery from '../FollowingFeedCountsQuery';
 import FollowingQuery from '../FollowingQuery';
 import FollowingSpecialFeedCountsQuery from '../FollowingSpecialFeedCountsQuery';
 import MenuItem from '@material-ui/core/MenuItem';
-import React from 'react';
 import { useMutation } from '@apollo/client';
 import { useSnackbar } from 'notistack';
 import useStyles from './actionsStyles';
@@ -36,7 +35,7 @@ export default function NewFeed(props) {
   const styles = useStyles();
 
   // when NewFeed is used as an input field.
-  const handleNewFeedPaste = evt => {
+  const handleNewFeedPaste = (evt) => {
     const inputField = evt.target;
 
     const func = () => {
@@ -52,7 +51,7 @@ export default function NewFeed(props) {
   };
 
   // when NewFeed is used as a button.
-  const handleClick = evt => {
+  const handleClick = (evt) => {
     addNewFeed(props.profileUrl);
   };
 

@@ -1,6 +1,6 @@
 import { F } from 'react-intl-wrapper';
 import { profileUrl } from '../../shared/util/url_factory';
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { setUser } from '../app/auth';
 import UserContext from '../app/User_Context';
 
@@ -14,7 +14,7 @@ export default function Tools({ className }) {
     setOrigin(window.location.origin);
   }, [origin]);
 
-  const handleLogout = evt => {
+  const handleLogout = (evt) => {
     setUser(undefined);
   };
 

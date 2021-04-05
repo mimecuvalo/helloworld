@@ -1,5 +1,5 @@
 import { defineMessages, useIntl } from 'react-intl-wrapper';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const messages = defineMessages({
   avatar: { msg: 'user avatar' },

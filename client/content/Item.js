@@ -6,7 +6,7 @@ import Favorites from './Favorites';
 import Footer from './Footer';
 import Header from './Header';
 import Latest from './templates/Latest';
-import React, { useImperativeHandle, useRef } from 'react';
+import { forwardRef, useImperativeHandle, useRef } from 'react';
 import Simple from './templates/Simple';
 
 const COMPONENT_TYPE_MAP = {
@@ -16,7 +16,7 @@ const COMPONENT_TYPE_MAP = {
   links: Album,
 };
 
-export default React.forwardRef((props, ref) => {
+export default forwardRef((props, ref) => {
   const template = useRef(null);
 
   useImperativeHandle(ref, () => ({

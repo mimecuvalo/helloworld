@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import { F } from 'react-intl-wrapper';
 import FollowerMenu from './FollowerMenu';
 import gql from 'graphql-tag';
-import React from 'react';
 import { useQuery } from '@apollo/client';
 import useStyles from './remoteUsersStyles';
 
@@ -36,7 +35,7 @@ export default function Followers(props) {
         <F msg="followers" />
       </h2>
       <ul>
-        {followers.map(follower => (
+        {followers.map((follower) => (
           <li key={follower.profile_url}>
             <button
               className="hw-button-link notranslate"
