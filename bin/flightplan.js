@@ -33,15 +33,19 @@ const fs = require('fs');
 const plan = require('flightplan');
 const { promisify } = require('util');
 
-plan.target('prod', [
+plan.target(
+  'prod',
+  [
+    {
+      host: 'nite-lite.net',
+      username: 'mime',
+      agent: process.env.SSH_AUTH_SOCK,
+    },
+  ],
   {
-    host: 'nite-lite.net',
-    username: 'mime',
-    agent: process.env.SSH_AUTH_SOCK
+    user: 'www-data',
   }
-], {
-  user: 'www-data',
-});
+);
 
 const DIRECTORY_NAME = 'helloworld';
 
@@ -50,7 +54,7 @@ const tmpDir = `${DIRECTORY_NAME}-${time}`;
 const remoteTmpDir = `/tmp/${tmpDir}/`;
 
 // run commands on localhost
-plan.local(async function(local) {
+plan.local(async function (local) {
   local.log('Copying files to remote hosts...');
 
   const gitInfoFile = '../.cra-all-the-things-prod-git-info.json';
@@ -74,7 +78,7 @@ plan.local(async function(local) {
 });
 
 // run commands on the target's remote hosts
-plan.remote(function(remote) {
+plan.remote(function (remote) {
   const user = plan.runtime.options.user;
   const varTmpDir = `/var/www/${tmpDir}`;
   const destDir = `/var/www/${DIRECTORY_NAME}`;

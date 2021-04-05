@@ -1,4 +1,4 @@
-(function() {
+(function () {
   var scripts = document.getElementsByTagName('SCRIPT');
   for (var i = 0; i < scripts.length; ++i) {
     if (scripts[i].src.indexOf('helloworld_follow.js') !== -1) {
@@ -7,4 +7,4 @@
       break;
     }
   }
-})()
+})();

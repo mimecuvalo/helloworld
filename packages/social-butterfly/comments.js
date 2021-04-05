@@ -9,8 +9,11 @@ export default (options) => async (req, res, next) => {
   }
   const comments = await options.getRemoteCommentsOnLocalContent(req.query.resource);
 
-  let renderedTree = `<?xml version='1.0' encoding='UTF-8'?>` +
-    renderToString(<Comments contentOwner={contentOwner} comments={comments} req={req} constants={options.constants} />);
+  let renderedTree =
+    `<?xml version='1.0' encoding='UTF-8'?>` +
+    renderToString(
+      <Comments contentOwner={contentOwner} comments={comments} req={req} constants={options.constants} />
+    );
   // XXX(mime): in the feeds I have some attributes that are `ref`. However, ref isn't allowed in React,
   // so in the DOM they are `refXXX`. Return them to normal here, sigh.
   renderedTree = renderedTree.replace(/refXXX="([^"]+)"/g, 'ref="$1"');
@@ -22,7 +25,7 @@ export default (options) => async (req, res, next) => {
 function Comments({ constants, req, comments, contentOwner }) {
   return (
     <GenericFeed contentOwner={contentOwner} constants={constants} req={req}>
-      {comments.map(comment => (
+      {comments.map((comment) => (
         <Comment key={comment.post_id} comment={comment} req={req} />
       ))}
     </GenericFeed>

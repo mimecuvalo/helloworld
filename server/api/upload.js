@@ -13,10 +13,8 @@ function fileFilter(req, file, cb) {
 
 const storage = multer.diskStorage({
   destination: '/tmp/uploads',
-  filename: function(req, file, cb) {
-    const random = Math.random()
-      .toString()
-      .substring(2);
+  filename: function (req, file, cb) {
+    const random = Math.random().toString().substring(2);
     const filename = cleanFilename(file.originalname);
     cb(null, `${random}-${filename}`);
   },
@@ -139,10 +137,7 @@ function getUniqueFilenames(req, file, username) {
 
 async function resize(original, dest, width, height) {
   try {
-    await sharp(original)
-      .rotate()
-      .resize(width, height, { fit: 'inside' })
-      .toFile(dest);
+    await sharp(original).rotate().resize(width, height, { fit: 'inside' }).toFile(dest);
   } catch (ex) {
     throw new Error('image resize failed');
   }

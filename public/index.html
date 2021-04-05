@@ -3,15 +3,15 @@
   This is only used for the service worker in production mode.
   NOTE: Keep in sync with HTMLBase/HTMLHead!
 -->
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charSet="utf-8" />
+    <meta charset="utf-8" />
     <link rel="author" href="%PUBLIC_URL%/humans.txt" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/favicon.ico" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"/>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta name="generator" content="Hello, world. https://github.com/mimecuvalo/helloworld" />
@@ -28,7 +28,7 @@
     </script>
     <script>
       var hasGlobalErrorFired = false;
-      window.onerror = function(message, file, line, column, error) {
+      window.onerror = function (message, file, line, column, error) {
         if (hasGlobalErrorFired) {
           return;
         }
@@ -41,14 +41,15 @@
           file: file,
           line: line,
           column: column,
-          url: window.location.href
+          url: window.location.href,
         };
         var img = new Image();
         img.src = '/api/report-error?data=' + encodeURIComponent(JSON.stringify(data));
       };
     </script>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div><!--
+    <div>
+      <!--
         this is the way the web ends
         this is the way the web ends
         this is the way the web ends

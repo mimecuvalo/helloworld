@@ -24,7 +24,7 @@ export default createPlugin({
   },
 });
 
-export const AnchorDecorator = props => {
+export const AnchorDecorator = (props) => {
   const { href } = props.contentState.getEntity(props.entityKey).getData();
   return (
     <a href={href} target="_blank" rel="noopener noreferrer">
@@ -34,7 +34,7 @@ export const AnchorDecorator = props => {
 };
 
 export function anchorStrategy(contentBlock, callback, contentState) {
-  contentBlock.findEntityRanges(character => {
+  contentBlock.findEntityRanges((character) => {
     const entityKey = character.getEntity();
     return entityKey !== null && contentState.getEntity(entityKey).getType() === ENTITY_TYPE;
   }, callback);

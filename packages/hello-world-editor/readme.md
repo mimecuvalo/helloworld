@@ -46,12 +46,14 @@ npm run serve:dev
 ```
 
 To run in production (or better yet check out bin/flightplan.js)
+
 ```sh
 npm --production install
 npm run serve:prod
 ```
 
 To locally develop the packages `hello-world-editor` and `social-butterfly`, run:
+
 ```sh
 ./setup_local_dev_environment.sh
 
@@ -62,8 +64,8 @@ cd packages/hello-world-editor; npm run build
 cd packages/social-butterfly; npm run build
 ```
 
-
 To run tests:
+
 ```sh
 npm run test
 ```

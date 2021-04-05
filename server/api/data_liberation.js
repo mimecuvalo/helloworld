@@ -19,4 +19,4 @@ export default async function dataLiberation(req, res) {
 
   fs.writeFileSync(filename, stringifiedAndIdPurged);
   res.download(filename);
-};
+}

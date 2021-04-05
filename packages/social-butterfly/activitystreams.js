@@ -3,33 +3,45 @@ import { fetchJSON } from './util/crawler';
 import { follow as emailFollow } from './email';
 import { getActivityPubActor, getUserRemoteInfo } from './discover_user';
 import { mention as emailMention } from './email';
-import { nanoid } from 'nanoid'
+import { nanoid } from 'nanoid';
 import { sanitizeHTML } from './util/crawler';
 import { send as activityPubSend } from './activitypub';
 import { send as salmonSend } from './salmon';
 import syndicate from './syndicate';
 
 export async function accept(req, contentOwner, userRemote) {
-  const id = buildUrl({ req, pathname: '/api/social/activitypub/accept', searchParams: { id: nanoid(10), resource: req.body }});
+  const id = buildUrl({
+    req,
+    pathname: '/api/social/activitypub/accept',
+    searchParams: { id: nanoid(10), resource: req.body },
+  });
   const message = createGenericMessage('Accept', req, id, contentOwner, req.body);
   send(req, userRemote, contentOwner, message);
 }
 
 export async function like(req, contentOwner, contentRemote, userRemote, isFavorite) {
   // TODO(mime): add back unfavorite
-  const id = buildUrl({ req, pathname: '/api/social/activitypub/like', searchParams: { id: nanoid(10), resource: contentRemote.link }});
+  const id = buildUrl({
+    req,
+    pathname: '/api/social/activitypub/like',
+    searchParams: { id: nanoid(10), resource: contentRemote.link },
+  });
   const message = createGenericMessage('Like', req, id, contentOwner, {
-     type: 'Post',
-     id: contentRemote.link,
-     displayName: contentRemote.title,
-     url: contentRemote.link
+    type: 'Post',
+    id: contentRemote.link,
+    displayName: contentRemote.title,
+    url: contentRemote.link,
   });
   send(req, userRemote, contentOwner, message);
 }
 
 export async function follow(req, contentOwner, userRemote, isFollow) {
   // TODO(mime): add back unfollow
-  const id = buildUrl({ req, pathname: '/api/social/activitypub/follow', searchParams: { id: nanoid(10), resource: userRemote.profile_url }});
+  const id = buildUrl({
+    req,
+    pathname: '/api/social/activitypub/follow',
+    searchParams: { id: nanoid(10), resource: userRemote.profile_url },
+  });
   const message = createGenericMessage('Follow', req, id, contentOwner, userRemote.profile_url);
   send(req, userRemote, contentOwner, message);
 }
@@ -69,8 +81,16 @@ export function createGenericMessage(type, req, id, localUser, object, opt_follo
 }
 
 export async function createArticle(req, localContent, localUser, opt_follower) {
-  const messageUrl = buildUrl({ req, pathname: '/api/social/activitypub/message', searchParams: { resource: localContent.url } });
-  const actorUrl = buildUrl({ req, pathname: '/api/social/activitypub/actor', searchParams: { resource: localUser.url } });
+  const messageUrl = buildUrl({
+    req,
+    pathname: '/api/social/activitypub/message',
+    searchParams: { resource: localContent.url },
+  });
+  const actorUrl = buildUrl({
+    req,
+    pathname: '/api/social/activitypub/actor',
+    searchParams: { resource: localUser.url },
+  });
   const statsImgSrc = buildUrl({ req, pathname: '/api/stats', searchParams: { resource: localContent.url } });
   const statsImg = `<img src="${statsImgSrc}" />`;
   const absoluteUrlReplacement = buildUrl({ req, pathname: '/resource' });
@@ -82,26 +102,33 @@ export async function createArticle(req, localContent, localUser, opt_follower) 
   if (localContent.thread) {
     try {
       const activityObject = await fetchJSON(localContent.thread, {
-        'Accept': 'application/activity+json',
+        Accept: 'application/activity+json',
       });
       if (activityObject) {
         inReplyTo = activityObject.id;
       }
-    } catch (ex) { }
+    } catch (ex) {}
   }
 
-  return createGenericMessage('Create', req, messageUrl, localUser, {
-		id: messageUrl,
-		url: localContent.url,
-		type: 'Article',
-		published: new Date(localContent.createdAt).toISOString(),
-		updated: new Date(localContent.updatedAt).toISOString(),
-		attributedTo: actorUrl,
-		inReplyTo,
-    title: localContent.title,
-		content: view,
-		to: 'https://www.w3.org/ns/activitystreams#Public',
-  }, opt_follower);
+  return createGenericMessage(
+    'Create',
+    req,
+    messageUrl,
+    localUser,
+    {
+      id: messageUrl,
+      url: localContent.url,
+      type: 'Article',
+      published: new Date(localContent.createdAt).toISOString(),
+      updated: new Date(localContent.updatedAt).toISOString(),
+      attributedTo: actorUrl,
+      inReplyTo,
+      title: localContent.title,
+      content: view,
+      to: 'https://www.w3.org/ns/activitystreams#Public',
+    },
+    opt_follower
+  );
 }
 
 export async function handle(type, options, req, res, activity, user, userRemote) {
@@ -181,14 +208,16 @@ async function handleLike(options, req, res, activity, userRemote, isLike) {
     return;
   }
 
-  await options.saveRemoteContent(Object.assign({}, remoteContent, {
-    content: '',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    link: '',
-    title: '',
-    view: '',
-  }));
+  await options.saveRemoteContent(
+    Object.assign({}, remoteContent, {
+      content: '',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      link: '',
+      title: '',
+      view: '',
+    })
+  );
 }
 
 async function handleCreate(options, req, res, activity, user, userRemote) {
@@ -239,13 +268,7 @@ async function handlePost(options, req, res, contentRemote, user, activityObject
   await options.saveRemoteContent(contentRemote);
 
   if (wasUserMentioned) {
-    emailMention(
-      req,
-      'Remote User',
-      undefined /* fromEmail */,
-      user.email,
-      contentRemote.link
-    );
+    emailMention(req, 'Remote User', undefined /* fromEmail */, user.email, contentRemote.link);
   }
 }
 

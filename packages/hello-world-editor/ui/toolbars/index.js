@@ -45,7 +45,7 @@ export default function Toolbars({ AlignmentTool, dividerPlugin }) {
   return (
     <>
       <InlineToolbar>
-        {externalProps => (
+        {(externalProps) => (
           <Toolbar className={styles.materialUIToolbar} disableGutters>
             <BoldButton {...externalProps} />
             <StrikethroughButton {...externalProps} />
@@ -60,7 +60,7 @@ export default function Toolbars({ AlignmentTool, dividerPlugin }) {
         )}
       </InlineToolbar>
       <SideToolbar>
-        {externalProps => (
+        {(externalProps) => (
           <Toolbar className={sideStyles.materialUIToolbar} disableGutters>
             <ImageButton {...externalProps} />
             <HeaderButton {...externalProps} />

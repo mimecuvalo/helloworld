@@ -13,7 +13,7 @@ export default function createLoaders(loaderOptions) {
 async function loadUsers(userIds) {
   const users = await User.findAll({ where: { id: userIds } });
   const userById = indexBy(users, 'id');
-  return userIds.map(userId => userById[userId]);
+  return userIds.map((userId) => userById[userId]);
 }
 
 function indexBy(array, fieldName) {

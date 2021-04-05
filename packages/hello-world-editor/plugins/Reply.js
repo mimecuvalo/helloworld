@@ -24,8 +24,9 @@ export default (config = {}) => {
 };
 
 function strategy(contentBlock, callback) {
-  const links = (linkify.match(contentBlock.text !== undefined ? contentBlock.text : contentBlock.get('text')) || [])
-      .filter(link => link.schema === '> ');
+  const links = (
+    linkify.match(contentBlock.text !== undefined ? contentBlock.text : contentBlock.get('text')) || []
+  ).filter((link) => link.schema === '> ');
   if (links.length) {
     for (let i = 0; i < links.length; i += 1) {
       callback(links[i].index, links[i].lastIndex);

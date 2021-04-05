@@ -36,8 +36,8 @@ router.get('/clientside-exceptions', async (req, res) => {
 
   const individualExceptions = exceptions
     .split('\n')
-    .map(e => e && JSON.parse(e))
-    .filter(e => e);
+    .map((e) => e && JSON.parse(e))
+    .filter((e) => e);
   const groupedExceptions = _.groupBy(individualExceptions, 'message');
 
   res.json({ exceptions: groupedExceptions });

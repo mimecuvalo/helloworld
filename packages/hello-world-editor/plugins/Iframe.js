@@ -20,7 +20,7 @@ export default createPlugin({
       return create(ENTITY_TYPE, 'IMMUTABLE', { src, width, height, frameBorder, allow });
     }
   },
-  blockToHTML: next => block => {
+  blockToHTML: (next) => (block) => {
     const result = next(block);
     if (block.data && isValidElement(result)) {
       return cloneElement(result, {});
@@ -54,7 +54,7 @@ function Iframe({ block, /*children,*/ className }) {
   );
 }
 
-export const iframeBlockRendererFn = componentDecorators => {
+export const iframeBlockRendererFn = (componentDecorators) => {
   const decoratedIframe = componentDecorators(Iframe);
 
   return (block, editor) => {

@@ -14,13 +14,13 @@ const emojiButtonStyles = {
   borderRadius: '1.5em',
   cursor: 'pointer',
   '&:focus': {
-    outline: '0'
+    outline: '0',
   },
   '&:hover': {
-    background: '#f3f3f3'
+    background: '#f3f3f3',
   },
   '&:active': {
-    background: '#e6e6e6'
+    background: '#e6e6e6',
   },
 };
 
@@ -32,7 +32,7 @@ const navEntryStyles = {
   color: '#bdbdbd',
   background: 'none',
   border: 'none',
-  outline: 'none'
+  outline: 'none',
 };
 
 const entryStyles = {
@@ -42,14 +42,14 @@ const entryStyles = {
   background: 'none',
   border: 'none',
   outline: 'none',
-  transition: 'background-color 0.4s cubic-bezier(0.27, 1.27, 0.48, 0.56)'
+  transition: 'background-color 0.4s cubic-bezier(0.27, 1.27, 0.48, 0.56)',
 };
 
 const entryShared = {
   padding: '5px 10px 1px 10px',
   transition: 'background-color 0.4s cubic-bezier(0.27, 1.27, 0.48, 0.56)',
   '&:active': {
-    backgroundColor: '#cce7ff'
+    backgroundColor: '#cce7ff',
   },
 };
 
@@ -66,14 +66,14 @@ const styles = {
     lineHeight: 'inherit',
     margin: '-0.2ex 0em 0.2ex',
     color: 'transparent',
-    minWidth: '1em'
+    minWidth: '1em',
   },
   emojiSuggestionsEntry: {
     extend: entryStyles,
   },
   emojiSuggestionsEntryFocused: {
     extend: entryStyles,
-    backgroundColor: '#e6f3ff'
+    backgroundColor: '#e6f3ff',
   },
   emojiSuggestionsEntryText: {
     display: 'inline-block',
@@ -82,7 +82,7 @@ const styles = {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     maxWidth: '368px',
-    fontSize: '0.9em'
+    fontSize: '0.9em',
   },
   emojiSuggestionsEntryIcon: {
     width: '1em',
@@ -90,7 +90,7 @@ const styles = {
     marginLeft: '0.25em',
     marginRight: '0.25em',
     display: 'inline-block',
-    verticalAlign: 'top'
+    verticalAlign: 'top',
   },
   emojiSuggestions: {
     border: '1px solid #eee',
@@ -108,10 +108,10 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     boxSizing: 'border-box',
-    transform: 'scale(0)'
+    transform: 'scale(0)',
   },
   emojiSelect: {
-    display: 'inline-block'
+    display: 'inline-block',
   },
   emojiSelectButton: {
     extend: entryShared,
@@ -128,10 +128,10 @@ const styles = {
     boxSizing: 'content-box',
     background: '#fff',
     border: '1px solid #e0e0e0',
-    boxShadow: '0 4px 30px 0 gainsboro'
+    boxShadow: '0 4px 30px 0 gainsboro',
   },
   emojiSelectPopoverClosed: {
-    display: 'none'
+    display: 'none',
   },
   emojiSelectPopoverTitle: {
     margin: '0 0 0.3em',
@@ -140,7 +140,7 @@ const styles = {
     lineHeight: '2.5em',
     fontWeight: 'normal',
     fontSize: '1em',
-    color: '#9e9e9e'
+    color: '#9e9e9e',
   },
   emojiSelectPopoverGroups: {
     margin: '0 0 0.3em',
@@ -149,16 +149,16 @@ const styles = {
     width: '21em',
     height: '20em',
     '&:hover $emojiSelectPopoverScrollbar': {
-      opacity: '0.3'
+      opacity: '0.3',
     },
     '& $emojiSelectPopoverScrollbar:hover, & $emojiSelectPopoverScrollbar:active': {
-      opacity: '0.6'
-    }
+      opacity: '0.6',
+    },
   },
   emojiSelectPopoverGroup: {
     padding: '0 0.5em',
     '&:first-child $emojiSelectPopoverGroupTitle': {
-      display: 'none'
+      display: 'none',
     },
   },
   emojiSelectPopoverGroupTitle: {
@@ -166,18 +166,18 @@ const styles = {
     paddingLeft: '0.5em',
     fontWeight: 'normal',
     fontSize: '1em',
-    color: '#9e9e9e'
+    color: '#9e9e9e',
   },
   emojiSelectPopoverGroupList: {
     margin: '0',
     padding: '0',
     display: 'flex',
     listStyle: 'none',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   emojiSelectPopoverGroupItem: {
     width: '2.5em',
-    height: '2.5em'
+    height: '2.5em',
   },
   emojiSelectPopoverToneSelect: {
     position: 'absolute',
@@ -185,7 +185,7 @@ const styles = {
     right: '0',
     top: '0',
     bottom: '0',
-    zIndex: '2'
+    zIndex: '2',
   },
   emojiSelectPopoverToneSelectList: {
     margin: '0.3em',
@@ -196,13 +196,13 @@ const styles = {
     border: '1px solid #e0e0e0',
     borderRadius: '0.5em',
     background: '#fff',
-    boxShadow: '0 0 0.3em rgba(0, 0, 0, 0.1)'
+    boxShadow: '0 0 0.3em rgba(0, 0, 0, 0.1)',
   },
   emojiSelectPopoverToneSelectItem: {
     width: '2.5em',
     height: '2.5em',
     '&:first-child': {
-      borderRight: '1px solid #e0e0e0'
+      borderRight: '1px solid #e0e0e0',
     },
   },
   emojiSelectPopoverEntry: {
@@ -210,30 +210,30 @@ const styles = {
   },
   emojiSelectPopoverEntryFocused: {
     extend: entryStyles,
-    backgroundColor: '#efefef'
+    backgroundColor: '#efefef',
   },
   emojiSelectPopoverEntryIcon: {
     width: '1.5em',
     height: '1.5em',
-    verticalAlign: 'middle'
+    verticalAlign: 'middle',
   },
   emojiSelectPopoverNav: {
     margin: '0',
     padding: '0 0.5em',
     display: 'flex',
     width: '20em',
-    listStyle: 'none'
+    listStyle: 'none',
   },
   emojiSelectPopoverNavItem: {
     width: '2.5em',
-    height: '2.5em'
+    height: '2.5em',
   },
   emojiSelectPopoverNavEntry: {
     extend: navEntryStyles,
   },
   emojiSelectPopoverNavEntryActive: {
     extend: navEntryStyles,
-    color: '#42a5f5'
+    color: '#42a5f5',
   },
   emojiSelectPopoverScrollbar: {
     position: 'absolute',
@@ -244,12 +244,12 @@ const styles = {
     backgroundColor: '#e0e0e0',
     borderRadius: '0.125em',
     opacity: '0.1',
-    transition: 'opacity 0.4s'
+    transition: 'opacity 0.4s',
   },
   emojiSelectPopoverScrollbarThumb: {
     backgroundColor: '#000',
     borderRadius: '0.125em',
-    cursor: 'pointer'
+    cursor: 'pointer',
   },
 };
 

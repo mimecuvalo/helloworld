@@ -4,9 +4,12 @@ import sanitizer from 'sanitize-html';
 
 export async function fetchUrl(url, opt_headers) {
   try {
-    const headers = Object.assign({
-      'user-agent': 'hello, world bot.',
-    }, (opt_headers || {}));
+    const headers = Object.assign(
+      {
+        'user-agent': 'hello, world bot.',
+      },
+      opt_headers || {}
+    );
     const response = await fetch(url, { headers });
     if (response.status >= 400) {
       throw new HTTPError(response.status, url);

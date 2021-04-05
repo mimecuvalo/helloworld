@@ -32,7 +32,7 @@ function sendWebfingerAsJson(req, res, user) {
       {
         rel: 'http://webfinger.net/rel/profile-page',
         type: 'text/html',
-        href: user.url
+        href: user.url,
       },
       {
         rel: 'http://webfinger.net/rel/avatar',
@@ -41,15 +41,15 @@ function sendWebfingerAsJson(req, res, user) {
       },
       {
         rel: 'salmon',
-        href: accountInfo.salmonUrl
+        href: accountInfo.salmonUrl,
       },
       {
         rel: 'http://salmon-protocol.org/ns/salmon-replies',
-        href: accountInfo.salmonUrl
+        href: accountInfo.salmonUrl,
       },
       {
         rel: 'http://salmon-protocol.org/ns/salmon-mention',
-        href: accountInfo.salmonUrl
+        href: accountInfo.salmonUrl,
       },
       {
         rel: 'http://ostatus.org/schema/1.0/subscribe',
@@ -83,7 +83,7 @@ function sendWebfingerAsJson(req, res, user) {
         type: 'application/activity+json',
         href: accountInfo.actorUrl,
       },
-    ]
+    ],
   };
 
   return res.json(json);
@@ -131,7 +131,11 @@ function WebFinger({ req, user }) {
       <XML.Link rel="webmention" href={accountInfo.webmentionUrl} />
       <XML.Link rel="http://webfinger.net/rel/profile-page" href={user.url} type="text/html" />
       <XML.Link rel="http://webfinger.net/rel/avatar" href={logo} type="image/jpeg" />
-      <XML.Link rel="http://schemas.google.com/g/2010#updates-from" href={accountInfo.feedUrl} type="application/atom+xml" />
+      <XML.Link
+        rel="http://schemas.google.com/g/2010#updates-from"
+        href={accountInfo.feedUrl}
+        type="application/atom+xml"
+      />
       <XML.Link rel="http://ostatus.org/schema/1.0/subscribe" href={accountInfo.followUrl} />
       <XML.Link rel="http://microformats.org/profile/hcard" href={user.url} type="text/html" />
       <XML.Link rel="self" href={accountInfo.actorUrl} type="application/activity+json" />
@@ -139,10 +143,10 @@ function WebFinger({ req, user }) {
   );
 }
 
-const createElementFactory = type => p => {
+const createElementFactory = (type) => (p) => {
   const { children, ...props } = p;
   return createElement(type, props, children);
 };
 
 const XML = {};
-['XRD', 'Link', 'Subject', 'Alias'].forEach(type => (XML[type] = createElementFactory(type)));
+['XRD', 'Link', 'Subject', 'Alias'].forEach((type) => (XML[type] = createElementFactory(type)));

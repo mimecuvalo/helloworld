@@ -4,4 +4,4 @@ import Text from './Text';
 export default {
   Blocks,
   Text,
-}
+};

@@ -48,7 +48,8 @@ Then, to run your newly created server locally, **with** the Storybook styleguid
 ```sh
 npm start
 ```
-*Prerequisites: Node 13+ if you want proper internationalization (i18n) support (via full-icu).*
+
+_Prerequisites: Node 13+ if you want proper internationalization (i18n) support (via full-icu)._
 
 Or, to run locally **without** the Storybook styleguide server:
 
@@ -57,6 +58,7 @@ npm run serve:dev
 ```
 
 To run in production (or better yet check out bin/flightplan.js)
+
 ```sh
 npm --production install
 npm run build
@@ -64,6 +66,7 @@ npm run serve:prod
 ```
 
 To locally develop the packages `hello-world-editor` and `social-butterfly`, run:
+
 ```sh
 ./bin/setup_local_dev_environment.sh
 
@@ -75,6 +78,7 @@ cd packages/social-butterfly; npm run build
 ```
 
 To run tests:
+
 ```sh
 npm run test
 ```
@@ -111,6 +115,7 @@ To use [Docker](https://docs.docker.com/compose/install/):
 ```sh
 npm run dev
 ```
+
 and then MySQL will be available on port 3002 (with username/password/database name all being `allthethings`).
 Redis will be on port 3003. To set up Redis be sure to set REACT_APP_REDIS_HOST and REACT_APP_REDIS_PORT.
 
@@ -197,7 +202,7 @@ Redis will be on port 3003. To set up Redis be sure to set REACT_APP_REDIS_HOST 
     - add salmon 'comment' type back for content.section === 'comment'
     - needs more work for gnusocial/friendica/pleroma/hubzilla interoperability
     - Linked Data Signatures for forwarded payloads.
-    -  if payload contains an attribution verify both actors
+    - if payload contains an attribution verify both actors
     - check out https://docs.joinmastodon.org/development/activitypub/
       - object IDs must use the https:// schema.
       - Servers must offer a WebFinger endpoint for turning usernames into actors.
@@ -269,7 +274,7 @@ Redis will be on port 3003. To set up Redis be sure to set REACT_APP_REDIS_HOST 
     - DraftEntity.get/create deprecated
     - multiple images - single undo instead of two (also when pasting unfurl)
     - use something instead of ' ‘ and ‘a’ for atomic blocks
-    - convertFromHTML bug - this will fail `<figure>    <img src="">  </figure>` but w/o whitespace won’t
+    - convertFromHTML bug - this will fail `<figure> <img src=""> </figure>` but w/o whitespace won’t
     - toolbar don’t move on click (position so it doesn’t go off screen), get rid of scale
     - checklist / tasklist
     - dnd + align toolbars don’t actually work

@@ -33,21 +33,21 @@ import uploadFiles from './media/attachment';
 const useStyles = createUseStyles({
   showPlaceholder: {
     '& [data-contents=true] > [data-block=true]:first-child:before': {
-      display: 'block'
+      display: 'block',
     },
   },
   commentType: {
     'div&': {
-      marginBottom: '4px'
+      marginBottom: '4px',
     },
     'div& [data-contents=true] > [data-block=true]:first-child': {
       fontSize: 'unset',
-      lineHeight: 'unset'
+      lineHeight: 'unset',
     },
     /* TODO(mime): too delicate of a rule. */
     'ul div& > div > div': {
-      padding: '0'
-    }
+      padding: '0',
+    },
   },
 });
 
@@ -92,7 +92,20 @@ const readOnlyPlugins = [
 ];
 
 export default forwardRef((props, ref) => {
-  const { content, dontWarnOnUnsaved, editorKey, locale, mentions, onChange: propOnChange, onLinkUnfurl, onMediaAdd, onMediaUpload, readOnly, showPlaceholder, type } = props;
+  const {
+    content,
+    dontWarnOnUnsaved,
+    editorKey,
+    locale,
+    mentions,
+    onChange: propOnChange,
+    onLinkUnfurl,
+    onMediaAdd,
+    onMediaUpload,
+    readOnly,
+    showPlaceholder,
+    type,
+  } = props;
   const editor = useRef(null);
   const [editorState, setEditorState] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -147,24 +160,21 @@ export default forwardRef((props, ref) => {
     export: () => editorState && convertToRaw(editorState.getCurrentContent()),
     fileInfo: () => fileInfo,
     focus: () => editor.current && editor.current.focus(),
-    setUnsavedChanges: (hasUnsavedChanges) => setHasUnsavedChanges(hasUnsavedChanges)
+    setUnsavedChanges: (hasUnsavedChanges) => setHasUnsavedChanges(hasUnsavedChanges),
   }));
 
   if (!editorState) {
     return null;
   }
 
-  const handleOnBeforeUnload = evt => {
+  const handleOnBeforeUnload = (evt) => {
     if (hasUnsavedChanges) {
       evt.returnValue = 'You have unfinished changes!';
     }
   };
 
-  const onChange = newEditorState => {
-    const hasText = !!newEditorState
-      .getCurrentContent()
-      .getPlainText()
-      .trim();
+  const onChange = (newEditorState) => {
+    const hasText = !!newEditorState.getCurrentContent().getPlainText().trim();
 
     setEditorState(newEditorState);
     setHasText(hasText);
@@ -188,7 +198,7 @@ export default forwardRef((props, ref) => {
     setFileInfo(result.fileInfos[0]);
   };
 
-  const customHandleKeyCommand = cmd => {
+  const customHandleKeyCommand = (cmd) => {
     const newEditorState = handleKeyCommand(cmd, editorState);
 
     if (!newEditorState) {
@@ -202,13 +212,13 @@ export default forwardRef((props, ref) => {
     return 'handled';
   };
 
-  const handleKeyDown = evt => {
+  const handleKeyDown = (evt) => {
     if (evt.shiftKey) {
       setShiftKeyPressed(true);
     }
   };
 
-  const handleKeyUp = evt => {
+  const handleKeyUp = (evt) => {
     if (!evt.shiftKey) {
       setShiftKeyPressed(false);
     }
@@ -279,7 +289,9 @@ export default forwardRef((props, ref) => {
             readOnly={readOnly}
             ref={editor}
           />
-          {readOnly ? null : <Toolbars AlignmentTool={AlignmentTool} dividerPlugin={dividerPlugin} onMediaUpload={onMediaUpload} />}
+          {readOnly ? null : (
+            <Toolbars AlignmentTool={AlignmentTool} dividerPlugin={dividerPlugin} onMediaUpload={onMediaUpload} />
+          )}
           {readOnly ? null : <Emojis />}
           {readOnly ? null : <Mentions mentions={mentions} />}
         </div>

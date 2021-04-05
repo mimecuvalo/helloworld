@@ -51,7 +51,6 @@ labels: 'issue: bug report, needs triage'
 
 (Write what happened. Please add screenshots!)
 
-
 ### Environment
 
 <!--

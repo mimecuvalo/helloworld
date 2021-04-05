@@ -129,7 +129,7 @@ const contentRemote = {
         group: ['from_user'],
       });
 
-      result.forEach(item => {
+      result.forEach((item) => {
         item.count = item.get('count');
       }); // hrmph.
 

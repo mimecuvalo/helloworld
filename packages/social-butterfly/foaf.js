@@ -33,7 +33,7 @@ function FOAF({ followers, following, user, req }) {
     <RDF {...namespaces}>
       <PersonalProfileDocument user={user} />
       <SelfAgent following={following} user={user} req={req} />
-      {followers.map(f => (
+      {followers.map((f) => (
         <Agent key={f.profile_url} follower={f} user={user} />
       ))}
     </RDF>
@@ -79,14 +79,16 @@ function SelfAgent({ following, user, req }) {
           <XML.accountName>{username}</XML.accountName>
           <XML.accountProfilePage {...resource} />
           <SIOCAcctOf {...resource} />
-          {following.map(f => (
+          {following.map((f) => (
             <SIOCFollows key={f.profile_url} {...{ 'rdf:resource': `${f.profile_url}#acct` }} />
           ))}
         </XML.OnlineAccount>
       </account>
-      {following.filter(f => f.follower).map(f => (
-        <knows key={f.profile_url} {...{ 'rdf:resource': `${f.profile_url}` }} />
-      ))}
+      {following
+        .filter((f) => f.follower)
+        .map((f) => (
+          <knows key={f.profile_url} {...{ 'rdf:resource': `${f.profile_url}` }} />
+        ))}
     </XML.Agent>
   );
 }
@@ -113,7 +115,7 @@ function Agent({ follower, user }) {
   );
 }
 
-const createElementFactory = type => p => {
+const createElementFactory = (type) => (p) => {
   const { children, ...props } = p;
   return createElement(type, props, children);
 };
@@ -132,4 +134,4 @@ const XML = {};
   'accountServiceHomepage',
   'accountName',
   'accountProfilePage',
-].forEach(type => (XML[type] = createElementFactory(type)));
+].forEach((type) => (XML[type] = createElementFactory(type)));

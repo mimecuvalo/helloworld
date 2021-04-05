@@ -95,4 +95,4 @@ export default function UserRemote(sequelize, Sequelize) {
   );
 
   return User_Remote;
-};
+}

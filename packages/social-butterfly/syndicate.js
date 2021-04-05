@@ -7,35 +7,36 @@ import { fetchText } from './util/crawler';
 import { reply as activityStreamsReply } from './activitystreams';
 import { reply as webmentionReply } from './webmention';
 
-export default (options) => async function syndicate(req, contentOwner, localContent, opt_remoteContent, opt_isComment) {
-  if (localContent.hidden) {
-    return;
-  }
+export default (options) =>
+  async function syndicate(req, contentOwner, localContent, opt_remoteContent, opt_isComment) {
+    if (localContent.hidden) {
+      return;
+    }
 
-  await webSubPush(req, options, localContent);
+    await webSubPush(req, options, localContent);
 
-  await parseMentions(req, options, contentOwner, localContent, opt_remoteContent);
+    await parseMentions(req, options, contentOwner, localContent, opt_remoteContent);
 
-  if (opt_isComment) {
-    const localContentUser = await options.getLocalUser(localContent.url, req);
-    emailComment(
-      req,
-      opt_remoteContent.username,
-      opt_remoteContent.comment_user,
-      localContentUser.email,
-      localContent.url,
-      opt_remoteContent
-    );
-  }
-}
+    if (opt_isComment) {
+      const localContentUser = await options.getLocalUser(localContent.url, req);
+      emailComment(
+        req,
+        opt_remoteContent.username,
+        opt_remoteContent.comment_user,
+        localContentUser.email,
+        localContent.url,
+        opt_remoteContent
+      );
+    }
+  };
 
 function findMentionsInDraftJS(draftJsContent) {
   const contentState = convertFromRaw(JSON.parse(draftJsContent));
 
   return Object.keys(contentState.entityMap)
-      .map(key => contentState.getEntity(contentState.entityMap[key]))
-      .filter(entity => entity.type === 'mention' || entity.type === 'rsvp')
-      .map(entity => entity.data.mention.link);
+    .map((key) => contentState.getEntity(contentState.entityMap[key]))
+    .filter((entity) => entity.type === 'mention' || entity.type === 'rsvp')
+    .map((entity) => entity.data.mention.link);
 }
 
 async function parseMentions(req, options, contentOwner, content, opt_remoteContent) {
@@ -57,7 +58,7 @@ async function parseMentions(req, options, contentOwner, content, opt_remoteCont
       }
     }
 
-    if (!userRemote || remoteUsers.find(el => el.profile_url === userRemote.profile_url)) {
+    if (!userRemote || remoteUsers.find((el) => el.profile_url === userRemote.profile_url)) {
       return;
     }
 

@@ -50,23 +50,25 @@ async function handleMention(req, options, user, sourceUrl, targetUrl) {
   const localContent = await options.getLocalContent(targetUrl, req);
 
   const existingModelEntry = await options.getRemoteContent(user.username, sourceUrl);
-  await options.saveRemoteContent(Object.assign({}, existingModelEntry?.dataValues, {
-    id: existingModelEntry?.id || undefined,
-    avatar: userRemote.avatar,
-    date_created: new Date($('.h-entry .t-published').attr('datetime') || new Date()),
-    date_updated: new Date($('.h-entry .t-updated').attr('datetime') || new Date()),
-    from_user: userRemote.profile_url,
-    from_user_remote_id: userRemote.id,
-    creator: userRemote.name,
-    link: sourceUrl,
-    local_content_name: localContent?.name,
-    post_id: sourceUrl,
-    title: $('.h-entry .p-name').first().text() || $('.h-entry .p-summary').first().text(),
-    to_username: user.username,
-    type: 'comment',
-    username: userRemote.username,
-    view: sanitizeHTML($('.h-entry .e-content').html()),
-  }));
+  await options.saveRemoteContent(
+    Object.assign({}, existingModelEntry?.dataValues, {
+      id: existingModelEntry?.id || undefined,
+      avatar: userRemote.avatar,
+      date_created: new Date($('.h-entry .t-published').attr('datetime') || new Date()),
+      date_updated: new Date($('.h-entry .t-updated').attr('datetime') || new Date()),
+      from_user: userRemote.profile_url,
+      from_user_remote_id: userRemote.id,
+      creator: userRemote.name,
+      link: sourceUrl,
+      local_content_name: localContent?.name,
+      post_id: sourceUrl,
+      title: $('.h-entry .p-name').first().text() || $('.h-entry .p-summary').first().text(),
+      to_username: user.username,
+      type: 'comment',
+      username: userRemote.username,
+      view: sanitizeHTML($('.h-entry .e-content').html()),
+    })
+  );
 
   emailMention(req, user.username, undefined /* fromEmail */, user.email, sourceUrl);
 }

@@ -59,7 +59,7 @@ export const resolvers = {
   },
   Mutation: {
     updateExperiments: (_, { experiments }) => {
-      LOCAL_STATE.experiments = experiments.map(name => ({
+      LOCAL_STATE.experiments = experiments.map((name) => ({
         __typename: 'Experiment',
         name,
       }));
@@ -81,7 +81,7 @@ export function initializeLocalState(user, experiments) {
 
   LOCAL_STATE.experiments =
     experiments &&
-    experiments.map(name => ({
+    experiments.map((name) => ({
       __typename: 'Experiment',
       name,
     }));

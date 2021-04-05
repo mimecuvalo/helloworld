@@ -1,19 +1,12 @@
 import { EditorState, Modifier, SelectionState } from 'draft-js';
 
 export function getTextForLine(editorState, line) {
-  return editorState
-    .getCurrentContent()
-    .getPlainText()
-    .split('\n')[line];
+  return editorState.getCurrentContent().getPlainText().split('\n')[line];
 }
 
 export function insertTextAtLine(editorState, line, text) {
   const selectionState = SelectionState.createEmpty(
-    editorState
-      .getCurrentContent()
-      .getBlockMap()
-      .keySeq()
-      .get(line)
+    editorState.getCurrentContent().getBlockMap().keySeq().get(line)
   ).merge({
     anchorOffset: 0,
     focusOffset: 0,
@@ -28,4 +21,4 @@ export function insertTextAtLine(editorState, line, text) {
 export default {
   getTextForLine,
   insertTextAtLine,
-}
+};

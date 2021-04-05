@@ -82,10 +82,10 @@ export async function parseFeed(content) {
     const feedEntries = [];
     new TextStream({}, content)
       .pipe(new FeedParser())
-      .on('error', function(error) {
+      .on('error', function (error) {
         reject(`FeedParser failed to parse feed: ${error}`);
       })
-      .on('readable', function() {
+      .on('readable', function () {
         try {
           let feedEntry = this.read();
           while (feedEntry) {
@@ -96,7 +96,7 @@ export async function parseFeed(content) {
           reject(ex.message);
         }
       })
-      .on('end', function() {
+      .on('end', function () {
         resolve({ feedEntries, feedMeta: this.meta });
       });
   });
@@ -105,8 +105,10 @@ export async function parseFeed(content) {
 }
 
 async function mapFeedEntriesToModelEntries(options, feedEntries, userRemote) {
-  const entries = await Promise.all(feedEntries.map(async feedEntry => await handleEntry(options, feedEntry, userRemote)));
-  const filteredEntries = entries.filter(entry => entry);
+  const entries = await Promise.all(
+    feedEntries.map(async (feedEntry) => await handleEntry(options, feedEntry, userRemote))
+  );
+  const filteredEntries = entries.filter((entry) => entry);
   const skippedCount = entries.length - filteredEntries.length;
 
   return [filteredEntries, skippedCount];
@@ -165,7 +167,7 @@ async function handleEntry(options, feedEntry, userRemote) {
   let comments_count = 0;
   let comments_updated;
   const atomLinks = feedEntry['atom:link'] ? [feedEntry['atom:link']].flat(1) : [];
-  const replies = atomLinks.find(el => el['@'].rel === 'replies');
+  const replies = atomLinks.find((el) => el['@'].rel === 'replies');
   if (replies) {
     comments_count = parseInt(replies['@'].count);
     comments_updated = new Date(replies['@'].updated);

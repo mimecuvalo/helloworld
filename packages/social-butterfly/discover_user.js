@@ -19,8 +19,7 @@ export async function getLRDD(url) {
     if (!lrddUrl) {
       lrddUrl = $('link[rel="lrdd"]').attr('template');
     }
-  } catch (ex) {
-  }
+  } catch (ex) {}
 
   return lrddUrl;
 }
@@ -36,7 +35,10 @@ export async function getWebfinger(lrddUrl, uri) {
     try {
       // Fallback to probing for username@hostname if possible. Some sites like socialhome require this.
       const parsedUrl = new URL(uri);
-      const acct = `${parsedUrl.pathname.split('/').filter(p => !!p).slice(-1)}@${parsedUrl.hostname}`;
+      const acct = `${parsedUrl.pathname
+        .split('/')
+        .filter((p) => !!p)
+        .slice(-1)}@${parsedUrl.hostname}`;
       const acctWebfingerUrl = lrddUrl.replace('{uri}', encodeURIComponent(acct));
       webfingerDoc = await fetchText(acctWebfingerUrl);
     } catch (ex) {
@@ -48,8 +50,10 @@ export async function getWebfinger(lrddUrl, uri) {
   try {
     const json = JSON.parse(webfingerDoc);
     const linkMap = {};
-    json.links.map(link => linkMap[link.rel] = link);
-    const activityPubActorUrl = json.links.find(link => link.rel === 'self' && link.type === 'application/activity+json');
+    json.links.map((link) => (linkMap[link.rel] = link));
+    const activityPubActorUrl = json.links.find(
+      (link) => link.rel === 'self' && link.type === 'application/activity+json'
+    );
 
     webfingerInfo = {
       feed_url: linkMap['http://schemas.google.com/g/2010#updates-from']?.href,
@@ -57,7 +61,7 @@ export async function getWebfinger(lrddUrl, uri) {
       activitypub_actor_url: activityPubActorUrl?.href,
       webmention_url: linkMap['webmention']?.href,
       magic_key: (linkMap['magic-public-key']?.href || '').replace('data:application/magic-public-key,', ''),
-      profile_url: json.aliases.find(alias => alias.startsWith('https:') || alias.startsWith('http:')),
+      profile_url: json.aliases.find((alias) => alias.startsWith('https:') || alias.startsWith('http:')),
     };
     success = true;
   } catch (ex) {
@@ -74,9 +78,10 @@ export async function getWebfinger(lrddUrl, uri) {
         activitypub_actor_url: $('link[rel="self"][type="application/activity+json"]').attr('href'),
         webmention_url: $('link[rel="webmention"]').attr('href'),
         magic_key: $('link[rel="magic-public-key"]').attr('href').replace('data:application/magic-public-key,', ''),
-        profile_url: $('alias').first().text().startsWith('https:')
-            || $('alias').first().text().startsWith('http:')
-            || $('alias').last().text(),
+        profile_url:
+          $('alias').first().text().startsWith('https:') ||
+          $('alias').first().text().startsWith('http:') ||
+          $('alias').last().text(),
       };
     } catch (ex) {
       return null;
@@ -101,7 +106,7 @@ export async function getWebfinger(lrddUrl, uri) {
 
 export async function getActivityPubActor(url) {
   return await fetchJSON(url, {
-    'Accept': 'application/activity+json',
+    Accept: 'application/activity+json',
   });
 }
 
@@ -151,8 +156,8 @@ export async function getUserRemoteInfo(websiteUrl, local_username) {
   const htmlDoc = await getHTML(websiteUrl);
   const atomLinks = feedMeta['atom:link'] ? [feedMeta['atom:link']].flat(1) : [];
   userRemote.profile_url = userRemote.profile_url || feedMeta['atom:author']?.['uri']?.['#'] || websiteUrl;
-  userRemote.hub_url = atomLinks.find(el => el['@'].rel === 'hub')?.['@'].href;
-  userRemote.salmon_url = userRemote.salmon_url || atomLinks.find(el => el['@'].rel === 'salmon')?.['@'].href;
+  userRemote.hub_url = atomLinks.find((el) => el['@'].rel === 'hub')?.['@'].href;
+  userRemote.salmon_url = userRemote.salmon_url || atomLinks.find((el) => el['@'].rel === 'salmon')?.['@'].href;
   userRemote.webmention_url = userRemote.webmention_url || htmlDoc('link[rel="webmention"]').attr('href');
   userRemote.username =
     userRemote.username || feedMeta['atom:author']?.['poco:preferredusername']?.['#'] || feedMeta.title;

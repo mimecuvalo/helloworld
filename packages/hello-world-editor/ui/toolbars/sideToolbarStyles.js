@@ -14,7 +14,7 @@ export const styles = {
     lineHeight: '36px',
     textAlign: 'center',
     '& svg': {
-      fill: '#fff'
+      fill: '#fff',
     },
   },
   spacer: {
@@ -23,7 +23,7 @@ export const styles = {
     left: '50%',
     transform: 'translate(-50%)',
     width: '74px',
-    height: '50px'
+    height: '50px',
   },
   popup: {
     position: 'absolute',
@@ -35,18 +35,18 @@ export const styles = {
     zIndex: '3',
     boxSizing: 'border-box',
     width: '80px',
-    marginTop: '8px'
+    marginTop: '8px',
   },
   materialUIToolbar: {
     'div.&': {
-      display: 'block'
-    }
+      display: 'block',
+    },
   },
   wrapper: {
     position: 'absolute',
     marginLeft: '-30px',
-    zIndex: '1'
-  }
+    zIndex: '1',
+  },
 };
 
 export const useStyles = createUseStyles(styles);

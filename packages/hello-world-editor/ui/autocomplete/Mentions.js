@@ -16,7 +16,7 @@ const entryStyles = {
   padding: '7px 10px 3px 10px',
   transition: 'background-color 0.4s cubic-bezier(0.27, 1.27, 0.48, 0.56)',
   '&:active': {
-    backgroundColor: '#cce7ff'
+    backgroundColor: '#cce7ff',
   },
 };
 
@@ -29,11 +29,11 @@ const styles = {
     '&:hover, &:focus': {
       color: '#677584',
       background: '#edf5fd',
-      outline: '0'
+      outline: '0',
     },
     '&:active': {
       color: '#222',
-      background: '#455261'
+      background: '#455261',
     },
   },
   mentionSuggestionsEntry: {
@@ -41,7 +41,7 @@ const styles = {
   },
   mentionSuggestionsEntryFocused: {
     extend: entryStyles,
-    backgroundColor: '#e6f3ff'
+    backgroundColor: '#e6f3ff',
   },
   mentionSuggestionsEntryText: {
     display: 'inline-block',
@@ -52,14 +52,14 @@ const styles = {
     maxWidth: '368px',
     fontSize: '0.9em',
     marginBottom: '0.2em',
-    lineHeight: '22px'
+    lineHeight: '22px',
   },
   mentionSuggestionsEntryAvatar: {
     display: 'inline-block',
     width: '24px',
     height: '24px',
     borderRadius: '12px',
-    verticalAlign: 'top'
+    verticalAlign: 'top',
   },
   mentionSuggestions: {
     border: '1px solid #eee',
@@ -77,8 +77,8 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     boxSizing: 'border-box',
-    transform: 'scale(0)'
-  }
+    transform: 'scale(0)',
+  },
 };
 
 export const mentionPlugin = createMentionPlugin({
@@ -95,7 +95,7 @@ export default function Mentions({ mentions }) {
       return [];
     }
 
-    return mentions.map(mention => {
+    return mentions.map((mention) => {
       return {
         name: mention.name || mention.username,
         link: mention.profile_url,
@@ -112,11 +112,5 @@ export default function Mentions({ mentions }) {
     // get the mention object selected
   };
 
-  return (
-    <MentionSuggestions
-      onSearchChange={onSearchChange}
-      suggestions={suggestions}
-      onAddMention={onAddMention}
-    />
-  );
+  return <MentionSuggestions onSearchChange={onSearchChange} suggestions={suggestions} onAddMention={onAddMention} />;
 }

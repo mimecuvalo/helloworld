@@ -61,7 +61,7 @@ async function retrieveOEmbedData(oEmbedUrl) {
   if (unescape(html).indexOf('<iframe ') !== -1) {
     const regexString = `([a-zA-Z]+)=['"]([^'"]+)['"]`;
     iframe = _.fromPairs(
-      html.match(new RegExp(regexString, 'g')).map(p => {
+      html.match(new RegExp(regexString, 'g')).map((p) => {
         const pair = p.match(new RegExp(regexString));
         return [pair[1], pair[2]];
       })
@@ -81,12 +81,8 @@ function retrieveOpenGraphData($) {
     (index, el) => ($(el).attr('property') || '').indexOf('og:') === 0
   );
   const openGraphObj = {};
-  openGraphProperties.each(function(i, el) {
-    openGraphObj[
-      $(el)
-        .attr('property')
-        .slice(3)
-    ] = $(el).attr('content');
+  openGraphProperties.each(function (i, el) {
+    openGraphObj[$(el).attr('property').slice(3)] = $(el).attr('content');
   });
 
   return {

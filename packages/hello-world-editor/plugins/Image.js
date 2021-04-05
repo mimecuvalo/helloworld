@@ -25,7 +25,7 @@ export default createPlugin({
       return create(ENTITY_TYPE, 'IMMUTABLE', { src, alt });
     }
   },
-  blockToHTML: next => block => {
+  blockToHTML: (next) => (block) => {
     const result = next(block);
     if (block.data && isValidElement(result)) {
       return cloneElement(result, {});
@@ -44,12 +44,17 @@ function Image({ block, /*children,*/ className }) {
   const data = block.getData();
   return (
     <a href={data.get('href')}>
-      <img className={classNames('u-photo', className)} src={data.get('src')} alt={data.get('alt')} title={data.get('alt')} />
+      <img
+        className={classNames('u-photo', className)}
+        src={data.get('src')}
+        alt={data.get('alt')}
+        title={data.get('alt')}
+      />
     </a>
   );
 }
 
-export const imageBlockRendererFn = componentDecorators => {
+export const imageBlockRendererFn = (componentDecorators) => {
   const decoratedImage = componentDecorators(Image);
 
   return (block, editor) => {

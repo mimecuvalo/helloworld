@@ -50,4 +50,4 @@ export default (options) => {
   }
 
   return { followRouter, follow, unfollow };
-}
+};

@@ -45,7 +45,8 @@ export default (options) => async (req, res, next) => {
   }
   const feed = await options.getLocalLatestContent(req.query.resource, req);
 
-  let renderedTree = `<?xml version='1.0' encoding='UTF-8'?>` +
+  let renderedTree =
+    `<?xml version='1.0' encoding='UTF-8'?>` +
     renderToString(<ContentFeed req={req} feed={feed} contentOwner={contentOwner} constants={options.constants} />);
   // XXX(mime): in the feeds I have some attributes that are `ref`. However, ref isn't allowed in React,
   // so in the DOM they are `refXXX`. Return them to normal here, sigh.
@@ -60,7 +61,7 @@ function ContentFeed({ feed, contentOwner, constants, req }) {
 
   return (
     <GenericFeed contentOwner={contentOwner} constants={constants} req={req} updatedAt={updatedAt}>
-      {feed.map(content => (
+      {feed.map((content) => (
         <Entry key={content.name} content={content} req={req} />
       ))}
     </GenericFeed>
@@ -157,9 +158,7 @@ function Entry({ content, req }) {
     <entry>
       <title>{content.title}</title>
       <link href={content.url} />
-      <id>
-        {content.url}
-      </id>
+      <id>{content.url}</id>
       <content type="html" dangerouslySetInnerHTML={{ __html: html }} />
       <published>{new Date(content.createdAt).toISOString()}</published>
       <updated>{new Date(content.updatedAt).toISOString()}</updated>

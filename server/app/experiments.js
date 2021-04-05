@@ -22,8 +22,8 @@ export default function getExperiments(req) {
   const session = req.session;
   const user = req.session.user;
   const cookieExperimentOverrides = authorization.isAdmin(user) ? JSON.parse(req.cookies.experiments || '{}') : [];
-  const allExperiments = Object.keys(REGISTERED_EXPERIMENTS).map(name => ({ name, ...REGISTERED_EXPERIMENTS[name] }));
-  const enabledExperiments = allExperiments.filter(exp => {
+  const allExperiments = Object.keys(REGISTERED_EXPERIMENTS).map((name) => ({ name, ...REGISTERED_EXPERIMENTS[name] }));
+  const enabledExperiments = allExperiments.filter((exp) => {
     if (cookieExperimentOverrides[exp.name] !== undefined) {
       return cookieExperimentOverrides[exp.name];
     }
@@ -52,12 +52,12 @@ export default function getExperiments(req) {
     return false;
   });
 
-  const enabledExperimentNames = enabledExperiments.map(exp => exp.name);
+  const enabledExperimentNames = enabledExperiments.map((exp) => exp.name);
   return enabledExperimentNames;
 }
 
 function doesUserMatch(cohort, user) {
   cohort = cohort || [];
   const email = user?.oauth?.email;
-  return cohort.some(funcOrEmail => (typeof funcOrEmail === 'string' ? funcOrEmail === email : funcOrEmail(user)));
+  return cohort.some((funcOrEmail) => (typeof funcOrEmail === 'string' ? funcOrEmail === email : funcOrEmail(user)));
 }

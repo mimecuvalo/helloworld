@@ -58,9 +58,9 @@ function StyleButton(props) {
   const intl = useIntl();
   const styles = useStyles();
 
-  const handleMouseDown = evt => evt.preventDefault();
+  const handleMouseDown = (evt) => evt.preventDefault();
 
-  const handleClick = evt => {
+  const handleClick = (evt) => {
     evt.preventDefault();
 
     props.setEditorState(
@@ -77,17 +77,11 @@ function StyleButton(props) {
     }
 
     if (!props.isBlock) {
-      return props
-        .getEditorState()
-        .getCurrentInlineStyle()
-        .has(props.formatStyle);
+      return props.getEditorState().getCurrentInlineStyle().has(props.formatStyle);
     }
 
     const editorState = props.getEditorState();
-    const type = editorState
-      .getCurrentContent()
-      .getBlockForKey(editorState.getSelection().getStartKey())
-      .getType();
+    const type = editorState.getCurrentContent().getBlockForKey(editorState.getSelection().getStartKey()).getType();
     if (props.formatStyle.indexOf('header') === 0) {
       return type.indexOf('header') === 0;
     }
@@ -138,11 +132,7 @@ export function LinkButton(props) {
 export function HeaderButton(props) {
   const editorState = props.getEditorState();
   const type =
-    editorState &&
-    editorState
-      .getCurrentContent()
-      .getBlockForKey(editorState.getSelection().getStartKey())
-      .getType();
+    editorState && editorState.getCurrentContent().getBlockForKey(editorState.getSelection().getStartKey()).getType();
   const formatStyle = type === 'header-one' ? 'header-two' : type === 'header-two' ? 'header-two' : 'header-one';
 
   return (
@@ -192,9 +182,9 @@ export function ImageButton(props) {
   const snackbar = useSnackbar();
   const styles = useStyles();
 
-  const handleMouseDown = evt => evt.preventDefault();
+  const handleMouseDown = (evt) => evt.preventDefault();
 
-  const handleClick = evt => {
+  const handleClick = (evt) => {
     evt.preventDefault();
 
     document.forms[IMAGE_FORM_NAME].elements[IMAGE_INPUT_NAME].click();

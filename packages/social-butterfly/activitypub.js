@@ -27,22 +27,19 @@ const Actor = (options) => async (req, res, next) => {
   const inboxUrl = buildUrl({ req, pathname: '/api/social/activitypub/inbox', searchParams: { resource } });
 
   const json = {
-  	'@context': [
-  		'https://www.w3.org/ns/activitystreams',
-  		'https://w3id.org/security/v1',
-  	],
+    '@context': ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
 
-  	id: actorUrl,
-  	type: 'Person',
-  	preferredUsername: user.username,
-  	inbox: inboxUrl,
+    id: actorUrl,
+    type: 'Person',
+    preferredUsername: user.username,
+    inbox: inboxUrl,
     url: user.url,
 
-  	publicKey: {
-  		id: `${actorUrl}#main-key`,
-  		owner: actorUrl,
-  		publicKeyPem: forge.pki.publicKeyToPem(magic.magicToRSA(user.magic_key)),
-  	}
+    publicKey: {
+      id: `${actorUrl}#main-key`,
+      owner: actorUrl,
+      publicKeyPem: forge.pki.publicKeyToPem(magic.magicToRSA(user.magic_key)),
+    },
   };
 
   res.json(json);
@@ -112,13 +109,18 @@ export async function send(req, userRemote, contentOwner, message) {
 function signMessage(req, contentOwner, userRemote) {
   const currentDate = new Date();
   const inboxUrl = new URL(userRemote.activitypub_inbox_url);
-  const signer = crypto.createSign('sha256')
-      .update(`(request-target): post ${inboxUrl.pathname}${inboxUrl.search}\n`)
-      .update(`host: ${inboxUrl.hostname}\n`)
-      .update(`date: ${currentDate.toUTCString()}`)
-      .end();
+  const signer = crypto
+    .createSign('sha256')
+    .update(`(request-target): post ${inboxUrl.pathname}${inboxUrl.search}\n`)
+    .update(`host: ${inboxUrl.hostname}\n`)
+    .update(`date: ${currentDate.toUTCString()}`)
+    .end();
   const signature = signer.sign(contentOwner.private_key).toString('base64');
-  const actorUrl = buildUrl({ req, pathname: '/api/social/activitypub/actor', searchParams: { resource: contentOwner.url } });
+  const actorUrl = buildUrl({
+    req,
+    pathname: '/api/social/activitypub/actor',
+    searchParams: { resource: contentOwner.url },
+  });
   const signatureHeader = `keyId="${actorUrl}",headers="(request-target) host date",signature="${signature}"`;
 
   return { currentDate, signatureHeader };
@@ -127,7 +129,7 @@ function signMessage(req, contentOwner, userRemote) {
 function verifyMessage(req, userRemote) {
   try {
     const signatureMap = {};
-    req.headers['signature'].split(',').forEach(keyValue => {
+    req.headers['signature'].split(',').forEach((keyValue) => {
       const keyValuePair = keyValue.split('=');
       signatureMap[keyValuePair[0]] = keyValuePair.slice(1).join('=').replace(/^"/, '').replace(/"$/, '');
     });
@@ -138,13 +140,13 @@ function verifyMessage(req, userRemote) {
     }
 
     const data = signatureMap['headers']
-        .split(' ')
-        .map(header => {
-          return header === '(request-target)'
-              ? `(request-target): post ${req.originalUrl}`
-              : `${header}: ${req.headers[header]}`;
-        })
-        .join('\n');
+      .split(' ')
+      .map((header) => {
+        return header === '(request-target)'
+          ? `(request-target): post ${req.originalUrl}`
+          : `${header}: ${req.headers[header]}`;
+      })
+      .join('\n');
 
     const verify = crypto.createVerify('sha256');
     verify.write(data);

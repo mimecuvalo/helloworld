@@ -12,12 +12,12 @@ export function createNewBlock(type, tag, editorState, entityData, attribs) {
 }
 
 export function decoratedBlocksToHTML(strategy, Component) {
-  return block => {
+  return (block) => {
     let indices = [];
 
     // XXX(mime): Backwards compatibility with draft-js-plugins, e.g. linkifyPlugin
     // Ugh, what a frankenstein mess.
-    block = Object.assign({}, block, { get: key => block[key]});
+    block = Object.assign({}, block, { get: (key) => block[key] });
 
     strategy(block, (index, lastIndex) => {
       indices.push({ index, lastIndex });
@@ -40,4 +40,4 @@ export function decoratedBlocksToHTML(strategy, Component) {
 
 export default {
   createNewBlock,
-}
+};

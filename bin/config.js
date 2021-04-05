@@ -9,11 +9,11 @@ const rl = readline.createInterface({
 });
 
 let name, githubUsername, email;
-rl.question('Name: ', answer => {
+rl.question('Name: ', (answer) => {
   name = answer;
-  rl.question('GitHub username: ', answer => {
+  rl.question('GitHub username: ', (answer) => {
     githubUsername = answer;
-    rl.question('Email: ', answer => {
+    rl.question('Email: ', (answer) => {
       email = answer;
       rl.close();
 

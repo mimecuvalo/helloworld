@@ -32,11 +32,7 @@ export const linkifyPlugin = createLinkifyPlugin();
 export const replyPlugin = createReplyPlugin();
 export const rsvpPlugin = createRSVPPlugin();
 
-export default compose(
-  Anchor,
-  Iframe,
-  Image
-);
+export default compose(Anchor, Iframe, Image);
 
 const componentDecorators = composeDecorators(
   alignmentPlugin.decorator,
@@ -54,27 +50,29 @@ export const htmlPlugins = compose(
   /*dividerPlugin,
   hashtagPlugin,
   mentionPlugin,*/
-  createPlugin(Object.assign(
-    {},
-    // TODO(mime): frankenstein stuff here b/c linkifyPlugin is 3rd party...
-    {
-      // This handles linkify content actually typed in (not pasted in from another editor).
-      blockToHTML: decoratedBlocksToHTML(linkifyPlugin.decorators[0].strategy, linkifyPlugin.decorators[0].component),
+  createPlugin(
+    Object.assign(
+      {},
+      // TODO(mime): frankenstein stuff here b/c linkifyPlugin is 3rd party...
+      {
+        // This handles linkify content actually typed in (not pasted in from another editor).
+        blockToHTML: decoratedBlocksToHTML(linkifyPlugin.decorators[0].strategy, linkifyPlugin.decorators[0].component),
 
-      // This handles LINK entities (actually, unrelated to the linkify plugin, e.g. pasted in from another editor).
-      entityToHTML: (entity, originalText) => {
-        if (entity.type === 'LINK') {
-          const { href } = entity.data;
-          return `<a href="${href}" target="_blank" rel="noopener noreferrer">${originalText}</a>`;
-        }
+        // This handles LINK entities (actually, unrelated to the linkify plugin, e.g. pasted in from another editor).
+        entityToHTML: (entity, originalText) => {
+          if (entity.type === 'LINK') {
+            const { href } = entity.data;
+            return `<a href="${href}" target="_blank" rel="noopener noreferrer">${originalText}</a>`;
+          }
 
-        return originalText;
-      }
-    },
-    linkifyPlugin
-  )),
+          return originalText;
+        },
+      },
+      linkifyPlugin
+    )
+  ),
   createPlugin(replyPlugin),
-  createPlugin(rsvpPlugin),
+  createPlugin(rsvpPlugin)
   /* TODO(mime): emojiPlugin, */
 );
 
@@ -82,7 +80,7 @@ export const decorator = new CompositeDecorator([{ strategy: anchorStrategy, com
 
 // TODO(mime): this is pulled from draft-extend until we use draft-extend directly.
 function accumulateFunction(newFn, acc) {
-  return function() {
+  return function () {
     var result = newFn.apply(undefined, arguments);
     if (result === null || result === undefined) {
       return acc.apply(undefined, arguments);

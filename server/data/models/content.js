@@ -176,4 +176,4 @@ export default function Content(sequelize, Sequelize) {
   );
 
   return Content;
-};
+}

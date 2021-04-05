@@ -12,23 +12,26 @@ export default function setupPush(options) {
     console.log('WebSub feed: ', topic, hub, callback, feed, headers);
 
     const searchParams = new URL(callback).searchParams;
-    const remoteUser = await options.getRemoteUser(searchParams.get('localUsername'), searchParams.get('remoteProfileUrl'));
+    const remoteUser = await options.getRemoteUser(
+      searchParams.get('localUsername'),
+      searchParams.get('remoteProfileUrl')
+    );
     await parseFeedAndInsertIntoDb(options, remoteUser, feed);
   });
 
-  webSubSubscriber.on('error', err => {
+  webSubSubscriber.on('error', (err) => {
     console.log('WebSub error', err);
   });
 
-  webSubSubscriber.on('subscribe', data => {
+  webSubSubscriber.on('subscribe', (data) => {
     console.log('WebSub subscribed: ', data);
   });
 
-  webSubSubscriber.on('unsubscribe', data => {
+  webSubSubscriber.on('unsubscribe', (data) => {
     console.log('WebSub unsubscribed: ', data);
   });
 
-  webSubSubscriber.on('denied', data => {
+  webSubSubscriber.on('denied', (data) => {
     console.log('WebSub denied: ', data);
   });
 

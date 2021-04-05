@@ -159,4 +159,4 @@ export default function ContentRemote(sequelize, Sequelize) {
   );
 
   return Content_Remote;
-};
+}

@@ -41,7 +41,7 @@ export default function SocialButterflyMemoized(app) {
   isSetup = true;
 
   return memoizedExports.dispose;
-};
+}
 
 /**
  * User has these fields:
@@ -117,7 +117,7 @@ async function getLocalLatestContent(localContentUrl, req) {
     order: [['createdAt', 'DESC']],
     limit: 50,
   });
-  feed.forEach(item => (item.url = contentUrl(item, req)));
+  feed.forEach((item) => (item.url = contentUrl(item, req)));
 
   return feed;
 }
