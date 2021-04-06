@@ -57,15 +57,16 @@ export default function constructApps({ appName, productionAssetsByType, publicU
           mediaSrc: ["'self'", 'blob:'],
           objectSrc: ["'self'"],
           reportUri: '/api/report-violation',
-
-          // XXX(mime): we have inline code around via `code` in content model. can we pass nonce around the app properly?
           scriptSrc: [
             "'self'",
             'https://cdn.auth0.com',
             'https://ssl.google-analytics.com',
             'https://storage.googleapis.com',
+            // XXX(mime): we have inline code around via `code` in content model. can we pass nonce around the app properly?
             "'unsafe-inline'",
-          ], //, (req, res) => `'nonce-${res.locals.nonce}'`],
+          ].concat(
+            process.env.NODE_ENV === 'development' ? ["'unsafe-inline'"] : [(req, res) => `'nonce-${res.locals.nonce}'`]
+          ),
           upgradeInsecureRequests: [],
 
           // XXX(mime): we have inline styles around via `style` in content model. can we pass nonce around the app properly?
