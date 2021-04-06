@@ -104,7 +104,7 @@
 
     var close = document.createElement('A');
     close.href = '#close-image-finder';
-    close.innerHTML = '×';
+    close.textContent = '×';
     close.style.fontSize = '20px';
     close.style.fontFamily = '"Helvetica Neue",Arial,sans-serif';
     close.style.position = 'fixed';

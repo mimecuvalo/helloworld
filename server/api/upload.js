@@ -4,6 +4,7 @@ import fs from 'fs';
 import mime from 'mime/lite';
 import multer from 'multer';
 import path from 'path';
+import rateLimit from 'express-rate-limit';
 import sharp from 'sharp';
 
 function fileFilter(req, file, cb) {
@@ -29,8 +30,13 @@ const MAX_FILES = 10;
 
 const upload = multer({ storage, limits: { fileSize: MAX_SIZE, files: MAX_FILES, fields: MAX_FILES }, fileFilter });
 
+const apiLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 100,
+});
+
 const router = express.Router();
-router.post('/', upload.array('files', MAX_FILES), async (req, res) => {
+router.post('/', upload.array('files', MAX_FILES), apiLimiter, async (req, res) => {
   const currentUser = req.session.user;
   if (!currentUser?.model) {
     throw new Error('i call shenanigans');

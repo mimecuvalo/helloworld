@@ -2,6 +2,7 @@ import _ from 'lodash';
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
+import rateLimit from 'express-rate-limit';
 import { REGISTERED_EXPERIMENTS } from 'server/app/experiments';
 
 const router = express.Router();
@@ -22,7 +23,12 @@ router.post('/repl', async (req, res) => {
   // res.json({ result, success });
 });
 
-router.get('/clientside-exceptions', async (req, res) => {
+const apiLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 100,
+});
+
+router.get('/clientside-exceptions', apiLimiter, async (req, res) => {
   let exceptions = '';
   try {
     exceptions = fs.readFileSync(

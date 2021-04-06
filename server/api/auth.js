@@ -38,6 +38,10 @@ router.get('/callback', async (req, res) => {
       model: userDbInfo,
     };
 
+    if (req.query.next && !req.query.next.startsWith('/')) {
+      throw new Error('i call shenanigans');
+    }
+
     res.redirect(req.query.next || '/');
     return;
   } catch (ex) {
@@ -48,6 +52,10 @@ router.get('/callback', async (req, res) => {
 
 router.post('/logout', (req, res) => {
   res.clearCookie('connect.sid');
+
+  if (req.query.next && !req.query.next.startsWith('/')) {
+    throw new Error('i call shenanigans');
+  }
 
   req.session.destroy(() => {
     res.redirect(req.query.next || '/');
