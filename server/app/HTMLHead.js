@@ -110,6 +110,7 @@ export default function HTMLHead(props) {
       />
       <link rel="canonical" href={content && contentUrl(content, req)} />
       {rss}
+      {!content && <meta name="robots" content="noindex" />}
       <meta name="viewport" content={viewport} />
       <meta name="theme-color" content="#000000" />
       <meta name="generator" content="Hello, world. https://github.com/mimecuvalo/helloworld" />
