@@ -6,7 +6,7 @@ import FollowingSpecialFeedCountsQuery from './FollowingSpecialFeedCountsQuery';
 import { FormattedNumber } from 'react-intl-wrapper';
 import { useContext } from 'react';
 import { useQuery } from '@apollo/client';
-import UserContext from '../app/User_Context';
+import UserContext from 'client/app/User_Context';
 import useStyles from './remoteUsersStyles';
 
 export default function FollowingSpecialFeeds(props) {

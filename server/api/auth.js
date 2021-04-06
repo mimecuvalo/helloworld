@@ -1,7 +1,7 @@
-import { buildUrl } from '../../shared/util/url_factory';
+import { buildUrl } from 'shared/util/url_factory';
 import express from 'express';
 import fetch from 'node-fetch';
-import models from '../data/models';
+import models from 'server/data/models';
 
 /**
  * Routes for letting the user login / logout.

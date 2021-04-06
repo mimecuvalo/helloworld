@@ -1,8 +1,8 @@
-import { buildUrl, profileUrl } from '../../shared/util/url_factory';
+import { buildUrl, profileUrl } from 'shared/util/url_factory';
 import classNames from 'classnames';
 import CloseIcon from '@material-ui/icons/Close';
-import constants from '../../shared/constants';
-import ContentLink from '../components/ContentLink';
+import constants from 'shared/constants';
+import ContentLink from 'client/components/ContentLink';
 import { createUseStyles } from 'react-jss';
 import { defineMessages, F, useIntl } from 'react-intl-wrapper';
 import gql from 'graphql-tag';

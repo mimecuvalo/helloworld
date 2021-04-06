@@ -3,7 +3,7 @@ import { createUseStyles } from 'react-jss';
 import { F } from 'react-intl-wrapper';
 import { memo, forwardRef } from 'react';
 import SiteMap from './SiteMap';
-import useDocumentTitle from '../app/title';
+import useDocumentTitle from 'client/app/title';
 
 const useStyles = createUseStyles({
   container: {

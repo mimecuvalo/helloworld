@@ -1,4 +1,4 @@
-import authorization from '../util/authorization';
+import authorization from 'server/util/authorization';
 
 function isInternalUser(user) {
   return user?.model?.superuser;

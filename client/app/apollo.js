@@ -1,12 +1,12 @@
 import { ApolloClient, ApolloLink, HttpLink, split } from '@apollo/client';
 import { BatchHttpLink } from '@apollo/client/link/batch-http';
-import { buildUrl } from '../../shared/util/url_factory';
-import configuration from '../app/configuration';
-import { dataIdFromObject } from '../../shared/data/apollo';
-import { initializeLocalState } from '../../shared/data/local_state';
+import { buildUrl } from 'shared/util/url_factory';
+import configuration from 'client/app/configuration';
+import { dataIdFromObject } from 'shared/data/apollo';
+import { initializeLocalState } from 'shared/data/local_state';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { onError } from '@apollo/client/link/error';
-import { typeDefs, resolvers } from '../../shared/data/local_state';
+import { typeDefs, resolvers } from 'shared/data/local_state';
 
 export default function createApolloClient() {
   const apolloUrl = buildUrl({ isAbsolute: true, pathname: '/graphql' });

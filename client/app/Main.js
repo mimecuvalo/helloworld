@@ -1,10 +1,10 @@
-import Content from '../content/Content';
-import Dashboard from '../dashboard/Dashboard';
+import Content from 'client/content/Content';
+import Dashboard from 'client/dashboard/Dashboard';
 import Footer from './Footer';
 import Header from './Header';
 import { Route, Switch } from 'react-router-dom';
 import ScrollToTop from './ScrollToTop';
-import Search from '../content/Search';
+import Search from 'client/content/Search';
 
 export default function MainApp() {
   const isOffline = typeof navigator !== 'undefined' && !navigator.onLine;
@@ -21,7 +21,7 @@ export default function MainApp() {
     //
     // let SuspenseWithTemporaryWorkaround;
     // if (IS_CLIENT) {
-    //   const Dashboard = lazy(() => import('../dashboard/Dashboard'));
+    //   const Dashboard = lazy(() => import('client/dashboard/Dashboard'));
     //   SuspenseWithTemporaryWorkaround = (
     //     <Suspense fallback={Fallback}>
     //       <Dashboard />

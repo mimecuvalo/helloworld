@@ -1,4 +1,4 @@
-import { buildUrl } from '../../shared/util/url_factory';
+import { buildUrl } from 'shared/util/url_factory';
 import express from 'express';
 
 // OpenSearch is a way to tell your browser to let a user hit <tab> and search your site.

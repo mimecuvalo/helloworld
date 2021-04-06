@@ -1,11 +1,11 @@
 import { createUseStyles } from 'react-jss';
 import { defineMessages, F, useIntl } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
-import Forbidden from '../error/403';
+import Forbidden from 'client/error/403';
 import { useContext } from 'react';
-import Unauthorized from '../error/401';
-import UserContext from '../app/User_Context';
-import useDocumentTitle from '../app/title';
+import Unauthorized from 'client/error/401';
+import UserContext from 'client/app/User_Context';
+import useDocumentTitle from 'client/app/title';
 import { useQuery } from '@apollo/client';
 
 const useStyles = createUseStyles({

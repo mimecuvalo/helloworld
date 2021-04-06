@@ -1,6 +1,6 @@
 import classNames from 'classnames';
-import ContentLink from '../../components/ContentLink';
-import ContentThumb from '../../components/ContentThumb';
+import ContentLink from 'client/components/ContentLink';
+import ContentThumb from 'client/components/ContentThumb';
 import { createUseStyles } from 'react-jss';
 import { defineMessages, F, useIntl } from 'react-intl-wrapper';
 import gql from 'graphql-tag';

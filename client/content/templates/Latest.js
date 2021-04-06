@@ -1,5 +1,5 @@
 import Archive from './Archive';
-import { contentUrl } from '../../../shared/util/url_factory';
+import { contentUrl } from 'shared/util/url_factory';
 import gql from 'graphql-tag';
 import { forwardRef, useEffect, useState } from 'react';
 import Simple from './Simple';

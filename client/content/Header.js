@@ -1,9 +1,9 @@
 import classNames from 'classnames';
-import ContentLink from '../components/ContentLink';
+import ContentLink from 'client/components/ContentLink';
 import { createUseStyles } from 'react-jss';
 import { F } from 'react-intl-wrapper';
 import { useContext } from 'react';
-import UserContext from '../app/User_Context';
+import UserContext from 'client/app/User_Context';
 
 const useStyles = createUseStyles({
   header: {

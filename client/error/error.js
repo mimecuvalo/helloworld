@@ -1,5 +1,5 @@
-import { buildUrl } from '../../shared/util/url_factory';
-import configuration from '../app/configuration';
+import { buildUrl } from 'shared/util/url_factory';
+import configuration from 'client/app/configuration';
 
 export function logError(data) {
   fetch(buildUrl({ pathname: '/api/report-error' }), {

@@ -6,7 +6,7 @@ import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { IntlProvider } from 'react-intl-wrapper';
 import ReactDOM from 'react-dom';
-import theme from '../../shared/theme';
+import theme from 'shared/theme';
 import { ThemeProvider } from '@material-ui/core/styles';
 
 it('renders without crashing', () => {

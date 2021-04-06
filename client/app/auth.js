@@ -1,4 +1,4 @@
-import { buildUrl } from '../../shared/util/url_factory';
+import { buildUrl } from 'shared/util/url_factory';
 import configuration from './configuration';
 
 let Auth0Lock;

@@ -1,5 +1,5 @@
 import { Button } from '@material-ui/core';
-import configuration from '../app/configuration';
+import configuration from 'client/app/configuration';
 import { useRef, useState } from 'react';
 
 // TODO(mime): This has a lot of work left to do.

@@ -1,7 +1,7 @@
 import classNames from 'classnames';
-import ContentLink from '../components/ContentLink';
+import ContentLink from 'client/components/ContentLink';
 import ContentQuery from './ContentQuery';
-import { contentUrl } from '../../shared/util/url_factory';
+import { contentUrl } from 'shared/util/url_factory';
 import { createUseStyles } from 'react-jss';
 import { F } from 'react-intl-wrapper';
 import gql from 'graphql-tag';

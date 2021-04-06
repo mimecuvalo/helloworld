@@ -4,12 +4,12 @@ import { defineMessages, useIntl } from 'react-intl-wrapper';
 import Feed from './Feed';
 import Followers from './Followers';
 import Following from './Following';
-import MyFeed from '../content/Feed';
+import MyFeed from 'client/content/Feed';
 import { useContext, useState, useRef } from 'react';
 import Tools from './Tools';
-import Unauthorized from '../error/401';
-import useDocumentTitle from '../app/title';
-import UserContext from '../app/User_Context';
+import Unauthorized from 'client/error/401';
+import useDocumentTitle from 'client/app/title';
+import UserContext from 'client/app/User_Context';
 
 const boxStyles = {
   width: 'calc(100% - 20px)',

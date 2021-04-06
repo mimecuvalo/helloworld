@@ -1,4 +1,4 @@
-import { contentUrl, profileUrl } from '../../shared/util/url_factory';
+import { contentUrl, profileUrl } from 'shared/util/url_factory';
 import { createUseStyles } from 'react-jss';
 import { F, FormattedDate } from 'react-intl-wrapper';
 

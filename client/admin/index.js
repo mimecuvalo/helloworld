@@ -2,15 +2,15 @@ import { AppBar, Drawer, List, ListItem, ListItemText, Toolbar, Typography } fro
 import classNames from 'classnames';
 import Exceptions from './Exceptions';
 import Experiments from './Experiments';
-import Forbidden from '../error/403';
+import Forbidden from 'client/error/403';
 import gql from 'graphql-tag';
 import { Link, Route, Switch, useLocation, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import NotFound from '../error/404';
+import NotFound from 'client/error/404';
 import REPL from './REPL';
-import ScrollToTop from '../app/ScrollToTop';
+import ScrollToTop from 'client/app/ScrollToTop';
 import SystemInfo from './SystemInfo';
-import Unauthorized from '../error/401';
+import Unauthorized from 'client/error/401';
 import Users from './Users';
 import { useQuery } from '@apollo/client';
 

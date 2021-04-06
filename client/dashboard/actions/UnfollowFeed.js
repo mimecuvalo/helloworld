@@ -1,6 +1,6 @@
 import { F } from 'react-intl-wrapper';
-import FollowingQuery from '../FollowingQuery';
-import FollowingSpecialFeedCountsQuery from '../FollowingSpecialFeedCountsQuery';
+import FollowingQuery from 'client/dashboard/FollowingQuery';
+import FollowingSpecialFeedCountsQuery from 'client/dashboard/FollowingSpecialFeedCountsQuery';
 import gql from 'graphql-tag';
 import MenuItem from '@material-ui/core/MenuItem';
 import { useMutation } from '@apollo/client';

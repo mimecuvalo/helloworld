@@ -1,4 +1,4 @@
-import { buildUrl, contentUrl } from '../../shared/util/url_factory';
+import { buildUrl, contentUrl } from 'shared/util/url_factory';
 import classNames from 'classnames';
 import ContentBase from './ContentBase';
 import ContentQuery from './ContentQuery';
@@ -11,7 +11,7 @@ import gql from 'graphql-tag';
 import isMobile from 'is-mobile';
 import Item from './Item';
 import Nav from './Nav';
-import NotFound from '../error/404';
+import NotFound from 'client/error/404';
 import { memo, useEffect, useRef, useState } from 'react';
 import Simple from './templates/Simple';
 import SwipeListener from 'swipe-listener';

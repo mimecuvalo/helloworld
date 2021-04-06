@@ -1,7 +1,7 @@
 import express from 'express';
-import { isRobotViewing } from '../util/crawler';
-import models from '../data/models';
-import { parseContentUrl } from '../../shared/util/url_factory';
+import { isRobotViewing } from 'server/util/crawler';
+import models from 'server/data/models';
+import { parseContentUrl } from 'shared/util/url_factory';
 import path from 'path';
 
 const router = express.Router();

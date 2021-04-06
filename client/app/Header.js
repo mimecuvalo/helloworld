@@ -2,7 +2,7 @@ import Button from '@material-ui/core/Button';
 import { createUseStyles } from 'react-jss';
 import { F } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
-import LoginLogoutButton from '../components/login';
+import LoginLogoutButton from 'client/components/login';
 import { useQuery } from '@apollo/client';
 import { useLocation } from 'react-router-dom';
 

@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import ContentEditor from '../ContentEditor';
+import ContentEditor from 'client/content/ContentEditor';
 import { createUseStyles } from 'react-jss';
 import { forwardRef, useImperativeHandle, useRef } from 'react';
 

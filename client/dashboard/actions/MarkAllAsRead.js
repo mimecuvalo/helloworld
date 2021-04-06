@@ -1,9 +1,9 @@
-import { escapeRegExp } from '../../../shared/util/regex';
+import { escapeRegExp } from 'shared/util/regex';
 import { F } from 'react-intl-wrapper';
-import FollowingSpecialFeedCountsQuery from '../FollowingSpecialFeedCountsQuery';
+import FollowingSpecialFeedCountsQuery from 'client/dashboard/FollowingSpecialFeedCountsQuery';
 import gql from 'graphql-tag';
 import MenuItem from '@material-ui/core/MenuItem';
-import { prefixIdFromObject } from '../../../shared/data/apollo';
+import { prefixIdFromObject } from 'shared/data/apollo';
 import { useMutation } from '@apollo/client';
 
 const MARK_ALL_CONTENT_IN_FEED_AS_READ = gql`

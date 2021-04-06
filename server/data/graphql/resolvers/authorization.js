@@ -1,5 +1,5 @@
 import { AuthenticationError, ForbiddenError } from 'apollo-server-express';
-import authorization from '../../../util/authorization';
+import authorization from 'server/util/authorization';
 import { skip } from 'graphql-resolvers';
 
 export const isAuthenticated = (parent, args, { currentUser }) =>

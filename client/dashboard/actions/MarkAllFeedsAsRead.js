@@ -1,10 +1,10 @@
-import { escapeRegExp } from '../../../shared/util/regex';
+import { escapeRegExp } from 'shared/util/regex';
 import { F } from 'react-intl-wrapper';
-import FollowingFeedCountsQuery from '../FollowingFeedCountsQuery';
-import FollowingSpecialFeedCountsQuery from '../FollowingSpecialFeedCountsQuery';
+import FollowingFeedCountsQuery from 'client/dashboard/FollowingFeedCountsQuery';
+import FollowingSpecialFeedCountsQuery from 'client/dashboard/FollowingSpecialFeedCountsQuery';
 import gql from 'graphql-tag';
 import MenuItem from '@material-ui/core/MenuItem';
-import { prefixIdFromObject } from '../../../shared/data/apollo';
+import { prefixIdFromObject } from 'shared/data/apollo';
 import { useMutation } from '@apollo/client';
 
 const MARK_ALL_FEEDS_AS_READ = gql`

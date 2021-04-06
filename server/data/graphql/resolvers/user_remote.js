@@ -1,7 +1,7 @@
 import { combineResolvers } from 'graphql-resolvers';
 import { isAdmin, isAuthor } from './authorization';
-import { profileUrl } from '../../../../shared/util/url_factory';
-import socialButterfly from '../../../social-butterfly';
+import { profileUrl } from 'shared/util/url_factory';
+import socialButterfly from 'server/social-butterfly';
 
 const UserRemote = {
   Query: {

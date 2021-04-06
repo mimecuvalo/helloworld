@@ -1,5 +1,5 @@
 import fs from 'fs';
-import models from '../data/models';
+import models from 'server/data/models';
 
 export default async function dataLiberation(req, res) {
   const username = req.session.user.model.username;

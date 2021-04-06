@@ -1,8 +1,8 @@
 import Button from '@material-ui/core/Button';
-import { createLock, setUser } from '../app/auth';
+import { createLock, setUser } from 'client/app/auth';
 import { F } from 'react-intl-wrapper';
 import { useContext } from 'react';
-import UserContext from '../app/User_Context';
+import UserContext from 'client/app/User_Context';
 
 export default function LoginLogoutButton() {
   const user = useContext(UserContext).user;

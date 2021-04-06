@@ -1,4 +1,4 @@
-import { createLock } from '../app/auth';
+import { createLock } from 'client/app/auth';
 import { defineMessages, F, useIntl } from 'react-intl-wrapper';
 import useStyles from './errorStyles';
 

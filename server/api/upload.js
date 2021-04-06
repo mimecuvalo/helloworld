@@ -1,4 +1,4 @@
-import constants from '../../shared/constants';
+import constants from 'shared/constants';
 import express from 'express';
 import fs from 'fs';
 import mime from 'mime/lite';

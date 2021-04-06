@@ -1,4 +1,4 @@
-import { buildUrl, contentUrl, profileUrl } from '../../shared/util/url_factory';
+import { buildUrl, contentUrl, profileUrl } from 'shared/util/url_factory';
 import gql from 'graphql-tag';
 import { memo } from 'react';
 import { useQuery } from '@apollo/client';
