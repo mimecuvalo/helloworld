@@ -7,6 +7,7 @@ import './index.css';
 import { IntlProvider, isInternalLocale, setLocales } from 'react-intl-wrapper';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
+import { StrictMode } from 'react';
 import theme from '../../shared/theme';
 import { ThemeProvider } from '@material-ui/core/styles';
 
@@ -25,13 +26,15 @@ async function renderAppTree(app) {
   }
 
   return (
-    <IntlProvider defaultLocale={configuration.locale} locale={configuration.locale} messages={translations}>
-      <ApolloProvider client={client}>
-        <Router>
-          <ThemeProvider theme={theme}>{app}</ThemeProvider>
-        </Router>
-      </ApolloProvider>
-    </IntlProvider>
+    <StrictMode>
+      <IntlProvider defaultLocale={configuration.locale} locale={configuration.locale} messages={translations}>
+        <ApolloProvider client={client}>
+          <Router>
+            <ThemeProvider theme={theme}>{app}</ThemeProvider>
+          </Router>
+        </ApolloProvider>
+      </IntlProvider>
+    </StrictMode>
   );
 }
 
