@@ -17,7 +17,7 @@ export default function LoginLogoutButton() {
 
   return (
     <Button variant="contained" color="primary" onClick={handleClick}>
-      <UserContext.Consumer>{({ user }) => (user ? <F msg="logout" /> : <F msg="login" />)}</UserContext.Consumer>
+      {user ? <F msg="logout" /> : <F msg="login" />}
     </Button>
   );
 }

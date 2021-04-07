@@ -23,7 +23,7 @@
 
 ## 📯 Description
 
-federated social web blog app. basically, i'm trying to build an open-source Tumblr (RIP). passes [SWAT0](https://indieweb.org/SWAT0)!
+federated social web blog app. in short, i'm trying to build an open-source Tumblr (RIP). passes [SWAT0](https://indieweb.org/SWAT0)!
 
 ## 💾 Install
 
@@ -91,8 +91,8 @@ npm run test
 
 - pass [SWAT0](https://indieweb.org/SWAT0)
 - open source
-- easy to install
-- be a good, easy-to-use alternative to what's out there!
+- quick to install
+- be a good, straightforward-to-use alternative to what's out there!
 
 ## 📙 Learn More
 

@@ -17,7 +17,7 @@
 
 ## 📯 Description
 
-federated social web blog app. basically, i'm trying to build an open-source Tumblr (RIP). passes [SWAT0](https://indieweb.org/SWAT0)!
+federated social web blog app. in short, i'm trying to build an open-source Tumblr (RIP). passes [SWAT0](https://indieweb.org/SWAT0)!
 
 ## ⚡ Features
 
@@ -83,7 +83,7 @@ To run tests:
 npm run test
 ```
 
-To change port, in an `.env` change the values to what you desire:
+To change port, in an `.env` change the values to what you would like
 
 ```sh
 PORT=3000
@@ -123,8 +123,8 @@ Redis will be on port 3003. To set up Redis be sure to set REACT_APP_REDIS_HOST 
 
 - pass [SWAT0](https://indieweb.org/SWAT0)
 - open source
-- easy to install
-- be a good, easy-to-use alternative to what's out there!
+- quick to install
+- be a good, straightforward-to-use alternative to what's out there!
 
 ## 🗺️ Roadmap
 
@@ -137,7 +137,7 @@ Redis will be on port 3003. To set up Redis be sure to set REACT_APP_REDIS_HOST 
 - Multiple app capable
 - getting negative counts on dashboard - regression
 - Fault tolerant http
-- rm antiCache with migration to hooks <- needed anymore?
+- rm antiCache with migration to React hook <- needed anymore?
 - Package directories build sanely
 - Reader WordPress alt Tumblr alternative
 - freeze HMR when re-building
@@ -145,7 +145,7 @@ Redis will be on port 3003. To set up Redis be sure to set REACT_APP_REDIS_HOST 
 - don't have edit link on feed page / or redirect to content page
 - graphql errors should surface to top
 - use rebound?
-- kill debugger on run, just in case?
+- end debugger debugger on run, to be safe?
 - bin / fly prod should have npm corresponding command
 - think about igor's feedback re css and other stuff
 - high-res picture load in app, not new link
@@ -166,7 +166,7 @@ Redis will be on port 3003. To set up Redis be sure to set REACT_APP_REDIS_HOST 
     - to test suite https://micropub.rocks/
   - litepub?
   - list library on indieweb wiki later when more mature
-  - deprecate salmon, get rid of magic_keys - just stick with public keys
+  - deprecate salmon, get rid of magic_keys - stick with public keys
   - get rid of local fields: comments_count and comments_updated, favorites_count, derive instead
   - move urls to constants (foaf, webfinger, etc.)
   - rename fields to be consistent
@@ -225,7 +225,7 @@ Redis will be on port 3003. To set up Redis be sure to set REACT_APP_REDIS_HOST 
 - get rid of trailing slash on profile page
 - make install instructions dead-simple, one-liner with mysql mock db setup.
 - render HTML with inline styling (e.g. mentions)
-- getting an error in graphql seems to hang the apollo server. if so, update all-the-things, too.
+- getting an error in graphql seems to freeze the apollo server. if so, update all-the-things, too.
 - same Apollo query twice causes SSR to fail with htmlHead, wtf.
 - more GraphQL examples:
   - fragments
@@ -238,17 +238,17 @@ Redis will be on port 3003. To set up Redis be sure to set REACT_APP_REDIS_HOST 
 - see if `lazy` attribute can be a good substitute for ContentThumb's delay-loading logic (chrome 75)
 - finish up Admin panel to add/delete users
 - loading state when following someone new
-- invalid url (i.e. with http:) follow error on dashboard
+- incorrect url (i.e. with http:) follow error on dashboard
 
 ### p1 (medium pri)
 
 - web components? (e.g. check out youtube.com)
 - update material-ui with proper theme (instead of pixel.css)
-- should just follow self in dashboard, when posting new comment it goes to 'user remote' version.
+- should follow self in dashboard, when posting new comment it goes to 'user remote' version.
 - add site loading/working component, say when following a feed and it's working.
 - hubspot's draft-extend / draft-convert might be a better route than draft-js-plugins, maybe combine the two editors
 - more winston logging
-- links template just open embeds in lightbox?
+- links template should only open embeds in lightbox?
 - images open in lightbox
 - editor features to bring back (from Python version)
   - use CSS-in-JS in editor package to avoid having to import separately
@@ -258,7 +258,7 @@ Redis will be on port 3003. To set up Redis be sure to set REACT_APP_REDIS_HOST 
   - gotta fix @-mentioning for editing content (works for dashboard only now)
   - draft.js:
     - move paste code out of main index.js
-    - custom tab behavior - draft.js's default is lame
+    - custom tab behavior - draft.js's default is terrible
     - add markdown
       - https://github.com/withspectrum/draft-js-markdown-plugin
       - https://github.com/ngs/draft-js-markdown-shortcuts-plugin
@@ -282,7 +282,7 @@ Redis will be on port 3003. To set up Redis be sure to set REACT_APP_REDIS_HOST 
   - create new sections / albums, renames (and redirects)
   - content rename (and redirects)
   - draggable, be able to drag album, sitemap, followers and move to different categories
-  - simple content is uneditable
+  - some content is uneditable (like from `Simple.js`)
   - audio/video uploads
   - css/js live updates to wysiwyg
   - figcaption
@@ -302,6 +302,7 @@ Redis will be on port 3003. To set up Redis be sure to set REACT_APP_REDIS_HOST 
   - media manager: had support for video/audio/images
   - resumable uploads
   - edit images
+  <!--alex disable adult-->
   - newsletter, google analytics, basic ads, adult content flag
   - Structured data w movies music
   - content management
@@ -318,7 +319,7 @@ Redis will be on port 3003. To set up Redis be sure to set REACT_APP_REDIS_HOST 
 
 ### p2 (ideas)
 
-- look at/switch over to React Hooks
+- look at/switch over to a React Hook
 
 ## 📙 Learn More
 
