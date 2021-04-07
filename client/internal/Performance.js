@@ -2,6 +2,7 @@ import Button from '@material-ui/core/Button';
 import classNames from 'classnames';
 import { createUseStyles } from 'react-jss';
 import Popover from '@material-ui/core/Popover';
+import reportWebVitals from 'client/app/reportWebVitals';
 import { useEffect, useState } from 'react';
 
 const useStyles = createUseStyles({
@@ -30,6 +31,14 @@ const useStyles = createUseStyles({
   },
 });
 
+const WEB_VITALS_NAME_TO_READABLE = {
+  CLS: 'cumulative-layout-shift (Web Vital)',
+  FID: 'first-input-delay (Web Vital)',
+  FCP: 'first-contentful-paint (Web Vital)',
+  LCP: 'largest-contentful-paint (Web Vital)',
+  TTFB: 'time-to-first-byte (Web Vital)',
+};
+
 // Provides insight into how long the initial render took.
 // Relies heavily on window['performance'] for now.
 // Could be improved with some more server-side stats and with some metrics on
@@ -39,6 +48,7 @@ export default function Performance() {
   const [duration, setDuration] = useState(0);
   const [navigationEntry, setNavigationEntry] = useState(null);
   const [paintEntries, setPaintEntries] = useState(null);
+  const [webVitalEntries, setWebVitalEntries] = useState({});
 
   const styles = useStyles();
 
@@ -68,6 +78,12 @@ export default function Performance() {
     });
   }, []);
 
+  useEffect(() => {
+    reportWebVitals(({ name, value }) =>
+      setWebVitalEntries((currentEntries) => ({ ...currentEntries, [name]: value }))
+    );
+  }, []);
+
   function renderPerfInfo() {
     if (!navigationEntry || !paintEntries || !anchorEl) {
       return null;
@@ -77,6 +93,9 @@ export default function Performance() {
     paintEntries.forEach((entry) => {
       entries[entry.name] = entry.startTime;
     });
+    for (const key in webVitalEntries) {
+      entries[key] = webVitalEntries[key];
+    }
 
     const relevantTimingKeys = [
       'redirectStart',
@@ -91,13 +110,19 @@ export default function Performance() {
       'responseStart',
       'responseEnd',
       'first-paint',
-      'first-contentful-paint',
       'domInteractive',
       'domContentLoadedEventStart',
       'domContentLoadedEventEnd',
       'domComplete',
       'loadEventStart',
       'loadEventEnd',
+
+      // Web Vitals: https://web.dev/vitals/
+      'CLS',
+      'FID',
+      'FCP',
+      'LCP',
+      'TTFB',
     ];
 
     return (
@@ -107,7 +132,9 @@ export default function Performance() {
           .sort((a, b) => entries[a] - entries[b])
           .map((timing) => (
             <tr key={timing}>
-              <td className={styles.entryType}>{timing}</td>
+              <td className={styles.entryType}>
+                {WEB_VITALS_NAME_TO_READABLE[timing] ? WEB_VITALS_NAME_TO_READABLE[timing] : timing}
+              </td>
               <td className={styles.entryData}>{entries[timing].toFixed(1)}</td>
             </tr>
           ))}
