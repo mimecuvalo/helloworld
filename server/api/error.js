@@ -20,6 +20,21 @@ const clientsideErrorsLogger = winston.createLogger({
   ],
 });
 
+const serversideErrorsLogger = winston.createLogger({
+  format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
+  transports: [
+    new WinstonDailyRotateFile({
+      name: 'serverside-exceptions',
+      filename: path.resolve(process.cwd(), 'logs', 'serverside-exceptions-%DATE%.log'),
+      zippedArchive: true,
+    }),
+  ],
+});
+
+process.on('unhandledRejection', (err) => {
+  serversideErrorsLogger.error(err);
+});
+
 const router = express.Router();
 router.get('/', (req, res) => {
   clientsideErrorsLogger.error(JSON.parse(req.query.data));

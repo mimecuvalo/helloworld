@@ -28,11 +28,16 @@ const apiLimiter = rateLimit({
   max: 100,
 });
 
-router.get('/clientside-exceptions', apiLimiter, async (req, res) => {
-  let exceptions = '';
+router.get('/list-exceptions', apiLimiter, async (req, res) => {
+  let clientExceptionsRaw = '',
+    serverExceptionsRaw = '';
   try {
-    exceptions = fs.readFileSync(
+    clientExceptionsRaw = fs.readFileSync(
       path.resolve(process.cwd(), 'logs', `clientside-exceptions-${new Date().toISOString().slice(0, 10)}.log`),
+      'utf8'
+    );
+    serverExceptionsRaw = fs.readFileSync(
+      path.resolve(process.cwd(), 'logs', `serverside-exceptions-${new Date().toISOString().slice(0, 10)}.log`),
       'utf8'
     );
   } catch (ex) {
@@ -40,13 +45,18 @@ router.get('/clientside-exceptions', apiLimiter, async (req, res) => {
     console.log(ex);
   }
 
-  const individualExceptions = exceptions
+  const individualClientExceptions = clientExceptionsRaw
     .split('\n')
     .map((e) => e && JSON.parse(e))
     .filter((e) => e);
-  const groupedExceptions = _.groupBy(individualExceptions, 'message');
+  const clientExceptions = _.groupBy(individualClientExceptions, 'message');
+  const individualServerExceptions = serverExceptionsRaw
+    .split('\n')
+    .map((e) => e && JSON.parse(e))
+    .filter((e) => e);
+  const serverExceptions = _.groupBy(individualServerExceptions, 'message');
 
-  res.json({ exceptions: groupedExceptions });
+  res.json({ clientExceptions, serverExceptions });
 });
 
 router.get('/experiments', async (req, res) => {
