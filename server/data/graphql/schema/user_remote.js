@@ -1,33 +1,44 @@
 import { gql } from 'apollo-server-express';
 
-const commonFields = `
-  local_username: String!
-  username: String!
-  name: String!
-  profile_url: String!
-  salmon_url: String
-  activitypub_actor_url: String
-  activitypub_inbox_url: String
-  webmention_url: String
-  magic_key: String
-  follower: Boolean!
-  following: Boolean!
-  feed_url: String!
-  hub_url: String
-  avatar: String!
-  favicon: String
-  sort_type: String
-`;
-
 // Keep in sync with both models/user_remote.js and migrations/[date]-create-user-remote.js
 export default gql`
   type UserRemotePrivate {
-    ${commonFields}
+    local_username: String!
+    username: String!
+    name: String!
+    profile_url: String!
+    salmon_url: String
+    activitypub_actor_url: String
+    activitypub_inbox_url: String
+    webmention_url: String
+    magic_key: String
+    follower: Boolean!
+    following: Boolean!
+    feed_url: String!
+    hub_url: String
+    avatar: String!
+    favicon: String
+    sort_type: String
     order: Int!
   }
 
   type UserRemotePublic {
-    ${commonFields}
+    local_username: String!
+    username: String!
+    name: String!
+    profile_url: String!
+    salmon_url: String
+    activitypub_actor_url: String
+    activitypub_inbox_url: String
+    webmention_url: String
+    magic_key: String
+    follower: Boolean!
+    following: Boolean!
+    feed_url: String!
+    hub_url: String
+    avatar: String!
+    favicon: String
+    sort_type: String
   }
 
   extend type Query {
