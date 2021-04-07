@@ -1,6 +1,6 @@
-import classNames from 'classnames';
 import { F } from 'react-intl-wrapper';
 import FollowingSpecialFeedCountsQuery from 'client/dashboard/FollowingSpecialFeedCountsQuery';
+import classNames from 'classnames';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
 import useStyles from './actionsStyles';

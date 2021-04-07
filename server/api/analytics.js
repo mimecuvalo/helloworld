@@ -1,7 +1,7 @@
+import WinstonDailyRotateFile from 'winston-daily-rotate-file';
 import express from 'express';
 import path from 'path';
 import winston from 'winston';
-import WinstonDailyRotateFile from 'winston-daily-rotate-file';
 
 const analyticsLogger = winston.createLogger({
   format: winston.format.combine(winston.format.timestamp(), winston.format.json()),

@@ -1,6 +1,6 @@
-import serverRender from './App';
-import { BrowserRouter as Router } from 'react-router-dom';
 import ReactDOM from 'react-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
+import serverRender from './App';
 
 it('renders server without crashing', () => {
   serverRender({

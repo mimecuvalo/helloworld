@@ -1,8 +1,9 @@
+import { defineMessages, useIntl } from 'react-intl-wrapper';
+
 import ContentBase from './ContentBase';
 import ContentLink from 'client/components/ContentLink';
 import ContentThumb from 'client/components/ContentThumb';
 import { createUseStyles } from 'react-jss';
-import { defineMessages, useIntl } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
 import { memo } from 'react';
 import { useQuery } from '@apollo/client';

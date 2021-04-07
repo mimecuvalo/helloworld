@@ -1,13 +1,14 @@
+import { forwardRef, useImperativeHandle, useRef } from 'react';
+
 import Album from './templates/Album';
 import Archive from './templates/Archive';
-import classNames from 'classnames';
 import Comments from './Comments';
 import Favorites from './Favorites';
 import Footer from './Footer';
 import Header from './Header';
 import Latest from './templates/Latest';
-import { forwardRef, useImperativeHandle, useRef } from 'react';
 import Simple from './templates/Simple';
+import classNames from 'classnames';
 
 const COMPONENT_TYPE_MAP = {
   album: Album,

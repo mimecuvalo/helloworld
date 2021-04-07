@@ -1,4 +1,5 @@
 import { accept, createArticle, findUserRemote, handle } from './activitystreams';
+
 import { buildUrl } from './util/url_factory';
 import crypto from 'crypto';
 import express from 'express';

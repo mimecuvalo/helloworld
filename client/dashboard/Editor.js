@@ -1,19 +1,20 @@
+import { EditorState, convertFromRaw } from 'draft-js';
+import { F, defineMessages } from 'react-intl-wrapper';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { useMutation, useQuery } from '@apollo/client';
+
 import Button from '@material-ui/core/Button';
-import classNames from 'classnames';
 import ContentEditor from 'client/content/ContentEditor';
-import { convertFromRaw, EditorState } from 'draft-js';
 import Cookies from 'js-cookie';
-import { createUseStyles } from 'react-jss';
-import { defineMessages, F } from 'react-intl-wrapper';
 //import { EditorUtils } from 'hello-world-editor';
 import FormControl from '@material-ui/core/FormControl';
-import gql from 'graphql-tag';
 import HiddenSnackbarShim from 'client/components/HiddenSnackbarShim';
 import MenuItem from '@material-ui/core/MenuItem';
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import Select from '@material-ui/core/Select';
 import Toolbar from '@material-ui/core/Toolbar';
-import { useMutation, useQuery } from '@apollo/client';
+import classNames from 'classnames';
+import { createUseStyles } from 'react-jss';
+import gql from 'graphql-tag';
 
 const useStyles = createUseStyles({
   editor: {},

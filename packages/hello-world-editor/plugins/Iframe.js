@@ -1,5 +1,6 @@
+import { cloneElement, isValidElement } from 'react';
+
 import { createPlugin } from 'draft-extend';
-import { isValidElement, cloneElement } from 'react';
 
 const BLOCK_TYPE = 'atomic';
 const ENTITY_TYPE = 'IFRAME';

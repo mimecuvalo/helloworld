@@ -1,6 +1,6 @@
 import A11y from './A11y';
-import { createUseStyles } from 'react-jss';
 import Performance from './Performance';
+import { createUseStyles } from 'react-jss';
 
 const useStyles = createUseStyles({
   debug: {

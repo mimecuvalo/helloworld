@@ -1,8 +1,9 @@
+import { defineMessages, useIntl } from 'react-intl-wrapper';
+
+import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import { contentUrl } from 'shared/util/url_factory';
 import { createUseStyles } from 'react-jss';
-import { defineMessages, useIntl } from 'react-intl-wrapper';
-import { Link } from 'react-router-dom';
 import { useRef } from 'react';
 
 const useStyles = createUseStyles({

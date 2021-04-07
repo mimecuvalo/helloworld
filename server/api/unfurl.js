@@ -1,7 +1,8 @@
+import { createAbsoluteUrl, fetchUrl } from 'server/util/crawler';
+
 import _ from 'lodash';
 import cheerio from 'cheerio';
 import express from 'express';
-import { fetchUrl, createAbsoluteUrl } from 'server/util/crawler';
 
 const IFRAME_ALLOW = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
 

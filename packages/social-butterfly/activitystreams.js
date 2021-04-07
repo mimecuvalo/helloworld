@@ -1,12 +1,13 @@
-import { buildUrl } from './util/url_factory';
-import { fetchJSON } from './util/crawler';
-import { follow as emailFollow } from './email';
 import { getActivityPubActor, getUserRemoteInfo } from './discover_user';
-import { mention as emailMention } from './email';
-import { nanoid } from 'nanoid';
-import { sanitizeHTML } from './util/crawler';
+
 import { send as activityPubSend } from './activitypub';
+import { buildUrl } from './util/url_factory';
+import { follow as emailFollow } from './email';
+import { mention as emailMention } from './email';
+import { fetchJSON } from './util/crawler';
+import { nanoid } from 'nanoid';
 import { send as salmonSend } from './salmon';
+import { sanitizeHTML } from './util/crawler';
 import syndicate from './syndicate';
 
 export async function accept(req, contentOwner, userRemote) {

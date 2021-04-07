@@ -1,5 +1,6 @@
-import { combineResolvers } from 'graphql-resolvers';
 import { isAdmin, isAuthor } from './authorization';
+
+import { combineResolvers } from 'graphql-resolvers';
 import { profileUrl } from 'shared/util/url_factory';
 import socialButterfly from 'server/social-butterfly';
 

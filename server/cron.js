@@ -1,5 +1,6 @@
-import schedule from 'node-schedule';
 import * as Sentry from '@sentry/node';
+
+import schedule from 'node-schedule';
 
 function reportingErrors(handler) {
   return async () => {

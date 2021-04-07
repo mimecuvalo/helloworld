@@ -1,4 +1,4 @@
-import { defineMessages, F, useIntl } from 'react-intl-wrapper';
+import { F, defineMessages, useIntl } from 'react-intl-wrapper';
 
 const messages = defineMessages({
   reply: { msg: 'replying to' },

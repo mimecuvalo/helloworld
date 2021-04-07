@@ -1,6 +1,7 @@
+import { findUserRemote, handle } from './activitystreams';
+
 import fetch from 'node-fetch';
 import { getUserRemoteInfo } from './discover_user';
-import { findUserRemote, handle } from './activitystreams';
 import magic from 'magic-signatures';
 
 export async function send(req, userRemote, contentOwner, data) {

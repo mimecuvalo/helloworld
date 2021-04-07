@@ -1,6 +1,7 @@
 import { contentUrl, parseContentUrl, profileUrl } from 'shared/util/url_factory';
-import models from 'server/data/models';
+
 import Sequelize from 'sequelize';
+import models from 'server/data/models';
 import socialButterfly from 'social-butterfly';
 
 let isSetup = false;

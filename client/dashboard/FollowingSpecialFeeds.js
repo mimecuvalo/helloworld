@@ -1,12 +1,12 @@
 import Avatar from './Avatar';
-import classNames from 'classnames';
 import { F } from 'react-intl-wrapper';
 import FollowingAllMenu from './FollowingAllMenu';
 import FollowingSpecialFeedCountsQuery from './FollowingSpecialFeedCountsQuery';
 import { FormattedNumber } from 'react-intl-wrapper';
+import UserContext from 'client/app/User_Context';
+import classNames from 'classnames';
 import { useContext } from 'react';
 import { useQuery } from '@apollo/client';
-import UserContext from 'client/app/User_Context';
 import useStyles from './remoteUsersStyles';
 
 export default function FollowingSpecialFeeds(props) {

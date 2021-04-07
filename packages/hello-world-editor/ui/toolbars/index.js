@@ -5,17 +5,17 @@ import {
   CodeBlockButton,
   HeaderButton,
   ImageButton,
-  //  LinkButton,
   NumberedListButton,
   StrikethroughButton,
 } from './Buttons';
+import { styles as sideToolbarStyles, useStyles as useSideToolbarStyles } from './sideToolbarStyles';
+import { styles as toolbarStyles, useStyles as useToolbarStyles } from './toolbarStyles';
+
+import { Separator } from '@draft-js-plugins/inline-toolbar';
+import Toolbar from '@material-ui/core/Toolbar';
 import createInlineToolbarPlugin from '@draft-js-plugins/inline-toolbar';
 import createLinkPlugin from '@draft-js-plugins/anchor';
 import createSideToolbarPlugin from '@draft-js-plugins/side-toolbar';
-import { Separator } from '@draft-js-plugins/inline-toolbar';
-import { styles as toolbarStyles, useStyles as useToolbarStyles } from './toolbarStyles';
-import Toolbar from '@material-ui/core/Toolbar';
-import { styles as sideToolbarStyles, useStyles as useSideToolbarStyles } from './sideToolbarStyles';
 
 // TODO(mime): rewrite this one day. it's annoying to work with.
 // Plus, this probably conflicts with plugins/Anchor.js :-/

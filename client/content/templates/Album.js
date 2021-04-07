@@ -1,11 +1,12 @@
-import classNames from 'classnames';
+import { F, defineMessages, useIntl } from 'react-intl-wrapper';
+import { useMutation, useQuery } from '@apollo/client';
+
 import ContentLink from 'client/components/ContentLink';
 import ContentThumb from 'client/components/ContentThumb';
+import classNames from 'classnames';
 import { createUseStyles } from 'react-jss';
-import { defineMessages, F, useIntl } from 'react-intl-wrapper';
-import gql from 'graphql-tag';
 import { forwardRef } from 'react';
-import { useQuery, useMutation } from '@apollo/client';
+import gql from 'graphql-tag';
 import { useSnackbar } from 'notistack';
 
 const useStyles = createUseStyles({

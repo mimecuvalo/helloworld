@@ -1,4 +1,5 @@
-import { defineMessages, F, useIntl } from 'react-intl-wrapper';
+import { F, defineMessages, useIntl } from 'react-intl-wrapper';
+
 import useStyles from './errorStyles';
 
 const messages = defineMessages({

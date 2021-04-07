@@ -1,15 +1,16 @@
+import { F, defineMessages, useIntl } from 'react-intl-wrapper';
+import { List, ListItem, ListItemText } from '@material-ui/core';
+import { useEffect, useState } from 'react';
+
 import Checkbox from '@material-ui/core/Checkbox';
 import Cookies from 'js-cookie';
-import { createUseStyles } from 'react-jss';
-import { defineMessages, F, useIntl } from 'react-intl-wrapper';
-import gql from 'graphql-tag';
 import HelpOutlineRoundedIcon from '@material-ui/icons/HelpOutlineRounded';
 import IconButton from '@material-ui/core/IconButton';
-import { List, ListItem, ListItemText } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { useEffect, useState } from 'react';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import { createUseStyles } from 'react-jss';
+import gql from 'graphql-tag';
 import { useQuery } from '@apollo/client';
 
 const useStyles = createUseStyles({

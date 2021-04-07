@@ -1,8 +1,9 @@
-import { F } from 'react-intl-wrapper';
-import { profileUrl } from 'shared/util/url_factory';
 import { useContext, useEffect, useState } from 'react';
-import { setUser } from 'client/app/auth';
+
+import { F } from 'react-intl-wrapper';
 import UserContext from 'client/app/User_Context';
+import { profileUrl } from 'shared/util/url_factory';
+import { setUser } from 'client/app/auth';
 
 export default function Tools({ className }) {
   const user = useContext(UserContext).user;

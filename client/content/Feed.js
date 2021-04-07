@@ -1,9 +1,10 @@
-import { createUseStyles } from 'react-jss';
+import { useEffect, useState } from 'react';
+
 import { F } from 'react-intl-wrapper';
-import gql from 'graphql-tag';
 import InfiniteFeed from 'client/components/InfiniteFeed';
 import Item from './Item';
-import { useEffect, useState } from 'react';
+import { createUseStyles } from 'react-jss';
+import gql from 'graphql-tag';
 import { useQuery } from '@apollo/client';
 import useWindowSize from 'client/components/windowSize';
 

@@ -1,6 +1,6 @@
 import { F } from 'react-intl-wrapper';
-import gql from 'graphql-tag';
 import MenuItem from '@material-ui/core/MenuItem';
+import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
 
 const TOGGLE_SORT_FEED = gql`

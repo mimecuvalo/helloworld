@@ -1,4 +1,4 @@
-import { BlockMapBuilder, CharacterMetadata, ContentBlock, EditorState, genKey, Modifier } from 'draft-js';
+import { BlockMapBuilder, CharacterMetadata, ContentBlock, EditorState, Modifier, genKey } from 'draft-js';
 import { List, Repeat } from 'immutable';
 
 // See https://github.com/facebook/draft-js/issues/553

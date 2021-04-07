@@ -1,6 +1,6 @@
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { linkTo } from '@storybook/addon-links';
+import { storiesOf } from '@storybook/react';
 
 /**
  * Setup for the Storybook styleguide component which lives at http://localhost:9001 by default.

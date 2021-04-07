@@ -1,8 +1,9 @@
+import { Route, Switch } from 'react-router-dom';
+
 import Content from 'client/content/Content';
 import Dashboard from 'client/dashboard/Dashboard';
 import Footer from './Footer';
 import Header from './Header';
-import { Route, Switch } from 'react-router-dom';
 import ScrollToTop from './ScrollToTop';
 import Search from 'client/content/Search';
 

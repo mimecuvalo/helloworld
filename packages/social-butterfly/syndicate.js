@@ -1,10 +1,10 @@
+import { reply as activityStreamsReply } from './activitystreams';
 import cheerio from 'cheerio';
 import { convertFromRaw } from 'draft-js';
 import { comment as emailComment } from './email';
 import { ensureAbsoluteUrl } from './util/url_factory';
 import fetch from 'node-fetch';
 import { fetchText } from './util/crawler';
-import { reply as activityStreamsReply } from './activitystreams';
 import { reply as webmentionReply } from './webmention';
 
 export default (options) =>

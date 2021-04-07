@@ -1,11 +1,12 @@
-import classNames from 'classnames';
-import { defineMessages, F, useIntl } from 'react-intl-wrapper';
+import { F, defineMessages, useIntl } from 'react-intl-wrapper';
+
 import FollowingFeeds from './FollowingFeeds';
 import FollowingQuery from './FollowingQuery';
 import FollowingSpecialFeeds from './FollowingSpecialFeeds';
 import NewFeed from './actions/NewFeed';
-import { useRef } from 'react';
+import classNames from 'classnames';
 import { useQuery } from '@apollo/client';
+import { useRef } from 'react';
 import useStyles from './remoteUsersStyles';
 
 const messages = defineMessages({

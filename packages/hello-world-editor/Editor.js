@@ -1,9 +1,10 @@
 import './Draft.css';
 import './Editor.css';
-import classNames from 'classnames';
-import { convertFromHTML } from 'draft-convert';
-import { createUseStyles } from 'react-jss';
-import { defineMessages } from 'react-intl';
+
+import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
+import Emojis, { emojiPlugin } from './ui/autocomplete/Emojis';
+import Mentions, { mentionPlugin } from './ui/autocomplete/Mentions';
+import Toolbars, { inlineToolbarPlugin, linkPlugin, sideToolbarPlugin } from './ui/toolbars';
 import draftJSExtendPlugins, {
   alignmentPlugin,
   blockDndPlugin,
@@ -16,17 +17,18 @@ import draftJSExtendPlugins, {
   replyPlugin,
   rsvpPlugin,
 } from './plugins';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { handleKeyCommand, keyBindingFn } from './input/keyboard';
+
 import Editor from '@draft-js-plugins/editor';
 import EditorUtils from '@draft-js-plugins/utils';
-import { convertFromRaw, convertToRaw, EditorState } from 'draft-js';
-import Emojis, { emojiPlugin } from './ui/autocomplete/Emojis';
-import { handleKeyCommand, keyBindingFn } from './input/keyboard';
 import HiddenSnackbarShim from './ui/HiddenSnackbarShim';
 import { IntlProvider } from 'react-intl';
-import Mentions, { mentionPlugin } from './ui/autocomplete/Mentions';
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { SnackbarProvider } from 'notistack';
-import Toolbars, { inlineToolbarPlugin, linkPlugin, sideToolbarPlugin } from './ui/toolbars';
+import classNames from 'classnames';
+import { convertFromHTML } from 'draft-convert';
+import { createUseStyles } from 'react-jss';
+import { defineMessages } from 'react-intl';
 import unfurl from './media/unfurl';
 import uploadFiles from './media/attachment';
 

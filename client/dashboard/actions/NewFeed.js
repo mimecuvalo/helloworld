@@ -1,11 +1,12 @@
-import classNames from 'classnames';
 import { defineMessages, useIntl } from 'react-intl-wrapper';
+
 import { F } from 'react-intl-wrapper';
-import gql from 'graphql-tag';
 import FollowingFeedCountsQuery from 'client/dashboard/FollowingFeedCountsQuery';
 import FollowingQuery from 'client/dashboard/FollowingQuery';
 import FollowingSpecialFeedCountsQuery from 'client/dashboard/FollowingSpecialFeedCountsQuery';
 import MenuItem from '@material-ui/core/MenuItem';
+import classNames from 'classnames';
+import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
 import { useSnackbar } from 'notistack';
 import useStyles from './actionsStyles';

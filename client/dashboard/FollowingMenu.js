@@ -1,13 +1,14 @@
+import { F, defineMessages, useIntl } from 'react-intl-wrapper';
+
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import { defineMessages, F, useIntl } from 'react-intl-wrapper';
 import IconButton from '@material-ui/core/IconButton';
 import MarkAllAsRead from './actions/MarkAllAsRead';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { useState } from 'react';
 import Sort from './actions/Sort';
 import UnfollowFeed from './actions/UnfollowFeed';
 import ViewAlreadyRead from './actions/ViewAlreadyRead';
+import { useState } from 'react';
 import useStyles from './remoteUsersStyles';
 
 const messages = defineMessages({

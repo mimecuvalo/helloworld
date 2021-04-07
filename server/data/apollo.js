@@ -1,8 +1,8 @@
 import { ApolloServer } from 'apollo-server-express';
 import createLoaders from './graphql/loaders';
 import models from './models';
-import typeDefs from './graphql/schema';
 import resolvers from './graphql/resolvers';
+import typeDefs from './graphql/schema';
 
 /**
  * The main entry point for our Apollo/GraphQL server.

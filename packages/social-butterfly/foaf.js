@@ -1,6 +1,6 @@
 import { buildUrl } from './util/url_factory';
-import crypto from 'crypto';
 import { createElement } from 'react';
+import crypto from 'crypto';
 import { renderToString } from 'react-dom/server';
 
 export default (options) => async (req, res) => {

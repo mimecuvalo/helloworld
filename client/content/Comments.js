@@ -1,15 +1,16 @@
-import classNames from 'classnames';
-import configuration from 'client/app/configuration';
+import { F, defineMessages, useIntl } from 'react-intl-wrapper';
+import { useContext, useEffect, useRef, useState } from 'react';
+
 import ContentQuery from './ContentQuery';
-import { createLock } from 'client/app/auth';
-import { createUseStyles } from 'react-jss';
-import { defineMessages, F, useIntl } from 'react-intl-wrapper';
 import Delete from 'client/dashboard/actions/Delete';
 //import { Editor } from 'hello-world-editor';
 import Favorite from 'client/dashboard/actions/Favorite';
-import gql from 'graphql-tag';
-import { useContext, useEffect, useRef, useState } from 'react';
 import UserContext from 'client/app/User_Context';
+import classNames from 'classnames';
+import configuration from 'client/app/configuration';
+import { createLock } from 'client/app/auth';
+import { createUseStyles } from 'react-jss';
+import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
 import { useSnackbar } from 'notistack';
 

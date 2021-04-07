@@ -1,18 +1,20 @@
-import AdminApp from 'client/admin';
 import './analytics';
 import './App.css';
 import 'client/content/EditorPlugin.css'; // XXX(mime): this is a complete hack for now.
-import classNames from 'classnames';
-import clientHealthCheck from './client_health_check';
-import CloseIcon from '@material-ui/icons/Close';
+
+import { Route, Switch } from 'react-router-dom';
+import { SnackbarProvider, useSnackbar } from 'notistack';
 import { defineMessages, useIntl } from 'react-intl-wrapper';
+import { useEffect, useState } from 'react';
+
+import AdminApp from 'client/admin';
+import CloseIcon from '@material-ui/icons/Close';
 import ErrorBoundary from 'client/error/ErrorBoundary';
 import IconButton from '@material-ui/core/IconButton';
 import MainApp from './Main';
-import { Route, Switch } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { SnackbarProvider, useSnackbar } from 'notistack';
 import UserContext from './User_Context';
+import classNames from 'classnames';
+import clientHealthCheck from './client_health_check';
 
 const messages = defineMessages({
   close: { msg: 'Close' },

@@ -1,14 +1,15 @@
+import { contentUrl, profileUrl } from 'shared/util/url_factory';
+import { isAdmin, isAuthor } from './authorization';
+
+import Sequelize from 'sequelize';
 import cheerio from 'cheerio';
 import { combineResolvers } from 'graphql-resolvers';
-import { contentUrl, profileUrl } from 'shared/util/url_factory';
 import { convertFromRaw } from 'draft-js';
 import { convertToHTML } from 'draft-convert';
 //import { EditorHTMLPlugins } from 'hello-world-editor';
 import { escapeRegExp } from 'shared/util/regex';
-import { isAdmin, isAuthor } from './authorization';
 import { isRobotViewing } from 'server/util/crawler';
 import { nanoid } from 'nanoid';
-import Sequelize from 'sequelize';
 import socialButterfly from 'server/social-butterfly';
 
 const ATTRIBUTES_NAVIGATION = [

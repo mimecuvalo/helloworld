@@ -1,22 +1,23 @@
+import { EditorState, convertFromRaw } from 'draft-js';
 import { buildUrl, contentUrl } from 'shared/util/url_factory';
-import classNames from 'classnames';
+import { defineMessages, useIntl } from 'react-intl-wrapper';
+import { memo, useEffect, useRef, useState } from 'react';
+import { useMutation, useQuery } from '@apollo/client';
+
 import ContentBase from './ContentBase';
 import ContentQuery from './ContentQuery';
-import { convertFromRaw, EditorState } from 'draft-js';
-import { createUseStyles } from 'react-jss';
-import { defineMessages, useIntl } from 'react-intl-wrapper';
 //import { EditorUtils } from 'hello-world-editor';
 import Feed from './Feed';
-import gql from 'graphql-tag';
-import isMobile from 'is-mobile';
 import Item from './Item';
 import Nav from './Nav';
 import NotFound from 'client/error/404';
-import { memo, useEffect, useRef, useState } from 'react';
 import Simple from './templates/Simple';
 import SwipeListener from 'swipe-listener';
+import classNames from 'classnames';
+import { createUseStyles } from 'react-jss';
+import gql from 'graphql-tag';
+import isMobile from 'is-mobile';
 import { useHistory } from 'react-router-dom';
-import { useQuery, useMutation } from '@apollo/client';
 import { useSnackbar } from 'notistack';
 
 const useStyles = createUseStyles({

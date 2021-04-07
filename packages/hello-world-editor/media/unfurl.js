@@ -1,6 +1,7 @@
+import { getTextForLine, insertTextAtLine } from '../utils/Text';
+
 import { buildUrl } from '../utils/url_factory';
 import { createNewBlock } from '../utils/Blocks';
-import { getTextForLine, insertTextAtLine } from '../utils/Text';
 import mime from 'mime/lite';
 
 const IFRAME_ALLOW = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';

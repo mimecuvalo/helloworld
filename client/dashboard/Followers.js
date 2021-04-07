@@ -1,7 +1,7 @@
 import Avatar from './Avatar';
-import classNames from 'classnames';
 import { F } from 'react-intl-wrapper';
 import FollowerMenu from './FollowerMenu';
+import classNames from 'classnames';
 import gql from 'graphql-tag';
 import { useQuery } from '@apollo/client';
 import useStyles from './remoteUsersStyles';

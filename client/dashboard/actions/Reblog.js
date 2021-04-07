@@ -1,5 +1,5 @@
-import classNames from 'classnames';
 import { F } from 'react-intl-wrapper';
+import classNames from 'classnames';
 import useStyles from './actionsStyles';
 
 export default function Reblog({ contentRemote, getEditor }) {

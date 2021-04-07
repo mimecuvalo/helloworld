@@ -1,19 +1,19 @@
 import ActivityPub from './activitypub';
 import Comments from './comments';
-import express from 'express';
-import Feed from './feed';
 import FOAF from './foaf';
+import Feed from './feed';
 import Follow from './follow';
 import HostMeta from './host_meta';
-import { like } from './activitystreams';
 import OEmbed from './oembed';
 import Salmon from './salmon';
-import schedule from 'node-schedule';
-import syndicate from './syndicate';
-import updateFeeds from './update_feeds';
 import WebFinger from './webfinger';
 import WebMention from './webmention';
 import WebSub from './websub';
+import express from 'express';
+import { like } from './activitystreams';
+import schedule from 'node-schedule';
+import syndicate from './syndicate';
+import updateFeeds from './update_feeds';
 
 export default (options) => {
   options.webSubSubscriberServer = WebSub(options);

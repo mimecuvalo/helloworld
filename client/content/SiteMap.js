@@ -1,16 +1,17 @@
+import { F, defineMessages, useIntl } from 'react-intl-wrapper';
 import { buildUrl, profileUrl } from 'shared/util/url_factory';
-import classNames from 'classnames';
+
 import CloseIcon from '@material-ui/icons/Close';
-import constants from 'shared/constants';
 import ContentLink from 'client/components/ContentLink';
-import { createUseStyles } from 'react-jss';
-import { defineMessages, F, useIntl } from 'react-intl-wrapper';
-import gql from 'graphql-tag';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import { useState } from 'react';
+import classNames from 'classnames';
+import constants from 'shared/constants';
+import { createUseStyles } from 'react-jss';
+import gql from 'graphql-tag';
 import { useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
+import { useState } from 'react';
 
 const useStyles = createUseStyles({
   sitemap: {

@@ -1,8 +1,9 @@
-import cheerio from 'cheerio';
+import { createAbsoluteUrl, fetchText, fetchUrl, sanitizeHTML } from './crawler';
+
 import FeedParser from 'feedparser';
-import { fetchText, fetchUrl, createAbsoluteUrl, sanitizeHTML } from './crawler';
 import { HTTPError } from './exceptions';
 import { Readable } from 'stream';
+import cheerio from 'cheerio';
 
 export async function discoverAndParseFeedFromUrl(url) {
   const { content, feedUrl } = await discoverAndRetrieveFeedFromUrl(url);

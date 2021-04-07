@@ -1,8 +1,9 @@
+import { forwardRef, useEffect, useState } from 'react';
+
 import Archive from './Archive';
+import Simple from './Simple';
 import { contentUrl } from 'shared/util/url_factory';
 import gql from 'graphql-tag';
-import { forwardRef, useEffect, useState } from 'react';
-import Simple from './Simple';
 import { useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 

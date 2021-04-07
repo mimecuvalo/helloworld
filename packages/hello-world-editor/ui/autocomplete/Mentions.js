@@ -1,4 +1,5 @@
 import createMentionPlugin, { defaultSuggestionsFilter } from '@draft-js-plugins/mention';
+
 import { useState } from 'react';
 
 const mentionStyles = {

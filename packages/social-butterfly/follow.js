@@ -1,9 +1,10 @@
+import { parseFeedAndInsertIntoDb, retrieveFeed } from './util/feeds';
+
+import FollowConfirm from './follow_confirm';
+import { follow as activityStreamsFollow } from './activitystreams';
 import { buildUrl } from './util/url_factory';
 import { discoverUserRemoteInfoSaveAndSubscribe } from './discover_user';
 import express from 'express';
-import { follow as activityStreamsFollow } from './activitystreams';
-import FollowConfirm from './follow_confirm';
-import { parseFeedAndInsertIntoDb, retrieveFeed } from './util/feeds';
 import { renderToString } from 'react-dom/server';
 
 export default (options) => {

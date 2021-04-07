@@ -1,16 +1,18 @@
+import * as languages from 'shared/i18n-lang-packs';
+
+import { IntlProvider, getDefaultLocale, getLocaleFromRequest, getLocales, setLocales } from 'react-intl-wrapper';
+import { JssProvider, SheetsRegistry, createGenerateId } from 'react-jss';
+import { ServerStyleSheets, ThemeProvider } from '@material-ui/core/styles';
+
 import { ApolloProvider } from '@apollo/client';
 import App from 'client/app/App';
+import HTMLBase from './HTMLBase';
+import { StaticRouter } from 'react-router';
 import createApolloClient from 'server/data/apollo_client';
 import { getDataFromTree } from '@apollo/client/react/ssr';
 import getExperiments from './experiments';
-import HTMLBase from './HTMLBase';
 import { initializeLocalState } from 'shared/data/local_state';
-import { IntlProvider, getDefaultLocale, getLocaleFromRequest, getLocales, setLocales } from 'react-intl-wrapper';
-import { JssProvider, SheetsRegistry, createGenerateId } from 'react-jss';
-import * as languages from 'shared/i18n-lang-packs';
 import { renderToString } from 'react-dom/server';
-import { ServerStyleSheets, ThemeProvider } from '@material-ui/core/styles';
-import { StaticRouter } from 'react-router';
 import theme from 'shared/theme';
 
 setLocales({

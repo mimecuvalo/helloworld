@@ -3,10 +3,14 @@ import './Focus.css';
 import './Hashtag.css';
 import './Reply.css';
 import './RSVP.css';
-import Anchor, { anchorStrategy, AnchorDecorator } from './Anchor';
+
+import Anchor, { AnchorDecorator, anchorStrategy } from './Anchor';
+import Iframe, { iframeBlockRendererFn } from './Iframe';
+import Image, { imageBlockRendererFn } from './Image';
+
+import { CompositeDecorator } from 'draft-js'; // so many ways to compose O_o
 import { compose } from 'draft-extend';
 import { composeDecorators } from '@draft-js-plugins/editor';
-import { CompositeDecorator } from 'draft-js'; // so many ways to compose O_o
 import createAlignmentPlugin from '@draft-js-plugins/alignment';
 import createBlockDndPlugin from '@draft-js-plugins/drag-n-drop';
 import createDividerPlugin from '@draft-js-plugins/divider';
@@ -14,11 +18,9 @@ import createFocusPlugin from '@draft-js-plugins/focus';
 import createHashtagPlugin from '@draft-js-plugins/hashtag';
 import createLinkifyPlugin from '@draft-js-plugins/linkify';
 import { createPlugin } from 'draft-extend';
-import createReplyPlugin from './Reply';
 import createRSVPPlugin from './RSVP';
+import createReplyPlugin from './Reply';
 import { decoratedBlocksToHTML } from '../utils/Blocks';
-import Iframe, { iframeBlockRendererFn } from './Iframe';
-import Image, { imageBlockRendererFn } from './Image';
 import { styles as toolbarStyles } from '../ui/toolbars/toolbarStyles';
 
 export const alignmentPlugin = createAlignmentPlugin({

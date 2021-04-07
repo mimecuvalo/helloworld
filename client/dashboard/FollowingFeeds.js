@@ -1,9 +1,9 @@
-import _ from 'lodash';
 import Avatar from './Avatar';
-import classNames from 'classnames';
-import { FormattedNumber } from 'react-intl-wrapper';
 import FollowingFeedCountsQuery from './FollowingFeedCountsQuery';
 import FollowingMenu from './FollowingMenu';
+import { FormattedNumber } from 'react-intl-wrapper';
+import _ from 'lodash';
+import classNames from 'classnames';
 import { useQuery } from '@apollo/client';
 import useStyles from './remoteUsersStyles';
 

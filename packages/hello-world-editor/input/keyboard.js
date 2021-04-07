@@ -1,4 +1,5 @@
-import { getDefaultKeyBinding, KeyBindingUtil } from 'draft-js';
+import { KeyBindingUtil, getDefaultKeyBinding } from 'draft-js';
+
 import { RichUtils } from 'draft-js';
 
 const MAX_DEPTH = 5;

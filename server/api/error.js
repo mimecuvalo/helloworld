@@ -1,7 +1,7 @@
+import WinstonDailyRotateFile from 'winston-daily-rotate-file';
 import express from 'express';
 import path from 'path';
 import winston from 'winston';
-import WinstonDailyRotateFile from 'winston-daily-rotate-file';
 
 /**
  * Exception collector that collects information both from window.error handler (for page load exceptions via GET)

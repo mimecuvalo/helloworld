@@ -1,12 +1,13 @@
-import _ from 'lodash';
-import classNames from 'classnames';
-import { createUseStyles } from 'react-jss';
+import { useEffect, useRef, useState } from 'react';
+
 import FollowingFeedCountsQuery from './FollowingFeedCountsQuery';
 import FollowingSpecialFeedCountsQuery from './FollowingSpecialFeedCountsQuery';
 import Footer from './Footer';
-import gql from 'graphql-tag';
 import Header from './Header';
-import { useEffect, useRef, useState } from 'react';
+import _ from 'lodash';
+import classNames from 'classnames';
+import { createUseStyles } from 'react-jss';
+import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
 
 const useStyles = createUseStyles({

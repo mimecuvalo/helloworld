@@ -1,3 +1,7 @@
+import * as Sentry from '@sentry/node';
+import * as cron from './cron';
+
+import WinstonDailyRotateFile from 'winston-daily-rotate-file';
 import apiServer from './api/api';
 import apolloServer from './data/apollo';
 import appServer from './app/app';
@@ -5,21 +9,18 @@ import bodyParser from 'body-parser';
 import compression from 'compression';
 import connectRedis from 'connect-redis';
 import cookieParser from 'cookie-parser';
-import * as cron from './cron';
 import csurf from 'csurf';
 import express from 'express';
 import fs from 'fs';
 import helmet from 'helmet';
 import models from './data/models';
 import path from 'path';
-import * as Sentry from '@sentry/node';
 import session from 'express-session';
 import sessionFileStore from 'session-file-store';
 import setup from './setup';
 import socialButterfly from './social-butterfly';
 import { v4 as uuidv4 } from 'uuid';
 import winston from 'winston';
-import WinstonDailyRotateFile from 'winston-daily-rotate-file';
 
 const FileStore = sessionFileStore(session);
 

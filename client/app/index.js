@@ -1,16 +1,19 @@
+import './index.css';
+
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+
+import { IntlProvider, isInternalLocale, setLocales } from 'react-intl-wrapper';
+
 import { ApolloProvider } from '@apollo/client';
 import App from './App';
+import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { StrictMode } from 'react';
+import { ThemeProvider } from '@material-ui/core/styles';
 import configuration from './configuration';
 import createApolloClient from './apollo';
-import './index.css';
-import { IntlProvider, isInternalLocale, setLocales } from 'react-intl-wrapper';
-import ReactDOM from 'react-dom';
 import reportWebVitals from './reportWebVitals';
-import * as serviceWorkerRegistration from './serviceWorkerRegistration';
-import { StrictMode } from 'react';
 import theme from 'shared/theme';
-import { ThemeProvider } from '@material-ui/core/styles';
 
 setLocales({
   defaultLocale: configuration.defaultLocale,

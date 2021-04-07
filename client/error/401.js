@@ -1,5 +1,6 @@
+import { F, defineMessages, useIntl } from 'react-intl-wrapper';
+
 import { createLock } from 'client/app/auth';
-import { defineMessages, F, useIntl } from 'react-intl-wrapper';
 import useStyles from './errorStyles';
 
 const messages = defineMessages({

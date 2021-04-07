@@ -1,11 +1,12 @@
-import classNames from 'classnames';
+import { forwardRef, memo, useEffect, useImperativeHandle, useRef } from 'react';
+
 import ContentLink from 'client/components/ContentLink';
 import ContentQuery from './ContentQuery';
+import { F } from 'react-intl-wrapper';
+import classNames from 'classnames';
 import { contentUrl } from 'shared/util/url_factory';
 import { createUseStyles } from 'react-jss';
-import { F } from 'react-intl-wrapper';
 import gql from 'graphql-tag';
-import { forwardRef, memo, useEffect, useImperativeHandle, useRef } from 'react';
 import { useQuery } from '@apollo/client';
 
 const useStyles = createUseStyles({

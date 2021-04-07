@@ -1,7 +1,8 @@
-import classNames from 'classnames';
-import ContentEditor from 'client/content/ContentEditor';
-import { createUseStyles } from 'react-jss';
 import { forwardRef, useImperativeHandle, useRef } from 'react';
+
+import ContentEditor from 'client/content/ContentEditor';
+import classNames from 'classnames';
+import { createUseStyles } from 'react-jss';
 
 // TODO(mime): move this somewhere more re-usable - same as ContentEditor.js - keep in sync.
 export const useStyles = createUseStyles({

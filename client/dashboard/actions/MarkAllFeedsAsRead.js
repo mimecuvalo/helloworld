@@ -1,9 +1,9 @@
-import { escapeRegExp } from 'shared/util/regex';
 import { F } from 'react-intl-wrapper';
 import FollowingFeedCountsQuery from 'client/dashboard/FollowingFeedCountsQuery';
 import FollowingSpecialFeedCountsQuery from 'client/dashboard/FollowingSpecialFeedCountsQuery';
-import gql from 'graphql-tag';
 import MenuItem from '@material-ui/core/MenuItem';
+import { escapeRegExp } from 'shared/util/regex';
+import gql from 'graphql-tag';
 import { prefixIdFromObject } from 'shared/data/apollo';
 import { useMutation } from '@apollo/client';
 

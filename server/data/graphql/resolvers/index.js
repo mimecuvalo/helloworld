@@ -1,9 +1,9 @@
-import contentResolvers from './content';
-import contentRemoteResolvers from './content_remote';
 import { GraphQLScalarType } from 'graphql';
 import { Kind } from 'graphql/language';
-import userResolvers from './user';
+import contentRemoteResolvers from './content_remote';
+import contentResolvers from './content';
 import userRemoteResolvers from './user_remote';
+import userResolvers from './user';
 
 const exampleResolvers = {
   Date: new GraphQLScalarType({

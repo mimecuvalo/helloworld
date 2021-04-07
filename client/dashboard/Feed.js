@@ -1,8 +1,8 @@
-import { createUseStyles } from 'react-jss';
 import { F } from 'react-intl-wrapper';
-import gql from 'graphql-tag';
 import InfiniteFeed from 'client/components/InfiniteFeed';
 import Item from './Item';
+import { createUseStyles } from 'react-jss';
+import gql from 'graphql-tag';
 import { useQuery } from '@apollo/client';
 
 const useStyles = createUseStyles({

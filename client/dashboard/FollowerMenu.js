@@ -1,5 +1,6 @@
+import { F, defineMessages, useIntl } from 'react-intl-wrapper';
+
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import { defineMessages, F, useIntl } from 'react-intl-wrapper';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';

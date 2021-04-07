@@ -1,5 +1,5 @@
-import fetch from 'node-fetch';
 import { HTTPError } from 'server/util/exceptions';
+import fetch from 'node-fetch';
 import sanitizer from 'sanitize-html';
 
 export async function fetchUrl(url, opt_headers) {

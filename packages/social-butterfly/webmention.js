@@ -1,8 +1,9 @@
-import cheerio from 'cheerio';
-import fetch from 'node-fetch';
 import { fetchText, sanitizeHTML } from './util/crawler';
-import { getUserRemoteInfo } from './discover_user';
+
+import cheerio from 'cheerio';
 import { mention as emailMention } from './email';
+import fetch from 'node-fetch';
+import { getUserRemoteInfo } from './discover_user';
 
 export async function reply(req, contentOwner, content, userRemote, mentionedRemoteUsers) {
   try {

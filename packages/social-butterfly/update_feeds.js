@@ -1,7 +1,8 @@
 import { parseFeedAndInsertIntoDb, retrieveFeed } from './util/feeds';
+
+import WinstonDailyRotateFile from 'winston-daily-rotate-file';
 import path from 'path';
 import winston from 'winston';
-import WinstonDailyRotateFile from 'winston-daily-rotate-file';
 
 const updateFeedsLogger = winston.createLogger({
   format: winston.format.combine(winston.format.timestamp(), winston.format.json()),

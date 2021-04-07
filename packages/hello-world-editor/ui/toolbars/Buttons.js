@@ -1,7 +1,7 @@
-import Button from '@material-ui/core/Button';
-import classNames from 'classnames';
-import CodeIcon from '@material-ui/icons/Code';
 import { defineMessages, useIntl } from 'react-intl';
+
+import Button from '@material-ui/core/Button';
+import CodeIcon from '@material-ui/icons/Code';
 import FormatBoldIcon from '@material-ui/icons/FormatBold';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered';
@@ -11,6 +11,7 @@ import FormatStrikethroughIcon from '@material-ui/icons/FormatStrikethrough';
 import InsertLinkIcon from '@material-ui/icons/InsertLink';
 import PhotoIcon from '@material-ui/icons/Photo';
 import { RichUtils } from 'draft-js';
+import classNames from 'classnames';
 import uploadFiles from '../../media/attachment';
 import { useSnackbar } from 'notistack';
 import { useStyles } from './toolbarStyles';

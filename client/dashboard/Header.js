@@ -1,6 +1,7 @@
+import { F, defineMessages, useIntl } from 'react-intl-wrapper';
+
 import classNames from 'classnames';
 import { createUseStyles } from 'react-jss';
-import { defineMessages, F, useIntl } from 'react-intl-wrapper';
 
 const useStyles = createUseStyles({
   header: {
