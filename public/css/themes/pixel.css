@@ -48,6 +48,11 @@ body {
   margin: 3px 3px 3px 0;
 }
 
+.hw-item {
+  content-visibility: auto;
+  contain-intrinsic-size: 90vh;
+}
+
 a.hw-button {
   text-decoration: line-through;
 }
