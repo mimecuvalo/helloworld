@@ -39,9 +39,6 @@ export default function Exceptions() {
     fetchData();
   }, [setClientExceptions, setServerExceptions]);
 
-  const clientMessages = Object.keys(clientExceptions);
-  const sortedClientMessages = clientMessages.sort((a, b) => clientExceptions[b].length - clientExceptions[a].length);
-
   // TODO(mime): Either have a Sentry embed or a way to look at server exceptions locally.
   return (
     <div className={styles.root}>
