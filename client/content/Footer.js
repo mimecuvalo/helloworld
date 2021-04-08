@@ -5,16 +5,21 @@ import { createUseStyles } from 'react-jss';
 
 const useStyles = createUseStyles({
   footer: {
+    position: 'sticky',
+    bottom: -1, // XXX: chrome has a bit of a problem here with content leaking out
+    background: '#111',
+    zIndex: 1,
+
     fontSize: '11px',
     color: '#666',
-    margin: '6px 6px 0 0',
-    borderTop: '1px solid #0bf',
-    padding: '8px 6px 6px 3px',
+    borderTop: '1px solid #ccc',
+    padding: '6px 10px',
     '& img': {
+      float: 'left',
       width: '16px',
       height: '16px',
-      marginRight: '5px',
-      marginTop: '-2px',
+      marginRight: '10px',
+      marginTop: 2,
     },
   },
 });
@@ -40,53 +45,24 @@ export default function Footer({ content, contentOwner }) {
       </span>
       <span className="notranslate">:&nbsp;</span>
       <F
-        msg="posted on {date}"
+        msg="posted {date}"
         values={{
           date: (
             <time className="t-published" dateTime={createdAt}>
-              <FormattedDate
-                value={createdAt}
-                year="numeric"
-                month="long"
-                day="2-digit"
-                hour="2-digit"
-                minute="2-digit"
-              />
+              <FormattedDate value={createdAt} year="2-digit" month="2-digit" day="2-digit" />
             </time>
           ),
         }}
       />
-      {updatedAt && updatedAt !== createdAt && (
-        <>
-          &nbsp;
-          <F
-            msg="(updated {date})"
-            values={{
-              date: (
-                <time className="t-updated" dateTime={updatedAt}>
-                  <FormattedDate
-                    value={updatedAt}
-                    year="numeric"
-                    month="long"
-                    day="2-digit"
-                    hour="2-digit"
-                    minute="2-digit"
-                  />
-                </time>
-              ),
-            }}
-          />
-        </>
-      )}
       <span className="notranslate">&nbsp;•&nbsp;</span>
       <a href={contentUrl(content)} target="_blank" rel="bookmark noopener noreferrer">
         <F msg="permalink" />
       </a>
-      <span className="notranslate">&nbsp;•&nbsp;</span>
+      <span className="notranslate">&nbsp;•</span>
       <button className="hw-button-link" onClick={handleFullscreen}>
         <F msg="fullscreen" />
       </button>
-      <span className="notranslate">&nbsp;•&nbsp;</span>
+      <span className="notranslate">•&nbsp;</span>
       <F
         msg="{count, plural, =0 {no human views} one {# human view} other {# human views}}"
         values={{ count: count }}

@@ -66,10 +66,10 @@ const useStyles = createUseStyles({
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
     color: '#999',
-    '&:before': {
+    '&::before': {
       content: "'('",
     },
-    '&:after': {
+    '&::after': {
       content: "')'",
     },
   },

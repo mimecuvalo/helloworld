@@ -7,6 +7,6 @@
   display: inline-block;
 }
 
-.hw-editor-rsvp-wrapper:before {
+.hw-editor-rsvp-wrapper::before {
   content: '📅';
 }

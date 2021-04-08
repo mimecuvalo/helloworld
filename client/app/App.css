@@ -4,12 +4,11 @@ html .App-snackbar-icon {
 
 .hw-button-link {
   margin: 0;
-  padding: 0;
+  padding: 4px;
   border: 0;
   background: transparent;
-  color: #03c;
+  color: #06e;
   cursor: pointer;
-  font-size: inherit;
 }
 
 /* In development, highlight untranslated strings. */

@@ -34,7 +34,7 @@ import uploadFiles from './media/attachment';
 
 const useStyles = createUseStyles({
   showPlaceholder: {
-    '& [data-contents=true] > [data-block=true]:first-child:before': {
+    '& [data-contents=true] > [data-block=true]:first-child::before': {
       display: 'block',
     },
   },

@@ -18,15 +18,15 @@ const useStyles = createUseStyles({
     maxHeight: '90vh',
     minWidth: '34vw',
     overflowY: 'scroll',
-    padding: '6px',
     paddingBottom: '0',
     marginBottom: '32px',
-    boxShadow: '1px 1px 3px 1px #ccc',
+    boxShadow: '0 0 0 1px #09f',
     transition: 'box-shadow 100ms',
 
-    '&:hover': {
-      boxShadow: '1px 1px 2px #999',
+    '& .hw-view': {
+      margin: '6px 10px',
     },
+
     '& p': {
       marginBlockStart: '1em',
       marginBlockEnd: '1em',

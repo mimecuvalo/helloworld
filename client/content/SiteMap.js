@@ -133,8 +133,18 @@ export default function SiteMap({ content, username }) {
     return items;
   }
 
+  const closeMenuOnClick = () => {
+    setForceMenuOpen(false);
+    window.removeEventListener('click', closeMenuOnClick);
+  };
+
   const handleMobileClick = () => {
     setForceMenuOpen(!forceMenuOpen);
+
+    // Wait a tick so we don't auto-close ourselves.
+    setTimeout(() => {
+      window.addEventListener('click', closeMenuOnClick);
+    }, 0);
   };
 
   const handleSearchSubmit = (evt) => {

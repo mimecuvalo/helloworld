@@ -192,7 +192,7 @@
   font-size: 40px;
   line-height: 48px;
 }
-.public-DraftEditor-content > [data-contents='true'] > [data-block='true']:first-child:before {
+.public-DraftEditor-content > [data-contents='true'] > [data-block='true']:first-child::before {
   display: none;
   position: absolute;
   left: 12px;
@@ -305,6 +305,6 @@
   display: inline-block;
 }
 
-.hw-editor-rsvp-wrapper:before {
+.hw-editor-rsvp-wrapper::before {
   content: '📅';
 }

@@ -17,6 +17,17 @@ export const useStyles = createUseStyles({
     '& figure img:hover': {
       outline: '3px solid #0bf',
     },
+
+    '@media only screen and (max-width: 600px)': {
+      '& figure': {
+        margin: 0,
+      },
+      '& img, & iframe, & object, & embed': {
+        maxHeight: '82vh',
+        maxWidth: '100vw',
+        margin: '10px',
+      },
+    },
   },
 });
 

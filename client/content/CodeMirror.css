@@ -474,7 +474,7 @@ div.CodeMirror-dragcursors {
 }
 
 /* See issue #2901 */
-.cm-tab-wrap-hack:after {
+.cm-tab-wrap-hack::after {
   content: '';
 }
 

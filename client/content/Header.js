@@ -8,20 +8,24 @@ import { useContext } from 'react';
 const useStyles = createUseStyles({
   header: {
     marginBottom: '6px',
-    padding: '0 6px',
+    padding: '6px 10px',
+    position: 'sticky',
+    top: 0,
+    background: '#111',
+    zIndex: 1,
   },
   title: {
     display: 'flex',
     margin: '3px 3px 3px 0',
-    fontSize: '32px',
+    fontSize: '24px',
     fontWeight: '400',
   },
   titleLink: {
     flex: '1',
-    color: '#000',
+    color: '#fff',
 
     '&:visited': {
-      color: '#000',
+      color: '#fff',
     },
   },
   edit: {

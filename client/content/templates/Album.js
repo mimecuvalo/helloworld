@@ -22,11 +22,10 @@ const useStyles = createUseStyles({
     overflow: 'hidden',
     verticalAlign: 'top',
     textAlign: 'center',
-    padding: '3px',
-    marginBottom: '3px',
+    margin: '3px',
     transition: 'all 0.3s ease-out',
     '&:hover': {
-      boxShadow: '2px 2px 6px #666',
+      boxShadow: '0px 0px 0px 1px #06e',
     },
   },
   link: {

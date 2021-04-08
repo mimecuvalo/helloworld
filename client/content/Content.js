@@ -24,10 +24,10 @@ const useStyles = createUseStyles({
   content: {
     margin: 'var(--app-margin)',
     padding: '0 3px 10px 3px',
-    width: '100%',
+    width: (props) => (props.template === 'feed' ? '100%' : '75vw'),
     '@media only screen and (max-width: 600px)': {
       '&': {
-        width: 'auto',
+        width: 'auto !important',
       },
     },
   },
@@ -106,7 +106,7 @@ const PersistedContent = memo(
     const [isEditing, setIsEditing] = useState(false);
     const [currentCanonicalUrl, setCurrentCanonicalUrl] = useState(null);
     const [saveContent] = useMutation(SAVE_CONTENT);
-    const styles = useStyles();
+    const styles = useStyles({ template: data?.fetchContent?.template });
 
     useEffect(() => {
       if (loading || !data.fetchContent) {
@@ -126,13 +126,16 @@ const PersistedContent = memo(
       }
 
       setupSwipe();
+      return () => {
+        swipeListener?.current && swipeListener.current.off();
+        swipeListener.current = null;
+      };
     }, [loading, data, routerHistory, currentCanonicalUrl]);
 
     useEffect(() => {
       document.addEventListener('keydown', handleKeyDown);
 
       return () => {
-        swipeListener?.current && swipeListener.current.off();
         document.removeEventListener('keydown', handleKeyDown);
       };
     });
@@ -159,7 +162,7 @@ const PersistedContent = memo(
         return;
       }
 
-      if (swipeListener?.current || !contentBase.current) {
+      if (swipeListener.current || !contentBase.current) {
         return;
       }
 

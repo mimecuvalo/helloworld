@@ -6,8 +6,20 @@
  *
  */
 
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=block');
+
 body {
   font-size: 13px;
+  background: #111;
+  color: #fff;
+}
+
+h1 {
+  font-family: 'Press Start 2P', monospace;
+}
+
+input::placeholder {
+  color: #fff;
 }
 
 #hw-sitemap {
@@ -70,7 +82,6 @@ a.hw-button[href]:hover {
   cursor: pointer;
   padding: 0 7px;
   line-height: 1.5;
-  background-color: #eff;
   border: 1px solid #0c0;
   border-radius: 3px;
   color: #060;
@@ -98,7 +109,6 @@ button.hw-edit {
 
 .hw-last,
 .hw-last:visited {
-  background-color: #eff;
   border: 1px solid #0cf;
   color: #06f;
 }
@@ -111,36 +121,33 @@ button.hw-edit {
 .hw-delete:visited,
 .hw-next,
 .hw-next:visited {
-  background-color: #ffe;
   border: 1px solid #f90;
-  color: #f30;
+  color: #f90;
 }
 .hw-delete:hover,
 .hw-next:hover {
   border: 1px solid #f30;
-  color: #f30;
+  color: #f90;
 }
 
 .hw-prev,
 .hw-prev:visited {
-  background-color: #fcfcfc;
   border: 1px solid #f60;
-  color: #f30;
+  color: #f60;
 }
 .hw-prev:hover {
   border: 1px solid #f00;
-  color: #f30;
+  color: #f60;
 }
 
 .hw-first,
 .hw-first:visited {
-  background-color: #fef;
   border: 1px solid #f0f;
-  color: #90f;
+  color: #f0f;
 }
 .hw-first:hover {
   border: 1px solid #60f;
-  color: #90f;
+  color: #f0f;
 }
 
 @media only screen and (max-width: 600px) {
@@ -156,6 +163,8 @@ button.hw-edit {
     position: absolute;
     top: -4px;
     left: -6px;
+    color: #fff;
+    z-index: 1;
   }
 
   #hw-sitemap.hw-sitemap-open {

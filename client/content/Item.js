@@ -1,3 +1,4 @@
+import { animated, useTransition } from 'react-spring';
 import { forwardRef, useImperativeHandle, useRef } from 'react';
 
 import Album from './templates/Album';
@@ -18,6 +19,8 @@ const COMPONENT_TYPE_MAP = {
 };
 
 export default forwardRef((props, ref) => {
+  const transitions = useTransition(props.content, {});
+
   const template = useRef(null);
 
   useImperativeHandle(ref, () => ({
@@ -28,11 +31,14 @@ export default forwardRef((props, ref) => {
 
   const { className, content, contentOwner, comments, favorites, handleEdit, isEditing, isFeed } = props;
   let TemplateComponent = COMPONENT_TYPE_MAP[content.template] || Simple;
+  const contentComponent = <TemplateComponent ref={template} content={content} isEditing={isEditing} isFeed={isFeed} />;
 
   return (
     <article className={classNames('hw-item', 'h-entry', className)}>
       <Header content={content} handleEdit={handleEdit} isEditing={isEditing} />
-      <TemplateComponent ref={template} content={content} isEditing={isEditing} isFeed={isFeed} />
+      {COMPONENT_TYPE_MAP[content.template]
+        ? contentComponent
+        : transitions((style, item) => <animated.div style={style}>{contentComponent}</animated.div>)}
       <Footer content={content} contentOwner={contentOwner} />
       {!isFeed ? <Comments comments={comments} content={content} /> : null}
       {!isFeed ? <Favorites favorites={favorites} content={content} /> : null}
