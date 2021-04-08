@@ -19,7 +19,11 @@ const COMPONENT_TYPE_MAP = {
 };
 
 export default forwardRef((props, ref) => {
-  const transitions = useTransition(props.content, {});
+  const transitions = useTransition(props.content, {
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { display: 'none', opacity: 0 },
+  });
 
   const template = useRef(null);
 

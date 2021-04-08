@@ -1,5 +1,4 @@
-import { Route, Switch, useLocation } from 'react-router-dom';
-import { animated, useTransition } from 'react-spring';
+import { Route, Switch } from 'react-router-dom';
 
 import Content from 'client/content/Content';
 import Dashboard from 'client/dashboard/Dashboard';
@@ -9,14 +8,6 @@ import ScrollToTop from './ScrollToTop';
 import Search from 'client/content/Search';
 
 export default function MainApp() {
-  const location = useLocation();
-  console.log(location);
-  const transition = useTransition(location, {
-    from: { position: 'absolute', opacity: 0 },
-    enter: { opacity: 1 },
-    leave: { opacity: 0 },
-  });
-
   const isOffline = typeof navigator !== 'undefined' && !navigator.onLine;
 
   function renderDashboard() {
@@ -46,28 +37,22 @@ export default function MainApp() {
 
   const main = (
     <main className="App-main">
-      {transition((style, item) => {
-        return (
-          <animated.div style={style}>
-            <ScrollToTop>
-              <Switch location={item}>
-                <Route path={`/dashboard`} component={renderDashboard} />
-                <Route path={`/:username/search/:query`} component={Search} />
-                <Route
-                  path={[
-                    `/:username/:section/:album/:name`,
-                    `/:username/:section/:name`,
-                    `/:username/:name`,
-                    `/:username`,
-                    `/`,
-                  ]}
-                  component={Content}
-                />
-              </Switch>
-            </ScrollToTop>
-          </animated.div>
-        );
-      })}
+      <ScrollToTop>
+        <Switch>
+          <Route path={`/dashboard`} component={renderDashboard} />
+          <Route path={`/:username/search/:query`} component={Search} />
+          <Route
+            path={[
+              `/:username/:section/:album/:name`,
+              `/:username/:section/:name`,
+              `/:username/:name`,
+              `/:username`,
+              `/`,
+            ]}
+            component={Content}
+          />
+        </Switch>
+      </ScrollToTop>
     </main>
   );
 
