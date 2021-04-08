@@ -18,7 +18,7 @@ export default function createApolloClient() {
   const httpLink = new HttpLink({ uri: apolloUrl });
 
   // We add the Apollo/GraphQL capabilities here (also notice ApolloProvider below).
-  const cache = new InMemoryCache({ dataIdFromObject, freezeResults: true }).restore(window['__APOLLO_STATE__']);
+  const cache = new InMemoryCache({ dataIdFromObject }).restore(window['__APOLLO_STATE__']);
 
   const errorLink = onError(({ graphQLErrors, networkError }) => {
     if (graphQLErrors) {
@@ -48,8 +48,6 @@ export default function createApolloClient() {
     },
     link,
     cache,
-    // TODO(mime): assumeImmutableResults and freezeResults will be default true in Apollo 3.0
-    assumeImmutableResults: true,
     typeDefs,
     resolvers,
   });
