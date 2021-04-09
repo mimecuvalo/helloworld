@@ -1,7 +1,7 @@
 import * as languages from 'shared/i18n-lang-packs';
 
 import { IntlProvider, getDefaultLocale, getLocaleFromRequest, getLocales, setLocales } from 'react-intl-wrapper';
-import { JssProvider, SheetsRegistry, createGenerateId } from 'react-jss';
+import { JssProvider, SheetsRegistry } from 'react-jss';
 import { ServerStyleSheets, ThemeProvider } from '@material-ui/core/styles';
 
 import { ApolloProvider } from '@apollo/client';
@@ -12,6 +12,7 @@ import createApolloClient from 'server/data/apollo_client';
 import { getDataFromTree } from '@apollo/client/react/ssr';
 import getExperiments from './experiments';
 import { initializeLocalState } from 'shared/data/local_state';
+import murmurhash from 'murmurhash';
 import { renderToString } from 'react-dom/server';
 import theme from 'shared/theme';
 
@@ -47,7 +48,13 @@ export default async function render({ req, res, next, assetPathsByType, appName
   // For Material UI setup.
   const sheets = new ServerStyleSheets();
   const sheetsNonMaterialUI = new SheetsRegistry();
-  const generateId = createGenerateId();
+
+  // XXX(mime): if we don't manually set generateClassName we get SSR/client mismatch upon
+  // hydration. See example: https://github.com/cssinjs/jss/issues/926
+  // I don't know wtf and have messed around with this for hours and hours.
+  // This works enough for now.
+  const createGenerateClassName = () => (rule) => murmurhash.v3(rule.toString()).toString();
+  const generateId = createGenerateClassName();
 
   const coreApp = <App user={filteredUser} />;
   // We need to set leave out Material-UI classname generation when traversing the React tree for

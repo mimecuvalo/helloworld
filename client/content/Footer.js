@@ -25,7 +25,7 @@ const useStyles = createUseStyles({
 });
 
 export default function Footer({ content, contentOwner }) {
-  const { count, count_robot, createdAt, updatedAt, username } = content;
+  const { count, count_robot, createdAt, username } = content;
   const name = contentOwner.name || username;
   const styles = useStyles();
 

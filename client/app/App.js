@@ -34,8 +34,7 @@ export default function App({ user }) {
     // Remove MaterialUI's SSR generated CSS.
     const jssStyles = document.getElementById('jss-ssr');
     if (jssStyles?.parentNode) {
-      // TODO(mime) XXX(mime): remove this ASAP - disabling for now til i figure out what's going on
-      //jssStyles.parentNode.removeChild(jssStyles);
+      jssStyles.parentNode.removeChild(jssStyles);
     }
 
     // Upon starting the app, kick off a client health check which runs periodically.

@@ -1,5 +1,5 @@
 import { Route, Switch } from 'react-router-dom';
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 
 import Content from 'client/content/Content';
 import { F } from 'react-intl-wrapper';
@@ -9,7 +9,12 @@ import ScrollToTop from './ScrollToTop';
 import Search from 'client/content/Search';
 
 export default function MainApp() {
+  const [isLoading, setIsLoading] = useState(true);
   const isOffline = typeof navigator !== 'undefined' && !navigator.onLine;
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, []);
 
   function renderDashboard() {
     // TODO(mime): Suspense and lazy aren't supported by ReactDOMServer yet (breaks SSR).
@@ -19,6 +24,11 @@ export default function MainApp() {
         <F msg="Loading…" />
       </span>
     );
+
+    // To match SSR.
+    if (isLoading) {
+      return Fallback;
+    }
 
     let SuspenseWithTemporaryWorkaround;
     if (IS_CLIENT) {

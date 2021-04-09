@@ -6,12 +6,14 @@ import { IntlProvider, isInternalLocale, setLocales } from 'react-intl-wrapper';
 
 import { ApolloProvider } from '@apollo/client';
 import App from './App';
+import { JssProvider } from 'react-jss';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { StrictMode } from 'react';
 import { ThemeProvider } from '@material-ui/core/styles';
 import configuration from './configuration';
 import createApolloClient from './apollo';
+import murmurhash from 'murmurhash';
 import reportWebVitals from './reportWebVitals';
 import theme from 'shared/theme';
 
@@ -19,6 +21,13 @@ setLocales({
   defaultLocale: configuration.defaultLocale,
   locales: configuration.locales,
 });
+
+// XXX(mime): if we don't manually set generateClassName we get SSR/client mismatch upon
+// hydration. See example: https://github.com/cssinjs/jss/issues/926
+// I don't know wtf and have messed around with this for hours and hours.
+// This works enough for now.
+const createGenerateClassName = () => (rule) => murmurhash.v3(rule.toString()).toString();
+const generateClassName = createGenerateClassName();
 
 async function renderAppTree(app) {
   const client = createApolloClient();
@@ -34,7 +43,9 @@ async function renderAppTree(app) {
       <IntlProvider defaultLocale={configuration.locale} locale={configuration.locale} messages={translations}>
         <ApolloProvider client={client}>
           <Router>
-            <ThemeProvider theme={theme}>{app}</ThemeProvider>
+            <JssProvider generateId={generateClassName}>
+              <ThemeProvider theme={theme}>{app}</ThemeProvider>
+            </JssProvider>
           </Router>
         </ApolloProvider>
       </IntlProvider>

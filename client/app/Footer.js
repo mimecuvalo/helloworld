@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 
 import { F } from 'react-intl-wrapper';
 import Help from './Help';
@@ -24,8 +24,13 @@ const useStyles = createUseStyles({
 });
 
 export default function Footer() {
+  const [isLoading, setIsLoading] = useState(true);
   const routerLocation = useLocation();
   const styles = useStyles();
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, []);
 
   function renderDebugMenu() {
     // Conditionally compile this code. Should not appear in production.
@@ -37,6 +42,11 @@ export default function Footer() {
           <F msg="Loading…" />
         </span>
       );
+
+      // To match SSR.
+      if (isLoading) {
+        return Fallback;
+      }
 
       let SuspenseWithTemporaryWorkaround;
       if (IS_CLIENT) {
