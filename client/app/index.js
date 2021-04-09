@@ -26,6 +26,7 @@ setLocales({
 // hydration. See example: https://github.com/cssinjs/jss/issues/926
 // I don't know wtf and have messed around with this for hours and hours.
 // This works enough for now.
+// Material v5 is migrating away from jss -> emotion and this might be fixed in v5.
 const createGenerateClassName = () => (rule) => murmurhash.v3(rule.toString()).toString();
 const generateClassName = createGenerateClassName();
 
