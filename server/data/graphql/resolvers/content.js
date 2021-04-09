@@ -1,12 +1,12 @@
 import { contentUrl, profileUrl } from 'shared/util/url_factory';
 import { isAdmin, isAuthor } from './authorization';
 
+import { EditorHTMLPlugins } from 'hello-world-editor';
 import Sequelize from 'sequelize';
 import cheerio from 'cheerio';
 import { combineResolvers } from 'graphql-resolvers';
 import { convertFromRaw } from 'draft-js';
 import { convertToHTML } from 'draft-convert';
-//import { EditorHTMLPlugins } from 'hello-world-editor';
 import { escapeRegExp } from 'shared/util/regex';
 import { isRobotViewing } from 'server/util/crawler';
 import { nanoid } from 'nanoid';
@@ -469,7 +469,7 @@ export default Content;
 
 export function toHTML(content, title) {
   title = title ? escapeRegExp(title) : '';
-  const html = ''; //EditorHTMLPlugins(convertToHTML)(convertFromRaw(JSON.parse(content)));
+  const html = EditorHTMLPlugins(convertToHTML)(convertFromRaw(JSON.parse(content)));
   return html.replace(new RegExp(`^<p>${title}</p>`), '');
 }
 

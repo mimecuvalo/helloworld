@@ -1,4 +1,4 @@
-//import { EditorState, convertFromRaw } from 'draft-js';
+import { EditorState, convertFromRaw } from 'draft-js';
 import { F, defineMessages } from 'react-intl-wrapper';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
@@ -6,7 +6,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import Button from '@material-ui/core/Button';
 import ContentEditor from 'client/content/ContentEditor';
 import Cookies from 'js-cookie';
-//import { EditorUtils } from 'hello-world-editor';
+import { EditorUtils } from 'hello-world-editor';
 import FormControl from '@material-ui/core/FormControl';
 import HiddenSnackbarShim from 'client/components/HiddenSnackbarShim';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -126,7 +126,7 @@ export default forwardRef(({ username }, ref) => {
       const { style, code, content } = editorRef.export();
 
       // TODO(mime): gotta be a simpler way then all this conversion.
-      const title = ''; //EditorUtils.Text.getTextForLine(EditorState.createWithContent(convertFromRaw(content)), 0);
+      const title = EditorUtils.Text.getTextForLine(EditorState.createWithContent(convertFromRaw(content)), 0);
 
       const name = title.replace(/[^A-Za-z0-9-]/g, '-');
       const { section, album } = JSON.parse(sectionAndAlbum);
@@ -222,7 +222,7 @@ export default forwardRef(({ username }, ref) => {
     insertText: (text) => {
       const contentEditor = editor.current.getContentEditor();
       let editorState = contentEditor.editorState;
-      editorState = ''; //EditorUtils.Text.insertTextAtLine(editorState, 1, `\n${text}\n`);
+      editorState = EditorUtils.Text.insertTextAtLine(editorState, 1, `\n${text}\n`);
       contentEditor.onChange(editorState);
     },
   }));
@@ -234,11 +234,11 @@ export default forwardRef(({ username }, ref) => {
   async function reblog(text, opt_url) {
     const contentEditor = editor.current.getContentEditor();
     let editorState = contentEditor.editorState;
-    editorState = ''; //EditorUtils.Text.insertTextAtLine(editorState, 0, '\n');
+    editorState = EditorUtils.Text.insertTextAtLine(editorState, 0, '\n');
     await contentEditor.handlePastedText(text, undefined /* html */, editorState);
 
     if (opt_url) {
-      editorState = ''; //EditorUtils.Text.insertTextAtLine(contentEditor.editorState, 2, opt_url);
+      editorState = EditorUtils.Text.insertTextAtLine(contentEditor.editorState, 2, opt_url);
       contentEditor.onChange(editorState);
     }
   }

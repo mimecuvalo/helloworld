@@ -3,7 +3,7 @@ import './CodeMirror.css';
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import AppBar from '@material-ui/core/AppBar';
-//import { Editor } from 'hello-world-editor';
+import { Editor } from 'hello-world-editor';
 import ErrorBoundary from 'client/error/ErrorBoundary';
 import { F } from 'react-intl-wrapper';
 import Tab from '@material-ui/core/Tab';
@@ -164,7 +164,7 @@ export default forwardRef((props, ref) => {
 
   let tab = (
     <div key="content" className={classNames(styles.view, 'hw-view')}>
-      {/* <Editor
+      <Editor
         content={editorContent ? { content: editorContent, style, code } : content}
         ref={contentEditor}
         mentions={mentions}
@@ -174,7 +174,7 @@ export default forwardRef((props, ref) => {
         onLinkUnfurl={handleLinkUnfurl}
         showPlaceholder={showPlaceholder}
         locale={configuration.locale}
-      /> */}
+      />
     </div>
   );
 

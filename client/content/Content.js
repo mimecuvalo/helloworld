@@ -1,4 +1,4 @@
-//import { EditorState, convertFromRaw } from 'draft-js';
+import { EditorState, convertFromRaw } from 'draft-js';
 import { buildUrl, contentUrl } from 'shared/util/url_factory';
 import { defineMessages, useIntl } from 'react-intl-wrapper';
 import { memo, useEffect, useRef, useState } from 'react';
@@ -6,7 +6,7 @@ import { useMutation, useQuery } from '@apollo/client';
 
 import ContentBase from './ContentBase';
 import ContentQuery from './ContentQuery';
-//import { EditorUtils } from 'hello-world-editor';
+import { EditorUtils } from 'hello-world-editor';
 import Feed from './Feed';
 import Item from './Item';
 import Nav from './Nav';
@@ -192,7 +192,7 @@ const PersistedContent = memo(
       const content = editor.export();
 
       // TODO(mime): gotta be a simpler way then all this conversion.
-      const title = ''; //EditorUtils.Text.getTextForLine(EditorState.createWithContent(convertFromRaw(content.content)), 0);
+      const title = EditorUtils.Text.getTextForLine(EditorState.createWithContent(convertFromRaw(content.content)), 0);
 
       const newThumb = editor.getContentEditor().fileInfo?.thumb || thumb || '';
 

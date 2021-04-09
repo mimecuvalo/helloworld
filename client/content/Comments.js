@@ -3,7 +3,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 
 import ContentQuery from './ContentQuery';
 import Delete from 'client/dashboard/actions/Delete';
-//import { Editor } from 'hello-world-editor';
+import { Editor } from 'hello-world-editor';
 import Favorite from 'client/dashboard/actions/Favorite';
 import UserContext from 'client/app/User_Context';
 import classNames from 'classnames';
@@ -145,14 +145,14 @@ export default function Comments({ comments, content }) {
       </h3>
       {isLoggedIn ? (
         <div id="hw-comment-editor" className={styles.commentEditorWrapper}>
-          {/* <Editor
+          <Editor
             editorKey="comments"
             content={{}}
             ref={commentEditor}
             type="comment"
             dontWarnOnUnsaved={true}
             locale={configuration.locale}
-          /> */}
+          />
           <button className={classNames('hw-button', 'hw-save')} disabled={isPosting} onClick={handlePost}>
             <F msg="post" />
           </button>
