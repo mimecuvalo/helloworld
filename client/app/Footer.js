@@ -30,6 +30,7 @@ export default function Footer() {
   function renderDebugMenu() {
     // Conditionally compile this code. Should not appear in production.
     if (process.env.NODE_ENV === 'development') {
+      // TODO(mime): Suspense and lazy aren't supported by ReactDOMServer yet (breaks SSR).
       const IS_CLIENT = typeof window !== 'undefined';
       const Fallback = (
         <span>

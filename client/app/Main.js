@@ -12,6 +12,7 @@ export default function MainApp() {
   const isOffline = typeof navigator !== 'undefined' && !navigator.onLine;
 
   function renderDashboard() {
+    // TODO(mime): Suspense and lazy aren't supported by ReactDOMServer yet (breaks SSR).
     const IS_CLIENT = typeof window !== 'undefined';
     const Fallback = (
       <span>
