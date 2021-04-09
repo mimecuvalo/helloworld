@@ -12,9 +12,9 @@ export default function Unauthorized() {
   const emojiAriaLabel = intl.formatMessage(messages.personGesturingNo);
   const styles = useStyles();
 
-  function handleLogin(evt) {
+  async function handleLogin(evt) {
     evt.preventDefault();
-    createLock().show();
+    (await createLock()).show();
   }
 
   return (

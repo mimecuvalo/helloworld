@@ -8,11 +8,11 @@ import { useContext } from 'react';
 export default function LoginLogoutButton() {
   const user = useContext(UserContext).user;
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (user) {
       setUser(undefined);
     } else {
-      createLock().show();
+      (await createLock()).show();
     }
   };
 

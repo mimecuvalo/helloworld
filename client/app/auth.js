@@ -1,13 +1,10 @@
 import { buildUrl } from 'shared/util/url_factory';
 import configuration from './configuration';
 
-let Auth0Lock;
-if (typeof window !== 'undefined') {
-  Auth0Lock = require('auth0-lock').default;
-}
-
 // Sets up the Auth0 object to be used later to create a login window.
-export function createLock() {
+export async function createLock() {
+  const { default: Auth0Lock } = await import('auth0-lock');
+
   return new Auth0Lock(configuration.auth0_client_id, configuration.auth0_domain, {
     auth: {
       redirectUrl: buildUrl({

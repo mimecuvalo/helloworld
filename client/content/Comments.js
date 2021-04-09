@@ -130,8 +130,8 @@ export default function Comments({ comments, content }) {
     setIsPosting(false);
   };
 
-  const handleLogin = (evt) => {
-    createLock().show();
+  const handleLogin = async (evt) => {
+    (await createLock()).show();
   };
 
   const ariaImgMsg = intl.formatMessage(messages.avatar);

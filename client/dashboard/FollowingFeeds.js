@@ -2,8 +2,8 @@ import Avatar from './Avatar';
 import FollowingFeedCountsQuery from './FollowingFeedCountsQuery';
 import FollowingMenu from './FollowingMenu';
 import { FormattedNumber } from 'react-intl-wrapper';
-import _ from 'lodash';
 import classNames from 'classnames';
+import keyBy from 'lodash/keyBy';
 import { useQuery } from '@apollo/client';
 import useStyles from './remoteUsersStyles';
 
@@ -23,7 +23,7 @@ export default function FollowingFeeds(props) {
 
   const following = props.following;
   const feedCounts = data.fetchFeedCounts;
-  const feedCountsObj = _.keyBy(feedCounts, 'from_user');
+  const feedCountsObj = keyBy(feedCounts, 'from_user');
   const currentUserRemote = props.currentUserRemote || {};
 
   return (

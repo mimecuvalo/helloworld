@@ -1,7 +1,8 @@
 import { Route, Switch } from 'react-router-dom';
+import { Suspense, lazy } from 'react';
 
 import Content from 'client/content/Content';
-import Dashboard from 'client/dashboard/Dashboard';
+import { F } from 'react-intl-wrapper';
 import Footer from './Footer';
 import Header from './Header';
 import ScrollToTop from './ScrollToTop';
@@ -11,28 +12,26 @@ export default function MainApp() {
   const isOffline = typeof navigator !== 'undefined' && !navigator.onLine;
 
   function renderDashboard() {
-    return <Dashboard />;
-    // TODO(mime): Suspense and lazy aren't supported by ReactDOMServer yet (breaks SSR).
-    // const IS_CLIENT = typeof window !== 'undefined';
-    // const Fallback = (
-    //   <span>
-    //     <F msg="Loading…" />
-    //   </span>
-    // );
-    //
-    // let SuspenseWithTemporaryWorkaround;
-    // if (IS_CLIENT) {
-    //   const Dashboard = lazy(() => import('client/dashboard/Dashboard'));
-    //   SuspenseWithTemporaryWorkaround = (
-    //     <Suspense fallback={Fallback}>
-    //       <Dashboard />
-    //     </Suspense>
-    //   );
-    // } else {
-    //   SuspenseWithTemporaryWorkaround = Fallback;
-    // }
-    //
-    // return SuspenseWithTemporaryWorkaround;
+    const IS_CLIENT = typeof window !== 'undefined';
+    const Fallback = (
+      <span>
+        <F msg="Loading…" />
+      </span>
+    );
+
+    let SuspenseWithTemporaryWorkaround;
+    if (IS_CLIENT) {
+      const Dashboard = lazy(() => import('client/dashboard/Dashboard'));
+      SuspenseWithTemporaryWorkaround = (
+        <Suspense fallback={Fallback}>
+          <Dashboard />
+        </Suspense>
+      );
+    } else {
+      SuspenseWithTemporaryWorkaround = Fallback;
+    }
+
+    return SuspenseWithTemporaryWorkaround;
   }
 
   const main = (

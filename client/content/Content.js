@@ -1,4 +1,4 @@
-import { EditorState, convertFromRaw } from 'draft-js';
+//import { EditorState, convertFromRaw } from 'draft-js';
 import { buildUrl, contentUrl } from 'shared/util/url_factory';
 import { defineMessages, useIntl } from 'react-intl-wrapper';
 import { memo, useEffect, useRef, useState } from 'react';

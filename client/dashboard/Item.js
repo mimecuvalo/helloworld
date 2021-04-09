@@ -4,10 +4,10 @@ import FollowingFeedCountsQuery from './FollowingFeedCountsQuery';
 import FollowingSpecialFeedCountsQuery from './FollowingSpecialFeedCountsQuery';
 import Footer from './Footer';
 import Header from './Header';
-import _ from 'lodash';
 import classNames from 'classnames';
 import { createUseStyles } from 'react-jss';
 import gql from 'graphql-tag';
+import throttle from 'lodash/throttle';
 import { useMutation } from '@apollo/client';
 
 const useStyles = createUseStyles({
@@ -96,7 +96,7 @@ export default function Item(props) {
       readContentRemoteCall(true);
     }
   };
-  const throttledMaybeMarkAsRead = _.throttle(maybeMarkAsRead, 100);
+  const throttledMaybeMarkAsRead = throttle(maybeMarkAsRead, 100);
 
   function addEventListeners() {
     window.addEventListener('scroll', throttledMaybeMarkAsRead, { passive: true });

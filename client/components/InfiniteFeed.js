@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import _ from 'lodash';
+import throttle from 'lodash/throttle';
 
 export default function InfiniteFeed({ children, deduper, fetchMore, queryName }) {
   const [didReachEndOfFeed, setDidReachEndOfFeed] = useState(false);
@@ -22,7 +22,7 @@ export default function InfiniteFeed({ children, deduper, fetchMore, queryName }
       setFetchingMore(true);
     };
 
-    const throttledMaybeLoadMoreContent = _.throttle(maybeLoadMoreContent, 100);
+    const throttledMaybeLoadMoreContent = throttle(maybeLoadMoreContent, 100);
     window.addEventListener('scroll', throttledMaybeLoadMoreContent, { passive: true });
     window.addEventListener('resize', throttledMaybeLoadMoreContent, { passive: true });
 
