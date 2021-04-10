@@ -50,18 +50,6 @@ npm --production install
 npm run serve:prod
 ```
 
-To locally develop the packages `hello-world-editor` and `social-butterfly`, run:
-
-```sh
-./setup_local_dev_environment.sh
-
-# To live update hello-world-editor code:
-cd packages/hello-world-editor; npm run build
-
-# To live update social-butterfly code:
-cd packages/social-butterfly; npm run build
-```
-
 To run tests:
 
 ```sh
