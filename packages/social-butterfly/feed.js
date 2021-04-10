@@ -1,5 +1,5 @@
 import { HTTPError } from './util/exceptions';
-import { createElement as RcE } from 'react';
+import React, { createElement as RcE } from 'react';
 import { buildUrl } from './util/url_factory';
 import { renderToString } from 'react-dom/server';
 
