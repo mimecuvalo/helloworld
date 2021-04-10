@@ -23,7 +23,8 @@ const useStyles = createUseStyles({
     verticalAlign: 'top',
     textAlign: 'center',
     margin: '3px',
-    transition: 'all 0.3s ease-out',
+    transition: 'all 0.2s ease-out',
+    boxShadow: '0px 0px 0px 1px transparent',
     '&:hover': {
       boxShadow: '0px 0px 0px 1px #06e',
     },
