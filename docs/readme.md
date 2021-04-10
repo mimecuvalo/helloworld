@@ -39,8 +39,7 @@ federated social web blog app. in short, i'm trying to build an open-source Tumb
 ## 💾 Install
 
 ```sh
-npm i lerna -g
-lerna bootstrap --hoist
+npm install
 ```
 
 Then, to run your newly created server locally, **with** the Storybook styleguide server:

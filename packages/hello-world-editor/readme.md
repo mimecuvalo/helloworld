@@ -28,8 +28,6 @@ federated social web blog app. in short, i'm trying to build an open-source Tumb
 ## 💾 Install
 
 ```sh
-npm i lerna -g
-lerna bootstrap --hoist
 npm install
 ```
 
