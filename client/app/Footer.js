@@ -1,10 +1,8 @@
-import { Suspense, lazy, useEffect, useState } from 'react';
+import { Suspense, lazy, memo, useEffect, useState } from 'react';
 
 import { F } from 'react-intl-wrapper';
 import Help from './Help';
-import classNames from 'classnames';
 import { createUseStyles } from 'react-jss';
-import { useLocation } from 'react-router-dom';
 
 const useStyles = createUseStyles({
   footer: {
@@ -16,16 +14,11 @@ const useStyles = createUseStyles({
       marginLeft: '10px',
     },
   },
-
-  dashboardFooter: {
-    position: 'static',
-    textAlign: 'right',
-  },
 });
 
-export default function Footer() {
+// NB: we memoize here because it has the a11y script included on dev which is expensive.
+const Footer = memo(function Footer() {
   const [isLoading, setIsLoading] = useState(true);
-  const routerLocation = useLocation();
   const styles = useStyles();
 
   useEffect(() => {
@@ -76,13 +69,10 @@ export default function Footer() {
   }
 
   return (
-    <footer
-      className={classNames(styles.footer, {
-        [styles.dashboardFooter]: routerLocation.pathname === '/dashboard',
-      })}
-    >
+    <footer className={styles.footer}>
       {renderDebugMenu()}
       {renderHelp()}
     </footer>
   );
-}
+});
+export default Footer;
