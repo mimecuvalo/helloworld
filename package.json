@@ -92,6 +92,9 @@
     "workbox-streams": "6.1.2"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "1.21.3",
+    "@graphql-codegen/flow": "1.18.5",
+    "@graphql-codegen/flow-resolvers": "1.17.13",
     "@storybook/addon-actions": "6.2.2",
     "@storybook/addon-links": "6.2.2",
     "@storybook/addons": "6.2.2",
@@ -129,6 +132,7 @@
     "build-storybook": "build-storybook -s public",
     "styleguide": "start-storybook -p 9001 -c .storybook --ci --quiet",
     "extract-messages": "NODE_ENV=development extract-messages -l=en -o build/messages --flat --moduleSourceName react-intl-wrapper --additionalComponentNames F 'template/**/!(*.test).js'",
+    "generate-types": "graphql-codegen --config graphql-codegen.yml",
     "dev": "npm install && docker-compose up -d && npx sequelize db:migrate && npx sequelize db:seed:all",
     "prepare": "husky install"
   },
