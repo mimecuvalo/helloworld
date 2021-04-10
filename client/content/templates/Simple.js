@@ -1,6 +1,5 @@
-import { forwardRef, useImperativeHandle, useRef } from 'react';
+import { Suspense, forwardRef, lazy, useImperativeHandle, useRef } from 'react';
 
-import ContentEditor from 'client/content/ContentEditor';
 import classNames from 'classnames';
 import { createUseStyles } from 'react-jss';
 
@@ -39,8 +38,14 @@ export default forwardRef(({ content, isEditing, isFeed }, ref) => {
     getEditor: () => editor.current,
   }));
 
-  if (isEditing) {
-    return <ContentEditor ref={editor} content={content} />;
+  // TODO(mime): Suspense and lazy aren't supported by ReactDOMServer yet (breaks SSR).
+  if (isEditing && typeof window !== 'undefined') {
+    const ContentEditor = lazy(() => import('client/content/ContentEditor'));
+    return (
+      <Suspense fallback={<div />}>
+        <ContentEditor ref={editor} content={content} />
+      </Suspense>
+    );
   }
 
   return (

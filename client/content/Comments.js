@@ -1,9 +1,8 @@
 import { F, defineMessages, useIntl } from 'react-intl-wrapper';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { Suspense, lazy, useContext, useEffect, useRef, useState } from 'react';
 
 import ContentQuery from './ContentQuery';
 import Delete from 'client/dashboard/actions/Delete';
-import { Editor } from 'hello-world-editor';
 import Favorite from 'client/dashboard/actions/Favorite';
 import UserContext from 'client/app/User_Context';
 import classNames from 'classnames';
@@ -138,6 +137,24 @@ export default function Comments({ comments, content }) {
   const isLoggedIn = !!user;
   const isOwnerViewing = user?.model?.username === content.username;
 
+  let editor = null;
+  // TODO(mime): Suspense and lazy aren't supported by ReactDOMServer yet (breaks SSR).
+  if (isLoggedIn && typeof window !== 'undefined') {
+    const { Editor } = lazy(() => import('hello-world-editor'));
+    return (
+      <Suspense fallback={<div />}>
+        <Editor
+          editorKey="comments"
+          content={{}}
+          ref={commentEditor}
+          type="comment"
+          dontWarnOnUnsaved={true}
+          locale={configuration.locale}
+        />
+      </Suspense>
+    );
+  }
+
   return (
     <div className="hw-comments">
       <h3 className={styles.commentsHeader}>
@@ -145,14 +162,7 @@ export default function Comments({ comments, content }) {
       </h3>
       {isLoggedIn ? (
         <div id="hw-comment-editor" className={styles.commentEditorWrapper}>
-          <Editor
-            editorKey="comments"
-            content={{}}
-            ref={commentEditor}
-            type="comment"
-            dontWarnOnUnsaved={true}
-            locale={configuration.locale}
-          />
+          {editor}
           <button className={classNames('hw-button', 'hw-save')} disabled={isPosting} onClick={handlePost}>
             <F msg="post" />
           </button>
