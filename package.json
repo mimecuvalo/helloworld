@@ -124,17 +124,17 @@
     "serve:dev": "react-scripts serve-dev",
     "serve:prod": "react-scripts serve-prod",
     "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
-    "analyze": "source-map-explorer build/static/js/*.chunk.js",
-    "config": "node bin/config.js",
-    "flow": "flow",
     "alex": "alex .",
-    "postinstall": "if test \"$NODE_ENV\" = \"development\" ; then flow-typed install; fi",
+    "analyze": "source-map-explorer build/static/js/*.chunk.js",
     "build-storybook": "build-storybook -s public",
-    "styleguide": "start-storybook -p 9001 -c .storybook --ci --quiet",
-    "extract-messages": "NODE_ENV=development extract-messages -l=en -o build/messages --flat --moduleSourceName react-intl-wrapper --additionalComponentNames F 'template/**/!(*.test).js'",
-    "generate-types": "graphql-codegen --config graphql-codegen.yml",
+    "config": "node bin/config.js",
     "dev": "npm install && docker-compose up -d && npx sequelize db:migrate && npx sequelize db:seed:all",
-    "prepare": "husky install"
+    "extract-messages": "NODE_ENV=development extract-messages -l=en -o build/messages --flat --moduleSourceName react-intl-wrapper --additionalComponentNames F 'template/**/!(*.test).js'",
+    "flow": "flow",
+    "generate-types": "graphql-codegen --config graphql-codegen.yml",
+    "postinstall": "if test \"$NODE_ENV\" = \"development\" ; then flow-typed install; fi",
+    "prepare": "if test \"$NODE_ENV\" = \"development\" ; then husky install; fi",
+    "styleguide": "start-storybook -p 9001 -c .storybook --ci --quiet"
   },
   "eslintConfig": {
     "extends": [

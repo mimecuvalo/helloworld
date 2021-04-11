@@ -60,6 +60,8 @@ To run in production (or better yet check out bin/flightplan.js)
 
 ```sh
 npm --production install
+# TODO(mime): annoyingly, you'll need to build the hello-world-editor/social-butterfly separately b/c npm workspaces isn't so robust yet.
+# in flightplan.js i hack around this by removing the workspaces, ugh.
 npm run build
 npm run serve:prod
 ```

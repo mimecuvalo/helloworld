@@ -90,6 +90,14 @@ plan.remote(function (remote) {
   remote.log('Copying .env file over...');
   remote.sudo(`cp ${destDir}/.env ${varTmpDir}/`, { user, failsafe: true });
 
+  // XXX(mime): this is so brittle and ridiculous - i have to figure out
+  // how to better use npm workspaces to make this better.
+  // This deletes the line `"packages/*"` from the workspaces in package.json so we
+  // don't have to build packages locally.
+  // See part 2 below.
+  remote.sudo(`rm -rf ${varTmpDir}/packages/hello-world-editor`, { user });
+  remote.sudo(`rm -rf ${varTmpDir}/packages/social-butterfly`, { user });
+
   remote.log('Seeing if we can just reuse the previous node_modules folder...');
   const isNPMUnchanged = remote.sudo(`cmp ${destDir}/package.json ${varTmpDir}/package.json`, { user, failsafe: true });
 
@@ -100,6 +108,10 @@ plan.remote(function (remote) {
     remote.log('package.json has changed. Installing dependencies...');
     remote.sudo(`cd ${varTmpDir}; npm install --production`, { user });
   }
+
+  // XXX(mime): part 2 of above. ugh.
+  remote.sudo(`cd ${varTmpDir}; npm install hello-world-editor`, { user });
+  remote.sudo(`cd ${varTmpDir}; npm install social-butterfly`, { user });
 
   // Copy over sessions.
   remote.sudo(`cp -R ${destDir}/sessions ${varTmpDir}`, { user, failsafe: true });
