@@ -27,7 +27,7 @@ setLocales({
 // I don't know wtf and have messed around with this for hours and hours.
 // This works enough for now.
 // Material v5 is migrating away from jss -> emotion and this might be fixed in v5.
-const createGenerateClassName = () => (rule) => murmurhash.v3(rule.toString()).toString();
+const createGenerateClassName = () => (rule) => `${rule.key}-${murmurhash.v3(rule.toString())}`;
 const generateClassName = createGenerateClassName();
 
 async function renderAppTree(app) {

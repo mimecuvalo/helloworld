@@ -22,7 +22,7 @@ const useStyles = createUseStyles({
   content: {
     margin: 'var(--app-margin)',
     padding: '0 3px 10px 3px',
-    width: (props) => (props.template === 'feed' ? '100%' : '75vw'),
+
     '@media only screen and (max-width: 600px)': {
       '&': {
         width: 'auto !important',
@@ -35,6 +35,10 @@ const useStyles = createUseStyles({
     flexDirection: 'row',
     flexFlow: 'wrap',
     alignItems: 'flex-start',
+    width: '100%',
+  },
+  regularWrapper: {
+    width: '75vw',
   },
 });
 
@@ -265,7 +269,12 @@ const PersistedContent = memo(
         title={title}
         username={content.username}
       >
-        <article className={classNames(styles.content, { [styles.feedWrapper]: content.template === 'feed' })}>
+        <article
+          className={classNames(styles.content, {
+            [styles.feedWrapper]: content.template === 'feed',
+            [styles.regularWrapper]: content.template !== 'feed',
+          })}
+        >
           {isEditing ? null : <Nav ref={nav} content={content} isEditing={isEditing} />}
           {itemEl}
         </article>
