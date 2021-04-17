@@ -55,7 +55,7 @@ export default function Header({ contentRemote }) {
       ) : null}
       {creator ? (
         <div className={styles.creator}>
-          <F msg={`by {creator}`} values={{ creator }} />
+          <F msg="by {creator}" values={{ creator }} />
         </div>
       ) : null}
       {avatar ? <img src={avatar} className={styles.avatar} alt={avatarAltText} /> : null}

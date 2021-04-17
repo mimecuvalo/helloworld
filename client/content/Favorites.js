@@ -21,7 +21,7 @@ export default function Favorites({ favorites }) {
         <li className={styles.favorite} key={favorite.post_id}>
           <img className={styles.avatar} src={favorite.avatar || '/img/pixel.gif'} alt={ariaImgMsg} />
           <F
-            msg={'{user}: favorited this post.'}
+            msg="{user}: favorited this post."
             values={{
               user: (
                 <span className={styles.author}>
