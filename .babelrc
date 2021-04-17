@@ -1,4 +1,13 @@
 {
   "presets": ["react-app"],
-  "plugins": ["module:react-intl-wrapper"]
+  "plugins": [
+    "module:react-intl-wrapper",
+    [
+      "react-intl",
+      {
+        "additionalComponentNames": ["F"],
+        "moduleSourceName": "react-intl-wrapper"
+      }
+    ]
+  ]
 }

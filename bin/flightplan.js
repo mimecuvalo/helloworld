@@ -92,8 +92,7 @@ plan.remote(function (remote) {
 
   // XXX(mime): this is so brittle and ridiculous - i have to figure out
   // how to better use npm workspaces to make this better.
-  // This deletes the line `"packages/*"` from the workspaces in package.json so we
-  // don't have to build packages locally.
+  // This deletes the packages so that they aren't symlinked.
   // See part 2 below.
   remote.sudo(`rm -rf ${varTmpDir}/packages/hello-world-editor`, { user });
   remote.sudo(`rm -rf ${varTmpDir}/packages/social-butterfly`, { user });
