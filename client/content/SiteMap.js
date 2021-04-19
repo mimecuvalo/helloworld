@@ -1,4 +1,4 @@
-import { F, defineMessages, useIntl } from 'react-intl-wrapper';
+import { F, defineMessages, useIntl } from 'shared/util/i18n';
 import { buildUrl, profileUrl } from 'shared/util/url_factory';
 
 import CloseIcon from '@material-ui/icons/Close';
@@ -52,8 +52,8 @@ const useStyles = createUseStyles({
 });
 
 const messages = defineMessages({
-  menu: { msg: 'Menu' },
-  search: { msg: 'search' },
+  menu: { defaultMessage: 'Menu' },
+  search: { defaultMessage: 'search' },
 });
 
 const SITE_MAP_AND_USER_QUERY = gql`
@@ -203,7 +203,7 @@ export default function SiteMap({ content, username }) {
               href={profileUrl(username)}
               className={classNames({ 'hw-selected': content.name === 'home' })}
             >
-              <F msg="home" />
+              <F defaultMessage="home" />
             </a>
           </li>
 

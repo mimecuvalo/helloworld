@@ -1,7 +1,7 @@
 import { createLock, setUser } from 'client/app/auth';
 
 import Button from '@material-ui/core/Button';
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import UserContext from 'client/app/User_Context';
 import { useContext } from 'react';
 
@@ -18,7 +18,7 @@ export default function LoginLogoutButton() {
 
   return (
     <Button variant="contained" color="primary" onClick={handleClick}>
-      {user ? <F msg="logout" /> : <F msg="login" />}
+      {user ? <F defaultMessage="logout" /> : <F defaultMessage="login" />}
     </Button>
   );
 }

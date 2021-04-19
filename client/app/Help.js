@@ -1,4 +1,4 @@
-import { F, defineMessages, useIntl } from 'react-intl-wrapper';
+import { F, defineMessages, useIntl } from 'shared/util/i18n';
 import { List, ListItem, ListItemText } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 
@@ -20,7 +20,7 @@ const useStyles = createUseStyles({
 });
 
 const messages = defineMessages({
-  help: { msg: 'Help' },
+  help: { defaultMessage: 'Help' },
 });
 
 const EXPERIMENTS_QUERY = gql`
@@ -127,14 +127,14 @@ export default function Help() {
         }}
       >
         <MenuItem key="admin" onClick={handleAdmin}>
-          <F msg="Admin" />
+          <F defaultMessage="Admin" />
         </MenuItem>
         <MenuItem key="experiments" onClick={handleExperiments}>
-          <F msg="Experiments" />
+          <F defaultMessage="Experiments" />
         </MenuItem>
         {renderStyleguide()}
         <MenuItem key="language" onClick={handleLanguage}>
-          <F msg="Test language alternative" />
+          <F defaultMessage="Test language alternative" />
         </MenuItem>
       </Menu>
 

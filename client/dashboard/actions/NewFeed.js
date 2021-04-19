@@ -1,6 +1,6 @@
-import { defineMessages, useIntl } from 'react-intl-wrapper';
+import { defineMessages, useIntl } from 'shared/util/i18n';
 
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import FollowingFeedCountsQuery from 'client/dashboard/FollowingFeedCountsQuery';
 import FollowingQuery from 'client/dashboard/FollowingQuery';
 import FollowingSpecialFeedCountsQuery from 'client/dashboard/FollowingSpecialFeedCountsQuery';
@@ -12,8 +12,8 @@ import { useSnackbar } from 'notistack';
 import useStyles from './actionsStyles';
 
 const messages = defineMessages({
-  error: { msg: 'Error subscribing to new feed.' },
-  follow: { msg: 'paste url to follow' },
+  error: { defaultMessage: 'Error subscribing to new feed.' },
+  follow: { defaultMessage: 'paste url to follow' },
 });
 
 const CREATE_USER_REMOTE = gql`
@@ -80,7 +80,7 @@ export default function NewFeed(props) {
   if (props.isButton) {
     return (
       <MenuItem onClick={handleClick}>
-        <F msg="follow back" />
+        <F defaultMessage="follow back" />
       </MenuItem>
     );
   }

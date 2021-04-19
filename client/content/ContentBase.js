@@ -1,6 +1,6 @@
 import { forwardRef, memo } from 'react';
 
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import SiteMap from './SiteMap';
 import classNames from 'classnames';
 import { createUseStyles } from 'react-jss';
@@ -49,7 +49,7 @@ export default memo(
 
         <footer className={styles.footer}>
           <F
-            msg="powered by {br} {link}"
+            defaultMessage="powered by {br} {link}"
             values={{
               br: <br />,
               link: (

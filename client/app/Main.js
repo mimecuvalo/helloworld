@@ -2,7 +2,7 @@ import { Route, Switch } from 'react-router-dom';
 import { Suspense, lazy, useEffect, useState } from 'react';
 
 import Content from 'client/content/Content';
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import Footer from './Footer';
 import Header from './Header';
 import ScrollToTop from './ScrollToTop';
@@ -21,7 +21,7 @@ export default function MainApp() {
     const IS_CLIENT = typeof window !== 'undefined';
     const Fallback = (
       <span>
-        <F msg="Loading…" />
+        <F defaultMessage="Loading…" />
       </span>
     );
 

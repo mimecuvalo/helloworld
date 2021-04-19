@@ -1,9 +1,9 @@
-import { F, defineMessages, useIntl } from 'react-intl-wrapper';
+import { F, defineMessages, useIntl } from 'shared/util/i18n';
 
 import useStyles from './errorStyles';
 
 const messages = defineMessages({
-  personGesturingNo: { msg: 'person gesturing no' },
+  personGesturingNo: { defaultMessage: 'person gesturing no' },
 });
 
 export default function Forbidden() {
@@ -17,12 +17,12 @@ export default function Forbidden() {
         🙅
       </span>
       <h1>
-        403: <F msg="forbidden" />
+        403: <F defaultMessage="forbidden" />
       </h1>
       <div>
-        <F msg="i'm sorry, dave. i'm afraid i can't do that." />
+        <F defaultMessage="i'm sorry, dave. i'm afraid i can't do that." />
         <br />
-        <F msg="try logging in." />
+        <F defaultMessage="try logging in." />
       </div>
     </div>
   );

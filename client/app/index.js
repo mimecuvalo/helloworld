@@ -2,7 +2,7 @@ import './index.css';
 
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
-import { IntlProvider, isInternalLocale, setLocales } from 'react-intl-wrapper';
+import { IntlProvider, isInternalLocale, setLocales, setupCreateIntl } from 'shared/util/i18n';
 
 import { ApolloProvider } from '@apollo/client';
 import App from './App';
@@ -33,15 +33,19 @@ const generateClassName = createGenerateClassName();
 async function renderAppTree(app) {
   const client = createApolloClient();
 
-  let translations = {};
+  let messages = {};
+  const { locale, defaultLocale } = configuration;
   // This is to dynamically load language packs as needed. We don't need them all client-side.
-  if (configuration.locale !== configuration.defaultLocale && !isInternalLocale(configuration.locale)) {
-    translations = (await import(`shared/i18n-lang-packs/${configuration.locale}`)).default;
+  if (locale !== defaultLocale && !isInternalLocale(locale)) {
+    messages = (await import(`shared/i18n-lang-packs/${locale}.json`)).default;
   }
+
+  // createIntl is used in non-React locations.
+  setupCreateIntl({ defaultLocale, locale, messages });
 
   return (
     <StrictMode>
-      <IntlProvider defaultLocale={configuration.locale} locale={configuration.locale} messages={translations}>
+      <IntlProvider defaultLocale={locale} locale={locale} messages={messages}>
         <ApolloProvider client={client}>
           <Router>
             <JssProvider generateId={generateClassName}>

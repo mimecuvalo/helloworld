@@ -1,4 +1,4 @@
-import { F, FormattedDate } from 'react-intl-wrapper';
+import { F, FormattedDate } from 'shared/util/i18n';
 import { contentUrl, profileUrl } from 'shared/util/url_factory';
 
 import { createUseStyles } from 'react-jss';
@@ -45,7 +45,7 @@ export default function Footer({ content, contentOwner }) {
       </span>
       <span className="notranslate">:&nbsp;</span>
       <F
-        msg="posted {date}"
+        defaultMessage="posted {date}"
         values={{
           date: (
             <time className="t-published" dateTime={createdAt}>
@@ -56,27 +56,27 @@ export default function Footer({ content, contentOwner }) {
       />
       <span className="notranslate">&nbsp;•&nbsp;</span>
       <a href={contentUrl(content)} target="_blank" rel="bookmark noopener noreferrer">
-        <F msg="permalink" />
+        <F defaultMessage="permalink" />
       </a>
       <span className="notranslate">&nbsp;•</span>
       <button className="hw-button-link" onClick={handleFullscreen}>
-        <F msg="fullscreen" />
+        <F defaultMessage="fullscreen" />
       </button>
       <span className="notranslate">•&nbsp;</span>
       <F
-        msg="{count, plural, =0 {no human views} one {# human view} other {# human views}}"
+        defaultMessage="{count, plural, =0 {no human views} one {# human view} other {# human views}}"
         values={{ count: count }}
       />
       <span className="notranslate">&nbsp;•&nbsp;</span>
       <F
-        msg="{count, plural, =0 {no robot views} one {# robot view} other {# robot views}}"
+        defaultMessage="{count, plural, =0 {no robot views} one {# robot view} other {# robot views}}"
         values={{ count: count_robot }}
       />
       {content.thread ? (
         <>
           <span className="notranslate">&nbsp;•&nbsp;</span>
           <a href={content.thread} target="_blank" rel="noopener noreferrer">
-            <F msg="view thread" />
+            <F defaultMessage="view thread" />
           </a>
         </>
       ) : null}

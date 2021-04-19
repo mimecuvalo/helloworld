@@ -1,4 +1,4 @@
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import FollowingQuery from 'client/dashboard/FollowingQuery';
 import FollowingSpecialFeedCountsQuery from 'client/dashboard/FollowingSpecialFeedCountsQuery';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -37,7 +37,7 @@ export default function UnfollowFeed(props) {
 
   return (
     <MenuItem onClick={handleClick}>
-      <F msg="unfollow" />
+      <F defaultMessage="unfollow" />
     </MenuItem>
   );
 }

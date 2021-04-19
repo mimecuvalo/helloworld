@@ -1,4 +1,4 @@
-import { F, defineMessages, useIntl } from 'react-intl-wrapper';
+import { F, defineMessages, useIntl } from 'shared/util/i18n';
 import { useMutation, useQuery } from '@apollo/client';
 
 import ContentLink from 'client/components/ContentLink';
@@ -45,7 +45,7 @@ const useStyles = createUseStyles({
 });
 
 const messages = defineMessages({
-  error: { msg: 'Error deleting content.' },
+  error: { defaultMessage: 'Error deleting content.' },
 });
 
 const FETCH_COLLECTION = gql`
@@ -123,7 +123,7 @@ export default forwardRef(({ content, isEditing }, ref) => {
     <ul className={styles.album}>
       {!collection.length && (
         <li>
-          <F msg="No content here yet." />
+          <F defaultMessage="No content here yet." />
         </li>
       )}
       {collection.map((item) => (

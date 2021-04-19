@@ -1,5 +1,5 @@
 import Avatar from './Avatar';
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import FollowerMenu from './FollowerMenu';
 import classNames from 'classnames';
 import gql from 'graphql-tag';
@@ -32,7 +32,7 @@ export default function Followers(props) {
   return (
     <div className={classNames(props.className, styles.remoteUsers)}>
       <h2>
-        <F msg="followers" />
+        <F defaultMessage="followers" />
       </h2>
       <ul>
         {followers.map((follower) => (

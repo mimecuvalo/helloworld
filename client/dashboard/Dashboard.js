@@ -1,4 +1,4 @@
-import { defineMessages, useIntl } from 'react-intl-wrapper';
+import { defineMessages, useIntl } from 'shared/util/i18n';
 import { useContext, useRef, useState } from 'react';
 
 import DashboardEditor from './Editor';
@@ -57,7 +57,7 @@ const useStyles = createUseStyles({
 });
 
 const messages = defineMessages({
-  title: { msg: 'Dashboard' },
+  title: { defaultMessage: 'Dashboard' },
 });
 
 export default function Dashboard(props) {

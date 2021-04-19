@@ -1,8 +1,8 @@
-import { defineMessages, useIntl } from 'react-intl-wrapper';
+import { defineMessages, useIntl } from 'shared/util/i18n';
 import { useEffect, useState } from 'react';
 
 const messages = defineMessages({
-  avatar: { msg: 'user avatar' },
+  avatar: { defaultMessage: 'user avatar' },
 });
 
 export default function Avatar({ src }) {

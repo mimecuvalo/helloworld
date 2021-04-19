@@ -1,9 +1,9 @@
-import { F, defineMessages, useIntl } from 'react-intl-wrapper';
+import { F, defineMessages, useIntl } from 'shared/util/i18n';
 
 import useStyles from './errorStyles';
 
 const messages = defineMessages({
-  upsideDownFace: { msg: 'upside down face' },
+  upsideDownFace: { defaultMessage: 'upside down face' },
 });
 
 export default function NotFound() {
@@ -17,12 +17,12 @@ export default function NotFound() {
         🙃
       </span>
       <h1>
-        404: <F msg="not found" />
+        404: <F defaultMessage="not found" />
       </h1>
       <div>
-        <F msg="i'm sorry, dave. i'm afraid i can't do that." />
+        <F defaultMessage="i'm sorry, dave. i'm afraid i can't do that." />
         <br />
-        <F msg="try going back to the <a>beginning</a>." values={{ a: (msg) => <a href="/">{msg}</a> }} />
+        <F defaultMessage="try going back to the <a>beginning</a>." values={{ a: (msg) => <a href="/">{msg}</a> }} />
       </div>
     </div>
   );

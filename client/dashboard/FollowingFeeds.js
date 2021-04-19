@@ -1,7 +1,7 @@
 import Avatar from './Avatar';
 import FollowingFeedCountsQuery from './FollowingFeedCountsQuery';
 import FollowingMenu from './FollowingMenu';
-import { FormattedNumber } from 'react-intl-wrapper';
+import { FormattedNumber } from 'shared/util/i18n';
 import classNames from 'classnames';
 import keyBy from 'lodash/keyBy';
 import { useQuery } from '@apollo/client';

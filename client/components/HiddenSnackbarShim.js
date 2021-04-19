@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useIntl } from 'react-intl-wrapper';
+import { useIntl } from 'shared/util/i18n';
 import { useSnackbar } from 'notistack';
 
 export default function HiddenSnackbarShim({ message, variant }) {

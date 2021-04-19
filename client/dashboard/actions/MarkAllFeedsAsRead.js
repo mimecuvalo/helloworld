@@ -1,4 +1,4 @@
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import FollowingFeedCountsQuery from 'client/dashboard/FollowingFeedCountsQuery';
 import FollowingSpecialFeedCountsQuery from 'client/dashboard/FollowingSpecialFeedCountsQuery';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -38,7 +38,7 @@ export default function MarkAllFeedsAsRead({ handleClose }) {
 
   return (
     <MenuItem onClick={handleClick}>
-      <F msg="mark all feeds as read" />
+      <F defaultMessage="mark all feeds as read" />
     </MenuItem>
   );
 }

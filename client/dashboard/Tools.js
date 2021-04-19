@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import UserContext from 'client/app/User_Context';
 import { profileUrl } from 'shared/util/url_factory';
 import { setUser } from 'client/app/auth';
@@ -38,27 +38,27 @@ export default function Tools({ className }) {
     <ul className={className}>
       <li>
         <a href={profileUrl(username)} target="_blank" rel="noopener noreferrer">
-          <F msg="view site" />
+          <F defaultMessage="view site" />
         </a>
       </li>
       <li>
         <a href={followScript}>
-          <F msg="follow bookmarklet" />
+          <F defaultMessage="follow bookmarklet" />
         </a>
       </li>
       <li>
         <a href={reblogScript}>
-          <F msg="reblog bookmarklet" />
+          <F defaultMessage="reblog bookmarklet" />
         </a>
       </li>
       <li>
         <a href="/api/data-liberation">
-          <F msg="data liberation" />
+          <F defaultMessage="data liberation" />
         </a>
       </li>
       <li>
         <button className="hw-button-link" onClick={handleLogout}>
-          <F msg="logout" />
+          <F defaultMessage="logout" />
         </button>
       </li>
     </ul>

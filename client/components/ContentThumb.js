@@ -1,4 +1,4 @@
-import { defineMessages, useIntl } from 'react-intl-wrapper';
+import { defineMessages, useIntl } from 'shared/util/i18n';
 
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
@@ -23,7 +23,7 @@ const useStyles = createUseStyles({
 });
 
 const messages = defineMessages({
-  thumbnail: { msg: 'thumbnail' },
+  thumbnail: { defaultMessage: 'thumbnail' },
 });
 
 export default function Thumb({ className, item, currentContent, isEditing }) {

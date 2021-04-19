@@ -1,4 +1,4 @@
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import classNames from 'classnames';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
@@ -49,7 +49,7 @@ export default function Delete(props) {
       onClick={handleClick}
       className={classNames('hw-button-link', { [styles.enabled]: props.contentRemote.deleted })}
     >
-      <F msg="delete" />
+      <F defaultMessage="delete" />
     </button>
   );
 }

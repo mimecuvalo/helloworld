@@ -1,4 +1,4 @@
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import InfiniteFeed from 'client/components/InfiniteFeed';
 import Item from './Item';
 import { createUseStyles } from 'react-jss';
@@ -79,14 +79,14 @@ export default function Feed({ getEditor, userRemote, specialFeed, query, should
             </a>
           ) : (
             <>
-              <F msg="Search:" /> {query}
+              <F defaultMessage="Search:" /> {query}
             </>
           )}
         </h1>
       ) : null}
       {!feed.length ? (
         <div className={styles.empty}>
-          <F msg="Nothing to read right now!" />
+          <F defaultMessage="Nothing to read right now!" />
         </div>
       ) : (
         feed.map((item) => <Item key={item.post_id} contentRemote={item} getEditor={getEditor} />)

@@ -1,4 +1,4 @@
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import MenuItem from '@material-ui/core/MenuItem';
 
 export default function ViewAlreadyRead({ handleClose, handleSetFeed, userRemote }) {
@@ -10,7 +10,7 @@ export default function ViewAlreadyRead({ handleClose, handleSetFeed, userRemote
 
   return (
     <MenuItem onClick={handleClick}>
-      <F msg="view all items" />
+      <F defaultMessage="view all items" />
     </MenuItem>
   );
 }

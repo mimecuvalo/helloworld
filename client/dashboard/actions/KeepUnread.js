@@ -1,4 +1,4 @@
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import classNames from 'classnames';
 import { useState } from 'react';
 import useStyles from './actionsStyles';
@@ -14,7 +14,7 @@ export default function KeepUnread({ keepUnreadCb }) {
 
   return (
     <button onClick={handleClick} className={classNames('hw-button-link', { [styles.enabled]: enabled })}>
-      <F msg="keep unread" />
+      <F defaultMessage="keep unread" />
     </button>
   );
 }

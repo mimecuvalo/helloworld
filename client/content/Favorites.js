@@ -1,9 +1,9 @@
-import { F, defineMessages, useIntl } from 'react-intl-wrapper';
+import { F, defineMessages, useIntl } from 'shared/util/i18n';
 
 import { useStyles } from './Comments';
 
 const messages = defineMessages({
-  avatar: { msg: 'avatar' },
+  avatar: { defaultMessage: 'avatar' },
 });
 
 export default function Favorites({ favorites }) {
@@ -21,7 +21,7 @@ export default function Favorites({ favorites }) {
         <li className={styles.favorite} key={favorite.post_id}>
           <img className={styles.avatar} src={favorite.avatar || '/img/pixel.gif'} alt={ariaImgMsg} />
           <F
-            msg="{user}: favorited this post."
+            defaultMessage="{user}: favorited this post."
             values={{
               user: (
                 <span className={styles.author}>

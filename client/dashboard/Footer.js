@@ -1,4 +1,4 @@
-import { F, FormattedDate } from 'react-intl-wrapper';
+import { F, FormattedDate } from 'shared/util/i18n';
 
 import Favorite from './actions/Favorite';
 import KeepUnread from './actions/KeepUnread';
@@ -38,7 +38,7 @@ export default function Footer({ contentRemote, getEditor, keepUnreadCb }) {
       <div className={styles.info}>
         <a className={styles.permalink} href={link} target="_blank" rel="noopener noreferrer">
           <F
-            msg="{username} posted on {date}"
+            defaultMessage="{username} posted on {date}"
             values={{
               username: username,
               date: (
@@ -59,7 +59,7 @@ export default function Footer({ contentRemote, getEditor, keepUnreadCb }) {
             <>
               &nbsp;
               <F
-                msg="(updated {date})"
+                defaultMessage="(updated {date})"
                 values={{
                   date: (
                     <time dateTime={updatedAt}>

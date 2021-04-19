@@ -1,4 +1,4 @@
-import { F, defineMessages, useIntl } from 'react-intl-wrapper';
+import { F, defineMessages, useIntl } from 'shared/util/i18n';
 
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import IconButton from '@material-ui/core/IconButton';
@@ -9,7 +9,7 @@ import { useState } from 'react';
 import useStyles from './remoteUsersStyles';
 
 const messages = defineMessages({
-  menu: { msg: 'follower options' },
+  menu: { defaultMessage: 'follower options' },
 });
 
 export default function FollowerMenu(props) {
@@ -54,7 +54,7 @@ export default function FollowerMenu(props) {
       </IconButton>
       <Menu id={id} anchorEl={anchorEl} open={isOpen} onClose={handleClose} transitionDuration={0}>
         <MenuItem key="visit" onClick={handleVisit}>
-          <F msg="visit" />
+          <F defaultMessage="visit" />
         </MenuItem>
         {!following ? <NewFeed handleSetFeed={handleSetFeed} isButton={true} profileUrl={profile_url} /> : null}
       </Menu>

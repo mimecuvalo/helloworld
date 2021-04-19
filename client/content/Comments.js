@@ -1,4 +1,4 @@
-import { F, defineMessages, useIntl } from 'react-intl-wrapper';
+import { F, defineMessages, useIntl } from 'shared/util/i18n';
 import { Suspense, lazy, useContext, useEffect, useRef, useState } from 'react';
 
 import ContentQuery from './ContentQuery';
@@ -50,8 +50,8 @@ export const useStyles = createUseStyles({
 });
 
 const messages = defineMessages({
-  avatar: { msg: 'avatar' },
-  error: { msg: 'Error updating content.' },
+  avatar: { defaultMessage: 'avatar' },
+  error: { defaultMessage: 'Error updating content.' },
 });
 
 const POST_COMMENT = gql`
@@ -158,22 +158,22 @@ export default function Comments({ comments, content }) {
   return (
     <div className="hw-comments">
       <h3 className={styles.commentsHeader}>
-        <F msg="comments" />
+        <F defaultMessage="comments" />
       </h3>
       {isLoggedIn ? (
         <div id="hw-comment-editor" className={styles.commentEditorWrapper}>
           {editor}
           <button className={classNames('hw-button', 'hw-save')} disabled={isPosting} onClick={handlePost}>
-            <F msg="post" />
+            <F defaultMessage="post" />
           </button>
         </div>
       ) : (
         <F
-          msg="Please {login} to leave a comment."
+          defaultMessage="Please {login} to leave a comment."
           values={{
             login: (
               <button className="hw-button-link" onClick={handleLogin}>
-                <F msg="login" />
+                <F defaultMessage="login" />
               </button>
             ),
           }}

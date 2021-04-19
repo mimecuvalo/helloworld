@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import InfiniteFeed from 'client/components/InfiniteFeed';
 import Item from './Item';
 import { createUseStyles } from 'react-jss';
@@ -124,7 +124,7 @@ export default function Feed({ content: { username, section, name }, didFeedLoad
   const contentOwner = data.fetchPublicUserData;
 
   if (!collection.length) {
-    return <F msg="Nothing to read right now!" />;
+    return <F defaultMessage="Nothing to read right now!" />;
   }
 
   return (

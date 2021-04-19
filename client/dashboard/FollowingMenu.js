@@ -1,4 +1,4 @@
-import { F, defineMessages, useIntl } from 'react-intl-wrapper';
+import { F, defineMessages, useIntl } from 'shared/util/i18n';
 
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import IconButton from '@material-ui/core/IconButton';
@@ -12,7 +12,7 @@ import { useState } from 'react';
 import useStyles from './remoteUsersStyles';
 
 const messages = defineMessages({
-  menu: { msg: 'user options' },
+  menu: { defaultMessage: 'user options' },
 });
 
 export default function FollowingMenu(props) {
@@ -50,7 +50,7 @@ export default function FollowingMenu(props) {
       </IconButton>
       <Menu id={id} anchorEl={anchorEl} open={isOpen} onClose={handleClose} transitionDuration={0}>
         <MenuItem key="visit" onClick={handleVisit}>
-          <F msg="visit" />
+          <F defaultMessage="visit" />
         </MenuItem>
         <MarkAllAsRead key="read" handleClose={handleClose} userRemote={props.userRemote} />
         <Sort key="sort" handleClose={handleClose} userRemote={props.userRemote} handleSetFeed={props.handleSetFeed} />

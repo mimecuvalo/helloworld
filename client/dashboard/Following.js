@@ -1,4 +1,4 @@
-import { F, defineMessages, useIntl } from 'react-intl-wrapper';
+import { F, defineMessages, useIntl } from 'shared/util/i18n';
 
 import FollowingFeeds from './FollowingFeeds';
 import FollowingQuery from './FollowingQuery';
@@ -10,7 +10,7 @@ import { useRef } from 'react';
 import useStyles from './remoteUsersStyles';
 
 const messages = defineMessages({
-  search: { msg: 'search' },
+  search: { defaultMessage: 'search' },
 });
 
 const POLL_INTERVAL = 60 * 1000;
@@ -45,7 +45,7 @@ export default function Following(props) {
   return (
     <div className={classNames(className, styles.remoteUsers)}>
       <h2>
-        <F msg="following" />
+        <F defaultMessage="following" />
       </h2>
 
       <ul>

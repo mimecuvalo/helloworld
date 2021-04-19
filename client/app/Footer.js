@@ -1,6 +1,6 @@
 import { Suspense, lazy, memo, useEffect, useState } from 'react';
 
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import Help from './Help';
 import { createUseStyles } from 'react-jss';
 
@@ -32,7 +32,7 @@ const Footer = memo(function Footer() {
       const IS_CLIENT = typeof window !== 'undefined';
       const Fallback = (
         <span>
-          <F msg="Loading…" />
+          <F defaultMessage="Loading…" />
         </span>
       );
 

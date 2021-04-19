@@ -1,4 +1,4 @@
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import classNames from 'classnames';
 import useStyles from './actionsStyles';
 
@@ -21,7 +21,7 @@ export default function Reblog({ contentRemote, getEditor }) {
       onClick={handleClick}
       className={classNames('hw-button-link', { [styles.disabled]: type === 'remote-comment' })}
     >
-      <F msg="reblog" />
+      <F defaultMessage="reblog" />
     </button>
   );
 }

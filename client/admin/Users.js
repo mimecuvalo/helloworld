@@ -1,4 +1,4 @@
-import { F, defineMessages, useIntl } from 'react-intl-wrapper';
+import { F, defineMessages, useIntl } from 'shared/util/i18n';
 
 import Forbidden from 'client/error/403';
 import Unauthorized from 'client/error/401';
@@ -35,7 +35,7 @@ const useStyles = createUseStyles({
 });
 
 const messages = defineMessages({
-  title: { msg: 'Admin' },
+  title: { defaultMessage: 'Admin' },
 });
 
 const FETCH_ALL_USERS = gql`
@@ -91,7 +91,7 @@ function AdminApp() {
   return (
     <div id="hw-admin" className={styles.container}>
       <nav className={styles.nav}>
-        <F msg="Users" />
+        <F defaultMessage="Users" />
       </nav>
 
       <article className={styles.content}>

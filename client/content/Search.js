@@ -1,4 +1,4 @@
-import { defineMessages, useIntl } from 'react-intl-wrapper';
+import { defineMessages, useIntl } from 'shared/util/i18n';
 
 import ContentBase from './ContentBase';
 import ContentLink from 'client/components/ContentLink';
@@ -55,8 +55,8 @@ const useStyles = createUseStyles({
 });
 
 const messages = defineMessages({
-  search: { msg: 'search' },
-  untitled: { msg: 'untitled' },
+  search: { defaultMessage: 'search' },
+  untitled: { defaultMessage: 'untitled' },
 });
 
 const SEARCH_AND_USER_QUERY = gql`

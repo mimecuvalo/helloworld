@@ -4,7 +4,7 @@ import 'client/content/EditorPlugin.css'; // XXX(mime): this is a complete hack 
 
 import { Route, Switch } from 'react-router-dom';
 import { SnackbarProvider, useSnackbar } from 'notistack';
-import { defineMessages, useIntl } from 'react-intl-wrapper';
+import { defineMessages, useIntl } from 'shared/util/i18n';
 import { useEffect, useState } from 'react';
 
 import AdminApp from 'client/admin';
@@ -17,7 +17,7 @@ import classNames from 'classnames';
 import clientHealthCheck from './client_health_check';
 
 const messages = defineMessages({
-  close: { msg: 'Close' },
+  close: { defaultMessage: 'Close' },
 });
 
 // This is the main entry point on the client-side.

@@ -2,7 +2,7 @@ import { forwardRef, memo, useEffect, useImperativeHandle, useRef } from 'react'
 
 import ContentLink from 'client/components/ContentLink';
 import ContentQuery from './ContentQuery';
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import classNames from 'classnames';
 import { contentUrl } from 'shared/util/url_factory';
 import { createUseStyles } from 'react-jss';
@@ -191,11 +191,11 @@ const PersistedNav = memo(
 
     return (
       <nav className={styles.nav}>
-        {renderLink(data.fetchContentNeighbors.last, 'last', <F msg="last" />)}
-        {renderLink(data.fetchContentNeighbors.next, 'next', <F msg="next" />)}
+        {renderLink(data.fetchContentNeighbors.last, 'last', <F defaultMessage="last" />)}
+        {renderLink(data.fetchContentNeighbors.next, 'next', <F defaultMessage="next" />)}
         {renderLink(data.fetchContentNeighbors.top, 'top', data.fetchContentNeighbors.top?.name)}
-        {renderLink(data.fetchContentNeighbors.prev, 'prev', <F msg="prev" />)}
-        {renderLink(data.fetchContentNeighbors.first, 'first', <F msg="first" />)}
+        {renderLink(data.fetchContentNeighbors.prev, 'prev', <F defaultMessage="prev" />)}
+        {renderLink(data.fetchContentNeighbors.first, 'first', <F defaultMessage="first" />)}
       </nav>
     );
   },

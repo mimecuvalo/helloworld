@@ -5,7 +5,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 import AppBar from '@material-ui/core/AppBar';
 import { Editor } from 'hello-world-editor';
 import ErrorBoundary from 'client/error/ErrorBoundary';
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import { buildUrl } from 'shared/util/url_factory';
@@ -211,9 +211,9 @@ export default forwardRef((props, ref) => {
     <>
       <AppBar position="static">
         <Tabs value={tabValue} onChange={handleTabChange}>
-          <Tab label={<F msg="Content" />} />
-          <Tab label={<F msg="CSS" />} />
-          <Tab label={<F msg="JS" />} />
+          <Tab label={<F defaultMessage="Content" />} />
+          <Tab label={<F defaultMessage="CSS" />} />
+          <Tab label={<F defaultMessage="JS" />} />
         </Tabs>
       </AppBar>
 

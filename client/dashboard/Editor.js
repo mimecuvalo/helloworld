@@ -1,5 +1,5 @@
 import { EditorState, convertFromRaw } from 'draft-js';
-import { F, defineMessages } from 'react-intl-wrapper';
+import { F, defineMessages } from 'shared/util/i18n';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
 
@@ -36,8 +36,8 @@ const useStyles = createUseStyles({
 });
 
 const messages = defineMessages({
-  error: { msg: 'Error posting content.' },
-  posted: { msg: 'Success!' },
+  error: { defaultMessage: 'Error posting content.' },
+  posted: { defaultMessage: 'Success!' },
 });
 
 const SITE_MAP_AND_USER_QUERY = gql`
@@ -310,7 +310,7 @@ export default forwardRef(({ username }, ref) => {
               {generateSiteMap(data.fetchSiteMap)}
             </Select>
             <Button type="submit" onClick={handlePost} className={classNames('hw-button', 'hw-edit', styles.post)}>
-              <F msg="post" />
+              <F defaultMessage="post" />
             </Button>
           </FormControl>
         </form>

@@ -1,7 +1,7 @@
 import { forwardRef, useContext } from 'react';
 
 import ContentLink from 'client/components/ContentLink';
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import UserContext from 'client/app/User_Context';
 import classNames from 'classnames';
 import { createUseStyles } from 'react-jss';
@@ -56,7 +56,7 @@ export default forwardRef(({ content }, ref) => {
     <ul className={styles.archive}>
       {!collection.length && (
         <li>
-          <F msg="No content here yet." />
+          <F defaultMessage="No content here yet." />
         </li>
       )}
       {collection

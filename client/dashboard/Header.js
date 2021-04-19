@@ -1,4 +1,4 @@
-import { F, defineMessages, useIntl } from 'react-intl-wrapper';
+import { F, defineMessages, useIntl } from 'shared/util/i18n';
 
 import classNames from 'classnames';
 import { createUseStyles } from 'react-jss';
@@ -33,7 +33,7 @@ const useStyles = createUseStyles({
 });
 
 const messages = defineMessages({
-  avatar: { msg: 'avatar' },
+  avatar: { defaultMessage: 'avatar' },
 });
 
 export default function Header({ contentRemote }) {
@@ -55,7 +55,7 @@ export default function Header({ contentRemote }) {
       ) : null}
       {creator ? (
         <div className={styles.creator}>
-          <F msg="by {creator}" values={{ creator }} />
+          <F defaultMessage="by {creator}" values={{ creator }} />
         </div>
       ) : null}
       {avatar ? <img src={avatar} className={styles.avatar} alt={avatarAltText} /> : null}

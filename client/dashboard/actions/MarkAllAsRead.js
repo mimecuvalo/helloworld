@@ -1,4 +1,4 @@
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import FollowingSpecialFeedCountsQuery from 'client/dashboard/FollowingSpecialFeedCountsQuery';
 import MenuItem from '@material-ui/core/MenuItem';
 import { escapeRegExp } from 'shared/util/regex';
@@ -41,7 +41,7 @@ export default function MarkAllAsRead(props) {
 
   return (
     <MenuItem onClick={handleClick}>
-      <F msg="mark all as read" />
+      <F defaultMessage="mark all as read" />
     </MenuItem>
   );
 }

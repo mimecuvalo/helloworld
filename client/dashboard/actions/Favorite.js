@@ -1,4 +1,4 @@
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import FollowingSpecialFeedCountsQuery from 'client/dashboard/FollowingSpecialFeedCountsQuery';
 import classNames from 'classnames';
 import gql from 'graphql-tag';
@@ -45,7 +45,7 @@ export default function Favorite(props) {
       onClick={handleClick}
       className={classNames('hw-button-link', { [styles.enabled]: props.contentRemote.favorited })}
     >
-      <F msg="favorite" />
+      <F defaultMessage="favorite" />
     </button>
   );
 }

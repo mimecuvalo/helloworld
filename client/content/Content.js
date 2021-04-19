@@ -1,5 +1,5 @@
 import { buildUrl, contentUrl } from 'shared/util/url_factory';
-import { defineMessages, useIntl } from 'react-intl-wrapper';
+import { defineMessages, useIntl } from 'shared/util/i18n';
 import { memo, useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
 
@@ -43,7 +43,7 @@ const useStyles = createUseStyles({
 });
 
 const messages = defineMessages({
-  error: { msg: 'Error updating content.' },
+  error: { defaultMessage: 'Error updating content.' },
 });
 
 const SAVE_CONTENT = gql`

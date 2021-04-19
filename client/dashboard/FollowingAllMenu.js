@@ -1,4 +1,4 @@
-import { defineMessages, useIntl } from 'react-intl-wrapper';
+import { defineMessages, useIntl } from 'shared/util/i18n';
 
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import IconButton from '@material-ui/core/IconButton';
@@ -8,7 +8,7 @@ import { useState } from 'react';
 import useStyles from './remoteUsersStyles';
 
 const messages = defineMessages({
-  menu: { msg: 'user options' },
+  menu: { defaultMessage: 'user options' },
 });
 
 export default function FollowingAllMenu(props) {

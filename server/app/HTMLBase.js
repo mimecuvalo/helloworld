@@ -1,4 +1,4 @@
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import HTMLHead from './HTMLHead';
 
 // The main wrapper around all of our app's code.
@@ -62,7 +62,7 @@ export default function HTMLBase({
         */}
 
         <noscript>
-          <F msg="You need to enable JavaScript to run this app." />
+          <F defaultMessage="You need to enable JavaScript to run this app." />
         </noscript>
         <div
           dangerouslySetInnerHTML={{

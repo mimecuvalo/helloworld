@@ -1,8 +1,8 @@
 import Avatar from './Avatar';
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import FollowingAllMenu from './FollowingAllMenu';
 import FollowingSpecialFeedCountsQuery from './FollowingSpecialFeedCountsQuery';
-import { FormattedNumber } from 'react-intl-wrapper';
+import { FormattedNumber } from 'shared/util/i18n';
 import UserContext from 'client/app/User_Context';
 import classNames from 'classnames';
 import { useContext } from 'react';
@@ -45,7 +45,7 @@ export default function FollowingSpecialFeeds(props) {
     <>
       <li className={styles.readAll}>
         <button className="hw-button-link" onClick={handleEntireFeedClick}>
-          <F msg="read all" />
+          <F defaultMessage="read all" />
         </button>
         <span className={styles.unreadCount}>
           <FormattedNumber value={totalCount} />
@@ -55,14 +55,14 @@ export default function FollowingSpecialFeeds(props) {
       <li className={classNames({ [styles.selected]: specialFeed === 'me' })}>
         <button className="hw-button-link" onClick={handleMyFeedClick}>
           {userAvatar}
-          <F msg="your feed" />
+          <F defaultMessage="your feed" />
         </button>
         <span />
       </li>
       <li className={classNames({ [styles.selected]: specialFeed === 'favorites' })}>
         <button className="hw-button-link" onClick={handleFavoritesClick}>
           {userAvatar}
-          <F msg="favorites" />
+          <F defaultMessage="favorites" />
         </button>
         <span className={styles.unreadCount}>
           <FormattedNumber value={favoritesCount} />
@@ -71,7 +71,7 @@ export default function FollowingSpecialFeeds(props) {
       <li className={classNames({ [styles.selected]: specialFeed === 'comments' })}>
         <button className="hw-button-link" onClick={handleCommentsClick}>
           {userAvatar}
-          <F msg="comments" />
+          <F defaultMessage="comments" />
         </button>
         <span className={styles.unreadCount}>
           <FormattedNumber value={commentsCount} />

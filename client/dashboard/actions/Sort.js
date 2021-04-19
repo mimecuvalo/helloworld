@@ -1,4 +1,4 @@
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import MenuItem from '@material-ui/core/MenuItem';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
@@ -27,7 +27,11 @@ export default function Sort(props) {
 
   return (
     <MenuItem onClick={handleClick}>
-      {props.userRemote.sort_type === 'oldest' ? <F msg="sort by newest" /> : <F msg="sort by oldest" />}
+      {props.userRemote.sort_type === 'oldest' ? (
+        <F defaultMessage="sort by newest" />
+      ) : (
+        <F defaultMessage="sort by oldest" />
+      )}
     </MenuItem>
   );
 }

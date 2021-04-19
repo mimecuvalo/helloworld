@@ -1,4 +1,4 @@
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import { PureComponent } from 'react';
 import { logError } from './error';
 
@@ -32,7 +32,7 @@ export default class ErrorBoundary extends PureComponent {
       // You can render any custom fallback UI
       return (
         <h1 style={styles.errorBoundary}>
-          <F msg="Something went wrong. 😦" />
+          <F defaultMessage="Something went wrong. 😦" />
         </h1>
       );
     }

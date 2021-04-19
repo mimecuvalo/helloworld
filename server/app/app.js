@@ -1,6 +1,6 @@
 import * as languages from 'shared/i18n-lang-packs';
 
-import { IntlProvider, getDefaultLocale, getLocaleFromRequest, getLocales, setLocales } from 'react-intl-wrapper';
+import { IntlProvider, getDefaultLocale, getLocaleFromRequest, getLocales, setLocales } from 'shared/util/i18n';
 import { JssProvider, SheetsRegistry } from 'react-jss';
 import { ServerStyleSheets, ThemeProvider } from '@material-ui/core/styles';
 

@@ -1,7 +1,7 @@
-import { F, defineMessages, useIntl } from 'react-intl-wrapper';
+import { F, defineMessages, useIntl } from 'shared/util/i18n';
 
 const messages = defineMessages({
-  reply: { msg: 'replying to' },
+  reply: { defaultMessage: 'replying to' },
 });
 
 export default function Reply(props) {
@@ -21,7 +21,7 @@ export default function Reply(props) {
 
   return (
     <button className="hw-button-link" onClick={handleClick}>
-      <F msg="reply" />
+      <F defaultMessage="reply" />
     </button>
   );
 }

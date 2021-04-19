@@ -1,5 +1,5 @@
 import Button from '@material-ui/core/Button';
-import { F } from 'react-intl-wrapper';
+import { F } from 'shared/util/i18n';
 import LoginLogoutButton from 'client/components/login';
 import { createUseStyles } from 'react-jss';
 import gql from 'graphql-tag';
@@ -43,7 +43,7 @@ export default function Header() {
       <nav>
         {isAuthor && routerLocation.pathname !== '/dashboard' ? (
           <Button variant="contained" color="primary" href="/dashboard">
-            <F msg="dashboard" />
+            <F defaultMessage="dashboard" />
           </Button>
         ) : null}
         {!isLoggedIn || !isAuthor ? <LoginLogoutButton /> : null}
