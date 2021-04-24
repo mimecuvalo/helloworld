@@ -1,6 +1,6 @@
 {
   "name": "hello-world-editor",
-  "version": "0.8.19",
+  "version": "0.8.20",
   "description": "An editor built on draft.js. Used with Hello, world federated blog.",
   "repository": {
     "type": "git",
@@ -37,12 +37,12 @@
     "@draft-js-plugins/divider": "4.1.0",
     "@draft-js-plugins/drag-n-drop": "4.1.0",
     "@draft-js-plugins/editor": "4.1.0",
-    "@draft-js-plugins/emoji": "4.4.0",
+    "@draft-js-plugins/emoji": "4.5.0",
     "@draft-js-plugins/focus": "4.1.1",
     "@draft-js-plugins/hashtag": "4.2.0",
     "@draft-js-plugins/inline-toolbar": "4.1.1",
     "@draft-js-plugins/linkify": "4.1.0",
-    "@draft-js-plugins/mention": "4.3.1",
+    "@draft-js-plugins/mention": "4.4.1",
     "@draft-js-plugins/side-toolbar": "4.1.0",
     "@draft-js-plugins/utils": "4.1.0",
     "classnames": "2.3.0",

@@ -2,8 +2,8 @@ import './Draft.css';
 import './Editor.css';
 
 import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
-// import Emojis, { emojiPlugin } from './ui/autocomplete/Emojis';
-// import Mentions, { mentionPlugin } from './ui/autocomplete/Mentions';
+import Emojis, { emojiPlugin } from './ui/autocomplete/Emojis';
+import Mentions, { mentionPlugin } from './ui/autocomplete/Mentions';
 import Toolbars, { inlineToolbarPlugin, linkPlugin, sideToolbarPlugin } from './ui/toolbars';
 import draftJSExtendPlugins, {
   alignmentPlugin,
@@ -70,12 +70,12 @@ const plugins = [
   alignmentPlugin,
   blockDndPlugin,
   dividerPlugin,
-  //emojiPlugin,
+  emojiPlugin,
   focusPlugin,
   hashtagPlugin,
   inlineToolbarPlugin,
   linkPlugin,
-  //mentionPlugin,
+  mentionPlugin,
   replyPlugin,
   rsvpPlugin,
   sideToolbarPlugin,
@@ -84,10 +84,10 @@ const plugins = [
 
 const readOnlyPlugins = [
   dividerPlugin,
-  //emojiPlugin,
+  emojiPlugin,
   hashtagPlugin,
   linkPlugin,
-  //mentionPlugin,
+  mentionPlugin,
   replyPlugin,
   rsvpPlugin,
   linkifyPlugin,
@@ -294,8 +294,8 @@ export default forwardRef((props, ref) => {
           {readOnly ? null : (
             <Toolbars AlignmentTool={AlignmentTool} dividerPlugin={dividerPlugin} onMediaUpload={onMediaUpload} />
           )}
-          {/* {readOnly ? null : <Emojis />}
-          {readOnly ? null : <Mentions mentions={mentions} />} */}
+          {readOnly ? null : <Emojis />}
+          {readOnly ? null : <Mentions mentions={mentions} />}
         </div>
         {errorMessage ? <HiddenSnackbarShim message={errorMessage} variant="error" /> : null}
       </SnackbarProvider>
