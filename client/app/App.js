@@ -2,10 +2,10 @@ import './analytics';
 import './App.css';
 import 'client/content/EditorPlugin.css'; // XXX(mime): this is a complete hack for now.
 
+import React, { useEffect, useState } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import { defineMessages, useIntl } from 'shared/util/i18n';
-import { useEffect, useState } from 'react';
 
 import AdminApp from 'client/admin';
 import CloseIcon from '@material-ui/icons/Close';
@@ -15,6 +15,11 @@ import MainApp from './Main';
 import UserContext from './User_Context';
 import classNames from 'classnames';
 import clientHealthCheck from './client_health_check';
+
+// XXX(mime): hello-world-editor needs React explicitly exported, there's probably a better place for this.
+if (typeof window !== 'undefined') {
+  window.React = React;
+}
 
 const messages = defineMessages({
   close: { defaultMessage: 'Close' },

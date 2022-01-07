@@ -192,11 +192,9 @@ export default forwardRef(({ username }, ref) => {
 
     // On first load, set unsaved changes to false, the first change is just a focus selection change.
     if (!didSetUnsavedChanges) {
-      console.log('wat');
       setDidSetUnsavedChanges(true);
 
       setTimeout(() => {
-        console.log('here');
         editor.current && editor.current.setUnsavedChanges(false);
       }, 0);
     }

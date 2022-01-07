@@ -140,7 +140,7 @@ export default function Comments({ comments, content }) {
   let editor = null;
   // TODO(mime): Suspense and lazy aren't supported by ReactDOMServer yet (breaks SSR).
   if (isLoggedIn && typeof window !== 'undefined') {
-    const { Editor } = lazy(() => import('hello-world-editor'));
+    const Editor = lazy(() => import('hello-world-editor').then((module) => ({ default: module.Editor })));
     return (
       <Suspense fallback={<div />}>
         <Editor

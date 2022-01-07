@@ -135,6 +135,12 @@ export default forwardRef((props, ref) => {
     // entanglement with the propOnChange call below. Need to come up with a better solution.
   }, []);
 
+  const handleOnBeforeUnload = (evt) => {
+    if (hasUnsavedChanges) {
+      evt.returnValue = 'You have unfinished changes!';
+    }
+  };
+
   useEffect(() => {
     if (!readOnly) {
       window.addEventListener('beforeunload', handleOnBeforeUnload);
@@ -168,12 +174,6 @@ export default forwardRef((props, ref) => {
   if (!editorState) {
     return null;
   }
-
-  const handleOnBeforeUnload = (evt) => {
-    if (hasUnsavedChanges) {
-      evt.returnValue = 'You have unfinished changes!';
-    }
-  };
 
   const onChange = (newEditorState) => {
     const hasText = !!newEditorState.getCurrentContent().getPlainText().trim();

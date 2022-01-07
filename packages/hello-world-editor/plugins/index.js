@@ -52,27 +52,33 @@ export const htmlPlugins = compose(
   /*dividerPlugin,
   hashtagPlugin,
   mentionPlugin,*/
-  createPlugin(
-    Object.assign(
-      {},
-      // TODO(mime): frankenstein stuff here b/c linkifyPlugin is 3rd party...
-      {
-        // This handles linkify content actually typed in (not pasted in from another editor).
-        blockToHTML: decoratedBlocksToHTML(linkifyPlugin.decorators[0].strategy, linkifyPlugin.decorators[0].component),
 
-        // This handles LINK entities (actually, unrelated to the linkify plugin, e.g. pasted in from another editor).
-        entityToHTML: (entity, originalText) => {
-          if (entity.type === 'LINK') {
-            const { href } = entity.data;
-            return `<a href="${href}" target="_blank" rel="noopener noreferrer">${originalText}</a>`;
-          }
+  // XXX(mime): need to fix linkify.
+  //createPlugin(linkifyPlugin),
 
-          return originalText;
-        },
-      },
-      linkifyPlugin
-    )
-  ),
+  // XXX(mime): bitrot - this code doesn't work anymore
+  // createPlugin(
+  //   Object.assign(
+  //     {},
+  //     // TODO(mime): frankenstein stuff here b/c linkifyPlugin is 3rd party...
+  //     {
+  //       // This handles linkify content actually typed in (not pasted in from another editor).
+  //       blockToHTML: decoratedBlocksToHTML(linkifyPlugin.decorators[0].strategy, linkifyPlugin.decorators[0].component),
+
+  //       // This handles LINK entities (actually, unrelated to the linkify plugin, e.g. pasted in from another editor).
+  //       entityToHTML: (entity, originalText) => {
+  //         if (entity.type === 'LINK') {
+  //           const { href } = entity.data;
+  //           return `<a href="${href}" target="_blank" rel="noopener noreferrer">${originalText}</a>`;
+  //         }
+
+  //         return originalText;
+  //       },
+  //     },
+  //     linkifyPlugin
+  //   )
+  // ),
+
   createPlugin(replyPlugin),
   createPlugin(rsvpPlugin)
   /* TODO(mime): emojiPlugin, */

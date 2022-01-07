@@ -1,0 +1,257 @@
+ fly prod -f bin/flightplan.js
+✈ Running default:prod
+✈ Executing local task
+localhost Copying files to remote hosts...
+localhost $ cd .. && git ls-files
+(node:34626) Warning: Accessing non-existent property 'padLevels' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+localhost ● ok
+localhost $ cd .. && rsync --files-from /var/folders/w6/10tjsqx562gbftv05h8vkm180000gn/T/996c4b917989a59b424a4e5a9e982699 -az --rsh="ssh -p22" ./ mime@nite-lite.net:/tmp/helloworld-2022-01-07T05-35-00-294Z/
+localhost ● ok
+localhost $ cd .. && rsync --files-from /var/folders/w6/10tjsqx562gbftv05h8vkm180000gn/T/467c877f491a8d81f3cc933d6d08b97d -az --rsh="ssh -p22" ./ mime@nite-lite.net:/tmp/helloworld-2022-01-07T05-35-00-294Z/
+localhost ● ok
+✈ Local task finished after 4.74 s
+✈ Connecting to 'nite-lite.net'
+✈ Executing remote task on nite-lite.net
+nite-lite.net Moving folder to web root...
+nite-lite.net $ echo 'cp -R /tmp/helloworld-2022-01-07T05-35-00-294Z/ /var/www' | sudo -u www-data -i bash
+nite-lite.net ● ok
+nite-lite.net $ rm -rf /tmp/helloworld-2022-01-07T05-35-00-294Z/
+nite-lite.net ● ok
+nite-lite.net Copying .env file over...
+nite-lite.net $ echo 'cp /var/www/helloworld/.env /var/www/helloworld-2022-01-07T05-35-00-294Z/' | sudo -u www-data -i bash
+nite-lite.net ● ok
+nite-lite.net $ echo 'rm -rf /var/www/helloworld-2022-01-07T05-35-00-294Z/packages/hello-world-editor' | sudo -u www-data -i bash
+nite-lite.net ● ok
+nite-lite.net $ echo 'rm -rf /var/www/helloworld-2022-01-07T05-35-00-294Z/packages/social-butterfly' | sudo -u www-data -i bash
+nite-lite.net ● ok
+nite-lite.net Seeing if we can just reuse the previous node_modules folder...
+nite-lite.net $ echo 'cmp /var/www/helloworld/package.json /var/www/helloworld-2022-01-07T05-35-00-294Z/package.json' | sudo -u www-data -i bash
+nite-lite.net > /var/www/helloworld/package.json /var/www/helloworld-2022-01-07T05-35-00-294Z/package.json differ: byte 1071, line 41
+nite-lite.net >
+nite-lite.net ● failed safely (1)
+nite-lite.net package.json has changed. Installing dependencies...
+nite-lite.net $ echo 'cd /var/www/helloworld-2022-01-07T05-35-00-294Z; npm install --production' | sudo -u www-data -i bash
+nite-lite.net >
+nite-lite.net > > hello-world-blog@0.8.7 postinstall
+nite-lite.net > > if test "$NODE_ENV" = "development" ; then flow-typed install; fi
+nite-lite.net >
+nite-lite.net >
+nite-lite.net > > hello-world-blog@0.8.7 prepare
+nite-lite.net > > if test "$NODE_ENV" = "development" ; then husky install; fi
+nite-lite.net >
+nite-lite.net >
+nite-lite.net > added 3458 packages, and audited 3461 packages in 1m
+nite-lite.net >
+nite-lite.net > 142 vulnerabilities (5 low, 106 moderate, 29 high, 2 critical)
+nite-lite.net >
+nite-lite.net > To address issues that do not require attention, run:
+nite-lite.net >   npm audit fix
+nite-lite.net >
+nite-lite.net > To address all issues possible (including breaking changes), run:
+nite-lite.net >   npm audit fix --force
+nite-lite.net >
+nite-lite.net > Some issues need review, and may require choosing
+nite-lite.net > a different dependency.
+nite-lite.net >
+nite-lite.net > Run `npm audit` for details.
+nite-lite.net >
+nite-lite.net ● ok
+nite-lite.net $ echo 'cd /var/www/helloworld-2022-01-07T05-35-00-294Z; npm install hello-world-editor' | sudo -u www-data -i bash
+nite-lite.net >
+nite-lite.net > added 768 packages, removed 9 packages, changed 2 packages, and audited 4219 packages in 35s
+nite-lite.net >
+nite-lite.net > 1 package is looking for funding
+nite-lite.net >   run `npm fund` for details
+nite-lite.net >
+nite-lite.net > 165 vulnerabilities (5 low, 120 moderate, 38 high, 2 critical)
+nite-lite.net >
+nite-lite.net > To address issues that do not require attention, run:
+nite-lite.net >   npm audit fix
+nite-lite.net >
+nite-lite.net > To address all issues possible (including breaking changes), run:
+nite-lite.net >   npm audit fix --force
+nite-lite.net >
+nite-lite.net > Some issues need review, and may require choosing
+nite-lite.net > a different dependency.
+nite-lite.net >
+nite-lite.net > Run `npm audit` for details.
+nite-lite.net >
+nite-lite.net ● ok
+nite-lite.net $ echo 'cd /var/www/helloworld-2022-01-07T05-35-00-294Z; npm install social-butterfly' | sudo -u www-data -i bash
+nite-lite.net >
+nite-lite.net > removed 24 packages, changed 1 package, and audited 4194 packages in 18s
+nite-lite.net >
+nite-lite.net > 1 package is looking for funding
+nite-lite.net >   run `npm fund` for details
+nite-lite.net >
+nite-lite.net > 161 vulnerabilities (5 low, 121 moderate, 33 high, 2 critical)
+nite-lite.net >
+nite-lite.net > To address issues that do not require attention, run:
+nite-lite.net >   npm audit fix
+nite-lite.net >
+nite-lite.net > To address all issues possible (including breaking changes), run:
+nite-lite.net >   npm audit fix --force
+nite-lite.net >
+nite-lite.net > Some issues need review, and may require choosing
+nite-lite.net > a different dependency.
+nite-lite.net >
+nite-lite.net > Run `npm audit` for details.
+nite-lite.net >
+nite-lite.net ● ok
+nite-lite.net $ echo 'cp -R /var/www/helloworld/sessions /var/www/helloworld-2022-01-07T05-35-00-294Z' | sudo -u www-data -i bash
+nite-lite.net ● ok
+nite-lite.net Building production files...
+nite-lite.net $ echo 'cd /var/www/helloworld-2022-01-07T05-35-00-294Z; npm run build' | sudo -u www-data -i bash
+nite-lite.net >
+nite-lite.net > > hello-world-blog@0.8.7 build
+nite-lite.net > > react-scripts build
+nite-lite.net >
+nite-lite.net > Creating an optimized production build...
+nite-lite.net > Browserslist: caniuse-lite is outdated. Please run:
+nite-lite.net > npx browserslist@latest --update-db
+nite-lite.net >
+nite-lite.net > Why you should do it regularly:
+nite-lite.net > https://github.com/browserslist/browserslist#browsers-data-updating
+nite-lite.net > Compiled successfully.
+nite-lite.net >
+nite-lite.net > File sizes after gzip:
+nite-lite.net >
+nite-lite.net >   308.12 KB  build/static/js/2.04e9a37c.chunk.js
+nite-lite.net >   223.58 KB  build/static/js/9.e23c6a58.chunk.js
+nite-lite.net >   218.87 KB  build/static/js/8.7a16692a.chunk.js
+nite-lite.net >   65.09 KB   build/static/js/0.5e226b9f.chunk.js
+nite-lite.net >   55.31 KB   build/static/js/3.f632ca11.chunk.js
+nite-lite.net >   23.24 KB   build/static/js/10.c9a9ae8b.chunk.js
+nite-lite.net >   19.02 KB   build/static/js/main.a77c22d3.chunk.js
+nite-lite.net >   15.39 KB   build/static/js/1.24801adc.chunk.js
+nite-lite.net >   8.26 KB    build/static/js/13.e85329cb.chunk.js
+nite-lite.net >   5.74 KB    build/static/js/14.5ace137a.chunk.js
+nite-lite.net >   5.32 KB    build/static/js/11.2821bc45.chunk.js
+nite-lite.net >   4.27 KB    build/static/js/4.f64e754d.chunk.js
+nite-lite.net >   2.94 KB    build/static/css/main.1ed44511.chunk.css
+nite-lite.net >   2 KB       build/static/js/5.db854c7f.chunk.js
+nite-lite.net >   1.71 KB    build/static/js/12.4630c24c.chunk.js
+nite-lite.net >   1.66 KB    build/static/js/runtime-main.09dd9a86.js
+nite-lite.net >   1.62 KB    build/static/css/12.f76c403f.chunk.css
+nite-lite.net >   1.61 KB    build/static/css/10.f76c403f.chunk.css
+nite-lite.net >   1.57 KB    build/static/js/15.474261bd.chunk.js
+nite-lite.net >   175 B      build/static/js/16.9197e46a.chunk.js
+nite-lite.net >   165 B      build/static/js/17.a4e124ad.chunk.js
+nite-lite.net >
+nite-lite.net > The project was built assuming it is hosted at /.
+nite-lite.net > You can control this with the homepage field in your package.json.
+nite-lite.net >
+nite-lite.net > The build folder is ready to be deployed.
+nite-lite.net > You may serve it with a static server:
+nite-lite.net >
+nite-lite.net >   npm install -g serve
+nite-lite.net >   serve -s build
+nite-lite.net >
+nite-lite.net > Find out more about deployment here:
+nite-lite.net >
+nite-lite.net >   https://cra.link/deployment
+nite-lite.net >
+nite-lite.net >
+nite-lite.net ● ok
+nite-lite.net Reloading application...
+nite-lite.net $ echo 'ln -snf /var/www/resource /var/www/helloworld-2022-01-07T05-35-00-294Z/resource' | sudo -u www-data -i bash
+nite-lite.net >
+nite-lite.net ● ok
+nite-lite.net $ echo 'ln -snf /var/www/helloworld-2022-01-07T05-35-00-294Z /var/www/helloworld' | sudo -u www-data -i bash
+nite-lite.net ● ok
+nite-lite.net $ echo 'cd /var/www/helloworld; pm2 kill; pm2 stop helloworld' | sudo -u www-data -i bash
+nite-lite.net > [PM2] [-] Stopping Modules
+nite-lite.net > [PM2] [v] Modules Stopped
+nite-lite.net > [PM2] [-] Stopping all Applications
+nite-lite.net > [PM2] Applying action deleteProcessId on app [all](ids: [ 0 ])
+nite-lite.net > [PM2] [helloworld](0) ✓
+nite-lite.net > [PM2] [v] All Applications Stopped
+nite-lite.net > [PM2] [-] Stopping Agent
+nite-lite.net > [PM2] [v] Agent Stopped
+nite-lite.net > [PM2] [-] Stopping PM2 Daemon
+nite-lite.net > [PM2] [-] PM2 Daemon Stopped
+nite-lite.net > [PM2] Spawning PM2 daemon with pm2_home=/var/www/.pm2
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'cat' of module exports inside circular dependency
+nite-lite.net > (Use `node --trace-warnings ...` to show where the warning was created)
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'cd' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'chmod' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'cp' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'dirs' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'pushd' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'popd' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'echo' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'tempdir' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'pwd' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'exec' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'ls' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'find' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'grep' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'head' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'ln' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'mkdir' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'rm' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'mv' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'sed' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'set' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'sort' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'tail' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'test' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'to' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'toEnd' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'touch' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'uniq' of module exports inside circular dependency
+nite-lite.net > (node:447169) Warning: Accessing non-existent property 'which' of module exports inside circular dependency
+nite-lite.net > [PM2] PM2 Successfully daemonized
+nite-lite.net > [PM2][ERROR] Process helloworld not found
+nite-lite.net > ┌──────────┬────┬──────┬─────┬────────┬─────────┬────────┬─────┬─────┬──────┬──────────┐
+nite-lite.net > │ App name │ id │ mode │ pid │ status │ restart │ uptime │ cpu │ mem │ user │ watching │
+nite-lite.net > └──────────┴────┴──────┴─────┴────────┴─────────┴────────┴─────┴─────┴──────┴──────────┘
+nite-lite.net >  Use `pm2 show <id|name>` to get more details about an app
+nite-lite.net >
+nite-lite.net ● failed safely (1)
+nite-lite.net $ echo 'cd /var/www/helloworld; pm2 startOrReload ecosystem.config.js --env production' | sudo -u www-data -i bash
+nite-lite.net >
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'cat' of module exports inside circular dependency
+nite-lite.net > (Use `node --trace-warnings ...` to show where the warning was created)
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'cd' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'chmod' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'cp' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'dirs' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'pushd' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'popd' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'echo' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'tempdir' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'pwd' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'exec' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'ls' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'find' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'grep' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'head' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'ln' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'mkdir' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'rm' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'mv' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'sed' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'set' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'sort' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'tail' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'test' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'to' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'toEnd' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'touch' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'uniq' of module exports inside circular dependency
+nite-lite.net > (node:447210) Warning: Accessing non-existent property 'which' of module exports inside circular dependency
+nite-lite.net > [PM2][WARN] Applications helloworld not running, starting...
+nite-lite.net > [PM2] App [helloworld] launched (1 instances)
+nite-lite.net > ┌────────────┬────┬──────┬────────┬────────┬─────────┬────────┬─────┬───────────┬──────────┬──────────┐
+nite-lite.net > │ App name   │ id │ mode │ pid    │ status │ restart │ uptime │ cpu │ mem       │ user     │ watching │
+nite-lite.net > ├────────────┼────┼──────┼────────┼────────┼─────────┼────────┼─────┼───────────┼──────────┼──────────┤
+nite-lite.net > │ helloworld │ 0  │ fork │ 447217 │ online │ 0       │ 0s     │ 0%  │ 21.5 MB   │ www-data │ disabled │
+nite-lite.net > └────────────┴────┴──────┴────────┴────────┴─────────┴────────┴─────┴───────────┴──────────┴──────────┘
+nite-lite.net >  Use `pm2 show <id|name>` to get more details about an app
+nite-lite.net >
+nite-lite.net ● ok
+✈ Remote task on nite-lite.net finished after 5.55 min
+✈ Flightplan finished after 5.67 min
+nite-lite.net >

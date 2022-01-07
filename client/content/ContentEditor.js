@@ -127,7 +127,7 @@ export default forwardRef((props, ref) => {
 
   const handleContentChange = () => {
     setHasUnsavedChanges(true);
-    setEditorContent(contentEditor.current.export());
+    contentEditor.current && setEditorContent(contentEditor.current.export());
   };
 
   const handleMediaAdd = (fileInfos) => onMediaAdd && onMediaAdd(fileInfos);

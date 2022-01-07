@@ -20,7 +20,10 @@ function handleMouseDown(evt) {
   let target = evt.target;
   let localName = target.localName;
 
-  while (!INTERESTING_ELEMENTS.includes(localName)) {
+  while (
+    !INTERESTING_ELEMENTS.includes(localName) &&
+    !(target.getAttribute && ['listbox', 'option', 'button'].includes(target.getAttribute('role')))
+  ) {
     target = target.parentNode;
     if (!target) {
       return;
@@ -47,7 +50,7 @@ function handleMouseDown(evt) {
 
   // Conditionally compile this code. Should not appear in production.
   if (process.env.NODE_ENV === 'development') {
-    console.log(`${pageName}: ${localName}: ${name}`);
+    console.debug(`[analytics] ${pageName} →  ${localName} → ${name}`);
   }
 
   logEvent('click', {
