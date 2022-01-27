@@ -51,7 +51,7 @@
     "magic-signatures": "2.0.0",
     "mime": "2.5.2",
     "multer": "1.4.2",
-    "nanoid": "3.1.22",
+    "nanoid": "3.1.31",
     "node-fetch": "2.6.1",
     "node-forge": "0.10.0",
     "node-schedule": "2.0.0",

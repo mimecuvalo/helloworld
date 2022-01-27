@@ -59,7 +59,7 @@
     "memory-fs": "0.5.0",
     "murmurhash": "2.0.0",
     "mysql2": "2.2.5",
-    "nanoid": "3.1.22",
+    "nanoid": "3.1.31",
     "node-fetch": "2.6.1",
     "node-schedule": "2.0.0",
     "notistack": "1.0.5",
