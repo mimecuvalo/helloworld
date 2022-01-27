@@ -50,6 +50,7 @@
     "draft-extend": "1.6.5",
     "draft-js": "0.11.7",
     "linkify-it": "3.0.2",
+    "mime": "2.5.2",
     "notistack": "1.0.5",
     "react-codemirror": "1.0.0",
     "react-intl": "5.15.5",

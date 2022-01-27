@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "hello-world-blog",
   "version": "0.8.7",
   "description": "hello, world. a federated blog with feed reader.",
@@ -38,7 +39,7 @@
     "classnames": "2.3.0",
     "connect-redis": "5.1.0",
     "cookie-parser": "1.4.5",
-    "cra-all-the-things": "0.17.0",
+    "cra-all-the-things": "0.19.0",
     "csurf": "1.11.0",
     "dataloader": "2.0.0",
     "express": "4.17.1",
@@ -105,13 +106,13 @@
     "alex": "8.2.0",
     "axe-core": "4.1.4",
     "enzyme": "3.11.0",
-    "flightplan": "0.6.20",
     "flow-bin": "0.110.0",
     "flow-remove-types": "2.149.0",
     "flow-typed": "3.3.1",
     "husky": "6.0.0",
     "import-sort-style-eslint": "6.0.0",
     "lint-staged": "10.5.4",
+    "node-gyp": "8.4.1",
     "npm-run-all": "4.1.5",
     "prettier": "2.2.1",
     "prettier-plugin-import-sort": "0.0.6",
@@ -133,8 +134,6 @@
     "dev": "npm install && docker-compose up -d && npx sequelize db:migrate && npx sequelize db:seed:all",
     "flow": "flow",
     "generate-types": "graphql-codegen --config graphql-codegen.yml",
-    "postinstall": "if test \"$NODE_ENV\" = \"development\" ; then flow-typed install; fi",
-    "prepare": "if test \"$NODE_ENV\" = \"development\" ; then husky install; fi",
     "styleguide": "start-storybook -p 9001 -c .storybook --ci --quiet"
   },
   "eslintConfig": {
@@ -164,5 +163,6 @@
     ".js, .jsx": {
       "style": "eslint"
     }
-  }
+  },
+  "packageManager": "yarn@3.1.1"
 }

@@ -214,7 +214,7 @@ function logRequest(appLogger, req, connection) {
 // HTMLHead/HTMLBase.
 // This is possible since we set `serverSideRender: true` in serve.js which sets res.locals.webpackStats.
 function processAssetsFromWebpackStats(res) {
-  const webpackStats = res.locals.webpackStats.toJson();
+  const webpackStats = res.locals.webpack.devMiddleware.stats.toJson();
   const extensionRegexp = /\.(css|js)(\?|$)/;
   const entrypoints = Object.keys(webpackStats.entrypoints);
   const assetDuplicateCheckMap = {};
@@ -223,7 +223,8 @@ function processAssetsFromWebpackStats(res) {
     js: [],
   };
   for (const entrypoint of entrypoints) {
-    for (const assetPath of webpackStats.entrypoints[entrypoint].assets) {
+    for (const assetFileInfo of webpackStats.entrypoints[entrypoint].assets) {
+      const { name: assetPath } = assetFileInfo;
       const extMatch = extensionRegexp.exec(assetPath);
       if (!extMatch) {
         continue;
