@@ -8,8 +8,8 @@ import typeDefs from './graphql/schema';
  * The main entry point for our Apollo/GraphQL server.
  * Works by apply middleware to the app.
  */
-export default function apolloServer(app) {
-  const schema = new ApolloServer({
+export default async function apolloServer(app) {
+  const apolloServer = new ApolloServer({
     typeDefs,
     resolvers,
     context: async ({ req, connection }) => {
@@ -32,5 +32,6 @@ export default function apolloServer(app) {
       };
     },
   });
-  schema.applyMiddleware({ app });
+  await apolloServer.start();
+  apolloServer.applyMiddleware({ app });
 }
