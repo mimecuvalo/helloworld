@@ -3,7 +3,7 @@ module.exports = {
   apps: [
     {
       name: 'helloworld',
-      script: 'npm run serve:prod',
+      script: 'yarn serve:prod',
 
       // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
       args: '',

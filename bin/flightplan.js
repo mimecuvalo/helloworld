@@ -94,29 +94,29 @@ plan.remote(function (remote) {
   // how to better use npm workspaces to make this better.
   // This deletes the packages so that they aren't symlinked.
   // See part 2 below.
-  remote.sudo(`rm -rf ${varTmpDir}/packages/hello-world-editor`, { user });
-  remote.sudo(`rm -rf ${varTmpDir}/packages/social-butterfly`, { user });
+  // remote.sudo(`rm -rf ${varTmpDir}/packages/hello-world-editor`, { user });
+  // remote.sudo(`rm -rf ${varTmpDir}/packages/social-butterfly`, { user });
 
   remote.log('Seeing if we can just reuse the previous node_modules folder...');
-  const isNPMUnchanged = remote.sudo(`cmp ${destDir}/package.json ${varTmpDir}/package.json`, { user, failsafe: true });
+  const isPackageJSONUnchanged = remote.sudo(`cmp ${destDir}/package.json ${varTmpDir}/package.json`, { user, failsafe: true });
 
-  if (isNPMUnchanged.code === 0 || (isNPMUnchanged.stderr && isNPMUnchanged.stderr.indexOf('cmp: EOF') === 0 /* ignore NOEOL false positive */)) {
+  if (isPackageJSONUnchanged.code === 0 || (isPackageJSONUnchanged.stderr && isPackageJSONUnchanged.stderr.indexOf('cmp: EOF') === 0 /* ignore NOEOL false positive */)) {
     remote.log('package.json is unchanged. Reusing previous node_modules folder...');
     remote.sudo(`mv ${destDir}/node_modules ${varTmpDir}`, { user });
   } else {
     remote.log('package.json has changed. Installing dependencies...');
-    remote.sudo(`cd ${varTmpDir}; npm install --production`, { user });
+    remote.sudo(`cd ${varTmpDir}; yarn workspaces focus -A --production`, { user });
   }
 
   // XXX(mime): part 2 of above. ugh.
-  remote.sudo(`cd ${varTmpDir}; npm install hello-world-editor`, { user });
-  remote.sudo(`cd ${varTmpDir}; npm install social-butterfly`, { user });
+  // remote.sudo(`cd ${varTmpDir}; npm install hello-world-editor`, { user });
+  // remote.sudo(`cd ${varTmpDir}; npm install social-butterfly`, { user });
 
   // Copy over sessions.
   remote.sudo(`cp -R ${destDir}/sessions ${varTmpDir}`, { user, failsafe: true });
 
   remote.log('Building production files...');
-  remote.sudo(`cd ${varTmpDir}; npm run build`, { user });
+  remote.sudo(`cd ${varTmpDir}; yarn build`, { user });
 
   remote.log('Reloading application...');
   remote.sudo(`ln -snf /var/www/resource ${varTmpDir}/resource`, { user });
