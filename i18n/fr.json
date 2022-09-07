@@ -1,0 +1,103 @@
+{
+  "smartling": {
+    "string_format": "icu",
+    "translate_paths": [
+      {
+        "instruction": "*/description",
+        "key": "{*}/message",
+        "path": "*/message"
+      }
+    ],
+    "variants_enabled": true
+  },
+  "0323de4f66": {
+    "message": "Déconnexion"
+  },
+  "1a30804f0b": {
+    "message": "logo2"
+  },
+  "2019743e1f": {
+    "message": "Test de la fonctionnalité All The Things"
+  },
+  "378bc111b7": {
+    "message": "Rendu avec React"
+  },
+  "3d728e1b6e": {
+    "message": "nous avons enregistré cette erreur et nous la corrigerons bientôt."
+  },
+  "3e1f651a10": {
+    "message": "Test désactivé"
+  },
+  "3f40dc56bc": {
+    "message": "Tester le snack-bar"
+  },
+  "44f00c21a1": {
+    "message": "essayez de revenir au <a>début</a>."
+  },
+  "4829262cec": {
+    "message": "Expériences"
+  },
+  "5a2351b91b": {
+    "message": "erreur interne du serveur"
+  },
+  "5d45c0776e": {
+    "message": "Tester le snack-bar"
+  },
+  "5f02f05c74": {
+    "message": "Chargement…"
+  },
+  "64af1b1f5f": {
+    "message": "visage à l'envers"
+  },
+  "690d8ebdfb": {
+    "message": "je suis désolé, dave. j'ai bien peur de ne pas pouvoir faire ça."
+  },
+  "6a26f54883": {
+    "message": "Aide"
+  },
+  "6b06791057": {
+    "message": "Tester la langue alternative"
+  },
+  "835ca8f9cf": {
+    "message": "ce n'est pas vous, c'est nous. notre serveur fait le singe."
+  },
+  "8cf04a9734": {
+    "message": "Accueil"
+  },
+  "96d6f2e7e1": {
+    "message": "logo"
+  },
+  "98088e4b13": {
+    "message": "Une erreur s'est produite. 😦"
+  },
+  "99dea78007": {
+    "message": "Connexion"
+  },
+  "a1619a6b1d": {
+    "message": "Test activé."
+  },
+  "ac40af9f13": {
+    "message": "Test de pluralisation i18n: {itemCount, plural, =0 {no items} one {# item} other {# items}}."
+  },
+  "ae5901e838": {
+    "message": "Test i18n html: <a>visitez notre site Web</a> et <cta>découvrez le monde</cta>"
+  },
+  "baf33637a2": {
+    "message": "Vous devez activer JavaScript pour exécuter cette application."
+  },
+  "c512eabeb3": {
+    "message": "Test des variables GraphQL (chemin de l'url actuelle): {url}"
+  },
+  "d40cbcb573": {
+    "message": "ne vois pas le mal, n'entends pas le mal, ne parle pas le mal singes"
+  },
+  "d8f4a19935": {
+    "message": "not found"
+  },
+  "e3afed0047": {
+    "message": "Administrateur"
+  },
+  "ed1f0bfee1": {
+    "message": "Votre fonctionnalité"
+  }
+}

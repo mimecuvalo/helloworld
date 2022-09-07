@@ -1,0 +1,36 @@
+@import '~sanitize.css';
+@import '~sanitize.css/forms.css';
+@import '~sanitize.css/typography.css';
+
+html {
+  scroll-behavior: smooth;
+}
+
+body::backdrop {
+  background-color: #fafafa;
+}
+
+@media print {
+  body {
+    background-color: #fff;
+  }
+}
+
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+}
+
+/* In development, highlight untranslated strings. */
+.App-is-development *:not(.notranslate) {
+  text-shadow: 3px 3px red;
+}
+
+.App-is-development .notranslate,
+.App-is-development .notranslate *,
+.App-is-development .i18n-msg,
+.App-is-development .i18n-msg * {
+  text-shadow: none;
+}

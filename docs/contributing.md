@@ -10,7 +10,7 @@ Following these guidelines helps to communicate that you respect the time of the
 
 ## Code of Conduct
 
-This project and everyone participating in it is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [mimecuvalo@gmail.com](mailto:mimecuvalo@gmail.com).
+This project and everyone participating in it is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [email@gmail.com](mailto:email@gmail.com).
 
 ## tl;dr
 
@@ -36,7 +36,7 @@ Before creating bug reports, please check [this list](#before-submitting-a-bug-r
 #### Before Submitting A Bug Report
 
 - **Check the debugging guide.** [insert your guide here]
-- **Perform a [cursory search](https://github.com/search?q=user%3Amimecuvalo+repo%3Aall-the-things&type=Issues)** to see if the problem has already been reported. If it has **and the issue is still open**, add a comment to the existing issue instead of opening a new one.
+- **Perform a [cursory search](https://github.com/search?q=user%3Ausername+repo%3Aproject&type=Issues)** to see if the problem has already been reported. If it has **and the issue is still open**, add a comment to the existing issue instead of opening a new one.
 
 #### How Do I Submit A (Good) Bug Report?
 
@@ -45,7 +45,7 @@ Bugs are tracked as [GitHub issues](https://guides.github.com/features/issues/).
 Explain the problem and include additional details to help maintainers reproduce the problem:
 
 - **Use a clear and descriptive title** for the issue to identify the problem.
-- **Describe the exact steps which reproduce the problem** in as many details as possible. For example, start by explaining how you started the project. When listing steps, **not only say what you did, but also explain how you did it**.
+- **Describe the exact steps which reproduce the problem** in as many details as possible. For example, start by explaining how you started the project. When listing steps, **ot only don't say what you did, but also explain how you did it**.
 - **Provide specific examples to demonstrate the steps**. Include links to files or GitHub projects, or copy/pasteable snippets, which you use in those examples. If you're providing snippets in the issue, use [Markdown code blocks](https://help.github.com/articles/markdown-basics/#multiple-lines).
 - **Describe the behavior you observed after following the steps** and point out what exactly is the problem with that behavior.
 - **Explain which behavior you expected to see instead and why.**
@@ -73,7 +73,7 @@ Before creating enhancement suggestions, please check [this list](#before-submit
 #### Before Submitting An Enhancement Suggestion
 
 - **Check the debugging guide** [insert your guide here] for tips — you might discover that the enhancement is already available. Most importantly, check if you're using the latest version.
-- **Perform a [cursory search](https://github.com/search?q=user%3Amimecuvalo+repo%3Aall-the-things&type=Issues)** to see if the enhancement has already been suggested. If it has, add a comment to the existing issue instead of opening a new one.
+- **Perform a [cursory search](https://github.com/search?q=user%3Ausername+repo%3Aproject&type=Issues)** to see if the enhancement has already been suggested. If it has, add a comment to the existing issue instead of opening a new one.
 
 #### How Do I Submit A (Good) Enhancement Suggestion?
 

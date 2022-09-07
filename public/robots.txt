@@ -1,5 +1,5 @@
 # Gives you control on what search engines can index or not on your site.
-# http://www.robotstxt.org/
+# https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Disallow:
 

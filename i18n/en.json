@@ -1,0 +1,115 @@
+{
+  "smartling": {
+    "string_format": "icu",
+    "translate_paths": [
+      {
+        "instruction": "*/description",
+        "key": "{*}/message",
+        "path": "*/message"
+      }
+    ],
+    "variants_enabled": true
+  },
+  "0323de4f66": {
+    "message": "Logout"
+  },
+  "2019743e1f": {
+    "message": "All The Things Feature test"
+  },
+  "350f9d6822": {
+    "message": "forbidden"
+  },
+  "36fd540552": {
+    "message": "unauthorized"
+  },
+  "378bc111b7": {
+    "message": "Rendering with React"
+  },
+  "3d728e1b6e": {
+    "message": "we've logged this error and we'll fix it soon."
+  },
+  "3e1f651a10": {
+    "message": "Experiment disabled"
+  },
+  "3f40dc56bc": {
+    "message": "Test snackbar"
+  },
+  "3f947b57fc": {
+    "message": "person gesturing no"
+  },
+  "44f00c21a1": {
+    "message": "try going back to the <a>beginning</a>."
+  },
+  "4829262cec": {
+    "message": "Experiments"
+  },
+  "5a2351b91b": {
+    "message": "internal server error"
+  },
+  "5d45c0776e": {
+    "message": "Snackbar test"
+  },
+  "5f02f05c74": {
+    "message": "Loading…"
+  },
+  "64af1b1f5f": {
+    "message": "upside down face"
+  },
+  "690d8ebdfb": {
+    "message": "i'm sorry, dave. i'm afraid i can't do that."
+  },
+  "6a26f54883": {
+    "message": "Help"
+  },
+  "6b06791057": {
+    "message": "Test language alternative"
+  },
+  "6cac132a3b": {
+    "message": "try <a>logging in</a>."
+  },
+  "835ca8f9cf": {
+    "message": "it's not you, it's us. our server is monkeying around."
+  },
+  "8cf04a9734": {
+    "message": "Home"
+  },
+  "98088e4b13": {
+    "message": "Something went wrong. 😦"
+  },
+  "99dea78007": {
+    "message": "Login"
+  },
+  "a1619a6b1d": {
+    "message": "Experiment enabled."
+  },
+  "ac40af9f13": {
+    "message": "i18n pluralization test: {itemCount, plural, =0 {no items} one {# item} other {# items}}."
+  },
+  "ae5901e838": {
+    "message": "i18n html test: <a>visit our website</a> and <cta>see the world</cta>"
+  },
+  "baf33637a2": {
+    "message": "You need to enable JavaScript to run this app."
+  },
+  "c512eabeb3": {
+    "message": "GraphQL variables test (current url path): {url}"
+  },
+  "d0fb5e8106": {
+    "message": "try logging in."
+  },
+  "d40cbcb573": {
+    "message": "see no evil, hear no evil, speak no evil monkeys"
+  },
+  "d8f4a19935": {
+    "message": "not found"
+  },
+  "e3afed0047": {
+    "message": "Admin"
+  },
+  "ed1f0bfee1": {
+    "message": "Your Feature"
+  },
+  "logo-id": {
+    "message": "logo"
+  }
+}

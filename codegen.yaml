@@ -1,0 +1,14 @@
+schema: http://localhost:3000/api/graphql
+documents: ['./data/**/*.ts*', './pages/index.tsx']
+generates:
+  data/graphql-generated.ts:
+    config:
+      contextType: ./context#Context
+    plugins:
+      - add:
+          content: // NOTE This file is auto-generated via yarn codegen - DO NOT EDIT DIRECTLY!
+
+            /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
+      - typescript
+      - typescript-operations
+      - typescript-resolvers

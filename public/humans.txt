@@ -3,11 +3,11 @@
 /* TEAM */
 Creator: Mime Čuvalo
 Contact: mimecuvalo@gmail.com
-Site: http://nite-lite.net
+Site: http://nightlight.rocks
 Location: teh interwebs
 
 /* THANKS */
-The create-react-app team: https://github.com/facebook/create-react-app
+The next.js team: https://github.com/vercel
 
 /* SITE */
 Components:

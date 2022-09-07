@@ -1,6 +1,6 @@
 {
-  "short_name": "Hello, world.",
-  "name": "Hello, world.",
+  "short_name": "Next.js:ATT",
+  "name": "Next.js: All The Things Sample",
   "icons": [
     {
       "src": "favicon.ico",

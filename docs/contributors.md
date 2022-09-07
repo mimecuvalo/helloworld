@@ -1,1 +1,1 @@
-Mime Čuvalo <mimecuvalo@gmail.com> [@mimecuvalo](https://github.com/mimecuvalo)
+Name <email@gmail.com> [@githubusername](https://github.com/githubusername)

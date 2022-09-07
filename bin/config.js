@@ -1,4 +1,5 @@
 'use strict';
+/* eslint-disable */
 
 const execSync = require('child_process').execSync;
 const readline = require('readline');
