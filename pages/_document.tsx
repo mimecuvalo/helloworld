@@ -7,8 +7,8 @@ import crypto from 'crypto';
 import { v4 } from 'uuid';
 import { withRouter } from 'next/router';
 
-const HOSTNAME = 'www.example.com';
-const TITLE = 'Next.js Example';
+const HOSTNAME = 'www.nightlight.rocks';
+const TITLE = 'Hello, world.';
 
 const generateCsp = (): [csp: string, nonce: string] => {
   const hash = crypto.createHash('sha256');
@@ -100,14 +100,14 @@ class MyDocument extends Document {
             <meta property="csp-nonce" content={nonce} />
             <meta httpEquiv="Content-Security-Policy" content={csp} />
             <link rel="preconnect" href="https://fonts.gstatic.com" />
-            <link rel="shortcut icon" href="/images/favicon.ico" />
+            <link rel="shortcut icon" href="/images/favicon.jpg" />
             {/* This is because of the withRouter */}
             {/* eslint-disable-next-line @next/next/no-page-custom-font */}
             <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
             <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
             <link rel="author" href={`/humans.txt`} />
-            <link rel="icon" href={`/favicon.ico`} />
-            <link rel="apple-touch-icon" href={`/favicon.ico`} />
+            <link rel="icon" href={`/favicon.jpg`} />
+            <link rel="apple-touch-icon" href={`/favicon.jpg`} />
             <link rel="search" href="/api/opensearch" type="application/opensearchdescription+xml" title={TITLE} />
             <meta name="description" content="website created using all-the-things." />
             <meta name="generator" content="all-the-things. https://github.com/mimecuvalo/all-the-things" />
@@ -151,7 +151,7 @@ function OpenGraphMetadata({ title }: { title: string }) {
       <meta property="og:type" content="website" />
       <meta property="og:url" content={url} />
       <meta property="og:site_name" content={title} />
-      <meta property="og:image" content={`${url}/favicon.ico`} />
+      <meta property="og:image" content={`${url}/favicon.jpg`} />
     </>
   );
 }
@@ -190,7 +190,7 @@ function StructuredMetaData({ nonce, title }: { nonce: string; title: string }) 
             "name": "${title}",
             "logo": {
               "@type": "ImageObject",
-              "url": "${url}favicon.ico"
+              "url": "${url}favicon.jpg"
             }
           },
           "description": "page description"

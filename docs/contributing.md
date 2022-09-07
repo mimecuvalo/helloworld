@@ -10,7 +10,7 @@ Following these guidelines helps to communicate that you respect the time of the
 
 ## Code of Conduct
 
-This project and everyone participating in it is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [email@gmail.com](mailto:email@gmail.com).
+This project and everyone participating in it is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [mimecuvalo@gmail.com](mailto:mimecuvalo@gmail.com).
 
 ## tl;dr
 
@@ -36,7 +36,7 @@ Before creating bug reports, please check [this list](#before-submitting-a-bug-r
 #### Before Submitting A Bug Report
 
 - **Check the debugging guide.** [insert your guide here]
-- **Perform a [cursory search](https://github.com/search?q=user%3Ausername+repo%3Aproject&type=Issues)** to see if the problem has already been reported. If it has **and the issue is still open**, add a comment to the existing issue instead of opening a new one.
+- **Perform a [cursory search](https://github.com/search?q=user%3Amimecuvalo+helloworld%3Aproject&type=Issues)** to see if the problem has already been reported. If it has **and the issue is still open**, add a comment to the existing issue instead of opening a new one.
 
 #### How Do I Submit A (Good) Bug Report?
 
@@ -73,7 +73,7 @@ Before creating enhancement suggestions, please check [this list](#before-submit
 #### Before Submitting An Enhancement Suggestion
 
 - **Check the debugging guide** [insert your guide here] for tips — you might discover that the enhancement is already available. Most importantly, check if you're using the latest version.
-- **Perform a [cursory search](https://github.com/search?q=user%3Ausername+repo%3Aproject&type=Issues)** to see if the enhancement has already been suggested. If it has, add a comment to the existing issue instead of opening a new one.
+- **Perform a [cursory search](https://github.com/search?q=user%3Amimecuvalo+helloworld%3Aproject&type=Issues)** to see if the enhancement has already been suggested. If it has, add a comment to the existing issue instead of opening a new one.
 
 #### How Do I Submit A (Good) Enhancement Suggestion?
 

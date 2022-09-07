@@ -1,17 +1,17 @@
 {
-  "name": "all-the-things",
+  "name": "helloworld",
   "private": true,
-  "description": "all the bells 🔔 and whistles 😙 for next.js",
+  "description": "Hello, world.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mimecuvalo/all-the-things.git"
+    "url": "https://github.com/mimecuvalo/helloworld.git"
   },
   "license": "MIT",
   "engines": {
     "node": ">=14.x"
   },
   "bugs": {
-    "url": "https://github.com/mimecuvalo/all-the-things/issues"
+    "url": "https://github.com/mimecuvalo/helloworld/issues"
   },
   "scripts": {
     "predev": "yarn i18n:compile",

@@ -1,11 +1,11 @@
 {
-  "short_name": "Next.js:ATT",
-  "name": "Next.js: All The Things Sample",
+  "short_name": "Hello, world.",
+  "name": "Hello, world.",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "favicon.jpg",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "type": "image/jpeg"
     }
   ],
   "start_url": ".",

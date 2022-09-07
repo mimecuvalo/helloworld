@@ -95,8 +95,8 @@ export default function HTMLHead(props) {
       <meta charSet="utf-8" />
       <link rel="author" href={`${publicUrl}humans.txt`} />
       {contentOwner ? <link rel="author" href={contentUrl({ username, section: 'main', name: 'about' })} /> : null}
-      <link rel="icon" href={favicon || `${publicUrl}favicon.ico`} />
-      <link rel="apple-touch-icon" href={favicon || `${publicUrl}favicon.ico`} />
+      <link rel="icon" href={favicon || `${publicUrl}favicon.jpg`} />
+      <link rel="apple-touch-icon" href={favicon || `${publicUrl}favicon.jpg`} />
       {assetPathsByType['css'].map((path) => (
         <link nonce={nonce} rel="stylesheet" key={path} href={path} />
       ))}
@@ -148,7 +148,7 @@ export default function HTMLHead(props) {
         It will be replaced with the URL of the `public` folder during the build.
         Only files inside the `public` folder can be referenced from the HTML.
 
-        Unlike "/favicon.ico" or "favicon.ico", "${publicUrl}favicon.ico" will
+        Unlike "/favicon.jpg" or "favicon.jpg", "${publicUrl}favicon.jpg" will
         work correctly both with client-side routing and a non-root public URL.
         Learn how to configure a non-root public URL by running `npm run build`.
       */}
@@ -231,7 +231,7 @@ function StructuredMetaData({ contentOwner, content, title, req, nonce }) {
             "name": "${title}",
             "logo": {
               "@type": "ImageObject",
-              "url": "${url}favicon.ico"
+              "url": "${url}favicon.jpg"
             }
           },
           "description": "${contentOwner?.description}"

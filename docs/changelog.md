@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- added this project! <email@gmail.com> [@githubusername](https://github.com/githubusername)
+- added this project! <mimecuvalo@gmail.com> [@mimecuvalo](https://github.com/mimecuvalo)
 
 ### Changed
 

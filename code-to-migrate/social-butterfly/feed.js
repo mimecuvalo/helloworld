@@ -1,5 +1,6 @@
-import { HTTPError } from './util/exceptions';
 import React, { createElement as RcE } from 'react';
+
+import { HTTPError } from './util/exceptions';
 import { buildUrl } from './util/url_factory';
 import { renderToString } from 'react-dom/server';
 
@@ -111,7 +112,7 @@ export function GenericFeed({ req, children, constants, contentOwner, updatedAt 
       <icon>
         {contentOwner.favicon
           ? buildUrl({ req, pathname: contentOwner.favicon })
-          : buildUrl({ req, pathname: '/favicon.ico' })}
+          : buildUrl({ req, pathname: '/favicon.jpg' })}
       </icon>
 
       {children}

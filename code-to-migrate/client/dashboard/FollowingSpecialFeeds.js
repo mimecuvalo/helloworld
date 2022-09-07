@@ -39,7 +39,7 @@ export default function FollowingSpecialFeeds(props) {
   const { commentsCount, favoritesCount, totalCount } = data.fetchUserTotalCounts;
   const { specialFeed } = props;
   const userFavicon = user.model.favicon;
-  const userAvatar = <Avatar src={userFavicon || '/favicon.ico'} />;
+  const userAvatar = <Avatar src={userFavicon || '/favicon.jpg'} />;
 
   return (
     <>

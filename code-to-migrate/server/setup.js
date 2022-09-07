@@ -13,7 +13,7 @@ export default async function setup() {
   const newUser = await models.User.create({
     description: 'Just another Hello, world blog',
     email: 'example@mail.com',
-    favicon: '/favicon.ico',
+    favicon: '/favicon.jpg',
     google_analytics: '',
     hostname: '',
     license: '',

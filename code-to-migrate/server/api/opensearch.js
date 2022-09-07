@@ -9,7 +9,7 @@ export default function openSearchRouterFactory({ appName }) {
   router.use((req, res) => {
     const username = req.query.username;
     const searchUrl = buildUrl({ req, pathname: `/${username}/search/{searchTerms}` });
-    const faviconUrl = buildUrl({ req, pathname: '/favicon.ico' });
+    const faviconUrl = buildUrl({ req, pathname: '/favicon.jpg' });
 
     res.type('application/xml');
     res.send(`<?xml version="1.0" encoding="UTF-8"?>
@@ -17,7 +17,7 @@ export default function openSearchRouterFactory({ appName }) {
         <ShortName>${appName}</ShortName>
         <Description>Search ${appName}</Description>
         <Url type="text/html" method="get" template="${searchUrl}"/>
-        <Image height="16" width="16" type="image/x-icon">${faviconUrl}</Image>
+        <Image height="16" width="16" type="image/jpeg">${faviconUrl}</Image>
       </OpenSearchDescription>`);
   });
 
