@@ -34,3 +34,14 @@ h6 {
 .App-is-development .i18n-msg * {
   text-shadow: none;
 }
+
+figure a {
+  text-align: center;
+  display: block;
+}
+
+figcaption {
+  text-align: center;
+  color: #666;
+  font-size: 12px;
+}

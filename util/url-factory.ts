@@ -1,4 +1,6 @@
-export function contentUrl(content, reqOrIsAbsolute = false, searchParams) {
+import { NextApiRequest } from 'next';
+
+export function contentUrl(content: Content, req: NextApiRequest, searchParams: URLSearchParams) {
   if (!content?.name) {
     return null;
   }
@@ -23,13 +25,10 @@ export function contentUrl(content, reqOrIsAbsolute = false, searchParams) {
     pathname += '/';
   }
 
-  const req = typeof reqOrIsAbsolute === 'object' && reqOrIsAbsolute;
-  const isAbsolute = typeof reqOrIsAbsolute === 'boolean' && reqOrIsAbsolute;
-
-  return buildUrl({ req, isAbsolute, pathname, searchParams });
+  return buildUrl({ req, pathname, searchParams });
 }
 
-export function parseContentUrl(url) {
+export function parseContentUrl(url: string): { username: string; name: string } {
   // Some urls are of the form 'acct:username@domain.com'
   url = url.replace(/^acct:/, '');
   if (url.indexOf('@') !== -1) {
@@ -44,19 +43,25 @@ export function parseContentUrl(url) {
   return { username, name };
 }
 
-export function profileUrl(username, reqOrIsAbsolute = false) {
-  const req = typeof reqOrIsAbsolute === 'object' && reqOrIsAbsolute;
-  const isAbsolute = typeof reqOrIsAbsolute === 'boolean' && reqOrIsAbsolute;
-
-  return buildUrl({ req, isAbsolute, pathname: `/${username}` });
+export function profileUrl(username: string, req: NextApiRequest): string {
+  return buildUrl({ req, pathname: `/${username}` });
 }
 
-export function buildUrl({ req, isAbsolute, pathname, searchParams }) {
+export function buildUrl({
+  req,
+  isAbsolute,
+  pathname,
+  searchParams,
+}: {
+  req: NextApiRequest;
+  isAbsolute?: boolean;
+  pathname: string;
+  searchParams?: URLSearchParams;
+}): string {
   let url = '';
 
   if (req) {
-    const protocol = req.get('x-scheme') || req.protocol;
-    url += `${protocol}://${req.get('host')}`;
+    url += `${new URL(req.url || '').protocol}://${req.headers['host']}`;
   } else if (isAbsolute) {
     url += `${window.location.origin}`;
   }

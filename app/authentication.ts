@@ -14,14 +14,13 @@ const authenticate =
     const user = await prisma?.user.findUnique({
       select: {
         email: true,
-        role: true,
       },
       where: {
         email: session.user.email,
       },
     });
 
-    if (user?.role !== 'ADMIN') {
+    if (!user) {
       return res.status(403).end('I call shenanigans.');
     }
 

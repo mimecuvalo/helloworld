@@ -11,3 +11,6 @@ migration notes
   - db backup
   - vercel pings
   - rss reader updates
+- get rid of local state in att?
+- app.use(bodyParser.text({ type: 'application/magic-envelope+xml' }));
+- make sure private_key isn't being sent down

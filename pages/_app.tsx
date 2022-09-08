@@ -91,6 +91,21 @@ function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }: 
             <noscript>
               <F defaultMessage="You need to enable JavaScript to run this app." />
             </noscript>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: `<!--
+                this is the way the web ends
+                this is the way the web ends
+                this is the way the web ends
+                not with a bang but with a OMGWTFBBQ
+
+                designed in Croatia by:
+                   _  *  _  |_ -|- | *  _  |_ -|-
+                  | | | |_| | | |  | | |_| | | |
+                        _|             _|
+              -->`,
+              }}
+            />
           </ThemeProvider>
         </CacheProvider>
       </ApolloProvider>
