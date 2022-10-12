@@ -19,7 +19,7 @@ const useStyles = createUseStyles({
 });
 
 const FETCH_CONTENT_REMOTE_PAGINATED = gql`
-  query($profileUrlOrSpecialFeed: String!, $offset: Int!, $query: String, $shouldShowAllItems: Boolean) {
+  query ($profileUrlOrSpecialFeed: String!, $offset: Int!, $query: String, $shouldShowAllItems: Boolean) {
     fetchContentRemotePaginated(
       profileUrlOrSpecialFeed: $profileUrlOrSpecialFeed
       offset: $offset

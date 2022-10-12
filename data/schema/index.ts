@@ -1,4 +1,7 @@
+import contentRemoteSchema from './content_remote';
+import contentSchema from './content';
 import { gql } from '@apollo/client';
+import userRemoteSchema from './user_remote';
 import userSchema from './user';
 
 // The `_` (underscores) here signify that the queries, mutations, subscriptions will be extended
@@ -25,5 +28,5 @@ const linkSchema = gql`
   scalar Date
 `;
 
-const schema = [linkSchema, userSchema];
+const schema = [linkSchema, contentSchema, contentRemoteSchema, userSchema, userRemoteSchema];
 export default schema;

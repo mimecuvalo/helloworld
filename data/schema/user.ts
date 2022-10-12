@@ -1,16 +1,50 @@
 import { gql } from '@apollo/client';
 
 export default gql`
-  type User {
+  type UserPrivate {
     username: String!
+    name: String!
     email: String!
+    title: String!
+    description: String
+    license: String
+    google_analytics: String
+    magic_key: String!
+    favicon: String
+    logo: String
+    theme: String!
+    viewport: String
+    sidebar_html: String
+    superuser: Boolean!
+    hostname: String
+    private_key: String!
+  }
+
+  type UserPublic {
+    username: String!
+    name: String!
+    email: String!
+    title: String!
+    description: String
+    license: String
+    google_analytics: String
+    magic_key: String!
+    favicon: String
+    logo: String
+    theme: String!
+    viewport: String
+    sidebar_html: String
   }
 
   extend type Query {
-    users: [User]
+    fetchAllUsers: [UserPrivate!]!
+    fetchUser(id: Int!): UserPrivate
+    fetchPublicUserData(username: String): UserPublic
+    fetchPublicUserDataHead(username: String): UserPublic
+    fetchPublicUserDataSearch(username: String): UserPublic
   }
 
   extend type Mutation {
-    createUser(username: String!, email: String!): User
+    createUser(username: String!, email: String!): UserPrivate
   }
 `;

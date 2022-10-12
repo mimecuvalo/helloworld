@@ -1,6 +1,5 @@
-import { gql } from 'apollo-server-express';
+import { gql } from '@apollo/client';
 
-// Keep in sync with both models/user_remote.js and migrations/[date]-create-user-remote.js
 export default gql`
   type UserRemotePrivate {
     local_username: String!

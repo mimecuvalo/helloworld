@@ -1,6 +1,5 @@
 import { HTTPError } from 'server/util/exceptions';
 import fetch from 'node-fetch';
-import sanitizer from 'sanitize-html';
 
 export async function fetchUrl(url, opt_headers) {
   try {
@@ -42,15 +41,4 @@ export function createAbsoluteUrl(websiteUrl, url) {
 export function isRobotViewing(req) {
   const userAgent = req.headers['x-user-agent'] || req.headers['user-agent'];
   return !!userAgent?.match(/bot|spider|crawl|slurp|ia_archiver/i);
-}
-
-export function sanitizeHTML(rawHTML) {
-  return sanitizer(rawHTML, {
-    allowedTags: sanitizer.defaults.allowedTags.concat(['img']),
-    allowedAttributes: {
-      a: ['href', 'name', 'target', 'title'],
-      img: ['src', 'srcset', 'width', 'height', 'alt', 'title'],
-      iframe: ['src', 'width', 'height', 'alt', 'title'],
-    },
-  });
 }

@@ -1,6 +1,5 @@
-import { gql } from 'apollo-server-express';
+import { gql } from '@apollo/client';
 
-// Keep in sync with both models/content_remote.js and migrations/[date]-create-content-remote.js
 export default gql`
   interface ContentRemote {
     avatar: String

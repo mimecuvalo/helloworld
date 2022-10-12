@@ -62,7 +62,7 @@ const useStyles = createUseStyles({
 });
 
 const FETCH_COLLECTION_PAGINATED = gql`
-  query($username: String!, $section: String!, $name: String!, $offset: Int!) {
+  query ($username: String!, $section: String!, $name: String!, $offset: Int!) {
     fetchCollectionPaginated(username: $username, section: $section, name: $name, offset: $offset) {
       album
       code

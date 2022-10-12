@@ -19,7 +19,7 @@ const useStyles = createUseStyles({
 });
 
 const FETCH_COLLECTION = gql`
-  query($username: String!, $section: String!, $album: String!, $name: String!) {
+  query ($username: String!, $section: String!, $album: String!, $name: String!) {
     fetchCollection(username: $username, section: $section, album: $album, name: $name) {
       album
       forceRefresh

@@ -1,5 +1,8 @@
 import { GraphQLScalarType, Kind, ValueNode } from 'graphql';
 
+import contentRemoteResolvers from './content_remote';
+import contentResolvers from './content';
+import userRemoteResolvers from './user_remote';
 import userResolvers from './user';
 
 const exampleResolvers = {
@@ -31,5 +34,5 @@ const exampleResolvers = {
   },
 };
 
-const resolvers = [exampleResolvers, userResolvers];
+const resolvers = [exampleResolvers, contentResolvers, contentRemoteResolvers, userRemoteResolvers, userResolvers];
 export default resolvers;
