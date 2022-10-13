@@ -1,4 +1,4 @@
-import { buildUrl } from './util/url_factory';
+import { buildUrl } from 'util/url-factory';
 import { createElement } from 'react';
 import { renderToString } from 'react-dom/server';
 

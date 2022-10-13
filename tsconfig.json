@@ -20,9 +20,11 @@
       "components": ["./components"],
       "components/*": ["./components/*"],
       "data": ["./data"],
+      "data/*": ["./data/*"],
       "hooks": ["./hooks"],
       "i18n": ["./i18n"],
       "i18n/*": ["./i18n/*"],
+      "social-butterfly": ["./social-butterfly"],
       "styles": ["./styles"],
       "util/*": ["./util/*"],
       "vendor/*": ["./vendor/*"]

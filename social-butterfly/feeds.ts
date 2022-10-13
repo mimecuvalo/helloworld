@@ -1,7 +1,7 @@
-import { createAbsoluteUrl, fetchText, fetchUrl, sanitizeHTML } from './crawler';
+import { createAbsoluteUrl, fetchText, fetchUrl, sanitizeHTML } from 'util/crawler';
 
 import FeedParser from 'feedparser';
-import { HTTPError } from './exceptions';
+import { HTTPError } from 'util/exceptions';
 import { Readable } from 'stream';
 import cheerio from 'cheerio';
 

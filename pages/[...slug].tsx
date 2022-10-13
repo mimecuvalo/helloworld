@@ -1,13 +1,13 @@
 import { buildUrl, contentUrl } from 'util/url-factory';
 import { memo, useEffect, useRef, useState } from 'react';
 
-import ContentBase from './ContentBase';
-import ContentQuery from './ContentQuery';
-import Feed from './Feed';
-import Item from './Item';
-import Nav from './Nav';
-import NotFound from 'components/error/404';
-import Simple from './templates/Simple';
+import ContentBase from 'components/content/ContentBase';
+import ContentQuery from 'components/content/ContentQuery';
+import Feed from 'components/content/Feed';
+import Item from 'components/content/Item';
+import Nav from 'components/content/Nav';
+import NotFound from './404';
+import Simple from 'components/content/templates/Simple';
 import SwipeListener from 'swipe-listener';
 import { styled } from 'components';
 import { useQuery } from '@apollo/client';
@@ -37,13 +37,7 @@ const StyledContent = styled('article')<{ $isFeedWrapper: boolean }>`
   `}
 `;
 
-export default function Content(props) {
-  const {
-    match: {
-      params: { username, name },
-    },
-  } = props;
-
+export default function Content({ username, name }) {
   const { loading, data } = useQuery(ContentQuery, {
     variables: {
       username: username || '',

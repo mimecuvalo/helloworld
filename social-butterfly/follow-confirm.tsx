@@ -1,4 +1,4 @@
-import { buildUrl } from './util/url_factory';
+import { buildUrl } from 'util/url-factory';
 
 export default function Follow({ req, resource }) {
   const actionUrl = buildUrl({ pathname: '/api/social/follow', searchParams: { resource } });

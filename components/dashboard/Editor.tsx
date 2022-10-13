@@ -1,39 +1,9 @@
-import { EditorState, convertFromRaw } from 'draft-js';
-import { F, defineMessages } from 'shared/util/i18n';
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { useMutation, useQuery } from '@apollo/client';
+import { Button, FormControl, MenuItem, Select, Toolbar } from 'components';
+import { F, defineMessages } from 'i18n';
+import { gql, useMutation, useQuery } from '@apollo/client';
+import { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
-import Button from '@material-ui/core/Button';
-import ContentEditor from 'client/content/ContentEditor';
 import Cookies from 'js-cookie';
-import { EditorUtils } from 'hello-world-editor';
-import FormControl from '@material-ui/core/FormControl';
-import HiddenSnackbarShim from 'client/components/HiddenSnackbarShim';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import Toolbar from '@material-ui/core/Toolbar';
-import classNames from 'classnames';
-import { createUseStyles } from 'react-jss';
-import gql from 'graphql-tag';
-
-const useStyles = createUseStyles({
-  editor: {},
-  editorForm: {
-    width: '100%',
-  },
-  editorToolbar: {
-    'div&': {
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'flex-end',
-    },
-  },
-  post: {
-    'button&': {
-      marginLeft: '12px',
-    },
-  },
-});
 
 const messages = defineMessages({
   error: { defaultMessage: 'Error posting content.' },
@@ -98,7 +68,7 @@ const POST_CONTENT = gql`
   }
 `;
 
-export default forwardRef(({ username }, ref) => {
+export default function Editor({ username }) {
   const { loading, data } = useQuery(SITE_MAP_AND_USER_QUERY, {
     variables: {
       username,
@@ -116,7 +86,6 @@ export default forwardRef(({ username }, ref) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [didSetUnsavedChanges, setDidSetUnsavedChanges] = useState(false);
-  const styles = useStyles();
 
   const handlePost = useCallback(
     async (evt) => {
@@ -307,24 +276,13 @@ export default forwardRef(({ username }, ref) => {
             >
               {generateSiteMap(data.fetchSiteMap)}
             </Select>
-            <Button type="submit" onClick={handlePost} className={classNames('hw-button', 'hw-edit', styles.post)}>
+            <Button type="submit" onClick={handlePost}>
               <F defaultMessage="post" />
             </Button>
           </FormControl>
         </form>
       </Toolbar>
-      <ContentEditor
-        ref={editor}
-        showPlaceholder={true}
-        mentions={data.fetchFollowing}
-        content={null}
-        section={section}
-        album={album}
-        onMediaAdd={handleMediaAdd}
-      />
-      {successMessage || errorMessage ? (
-        <HiddenSnackbarShim message={successMessage || errorMessage} variant={successMessage ? 'success' : 'error'} />
-      ) : null}
+      Editor
     </div>
   );
-});
+}

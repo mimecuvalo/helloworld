@@ -1,10 +1,10 @@
-import { F } from 'shared/util/i18n';
-import FollowingSpecialFeedCountsQuery from 'client/dashboard/FollowingSpecialFeedCountsQuery';
-import MenuItem from '@material-ui/core/MenuItem';
-import { escapeRegExp } from 'shared/util/regex';
-import gql from 'graphql-tag';
-import { prefixIdFromObject } from 'shared/data/apollo';
-import { useMutation } from '@apollo/client';
+import { gql, useMutation } from '@apollo/client';
+
+import { F } from 'i18n';
+import FollowingSpecialFeedCountsQuery from 'components/dashboard/FollowingSpecialFeedCountsQuery';
+import { MenuItem } from 'components';
+import { escapeRegExp } from 'util/regex';
+import { prefixIdFromObject } from 'data/apollo';
 
 const MARK_ALL_CONTENT_IN_FEED_AS_READ = gql`
   mutation markAllContentInFeedAsRead($from_user: String!) {
@@ -15,12 +15,18 @@ const MARK_ALL_CONTENT_IN_FEED_AS_READ = gql`
   }
 `;
 
-export default function MarkAllAsRead(props) {
+export default function MarkAllAsRead({
+  handleClose,
+  userRemote,
+}: {
+  handleClose: () => void;
+  userRemote: UserRemote;
+}) {
   const [markAllContentInFeedAsRead] = useMutation(MARK_ALL_CONTENT_IN_FEED_AS_READ);
-  const from_user = props.userRemote.profile_url;
+  const from_user = userRemote.profile_url;
 
   const handleClick = () => {
-    props.handleClose();
+    handleClose();
 
     markAllContentInFeedAsRead({
       variables: { from_user },

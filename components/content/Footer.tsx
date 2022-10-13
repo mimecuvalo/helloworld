@@ -1,40 +1,38 @@
-import { F, FormattedDate } from 'shared/util/i18n';
-import { contentUrl, profileUrl } from 'shared/util/url_factory';
+import { F, FormattedDate } from 'i18n';
+import { contentUrl, profileUrl } from 'util/url-factory';
 
-import { createUseStyles } from 'react-jss';
+import { styled } from 'components';
 
-const useStyles = createUseStyles({
-  footer: {
-    position: 'sticky',
-    bottom: -1, // XXX: chrome has a bit of a problem here with content leaking out
-    background: '#111',
-    zIndex: 1,
+const StyledFooter = styled('footer')`
+  position: sticky;
+  bottom: -1, // XXX: chrome has a bit of a problem here with content leaking out
+  background: #111;
+  z-index: 1,
 
-    fontSize: '11px',
-    color: '#666',
-    borderTop: '1px solid #ccc',
-    padding: '6px 10px',
-    '& img': {
-      float: 'left',
-      width: '16px',
-      height: '16px',
-      marginRight: '10px',
-      marginTop: 2,
-    },
-  },
-});
+  font-size: 11px;
+  color: #666;
+  border-top: 1px solid #ccc;
+  padding: 6px 10px;
 
-export default function Footer({ content, contentOwner }) {
+  & img {
+    float: left;
+    width: 16px;
+    height: 16px;
+    margin-right: 10px;
+    margin-top:  2,
+  }
+`;
+
+export default function Footer({ content, contentOwner }: { content: Content; contentOwner: string }) {
   const { count, count_robot, createdAt, username } = content;
   const name = contentOwner.name || username;
-  const styles = useStyles();
 
   const handleFullscreen = (evt) => {
     document.getElementById('hw-content').requestFullscreen();
   };
 
   return (
-    <footer className={styles.footer}>
+    <StyledFooter>
       <span className="p-author h-card">
         <a key="img" href={profileUrl(username)} className="u-url u-uid icon-container">
           <img className="u-photo" src={contentOwner.logo || contentOwner.favicon} alt={name} />
@@ -80,6 +78,6 @@ export default function Footer({ content, contentOwner }) {
           </a>
         </>
       ) : null}
-    </footer>
+    </StyledFooter>
   );
 }

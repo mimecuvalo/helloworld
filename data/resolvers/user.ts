@@ -3,8 +3,8 @@ import { isAdmin } from './authorization';
 
 const User = {
   Query: {
-    fetchAllUsers: combineResolvers(isAdmin, async (parent, args, { models }) => {
-      return await models.User.findAll();
+    fetchAllUsers: combineResolvers(isAdmin, async (parent, args, { prisma }) => {
+      return await prisma.User.findMany();
     }),
 
     fetchUser: combineResolvers(isAdmin, async (parent, { id }, { loaders, models }) => {
@@ -52,7 +52,6 @@ const User = {
     },
   },
 
-  // Example stubs of mutations, non-functional out of the box.
   Mutation: {
     createUser: combineResolvers(isAdmin, async (parent, { username, email }, { models }) => {
       return await models.User.create({ username, email });

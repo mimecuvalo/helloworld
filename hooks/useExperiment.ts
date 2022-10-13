@@ -1,5 +1,4 @@
-import gql from 'graphql-tag';
-import { useQuery } from '@apollo/client';
+import { gql, useQuery } from '@apollo/client';
 
 const EXPERIMENTS_QUERY = gql`
   {

@@ -1,6 +1,6 @@
 import { NextApiRequest } from 'next';
 
-export function contentUrl(content: Content, req: NextApiRequest, searchParams: URLSearchParams) {
+export function contentUrl(content: Content, req?: NextApiRequest, searchParams?: URLSearchParams) {
   if (!content?.name) {
     return null;
   }
@@ -77,4 +77,12 @@ export function buildUrl({
 
 export function prettifyUrl(url: string) {
   return url.replace(/ /g, '+');
+}
+
+export function ensureAbsoluteUrl(basisAbsoluteUrl, urlOrPath) {
+  const parsedUrl = new URL(basisAbsoluteUrl);
+  const hostnameAndProtocol = `${parsedUrl.protocol}//${parsedUrl.host}`;
+
+  urlOrPath = urlOrPath || '';
+  return urlOrPath[0] === '/' ? `${hostnameAndProtocol}${urlOrPath}` : urlOrPath;
 }

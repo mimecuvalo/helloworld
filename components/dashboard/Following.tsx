@@ -1,13 +1,11 @@
-import { F, defineMessages, useIntl } from 'shared/util/i18n';
+import { F, defineMessages, useIntl } from 'i18n';
 
 import FollowingFeeds from './FollowingFeeds';
 import FollowingQuery from './FollowingQuery';
 import FollowingSpecialFeeds from './FollowingSpecialFeeds';
 import NewFeed from './actions/NewFeed';
-import classNames from 'classnames';
 import { useQuery } from '@apollo/client';
 import { useRef } from 'react';
-import useStyles from './remoteUsersStyles';
 
 const messages = defineMessages({
   search: { defaultMessage: 'search' },
@@ -15,11 +13,18 @@ const messages = defineMessages({
 
 const POLL_INTERVAL = 60 * 1000;
 
-export default function Following(props) {
+export default function Following({
+  userRemote,
+  handleSetFeed,
+  specialFeed,
+}: {
+  specialFeed: string;
+  userRemote: UserRemote;
+  handleSetFeed: (userRemote: UserRemote, search: string) => void;
+}) {
   const intl = useIntl();
   const searchInput = useRef(null);
   const { loading, data } = useQuery(FollowingQuery);
-  const styles = useStyles();
 
   if (loading) {
     return null;
@@ -27,23 +32,22 @@ export default function Following(props) {
 
   const handleSearchKeyUp = (evt) => {
     if (evt.key === 'Enter') {
-      props.handleSetFeed('', searchInput.current.value);
+      handleSetFeed('', searchInput.current.value);
     }
   };
 
   // It'd be nice to listen to the 'search' event for the (x) cancel button but it doesn't work w/ React?
   const handleSearchChange = (evt) => {
     if (!searchInput.current.value) {
-      props.handleSetFeed('', searchInput.current.value);
+      handleSetFeed('', searchInput.current.value);
     }
   };
 
   const following = data.fetchFollowing;
-  const { className, handleSetFeed, userRemote, specialFeed } = props;
   const searchPlaceholder = intl.formatMessage(messages.search);
 
   return (
-    <div className={classNames(className, styles.remoteUsers)}>
+    <div>
       <h2>
         <F defaultMessage="following" />
       </h2>
@@ -61,7 +65,6 @@ export default function Following(props) {
       <NewFeed handleSetFeed={handleSetFeed} />
 
       <input
-        className={classNames(styles.search, 'notranslate')}
         type="search"
         onKeyUp={handleSearchKeyUp}
         onChange={handleSearchChange}

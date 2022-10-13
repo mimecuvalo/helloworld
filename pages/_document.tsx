@@ -1,9 +1,11 @@
 import Document, { DocumentContext, DocumentInitialProps, Head, Html, Main, NextScript } from 'next/document';
 import { ReactNode, StrictMode } from 'react';
+import { buildUrl, contentUrl } from 'util/url-factory';
 import { createEmotionCache, muiTheme } from 'styles';
 
 import createEmotionServer from '@emotion/server/create-instance';
 import crypto from 'crypto';
+import { gql } from '@apollo/client';
 import { v4 } from 'uuid';
 import { withRouter } from 'next/router';
 
@@ -75,7 +77,7 @@ const CONTENT_AND_USER_QUERY = gql`
 `;
 
 // NOTE: Keep in sync with index.html for service workers!
-export default function HTMLHead(props) {
+export function HTMLHead(props) {
   const { appName, assetPathsByType, nonce, publicUrl, req } = props;
   // The username is either the first part of the path (e.g. hostname.com/mime/section/album/name)
   // or if we're on a user that has a `hostname` defined then it's implicit in the url
@@ -300,7 +302,7 @@ export default withRouter(MyDocument);
 
 // This needs to be filled out by the developer to provide content for the site.
 // Learn more here: http://ogp.me/
-const OpenGraphMetadata = memo(function OpenGraphMetadata({ contentOwner, content, title, req }) {
+function OpenGraphMetadata({ contentOwner, content, title, req }) {
   const thumb = buildThumb(contentOwner, content, req);
 
   return (
@@ -313,7 +315,7 @@ const OpenGraphMetadata = memo(function OpenGraphMetadata({ contentOwner, conten
       <meta property="og:image" content={thumb} />
     </>
   );
-});
+}
 
 function buildThumb(contentOwner, content, req) {
   let thumb;

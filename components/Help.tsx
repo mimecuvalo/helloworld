@@ -12,14 +12,13 @@ import {
 } from '@mui/material';
 import { F, defineMessages, useIntl } from 'i18n';
 import { MouseEvent, useEffect, useState } from 'react';
+import { gql, useQuery } from '@apollo/client';
 
 import { $Experiment } from 'app/experiments';
 import Cookies from 'js-cookie';
 import { Help as HelpIcon } from '@mui/icons-material';
 import Link from 'next/link';
-import gql from 'graphql-tag';
 import { styled } from '@mui/material/styles';
-import { useQuery } from '@apollo/client';
 
 const HelpContainer = styled('div')`
   display: inline-block;
@@ -123,6 +122,7 @@ export default function Help() {
         aria-owns={isOpen ? 'help-menu' : undefined}
         aria-haspopup="true"
         onClick={handleMenuOpenerClick}
+        size="large"
       >
         <HelpIcon />
       </IconButton>

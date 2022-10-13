@@ -18,7 +18,7 @@ import { Typography } from '../components/index';
           {Object.keys(storybook[colorGroup])
             .reverse()
             .map(color => (
-              <li style={{ textAlign: 'center', margin: '0 2em 2em 0' }}>
+              <li style={{ text-align: 'center', margin: '0 2em 2em 0' }}>
                 <div
                   style={{
                     display: 'flex',
@@ -27,9 +27,9 @@ import { Typography } from '../components/index';
                     backgroundColor: storybook[colorGroup][color],
                     width: '100px',
                     height: '100px',
-                    borderRadius: '50%',
+                    border-radius: '50%',
                     color: storybook.basics.black,
-                    fontSize: '12px',
+                    font-size: '12px',
                     border: `1px solid ${storybook.grey[300]}`,
                   }}
                 >

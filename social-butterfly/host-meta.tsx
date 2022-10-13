@@ -1,4 +1,4 @@
-import { buildUrl } from './util/url_factory';
+import { buildUrl } from 'util/url-factory';
 
 export default function hostMeta(req, res) {
   const webFingerUrl = buildUrl({ req, pathname: `/.well-known/webfinger` });

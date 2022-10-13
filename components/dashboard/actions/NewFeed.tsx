@@ -1,15 +1,13 @@
-import { defineMessages, useIntl } from 'shared/util/i18n';
+import { ClipboardEvent, MouseEvent } from 'react';
+import { defineMessages, useIntl } from 'i18n';
+import { gql, useMutation } from '@apollo/client';
 
-import { F } from 'shared/util/i18n';
-import FollowingFeedCountsQuery from 'client/dashboard/FollowingFeedCountsQuery';
-import FollowingQuery from 'client/dashboard/FollowingQuery';
-import FollowingSpecialFeedCountsQuery from 'client/dashboard/FollowingSpecialFeedCountsQuery';
-import MenuItem from '@material-ui/core/MenuItem';
+import { F } from 'i18n';
+import FollowingFeedCountsQuery from 'components/dashboard/FollowingFeedCountsQuery';
+import FollowingQuery from 'components/dashboard/FollowingQuery';
+import FollowingSpecialFeedCountsQuery from 'components/dashboard/FollowingSpecialFeedCountsQuery';
+import { MenuItem } from 'components';
 import classNames from 'classnames';
-import gql from 'graphql-tag';
-import { useMutation } from '@apollo/client';
-import { useSnackbar } from 'notistack';
-import useStyles from './actionsStyles';
 
 const messages = defineMessages({
   error: { defaultMessage: 'Error subscribing to new feed.' },
@@ -29,14 +27,20 @@ const CREATE_USER_REMOTE = gql`
   }
 `;
 
-export default function NewFeed(props) {
-  const snackbar = useSnackbar();
+export default function NewFeed({
+  profileUrl,
+  isButton,
+  handleSetFeed,
+}: {
+  profileUrl: string;
+  isButton: boolean;
+  handleSetFeed: (feed: any) => void;
+}) {
   const intl = useIntl();
   const [createUserRemote] = useMutation(CREATE_USER_REMOTE);
-  const styles = useStyles();
 
   // when NewFeed is used as an input field.
-  const handleNewFeedPaste = (evt) => {
+  const handleNewFeedPaste = (evt: ClipboardEvent) => {
     const inputField = evt.target;
 
     const func = () => {
@@ -52,32 +56,28 @@ export default function NewFeed(props) {
   };
 
   // when NewFeed is used as a button.
-  const handleClick = (evt) => {
-    addNewFeed(props.profileUrl);
+  const handleClick = (evt: MouseEvent) => {
+    addNewFeed(profileUrl);
   };
 
-  async function addNewFeed(profile_url) {
-    try {
-      const { data } = await createUserRemote({
-        variables: { profile_url },
-        refetchQueries: [{ query: FollowingSpecialFeedCountsQuery }, { query: FollowingFeedCountsQuery }],
-        update: (store, { data: { createUserRemote } }) => {
-          const data = store.readQuery({ query: FollowingQuery });
-          store.writeQuery({
-            query: FollowingQuery,
-            data: { fetchFollowing: [...data.fetchFollowing, createUserRemote] },
-          });
-        },
-      });
-      props.handleSetFeed(data.createUserRemote);
-    } catch (ex) {
-      snackbar.enqueueSnackbar(intl.formatMessage(messages.error), { variant: 'error' });
-    }
+  async function addNewFeed(profile_url: string) {
+    const { data } = await createUserRemote({
+      variables: { profile_url },
+      refetchQueries: [{ query: FollowingSpecialFeedCountsQuery }, { query: FollowingFeedCountsQuery }],
+      update: (store, { data: { createUserRemote } }) => {
+        const data = store.readQuery({ query: FollowingQuery });
+        store.writeQuery({
+          query: FollowingQuery,
+          data: { fetchFollowing: [...data.fetchFollowing, createUserRemote] },
+        });
+      },
+    });
+    handleSetFeed(data.createUserRemote);
   }
 
   const followPlaceholder = intl.formatMessage(messages.follow);
 
-  if (props.isButton) {
+  if (isButton) {
     return (
       <MenuItem onClick={handleClick}>
         <F defaultMessage="follow back" />

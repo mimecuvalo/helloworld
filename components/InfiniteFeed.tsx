@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react';
+import { PropsWithChildren, useEffect, useState } from 'react';
 
 import throttle from 'lodash/throttle';
 
-export default function InfiniteFeed({ children, deduper, fetchMore, queryName }) {
+// TODO(mime): type better
+const InfiniteFeed: React.FC<
+  PropsWithChildren<{ deduper: (currentFeed: any, nextResults: any) => any; fetchMore: any; queryName: string }>
+> = ({ children, deduper, fetchMore, queryName }) => {
   const [didReachEndOfFeed, setDidReachEndOfFeed] = useState(false);
   const [fetchingMore, setFetchingMore] = useState(false);
   const [offset, setOffset] = useState(0);
@@ -39,7 +42,8 @@ export default function InfiniteFeed({ children, deduper, fetchMore, queryName }
 
     fetchMore({
       variables: { offset },
-      updateQuery: (prev, { fetchMoreResult }) => {
+      // Not worth typing
+      updateQuery: (prev: any, { fetchMoreResult }: any) => {
         if (!fetchMoreResult || !fetchMoreResult[queryName].length) {
           setDidReachEndOfFeed(true);
           return prev;
@@ -59,4 +63,6 @@ export default function InfiniteFeed({ children, deduper, fetchMore, queryName }
   }, [deduper, fetchMore, fetchingMore, offset, queryName]);
 
   return <>{children}</>;
-}
+};
+
+export default InfiniteFeed;

@@ -1,4 +1,4 @@
-import { contentUrl, parseContentUrl, profileUrl } from 'shared/util/url_factory';
+import { contentUrl, parseContentUrl, profileUrl } from 'util/url-factory';
 
 import Sequelize from 'sequelize';
 import models from 'server/data/models';

@@ -1,22 +1,21 @@
-import { F } from 'shared/util/i18n';
-import InfiniteFeed from 'client/components/InfiniteFeed';
-import Item from './Item';
-import { createUseStyles } from 'react-jss';
-import gql from 'graphql-tag';
-import { useQuery } from '@apollo/client';
+import { DocumentNode, gql, useQuery } from '@apollo/client';
+import { InfiniteFeed, styled } from 'components';
 
-const useStyles = createUseStyles({
-  header: {
-    border: '1px solid #0cf',
-    boxShadow: '1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf',
-    width: '80%',
-    marginBottom: '25px',
-    padding: '3px 6px',
-  },
-  empty: {
-    width: '100%',
-  },
-});
+import { F } from 'i18n';
+import Item from './Item';
+import { ReactNode } from 'react';
+
+const Header = styled('h1')`
+  border: 1px solid #0cf;
+  box-shadow: 1px 1px #0cf, 2px 2px #0cf, 3px 3px #0cf;
+  width: 80%;
+  margin-bottom: 25px;
+  padding: 3px 6px;
+`;
+
+const Empty = styled('div')`
+  width: 100%;
+`;
 
 const FETCH_CONTENT_REMOTE_PAGINATED = gql`
   query ($profileUrlOrSpecialFeed: String!, $offset: Int!, $query: String, $shouldShowAllItems: Boolean) {
@@ -47,7 +46,22 @@ const FETCH_CONTENT_REMOTE_PAGINATED = gql`
   }
 `;
 
-export default function Feed({ getEditor, userRemote, specialFeed, query, shouldShowAllItems, didFeedLoad }) {
+// TODO(mime): type better
+export default function Feed({
+  getEditor,
+  userRemote,
+  specialFeed,
+  query,
+  shouldShowAllItems,
+  didFeedLoad,
+}: {
+  getEditor: ReactNode;
+  userRemote: User;
+  specialFeed: string;
+  query: DocumentNode;
+  shouldShowAllItems: boolean;
+  didFeedLoad: boolean;
+}) {
   const { loading, data, fetchMore } = useQuery(FETCH_CONTENT_REMOTE_PAGINATED, {
     variables: {
       profileUrlOrSpecialFeed: userRemote ? userRemote.profile_url : specialFeed,
@@ -57,9 +71,8 @@ export default function Feed({ getEditor, userRemote, specialFeed, query, should
     },
     fetchPolicy: didFeedLoad ? 'network-only' : 'cache-first',
   });
-  const styles = useStyles();
 
-  function dedupe(currentFeed, nextResults) {
+  function dedupe(currentFeed: any, nextResults: any) {
     return nextResults.filter((nextEl) => !currentFeed.find((prevEl) => prevEl.post_id === nextEl.post_id));
   }
 
@@ -72,7 +85,7 @@ export default function Feed({ getEditor, userRemote, specialFeed, query, should
   return (
     <InfiniteFeed deduper={dedupe} fetchMore={fetchMore} queryName="fetchContentRemotePaginated">
       {userRemote || query ? (
-        <h1 className={styles.header}>
+        <Header>
           {userRemote ? (
             <a href={userRemote.profile_url} target="_blank" rel="noopener noreferrer">
               {userRemote.username}
@@ -82,12 +95,12 @@ export default function Feed({ getEditor, userRemote, specialFeed, query, should
               <F defaultMessage="Search:" /> {query}
             </>
           )}
-        </h1>
+        </Header>
       ) : null}
       {!feed.length ? (
-        <div className={styles.empty}>
+        <Empty>
           <F defaultMessage="Nothing to read right now!" />
-        </div>
+        </Empty>
       ) : (
         feed.map((item) => <Item key={item.post_id} contentRemote={item} getEditor={getEditor} />)
       )}

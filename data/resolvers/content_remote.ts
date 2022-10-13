@@ -1,10 +1,9 @@
-import { contentUrl, profileUrl } from 'shared/util/url_factory';
+import { contentUrl, profileUrl } from 'util/url-factory';
 import { isAdmin, isAuthor } from './authorization';
 
-import Sequelize from 'sequelize';
 import { combineResolvers } from 'graphql-resolvers';
 import crypto from 'crypto';
-import socialButterfly from 'server/social-butterfly';
+import socialButterfly from 'social-butterfly';
 import { toHTML } from './content';
 import { v4 as uuidv4 } from 'uuid';
 

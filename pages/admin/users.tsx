@@ -1,38 +1,37 @@
-import { F, defineMessages, useIntl } from 'shared/util/i18n';
+import { F, defineMessages, useIntl } from 'i18n';
+import { gql, useQuery } from '@apollo/client';
 
-import Forbidden from 'client/error/403';
-import Unauthorized from 'client/error/401';
-import UserContext from 'client/app/User_Context';
-import { createUseStyles } from 'react-jss';
-import gql from 'graphql-tag';
+import Forbidden from 'components/error/403';
+import Head from 'next/head';
+import Unauthorized from 'components/error/401';
+import UserContext from 'app/UserContext';
+import { styled } from 'components';
 import { useContext } from 'react';
-import useDocumentTitle from 'client/app/title';
-import { useQuery } from '@apollo/client';
 
-const useStyles = createUseStyles({
-  container: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    margin: '64px 8px',
-  },
-  content: {
-    display: 'flex',
-    flexDirection: 'column',
-    flexFlow: 'wrap',
-    alignItems: 'flex-start',
-    width: '82%',
-    margin: '6px',
-    overflowX: 'scroll',
-  },
-  nav: {
-    position: 'sticky',
-    top: '0',
-    width: '235px',
-    height: '100vh',
-    padding: 'var(--app-margin)',
-    overflow: 'scroll',
-  },
-});
+const Container = styled('div')`
+  display: flex;
+  align-items: flex-start;
+  margin: 64px 8px;
+`;
+
+const Content = styled('article')`
+  display: flex;
+  flex-direction: column;
+  flex-flow: wrap;
+  align-items: flex-start;
+  width: 82%;
+  margin: 6px;
+  overflow-x: scroll;
+`;
+
+const Nav = styled('nav')`
+  position: sticky;
+  top: 0;
+  width: 235px;
+  height: 100vh;
+  padding: var(--app-margin);
+  overflow: scroll;
+`;
 
 const messages = defineMessages({
   title: { defaultMessage: 'Admin' },
@@ -77,10 +76,8 @@ export default function Admin() {
 function AdminApp() {
   const intl = useIntl();
   const { loading, data } = useQuery(FETCH_ALL_USERS);
-  const styles = useStyles();
 
   const title = intl.formatMessage(messages.title);
-  useDocumentTitle(title);
 
   if (loading) {
     return null;
@@ -89,52 +86,57 @@ function AdminApp() {
   const allUsers = data.fetchAllUsers;
 
   return (
-    <div id="hw-admin" className={styles.container}>
-      <nav className={styles.nav}>
-        <F defaultMessage="Users" />
-      </nav>
+    <>
+      <Head>
+        <title>{title}</title>
+      </Head>
+      <Container id="hw-admin">
+        <Nav>
+          <F defaultMessage="Users" />
+        </Nav>
 
-      <article className={styles.content}>
-        <table>
-          <thead>
-            <tr>
-              <th>
-                <strong>username</strong>
-              </th>
-              {Object.keys(allUsers[0])
-                .filter((k) => k !== 'username')
-                .map((key) => (
-                  <th key={key}>
-                    <strong>{key}</strong>
-                  </th>
-                ))}
-            </tr>
-          </thead>
-          <tbody>
-            {allUsers.map((user) => {
-              return (
-                <tr key={user.username}>
-                  <td>
-                    <input readOnly type="text" value={user['username']} />
-                  </td>
-                  {Object.keys(user)
-                    .filter((k) => k !== 'username')
-                    .map((key) => (
-                      <td key={key}>
-                        <input
-                          readOnly
-                          type={typeof user[key] === 'boolean' ? 'checkbox' : 'text'}
-                          checked={typeof user[key] === 'boolean' ? user[key] : null}
-                          value={user[key] || ''}
-                        />
-                      </td>
-                    ))}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </article>
-    </div>
+        <Content>
+          <table>
+            <thead>
+              <tr>
+                <th>
+                  <strong>username</strong>
+                </th>
+                {Object.keys(allUsers[0])
+                  .filter((k) => k !== 'username')
+                  .map((key) => (
+                    <th key={key}>
+                      <strong>{key}</strong>
+                    </th>
+                  ))}
+              </tr>
+            </thead>
+            <tbody>
+              {allUsers.map((user) => {
+                return (
+                  <tr key={user.username}>
+                    <td>
+                      <input readOnly type="text" value={user['username']} />
+                    </td>
+                    {Object.keys(user)
+                      .filter((k) => k !== 'username')
+                      .map((key) => (
+                        <td key={key}>
+                          <input
+                            readOnly
+                            type={typeof user[key] === 'boolean' ? 'checkbox' : 'text'}
+                            checked={typeof user[key] === 'boolean' ? user[key] : null}
+                            value={user[key] || ''}
+                          />
+                        </td>
+                      ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </Content>
+      </Container>
+    </>
   );
 }

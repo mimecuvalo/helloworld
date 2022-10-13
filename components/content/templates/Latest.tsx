@@ -1,11 +1,10 @@
-import { forwardRef, useEffect, useState } from 'react';
+import { gql, useQuery } from '@apollo/client';
+import { useEffect, useState } from 'react';
 
 import Archive from './Archive';
 import Simple from './Simple';
-import { contentUrl } from 'shared/util/url_factory';
-import gql from 'graphql-tag';
-import { useHistory } from 'react-router-dom';
-import { useQuery } from '@apollo/client';
+import { contentUrl } from 'util/url-factory';
+import { useRouter } from 'next/router';
 
 const FETCH_COLLECTION_LINKS = gql`
   query ($username: String!, $section: String!, $name: String!) {
@@ -21,9 +20,9 @@ const FETCH_COLLECTION_LINKS = gql`
   }
 `;
 
-export default forwardRef(({ content }, ref) => {
+export default function Latest({ content }: { content: Content }) {
   const { username, section, name } = content;
-  const routerHistory = useHistory();
+  const router = useRouter();
   const [archiveMode, setArchiveMode] = useState(false);
   const { loading, data } = useQuery(FETCH_COLLECTION_LINKS, {
     variables: {
@@ -40,9 +39,9 @@ export default forwardRef(({ content }, ref) => {
     } else {
       // XXX(mime): we do setTimeout 0 because in Content.js we replace history with the canonical url
       // so it's a shitty race condition :-/
-      setTimeout(() => routerHistory.replace(contentUrl(data.fetchCollectionLatest)), 0);
+      setTimeout(() => router.replace(contentUrl(data.fetchCollectionLatest)), 0);
     }
-  }, [archiveMode, data, routerHistory]);
+  }, [archiveMode, data, router]);
 
   if (archiveMode) {
     return <Archive content={content} />;
@@ -53,4 +52,4 @@ export default forwardRef(({ content }, ref) => {
   }
 
   return <Simple content={data.fetchCollectionLatest} />;
-});
+}

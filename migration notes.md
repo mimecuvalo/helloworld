@@ -9,6 +9,7 @@ data
 - editor - switch to new editor
 - remove draft.js garbage - switch to markdown
 - image upload / resources go to s3 bucket
+- s3 url migration / rewrite
 - allow unfurl (pasting of iframe link)
 - image "u-photo" ?
 - u-in-reply-to Reply > to microblog
@@ -33,3 +34,10 @@ data
 - typescript pass
 - tests pass
 - upgrade packages and close unrelated dependabot PRs
+- use next image in places
+- fix up editing entries in place
+- disallow any
+- convert buttons/avatar over to mui, e.g. styled('button')
+- re-enable editing style/js
+- use mui breakpoints
+- re-package social-butterfly, or get rid of

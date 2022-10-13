@@ -1,26 +1,21 @@
-import { F } from 'shared/util/i18n';
-import classNames from 'classnames';
-import useStyles from './actionsStyles';
+import { F } from 'i18n';
 
-export default function Reblog({ contentRemote, getEditor }) {
+export default function Reblog({ contentRemote }: { contentRemote: ContentRemote }) {
+  // TODO fix up
   const type = contentRemote.type;
-  const styles = useStyles();
 
-  const handleClick = (evt) => {
-    const type = contentRemote.type;
-    if (type === 'remote-comment') {
-      return;
-    }
+  // const handleClick = (evt) => {
+  //   const type = contentRemote.type;
+  //   if (type === 'remote-comment') {
+  //     return;
+  //   }
 
-    // TODO(mime): in future would be great to send html.
-    getEditor().reblog(contentRemote.link);
-  };
+  //   // TODO(mime): in future would be great to send html.
+  //   getEditor().reblog(contentRemote.link);
+  // };
 
   return (
-    <button
-      onClick={handleClick}
-      className={classNames('hw-button-link', { [styles.disabled]: type === 'remote-comment' })}
-    >
+    <button disabled={type === 'remote-comment'} className="hw-button-link">
       <F defaultMessage="reblog" />
     </button>
   );

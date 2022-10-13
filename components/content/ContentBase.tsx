@@ -1,53 +1,52 @@
-import { forwardRef, memo } from 'react';
-
-import { F } from 'shared/util/i18n';
+import { F } from 'i18n';
+import Head from 'next/head';
 import SiteMap from './SiteMap';
-import classNames from 'classnames';
-import { createUseStyles } from 'react-jss';
-import useDocumentTitle from 'client/app/title';
+import { styled } from 'components';
 
-const useStyles = createUseStyles({
-  container: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    flexDirection: 'column',
-    '& > header': {
-      display: 'none',
-    },
-  },
-  articleNavContainer: {
-    display: 'flex',
-    alignItems: 'flex-start',
-  },
-  footer: {
-    width: '154px',
-    marginLeft: '6px',
-    padding: '10px 0',
-    fontSize: '11px',
-    textAlign: 'center',
-  },
-});
+const Container = styled('div')`
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
 
-export default memo(
-  forwardRef((props, ref) => {
-    const { children, className, contentOwner, title, username } = props;
-    useDocumentTitle(title);
-    const styles = useStyles();
+  & > header {
+    display: none;
+  }
+`;
 
-    return (
-      <div ref={ref} id="hw-content" className={classNames(styles.container, className)}>
+const ArticleNavContainer = styled('div')`
+  display: flex;
+  align-items: flex-start;
+`;
+
+const Footer = styled('footer')`
+  width: 154px;
+  margin-left: 6px;
+  padding: 10px 0;
+  font-size: 11px;
+  text-align: center;
+`;
+
+export default function ContentBase(props) {
+  const { children, className, contentOwner, title, username } = props;
+
+  return (
+    <>
+      <Head>
+        <title>{title}</title>
+      </Head>
+      <Container id="hw-content" className={className}>
         <header>
           <h1>{`${contentOwner.title}` + (title ? ` - ${title}` : '')}</h1>
           <h2>{contentOwner.description}</h2>
         </header>
 
-        <div className={styles.articleNavContainer}>
+        <ArticleNavContainer>
           <SiteMap username={username} />
 
           {children}
-        </div>
+        </ArticleNavContainer>
 
-        <footer className={styles.footer}>
+        <Footer>
           <F
             defaultMessage="powered by {br} {link}"
             values={{
@@ -59,8 +58,8 @@ export default memo(
               ),
             }}
           />
-        </footer>
-      </div>
-    );
-  })
-);
+        </Footer>
+      </Container>
+    </>
+  );
+}

@@ -1,19 +1,27 @@
-import { Link } from 'react-router-dom';
-import UserContext from 'client/app/User_Context';
-import classNames from 'classnames';
-import { contentUrl } from 'shared/util/url_factory';
-import { createUseStyles } from 'react-jss';
-import { useContext } from 'react';
+import { Link, styled } from 'components';
+import { PropsWithChildren, Ref, useContext } from 'react';
 
-const useStyles = createUseStyles({
-  hidden: {
-    fontStyle: 'italic',
-  },
-});
+import { Content } from '@prisma/client';
+import UserContext from 'app/UserContext';
+import { contentUrl } from 'util/url-factory';
 
-export default function ContentLink(props) {
+const StyledLink = styled(Link)<{
+  $isHidden: boolean;
+}>`
+  ${props.$isHidden && `font-style: italic;`}
+`;
+
+const ContentLink: React.FC<
+  PropsWithChildren<{
+    item: Content;
+    currentContent: Content;
+    rel?: string;
+    innerRef?: Ref;
+    url?: string;
+    className?: string;
+  }>
+> = (props) => {
   const user = useContext(UserContext).user;
-  const styles = useStyles();
 
   const item = props.item;
   const currentContent = props.currentContent || {};
@@ -21,17 +29,18 @@ export default function ContentLink(props) {
   const { rel, innerRef, url } = props;
 
   return (
-    <Link
+    <StyledLink
       to={url || contentUrl(item)}
       title={item.title}
-      className={classNames(props.className, {
-        [styles.hidden]: isOwnerViewing && item.hidden,
-      })}
+      $isHidden={isOwnerViewing && item.hidden}
+      className={props.className}
       target={item.forceRefresh || currentContent.forceRefresh ? '_self' : ''}
       rel={rel}
       innerRef={innerRef}
     >
       {props.children}
-    </Link>
+    </StyledLink>
   );
-}
+};
+
+export default ContentLink;

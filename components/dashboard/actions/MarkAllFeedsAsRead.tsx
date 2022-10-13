@@ -1,11 +1,11 @@
-import { F } from 'shared/util/i18n';
-import FollowingFeedCountsQuery from 'client/dashboard/FollowingFeedCountsQuery';
-import FollowingSpecialFeedCountsQuery from 'client/dashboard/FollowingSpecialFeedCountsQuery';
-import MenuItem from '@material-ui/core/MenuItem';
-import { escapeRegExp } from 'shared/util/regex';
-import gql from 'graphql-tag';
-import { prefixIdFromObject } from 'shared/data/apollo';
-import { useMutation } from '@apollo/client';
+import { gql, useMutation } from '@apollo/client';
+
+import { F } from 'i18n';
+import FollowingFeedCountsQuery from 'components/dashboard/FollowingFeedCountsQuery';
+import FollowingSpecialFeedCountsQuery from 'components/dashboard/FollowingSpecialFeedCountsQuery';
+import { MenuItem } from 'components';
+import { escapeRegExp } from 'util/regex';
+import { prefixIdFromObject } from 'data/apollo';
 
 const MARK_ALL_FEEDS_AS_READ = gql`
   mutation markAllFeedsAsRead {
@@ -15,7 +15,7 @@ const MARK_ALL_FEEDS_AS_READ = gql`
   }
 `;
 
-export default function MarkAllFeedsAsRead({ handleClose }) {
+export default function MarkAllFeedsAsRead({ handleClose }: { handleClose: () => void }) {
   const [markAllFeedsAsRead] = useMutation(MARK_ALL_FEEDS_AS_READ);
 
   const handleClick = () => {

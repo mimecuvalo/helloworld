@@ -1,10 +1,8 @@
-import Avatar from './Avatar';
-import { F } from 'shared/util/i18n';
+import { gql, useQuery } from '@apollo/client';
+
+import { Avatar } from 'components';
+import { F } from 'i18n';
 import FollowerMenu from './FollowerMenu';
-import classNames from 'classnames';
-import gql from 'graphql-tag';
-import { useQuery } from '@apollo/client';
-import useStyles from './remoteUsersStyles';
 
 const FETCH_FOLLOWERS = gql`
   {
@@ -19,9 +17,8 @@ const FETCH_FOLLOWERS = gql`
   }
 `;
 
-export default function Followers(props) {
+export default function Followers({ handleSetFeed }: (userRemote: UserRemote) => void) {
   const { loading, data } = useQuery(FETCH_FOLLOWERS);
-  const styles = useStyles();
 
   if (loading) {
     return null;
@@ -30,7 +27,7 @@ export default function Followers(props) {
   const followers = data.fetchFollowers;
 
   return (
-    <div className={classNames(props.className, styles.remoteUsers)}>
+    <div>
       <h2>
         <F defaultMessage="followers" />
       </h2>
@@ -44,7 +41,7 @@ export default function Followers(props) {
               <Avatar src={follower.favicon || follower.avatar} />
               {follower.name || follower.username}
             </button>
-            <FollowerMenu userRemote={follower} handleSetFeed={props.handleSetFeed} />
+            <FollowerMenu userRemote={follower} handleSetFeed={handleSetFeed} />
           </li>
         ))}
       </ul>

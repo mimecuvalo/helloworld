@@ -1,6 +1,6 @@
 import { accept, createArticle, findUserRemote, handle } from './activitystreams';
 
-import { buildUrl } from './util/url_factory';
+import { buildUrl } from 'util/url-factory';
 import crypto from 'crypto';
 import express from 'express';
 import fetch from 'node-fetch';
@@ -85,47 +85,6 @@ const Message = (options) => async (req, res, next) => {
   json['@context'] = 'https://www.w3.org/ns/activitystreams';
   res.json(json);
 };
-
-export async function send(req, userRemote, contentOwner, message) {
-  const { currentDate, signatureHeader } = signMessage(req, contentOwner, userRemote);
-  const inboxUrl = new URL(userRemote.activitypub_inbox_url);
-
-  try {
-    await fetch(userRemote.activitypub_inbox_url, {
-      method: 'POST',
-      body: JSON.stringify(message),
-      headers: {
-        Host: inboxUrl.hostname,
-        Date: currentDate.toUTCString(),
-        Signature: signatureHeader,
-        'Content-Type': 'application/ld+json',
-      },
-    });
-  } catch (ex) {
-    // Not a big deal if this fails.
-    // TODO(mime): add logging later.
-  }
-}
-
-function signMessage(req, contentOwner, userRemote) {
-  const currentDate = new Date();
-  const inboxUrl = new URL(userRemote.activitypub_inbox_url);
-  const signer = crypto
-    .createSign('sha256')
-    .update(`(request-target): post ${inboxUrl.pathname}${inboxUrl.search}\n`)
-    .update(`host: ${inboxUrl.hostname}\n`)
-    .update(`date: ${currentDate.toUTCString()}`)
-    .end();
-  const signature = signer.sign(contentOwner.private_key).toString('base64');
-  const actorUrl = buildUrl({
-    req,
-    pathname: '/api/social/activitypub/actor',
-    searchParams: { resource: contentOwner.url },
-  });
-  const signatureHeader = `keyId="${actorUrl}",headers="(request-target) host date",signature="${signature}"`;
-
-  return { currentDate, signatureHeader };
-}
 
 function verifyMessage(req, userRemote) {
   try {

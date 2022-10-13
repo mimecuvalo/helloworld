@@ -1,9 +1,8 @@
-import { F } from 'shared/util/i18n';
-import FollowingSpecialFeedCountsQuery from 'client/dashboard/FollowingSpecialFeedCountsQuery';
+import { gql, useMutation } from '@apollo/client';
+
+import { F } from 'i18n';
+import FollowingSpecialFeedCountsQuery from 'components/dashboard/FollowingSpecialFeedCountsQuery';
 import classNames from 'classnames';
-import gql from 'graphql-tag';
-import { useMutation } from '@apollo/client';
-import useStyles from './actionsStyles';
 
 const FAVORITE_CONTENT_REMOTE = gql`
   mutation favoriteContentRemote($from_user: String, $post_id: String!, $type: String!, $favorited: Boolean!) {
@@ -16,12 +15,17 @@ const FAVORITE_CONTENT_REMOTE = gql`
   }
 `;
 
-export default function Favorite(props) {
-  const { favorited, from_user, post_id, type } = props.contentRemote;
+export default function Favorite({
+  contentRemote,
+  isDashboard,
+}: {
+  contentRemote: ContentRemote;
+  isDashboard: boolean;
+}) {
+  const { favorited, from_user, post_id, type } = contentRemote;
   const variables = { from_user, post_id, type, favorited: !favorited };
 
   const [favoriteContentRemote] = useMutation(FAVORITE_CONTENT_REMOTE);
-  const styles = useStyles();
 
   const handleClick = (evt) =>
     favoriteContentRemote({
@@ -31,7 +35,7 @@ export default function Favorite(props) {
         favoriteContentRemote: Object.assign({}, variables, { __typename: type }),
       },
       update: (store, { data: { favoriteContentRemote } }) => {
-        if (props.isDashboard) {
+        if (isDashboard) {
           const query = FollowingSpecialFeedCountsQuery;
           const data = store.readQuery({ query });
           data.fetchUserTotalCounts.favoritesCount += variables.favorited ? 1 : -1;
@@ -43,7 +47,7 @@ export default function Favorite(props) {
   return (
     <button
       onClick={handleClick}
-      className={classNames('hw-button-link', { [styles.enabled]: props.contentRemote.favorited })}
+      className={classNames('hw-button-link', { [styles.enabled]: contentRemote.favorited })}
     >
       <F defaultMessage="favorite" />
     </button>

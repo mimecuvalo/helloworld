@@ -3,17 +3,16 @@ import Comments from './comments';
 import FOAF from './foaf';
 import Feed from './feed';
 import Follow from './follow';
-import HostMeta from './host_meta';
+import HostMeta from './host-meta';
 import OEmbed from './oembed';
 import Salmon from './salmon';
 import WebFinger from './webfinger';
 import WebMention from './webmention';
 import WebSub from './websub';
-import express from 'express';
 import { like } from './activitystreams';
 import schedule from 'node-schedule';
 import syndicate from './syndicate';
-import updateFeeds from './update_feeds';
+import updateFeeds from './update-feeds';
 
 export default (options) => {
   options.webSubSubscriberServer = WebSub(options);

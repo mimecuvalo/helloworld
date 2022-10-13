@@ -1,20 +1,17 @@
-import { defineMessages, useIntl } from 'shared/util/i18n';
+import { IconButton, Menu } from 'components';
+import { defineMessages, useIntl } from 'i18n';
 
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import IconButton from '@material-ui/core/IconButton';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import MarkAllFeedsAsRead from './actions/MarkAllFeedsAsRead';
-import Menu from '@material-ui/core/Menu';
 import { useState } from 'react';
-import useStyles from './remoteUsersStyles';
 
 const messages = defineMessages({
   menu: { defaultMessage: 'user options' },
 });
 
-export default function FollowingAllMenu(props) {
+export default function FollowingAllMenu() {
   const intl = useIntl();
   const [anchorEl, setAnchorEl] = useState(null);
-  const styles = useStyles();
 
   const handleMenuOpenerClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -31,11 +28,11 @@ export default function FollowingAllMenu(props) {
   return (
     <>
       <IconButton
-        className={styles.menu}
         aria-label={menuAriaLabel}
         aria-owns={isOpen ? id : undefined}
         aria-haspopup="true"
         onClick={handleMenuOpenerClick}
+        size="large"
       >
         <ArrowDropDownIcon />
       </IconButton>

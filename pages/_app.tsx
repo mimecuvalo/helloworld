@@ -3,7 +3,7 @@ import 'styles/globals.css';
 import * as serviceWorkerRegistration from 'app/serviceWorkerRegistration';
 
 import { APOLLO_STATE_PROP_NAME, useApollo } from 'app/apollo';
-import { ApolloProvider, NormalizedCacheObject } from '@apollo/client';
+import { ApolloProvider, NormalizedCacheObject, gql } from '@apollo/client';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import { Footer, Header } from 'components';
 import { IntlProvider, setupCreateIntl } from 'i18n';
@@ -94,16 +94,16 @@ function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }: 
             <div
               dangerouslySetInnerHTML={{
                 __html: `<!--
-                this is the way the web ends
-                this is the way the web ends
-                this is the way the web ends
-                not with a bang but with a OMGWTFBBQ
+                  this is the way the web ends
+                  this is the way the web ends
+                  this is the way the web ends
+                  not with a bang but with a OMGWTFBBQ
 
-                designed in Croatia by:
-                   _  *  _  |_ -|- | *  _  |_ -|-
-                  | | | |_| | | |  | | |_| | | |
-                        _|             _|
-              -->`,
+                  designed in Croatia by:
+                     _  *  _  |_ -|- | *  _  |_ -|-
+                    | | | |_| | | |  | | |_| | | |
+                          _|             _|
+                -->`,
               }}
             />
           </ThemeProvider>

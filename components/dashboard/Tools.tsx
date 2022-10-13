@@ -1,11 +1,10 @@
 import { useContext, useEffect, useState } from 'react';
 
-import { F } from 'shared/util/i18n';
-import UserContext from 'client/app/User_Context';
-import { profileUrl } from 'shared/util/url_factory';
-import { setUser } from 'client/app/auth';
+import { F } from 'i18n';
+import UserContext from 'app/UserContext';
+import { profileUrl } from 'util/url-factory';
 
-export default function Tools({ className }) {
+export default function Tools({ className }: { className: string }) {
   const user = useContext(UserContext).user;
   const [origin, setOrigin] = useState(null);
 
@@ -15,11 +14,7 @@ export default function Tools({ className }) {
     setOrigin(window.location.origin);
   }, [origin]);
 
-  const handleLogout = (evt) => {
-    setUser(undefined);
-  };
-
-  function createBookmarklet(pathname) {
+  function createBookmarklet(pathname: string) {
     return `
       javascript:void((function() {
         var e = document.createElement('script');
@@ -57,7 +52,7 @@ export default function Tools({ className }) {
         </a>
       </li>
       <li>
-        <button className="hw-button-link" onClick={handleLogout}>
+        <button className="hw-button-link" href="/api/auth/logout">
           <F defaultMessage="logout" />
         </button>
       </li>

@@ -1,67 +1,30 @@
-import { defineMessages, useIntl } from 'shared/util/i18n';
 import { useContext, useRef, useState } from 'react';
 
-import DashboardEditor from './Editor';
-import Feed from './Feed';
-import Followers from './Followers';
-import Following from './Following';
-import MyFeed from 'client/content/Feed';
-import Tools from './Tools';
-import Unauthorized from 'client/error/401';
-import UserContext from 'client/app/User_Context';
-import { createUseStyles } from 'react-jss';
-import useDocumentTitle from 'client/app/title';
+import DashboardEditor from 'components/dashboard/Editor';
+import Feed from 'components/dashboard/Feed';
+import Followers from 'components/dashboard/Followers';
+import Following from 'components/dashboard/Following';
+import MyFeed from 'components/content/Feed';
+import Tools from 'components/dashboard/Tools';
+import Unauthorized from 'components/error/401';
+import UserContext from 'app/UserContext';
+import { styled } from 'components';
 
-const boxStyles = {
-  width: 'calc(100% - 20px)',
-  padding: '5px',
-  marginBottom: '10px',
-};
+const Container = styled('div')`
+  display: flex;
+  align-items: flex-start;
+`;
 
-const useStyles = createUseStyles({
-  container: {
-    display: 'flex',
-    alignItems: 'flex-start',
-  },
-  content: {
-    display: 'flex',
-    flexDirection: 'row',
-    flexFlow: 'wrap',
-    alignItems: 'flex-start',
-    width: '82%',
-    margin: '6px',
-  },
-  nav: {
-    position: 'sticky',
-    top: '0',
-    width: '235px',
-    height: '100vh',
-    padding: 'var(--app-margin)',
-    overflow: 'scroll',
-  },
-  tools: {
-    extend: boxStyles,
-    border: '1px solid #c0f',
-    boxShadow: '1px 1px #c0f, 2px 2px #c0f, 3px 3px #c0f',
-  },
-  following: {
-    extend: boxStyles,
-    border: '1px solid #0c0',
-    boxShadow: '1px 1px #0c0, 2px 2px #0c0, 3px 3px #0c0',
-  },
-  followers: {
-    extend: boxStyles,
-    border: '1px solid #fa0',
-    boxShadow: '1px 1px 0 #fa0, 2px 2px 0 #fa0, 3px 3px 0 #fa0',
-  },
-});
+const Content = styled('article')`
+  display: flex;
+  flexdirection: row;
+  flexflow: wrap;
+  alignitems: flex-start;
+  width: 82%;
+  margin: 6px;
+`;
 
-const messages = defineMessages({
-  title: { defaultMessage: 'Dashboard' },
-});
-
-export default function Dashboard(props) {
-  const intl = useIntl();
+export default function Dashboard() {
   const editor = useRef(null);
   const [shouldShowAllItems, setShouldShowAllItems] = useState(false);
   const [didFeedLoad, setDidFeedLoad] = useState(false);
@@ -69,10 +32,6 @@ export default function Dashboard(props) {
   const [specialFeed, setSpecialFeed] = useState('');
   const [userRemote, setUserRemote] = useState(null);
   const user = useContext(UserContext).user;
-  const styles = useStyles();
-
-  const title = intl.formatMessage(messages.title);
-  useDocumentTitle(title);
 
   if (!user) {
     return <Unauthorized />;
@@ -99,8 +58,8 @@ export default function Dashboard(props) {
   };
 
   return (
-    <div id="hw-dashboard" className={styles.container}>
-      <nav className={styles.nav}>
+    <Container id="hw-dashboard">
+      <nav>
         <Tools className={styles.tools} />
         <Following
           className={styles.following}
@@ -111,7 +70,7 @@ export default function Dashboard(props) {
         <Followers className={styles.followers} handleSetFeed={handleSetFeed} />
       </nav>
 
-      <article className={styles.content}>
+      <Content>
         <DashboardEditor ref={editor} username={user.model.username} />
         {specialFeed === 'me' ? (
           <MyFeed
@@ -128,7 +87,7 @@ export default function Dashboard(props) {
             userRemote={userRemote}
           />
         )}
-      </article>
-    </div>
+      </Content>
+    </Container>
   );
 }

@@ -1,4 +1,4 @@
-import { parseFeedAndInsertIntoDb } from './util/feeds';
+import { parseFeedAndInsertIntoDb } from './feeds';
 import pubSubHubBub from 'pubsubhubbub';
 
 export default function setupPush(options) {

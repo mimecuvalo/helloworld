@@ -1,10 +1,9 @@
 import { reply as activityStreamsReply } from './activitystreams';
 import cheerio from 'cheerio';
-import { convertFromRaw } from 'draft-js';
-import { comment as emailComment } from './email';
-import { ensureAbsoluteUrl } from './util/url_factory';
+//import { comment as emailComment } from './email';
+import { ensureAbsoluteUrl } from 'util/url-factory';
 import fetch from 'node-fetch';
-import { fetchText } from './util/crawler';
+import { fetchText } from 'util/crawler';
 import { reply as webmentionReply } from './webmention';
 
 export default (options) =>
@@ -19,14 +18,14 @@ export default (options) =>
 
     if (opt_isComment) {
       const localContentUser = await options.getLocalUser(localContent.url, req);
-      emailComment(
-        req,
-        opt_remoteContent.username,
-        opt_remoteContent.comment_user,
-        localContentUser.email,
-        localContent.url,
-        opt_remoteContent
-      );
+      // emailComment(
+      //   req,
+      //   opt_remoteContent.username,
+      //   opt_remoteContent.comment_user,
+      //   localContentUser.email,
+      //   localContent.url,
+      //   opt_remoteContent
+      // );
     }
   };
 

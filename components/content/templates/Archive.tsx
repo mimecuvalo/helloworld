@@ -1,22 +1,16 @@
-import { forwardRef, useContext } from 'react';
+import { gql, useQuery } from '@apollo/client';
 
-import ContentLink from 'client/components/ContentLink';
-import { F } from 'shared/util/i18n';
-import UserContext from 'client/app/User_Context';
-import classNames from 'classnames';
-import { createUseStyles } from 'react-jss';
-import gql from 'graphql-tag';
-import { useQuery } from '@apollo/client';
+import ContentLink from 'components/ContentLink';
+import { F } from 'i18n';
+import { styled } from 'components';
 
-const useStyles = createUseStyles({
-  archive: {
-    listStyle: 'inside square',
-    padding: '10px',
-  },
-  loadingEmptyBox: {
-    minHeight: '100vh',
-  },
-});
+const StyledArchive = styled('ul')`
+  list-style: inside square;
+`;
+
+const LoadingEmptyBox = styled('div')`
+  min-height: 100vh;
+`;
 
 const FETCH_COLLECTION = gql`
   query ($username: String!, $section: String!, $album: String!, $name: String!) {
@@ -32,9 +26,8 @@ const FETCH_COLLECTION = gql`
   }
 `;
 
-export default forwardRef(({ content }, ref) => {
+export default function Archive({ content }: { content: Content }) {
   const { username, section, album, name } = content;
-  const user = useContext(UserContext).user;
   const { loading, data } = useQuery(FETCH_COLLECTION, {
     variables: {
       username,
@@ -43,36 +36,29 @@ export default forwardRef(({ content }, ref) => {
       name,
     },
   });
-  const styles = useStyles();
 
   if (loading) {
-    return <div className={styles.loadingEmptyBox} />;
+    return <LoadingEmptyBox />;
   }
 
-  const isOwnerViewing = user?.model?.username === content.username;
   const collection = data.fetchCollection;
 
   return (
-    <ul className={styles.archive}>
+    <StyledArchive>
       {!collection.length && (
         <li>
           <F defaultMessage="No content here yet." />
         </li>
       )}
       {collection
-        .filter((item) => item.name !== content.name)
-        .map((item) => (
-          <li
-            key={item.name}
-            className={classNames('hw-content-item', {
-              [styles.hidden]: isOwnerViewing && item.hidden,
-            })}
-          >
+        .filter((item: Content) => item.name !== content.name)
+        .map((item: Content) => (
+          <li key={item.name} className="hw-content-item">
             <ContentLink item={item} currentContent={content}>
               {item.title}
             </ContentLink>
           </li>
         ))}
-    </ul>
+    </StyledArchive>
   );
-});
+}

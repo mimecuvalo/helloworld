@@ -1,5 +1,5 @@
 <h1 align="center">
-  🔮 Project Name
+  🔮 Hello, world.
 </h1>
 <blockquote align="center">
   federated social web blog<br>

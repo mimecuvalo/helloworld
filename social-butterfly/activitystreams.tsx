@@ -1,14 +1,13 @@
-import { getActivityPubActor, getUserRemoteInfo } from './discover_user';
+import { getActivityPubActor, getUserRemoteInfo } from './discover-user';
 
-import { send as activityPubSend } from './activitypub';
-import { buildUrl } from './util/url_factory';
-import { follow as emailFollow } from './email';
-import { mention as emailMention } from './email';
-import { fetchJSON } from './util/crawler';
+import { buildUrl } from 'util/url-factory';
+// import { follow as emailFollow } from './email';
+// import { mention as emailMention } from './email';
+import { fetchJSON } from 'util/crawler';
 import { nanoid } from 'nanoid';
-import { send as salmonSend } from './salmon';
-import { sanitizeHTML } from './util/crawler';
-import syndicate from './syndicate';
+import { sanitizeHTML } from 'util/crawler';
+
+//import syndicate from './syndicate';
 
 export async function accept(req, contentOwner, userRemote) {
   const id = buildUrl({
@@ -63,6 +62,59 @@ async function send(req, userRemote, contentOwner, message) {
     // Not a big deal if this fails.
     // TODO(mime): add logging later.
   }
+}
+
+export async function salmonSend(req, userRemote, contentOwner, data) {
+  data = JSON.stringify(data);
+  const body = magic.sign({ data, data_type: 'application/ld+json' }, contentOwner.private_key);
+  body.sigs[0].value = magic.btob64u(body.sigs[0].value);
+
+  await fetch(userRemote.salmon_url, {
+    method: 'POST',
+    body: JSON.stringify(body),
+    headers: { 'Content-Type': 'application/magic-envelope+json' },
+  });
+}
+
+async function activityPubSend(req, userRemote, contentOwner, message) {
+  const { currentDate, signatureHeader } = signMessage(req, contentOwner, userRemote);
+  const inboxUrl = new URL(userRemote.activitypub_inbox_url);
+
+  try {
+    await fetch(userRemote.activitypub_inbox_url, {
+      method: 'POST',
+      body: JSON.stringify(message),
+      headers: {
+        Host: inboxUrl.hostname,
+        Date: currentDate.toUTCString(),
+        Signature: signatureHeader,
+        'Content-Type': 'application/ld+json',
+      },
+    });
+  } catch (ex) {
+    // Not a big deal if this fails.
+    // TODO(mime): add logging later.
+  }
+}
+
+function signMessage(req, contentOwner, userRemote) {
+  const currentDate = new Date();
+  const inboxUrl = new URL(userRemote.activitypub_inbox_url);
+  const signer = crypto
+    .createSign('sha256')
+    .update(`(request-target): post ${inboxUrl.pathname}${inboxUrl.search}\n`)
+    .update(`host: ${inboxUrl.hostname}\n`)
+    .update(`date: ${currentDate.toUTCString()}`)
+    .end();
+  const signature = signer.sign(contentOwner.private_key).toString('base64');
+  const actorUrl = buildUrl({
+    req,
+    pathname: '/api/social/activitypub/actor',
+    searchParams: { resource: contentOwner.url },
+  });
+  const signatureHeader = `keyId="${actorUrl}",headers="(request-target) host date",signature="${signature}"`;
+
+  return { currentDate, signatureHeader };
 }
 
 export function createGenericMessage(type, req, id, localUser, object, opt_follower) {
@@ -171,7 +223,7 @@ export async function findUserRemote(options, json, res, user) {
 async function handleFollow(options, req, user, userRemote, isFollow) {
   if (isFollow) {
     await options.saveRemoteUser(Object.assign({}, userRemote.dataValues, { follower: true }));
-    emailFollow(req, user.username, user.email, userRemote.profile_url);
+    //emailFollow(req, user.username, user.email, userRemote.profile_url);
   } else {
     if (userRemote.following) {
       await options.saveRemoteUser(Object.assign({}, userRemote.dataValues, { follower: false }));
@@ -269,7 +321,7 @@ async function handlePost(options, req, res, contentRemote, user, activityObject
   await options.saveRemoteContent(contentRemote);
 
   if (wasUserMentioned) {
-    emailMention(req, 'Remote User', undefined /* fromEmail */, user.email, contentRemote.link);
+    //emailMention(req, 'Remote User', undefined /* fromEmail */, user.email, contentRemote.link);
   }
 }
 
@@ -284,5 +336,7 @@ async function handleComment(options, req, res, contentRemote, inReplyTo) {
   await options.saveRemoteContent(contentRemote);
 
   const contentOwner = await options.getLocalUser(inReplyTo, req);
-  await syndicate(req, contentOwner, content, contentRemote, true /* isComment */);
+
+  // TODO(mime): fix
+  //await syndicate(req, contentOwner, content, contentRemote, true /* isComment */);
 }

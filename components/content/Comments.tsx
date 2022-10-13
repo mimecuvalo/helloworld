@@ -1,53 +1,45 @@
-import { F, defineMessages, useIntl } from 'shared/util/i18n';
+import { F, defineMessages, useIntl } from 'i18n';
+import { Login, styled } from 'components';
 import { Suspense, lazy, useContext, useEffect, useRef, useState } from 'react';
+import { gql, useMutation } from '@apollo/client';
 
 import ContentQuery from './ContentQuery';
-import Delete from 'client/dashboard/actions/Delete';
-import Favorite from 'client/dashboard/actions/Favorite';
-import UserContext from 'client/app/User_Context';
-import classNames from 'classnames';
-import configuration from 'client/app/configuration';
-import { createLock } from 'client/app/auth';
-import { createUseStyles } from 'react-jss';
-import gql from 'graphql-tag';
-import { useMutation } from '@apollo/client';
-import { useSnackbar } from 'notistack';
+import Delete from 'components/dashboard/actions/Delete';
+import Favorite from 'components/dashboard/actions/Favorite';
+import UserContext from 'app/UserContext';
 
-export const useStyles = createUseStyles({
-  commentEditorWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  comment: {
-    display: 'flex',
-    marginBottom: '10px',
-    clear: 'both',
-    fontSize: '11px',
-  },
-  favorite: {
-    display: 'flex',
-    marginBottom: '10px',
-    clear: 'both',
-    fontSize: '11px',
-  },
-  commentsHeader: {
-    borderBottom: '1px solid #ccc',
-    paddingBottom: '3px',
-    marginBottom: '10px',
-    fontWeight: '500',
-  },
-  comments: {
-    marginTop: '10px',
-  },
-  avatar: {
-    maxWidth: '32px',
-    maxHeight: '32px',
-    margin: '0 10px 0 0',
-  },
-  author: {
-    fontWeight: 'bold',
-  },
-});
+const CommentEditorWrapper = styled('div')`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Comment = styled('li')`
+  display: flex;
+  margin-bottom: 10px;
+  clear: both;
+  font-size: 11px;
+`;
+
+const CommentsHeader = styled('h3')`
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 3px;
+  margin-bottom: 10px;
+  font-weight: 50;
+`;
+
+const StyledComments = styled('ul')`
+  margin-top: '10px';
+`;
+
+const Avatar = styled('img')`
+  max-width: 32px;
+  max-height: 32px;
+  margin: 0 10px 0 0;
+`;
+
+const Author = styled('span')`
+  font-weight: bold;
+`;
 
 const messages = defineMessages({
   avatar: { defaultMessage: 'avatar' },
@@ -80,7 +72,6 @@ export default function Comments({ comments, content }) {
   const [isPosting, setIsPosting] = useState(false);
   const [postComment] = useMutation(POST_COMMENT);
   const user = useContext(UserContext).user;
-  const styles = useStyles();
 
   const handleKeyDown = (evt) => {
     if (!commentEditor || !commentEditor.current) {
@@ -157,54 +148,45 @@ export default function Comments({ comments, content }) {
 
   return (
     <div className="hw-comments">
-      <h3 className={styles.commentsHeader}>
+      <CommentsHeader>
         <F defaultMessage="comments" />
-      </h3>
+      </CommentsHeader>
       {isLoggedIn ? (
-        <div id="hw-comment-editor" className={styles.commentEditorWrapper}>
+        <CommentEditorWrapper id="hw-comment-editor">
           {editor}
           <button className={classNames('hw-button', 'hw-save')} disabled={isPosting} onClick={handlePost}>
             <F defaultMessage="post" />
           </button>
-        </div>
+        </CommentEditorWrapper>
       ) : (
-        <F
-          defaultMessage="Please {login} to leave a comment."
-          values={{
-            login: (
-              <button className="hw-button-link" onClick={handleLogin}>
-                <F defaultMessage="login" />
-              </button>
-            ),
-          }}
-        />
+        <Login />
       )}
       {comments ? (
-        <ul className={styles.comments}>
+        <StyledComments>
           {comments.map((comment) => (
-            <li className={styles.comment} key={comment.post_id}>
-              <img className={styles.avatar} src={comment.avatar || '/img/pixel.gif'} alt={ariaImgMsg} />
+            <Comment key={comment.post_id}>
+              <Avatar src={comment.avatar || '/img/pixel.gif'} alt={ariaImgMsg} />
               <div>
                 {comment.from_user ? (
                   <a href={comment.from_user} target="_blank" rel="noopener noreferrer">
                     {comment.creator || comment.username}
                   </a>
                 ) : (
-                  <span className={styles.author}>{comment.creator || comment.username}: </span>
+                  <Author>{comment.creator || comment.username}: </Author>
                 )}
                 <div dangerouslySetInnerHTML={{ __html: comment.view }} />
 
                 {isOwnerViewing ? (
-                  <div className={styles.actions}>
+                  <div>
                     <Favorite contentRemote={comment} />
                     &nbsp;•&nbsp;
                     <Delete contentRemote={comment} />
                   </div>
                 ) : null}
               </div>
-            </li>
+            </Comment>
           ))}
-        </ul>
+        </StyledComments>
       ) : null}
     </div>
   );

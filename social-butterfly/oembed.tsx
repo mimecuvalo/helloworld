@@ -1,4 +1,4 @@
-import { buildUrl } from './util/url_factory';
+import { buildUrl } from 'util/url-factory';
 
 export default (options) => async (req, res, next) => {
   const { constants, getLocalUser, getLocalContent } = options;

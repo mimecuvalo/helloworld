@@ -1,20 +1,6 @@
 import { findUserRemote, handle } from './activitystreams';
 
-import fetch from 'node-fetch';
-import { getUserRemoteInfo } from './discover_user';
 import magic from 'magic-signatures';
-
-export async function send(req, userRemote, contentOwner, data) {
-  data = JSON.stringify(data);
-  const body = magic.sign({ data, data_type: 'application/ld+json' }, contentOwner.private_key);
-  body.sigs[0].value = magic.btob64u(body.sigs[0].value);
-
-  await fetch(userRemote.salmon_url, {
-    method: 'POST',
-    body: JSON.stringify(body),
-    headers: { 'Content-Type': 'application/magic-envelope+json' },
-  });
-}
 
 export default (options) => async (req, res) => {
   if (!req.query.resource) {

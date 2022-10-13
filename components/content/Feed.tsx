@@ -1,65 +1,67 @@
-import { useEffect, useState } from 'react';
+import { gql, useQuery } from '@apollo/client';
 
-import { F } from 'shared/util/i18n';
-import InfiniteFeed from 'client/components/InfiniteFeed';
+import { F } from 'i18n';
+import InfiniteFeed from 'components/InfiniteFeed';
 import Item from './Item';
-import { createUseStyles } from 'react-jss';
-import gql from 'graphql-tag';
-import { useQuery } from '@apollo/client';
-import useWindowSize from 'client/components/windowSize';
+import { styled } from 'components';
 
-const useStyles = createUseStyles({
-  /* Reset some sane defaults for web content. Taken from Chrome's User Agent defaults. */
-  item: {
-    clear: 'both',
-    zoom: '0.75',
-    marginRight: '32px',
-    flex: '0 1',
-    maxHeight: '90vh',
-    minWidth: '34vw',
-    overflowY: 'scroll',
-    paddingBottom: '0',
-    marginBottom: '32px',
-    boxShadow: '0 0 0 1px #09f',
-    transition: 'box-shadow 100ms',
+export const ItemWrapper = styled('div')`
+  clear: both;
+  zoom: 0.75;
+  margin-right: 32px;
+  flex: 0 1;
+  max-height: 90vh;
+  min-width: 34vw;
+  overflow-y: scroll;
+  padding-bottom: 0;
+  margin-bottom: 32px;
+  box-shadow: 0 0 0 1px #09f;
+  transition: box-shadow 100ms;
 
-    '& .hw-view': {
-      margin: '6px 10px',
-    },
+  & .hw-view {
+    margin: 6px 10px;
+  }
 
-    '& p': {
-      marginBlockStart: '1em',
-      marginBlockEnd: '1em',
-      marginInlineStart: '0px',
-      marginInlineEnd: '0px',
-    },
-    '& ul, & ol, & blockquote': {
-      marginBlockStart: '1em',
-      marginBlockEnd: '1em',
-      marginInlineStart: '0px',
-      marginInlineEnd: '0px',
-      paddingInlineStart: '20px',
-    },
-    '& blockquote': {
-      borderLeft: '1px solid #666',
-    },
-    '& a': {
-      wordWrap: 'break-word',
-    },
-    '& pre': {
-      whiteSpace: 'pre-wrap',
-      wordWrap: 'break-word',
-    },
-    '& img': {
-      maxWidth: '100%',
-      height: 'auto',
-    },
-    '& iframe': {
-      border: '0',
-      maxWidth: '100%',
-    },
-  },
-});
+  & p {
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+  }
+
+  & ul,
+  & ol,
+  & blockquote {
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 20px;
+  }
+
+  & blockquote {
+    border-left: 1px solid #666;
+  }
+
+  & a {
+    word-wrap: break-word;
+  }
+
+  & pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  & img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  & iframe {
+    border: 0;
+    max-width: 100%;
+  }
+`;
 
 const FETCH_COLLECTION_PAGINATED = gql`
   query ($username: String!, $section: String!, $name: String!, $offset: Int!) {
@@ -97,15 +99,13 @@ const FETCH_COLLECTION_PAGINATED = gql`
   }
 `;
 
-export default function Feed({ content: { username, section, name }, didFeedLoad }) {
-  const [isDesktop, setIsDesktop] = useState(false);
-  const styles = useStyles();
-  const windowSize = useWindowSize();
-
-  useEffect(() => {
-    setIsDesktop(window.matchMedia(`screen and (min-width: 600px)`).matches);
-  }, [windowSize]);
-
+export default function Feed({
+  content: { username, section, name },
+  didFeedLoad,
+}: {
+  content: Content;
+  didFeedLoad: boolean;
+}) {
   const { loading, data, fetchMore } = useQuery(FETCH_COLLECTION_PAGINATED, {
     variables: {
       username,
@@ -130,13 +130,9 @@ export default function Feed({ content: { username, section, name }, didFeedLoad
   return (
     <InfiniteFeed fetchMore={fetchMore} queryName="fetchCollectionPaginated">
       {collection.map((item) => (
-        <Item
-          key={item.name}
-          className={isDesktop && styles.item}
-          content={item}
-          contentOwner={contentOwner}
-          isFeed={true}
-        />
+        <ItemWrapper>
+          <Item key={item.name} content={item} contentOwner={contentOwner} isFeed={true} />
+        </ItemWrapper>
       ))}
     </InfiniteFeed>
   );

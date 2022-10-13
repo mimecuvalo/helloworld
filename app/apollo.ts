@@ -1,4 +1,4 @@
-import { ApolloClient, ApolloLink, HttpLink, InMemoryCache, NormalizedCacheObject, split } from '@apollo/client';
+import { ApolloClient, ApolloLink, HttpLink, InMemoryCache, NormalizedCacheObject, gql, split } from '@apollo/client';
 
 import { BatchHttpLink } from '@apollo/client/link/batch-http';
 import { clientCache } from 'data/localState';

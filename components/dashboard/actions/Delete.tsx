@@ -1,8 +1,7 @@
-import { F } from 'shared/util/i18n';
-import classNames from 'classnames';
-import gql from 'graphql-tag';
-import { useMutation } from '@apollo/client';
-import useStyles from './actionsStyles';
+import { gql, useMutation } from '@apollo/client';
+
+import { F } from 'i18n';
+import { MouseEvent } from 'react';
 
 const DELETE_CONTENT_REMOTE = gql`
   mutation deleteContentRemote(
@@ -28,14 +27,13 @@ const DELETE_CONTENT_REMOTE = gql`
   }
 `;
 
-export default function Delete(props) {
-  const { deleted, from_user, local_content_name, post_id, type } = props.contentRemote;
+export default function Delete({ contentRemote }: { contentRemote: ContentRemote }) {
+  const { deleted, from_user, local_content_name, post_id, type } = contentRemote;
   const variables = { from_user, local_content_name, post_id, type, deleted: !deleted };
 
   const [deleteContentRemote] = useMutation(DELETE_CONTENT_REMOTE);
-  const styles = useStyles();
 
-  const handleClick = (evt) =>
+  const handleClick = (evt: MouseEvent) =>
     deleteContentRemote({
       variables,
       optimisticResponse: {
@@ -45,10 +43,7 @@ export default function Delete(props) {
     });
 
   return (
-    <button
-      onClick={handleClick}
-      className={classNames('hw-button-link', { [styles.enabled]: props.contentRemote.deleted })}
-    >
+    <button onClick={handleClick} disabled={!contentRemote.deleted} className="hw-button-link">
       <F defaultMessage="delete" />
     </button>
   );

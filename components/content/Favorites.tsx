@@ -1,6 +1,17 @@
-import { F, defineMessages, useIntl } from 'shared/util/i18n';
+import { F, defineMessages, useIntl } from 'i18n';
 
-import { useStyles } from './Comments';
+import { styled } from 'components';
+
+const StyledFavorite = styled('li')`
+  display: flex;
+  margin-bottom: 10px;
+  clear: both;
+  font-size: 11px;
+`;
+
+const Author = styled('span')`
+  font-weight: bold;
+`;
 
 const messages = defineMessages({
   avatar: { defaultMessage: 'avatar' },
@@ -9,7 +20,6 @@ const messages = defineMessages({
 export default function Favorites({ favorites }) {
   const intl = useIntl();
   const ariaImgMsg = intl.formatMessage(messages.avatar);
-  const styles = useStyles();
 
   if (!favorites) {
     return null;
@@ -18,13 +28,13 @@ export default function Favorites({ favorites }) {
   return (
     <ul>
       {favorites?.map((favorite) => (
-        <li className={styles.favorite} key={favorite.post_id}>
+        <StyledFavorite key={favorite.post_id}>
           <img className={styles.avatar} src={favorite.avatar || '/img/pixel.gif'} alt={ariaImgMsg} />
           <F
             defaultMessage="{user}: favorited this post."
             values={{
               user: (
-                <span className={styles.author}>
+                <Author>
                   {favorite.from_user ? (
                     <a href={favorite.from_user} target="_blank" rel="noopener noreferrer">
                       {favorite.username}
@@ -32,11 +42,11 @@ export default function Favorites({ favorites }) {
                   ) : (
                     <span>{favorite.username}</span>
                   )}
-                </span>
+                </Author>
               ),
             }}
           />
-        </li>
+        </StyledFavorite>
       ))}
     </ul>
   );

@@ -1,19 +1,17 @@
-import { F } from 'shared/util/i18n';
-import classNames from 'classnames';
-import { useState } from 'react';
-import useStyles from './actionsStyles';
+import { MouseEvent, useState } from 'react';
 
-export default function KeepUnread({ keepUnreadCb }) {
+import { F } from 'i18n';
+
+export default function KeepUnread({ keepUnreadCb }: { keepUnreadCb: (enabled: boolean) => void }) {
   const [enabled, setEnabled] = useState(false);
-  const styles = useStyles();
 
-  const handleClick = async (evt) => {
+  const handleClick = async (evt: MouseEvent) => {
     keepUnreadCb(!enabled);
     setEnabled(!enabled);
   };
 
   return (
-    <button onClick={handleClick} className={classNames('hw-button-link', { [styles.enabled]: enabled })}>
+    <button onClick={handleClick} disabled={!enabled} className="hw-button-link">
       <F defaultMessage="keep unread" />
     </button>
   );

@@ -1,52 +1,60 @@
-import ContentLink from 'client/components/ContentLink';
-import { F } from 'shared/util/i18n';
-import UserContext from 'client/app/User_Context';
+import ContentLink from 'components/ContentLink';
+import { F } from 'i18n';
+import UserContext from 'app/UserContext';
 import classNames from 'classnames';
-import { createUseStyles } from 'react-jss';
+import { styled } from 'components';
 import { useContext } from 'react';
 
-const useStyles = createUseStyles({
-  header: {
-    marginBottom: '6px',
-    padding: '6px 10px',
-    position: 'sticky',
-    top: 0,
-    background: '#111',
-    zIndex: 1,
-  },
-  title: {
-    display: 'flex',
-    margin: '3px 3px 3px 0',
-    fontSize: '24px',
-    fontWeight: '400',
-  },
-  titleLink: {
-    flex: '1',
-    color: '#fff',
+const StyledHeader = styled('header')`
+  margin-bottom: 6px;
+  padding: 6px 10px;
+  position: sticky;
+  top: 0,
+  background: #111;
+  z-index: 1,
+`;
 
-    '&:visited': {
-      color: '#fff',
-    },
-  },
-  edit: {
-    lineHeight: '14px',
-    fontSize: '12px',
-    fontWeight: '500',
-    marginBottom: '2px',
-    padding: '0 7px',
-    color: '#060',
-    alignSelf: 'flex-start',
-  },
-});
+const Title = styled('h1')`
+  display: flex;
+  margin: 3px 3px 3px 0;
+  font-size: 24px;
+  font-weight: 400;
 
-export default function Header({ content, handleEdit, isEditing }) {
+  & a {
+    flex: 1;
+    color: #fff;
+  }
+
+  & a:visited {
+    color: #fff;
+  }
+`;
+
+const EditButton = styled('button')`
+  line-height: 14px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 2px;
+  padding: 0 7px;
+  color: #060;
+  align-self: flex-start;
+`;
+
+export default function Header({
+  content,
+  handleEdit,
+  isEditing,
+}: {
+  content: Content;
+  handleEdit: () => void;
+  isEditing: boolean;
+}) {
   const user = useContext(UserContext).user;
   const isOwnerViewing = user?.model?.username === content.username;
-  const styles = useStyles();
 
   return (
-    <header className={styles.header}>
-      <h1 className={styles.title}>
+    <StyledHeader>
+      <Title>
         <ContentLink item={content} currentContent={content} className={styles.titleLink}>
           <span className="p-name">{content.title && <span className="notranslate">{content.title}</span>}</span>
           {isOwnerViewing && content.hidden && (
@@ -58,16 +66,11 @@ export default function Header({ content, handleEdit, isEditing }) {
         </ContentLink>
 
         {isOwnerViewing ? (
-          <button
-            onClick={handleEdit}
-            className={classNames('hw-button', 'hw-button-link', 'hw-edit', styles.edit, {
-              'hw-selected': isEditing,
-            })}
-          >
+          <EditButton onClick={handleEdit} className="hw-button hw-button-link hw-edit">
             <F defaultMessage="edit" />
-          </button>
+          </EditButton>
         ) : null}
-      </h1>
-    </header>
+      </Title>
+    </StyledHeader>
   );
 }

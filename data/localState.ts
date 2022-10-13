@@ -1,4 +1,4 @@
-import { InMemoryCache, StoreObject, defaultDataIdFromObject } from '@apollo/client';
+import { InMemoryCache, StoreObject, defaultDataIdFromObject, gql } from '@apollo/client';
 
 // This is your app's local state. Which can be queried and modified via Apollo.
 // Learn more here: https://www.apollographql.com/docs/react/data/local-state/

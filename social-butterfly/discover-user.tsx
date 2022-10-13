@@ -1,8 +1,8 @@
-import { buildUrl, ensureAbsoluteUrl } from './util/url_factory';
-import { createAbsoluteUrl, fetchJSON, fetchText } from './util/crawler';
+import { buildUrl, ensureAbsoluteUrl } from 'util/url-factory';
+import { createAbsoluteUrl, fetchJSON, fetchText } from 'util/crawler';
 
 import cheerio from 'cheerio';
-import { discoverAndParseFeedFromUrl } from './util/feeds';
+import { discoverAndParseFeedFromUrl } from './feeds';
 
 // Get the /.well-known/host-meta resource.
 // In other words, get the link to the WebFinger resource.

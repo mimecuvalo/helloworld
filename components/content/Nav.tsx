@@ -1,26 +1,22 @@
-import { forwardRef, memo, useEffect, useImperativeHandle, useRef } from 'react';
+import { ApolloClient, gql, useQuery } from '@apollo/client';
+import { ReactNode, forwardRef, memo, useEffect, useImperativeHandle, useRef } from 'react';
 
-import ContentLink from 'client/components/ContentLink';
+import ContentLink from 'components/ContentLink';
 import ContentQuery from './ContentQuery';
-import { F } from 'shared/util/i18n';
-import classNames from 'classnames';
-import { contentUrl } from 'shared/util/url_factory';
-import { createUseStyles } from 'react-jss';
-import gql from 'graphql-tag';
-import { useQuery } from '@apollo/client';
+import { F } from 'i18n';
+import { contentUrl } from 'util/url-factory';
+import { styled } from 'components';
 
-const useStyles = createUseStyles({
-  nav: {
-    float: 'right',
-    padding: '4px 0',
-    whiteSpace: 'nowrap',
-  },
+const StyledNav = styled('nav')`
+  float: right;
+  padding: 4px 0;
+  white-space: nowrap;
+`;
 
-  loadingEmptyBox: {
-    float: 'right',
-    height: '32px',
-  },
-});
+const LoadingEmptyBox = styled('div')`
+  float: right;
+  height: 32px;
+`;
 
 const NAV_FIELDS = `
   album
@@ -57,7 +53,7 @@ const FETCH_CONTENT_NEIGHBORS = gql`
     }
   `;
 
-export default forwardRef(({ content, isEditing }, ref) => {
+export default function Nav({ content, isEditing }: { content: Content; isEditing: boolean }) {
   const { username, section, album, name } = content;
   const { loading, data, client } = useQuery(FETCH_CONTENT_NEIGHBORS, {
     variables: {
@@ -80,14 +76,15 @@ export default forwardRef(({ content, isEditing }, ref) => {
     return () => window.removeEventListener('keyup', handleKeyUp);
   });
 
-  useImperativeHandle(ref, () => ({
-    prev: () => {
-      prev?.current && prev.current.click();
-    },
-    next: () => {
-      next?.current && next.current.click();
-    },
-  }));
+  // TODO
+  // useImperativeHandle(ref, () => ({
+  //   prev: () => {
+  //     prev?.current && prev.current.click();
+  //   },
+  //   next: () => {
+  //     next?.current && next.current.click();
+  //   },
+  // }));
 
   const handleKeyUp = (evt) => {
     if (isEditing) {
@@ -127,16 +124,26 @@ export default forwardRef(({ content, isEditing }, ref) => {
       data={data}
     />
   );
-});
+}
 
 // This is separate and memoized so that we don't re-render while loading.
 // Otherwise, it's a bit jarring when the navigation menu disappears everytime you click next/prev.
 const PersistedNav = memo(
-  function PersistedNav({ loading, navigationActions, client, content, data }) {
-    const styles = useStyles();
-
+  function PersistedNav({
+    loading,
+    navigationActions,
+    client,
+    content,
+    data,
+  }: {
+    loading: boolean;
+    navigationActions: { [key: string]: ReactNode };
+    client: ApolloClient;
+    content: Content;
+    data: any;
+  }) {
     if (loading) {
-      return <div className={styles.loadingEmptyBox} />;
+      return <LoadingEmptyBox />;
     }
 
     function renderLink(contentMeta, name, msg) {
@@ -190,13 +197,13 @@ const PersistedNav = memo(
     }
 
     return (
-      <nav className={styles.nav}>
+      <StyledNav>
         {renderLink(data.fetchContentNeighbors.last, 'last', <F defaultMessage="last" />)}
         {renderLink(data.fetchContentNeighbors.next, 'next', <F defaultMessage="next" />)}
         {renderLink(data.fetchContentNeighbors.top, 'top', data.fetchContentNeighbors.top?.name)}
         {renderLink(data.fetchContentNeighbors.prev, 'prev', <F defaultMessage="prev" />)}
         {renderLink(data.fetchContentNeighbors.first, 'first', <F defaultMessage="first" />)}
-      </nav>
+      </StyledNav>
     );
   },
   (prevProps, nextProps) => {

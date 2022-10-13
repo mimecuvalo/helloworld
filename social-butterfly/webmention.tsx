@@ -1,9 +1,9 @@
-import { fetchText, sanitizeHTML } from './util/crawler';
+import { fetchText, sanitizeHTML } from 'util/crawler';
 
 import cheerio from 'cheerio';
-import { mention as emailMention } from './email';
+// import { mention as emailMention } from './email';
 import fetch from 'node-fetch';
-import { getUserRemoteInfo } from './discover_user';
+import { getUserRemoteInfo } from './discover-user';
 
 export async function reply(req, contentOwner, content, userRemote, mentionedRemoteUsers) {
   try {
@@ -71,5 +71,5 @@ async function handleMention(req, options, user, sourceUrl, targetUrl) {
     })
   );
 
-  emailMention(req, user.username, undefined /* fromEmail */, user.email, sourceUrl);
+  //emailMention(req, user.username, undefined /* fromEmail */, user.email, sourceUrl);
 }

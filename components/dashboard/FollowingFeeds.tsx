@@ -1,30 +1,36 @@
 import Avatar from './Avatar';
 import FollowingFeedCountsQuery from './FollowingFeedCountsQuery';
 import FollowingMenu from './FollowingMenu';
-import { FormattedNumber } from 'shared/util/i18n';
+import { FormattedNumber } from 'i18n';
 import classNames from 'classnames';
 import keyBy from 'lodash/keyBy';
 import { useQuery } from '@apollo/client';
-import useStyles from './remoteUsersStyles';
 
-export default function FollowingFeeds(props) {
+export default function FollowingFeeds({
+  pollInterval,
+  handleSetFeed,
+  following,
+  currentUserRemote = {},
+}: {
+  pollInterval: number;
+  handleSetFeed: (userRemote: UserRemote) => void;
+  following: boolean;
+  currentUserRemote: UserRemote;
+}) {
   const { loading, data } = useQuery(FollowingFeedCountsQuery, {
-    pollInterval: props.pollInterval,
+    pollInterval: pollInterval,
   });
-  const styles = useStyles();
 
   if (loading) {
     return null;
   }
 
   const handleClick = (evt, userRemote) => {
-    props.handleSetFeed(userRemote);
+    handleSetFeed(userRemote);
   };
 
-  const following = props.following;
   const feedCounts = data.fetchFeedCounts;
   const feedCountsObj = keyBy(feedCounts, 'from_user');
-  const currentUserRemote = props.currentUserRemote || {};
 
   return (
     <>
@@ -48,7 +54,7 @@ export default function FollowingFeeds(props) {
               '0'
             )}
           </span>
-          <FollowingMenu userRemote={userRemote} handleSetFeed={props.handleSetFeed} />
+          <FollowingMenu userRemote={userRemote} handleSetFeed={handleSetFeed} />
         </li>
       ))}
     </>

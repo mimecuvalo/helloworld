@@ -1,9 +1,9 @@
-import { F } from 'shared/util/i18n';
-import FollowingQuery from 'client/dashboard/FollowingQuery';
-import FollowingSpecialFeedCountsQuery from 'client/dashboard/FollowingSpecialFeedCountsQuery';
-import MenuItem from '@material-ui/core/MenuItem';
-import gql from 'graphql-tag';
-import { useMutation } from '@apollo/client';
+import { gql, useMutation } from '@apollo/client';
+
+import { F } from 'i18n';
+import FollowingQuery from 'components/dashboard/FollowingQuery';
+import FollowingSpecialFeedCountsQuery from 'components/dashboard/FollowingSpecialFeedCountsQuery';
+import MenuItem from '@mui/material/MenuItem';
 
 const DESTROY_FEED = gql`
   mutation destroyFeed($profile_url: String!) {
@@ -11,13 +11,21 @@ const DESTROY_FEED = gql`
   }
 `;
 
-export default function UnfollowFeed(props) {
-  const profile_url = props.userRemote.profile_url;
+export default function UnfollowFeed({
+  handleClose,
+  handleSetFeed,
+  userRemote,
+}: {
+  handleClose: () => void;
+  handleSetFeed: (userRemote: string, query?: any, allItems?: boolean) => void;
+  userRemote: User;
+}) {
+  const profile_url = userRemote.profile_url;
 
   const [destroyFeed] = useMutation(DESTROY_FEED);
 
   const handleClick = async () => {
-    props.handleClose();
+    handleClose();
 
     await destroyFeed({
       variables: { profile_url },
@@ -32,7 +40,7 @@ export default function UnfollowFeed(props) {
         });
       },
     });
-    props.handleSetFeed('');
+    handleSetFeed('');
   };
 
   return (

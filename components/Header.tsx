@@ -1,25 +1,25 @@
-import Button from '@material-ui/core/Button';
-import { F } from 'shared/util/i18n';
-import LoginLogoutButton from 'client/components/login';
-import { createUseStyles } from 'react-jss';
-import gql from 'graphql-tag';
-import { useLocation } from 'react-router-dom';
-import { useQuery } from '@apollo/client';
+import { Button, styled } from '@mui/material';
+import { gql, useQuery } from '@apollo/client';
 
-const useStyles = createUseStyles({
-  header: {
-    display: 'block',
-    position: 'fixed',
-    top: '10px',
-    right: '10px',
-    '& a,  & a:visited': {
-      color: '#060',
-    },
-    '& button': {
-      marginLeft: '10px',
-    },
-  },
-});
+import { F } from 'i18n';
+import Login from './Login';
+import { useRouter } from 'next/router';
+
+const StyledHeader = styled('header')`
+  display: block;
+  position: fixed;
+  top: 10px;
+  right: 10px;
+
+  & a,
+  & a:visited {
+    color: #060;
+  }
+
+  & button {
+    marginsreft: 10px;
+  }
+`;
 
 const USER_QUERY = gql`
   {
@@ -32,22 +32,21 @@ const USER_QUERY = gql`
 `;
 
 export default function Header() {
-  const routerLocation = useLocation();
+  const router = useRouter();
   const { data } = useQuery(USER_QUERY);
   const isLoggedIn = !!data?.user;
   const isAuthor = !!data?.user?.model;
-  const styles = useStyles();
 
   return (
-    <header className={styles.header}>
+    <StyledHeader>
       <nav>
-        {isAuthor && routerLocation.pathname !== '/dashboard' ? (
+        {isAuthor && router.pathname !== '/dashboard' ? (
           <Button variant="contained" color="primary" href="/dashboard">
             <F defaultMessage="dashboard" />
           </Button>
         ) : null}
-        {!isLoggedIn || !isAuthor ? <LoginLogoutButton /> : null}
+        {!isLoggedIn || !isAuthor ? <Login /> : null}
       </nav>
-    </header>
+    </StyledHeader>
   );
 }

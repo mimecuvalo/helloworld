@@ -1,61 +1,62 @@
-import { defineMessages, useIntl } from 'shared/util/i18n';
+import { Link, styled } from 'components';
+import { defineMessages, useIntl } from 'i18n';
 
-import { Link } from 'react-router-dom';
-import classNames from 'classnames';
-import { contentUrl } from 'shared/util/url_factory';
-import { createUseStyles } from 'react-jss';
-import { useRef } from 'react';
+import { Content } from '@prisma/client';
+import { contentUrl } from 'util/url-factory';
 
-const useStyles = createUseStyles({
-  thumbLink: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 'var(--thumb-width)',
-    maxWidth: 'var(--thumb-width)',
-    minHeight: 'var(--thumb-height)',
-  },
-  thumb: {
-    display: 'inline-block',
-    maxWidth: 'var(--thumb-width)',
-    maxHeight: 'var(--thumb-height)',
-  },
-});
+const ThumbLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--thumb-width);
+  max-width: var(--thumb-width);
+  min-height: var(--thumb-height);
+`;
+
+const StyledThumb = styled('img')`
+  display: inline-block;
+  max-width: var(--thumb-width);
+  max-height: var(--thumb-height)';
+`;
 
 const messages = defineMessages({
   thumbnail: { defaultMessage: 'thumbnail' },
 });
 
-export default function Thumb({ className, item, currentContent, isEditing }) {
+export default function Thumb({
+  className,
+  item,
+  currentContent,
+  isEditing,
+}: {
+  className?: string;
+  item: Content;
+  currentContent: Content;
+  isEditing: boolean;
+}) {
   const intl = useIntl();
-  const image = useRef();
-  const styles = useStyles();
 
   currentContent = currentContent || {};
   const thumbAltText = intl.formatMessage(messages.thumbnail);
 
   const thumb = (
-    <img loading="lazy" src={item.thumb || '/img/pixel.gif'} ref={image} alt={thumbAltText} className={styles.thumb} />
+    // TODO(mime): is loading lazy necessary here for next.js? i forget
+    <StyledThumb loading="lazy" src={item.thumb || '/img/pixel.gif'} alt={thumbAltText} />
   );
 
   // We're using the fancy new "loading" attribute for images to lazy load thumbs. Woo!
   return !isEditing && item.externalLink ? (
-    <a
-      className={classNames(styles.thumbLink, className)}
-      href={item.externalLink}
-      target="_blank"
-      rel="noreferrer noopener"
-    >
+    <ThumbLink className={className} href={item.externalLink} target="_blank">
       {thumb}
-    </a>
+    </ThumbLink>
   ) : (
-    <Link
+    <ThumbLink
       to={contentUrl(item)}
-      className={classNames(styles.thumbLink, className)}
+      className={className}
       title={item.title}
       target={item.forceRefresh || currentContent.forceRefresh ? '_self' : ''}
     >
       {thumb}
-    </Link>
+    </ThumbLink>
   );
 }

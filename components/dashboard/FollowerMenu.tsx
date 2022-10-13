@@ -1,23 +1,25 @@
-import { F, defineMessages, useIntl } from 'shared/util/i18n';
+import { F, defineMessages, useIntl } from 'i18n';
+import { IconButton, Menu, MenuItem } from 'components';
+import { MouseEvent, useState } from 'react';
 
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import IconButton from '@material-ui/core/IconButton';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import NewFeed from './actions/NewFeed';
-import { useState } from 'react';
-import useStyles from './remoteUsersStyles';
 
 const messages = defineMessages({
   menu: { defaultMessage: 'follower options' },
 });
 
-export default function FollowerMenu(props) {
+export default function FollowerMenu({
+  userRemote,
+  handleSetFeed,
+}: {
+  userRemote: UserRemote;
+  handleSetFeed: (userRemote: UserRemote) => void;
+}) {
   const intl = useIntl();
   const [anchorEl, setAnchorEl] = useState(null);
-  const styles = useStyles();
 
-  const handleMenuOpenerClick = (event) => {
+  const handleMenuOpenerClick = (event: MouseEvent) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -25,18 +27,17 @@ export default function FollowerMenu(props) {
     setAnchorEl(null);
   };
 
-  const handleSetFeed = (userRemote) => {
+  const onSetFeed = (userRemote: UserRemote) => {
     handleClose();
-    props.handleSetFeed(userRemote);
+    handleSetFeed(userRemote);
   };
 
   const handleVisit = () => {
     handleClose();
-    window.open(props.userRemote.profile_url, props.userRemote.profile_url);
+    window.open(userRemote.profile_url, userRemote.profile_url);
   };
 
   const isOpen = Boolean(anchorEl);
-  const { userRemote } = props;
   const menuAriaLabel = intl.formatMessage(messages.menu);
   const id = `follower-menu-${userRemote.profile_url}`;
   const { profile_url, following } = userRemote;
@@ -49,6 +50,7 @@ export default function FollowerMenu(props) {
         aria-owns={isOpen ? id : undefined}
         aria-haspopup="true"
         onClick={handleMenuOpenerClick}
+        size="large"
       >
         <ArrowDropDownIcon />
       </IconButton>
@@ -56,7 +58,7 @@ export default function FollowerMenu(props) {
         <MenuItem key="visit" onClick={handleVisit}>
           <F defaultMessage="visit" />
         </MenuItem>
-        {!following ? <NewFeed handleSetFeed={handleSetFeed} isButton={true} profileUrl={profile_url} /> : null}
+        {!following ? <NewFeed handleSetFeed={onSetFeed} isButton={true} profileUrl={profile_url} /> : null}
       </Menu>
     </>
   );

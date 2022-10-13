@@ -1,43 +1,48 @@
-import Avatar from './Avatar';
-import { F } from 'shared/util/i18n';
+import { Avatar } from 'components';
+import { F } from 'i18n';
 import FollowingAllMenu from './FollowingAllMenu';
 import FollowingSpecialFeedCountsQuery from './FollowingSpecialFeedCountsQuery';
-import { FormattedNumber } from 'shared/util/i18n';
-import UserContext from 'client/app/User_Context';
+import { FormattedNumber } from 'i18n';
+import UserContext from 'app/UserContext';
 import classNames from 'classnames';
 import { useContext } from 'react';
 import { useQuery } from '@apollo/client';
-import useStyles from './remoteUsersStyles';
 
-export default function FollowingSpecialFeeds(props) {
+export default function FollowingSpecialFeeds({
+  pollInterval,
+  handleSetFeed,
+  specialFeed,
+}: {
+  pollInterval: number;
+  handleSetFeed: (userRemote: UserRemote) => void;
+  specialFeed: string;
+}) {
   const user = useContext(UserContext).user;
   const { loading, data } = useQuery(FollowingSpecialFeedCountsQuery, {
-    pollInterval: props.pollInterval,
+    pollInterval: pollInterval,
   });
-  const styles = useStyles();
 
   if (loading) {
     return null;
   }
 
   const handleEntireFeedClick = (evt) => {
-    props.handleSetFeed('');
+    handleSetFeed('');
   };
 
   const handleMyFeedClick = (evt) => {
-    props.handleSetFeed('me');
+    handleSetFeed('me');
   };
 
   const handleFavoritesClick = (evt) => {
-    props.handleSetFeed('favorites');
+    handleSetFeed('favorites');
   };
 
   const handleCommentsClick = (evt) => {
-    props.handleSetFeed('comments');
+    handleSetFeed('comments');
   };
 
   const { commentsCount, favoritesCount, totalCount } = data.fetchUserTotalCounts;
-  const { specialFeed } = props;
   const userFavicon = user.model.favicon;
   const userAvatar = <Avatar src={userFavicon || '/favicon.jpg'} />;
 

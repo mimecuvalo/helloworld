@@ -1,16 +1,12 @@
-import { contentUrl, profileUrl } from 'shared/util/url_factory';
+import { contentUrl, profileUrl } from 'util/url-factory';
 import { isAdmin, isAuthor } from './authorization';
 
-import { EditorHTMLPlugins } from 'hello-world-editor';
-import Sequelize from 'sequelize';
 import cheerio from 'cheerio';
 import { combineResolvers } from 'graphql-resolvers';
-import { convertFromRaw } from 'draft-js';
-import { convertToHTML } from 'draft-convert';
-import { escapeRegExp } from 'shared/util/regex';
-import { isRobotViewing } from 'server/util/crawler';
+import { escapeRegExp } from 'util/regex';
+import { isRobotViewing } from 'util/crawler';
 import { nanoid } from 'nanoid';
-import socialButterfly from 'server/social-butterfly';
+import socialButterfly from 'social-butterfly';
 
 const ATTRIBUTES_NAVIGATION = [
   'username',

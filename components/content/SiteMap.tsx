@@ -1,55 +1,52 @@
-import { F, defineMessages, useIntl } from 'shared/util/i18n';
-import { buildUrl, profileUrl } from 'shared/util/url_factory';
+import { F, defineMessages, useIntl } from 'i18n';
+import { IconButton, styled } from 'components';
+import { ReactNode, useState } from 'react';
+import { buildUrl, profileUrl } from 'util/url-factory';
+import { gql, useQuery } from '@apollo/client';
 
-import CloseIcon from '@material-ui/icons/Close';
-import ContentLink from 'client/components/ContentLink';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import classNames from 'classnames';
-import constants from 'shared/constants';
-import { createUseStyles } from 'react-jss';
-import gql from 'graphql-tag';
-import { useHistory } from 'react-router-dom';
-import { useQuery } from '@apollo/client';
-import { useState } from 'react';
+import CloseIcon from '@mui/icons-material/Close';
+import { Content } from '@prisma/client';
+import ContentLink from 'components/ContentLink';
+import MenuIcon from '@mui/icons-material/Menu';
+import constants from 'util/constants';
+import { useRouter } from 'next/router';
 
-const useStyles = createUseStyles({
-  sitemap: {
-    margin: 'var(--app-margin)',
-    minWidth: '155px',
-    padding: '6px',
-  },
-  album: {
-    paddingLeft: '7px',
-  },
-  selected: {
-    fontWeight: 'bold',
-  },
-  item: {
-    wordWrap: 'break-word',
-  },
-  search: {
-    margin: '20px 0 10px 0',
-  },
-  searchInput: {
-    width: '100%',
-  },
-  license: {
-    margin: '20px 0 10px 0',
-    textAlign: 'center',
-    fontSize: '10px',
-  },
-  hamburger: {
-    display: 'none !important',
-  },
-  logoWrapper: {
-    textAlign: 'center',
-  },
-  logo: {
-    borderRadius: '50%',
-    marginBottom: '10px',
-  },
-});
+const Nav = styled('nav')<{ $forceMenuOpen: boolean }>`
+  margin: var(--app-margin);
+  min-width: 155px;
+  padding: 6px;
+`;
+
+const Album = styled('ul')`
+  padding-left: 7px;
+`;
+
+const Item = styled('li')<{ $isSelected: boolean }>`
+  ${(props) => props.$isSelected && `font-weight: bold;`}
+`;
+
+const Form = styled('form')`
+  margin: 20px 0 10px 0;
+`;
+
+const License = styled('div')`
+  margin: 20px 0 10px 0;
+  text-align: center;
+  font-size: 10px;
+`;
+
+const Hamburger = styled(IconButton)`
+  display: none !important;
+`;
+
+const LogoWrapper = styled('li')`
+  text-align: center;
+`;
+
+const Logo = styled('img')`
+  border-radius: 50%;
+  margin-bottom: 10px;
+`;
 
 const messages = defineMessages({
   menu: { defaultMessage: 'Menu' },
@@ -77,32 +74,28 @@ const SITE_MAP_AND_USER_QUERY = gql`
   }
 `;
 
-export default function SiteMap({ content, username }) {
-  const routerHistory = useHistory();
+export default function SiteMap({ content, username }: { content: Content; username: string }) {
+  const router = useRouter();
   const intl = useIntl();
+  // TODO(mime): wtf
   const [forceMenuOpen, setForceMenuOpen] = useState(false);
   const { loading, data } = useQuery(SITE_MAP_AND_USER_QUERY, {
     variables: {
       username,
     },
   });
-  const styles = useStyles();
 
-  function generateItem(item, albums) {
+  function generateItem(item: Content, albums: ReactNode) {
     content = content || {};
 
     const isSelected = item.name === content.name || item.name === content.album || item.name === content.section;
     return (
-      <li id={`hw-sitemap-${item.name}`} key={item.name} className={styles.item}>
-        <ContentLink
-          item={item}
-          currentContent={content}
-          className={classNames({ 'hw-selected': isSelected, [styles.selected]: isSelected }, 'notranslate')}
-        >
+      <Item id={`hw-sitemap-${item.name}`} key={item.name} $isSelected={isSelected}>
+        <ContentLink item={item} currentContent={content} className="notranslate">
           {item.title}
         </ContentLink>
         {albums}
-      </li>
+      </Item>
     );
   }
 
@@ -124,7 +117,7 @@ export default function SiteMap({ content, username }) {
             break;
           }
         }
-        albums = <ul className={styles.album}>{albumItems}</ul>;
+        albums = <Album>{albumItems}</Album>;
       }
 
       items.push(generateItem(item, albums));
@@ -154,7 +147,7 @@ export default function SiteMap({ content, username }) {
     const formUrl = new URL(form.action);
     const query = form.q.value;
     const url = buildUrl({ pathname: `/${username}${formUrl.pathname}/${query}` });
-    routerHistory.push(url);
+    router.push(url);
   };
 
   if (loading) {
@@ -171,37 +164,28 @@ export default function SiteMap({ content, username }) {
 
   return (
     <>
-      <IconButton
-        className={classNames(styles.hamburger, 'hw-sitemap-hamburger')}
-        aria-label={menuButtonLabel}
-        onClick={handleMobileClick}
-      >
+      <Hamburger className="hw-sitemap-hamburger" aria-label={menuButtonLabel} onClick={handleMobileClick} size="large">
         {forceMenuOpen ? <CloseIcon /> : <MenuIcon />}
-      </IconButton>
-      <nav
-        id="hw-sitemap"
-        className={classNames(styles.sitemap, {
-          'hw-sitemap-open': forceMenuOpen,
-        })}
-      >
+      </Hamburger>
+      <Nav id="hw-sitemap" $forceMenuOpen={forceMenuOpen}>
         <ul>
           {contentOwner.logo ? (
-            <li className={classNames(styles.logoWrapper, 'h-card')}>
+            <LogoWrapper className="h-card">
               <a id="hw-sitemap-logo" href={profileUrl(username)} className="u-url u-uid">
-                <img
-                  className={classNames(styles.logo, 'u-photo')}
+                <Logo
+                  className="u-photo"
                   src={contentOwner.logo}
                   title={contentOwner.title}
                   alt={contentOwner.name || username}
                 />
               </a>
-            </li>
+            </LogoWrapper>
           ) : null}
           <li>
             <a
               id="hw-sitemap-home"
               href={profileUrl(username)}
-              className={classNames({ 'hw-selected': content.name === 'home' })}
+              className={content.name === 'home' ? 'hw-selected' : ''}
             >
               <F defaultMessage="home" />
             </a>
@@ -210,24 +194,12 @@ export default function SiteMap({ content, username }) {
           {items}
         </ul>
 
-        <form
-          method="get"
-          action="/search"
-          onSubmit={handleSearchSubmit}
-          className={classNames(styles.search, 'notranslate')}
-        >
-          <input
-            aria-label={searchLabel}
-            type="search"
-            name="q"
-            placeholder="search"
-            required
-            className={styles.searchInput}
-          />
-        </form>
+        <Form method="get" action="/search" onSubmit={handleSearchSubmit} className="notranslate">
+          <input aria-label={searchLabel} type="search" name="q" placeholder="search" required />
+        </Form>
 
         {contentOwner.license ? (
-          <div className={classNames(styles.license, 'notranslate')}>
+          <License className="notranslate">
             {contentOwner.license === 'http://purl.org/atompub/license#unspecified' ? (
               `Copyright ${new Date().getFullYear()} by ${contentOwner.name}`
             ) : (
@@ -235,13 +207,13 @@ export default function SiteMap({ content, username }) {
                 <img src={constants.licenses[contentOwner.license].img} alt="license" />
               </a>
             )}
-          </div>
+          </License>
         ) : null}
 
         {contentOwner.sidebar_html ? (
           <div className="notranslate" dangerouslySetInnerHTML={{ __html: contentOwner.sidebar_html }} />
         ) : null}
-      </nav>
+      </Nav>
     </>
   );
 }
