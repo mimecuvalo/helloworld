@@ -43,13 +43,13 @@ const FETCH_ALL_USERS = gql`
       description
       email
       favicon
-      google_analytics
+      googleAnalytics
       hostname
       license
       logo
-      magic_key
+      magicKey
       name
-      private_key
+      privateKey
       superuser
       theme
       title
@@ -60,7 +60,7 @@ const FETCH_ALL_USERS = gql`
 `;
 
 export default function Admin() {
-  const user = useContext(UserContext).user;
+  const { user } = useContext(UserContext);
 
   if (!user) {
     return <Unauthorized />;

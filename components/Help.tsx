@@ -12,7 +12,6 @@ import {
 } from '@mui/material';
 import { F, defineMessages, useIntl } from 'i18n';
 import { MouseEvent, useEffect, useState } from 'react';
-import { gql, useQuery } from '@apollo/client';
 
 import { $Experiment } from 'app/experiments';
 import Cookies from 'js-cookie';
@@ -28,13 +27,13 @@ const messages = defineMessages({
   help: { defaultMessage: 'Help' },
 });
 
-const EXPERIMENTS_QUERY = gql`
-  {
-    experiments @client {
-      name
-    }
-  }
-`;
+// const EXPERIMENTS_QUERY = gql`
+//   {
+//     experiments @client {
+//       name
+//     }
+//   }
+// `;
 
 export default function Help() {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>();
@@ -42,8 +41,8 @@ export default function Help() {
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
   const [isExperimentsOpen, setIsExperimentsOpen] = useState(false);
   const intl = useIntl();
-  const { data } = useQuery(EXPERIMENTS_QUERY);
-  const enabledExperiments = data?.experiments?.map((exp: EnabledExperiment) => exp.name) || [];
+  //const { data } = useQuery(EXPERIMENTS_QUERY);
+  const enabledExperiments: EnabledExperiment[] = []; //data?.experiments?.map((exp: EnabledExperiment) => exp.name) || [];
 
   useEffect(() => {
     async function fetchData() {

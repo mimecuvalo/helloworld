@@ -20,7 +20,7 @@ model User {
   superuser       Boolean   @default(false)
   title           String
   description     String?
-  hostname        String?
+  hostname        String?   @unique
   license         String?
   googleAnalytics String?
   favicon         String?
@@ -59,7 +59,7 @@ model UserRemote {
 
   @@index([localUsername])
   @@index([profileUrl])
-  @@index([localUsername, profileUrl])
+  @@unique([localUsername, profileUrl])
 }
 
 model Content {
@@ -73,7 +73,7 @@ model Content {
   name            String
   template        String?
   sortType        String?
-  redirect        String?
+  redirect        Int?
   hidden          Boolean   @default(false)
   title           String
   thumb           String
@@ -94,7 +94,7 @@ model Content {
   // TODO(mime): add full-text search?
   //@@index([title, view])
   //@@index([title, content])
-  @@index([username, name])
+  @@unique([username, name])
   @@index([section])
   @@index([name])
   @@index([username])
@@ -136,5 +136,6 @@ model ContentRemote {
   @@index([toUsername, fromUsername])
   @@index([toUsername, commentUser])
   @@index([toUsername, postId])
+  @@unique([toUsername, fromUsername, postId])
   @@index([thread])
 }

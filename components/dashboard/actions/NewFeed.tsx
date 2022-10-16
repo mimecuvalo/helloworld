@@ -1,13 +1,13 @@
-import { ClipboardEvent, MouseEvent } from 'react';
 import { defineMessages, useIntl } from 'i18n';
 import { gql, useMutation } from '@apollo/client';
 
+import { ClipboardEvent } from 'react';
 import { F } from 'i18n';
 import FollowingFeedCountsQuery from 'components/dashboard/FollowingFeedCountsQuery';
 import FollowingQuery from 'components/dashboard/FollowingQuery';
 import FollowingSpecialFeedCountsQuery from 'components/dashboard/FollowingSpecialFeedCountsQuery';
 import { MenuItem } from 'components';
-import classNames from 'classnames';
+import { UserRemotePublic } from 'data/graphql-generated';
 
 const messages = defineMessages({
   error: { defaultMessage: 'Error subscribing to new feed.' },
@@ -15,13 +15,13 @@ const messages = defineMessages({
 });
 
 const CREATE_USER_REMOTE = gql`
-  mutation createUserRemote($profile_url: String!) {
-    createUserRemote(profile_url: $profile_url) {
+  mutation createUserRemote($profileUrl: String!) {
+    createUserRemote(profileUrl: $profileUrl) {
       avatar
       favicon
       name
-      profile_url
-      sort_type
+      profileUrl
+      sortType
       username
     }
   }
@@ -32,23 +32,23 @@ export default function NewFeed({
   isButton,
   handleSetFeed,
 }: {
-  profileUrl: string;
-  isButton: boolean;
-  handleSetFeed: (feed: any) => void;
+  profileUrl?: string;
+  isButton?: boolean;
+  handleSetFeed: (feed: UserRemotePublic | string, search?: string) => void;
 }) {
   const intl = useIntl();
   const [createUserRemote] = useMutation(CREATE_USER_REMOTE);
 
   // when NewFeed is used as an input field.
   const handleNewFeedPaste = (evt: ClipboardEvent) => {
-    const inputField = evt.target;
+    const inputField = evt.target as HTMLInputElement;
 
     const func = () => {
-      const profile_url = inputField.value;
+      const profileUrl = inputField.value;
       inputField.value = '';
       inputField.blur();
 
-      addNewFeed(profile_url);
+      addNewFeed(profileUrl);
     };
 
     // Note: we do setTimeout b/c the <input /> field's value isn't set quite yet upon paste.
@@ -56,16 +56,16 @@ export default function NewFeed({
   };
 
   // when NewFeed is used as a button.
-  const handleClick = (evt: MouseEvent) => {
-    addNewFeed(profileUrl);
+  const handleClick = () => {
+    addNewFeed(profileUrl || '');
   };
 
-  async function addNewFeed(profile_url: string) {
+  async function addNewFeed(profileUrl: string) {
     const { data } = await createUserRemote({
-      variables: { profile_url },
+      variables: { profileUrl },
       refetchQueries: [{ query: FollowingSpecialFeedCountsQuery }, { query: FollowingFeedCountsQuery }],
       update: (store, { data: { createUserRemote } }) => {
-        const data = store.readQuery({ query: FollowingQuery });
+        const data: any = store.readQuery({ query: FollowingQuery });
         store.writeQuery({
           query: FollowingQuery,
           data: { fetchFollowing: [...data.fetchFollowing, createUserRemote] },
@@ -85,11 +85,5 @@ export default function NewFeed({
     );
   }
 
-  return (
-    <input
-      className={classNames(styles.newFeed, 'notranslate')}
-      placeholder={followPlaceholder}
-      onPaste={handleNewFeedPaste}
-    />
-  );
+  return <input className="notranslate" placeholder={followPlaceholder} onPaste={handleNewFeedPaste} />;
 }

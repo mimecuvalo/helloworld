@@ -1,12 +1,13 @@
 import { buildUrl, contentUrl } from 'util/url-factory';
 import { memo, useEffect, useRef, useState } from 'react';
 
+import { ContentAndUserQueryQuery } from 'data/graphql-generated';
 import ContentBase from 'components/content/ContentBase';
 import ContentQuery from 'components/content/ContentQuery';
 import Feed from 'components/content/Feed';
 import Item from 'components/content/Item';
 import Nav from 'components/content/Nav';
-import NotFound from './404';
+import NotFound from 'pages/404';
 import Simple from 'components/content/templates/Simple';
 import SwipeListener from 'swipe-listener';
 import { styled } from 'components';
@@ -37,8 +38,8 @@ const StyledContent = styled('article')<{ $isFeedWrapper: boolean }>`
   `}
 `;
 
-export default function Content({ username, name }) {
-  const { loading, data } = useQuery(ContentQuery, {
+export default function Content({ username, name }: { username: string; name: string }) {
+  const { loading, data } = useQuery<ContentAndUserQueryQuery>(ContentQuery, {
     variables: {
       username: username || '',
       name: username ? name || 'home' : '',
@@ -51,17 +52,16 @@ export default function Content({ username, name }) {
 // This is separate and memoized so that we don't re-render while loading.
 // Otherwise, it's a bit jarring when the content structure disappears everytime you click next/prev.
 const PersistedContent = memo(
-  function PersistedContent({ loading, data }: { loading: boolean; data: any }) {
+  function PersistedContent({ loading, data }: { loading: boolean; data: ContentAndUserQueryQuery | undefined }) {
     const router = useRouter();
-    const contentBase = useRef(null);
-    const item = useRef(null);
-    const nav = useRef(null);
+    const contentBase = useRef<Element>(null);
+    const item = useRef<Element>(null);
+    //const nav = useRef<Element>(null);
     const swipeListener = useRef(null);
-    const [currentCanonicalUrl, setCurrentCanonicalUrl] = useState(null);
-    const styles = useStyles({ template: data?.fetchContent?.template });
+    const [currentCanonicalUrl, setCurrentCanonicalUrl] = useState('');
 
     useEffect(() => {
-      if (loading || !data.fetchContent) {
+      if (loading || !data || !data.fetchContent) {
         return;
       }
 
@@ -79,18 +79,19 @@ const PersistedContent = memo(
 
       setupSwipe();
       return () => {
+        // @ts-ignore this is fine.
         swipeListener?.current && swipeListener.current.off();
         swipeListener.current = null;
       };
     }, [loading, data, router, currentCanonicalUrl]);
 
-    useEffect(() => {
-      document.addEventListener('keydown', handleKeyDown);
+    // useEffect(() => {
+    //   document.addEventListener('keydown', handleKeyDown);
 
-      return () => {
-        document.removeEventListener('keydown', handleKeyDown);
-      };
-    });
+    //   return () => {
+    //     document.removeEventListener('keydown', handleKeyDown);
+    //   };
+    // });
 
     function setupSwipe() {
       if (swipeListener.current || !contentBase.current) {
@@ -98,18 +99,19 @@ const PersistedContent = memo(
       }
 
       swipeListener.current = SwipeListener(contentBase.current);
-      contentBase.current.addEventListener('swipe', (e) => {
-        const directions = e.detail.directions;
-
-        if (directions.left) {
-          nav.current && nav.current.prev();
-        } else if (directions.right) {
-          nav.current && nav.current.next();
-        }
+      // eslint-disable-next-line
+      contentBase.current.addEventListener('swipe', (e: any) => {
+        //const directions = e.detail.directions;
+        // TODO fix
+        // if (directions.left) {
+        //   nav.current && nav.current.prev();
+        // } else if (directions.right) {
+        //   nav.current && nav.current.next();
+        // }
       });
     }
 
-    if (loading) {
+    if (loading || !data) {
       return null;
     }
 
@@ -130,31 +132,23 @@ const PersistedContent = memo(
     const contentOwner = data.fetchPublicUserData;
     const comments = data.fetchCommentsRemote;
     const favorites = data.fetchFavoritesRemote;
+
+    if (!contentOwner || !comments || !favorites) {
+      return null;
+    }
+
     const itemEl =
       content.template === 'feed' ? (
         <Feed content={content} />
       ) : (
-        <Item
-          content={content}
-          contentOwner={contentOwner}
-          comments={comments}
-          favorites={favorites}
-          handleEdit={handleEdit}
-          ref={item}
-        />
+        <Item content={content} contentOwner={contentOwner} comments={comments} favorites={favorites} ref={item} />
       );
     const title = (content.title ? content.title + ' – ' : '') + contentOwner.title;
 
     return (
-      <ContentBase
-        ref={contentBase}
-        content={content}
-        contentOwner={contentOwner}
-        title={title}
-        username={content.username}
-      >
+      <ContentBase content={content} contentOwner={contentOwner} title={title} username={content.username}>
         <StyledContent $isFeedWrapper={content.template === 'feed'}>
-          <Nav ref={nav} content={content} />
+          <Nav content={content} />
           {itemEl}
         </StyledContent>
       </ContentBase>

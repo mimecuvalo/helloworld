@@ -2,42 +2,42 @@ import { gql } from '@apollo/client';
 
 export default gql`
   type UserRemotePrivate {
-    local_username: String!
+    localUsername: String!
     username: String!
     name: String!
-    profile_url: String!
-    salmon_url: String
-    activitypub_actor_url: String
-    activitypub_inbox_url: String
-    webmention_url: String
-    magic_key: String
+    profileUrl: String!
+    salmonUrl: String
+    activityPubActorUrl: String
+    activityPubInboxUrl: String
+    webmentionUrl: String
+    magicKey: String
     follower: Boolean!
     following: Boolean!
-    feed_url: String!
-    hub_url: String
+    feedUrl: String!
+    hubUrl: String
     avatar: String!
     favicon: String
-    sort_type: String
+    sortType: String
     order: Int!
   }
 
   type UserRemotePublic {
-    local_username: String!
+    localUsername: String!
     username: String!
     name: String!
-    profile_url: String!
-    salmon_url: String
-    activitypub_actor_url: String
-    activitypub_inbox_url: String
-    webmention_url: String
-    magic_key: String
+    profileUrl: String!
+    salmonUrl: String
+    activityPubActorUrl: String
+    activityPubInboxUrl: String
+    webmentionUrl: String
+    magicKey: String
     follower: Boolean!
     following: Boolean!
-    feed_url: String!
-    hub_url: String
+    feedUrl: String!
+    hubUrl: String
     avatar: String!
     favicon: String
-    sort_type: String
+    sortType: String
   }
 
   extend type Query {
@@ -48,8 +48,8 @@ export default gql`
   }
 
   extend type Mutation {
-    createUserRemote(profile_url: String!): UserRemotePublic
-    toggleSortFeed(profile_url: String!, current_sort_type: String!): UserRemotePublic!
-    destroyFeed(profile_url: String!): Boolean!
+    createUserRemote(profileUrl: String!): UserRemotePublic
+    toggleSortFeed(profileUrl: String!, currentSortType: String!): UserRemotePublic!
+    destroyFeed(profileUrl: String!): Boolean!
   }
 `;

@@ -31,7 +31,7 @@ export default function Dashboard() {
   const [query, setQuery] = useState(null);
   const [specialFeed, setSpecialFeed] = useState('');
   const [userRemote, setUserRemote] = useState(null);
-  const user = useContext(UserContext).user;
+  const { user } = useContext(UserContext);
 
   if (!user) {
     return <Unauthorized />;

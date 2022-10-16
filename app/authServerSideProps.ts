@@ -21,14 +21,14 @@ const authServerSideProps =
     const user = await prisma.user.findUnique({
       select: {
         email: true,
-        role: true,
+        superuser: true,
       },
       where: {
         email: session.user.email,
       },
     });
 
-    if (user?.role !== 'ADMIN') {
+    if (!user?.superuser) {
       return {
         redirect: {
           permanent: false,

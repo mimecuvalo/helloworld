@@ -1,5 +1,6 @@
 import { F } from 'i18n';
 import { MenuItem } from 'components';
+import { UserRemotePublic } from 'data/graphql-generated';
 
 export default function ViewAlreadyRead({
   handleClose,
@@ -7,8 +8,8 @@ export default function ViewAlreadyRead({
   userRemote,
 }: {
   handleClose: () => void;
-  handleSetFeed: (userRemote: string, query?: any, allItems?: boolean) => void;
-  userRemote: User;
+  handleSetFeed: (userRemote: UserRemotePublic | string, query?: any, allItems?: boolean) => void;
+  userRemote: UserRemotePublic;
 }) {
   const handleClick = async () => {
     handleClose();

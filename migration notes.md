@@ -1,11 +1,5 @@
 migration notes
 
-data
-
-- resolvers
-- loaders? add to context.ts like https://github.com/mimecuvalo/helloworld/blob/legacy_create_react_app/server/data/apollo.js
-
-- migrate: createUseStyles
 - editor - switch to new editor
 - remove draft.js garbage - switch to markdown
 - image upload / resources go to s3 bucket
@@ -41,3 +35,7 @@ data
 - re-enable editing style/js
 - use mui breakpoints
 - re-package social-butterfly, or get rid of
+- fix todos
+- for some reason was doing this?
+  // TODO(mime): hacky - how can we unify this (here and wherever we use syndicate())
+  currentUser.url = profileUrl(currentUsername, req);

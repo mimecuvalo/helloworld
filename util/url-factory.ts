@@ -1,8 +1,13 @@
+import { Content } from 'data/graphql-generated';
 import { NextApiRequest } from 'next';
 
-export function contentUrl(content: Content, req?: NextApiRequest, searchParams?: URLSearchParams) {
+export function contentUrl(
+  content: Pick<Content, 'username' | 'name' | 'section' | 'album'>,
+  req?: NextApiRequest | false,
+  searchParams?: { [key: string]: string }
+) {
   if (!content?.name) {
-    return null;
+    return '';
   }
 
   let pathname = '';
@@ -43,7 +48,7 @@ export function parseContentUrl(url: string): { username: string; name: string }
   return { username, name };
 }
 
-export function profileUrl(username: string, req: NextApiRequest): string {
+export function profileUrl(username: string, req?: NextApiRequest): string {
   return buildUrl({ req, pathname: `/${username}` });
 }
 
@@ -53,10 +58,10 @@ export function buildUrl({
   pathname,
   searchParams,
 }: {
-  req: NextApiRequest;
+  req?: NextApiRequest;
   isAbsolute?: boolean;
   pathname: string;
-  searchParams?: URLSearchParams;
+  searchParams?: { [key: string]: string };
 }): string {
   let url = '';
 
@@ -79,7 +84,7 @@ export function prettifyUrl(url: string) {
   return url.replace(/ /g, '+');
 }
 
-export function ensureAbsoluteUrl(basisAbsoluteUrl, urlOrPath) {
+export function ensureAbsoluteUrl(basisAbsoluteUrl: string, urlOrPath: string) {
   const parsedUrl = new URL(basisAbsoluteUrl);
   const hostnameAndProtocol = `${parsedUrl.protocol}//${parsedUrl.host}`;
 

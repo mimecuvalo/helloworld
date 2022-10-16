@@ -2,22 +2,23 @@ import { gql } from '@apollo/client';
 
 export default gql`
   type UserPrivate {
+    id: Int!
     username: String!
     name: String!
     email: String!
     title: String!
     description: String
     license: String
-    google_analytics: String
-    magic_key: String!
+    googleAnalytics: String
+    magicKey: String!
     favicon: String
     logo: String
     theme: String!
     viewport: String
-    sidebar_html: String
+    sidebarHtml: String
     superuser: Boolean!
     hostname: String
-    private_key: String!
+    privateKey: String!
   }
 
   type UserPublic {
@@ -27,13 +28,13 @@ export default gql`
     title: String!
     description: String
     license: String
-    google_analytics: String
-    magic_key: String!
+    googleAnalytics: String
+    magicKey: String!
     favicon: String
     logo: String
     theme: String!
     viewport: String
-    sidebar_html: String
+    sidebarHtml: String
   }
 
   extend type Query {

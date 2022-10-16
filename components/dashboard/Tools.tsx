@@ -1,12 +1,14 @@
 import { useContext, useEffect, useState } from 'react';
 
+import { Button } from 'components';
 import { F } from 'i18n';
+import Link from 'next/link';
 import UserContext from 'app/UserContext';
 import { profileUrl } from 'util/url-factory';
 
 export default function Tools({ className }: { className: string }) {
-  const user = useContext(UserContext).user;
-  const [origin, setOrigin] = useState(null);
+  const { user } = useContext(UserContext);
+  const [origin, setOrigin] = useState('');
 
   useEffect(() => {
     // TODO(mime): need an isomorphic mechanism for host. Haven't written it yet.
@@ -25,7 +27,7 @@ export default function Tools({ className }: { className: string }) {
     `;
   }
 
-  const username = user.model.username;
+  const username = user?.username || '';
   const followScript = createBookmarklet('/js/helloworld_follow.js');
   const reblogScript = createBookmarklet('/js/helloworld_reblog.js');
 
@@ -47,14 +49,14 @@ export default function Tools({ className }: { className: string }) {
         </a>
       </li>
       <li>
-        <a href="/api/data-liberation">
+        <Link passHref href="/api/data-liberation">
           <F defaultMessage="data liberation" />
-        </a>
+        </Link>
       </li>
       <li>
-        <button className="hw-button-link" href="/api/auth/logout">
+        <Button className="hw-button-link" href="/api/auth/logout">
           <F defaultMessage="logout" />
-        </button>
+        </Button>
       </li>
     </ul>
   );

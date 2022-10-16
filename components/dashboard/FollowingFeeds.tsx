@@ -1,8 +1,10 @@
-import Avatar from './Avatar';
+import { FetchFeedCountsQuery, UserRemotePublic } from 'data/graphql-generated';
+
+import { Avatar } from 'components';
 import FollowingFeedCountsQuery from './FollowingFeedCountsQuery';
 import FollowingMenu from './FollowingMenu';
 import { FormattedNumber } from 'i18n';
-import classNames from 'classnames';
+import { MouseEvent } from 'react';
 import keyBy from 'lodash/keyBy';
 import { useQuery } from '@apollo/client';
 
@@ -10,22 +12,22 @@ export default function FollowingFeeds({
   pollInterval,
   handleSetFeed,
   following,
-  currentUserRemote = {},
+  currentUserRemote,
 }: {
   pollInterval: number;
-  handleSetFeed: (userRemote: UserRemote) => void;
-  following: boolean;
-  currentUserRemote: UserRemote;
+  handleSetFeed: (userRemote: UserRemotePublic | string, search?: string) => void;
+  following: UserRemotePublic[];
+  currentUserRemote: UserRemotePublic;
 }) {
-  const { loading, data } = useQuery(FollowingFeedCountsQuery, {
+  const { loading, data } = useQuery<FetchFeedCountsQuery>(FollowingFeedCountsQuery, {
     pollInterval: pollInterval,
   });
 
-  if (loading) {
+  if (loading || !data) {
     return null;
   }
 
-  const handleClick = (evt, userRemote) => {
+  const handleClick = (evt: MouseEvent, userRemote: UserRemotePublic) => {
     handleSetFeed(userRemote);
   };
 
@@ -36,8 +38,8 @@ export default function FollowingFeeds({
     <>
       {following.map((userRemote) => (
         <li
-          key={userRemote.profile_url}
-          className={classNames({ [styles.selected]: currentUserRemote.profile_url === userRemote.profile_url })}
+          key={userRemote.profileUrl}
+          style={{ fontWeight: currentUserRemote.profileUrl === userRemote.profileUrl ? 'bold' : 'normal' }}
         >
           <button
             className="hw-button-link notranslate"
@@ -47,9 +49,9 @@ export default function FollowingFeeds({
             <Avatar src={userRemote.favicon || userRemote.avatar} />
             {userRemote.name || userRemote.username}
           </button>
-          <span className={styles.unreadCount}>
-            {feedCountsObj[userRemote.profile_url] ? (
-              <FormattedNumber value={feedCountsObj[userRemote.profile_url].count} />
+          <span>
+            {feedCountsObj[userRemote.profileUrl] ? (
+              <FormattedNumber value={feedCountsObj[userRemote.profileUrl].count} />
             ) : (
               '0'
             )}

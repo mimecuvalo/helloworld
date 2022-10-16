@@ -1,5 +1,6 @@
 import { gql, useQuery } from '@apollo/client';
 
+import { Content } from 'data/graphql-generated';
 import ContentLink from 'components/ContentLink';
 import { F } from 'i18n';
 import { styled } from 'components';

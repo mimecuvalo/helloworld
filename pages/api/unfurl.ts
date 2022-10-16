@@ -1,13 +1,13 @@
-import { createAbsoluteUrl, fetchUrl } from 'server/util/crawler';
+import { NextApiRequest, NextApiResponse } from 'next';
+import { createAbsoluteUrl, fetchUrl } from 'util/crawler';
 
 import _ from 'lodash';
+import authenticate from 'app/authentication';
 import cheerio from 'cheerio';
-import express from 'express';
 
 const IFRAME_ALLOW = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
 
-const router = express.Router();
-router.post('/', async (req, res) => {
+export default authenticate(async function handler(req: NextApiRequest, res: NextApiResponse) {
   const embed = await discoverAndRetrieveOEmbedOrOpenGraphDataFromUrl(req.body.url);
   if (!embed) {
     res.json({ success: false });
@@ -17,7 +17,7 @@ router.post('/', async (req, res) => {
   res.json({ success: true, wasMediaFound: !!(embed.image || embed.iframe), ...embed });
 });
 
-async function discoverAndRetrieveOEmbedOrOpenGraphDataFromUrl(url) {
+async function discoverAndRetrieveOEmbedOrOpenGraphDataFromUrl(url: string) {
   const response = await fetchUrl(url);
   const content = await response.text();
 
@@ -29,7 +29,7 @@ async function discoverAndRetrieveOEmbedOrOpenGraphDataFromUrl(url) {
   return null;
 }
 
-async function parseHtmlAndRetrieveOEmbedOrOpenGraphData(websiteUrl, html) {
+async function parseHtmlAndRetrieveOEmbedOrOpenGraphData(websiteUrl: string, html: string) {
   const parsedUrl = new URL(websiteUrl);
   const $ = cheerio.load(html);
   const oEmbedLinks = $('link[rel="alternate"]').filter(
@@ -52,19 +52,19 @@ async function parseHtmlAndRetrieveOEmbedOrOpenGraphData(websiteUrl, html) {
 }
 
 // We don't bother with XML support for oEmbed. Basically everyone supports JSON at this point.
-async function retrieveOEmbedData(oEmbedUrl) {
+async function retrieveOEmbedData(oEmbedUrl: string) {
   const response = await fetchUrl(oEmbedUrl);
   const json = await response.json();
 
   const html = json.html;
 
-  let iframe = {};
+  let iframe: { [key: string]: string | number } = {};
   if (unescape(html).indexOf('<iframe ') !== -1) {
     const regexString = `([a-zA-Z]+)=['"]([^'"]+)['"]`;
     iframe = _.fromPairs(
-      html.match(new RegExp(regexString, 'g')).map((p) => {
+      html.match(new RegExp(regexString, 'g')).map((p: string) => {
         const pair = p.match(new RegExp(regexString));
-        return [pair[1], pair[2]];
+        return [pair?.[1], pair?.[2]];
       })
     );
     iframe['src'] = iframe['src'] || '';
@@ -77,13 +77,13 @@ async function retrieveOEmbedData(oEmbedUrl) {
   return { type: 'oEmbed', title: json.title, image: json.thumbnail_url, iframe };
 }
 
-function retrieveOpenGraphData($) {
+function retrieveOpenGraphData($: cheerio.Root) {
   const openGraphProperties = $('meta[property]').filter(
     (index, el) => ($(el).attr('property') || '').indexOf('og:') === 0
   );
-  const openGraphObj = {};
+  const openGraphObj: { [key: string]: string | undefined } = {};
   openGraphProperties.each(function (i, el) {
-    openGraphObj[$(el).attr('property').slice(3)] = $(el).attr('content');
+    openGraphObj[$(el).attr('property')?.slice(3) || ''] = $(el).attr('content');
   });
 
   return {
@@ -99,5 +99,3 @@ function retrieveOpenGraphData($) {
     },
   };
 }
-
-export default router;

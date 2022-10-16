@@ -1,7 +1,7 @@
 import { Link, styled } from 'components';
 import { defineMessages, useIntl } from 'i18n';
 
-import { Content } from '@prisma/client';
+import { Content } from 'data/graphql-generated';
 import { contentUrl } from 'util/url-factory';
 
 const ThumbLink = styled(Link)`
@@ -27,12 +27,10 @@ export default function Thumb({
   className,
   item,
   currentContent,
-  isEditing,
 }: {
   className?: string;
   item: Content;
   currentContent: Content;
-  isEditing: boolean;
 }) {
   const intl = useIntl();
 
@@ -45,11 +43,22 @@ export default function Thumb({
   );
 
   // We're using the fancy new "loading" attribute for images to lazy load thumbs. Woo!
-  return !isEditing && item.externalLink ? (
-    <ThumbLink className={className} href={item.externalLink} target="_blank">
-      {thumb}
-    </ThumbLink>
-  ) : (
+  // return !isEditing && item.externalLink ? (
+  //   <ThumbLink className={className} href={item.externalLink} target="_blank">
+  //     {thumb}
+  //   </ThumbLink>
+  // ) : (
+  //   <ThumbLink
+  //     to={contentUrl(item)}
+  //     className={className}
+  //     title={item.title}
+  //     target={item.forceRefresh || currentContent.forceRefresh ? '_self' : ''}
+  //   >
+  //     {thumb}
+  //   </ThumbLink>
+  // );
+
+  return (
     <ThumbLink
       to={contentUrl(item)}
       className={className}

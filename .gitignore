@@ -56,6 +56,3 @@ logs/*.log.gz
 
 # Sentry
 .sentryclirc
-
-# Apollo/Graphql
-graphql-generated.ts

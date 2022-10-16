@@ -6,32 +6,32 @@ export default gql`
     createdAt: Date!
     deleted: Boolean!
     favorited: Boolean!
-    from_user: String
-    local_content_name: String
-    post_id: String!
-    to_username: String!
+    fromUsername: String
+    localContentName: String
+    postId: String!
+    toUsername: String!
     type: String!
     username: String!
   }
 
   type Post implements ContentRemote {
     avatar: String
-    comment_user: String
-    comments_count: Int!
-    comments_updated: Date
+    commentUser: String
+    commentsCount: Int!
+    commentsUpdated: Date
     createdAt: Date!
     creator: String
     deleted: Boolean!
     favorited: Boolean!
-    from_user: String
-    is_spam: Boolean!
+    fromUsername: String
+    isSpam: Boolean!
     link: String!
-    local_content_name: String
-    post_id: String!
+    localContentName: String
+    postId: String!
     read: Boolean!
     thread: String
     title: String!
-    to_username: String!
+    toUsername: String!
     type: String!
     updatedAt: Date
     username: String!
@@ -45,14 +45,14 @@ export default gql`
     createdAt: Date!
     deleted: Boolean!
     favorited: Boolean!
-    from_user: String
+    fromUsername: String
     link: String!
-    local_content_name: String
-    post_id: String!
-    to_username: String!
+    localContentName: String
+    postId: String!
+    toUsername: String!
     type: String!
     username: String!
-    view: String
+    view: String!
   }
 
   type Favorite implements ContentRemote {
@@ -60,10 +60,10 @@ export default gql`
     createdAt: Date!
     deleted: Boolean!
     favorited: Boolean!
-    from_user: String
-    local_content_name: String
-    post_id: String!
-    to_username: String!
+    fromUsername: String
+    localContentName: String
+    postId: String!
+    toUsername: String!
     type: String!
     username: String!
   }
@@ -75,7 +75,7 @@ export default gql`
   }
 
   type FeedCount {
-    from_user: String!
+    fromUsername: String!
     count: Int!
   }
 
@@ -96,16 +96,16 @@ export default gql`
 
   extend type Mutation {
     postComment(username: String!, name: String!, content: String!): Comment!
-    favoriteContentRemote(from_user: String, post_id: String!, type: String!, favorited: Boolean!): ContentRemote!
+    favoriteContentRemote(fromUsername: String!, postId: String!, type: String!, favorited: Boolean!): ContentRemote!
     deleteContentRemote(
-      from_user: String
-      post_id: String!
-      local_content_name: String!
+      fromUsername: String!
+      postId: String!
+      localContentName: String!
       type: String!
       deleted: Boolean!
     ): ContentRemote!
-    markAllContentInFeedAsRead(from_user: String!): FeedCount!
+    markAllContentInFeedAsRead(fromUsername: String!): FeedCount!
     markAllFeedsAsRead: FeedCount!
-    readContentRemote(from_user: String!, post_id: String!, read: Boolean!): Post!
+    readContentRemote(fromUsername: String!, postId: String!, read: Boolean!): Post!
   }
 `;

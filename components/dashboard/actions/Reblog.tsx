@@ -1,3 +1,4 @@
+import { ContentRemote } from 'data/graphql-generated';
 import { F } from 'i18n';
 
 export default function Reblog({ contentRemote }: { contentRemote: ContentRemote }) {

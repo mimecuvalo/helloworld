@@ -14,7 +14,7 @@ import schedule from 'node-schedule';
 import syndicate from './syndicate';
 import updateFeeds from './update-feeds';
 
-export default (options) => {
+export default (options?: any) => {
   options.webSubSubscriberServer = WebSub(options);
 
   const { apiRouter, follow, unfollow } = setupApi(options);
@@ -28,7 +28,7 @@ export default (options) => {
   return { apiRouter, dispose, follow, like, syndicate: syndicateWithOptions, unfollow };
 };
 
-function setupApi(options) {
+function setupApi(options?: any) {
   const { app } = options;
   app.use('/.well-known/host-meta', HostMeta);
   app.get('/.well-known/webfinger', WebFinger(options));
@@ -53,7 +53,7 @@ function setupApi(options) {
   return { apiRouter, follow, unfollow };
 }
 
-function setupTasks(options) {
+function setupTasks(options?: any) {
   // Updates at 1am every night.
   schedule.scheduleJob('updateFeeds', '0 1 * * *', () => updateFeeds(options));
 }

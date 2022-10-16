@@ -1,15 +1,16 @@
+import { MarkAllContentInFeedAsReadMutation, UserRemotePublic } from 'data/graphql-generated';
 import { gql, useMutation } from '@apollo/client';
 
 import { F } from 'i18n';
 import FollowingSpecialFeedCountsQuery from 'components/dashboard/FollowingSpecialFeedCountsQuery';
 import { MenuItem } from 'components';
 import { escapeRegExp } from 'util/regex';
-import { prefixIdFromObject } from 'data/apollo';
+import { prefixIdFromObject } from 'data/localState';
 
 const MARK_ALL_CONTENT_IN_FEED_AS_READ = gql`
-  mutation markAllContentInFeedAsRead($from_user: String!) {
-    markAllContentInFeedAsRead(from_user: $from_user) {
-      from_user
+  mutation markAllContentInFeedAsRead($fromUsername: String!) {
+    markAllContentInFeedAsRead(fromUsername: $fromUsername) {
+      fromUsername
       count
     }
   }
@@ -20,26 +21,30 @@ export default function MarkAllAsRead({
   userRemote,
 }: {
   handleClose: () => void;
-  userRemote: UserRemote;
+  userRemote: UserRemotePublic;
 }) {
-  const [markAllContentInFeedAsRead] = useMutation(MARK_ALL_CONTENT_IN_FEED_AS_READ);
-  const from_user = userRemote.profile_url;
+  const [markAllContentInFeedAsRead] = useMutation<MarkAllContentInFeedAsReadMutation>(
+    MARK_ALL_CONTENT_IN_FEED_AS_READ
+  );
+  const fromUsername = userRemote.profileUrl;
 
   const handleClick = () => {
     handleClose();
 
     markAllContentInFeedAsRead({
-      variables: { from_user },
+      variables: { fromUsername },
       optimisticResponse: {
         __typename: 'Mutation',
-        markAllContentInFeedAsRead: { __typename: 'FeedCount', from_user, count: 0 },
+        markAllContentInFeedAsRead: { __typename: 'FeedCount', fromUsername, count: 0 },
       },
       refetchQueries: [{ query: FollowingSpecialFeedCountsQuery }],
-      update: (store, { data: { markAllContentInFeedAsRead } }) => {
-        const prefixId = escapeRegExp(prefixIdFromObject({ __typename: 'Post', from_user }));
+      update: (store) => {
+        const prefixId = escapeRegExp(prefixIdFromObject({ __typename: 'Post', fromUsername }));
         const regex = new RegExp(`^${prefixId}`);
-        Object.keys(store.data.data).forEach(
-          (key) => key.match(regex) && store.data.set(key, Object.assign({}, store.data.get(key), { read: true }))
+        Object.keys((store as any).data.data).forEach(
+          (key) =>
+            key.match(regex) &&
+            (store as any).data.set(key, Object.assign({}, (store as any).data.get(key), { read: true }))
         );
       },
     });

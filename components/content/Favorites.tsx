@@ -1,6 +1,7 @@
+import { Avatar, styled } from 'components';
 import { F, defineMessages, useIntl } from 'i18n';
 
-import { styled } from 'components';
+import { Favorite } from 'data/graphql-generated';
 
 const StyledFavorite = styled('li')`
   display: flex;
@@ -17,7 +18,7 @@ const messages = defineMessages({
   avatar: { defaultMessage: 'avatar' },
 });
 
-export default function Favorites({ favorites }) {
+export default function Favorites({ favorites }: { favorites?: Favorite[] }) {
   const intl = useIntl();
   const ariaImgMsg = intl.formatMessage(messages.avatar);
 
@@ -28,15 +29,15 @@ export default function Favorites({ favorites }) {
   return (
     <ul>
       {favorites?.map((favorite) => (
-        <StyledFavorite key={favorite.post_id}>
-          <img className={styles.avatar} src={favorite.avatar || '/img/pixel.gif'} alt={ariaImgMsg} />
+        <StyledFavorite key={favorite.postId}>
+          <Avatar src={favorite.avatar || '/img/pixel.gif'} alt={ariaImgMsg} />
           <F
             defaultMessage="{user}: favorited this post."
             values={{
-              user: (
+              user: () => (
                 <Author>
-                  {favorite.from_user ? (
-                    <a href={favorite.from_user} target="_blank" rel="noopener noreferrer">
+                  {favorite.fromUsername ? (
+                    <a href={favorite.fromUsername} target="_blank" rel="noopener noreferrer">
                       {favorite.username}
                     </a>
                   ) : (

@@ -6,9 +6,9 @@ export default gql`
     section: String!
     album: String!
     name: String!
-    template: String
-    sort_type: String
-    redirect: ID!
+    template: String!
+    sortType: String
+    redirect: Int!
     hidden: Boolean!
     title: String!
     createdAt: Date!
@@ -16,18 +16,20 @@ export default gql`
     thumb: String!
     order: Int!
     count: Int!
-    count_robot: Int!
-    comments_count: Int!
-    comments_updated: Date
+    countRobot: Int!
+    commentsCount: Int!
+    commentsUpdated: Date
     favorited: Boolean!
     thread: String
-    thread_user: String
+    threadUser: String
     avatar: String
     style: String!
     code: String!
     view: String!
     content: String!
     forceRefresh: Boolean # If content contains style/code we can't do ajax navigation.
+    prefetchImages: [String!]
+    externalLink: String # If we have a direct link to an external site.
   }
 
   type ContentMetaInfo {

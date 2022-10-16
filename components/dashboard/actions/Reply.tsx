@@ -5,7 +5,7 @@ import { F } from 'i18n';
 //   reply: { defaultMessage: 'replying to' },
 // });
 
-export default function Reply(props: { contentRemote: ContentRemote }) {
+export default function Reply(/*props: { contentRemote: ContentRemote }*/) {
   // TODO fix up
   // const intl = useIntl();
 

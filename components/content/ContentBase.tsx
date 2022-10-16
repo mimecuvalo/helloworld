@@ -1,5 +1,8 @@
+import { Content, UserPublic } from 'data/graphql-generated';
+
 import { F } from 'i18n';
 import Head from 'next/head';
+import { PropsWithChildren } from 'react';
 import SiteMap from './SiteMap';
 import { styled } from 'components';
 
@@ -26,8 +29,16 @@ const Footer = styled('footer')`
   text-align: center;
 `;
 
-export default function ContentBase(props) {
-  const { children, className, contentOwner, title, username } = props;
+export default function ContentBase(
+  props: PropsWithChildren<{
+    content: Content;
+    className?: string;
+    contentOwner: Pick<UserPublic, 'title' | 'description'>;
+    title: string;
+    username: string;
+  }>
+) {
+  const { children, content, className, contentOwner, title, username } = props;
 
   return (
     <>
@@ -41,7 +52,7 @@ export default function ContentBase(props) {
         </header>
 
         <ArticleNavContainer>
-          <SiteMap username={username} />
+          <SiteMap content={content} username={username} />
 
           {children}
         </ArticleNavContainer>
@@ -50,8 +61,8 @@ export default function ContentBase(props) {
           <F
             defaultMessage="powered by {br} {link}"
             values={{
-              br: <br />,
-              link: (
+              br: () => <br />,
+              link: () => (
                 <a href="https://github.com/mimecuvalo/helloworld" rel="generator">
                   Hello, world.
                 </a>

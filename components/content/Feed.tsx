@@ -1,3 +1,4 @@
+import { Content, FetchCollectionQuery, UserPublic } from 'data/graphql-generated';
 import { gql, useQuery } from '@apollo/client';
 
 import { F } from 'i18n';
@@ -64,14 +65,14 @@ export const ItemWrapper = styled('div')`
 `;
 
 const FETCH_COLLECTION_PAGINATED = gql`
-  query ($username: String!, $section: String!, $name: String!, $offset: Int!) {
+  query FetchCollection($username: String!, $section: String!, $name: String!, $offset: Int!) {
     fetchCollectionPaginated(username: $username, section: $section, name: $name, offset: $offset) {
       album
       code
-      comments_count
-      comments_updated
+      commentsCount
+      commentsUpdated
       count
-      count_robot
+      countRobot
       createdAt
       updatedAt
       hidden
@@ -79,7 +80,7 @@ const FETCH_COLLECTION_PAGINATED = gql`
       order
       redirect
       section
-      sort_type
+      sortType
       style
       template
       thumb
@@ -103,10 +104,10 @@ export default function Feed({
   content: { username, section, name },
   didFeedLoad,
 }: {
-  content: Content;
-  didFeedLoad: boolean;
+  content: Pick<Content, 'username' | 'section' | 'name'>;
+  didFeedLoad?: boolean;
 }) {
-  const { loading, data, fetchMore } = useQuery(FETCH_COLLECTION_PAGINATED, {
+  const { loading, data, fetchMore } = useQuery<FetchCollectionQuery>(FETCH_COLLECTION_PAGINATED, {
     variables: {
       username,
       section,
@@ -116,7 +117,7 @@ export default function Feed({
     fetchPolicy: didFeedLoad ? 'network-only' : 'cache-first',
   });
 
-  if (loading) {
+  if (loading || !data) {
     return null;
   }
 
@@ -130,8 +131,8 @@ export default function Feed({
   return (
     <InfiniteFeed fetchMore={fetchMore} queryName="fetchCollectionPaginated">
       {collection.map((item) => (
-        <ItemWrapper>
-          <Item key={item.name} content={item} contentOwner={contentOwner} isFeed={true} />
+        <ItemWrapper key={item.name}>
+          <Item content={item as Content} contentOwner={contentOwner as UserPublic} isFeed={true} />
         </ItemWrapper>
       ))}
     </InfiniteFeed>

@@ -1,7 +1,7 @@
+import { Content } from 'data/graphql-generated';
 import ContentLink from 'components/ContentLink';
 import { F } from 'i18n';
 import UserContext from 'app/UserContext';
-import classNames from 'classnames';
 import { styled } from 'components';
 import { useContext } from 'react';
 
@@ -30,32 +30,24 @@ const Title = styled('h1')`
   }
 `;
 
-const EditButton = styled('button')`
-  line-height: 14px;
-  font-size: 12px;
-  font-weight: 500;
-  margin-bottom: 2px;
-  padding: 0 7px;
-  color: #060;
-  align-self: flex-start;
-`;
+// const EditButton = styled('button')`
+//   line-height: 14px;
+//   font-size: 12px;
+//   font-weight: 500;
+//   margin-bottom: 2px;
+//   padding: 0 7px;
+//   color: #060;
+//   align-self: flex-start;
+// `;
 
-export default function Header({
-  content,
-  handleEdit,
-  isEditing,
-}: {
-  content: Content;
-  handleEdit: () => void;
-  isEditing: boolean;
-}) {
-  const user = useContext(UserContext).user;
-  const isOwnerViewing = user?.model?.username === content.username;
+export default function Header({ content }: { content: Content }) {
+  const { user } = useContext(UserContext);
+  const isOwnerViewing = user?.username === content.username;
 
   return (
     <StyledHeader>
       <Title>
-        <ContentLink item={content} currentContent={content} className={styles.titleLink}>
+        <ContentLink item={content} currentContent={content}>
           <span className="p-name">{content.title && <span className="notranslate">{content.title}</span>}</span>
           {isOwnerViewing && content.hidden && (
             <span>
@@ -65,11 +57,11 @@ export default function Header({
           )}
         </ContentLink>
 
-        {isOwnerViewing ? (
+        {/* {isOwnerViewing ? (
           <EditButton onClick={handleEdit} className="hw-button hw-button-link hw-edit">
             <F defaultMessage="edit" />
           </EditButton>
-        ) : null}
+        ) : null} */}
       </Title>
     </StyledHeader>
   );

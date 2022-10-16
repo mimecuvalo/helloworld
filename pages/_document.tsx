@@ -48,7 +48,7 @@ const generateCsp = (): [csp: string, nonce: string] => {
 };
 
 const CONTENT_AND_USER_QUERY = gql`
-  query ContentAndUserQuery($username: String!, $name: String!) {
+  query ContentAndUserQueryDocument($username: String!, $name: String!) {
     fetchContentHead(username: $username, name: $name) {
       username
       section
@@ -58,14 +58,14 @@ const CONTENT_AND_USER_QUERY = gql`
       title
       createdAt
       updatedAt
-      comments_count
-      comments_updated
+      commentsCount
+      commentsUpdated
     }
 
     fetchPublicUserDataHead(username: $username) {
       description
       favicon
-      google_analytics
+      googleAnalytics
       logo
       name
       theme

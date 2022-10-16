@@ -1,3 +1,4 @@
+import { FetchFollowersQuery, UserRemotePublic } from 'data/graphql-generated';
 import { gql, useQuery } from '@apollo/client';
 
 import { Avatar } from 'components';
@@ -5,22 +6,26 @@ import { F } from 'i18n';
 import FollowerMenu from './FollowerMenu';
 
 const FETCH_FOLLOWERS = gql`
-  {
+  query FetchFollowers {
     fetchFollowers {
       avatar
       favicon
       following
       name
-      profile_url
+      profileUrl
       username
     }
   }
 `;
 
-export default function Followers({ handleSetFeed }: (userRemote: UserRemote) => void) {
-  const { loading, data } = useQuery(FETCH_FOLLOWERS);
+export default function Followers({
+  handleSetFeed,
+}: {
+  handleSetFeed: (userRemote: UserRemotePublic | string) => void;
+}) {
+  const { loading, data } = useQuery<FetchFollowersQuery>(FETCH_FOLLOWERS);
 
-  if (loading) {
+  if (loading || !data) {
     return null;
   }
 
@@ -33,15 +38,15 @@ export default function Followers({ handleSetFeed }: (userRemote: UserRemote) =>
       </h2>
       <ul>
         {followers.map((follower) => (
-          <li key={follower.profile_url}>
+          <li key={follower.profileUrl}>
             <button
               className="hw-button-link notranslate"
-              onClick={() => window.open(follower.profile_url, follower.profile_url, 'noopener,noreferrer')}
+              onClick={() => window.open(follower.profileUrl, follower.profileUrl, 'noopener,noreferrer')}
             >
               <Avatar src={follower.favicon || follower.avatar} />
               {follower.name || follower.username}
             </button>
-            <FollowerMenu userRemote={follower} handleSetFeed={handleSetFeed} />
+            <FollowerMenu userRemote={follower as UserRemotePublic} handleSetFeed={handleSetFeed} />
           </li>
         ))}
       </ul>

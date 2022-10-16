@@ -1,10 +1,12 @@
-import { ApolloClient, gql, useQuery } from '@apollo/client';
-import { ReactNode, forwardRef, memo, useEffect, useImperativeHandle, useRef } from 'react';
+import { ApolloClient, InMemoryCache, gql, useQuery } from '@apollo/client';
+import { Content, ContentMetaInfo } from 'data/graphql-generated';
 
 import ContentLink from 'components/ContentLink';
 import ContentQuery from './ContentQuery';
 import { F } from 'i18n';
+import classNames from 'classnames';
 import { contentUrl } from 'util/url-factory';
+import { memo } from 'react';
 import { styled } from 'components';
 
 const StyledNav = styled('nav')`
@@ -29,31 +31,31 @@ const NAV_FIELDS = `
 `;
 
 const FETCH_CONTENT_NEIGHBORS = gql`
-    query($username: String!, $section: String!, $album: String!, $name: String!) {
-      fetchContentNeighbors(username: $username, section: $section, album: $album, name: $name) {
-        first {
-          ${NAV_FIELDS}
-        }
-        last {
-          ${NAV_FIELDS}
-        }
-        next {
-          ${NAV_FIELDS}
-          prefetchImages
-        }
-        prev {
-          ${NAV_FIELDS}
-          prefetchImages
-        }
-        top {
-          ${NAV_FIELDS}
-          template
-        }
+  query FetchContentNeighbors($username: String!, $section: String!, $album: String!, $name: String!) {
+    fetchContentNeighbors(username: $username, section: $section, album: $album, name: $name) {
+      first {
+        ${NAV_FIELDS}
+      }
+      last {
+        ${NAV_FIELDS}
+      }
+      next {
+        ${NAV_FIELDS}
+        prefetchImages
+      }
+      prev {
+        ${NAV_FIELDS}
+        prefetchImages
+      }
+      top {
+        ${NAV_FIELDS}
+        template
       }
     }
-  `;
+  }
+`;
 
-export default function Nav({ content, isEditing }: { content: Content; isEditing: boolean }) {
+export default function Nav({ content }: { content: Content }) {
   const { username, section, album, name } = content;
   const { loading, data, client } = useQuery(FETCH_CONTENT_NEIGHBORS, {
     variables: {
@@ -64,17 +66,17 @@ export default function Nav({ content, isEditing }: { content: Content; isEditin
     },
   });
 
-  const last = useRef(null);
-  const next = useRef(null);
-  const top = useRef(null);
-  const prev = useRef(null);
-  const first = useRef(null);
-  const navigationActions = { last, next, top, prev, first };
+  // const last = useRef(null);
+  // const next = useRef(null);
+  // const top = useRef(null);
+  // const prev = useRef(null);
+  // const first = useRef(null);
+  // const navigationActions = { last, next, top, prev, first };
 
-  useEffect(() => {
-    window.addEventListener('keyup', handleKeyUp);
-    return () => window.removeEventListener('keyup', handleKeyUp);
-  });
+  // useEffect(() => {
+  //   window.addEventListener('keyup', handleKeyUp);
+  //   return () => window.removeEventListener('keyup', handleKeyUp);
+  // });
 
   // TODO
   // useImperativeHandle(ref, () => ({
@@ -86,25 +88,25 @@ export default function Nav({ content, isEditing }: { content: Content; isEditin
   //   },
   // }));
 
-  const handleKeyUp = (evt) => {
-    if (isEditing) {
-      return;
-    }
+  // const handleKeyUp = (evt) => {
+  //   if (isEditing) {
+  //     return;
+  //   }
 
-    switch (evt.key) {
-      case 'ArrowUp':
-        top?.current && top.current.click();
-        break;
-      case 'ArrowLeft':
-        next?.current && next.current.click();
-        break;
-      case 'ArrowRight':
-        prev?.current && prev.current.click();
-        break;
-      default:
-        break;
-    }
-  };
+  //   switch (evt.key) {
+  //     case 'ArrowUp':
+  //       top?.current && top.current.click();
+  //       break;
+  //     case 'ArrowLeft':
+  //       next?.current && next.current.click();
+  //       break;
+  //     case 'ArrowRight':
+  //       prev?.current && prev.current.click();
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // };
 
   if (
     content.template === 'feed' ||
@@ -115,15 +117,7 @@ export default function Nav({ content, isEditing }: { content: Content; isEditin
     return null;
   }
 
-  return (
-    <PersistedNav
-      loading={loading}
-      navigationActions={navigationActions}
-      client={client}
-      content={content}
-      data={data}
-    />
-  );
+  return <PersistedNav loading={loading} client={client} content={content} data={data} />;
 }
 
 // This is separate and memoized so that we don't re-render while loading.
@@ -131,14 +125,12 @@ export default function Nav({ content, isEditing }: { content: Content; isEditin
 const PersistedNav = memo(
   function PersistedNav({
     loading,
-    navigationActions,
     client,
     content,
     data,
   }: {
     loading: boolean;
-    navigationActions: { [key: string]: ReactNode };
-    client: ApolloClient;
+    client: ApolloClient<InMemoryCache>;
     content: Content;
     data: any;
   }) {
@@ -146,7 +138,7 @@ const PersistedNav = memo(
       return <LoadingEmptyBox />;
     }
 
-    function renderLink(contentMeta, name, msg) {
+    function renderLink(contentMeta: ContentMetaInfo, name: string, msg: JSX.Element) {
       contentMeta = contentMeta || {};
 
       const url = contentUrl(
@@ -159,7 +151,6 @@ const PersistedNav = memo(
           <a
             href={url}
             rel={name}
-            ref={navigationActions[name]}
             className={classNames(`hw-${name} hw-button`, { notranslate: name === 'top' })}
             title={contentMeta.title}
           >
@@ -176,7 +167,7 @@ const PersistedNav = memo(
         });
 
         if (typeof window !== 'undefined') {
-          for (const img of contentMeta.prefetchImages) {
+          for (const img of contentMeta.prefetchImages || []) {
             new Image().src = img;
           }
         }
@@ -188,7 +179,6 @@ const PersistedNav = memo(
           item={contentMeta}
           currentContent={content}
           rel={name}
-          innerRef={navigationActions[name]}
           className={classNames(`hw-${name} hw-button`, { notranslate: name === 'top' })}
         >
           {msg}

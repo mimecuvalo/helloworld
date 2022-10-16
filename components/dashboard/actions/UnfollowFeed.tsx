@@ -3,11 +3,12 @@ import { gql, useMutation } from '@apollo/client';
 import { F } from 'i18n';
 import FollowingQuery from 'components/dashboard/FollowingQuery';
 import FollowingSpecialFeedCountsQuery from 'components/dashboard/FollowingSpecialFeedCountsQuery';
-import MenuItem from '@mui/material/MenuItem';
+import { MenuItem } from 'components';
+import { UserRemotePublic } from 'data/graphql-generated';
 
 const DESTROY_FEED = gql`
-  mutation destroyFeed($profile_url: String!) {
-    destroyFeed(profile_url: $profile_url)
+  mutation destroyFeed($profileUrl: String!) {
+    destroyFeed(profileUrl: $profileUrl)
   }
 `;
 
@@ -17,10 +18,10 @@ export default function UnfollowFeed({
   userRemote,
 }: {
   handleClose: () => void;
-  handleSetFeed: (userRemote: string, query?: any, allItems?: boolean) => void;
-  userRemote: User;
+  handleSetFeed: (userRemote: UserRemotePublic | string, query?: any, allItems?: boolean) => void;
+  userRemote: UserRemotePublic;
 }) {
-  const profile_url = userRemote.profile_url;
+  const profileUrl = userRemote.profileUrl;
 
   const [destroyFeed] = useMutation(DESTROY_FEED);
 
@@ -28,14 +29,14 @@ export default function UnfollowFeed({
     handleClose();
 
     await destroyFeed({
-      variables: { profile_url },
+      variables: { profileUrl },
       refetchQueries: [{ query: FollowingSpecialFeedCountsQuery }],
-      update: (store, { data }) => {
-        const followingData = store.readQuery({ query: FollowingQuery });
+      update: (store) => {
+        const followingData: any = store.readQuery({ query: FollowingQuery });
         store.writeQuery({
           query: FollowingQuery,
           data: {
-            fetchFollowing: followingData.fetchFollowing.filter((i) => i.profile_url !== profile_url),
+            fetchFollowing: followingData.fetchFollowing.filter((i: UserRemotePublic) => i.profileUrl !== profileUrl),
           },
         });
       },

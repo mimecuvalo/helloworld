@@ -1,5 +1,5 @@
 schema: http://localhost:3000/api/graphql
-documents: ['./data/**/*.ts*', './pages/index.tsx']
+documents: ['./data/**/*.ts*', './components/**/*.tsx', './hooks/**/*.tsx', './pages/**/*.tsx']
 generates:
   data/graphql-generated.ts:
     config:

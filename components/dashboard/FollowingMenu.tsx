@@ -1,4 +1,5 @@
 import { F, defineMessages, useIntl } from 'i18n';
+import { MouseEvent, useState } from 'react';
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import IconButton from '@mui/material/IconButton';
@@ -7,8 +8,8 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Sort from './actions/Sort';
 import UnfollowFeed from './actions/UnfollowFeed';
+import { UserRemotePublic } from 'data/graphql-generated';
 import ViewAlreadyRead from './actions/ViewAlreadyRead';
-import { useState } from 'react';
 
 const messages = defineMessages({
   menu: { defaultMessage: 'user options' },
@@ -18,13 +19,13 @@ export default function FollowingMenu({
   userRemote,
   handleSetFeed,
 }: {
-  userRemote: UserRemote;
-  handleSetFeed: (userRemote: UserRemote) => void;
+  userRemote: UserRemotePublic;
+  handleSetFeed: (userRemote: UserRemotePublic | string, search?: string) => void;
 }) {
   const intl = useIntl();
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<Element | null>();
 
-  const handleMenuOpenerClick = (event) => {
+  const handleMenuOpenerClick = (event: MouseEvent) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -34,17 +35,16 @@ export default function FollowingMenu({
 
   const handleVisit = () => {
     handleClose();
-    window.open(userRemote.profile_url, userRemote.profile_url, 'noopener,noreferrer');
+    window.open(userRemote.profileUrl, userRemote.profileUrl, 'noopener,noreferrer');
   };
 
   const isOpen = Boolean(anchorEl);
   const menuAriaLabel = intl.formatMessage(messages.menu);
-  const id = `following-menu-${userRemote.profile_url}`;
+  const id = `following-menu-${userRemote.profileUrl}`;
 
   return (
     <>
       <IconButton
-        className={styles.menu}
         aria-label={menuAriaLabel}
         aria-owns={isOpen ? id : undefined}
         aria-haspopup="true"

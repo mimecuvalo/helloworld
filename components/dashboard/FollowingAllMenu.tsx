@@ -1,9 +1,9 @@
 import { IconButton, Menu } from 'components';
+import { MouseEvent, useState } from 'react';
 import { defineMessages, useIntl } from 'i18n';
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import MarkAllFeedsAsRead from './actions/MarkAllFeedsAsRead';
-import { useState } from 'react';
 
 const messages = defineMessages({
   menu: { defaultMessage: 'user options' },
@@ -11,9 +11,9 @@ const messages = defineMessages({
 
 export default function FollowingAllMenu() {
   const intl = useIntl();
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<Element | null>(null);
 
-  const handleMenuOpenerClick = (event) => {
+  const handleMenuOpenerClick = (event: MouseEvent) => {
     setAnchorEl(event.currentTarget);
   };
 

@@ -1,7 +1,7 @@
+import { Avatar, styled } from 'components';
+import { Content, UserPublic } from 'data/graphql-generated';
 import { F, FormattedDate } from 'i18n';
 import { contentUrl, profileUrl } from 'util/url-factory';
-
-import { styled } from 'components';
 
 const StyledFooter = styled('footer')`
   position: sticky;
@@ -23,19 +23,19 @@ const StyledFooter = styled('footer')`
   }
 `;
 
-export default function Footer({ content, contentOwner }: { content: Content; contentOwner: string }) {
-  const { count, count_robot, createdAt, username } = content;
+export default function Footer({ content, contentOwner }: { content: Content; contentOwner: UserPublic }) {
+  const { count, countRobot, createdAt, username } = content;
   const name = contentOwner.name || username;
 
-  const handleFullscreen = (evt) => {
-    document.getElementById('hw-content').requestFullscreen();
+  const handleFullscreen = () => {
+    document.getElementById('hw-content')?.requestFullscreen();
   };
 
   return (
     <StyledFooter>
       <span className="p-author h-card">
         <a key="img" href={profileUrl(username)} className="u-url u-uid icon-container">
-          <img className="u-photo" src={contentOwner.logo || contentOwner.favicon} alt={name} />
+          <Avatar className="u-photo" src={contentOwner.logo || contentOwner.favicon || ''} alt={name} />
         </a>
         <a key="name" href={profileUrl(username)} className="p-name fn u-url u-uid url notranslate">
           {name}
@@ -45,7 +45,7 @@ export default function Footer({ content, contentOwner }: { content: Content; co
       <F
         defaultMessage="posted {date}"
         values={{
-          date: (
+          date: () => (
             <time className="t-published" dateTime={createdAt}>
               <FormattedDate value={createdAt} year="2-digit" month="2-digit" day="2-digit" />
             </time>
@@ -68,7 +68,7 @@ export default function Footer({ content, contentOwner }: { content: Content; co
       <span className="notranslate">&nbsp;•&nbsp;</span>
       <F
         defaultMessage="{count, plural, =0 {no robot views} one {# robot view} other {# robot views}}"
-        values={{ count: count_robot }}
+        values={{ count: countRobot }}
       />
       {content.thread ? (
         <>

@@ -1,3 +1,4 @@
+import { Content } from 'data/graphql-generated';
 import { styled } from 'components';
 
 const View = styled('div')`
@@ -33,7 +34,14 @@ const View = styled('div')`
   }
 `;
 
-export default function Simple({ content, isFeed }: { content: Content; isEditing: boolean; isFeed: boolean }) {
+export default function Simple({
+  content,
+  isFeed,
+}: {
+  content: Pick<Content, 'style' | 'code' | 'view'>;
+  isEditing?: boolean;
+  isFeed?: boolean;
+}) {
   // TODO(mime): fix up
   //const editor = useRef(null);
   //

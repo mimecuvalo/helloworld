@@ -1,12 +1,13 @@
+import { Content, SiteMapAndUserQuery } from 'data/graphql-generated';
 import { F, defineMessages, useIntl } from 'i18n';
+import { FormEvent, ReactNode, useState } from 'react';
 import { IconButton, styled } from 'components';
-import { ReactNode, useState } from 'react';
 import { buildUrl, profileUrl } from 'util/url-factory';
 import { gql, useQuery } from '@apollo/client';
 
 import CloseIcon from '@mui/icons-material/Close';
-import { Content } from '@prisma/client';
 import ContentLink from 'components/ContentLink';
+import Image from 'next/image';
 import MenuIcon from '@mui/icons-material/Menu';
 import constants from 'util/constants';
 import { useRouter } from 'next/router';
@@ -54,7 +55,7 @@ const messages = defineMessages({
 });
 
 const SITE_MAP_AND_USER_QUERY = gql`
-  query SiteMapAndUserQuery($username: String!) {
+  query SiteMapAndUser($username: String!) {
     fetchSiteMap(username: $username) {
       album
       forceRefresh
@@ -69,7 +70,8 @@ const SITE_MAP_AND_USER_QUERY = gql`
       license
       logo
       name
-      sidebar_html
+      title
+      sidebarHtml
     }
   }
 `;
@@ -79,15 +81,13 @@ export default function SiteMap({ content, username }: { content: Content; usern
   const intl = useIntl();
   // TODO(mime): wtf
   const [forceMenuOpen, setForceMenuOpen] = useState(false);
-  const { loading, data } = useQuery(SITE_MAP_AND_USER_QUERY, {
+  const { loading, data } = useQuery<SiteMapAndUserQuery>(SITE_MAP_AND_USER_QUERY, {
     variables: {
       username,
     },
   });
 
-  function generateItem(item: Content, albums: ReactNode) {
-    content = content || {};
-
+  function generateItem(item: SiteMapAndUserQuery['fetchSiteMap'][0], albums?: ReactNode) {
     const isSelected = item.name === content.name || item.name === content.album || item.name === content.section;
     return (
       <Item id={`hw-sitemap-${item.name}`} key={item.name} $isSelected={isSelected}>
@@ -99,7 +99,7 @@ export default function SiteMap({ content, username }: { content: Content; usern
     );
   }
 
-  function generateItems(siteMap) {
+  function generateItems(siteMap: SiteMapAndUserQuery['fetchSiteMap']) {
     const items = [];
     for (let i = 0; i < siteMap.length; ++i) {
       const item = siteMap[i];
@@ -140,25 +140,28 @@ export default function SiteMap({ content, username }: { content: Content; usern
     }, 0);
   };
 
-  const handleSearchSubmit = (evt) => {
+  const handleSearchSubmit = (evt: FormEvent) => {
     evt.preventDefault();
 
-    const form = evt.target;
+    const form = evt.target as HTMLFormElement;
     const formUrl = new URL(form.action);
-    const query = form.q.value;
+    const query = form['q'].value;
     const url = buildUrl({ pathname: `/${username}${formUrl.pathname}/${query}` });
     router.push(url);
   };
 
-  if (loading) {
+  if (loading || !data) {
     return null;
   }
 
-  content = content || {};
   const siteMap = data.fetchSiteMap;
   const contentOwner = data.fetchPublicUserData;
   const menuButtonLabel = intl.formatMessage(messages.menu);
   const searchLabel = intl.formatMessage(messages.search);
+
+  if (!siteMap || !contentOwner) {
+    return null;
+  }
 
   const items = generateItems(siteMap);
 
@@ -204,14 +207,15 @@ export default function SiteMap({ content, username }: { content: Content; usern
               `Copyright ${new Date().getFullYear()} by ${contentOwner.name}`
             ) : (
               <a href={contentOwner.license} target="_blank" rel="noopener noreferrer">
-                <img src={constants.licenses[contentOwner.license].img} alt="license" />
+                {/* @ts-ignore */}
+                <Image src={constants.licenses[contentOwner.license].img} alt="license" />
               </a>
             )}
           </License>
         ) : null}
 
-        {contentOwner.sidebar_html ? (
-          <div className="notranslate" dangerouslySetInnerHTML={{ __html: contentOwner.sidebar_html }} />
+        {contentOwner.sidebarHtml ? (
+          <div className="notranslate" dangerouslySetInnerHTML={{ __html: contentOwner.sidebarHtml }} />
         ) : null}
       </Nav>
     </>

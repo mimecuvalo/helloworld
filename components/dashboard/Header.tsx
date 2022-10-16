@@ -1,6 +1,8 @@
 import { Avatar, styled } from 'components';
 import { F, defineMessages, useIntl } from 'i18n';
 
+import { Post } from 'data/graphql-generated';
+
 const StyledHeader = styled('header')`
   position: sticky;
   top: 0;
@@ -31,7 +33,7 @@ const messages = defineMessages({
   avatar: { defaultMessage: 'avatar' },
 });
 
-export default function Header({ contentRemote }: { contentRemote: ContentRemote }) {
+export default function Header({ contentRemote }: { contentRemote: Post }) {
   const intl = useIntl();
   const { avatar, creator, link, read, title } = contentRemote;
   const avatarAltText = intl.formatMessage(messages.avatar);

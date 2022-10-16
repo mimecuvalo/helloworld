@@ -6,23 +6,24 @@ import FollowingSpecialFeedCountsQuery from './FollowingSpecialFeedCountsQuery';
 import Footer from './Footer';
 import Header from './Header';
 import { ItemWrapper } from 'components/content/Feed';
+import { Post } from 'data/graphql-generated';
 import throttle from 'lodash/throttle';
 
 const READ_CONTENT_REMOTE = gql`
-  mutation readContentRemote($from_user: String!, $post_id: String!, $read: Boolean!) {
-    readContentRemote(from_user: $from_user, post_id: $post_id, read: $read) {
-      from_user
-      post_id
+  mutation readContentRemote($fromUsername: String!, $postId: String!, $read: Boolean!) {
+    readContentRemote(fromUsername: $fromUsername, postId: $postId, read: $read) {
+      fromUsername
+      postId
       read
     }
   }
 `;
 
-export default function Item({ contentRemote }: { contentRemote: ContentRemote }) {
+export default function Item({ contentRemote }: { contentRemote: Post }) {
   const [readContentRemote] = useMutation(READ_CONTENT_REMOTE);
   const [keepUnread, setKeepUnread] = useState(false);
   const [manuallyMarkedAsRead, setManuallyMarkedAsRead] = useState(contentRemote.read);
-  const item = useRef(null);
+  const item = useRef<Element>(null);
 
   useEffect(() => {
     if (!manuallyMarkedAsRead) {
@@ -52,9 +53,9 @@ export default function Item({ contentRemote }: { contentRemote: ContentRemote }
     window.removeEventListener('resize', throttledMaybeMarkAsRead);
   }
 
-  function readContentRemoteCall(read) {
-    const { from_user, post_id } = contentRemote;
-    const variables = { from_user, post_id, read };
+  function readContentRemoteCall(read: boolean) {
+    const { fromUsername, postId } = contentRemote;
+    const variables = { fromUsername, postId, read };
     const expectedResponse = Object.assign({}, variables, { __typename: 'Post' });
 
     readContentRemote({
@@ -63,15 +64,15 @@ export default function Item({ contentRemote }: { contentRemote: ContentRemote }
         __typename: 'Mutation',
         readContentRemote: expectedResponse,
       },
-      update: (store, { data: { readContentRemote } }) => {
+      update: (store) => {
         const specialQuery = FollowingSpecialFeedCountsQuery;
-        const specialData = store.readQuery({ query: specialQuery });
+        const specialData: any = store.readQuery({ query: specialQuery });
         specialData.fetchUserTotalCounts.totalCount += variables.read ? -1 : 1;
         store.writeQuery({ query: specialQuery, data: specialData });
 
         const query = FollowingFeedCountsQuery;
-        const data = store.readQuery({ query });
-        data.fetchFeedCounts.find((i) => i.from_user === from_user).count += read ? -1 : 1;
+        const data: any = store.readQuery({ query });
+        data.fetchFeedCounts.find((i: Post) => i.fromUsername === fromUsername).count += read ? -1 : 1;
         store.writeQuery({ query, data });
       },
     });
@@ -90,7 +91,7 @@ export default function Item({ contentRemote }: { contentRemote: ContentRemote }
   const decoratedView = contentRemote.view.replace(/<a ([^>]+)/g, '<a $1 target="_blank" rel="noreferrer noopener"');
 
   return (
-    <ItemWrapper ref={item} className="hw-item">
+    <ItemWrapper className="hw-item">
       <Header contentRemote={contentRemote} />
       <div className="notranslate" dangerouslySetInnerHTML={{ __html: decoratedView }} />
       <Footer contentRemote={contentRemote} keepUnreadCb={keepUnreadCb} />

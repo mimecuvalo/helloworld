@@ -4,6 +4,7 @@ import { MouseEvent, useState } from 'react';
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import NewFeed from './actions/NewFeed';
+import { UserRemotePublic } from 'data/graphql-generated';
 
 const messages = defineMessages({
   menu: { defaultMessage: 'follower options' },
@@ -13,11 +14,11 @@ export default function FollowerMenu({
   userRemote,
   handleSetFeed,
 }: {
-  userRemote: UserRemote;
-  handleSetFeed: (userRemote: UserRemote) => void;
+  userRemote: UserRemotePublic;
+  handleSetFeed: (userRemote: UserRemotePublic | string) => void;
 }) {
   const intl = useIntl();
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<Element | null>(null);
 
   const handleMenuOpenerClick = (event: MouseEvent) => {
     setAnchorEl(event.currentTarget);
@@ -27,25 +28,24 @@ export default function FollowerMenu({
     setAnchorEl(null);
   };
 
-  const onSetFeed = (userRemote: UserRemote) => {
+  const onSetFeed = (userRemote: UserRemotePublic | string) => {
     handleClose();
     handleSetFeed(userRemote);
   };
 
   const handleVisit = () => {
     handleClose();
-    window.open(userRemote.profile_url, userRemote.profile_url);
+    window.open(userRemote.profileUrl, userRemote.profileUrl);
   };
 
   const isOpen = Boolean(anchorEl);
   const menuAriaLabel = intl.formatMessage(messages.menu);
-  const id = `follower-menu-${userRemote.profile_url}`;
-  const { profile_url, following } = userRemote;
+  const id = `follower-menu-${userRemote.profileUrl}`;
+  const { profileUrl, following } = userRemote;
 
   return (
     <>
       <IconButton
-        className={styles.menu}
         aria-label={menuAriaLabel}
         aria-owns={isOpen ? id : undefined}
         aria-haspopup="true"
@@ -58,7 +58,7 @@ export default function FollowerMenu({
         <MenuItem key="visit" onClick={handleVisit}>
           <F defaultMessage="visit" />
         </MenuItem>
-        {!following ? <NewFeed handleSetFeed={onSetFeed} isButton={true} profileUrl={profile_url} /> : null}
+        {!following ? <NewFeed handleSetFeed={onSetFeed} isButton={true} profileUrl={profileUrl} /> : null}
       </Menu>
     </>
   );

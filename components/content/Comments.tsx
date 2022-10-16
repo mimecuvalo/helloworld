@@ -1,17 +1,11 @@
+import { Comment as CommentType, Content } from 'data/graphql-generated';
 import { F, defineMessages, useIntl } from 'i18n';
-import { Login, styled } from 'components';
-import { Suspense, lazy, useContext, useEffect, useRef, useState } from 'react';
-import { gql, useMutation } from '@apollo/client';
 
-import ContentQuery from './ContentQuery';
 import Delete from 'components/dashboard/actions/Delete';
 import Favorite from 'components/dashboard/actions/Favorite';
 import UserContext from 'app/UserContext';
-
-const CommentEditorWrapper = styled('div')`
-  display: flex;
-  flex-direction: column;
-`;
+import { styled } from 'components';
+import { useContext } from 'react';
 
 const Comment = styled('li')`
   display: flex;
@@ -46,129 +40,122 @@ const messages = defineMessages({
   error: { defaultMessage: 'Error updating content.' },
 });
 
-const POST_COMMENT = gql`
-  mutation postComment($username: String!, $name: String!, $content: String!) {
-    postComment(username: $username, name: $name, content: $content) {
-      avatar
-      content
-      deleted
-      favorited
-      from_user
-      link
-      local_content_name
-      post_id
-      to_username
-      type
-      username
-      view
-    }
-  }
-`;
+// const POST_COMMENT = gql`
+//   mutation postComment($username: String!, $name: String!, $content: String!) {
+//     postComment(username: $username, name: $name, content: $content) {
+//       avatar
+//       content
+//       deleted
+//       favorited
+//       fromUser
+//       link
+//       localContentName
+//       postId
+//       toUsername
+//       type
+//       username
+//       view
+//     }
+//   }
+// `;
 
-export default function Comments({ comments, content }) {
+export default function Comments({ comments, content }: { comments?: CommentType[]; content: Content }) {
   const intl = useIntl();
-  const snackbar = useSnackbar();
-  const commentEditor = useRef(null);
-  const [isPosting, setIsPosting] = useState(false);
-  const [postComment] = useMutation(POST_COMMENT);
-  const user = useContext(UserContext).user;
+  // const commentEditor = useRef(null);
+  // const [isPosting, setIsPosting] = useState(false);
+  // const [postComment] = useMutation(POST_COMMENT);
+  const { user } = useContext(UserContext);
 
-  const handleKeyDown = (evt) => {
-    if (!commentEditor || !commentEditor.current) {
-      return;
-    }
+  // const handleKeyDown = (evt: KeyboardEvent) => {
+  //   if (!commentEditor || !commentEditor.current) {
+  //     return;
+  //   }
 
-    // TODO(mime): combine this logic somewhere. (also in keyboard.js)
-    const isMac = navigator.platform.toLowerCase().indexOf('mac') !== -1;
-    const isAccelKey = isMac ? evt.metaKey : evt.ctrlKey;
-    if (isAccelKey && evt.key === 'Enter') {
-      handlePost();
-    }
-  };
+  //   // TODO(mime): combine this logic somewhere. (also in keyboard.js)
+  //   const isMac = navigator.platform.toLowerCase().indexOf('mac') !== -1;
+  //   const isAccelKey = isMac ? evt.metaKey : evt.ctrlKey;
+  //   if (isAccelKey && evt.key === 'Enter') {
+  //     handlePost();
+  //   }
+  // };
 
-  useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
+  // useEffect(() => {
+  //   document.addEventListener('keydown', handleKeyDown);
 
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  });
+  //   return () => document.removeEventListener('keydown', handleKeyDown);
+  // });
 
-  const handlePost = async (evt) => {
-    const { username, name } = content;
-    const editor = commentEditor.current;
-    const commentContent = JSON.stringify(editor.export());
-    editor.clear();
+  // const handlePost = async () => {
+  //   const { username, name } = content;
+  //   const editor = commentEditor.current;
+  //   const commentContent = JSON.stringify(editor.export());
+  //   editor.clear();
 
-    const variables = { username, name, content: commentContent };
+  //   const variables = { username, name, content: commentContent };
 
-    setIsPosting(true);
+  //   setIsPosting(true);
 
-    try {
-      await postComment({
-        variables,
-        update: (store, { data: { postComment } }) => {
-          const contentVariables = { username, name };
-          const query = ContentQuery;
-          const data = store.readQuery({ query, variables: contentVariables });
-          data.fetchCommentsRemote.unshift(postComment);
-          store.writeQuery({ query, variables: contentVariables, data });
-        },
-      });
-    } catch (ex) {
-      snackbar.enqueueSnackbar(intl.formatMessage(messages.error), { variant: 'error' });
-    }
+  //   try {
+  //     await postComment({
+  //       variables,
+  //       update: (store, { data: { postComment } }) => {
+  //         const contentVariables = { username, name };
+  //         const query = ContentQuery;
+  //         const data = store.readQuery({ query, variables: contentVariables });
+  //         data.fetchCommentsRemote.unshift(postComment);
+  //         store.writeQuery({ query, variables: contentVariables, data });
+  //       },
+  //     });
+  //   } catch (ex) {
+  //     snackbar.enqueueSnackbar(intl.formatMessage(messages.error), { variant: 'error' });
+  //   }
 
-    setIsPosting(false);
-  };
-
-  const handleLogin = async (evt) => {
-    (await createLock()).show();
-  };
+  //   setIsPosting(false);
+  // };
 
   const ariaImgMsg = intl.formatMessage(messages.avatar);
-  const isLoggedIn = !!user;
-  const isOwnerViewing = user?.model?.username === content.username;
+  const isOwnerViewing = user?.username === content.username;
 
-  let editor = null;
-  // TODO(mime): Suspense and lazy aren't supported by ReactDOMServer yet (breaks SSR).
-  if (isLoggedIn && typeof window !== 'undefined') {
-    const Editor = lazy(() => import('hello-world-editor').then((module) => ({ default: module.Editor })));
-    return (
-      <Suspense fallback={<div />}>
-        <Editor
-          editorKey="comments"
-          content={{}}
-          ref={commentEditor}
-          type="comment"
-          dontWarnOnUnsaved={true}
-          locale={configuration.locale}
-        />
-      </Suspense>
-    );
-  }
+  // let editor = null;
+  // // TODO(mime): Suspense and lazy aren't supported by ReactDOMServer yet (breaks SSR).
+  // if (isLoggedIn && typeof window !== 'undefined') {
+  //   const Editor = lazy(() => import('hello-world-editor').then((module) => ({ default: module.Editor })));
+  //   return (
+  //     <Suspense fallback={<div />}>
+  //       <Editor
+  //         editorKey="comments"
+  //         content={{}}
+  //         ref={commentEditor}
+  //         type="comment"
+  //         dontWarnOnUnsaved={true}
+  //         locale={configuration.locale}
+  //       />
+  //     </Suspense>
+  //   );
+  // }
 
   return (
     <div className="hw-comments">
       <CommentsHeader>
         <F defaultMessage="comments" />
       </CommentsHeader>
-      {isLoggedIn ? (
+      {/* {isLoggedIn ? (
         <CommentEditorWrapper id="hw-comment-editor">
-          {editor}
-          <button className={classNames('hw-button', 'hw-save')} disabled={isPosting} onClick={handlePost}>
+          <button className="hw-button hw-save" disabled={isPosting} onClick={handlePost}>
             <F defaultMessage="post" />
           </button>
         </CommentEditorWrapper>
       ) : (
         <Login />
-      )}
+      )} */}
       {comments ? (
         <StyledComments>
           {comments.map((comment) => (
-            <Comment key={comment.post_id}>
+            <Comment key={comment.postId}>
               <Avatar src={comment.avatar || '/img/pixel.gif'} alt={ariaImgMsg} />
               <div>
-                {comment.from_user ? (
-                  <a href={comment.from_user} target="_blank" rel="noopener noreferrer">
+                {comment.fromUsername ? (
+                  <a href={comment.fromUsername} target="_blank" rel="noopener noreferrer">
                     {comment.creator || comment.username}
                   </a>
                 ) : (

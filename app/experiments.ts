@@ -1,10 +1,11 @@
 import Cookies from 'js-cookie';
+import { UserPrivate } from 'data/graphql-generated';
 
-function isInternalUser(user: User | null): boolean {
-  return !!user?.model?.superuser;
+function isInternalUser(user: UserPrivate | null): boolean {
+  return !!user?.superuser;
 }
 
-type EnabledOption = string | ((user: User | null) => boolean);
+type EnabledOption = string | ((user: UserPrivate | null) => boolean);
 
 export type $Experiment = {
   startDate: string;
@@ -28,9 +29,9 @@ export const REGISTERED_EXPERIMENTS: { [key: string]: $Experiment } = {
 //   'some-old-experiment',
 // ];
 
-export default function getExperiments(user: User | null): EnabledExperiment[] {
+export default function getExperiments(user: UserPrivate | null): EnabledExperiment[] {
   const cookieExperimentOverrides =
-    user?.model.superuser || process.env.NODE_ENV === 'development'
+    user?.superuser || process.env.NODE_ENV === 'development'
       ? JSON.parse(decodeURIComponent(Cookies.get('experiments') || '{}'))
       : [];
 
@@ -59,7 +60,7 @@ export default function getExperiments(user: User | null): EnabledExperiment[] {
     // - remove '-' and '_'
     // - get first 5 letters
     // - compare that with the last number in base 36 which is ZZZZZ
-    const userIdPartial = user?.id?.replace(/[-_]/g, '').slice(0, 5) || '';
+    const userIdPartial = user?.id?.toString().replace(/[-_]/g, '').slice(0, 5) || '';
     const userPercent = parseInt(userIdPartial, 36) / parseInt('ZZZZZ', 36);
     if (userPercent <= exp.enabledPercent) {
       return true;
@@ -72,7 +73,7 @@ export default function getExperiments(user: User | null): EnabledExperiment[] {
   return enabledExperimentNames;
 }
 
-function doesUserMatch(cohort: EnabledOption[], user: User | null) {
+function doesUserMatch(cohort: EnabledOption[], user: UserPrivate | null) {
   cohort = cohort || [];
   const email = user?.email;
   return cohort.some((funcOrEmail: EnabledOption) =>

@@ -3,9 +3,10 @@ import { gql, useMutation } from '@apollo/client';
 import { F } from 'i18n';
 import FollowingFeedCountsQuery from 'components/dashboard/FollowingFeedCountsQuery';
 import FollowingSpecialFeedCountsQuery from 'components/dashboard/FollowingSpecialFeedCountsQuery';
+import { MarkAllFeedsAsReadMutation } from 'data/graphql-generated';
 import { MenuItem } from 'components';
 import { escapeRegExp } from 'util/regex';
-import { prefixIdFromObject } from 'data/apollo';
+import { prefixIdFromObject } from 'data/localState';
 
 const MARK_ALL_FEEDS_AS_READ = gql`
   mutation markAllFeedsAsRead {
@@ -16,21 +17,23 @@ const MARK_ALL_FEEDS_AS_READ = gql`
 `;
 
 export default function MarkAllFeedsAsRead({ handleClose }: { handleClose: () => void }) {
-  const [markAllFeedsAsRead] = useMutation(MARK_ALL_FEEDS_AS_READ);
+  const [markAllFeedsAsRead] = useMutation<MarkAllFeedsAsReadMutation>(MARK_ALL_FEEDS_AS_READ);
 
   const handleClick = () => {
     handleClose();
     markAllFeedsAsRead({
       optimisticResponse: {
         __typename: 'Mutation',
-        markAllFeedsAsRead: { __typename: 'UserCounts', count: 0 },
+        markAllFeedsAsRead: { __typename: 'FeedCount', count: 0 },
       },
       refetchQueries: [{ query: FollowingSpecialFeedCountsQuery }, { query: FollowingFeedCountsQuery }],
-      update: (store, { data: { markAllFeedsAsRead } }) => {
+      update: (store) => {
         const prefixId = escapeRegExp(prefixIdFromObject({ __typename: 'Post' }));
         const regex = new RegExp(`^${prefixId}`);
-        Object.keys(store.data.data).forEach(
-          (key) => key.match(regex) && store.data.set(key, Object.assign({}, store.data.get(key), { read: true }))
+        Object.keys((store as any).data.data).forEach(
+          (key) =>
+            key.match(regex) &&
+            (store as any).data.set(key, Object.assign({}, (store as any).data.get(key), { read: true }))
         );
       },
     });

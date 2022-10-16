@@ -1,8 +1,9 @@
 import { Button, styled } from '@mui/material';
-import { gql, useQuery } from '@apollo/client';
 
 import { F } from 'i18n';
 import Login from './Login';
+import UserContext from 'app/UserContext';
+import { useContext } from 'react';
 import { useRouter } from 'next/router';
 
 const StyledHeader = styled('header')`
@@ -21,21 +22,11 @@ const StyledHeader = styled('header')`
   }
 `;
 
-const USER_QUERY = gql`
-  {
-    user @client {
-      model {
-        username
-      }
-    }
-  }
-`;
-
 export default function Header() {
   const router = useRouter();
-  const { data } = useQuery(USER_QUERY);
-  const isLoggedIn = !!data?.user;
-  const isAuthor = !!data?.user?.model;
+  const { user } = useContext(UserContext);
+  const isLoggedIn = !!user;
+  const isAuthor = !!user?.username;
 
   return (
     <StyledHeader>

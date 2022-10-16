@@ -1,39 +1,39 @@
 import { gql, useMutation } from '@apollo/client';
 
+import { ContentRemote } from 'data/graphql-generated';
 import { F } from 'i18n';
-import { MouseEvent } from 'react';
 
 const DELETE_CONTENT_REMOTE = gql`
   mutation deleteContentRemote(
-    $from_user: String
-    $local_content_name: String!
-    $post_id: String!
+    $fromUsername: String!
+    $localContentName: String!
+    $postId: String!
     $type: String!
     $deleted: Boolean!
   ) {
     deleteContentRemote(
-      from_user: $from_user
-      local_content_name: $local_content_name
-      post_id: $post_id
+      fromUsername: $fromUsername
+      localContentName: $localContentName
+      postId: $postId
       type: $type
       deleted: $deleted
     ) {
       deleted
-      from_user
-      local_content_name
-      post_id
+      fromUsername
+      localContentName
+      postId
       type
     }
   }
 `;
 
 export default function Delete({ contentRemote }: { contentRemote: ContentRemote }) {
-  const { deleted, from_user, local_content_name, post_id, type } = contentRemote;
-  const variables = { from_user, local_content_name, post_id, type, deleted: !deleted };
+  const { deleted, fromUsername, localContentName, postId, type } = contentRemote;
+  const variables = { fromUsername, localContentName, postId, type, deleted: !deleted };
 
   const [deleteContentRemote] = useMutation(DELETE_CONTENT_REMOTE);
 
-  const handleClick = (evt: MouseEvent) =>
+  const handleClick = () =>
     deleteContentRemote({
       variables,
       optimisticResponse: {

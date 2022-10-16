@@ -5,11 +5,11 @@ export default gql`
     fetchContent(username: $username, name: $name) {
       album
       code
-      comments_count
-      comments_updated
+      commentsCount
+      commentsUpdated
       content
       count
-      count_robot
+      countRobot
       createdAt
       forceRefresh
       hidden
@@ -31,10 +31,10 @@ export default gql`
       content
       deleted
       favorited
-      from_user
+      fromUsername
       link
-      local_content_name
-      post_id
+      localContentName
+      postId
       type
       username
       view
@@ -42,9 +42,9 @@ export default gql`
 
     fetchFavoritesRemote(username: $username, name: $name) {
       avatar
-      from_user
-      local_content_name
-      post_id
+      fromUsername
+      localContentName
+      postId
       type
       username
     }

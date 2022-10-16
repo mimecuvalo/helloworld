@@ -1,13 +1,13 @@
 import { render, screen } from 'util/testing';
 
-import Home from 'pages/index';
+import Page404 from 'pages/404';
 
-describe('Home', () => {
+describe('404', () => {
   it('renders a heading', async () => {
-    render(<Home />);
+    render(<Page404 />);
 
     const heading = screen.getByRole('heading', {
-      name: /Hello, world\./i,
+      name: /not found/i,
     });
 
     expect(heading).toBeInTheDocument();

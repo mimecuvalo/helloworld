@@ -2,6 +2,7 @@ import { F, FormattedDate } from 'i18n';
 
 import Favorite from './actions/Favorite';
 import KeepUnread from './actions/KeepUnread';
+import { Post } from 'data/graphql-generated';
 import Reblog from './actions/Reblog';
 import Reply from './actions/Reply';
 import { styled } from 'components';
@@ -21,8 +22,8 @@ export default function Footer({
   contentRemote,
   keepUnreadCb,
 }: {
-  contentRemote: ContentRemote;
-  keepUnreadCb: () => void;
+  contentRemote: Post;
+  keepUnreadCb: (keepUnread: boolean) => void;
 }) {
   const { createdAt, link, updatedAt, username } = contentRemote;
 
@@ -34,7 +35,7 @@ export default function Footer({
             defaultMessage="{username} posted on {date}"
             values={{
               username: username,
-              date: (
+              date: () => (
                 <time dateTime={createdAt}>
                   <FormattedDate
                     value={createdAt}
@@ -54,7 +55,7 @@ export default function Footer({
               <F
                 defaultMessage="(updated {date})"
                 values={{
-                  date: (
+                  date: () => (
                     <time dateTime={updatedAt}>
                       <FormattedDate
                         value={updatedAt}
@@ -73,13 +74,13 @@ export default function Footer({
         </a>
       </div>
       <div>
-        <Reblog contentRemote={contentRemote} getEditor={getEditor} />
+        <Reblog contentRemote={contentRemote} />
         &nbsp;•&nbsp;
         <Favorite contentRemote={contentRemote} isDashboard={true} />
         &nbsp;•&nbsp;
-        <KeepUnread keepUnreadCb={keepUnreadCb} contentRemote={contentRemote} />
+        <KeepUnread keepUnreadCb={keepUnreadCb} />
         &nbsp;•&nbsp;
-        <Reply contentRemote={contentRemote} getEditor={getEditor} />
+        <Reply />
       </div>
     </StyledFooter>
   );

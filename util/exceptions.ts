@@ -1,5 +1,5 @@
 export class HTTPError extends Error {
-  constructor(status, url, opt_info) {
+  constructor(status: number, url: string, opt_info?: string) {
     super(status.toString());
 
     opt_info = opt_info || '';

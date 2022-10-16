@@ -1,8 +1,8 @@
 import DataLoader from 'dataloader';
-import { User } from 'server/data/models';
+import groupBy from 'lodash/groupBy';
 
-export default function createLoaders(loaderOptions) {
-  const options = { cache: loaderOptions && loaderOptions.disableCache ? false : true };
+export default function createLoaders(loaderOptions?: { [key: string]: boolean }) {
+  const options = { cache: loaderOptions?.disableCache ? false : true };
 
   return {
     users: new DataLoader(loadUsers, options),
@@ -10,15 +10,8 @@ export default function createLoaders(loaderOptions) {
 }
 
 // Batch load users
-async function loadUsers(userIds) {
-  const users = await User.findAll({ where: { id: userIds } });
-  const userById = indexBy(users, 'id');
+async function loadUsers(userIds: readonly number[]) {
+  const users = await prisma?.user.findMany({ where: { id: { in: userIds.slice(0) } } });
+  const userById = groupBy(users, 'id');
   return userIds.map((userId) => userById[userId]);
-}
-
-function indexBy(array, fieldName) {
-  return array.reduce((dict, item) => {
-    dict[item[fieldName]] = item;
-    return dict;
-  }, {});
 }

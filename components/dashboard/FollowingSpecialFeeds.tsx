@@ -4,20 +4,19 @@ import FollowingAllMenu from './FollowingAllMenu';
 import FollowingSpecialFeedCountsQuery from './FollowingSpecialFeedCountsQuery';
 import { FormattedNumber } from 'i18n';
 import UserContext from 'app/UserContext';
-import classNames from 'classnames';
+import { UserRemotePublic } from 'data/graphql-generated';
 import { useContext } from 'react';
 import { useQuery } from '@apollo/client';
 
 export default function FollowingSpecialFeeds({
   pollInterval,
   handleSetFeed,
-  specialFeed,
 }: {
   pollInterval: number;
-  handleSetFeed: (userRemote: UserRemote) => void;
+  handleSetFeed: (userRemote: UserRemotePublic | string, search?: string) => void;
   specialFeed: string;
 }) {
-  const user = useContext(UserContext).user;
+  const { user } = useContext(UserContext);
   const { loading, data } = useQuery(FollowingSpecialFeedCountsQuery, {
     pollInterval: pollInterval,
   });
@@ -26,59 +25,59 @@ export default function FollowingSpecialFeeds({
     return null;
   }
 
-  const handleEntireFeedClick = (evt) => {
+  const handleEntireFeedClick = () => {
     handleSetFeed('');
   };
 
-  const handleMyFeedClick = (evt) => {
+  const handleMyFeedClick = () => {
     handleSetFeed('me');
   };
 
-  const handleFavoritesClick = (evt) => {
+  const handleFavoritesClick = () => {
     handleSetFeed('favorites');
   };
 
-  const handleCommentsClick = (evt) => {
+  const handleCommentsClick = () => {
     handleSetFeed('comments');
   };
 
   const { commentsCount, favoritesCount, totalCount } = data.fetchUserTotalCounts;
-  const userFavicon = user.model.favicon;
+  const userFavicon = user?.favicon;
   const userAvatar = <Avatar src={userFavicon || '/favicon.jpg'} />;
 
   return (
     <>
-      <li className={styles.readAll}>
+      <li>
         <button className="hw-button-link" onClick={handleEntireFeedClick}>
           <F defaultMessage="read all" />
         </button>
-        <span className={styles.unreadCount}>
+        <span>
           <FormattedNumber value={totalCount} />
         </span>
         <FollowingAllMenu />
       </li>
-      <li className={classNames({ [styles.selected]: specialFeed === 'me' })}>
+      <li>
         <button className="hw-button-link" onClick={handleMyFeedClick}>
           {userAvatar}
           <F defaultMessage="your feed" />
         </button>
         <span />
       </li>
-      <li className={classNames({ [styles.selected]: specialFeed === 'favorites' })}>
+      <li>
         <button className="hw-button-link" onClick={handleFavoritesClick}>
           {userAvatar}
           <F defaultMessage="favorites" />
         </button>
-        <span className={styles.unreadCount}>
+        <span>
           <FormattedNumber value={favoritesCount} />
         </span>
       </li>
-      <li className={classNames({ [styles.selected]: specialFeed === 'comments' })}>
+      <li>
         <button className="hw-button-link" onClick={handleCommentsClick}>
           {userAvatar}
           <F defaultMessage="comments" />
         </button>
-        <span className={styles.unreadCount}>
+        <span>
           <FormattedNumber value={commentsCount} />
         </span>
       </li>

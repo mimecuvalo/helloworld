@@ -2,6 +2,7 @@ import { gql, useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
 
 import Archive from './Archive';
+import { Content } from 'data/graphql-generated';
 import Simple from './Simple';
 import { contentUrl } from 'util/url-factory';
 import { useRouter } from 'next/router';
@@ -48,7 +49,7 @@ export default function Latest({ content }: { content: Content }) {
   }
 
   if (loading) {
-    return null;
+    return <></>;
   }
 
   return <Simple content={data.fetchCollectionLatest} />;

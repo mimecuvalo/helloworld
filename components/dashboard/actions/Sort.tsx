@@ -2,12 +2,13 @@ import { gql, useMutation } from '@apollo/client';
 
 import { F } from 'i18n';
 import MenuItem from '@mui/material/MenuItem';
+import { UserRemotePublic } from 'data/graphql-generated';
 
 const TOGGLE_SORT_FEED = gql`
-  mutation toggleSortFeed($profile_url: String!, $current_sort_type: String!) {
-    toggleSortFeed(profile_url: $profile_url, current_sort_type: $current_sort_type) {
-      profile_url
-      sort_type
+  mutation toggleSortFeed($profileUrl: String!, $currentSortType: String!) {
+    toggleSortFeed(profileUrl: $profileUrl, currentSortType: $currentSortType) {
+      profileUrl
+      sortType
     }
   }
 `;
@@ -19,7 +20,7 @@ export default function Sort({
 }: {
   handleClose: () => void;
   handleSetFeed: (userRemote: string, query?: any, allItems?: boolean) => void;
-  userRemote: User;
+  userRemote: UserRemotePublic;
 }) {
   const [toggleSortFeed] = useMutation(TOGGLE_SORT_FEED);
 
@@ -27,7 +28,7 @@ export default function Sort({
     handleClose();
 
     const mutationResult = await toggleSortFeed({
-      variables: { profile_url: userRemote.profile_url, current_sort_type: userRemote.sort_type },
+      variables: { profileUrl: userRemote.profileUrl, currentSortType: userRemote.sortType },
     });
 
     handleSetFeed(Object.assign({}, userRemote, mutationResult.data.toggleSortFeed));
@@ -35,11 +36,7 @@ export default function Sort({
 
   return (
     <MenuItem onClick={handleClick}>
-      {userRemote.sort_type === 'oldest' ? (
-        <F defaultMessage="sort by newest" />
-      ) : (
-        <F defaultMessage="sort by oldest" />
-      )}
+      {userRemote.sortType === 'oldest' ? <F defaultMessage="sort by newest" /> : <F defaultMessage="sort by oldest" />}
     </MenuItem>
   );
 }

@@ -1,10 +1,10 @@
-import { Alert, IconButton, Snackbar, styled } from 'components';
-import { F, defineMessages, useIntl } from 'i18n';
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { Alert, Snackbar, styled } from 'components';
+import { gql, useQuery } from '@apollo/client';
 
-import { Content } from '@prisma/client';
+import { Content } from 'data/graphql-generated';
 import ContentLink from 'components/ContentLink';
 import ContentThumb from 'components/ContentThumb';
+import { F } from 'i18n';
 import { useState } from 'react';
 
 const StyledAlbum = styled('ul')`
@@ -39,15 +39,15 @@ const LinkWrapper = styled('span')`
   }
 `;
 
-const DeleteButton = styled(IconButton)`
-  position: absolute;
-  top: 5px;
-  right: 5px;
-`;
+// const DeleteButton = styled(IconButton)`
+//   position: absolute;
+//   top: 5px;
+//   right: 5px;
+// `;
 
-const messages = defineMessages({
-  error: { defaultMessage: 'Error deleting content.' },
-});
+// const messages = defineMessages({
+//   error: { defaultMessage: 'Error deleting content.' },
+// });
 
 const FETCH_COLLECTION = gql`
   query ($username: String!, $section: String!, $album: String!, $name: String!) {
@@ -65,16 +65,15 @@ const FETCH_COLLECTION = gql`
   }
 `;
 
-const DELETE_CONTENT = gql`
-  mutation deleteContent($name: String!) {
-    deleteContent(name: $name)
-  }
-`;
+// const DELETE_CONTENT = gql`
+//   mutation deleteContent($name: String!) {
+//     deleteContent(name: $name)
+//   }
+// `;
 
-export default function Album({ content, isEditing }: { content: Content; isEditing: boolean }) {
+export default function Album({ content }: { content: Content }) {
   const { username, section, album, name } = content;
-  const intl = useIntl();
-  const [errorMsg, setErrorMsg] = useState('');
+  const [errorMsg] = useState('');
   const [isToastOpen, setIsToastOpen] = useState(false);
 
   const { loading, data } = useQuery(FETCH_COLLECTION, {
@@ -86,36 +85,36 @@ export default function Album({ content, isEditing }: { content: Content; isEdit
     },
   });
 
-  const [deleteContent] = useMutation(DELETE_CONTENT);
+  // const [deleteContent] = useMutation(DELETE_CONTENT);
 
   const handleToastClose = () => setIsToastOpen(false);
 
-  const handleClick = async (item: Content) => {
-    const variables = { name: item.name };
+  // const handleClick = async (item: Content) => {
+  //   const variables = { name: item.name };
 
-    try {
-      await deleteContent({
-        variables,
-        optimisticResponse: {
-          __typename: 'Mutation',
-          deleteContent: true,
-        },
-        update: (store) => {
-          const { username, section, album, name } = content;
-          const queryVariables = { username, section, album, name };
-          const data = store.readQuery({ query: FETCH_COLLECTION, variables: queryVariables });
-          store.writeQuery({
-            query: FETCH_COLLECTION,
-            data: { fetchCollection: data.fetchCollection.filter((i: Content) => i.name !== item.name) },
-            variables: queryVariables,
-          });
-        },
-      });
-    } catch (ex) {
-      setErrorMsg(intl.formatMessage(messages.error));
-      setIsToastOpen(true);
-    }
-  };
+  //   try {
+  //     await deleteContent({
+  //       variables,
+  //       optimisticResponse: {
+  //         __typename: 'Mutation',
+  //         deleteContent: true,
+  //       },
+  //       update: (store) => {
+  //         const { username, section, album, name } = content;
+  //         const queryVariables = { username, section, album, name };
+  //         const data = store.readQuery({ query: FETCH_COLLECTION, variables: queryVariables });
+  //         store.writeQuery({
+  //           query: FETCH_COLLECTION,
+  //           data: { fetchCollection: data.fetchCollection.filter((i: Content) => i.name !== item.name) },
+  //           variables: queryVariables,
+  //         });
+  //       },
+  //     });
+  //   } catch (ex) {
+  //     setErrorMsg(intl.formatMessage(messages.error));
+  //     setIsToastOpen(true);
+  //   }
+  // };
 
   if (loading) {
     return <LoadingEmptyBox />;
@@ -133,14 +132,14 @@ export default function Album({ content, isEditing }: { content: Content; isEdit
         )}
         {collection.map((item: Content) => (
           <Item key={item.name}>
-            {isEditing ? (
+            {/* {isEditing ? (
               <DeleteButton className="hw-button hw-delete" onClick={() => handleClick(item)}>
                 x
               </DeleteButton>
-            ) : null}
-            <ContentThumb isEditing={isEditing} item={item} currentContent={content} />
+            ) : null} */}
+            <ContentThumb item={item} currentContent={content} />
             <LinkWrapper>
-              {!isEditing && item.externalLink ? (
+              {/* {!isEditing && item.externalLink ? (
                 <a
                   className="hw-album-title notranslate"
                   href={item.externalLink}
@@ -153,7 +152,10 @@ export default function Album({ content, isEditing }: { content: Content; isEdit
                 <ContentLink item={item} currentContent={content} className="hw-album-title notranslate">
                   {item.title}
                 </ContentLink>
-              ) : null}
+              ) : null} */}
+              <ContentLink item={item} currentContent={content} className="hw-album-title notranslate">
+                {item.title}
+              </ContentLink>
             </LinkWrapper>
           </Item>
         ))}

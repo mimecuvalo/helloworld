@@ -1,131 +1,163 @@
-import { contentUrl, profileUrl } from 'util/url-factory';
+// import socialButterfly from 'social-butterfly';
+import {
+  ContentResolvers,
+  Content as ContentType,
+  MutationDeleteContentArgs,
+  MutationPostContentArgs,
+  MutationSaveContentArgs,
+  QueryFetchCollectionArgs,
+  QueryFetchCollectionLatestArgs,
+  QueryFetchCollectionPaginatedArgs,
+  QueryFetchContentArgs,
+  QueryFetchContentHeadArgs,
+  QueryFetchContentNeighborsArgs,
+  QueryFetchSiteMapArgs,
+} from 'data/graphql-generated';
 import { isAdmin, isAuthor } from './authorization';
 
+import { Context } from 'data/context';
 import cheerio from 'cheerio';
 import { combineResolvers } from 'graphql-resolvers';
-import { escapeRegExp } from 'util/regex';
 import { isRobotViewing } from 'util/crawler';
 import { nanoid } from 'nanoid';
-import socialButterfly from 'social-butterfly';
 
-const ATTRIBUTES_NAVIGATION = [
-  'username',
-  'section',
-  'album',
-  'name',
-  'title',
-  'thumb',
-  'hidden',
-  'template',
-  'style',
-  'code',
-];
+const ATTRIBUTES_NAVIGATION = {
+  username: true,
+  section: true,
+  album: true,
+  name: true,
+  title: true,
+  thumb: true,
+  hidden: true,
+  template: true,
+  style: true,
+  code: true,
+};
 
 const Content = {
   Query: {
-    allContent: combineResolvers(isAdmin, async (parent, args, { models }) => {
-      return await models.Content.findAll();
+    // eslint-disable-next-line
+    allContent: combineResolvers(isAdmin, async (parent: ContentResolvers, args: any, { prisma }: Context) => {
+      return await prisma.content.findMany();
     }),
 
-    async fetchContent(parent, { username, name }, { currentUser, hostname, models, req }) {
+    async fetchContent(
+      parent: ContentResolvers,
+      { username, name }: QueryFetchContentArgs,
+      { currentUsername, hostname, prisma, req }: Context
+    ) {
+      username = username || undefined;
+      name = name || undefined;
+
       if (!username) {
         if (hostname) {
-          const hostnameUserData = await models.User.findOne({ attributes: ['username'], where: { hostname } });
+          const hostnameUserData = await prisma.user.findUnique({ select: { username: true }, where: { hostname } });
           if (hostnameUserData) {
             username = hostnameUserData.username;
             name = name || 'home';
           }
         }
         if (!username) {
-          username = (await models.User.findOne({ attributes: ['username'], where: { id: 1 } })).username;
+          username = (await prisma.user.findUnique({ select: { username: true }, where: { id: 1 } }))?.username;
           name = name || 'main';
         }
       }
 
-      let content = await models.Content.findOne({ where: { username, name } });
+      let content = (await prisma.content.findFirst({ where: { username, name } })) as ContentType | null;
 
       if (!content) {
         name = 'home';
         // Could be that we don't have a 'main' page. Look for a 'home' page instead.
-        content = await models.Content.findOne({ where: { username, name } });
+        content = (await prisma.content.findFirst({ where: { username, name } })) as ContentType | null;
       }
 
       // Inherit style, code, template from the album.
       if (content?.album && content.album !== 'main') {
-        const albumContent = await models.Content.findOne({
+        const albumContent = await prisma.content.findFirst({
           where: { username, section: content.section, album: 'main', name: content.album },
         });
-        if (albumContent.style) {
+        if (albumContent?.style) {
           content.style = albumContent.style + content.style;
         }
-        if (albumContent.code) {
+        if (albumContent?.code) {
           content.code = albumContent.code + content.code;
         }
       }
 
       // Inherit style, code, template from section.
       if (content && content?.section !== 'main') {
-        const sectionContent = await models.Content.findOne({
+        const sectionContent = await prisma.content.findFirst({
           where: { username, section: 'main', name: content.section },
         });
-        if (sectionContent.style) {
+        if (sectionContent?.style) {
           content.style = sectionContent.style + content.style;
         }
-        if (sectionContent.code) {
+        if (sectionContent?.code) {
           content.code = sectionContent.code + content.code;
         }
         if (!content.template && content.album === 'main') {
-          content.template = sectionContent.template;
+          content.template = sectionContent?.template || '';
         }
       }
       if (content && !content.template && content.album === 'main') {
         // This is when we're visiting a url of the form: /profile/section/album
-        const parentContent = await models.Content.findOne({
+        const parentContent = await prisma.content.findFirst({
           where: { username, section: 'main', name: content.section },
         });
-        content.template = parentContent.template;
+        content.template = parentContent?.template || '';
       }
 
       // Update count
       // lack of 'req' is a dumb check for !fetchContentHead :-/
-      const isOwnerViewing = currentUser?.model?.username === username;
+      const isOwnerViewing = currentUsername === username;
       if (req && content && !isOwnerViewing) {
-        const attributes = isRobotViewing(req)
-          ? { count_robot: content.count_robot + 1 }
-          : { count: content.count + 1 };
-        await models.Content.update(attributes, {
+        const attributes = isRobotViewing(req) ? { count_robot: content.countRobot + 1 } : { count: content.count + 1 };
+        await prisma.content.update({
+          data: attributes,
           where: {
-            username,
-            name: content.name,
+            username_name: {
+              username: username || '',
+              name: content.name,
+            },
           },
         });
+      }
+
+      if (!content) {
+        return null;
       }
 
       return decorateWithRefreshFlag(content);
     },
 
     // XXX(mime): see HTMLHead.js :(
-    async fetchContentHead(parent, { username, name }, { hostname, models }) {
-      return await Content.Query.fetchContent(parent, { username, name }, { hostname, models });
+    async fetchContentHead(parent: ContentResolvers, { username, name }: QueryFetchContentHeadArgs, ctx: Context) {
+      return await Content.Query.fetchContent(parent, { username, name }, ctx);
     },
 
-    async fetchContentNeighbors(parent, { username, section, album, name }, { currentUser, models }) {
-      const ATTRIBUTES_NAVIGATION_WITH_VIEW = ATTRIBUTES_NAVIGATION.concat(['view']);
+    async fetchContentNeighbors(
+      parent: ContentResolvers,
+      { username, section, album, name }: QueryFetchContentNeighborsArgs,
+      { currentUsername, prisma }: Context
+    ) {
+      const ATTRIBUTES_NAVIGATION_WITH_VIEW = Object.assign({ view: true }, ATTRIBUTES_NAVIGATION);
 
       if (!username) {
-        username = (await models.User.findOne({ attributes: ['username'], where: { id: 1 } })).username;
+        username = (await prisma.user.findFirst({ select: { username: true }, where: { id: 1 } }))?.username;
       }
       name = name || 'main';
+      album = album || undefined;
+      section = section || undefined;
 
-      const sectionContent = await models.Content.findOne({
+      const sectionContent = await prisma.content.findFirst({
         where: { username, section: 'main', name: section === 'main' ? name : section },
       });
-      const order = [['order'], getSQLSortType(sectionContent.sort_type)];
+      const orderBy = [{ order: 'asc' }, getSQLSortType(sectionContent?.sortType || '')];
 
-      const isOwnerViewing = currentUser?.model?.username === username;
+      const isOwnerViewing = currentUsername === username;
 
-      const constraints = {
-        redirect: false,
+      const constraints: { [key: string]: boolean | number } = {
+        redirect: 0,
       };
       if (!isOwnerViewing) {
         constraints['hidden'] = false;
@@ -136,11 +168,11 @@ const Content = {
         section,
         album,
       };
-      const collection = await models.Content.findAll({
-        attributes: ATTRIBUTES_NAVIGATION_WITH_VIEW,
+      const collection = (await prisma.content.findMany({
+        select: ATTRIBUTES_NAVIGATION_WITH_VIEW,
         where: Object.assign({}, constraints, collectionConstraints),
-        order,
-      });
+        orderBy,
+      })) as ContentType[];
 
       const contentIndex = collection.findIndex((i) => i.name === name);
 
@@ -150,65 +182,74 @@ const Content = {
         album: album ? 'main' : '',
         name: album ? album : section,
       };
-      const collectionItem = await models.Content.findOne({
-        attributes: ATTRIBUTES_NAVIGATION_WITH_VIEW,
+      const collectionItem = await prisma.content.findFirst({
+        select: ATTRIBUTES_NAVIGATION_WITH_VIEW,
         where: collectionItemConstraints,
       });
+      console.log(ATTRIBUTES_NAVIGATION_WITH_VIEW, collectionItemConstraints);
+
+      if (!collectionItem) {
+        return null;
+      }
 
       return {
         first: decorateWithRefreshFlag(collection[collection.length - 1]),
         prev: decoratePrefetchImages(decorateWithRefreshFlag(collection[contentIndex + 1])),
-        top: decorateWithRefreshFlag(collectionItem),
+        top: decorateWithRefreshFlag(collectionItem as ContentType),
         next: decoratePrefetchImages(decorateWithRefreshFlag(collection[contentIndex - 1])),
         last: decorateWithRefreshFlag(collection[0]),
       };
     },
 
-    async fetchCollection(parent, { username, section, album, name }, { currentUser, models }) {
-      const isOwnerViewing = currentUser?.model?.username === username;
+    async fetchCollection(
+      parent: ContentResolvers,
+      { username, section, album, name }: QueryFetchCollectionArgs,
+      { currentUsername, prisma }: Context
+    ) {
+      const isOwnerViewing = currentUsername === username;
 
-      const sectionContent = await models.Content.findOne({
+      const sectionContent = await prisma.content.findFirst({
         where: { username, section: !album ? 'main' : section, name },
       });
-      const order = [['order'], getSQLSortType(sectionContent.sort_type)];
+      const orderBy = [{ order: 'asc' }, getSQLSortType(sectionContent?.sortType || '')];
 
-      const constraints = {
-        redirect: false,
+      const constraints: { [key: string]: boolean | number } = {
+        redirect: 0,
       };
       if (!isOwnerViewing) {
         constraints['hidden'] = false;
       }
 
       // For links section, we grab the anchor url in the view.
-      const attributes = section === 'links' ? ATTRIBUTES_NAVIGATION.concat('view') : ATTRIBUTES_NAVIGATION;
+      const select = section === 'links' ? Object.assign({ view: true }, ATTRIBUTES_NAVIGATION) : ATTRIBUTES_NAVIGATION;
 
-      let collection = [];
+      let collection: ContentType[] = [];
       // Check first to see if this is an album and grab items within it.
       if (section !== 'main') {
         const contentConstraints = { username, section, album: name };
-        collection = await models.Content.findAll({
-          attributes,
+        collection = (await prisma.content.findMany({
+          select,
           where: Object.assign({}, constraints, contentConstraints),
-          order,
-        });
+          orderBy,
+        })) as ContentType[];
       }
 
       // If we couldn't find an album then, look for the section instead and find the albums within it.
       if (!collection.length) {
         const contentConstraints = { username, section: name, album: 'main' };
-        collection = await models.Content.findAll({
-          attributes,
+        collection = (await prisma.content.findMany({
+          select,
           where: Object.assign({}, constraints, contentConstraints),
-          order,
-        });
+          orderBy,
+        })) as ContentType[];
 
         const albumConstraints = Object.assign({}, constraints, contentConstraints);
         for (const content of collection) {
           albumConstraints['album'] = content.name;
-          const albumFirstContent = await models.Content.findOne({
-            attributes: ['thumb'],
+          const albumFirstContent = await prisma.content.findFirst({
+            select: { thumb: true },
             where: Object.assign({}, constraints, albumConstraints),
-            order,
+            orderBy,
           });
           if (albumFirstContent) {
             content.thumb = albumFirstContent.thumb;
@@ -217,22 +258,22 @@ const Content = {
 
         // Then, it combines with top-level items in the section (not in an album).
         const topLevelContentConstraints = { username, section: name, album: '' };
-        const topLevelItems = await models.Content.findAll({
-          attributes,
+        const topLevelItems = (await prisma.content.findMany({
+          select,
           where: Object.assign({}, constraints, topLevelContentConstraints),
-          order,
-        });
+          orderBy,
+        })) as ContentType[];
         collection = collection.concat(topLevelItems);
       }
 
       // This is if the top-level user page is an album. (I'm pretty sure at least :-/)
       if (!collection.length && section !== 'main') {
         const contentConstraints = { username, section };
-        collection = await models.Content.findAll({
-          attributes: ATTRIBUTES_NAVIGATION,
+        collection = (await prisma.content.findMany({
+          select: ATTRIBUTES_NAVIGATION,
           where: Object.assign({}, constraints, contentConstraints),
-          order,
-        });
+          orderBy,
+        })) as ContentType[];
       }
 
       if (section === 'links') {
@@ -251,51 +292,63 @@ const Content = {
       return decorateArrayWithRefreshFlag(collection);
     },
 
-    async fetchCollectionPaginated(parent, { username, section, name, offset }, { currentUser, models }) {
-      const isOwnerViewing = currentUser?.model?.username === username;
-      const limit = 20;
+    async fetchCollectionPaginated(
+      parent: ContentResolvers,
+      { username, section, name, offset }: QueryFetchCollectionPaginatedArgs,
+      { currentUsername, prisma }: Context
+    ) {
+      const isOwnerViewing = currentUsername === username;
+      const take = 20;
 
-      const constraints = {
-        redirect: false,
+      const constraints: { [key: string]: boolean | number } = {
+        redirect: 0,
       };
       if (!isOwnerViewing) {
         constraints['hidden'] = false;
       }
 
-      const notEqualToMain = { [Sequelize.Op.ne]: 'main' };
+      const notEqualToMain = { not: 'main' };
       const contentConstraints = {
         username,
         section: section !== 'main' ? section : name !== 'home' ? name : notEqualToMain,
         album: section !== 'main' ? name : notEqualToMain,
       };
-      return await models.Content.findAll({
+      return await prisma.content.findMany({
         where: Object.assign({}, constraints, contentConstraints),
-        order: [['order'], ['createdAt', 'DESC']],
-        limit,
-        offset: offset * limit,
+        orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
+        take,
+        skip: offset * take,
       });
     },
 
-    async fetchCollectionLatest(parent, { username, section, name }, { currentUser, models }) {
-      const isOwnerViewing = currentUser?.model?.username === username;
+    async fetchCollectionLatest(
+      parent: ContentResolvers,
+      { username, name }: QueryFetchCollectionLatestArgs,
+      { currentUsername, prisma }: Context
+    ) {
+      const isOwnerViewing = currentUsername === username;
 
-      const constraints = {
-        redirect: false,
+      const constraints: { [key: string]: boolean | number } = {
+        redirect: 0,
       };
       if (!isOwnerViewing) {
         constraints['hidden'] = false;
       }
 
       const contentConstraints = { username, section: name };
-      return await models.Content.findOne({
+      return await prisma.content.findFirst({
         where: Object.assign({}, constraints, contentConstraints),
-        order: [['order'], ['createdAt', 'DESC']],
+        orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
       });
     },
 
-    async fetchSiteMap(parent, { username }, { currentUser, models }) {
-      const isOwnerViewing = currentUser?.model?.username === username;
-      const constraints = {};
+    async fetchSiteMap(
+      parent: ContentResolvers,
+      { username }: QueryFetchSiteMapArgs,
+      { currentUsername, prisma }: Context
+    ) {
+      const isOwnerViewing = currentUsername === username;
+      const constraints: { [key: string]: boolean } = {};
       if (!isOwnerViewing) {
         constraints['hidden'] = false;
       }
@@ -303,17 +356,17 @@ const Content = {
       const contentConstraints = {
         username,
         section: 'main',
-        name: { [Sequelize.Op.notIn]: ['main', 'home', 'comments'] },
+        name: { notIn: ['main', 'home', 'comments'] },
         redirect: 0,
       };
 
-      const sections = await models.Content.findAll({
-        attributes: ATTRIBUTES_NAVIGATION,
+      const sections = (await prisma.content.findMany({
+        select: ATTRIBUTES_NAVIGATION,
         where: Object.assign({}, constraints, contentConstraints),
-        order: [['order'], ['createdAt']],
-      });
+        orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
+      })) as ContentType[];
 
-      let siteMap = [];
+      let siteMap: ContentType[] = [];
       for (const section of sections) {
         const albumConstraints = {
           username,
@@ -321,11 +374,11 @@ const Content = {
           album: 'main',
         };
 
-        const albums = await models.Content.findAll({
-          attributes: ATTRIBUTES_NAVIGATION,
+        const albums = (await prisma.content.findMany({
+          select: ATTRIBUTES_NAVIGATION,
           where: Object.assign({}, constraints, albumConstraints),
-          order: [['order'], ['createdAt']],
-        });
+          orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
+        })) as ContentType[];
 
         siteMap.push(section);
         if (albums.length) {
@@ -336,44 +389,49 @@ const Content = {
       return decorateArrayWithRefreshFlag(siteMap);
     },
 
-    async searchContent(parent, { username, query }, { currentUser, models }) {
-      const isOwnerViewing = currentUser?.model?.username === username;
+    // TODO: re-enable
+    // async searchContent(parent: ContentResolvers, { username, query }: QuerySearchContentArgs, {currentUsername, prisma }: Context) {
+    //   const isOwnerViewing = currentUsername === username;
 
-      const constraints = {
-        redirect: false,
-        username,
-      };
-      if (!isOwnerViewing) {
-        constraints['hidden'] = false;
-      }
+    //   const constraints: {[key: string]: boolean | string | number} = {
+    //     redirect: 0,
+    //     username,
+    //   };
+    //   if (!isOwnerViewing) {
+    //     constraints['hidden'] = false;
+    //   }
 
-      let collection = await models.Content.findAll({
-        attributes: ATTRIBUTES_NAVIGATION.concat(['view']),
-        where: [constraints, Sequelize.literal('match (title, view) against (:query)')],
-        replacements: {
-          query,
-        },
-      });
+    //   let collection = await prisma.content.findMany({
+    //     select: Object.assign({view: true}, ATTRIBUTES_NAVIGATION),
+    //     where: [constraints, Sequelize.literal('match (title, view) against (:query)')],
+    //     replacements: {
+    //       query,
+    //     },
+    //   });
 
-      for (const item of collection) {
-        const HTML_REGEX = /<[^>]+>/g;
-        item.preview = ellipsize(item.view.replace(HTML_REGEX, '').trim(), 130);
-      }
+    //   for (const item of collection) {
+    //     const HTML_REGEX = /<[^>]+>/g;
+    //     item.preview = ellipsize(item.view.replace(HTML_REGEX, '').trim(), 130);
+    //   }
 
-      return decorateArrayWithRefreshFlag(collection);
-    },
+    //   return decorateArrayWithRefreshFlag(collection);
+    // },
   },
 
   Mutation: {
     saveContent: combineResolvers(
       isAuthor,
-      async (parent, { name, hidden, title, thumb, style, code, content }, { currentUser, models, req }) => {
-        const username = currentUser.model.username;
-        const view = toHTML(content, title);
+      async (
+        parent: ContentResolvers,
+        { name, hidden, title, thumb, style, code, content }: MutationSaveContentArgs,
+        { currentUsername, prisma }: Context
+      ) => {
+        const username = currentUsername;
+        const view = 'FIXME';
         const thread = discoverThreadInHTML(view);
 
-        await models.Content.update(
-          {
+        await prisma.content.update({
+          data: {
             hidden,
             title,
             thumb,
@@ -383,64 +441,64 @@ const Content = {
             content,
             view,
           },
-          {
-            where: {
+          where: {
+            username_name: {
               username,
               name,
             },
-          }
-        );
+          },
+        });
 
-        const updatedContent = await models.Content.findOne({ where: { username, name } });
+        // const updatedContent = await prisma.content.findOne({ where: { username, name } });
 
         if (!hidden) {
-          // TODO(mime): hacky - how can we unify this (here and wherever we use syndicate())
-          currentUser.model.url = profileUrl(currentUser.model.username, req);
-          updatedContent.url = contentUrl(updatedContent, req);
-          await socialButterfly().syndicate(req, currentUser.model, updatedContent);
+          // // TODO(mime): hacky - how can we unify this (here and wherever we use syndicate())
+          // currentUser.model.url = profileUrl(currentUsername, req);
+          // updatedContent.url = contentUrl(updatedContent, req);
+          // await socialButterfly().syndicate(req, currentUser.model, updatedContent);
         }
 
-        return { username: currentUser.model.username, name, hidden, title, thumb, style, code, content };
+        return { username: currentUsername, name, hidden, title, thumb, style, code, content };
       }
     ),
 
     postContent: combineResolvers(
       isAuthor,
       async (
-        parent,
-        { section, album, name, title, hidden, thumb, style, code, content },
-        { currentUser, models, req }
+        parent: ContentResolvers,
+        { section, album, name, title, hidden, thumb, style, code, content }: MutationPostContentArgs,
+        { currentUsername }: Context
       ) => {
         name = (name || 'untitled') + '-' + nanoid(10);
         name = name.replace(/[^A-Za-z0-9-]/, '-');
 
-        const view = toHTML(content, title);
-        const thread = discoverThreadInHTML(view);
+        // const view = 'FIXME';
+        // const thread = discoverThreadInHTML(view);
 
-        const createdContent = await models.Content.create({
-          username: currentUser.model.username,
-          section,
-          album,
-          name,
-          title,
-          thumb,
-          thread,
-          hidden,
-          style,
-          code,
-          content,
-          view,
-        });
+        // const createdContent = await prisma.content.create({
+        //   username: currentUsername,
+        //   section,
+        //   album,
+        //   name,
+        //   title,
+        //   thumb,
+        //   thread,
+        //   hidden,
+        //   style,
+        //   code,
+        //   content,
+        //   view,
+        // });
 
         if (!hidden) {
-          // TODO(mime): hacky - how can we unify this (here and wherever we use syndicate())
-          currentUser.model.url = profileUrl(currentUser.model.username, req);
-          createdContent.url = contentUrl(createdContent, req);
-          await socialButterfly().syndicate(req, currentUser.model, createdContent);
+          // // TODO(mime): hacky - how can we unify this (here and wherever we use syndicate())
+          // currentUser.model.url = profileUrl(currentUsername, req);
+          // createdContent.url = contentUrl(createdContent, req);
+          // await socialButterfly().syndicate(req, currentUsername, createdContent);
         }
 
         return {
-          username: currentUser.model.username,
+          username: currentUsername,
           section,
           album,
           name,
@@ -454,37 +512,41 @@ const Content = {
       }
     ),
 
-    deleteContent: combineResolvers(isAuthor, async (parent, { name }, { currentUser, models, req }) => {
-      await models.Content.destroy({ where: { username: currentUser.model.username, name } });
-      return true;
-    }),
+    deleteContent: combineResolvers(
+      isAuthor,
+      async (parent: ContentResolvers, { name }: MutationDeleteContentArgs, { currentUsername, prisma }: Context) => {
+        await prisma.content.delete({
+          where: {
+            username_name: {
+              username: currentUsername,
+              name,
+            },
+          },
+        });
+        return true;
+      }
+    ),
   },
 };
 
 export default Content;
 
-export function toHTML(content, title) {
-  title = title ? escapeRegExp(title) : '';
-  const html = EditorHTMLPlugins(convertToHTML)(convertFromRaw(JSON.parse(content)));
-  return html.replace(new RegExp(`^<p>${title}</p>`), '');
-}
-
-function discoverThreadInHTML(html) {
+function discoverThreadInHTML(html: string) {
   const $ = cheerio.load(html);
   return $('a.u-in-reply-to').first().attr('href');
 }
 
-function getSQLSortType(sortType) {
+function getSQLSortType(sortType: string): { [key: string]: string } {
   if (sortType === 'oldest') {
-    return ['createdAt'];
+    return { createdAt: 'asc' };
   }
   if (sortType === 'alphabetical') {
-    return ['title'];
+    return { title: 'asc' };
   }
-  return ['createdAt', 'DESC'];
+  return { createdAt: 'desc' };
 }
 
-function decorateArrayWithRefreshFlag(list) {
+function decorateArrayWithRefreshFlag(list: ContentType[]) {
   for (const item of list) {
     decorateWithRefreshFlag(item);
   }
@@ -492,7 +554,7 @@ function decorateArrayWithRefreshFlag(list) {
   return list;
 }
 
-function decorateWithRefreshFlag(item) {
+function decorateWithRefreshFlag(item: ContentType) {
   if (item) {
     item.forceRefresh = !!(item.style || item.code);
   }
@@ -500,7 +562,7 @@ function decorateWithRefreshFlag(item) {
   return item;
 }
 
-function decoratePrefetchImages(item) {
+function decoratePrefetchImages(item: ContentType) {
   if (item) {
     item.prefetchImages = (item.view.match(/src=['"][^'"]+['"]/g) || []).map((i) => i.slice(5, -1));
   }
@@ -508,10 +570,10 @@ function decoratePrefetchImages(item) {
   return item;
 }
 
-function ellipsize(str, len) {
-  if (str.length <= len) {
-    return str;
-  }
+// function ellipsize(str: string, len: number) {
+//   if (str.length <= len) {
+//     return str;
+//   }
 
-  return str.slice(0, len) + '…';
-}
+//   return str.slice(0, len) + '…';
+// }

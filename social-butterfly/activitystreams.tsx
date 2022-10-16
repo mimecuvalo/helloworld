@@ -335,7 +335,7 @@ async function handleComment(options, req, res, contentRemote, inReplyTo) {
   contentRemote.local_content_name = content.name;
   await options.saveRemoteContent(contentRemote);
 
-  const contentOwner = await options.getLocalUser(inReplyTo, req);
+  //const contentOwner = await options.getLocalUser(inReplyTo, req);
 
   // TODO(mime): fix
   //await syndicate(req, contentOwner, content, contentRemote, true /* isComment */);

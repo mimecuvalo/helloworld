@@ -1,9 +1,9 @@
 import { DocumentNode, gql, useQuery } from '@apollo/client';
+import { FetchContentRemotePaginatedQuery, Post, UserRemotePrivate } from 'data/graphql-generated';
 import { InfiniteFeed, styled } from 'components';
 
 import { F } from 'i18n';
 import Item from './Item';
-import { ReactNode } from 'react';
 
 const Header = styled('h1')`
   border: 1px solid #0cf;
@@ -18,7 +18,12 @@ const Empty = styled('div')`
 `;
 
 const FETCH_CONTENT_REMOTE_PAGINATED = gql`
-  query ($profileUrlOrSpecialFeed: String!, $offset: Int!, $query: String, $shouldShowAllItems: Boolean) {
+  query FetchContentRemotePaginated(
+    $profileUrlOrSpecialFeed: String!
+    $offset: Int!
+    $query: String
+    $shouldShowAllItems: Boolean
+  ) {
     fetchContentRemotePaginated(
       profileUrlOrSpecialFeed: $profileUrlOrSpecialFeed
       offset: $offset
@@ -26,16 +31,16 @@ const FETCH_CONTENT_REMOTE_PAGINATED = gql`
       shouldShowAllItems: $shouldShowAllItems
     ) {
       avatar
-      comments_count
+      commentsCount
       creator
       createdAt
       deleted
       favorited
-      from_user
-      is_spam
+      fromUsername
+      isSpam
       link
-      local_content_name
-      post_id
+      localContentName
+      postId
       read
       title
       type
@@ -48,23 +53,21 @@ const FETCH_CONTENT_REMOTE_PAGINATED = gql`
 
 // TODO(mime): type better
 export default function Feed({
-  getEditor,
   userRemote,
   specialFeed,
   query,
   shouldShowAllItems,
   didFeedLoad,
 }: {
-  getEditor: ReactNode;
-  userRemote: User;
+  userRemote: UserRemotePrivate;
   specialFeed: string;
   query: DocumentNode;
   shouldShowAllItems: boolean;
   didFeedLoad: boolean;
 }) {
-  const { loading, data, fetchMore } = useQuery(FETCH_CONTENT_REMOTE_PAGINATED, {
+  const { loading, data, fetchMore } = useQuery<FetchContentRemotePaginatedQuery>(FETCH_CONTENT_REMOTE_PAGINATED, {
     variables: {
-      profileUrlOrSpecialFeed: userRemote ? userRemote.profile_url : specialFeed,
+      profileUrlOrSpecialFeed: userRemote ? userRemote.profileUrl : specialFeed,
       offset: 0,
       query,
       shouldShowAllItems,
@@ -73,10 +76,10 @@ export default function Feed({
   });
 
   function dedupe(currentFeed: any, nextResults: any) {
-    return nextResults.filter((nextEl) => !currentFeed.find((prevEl) => prevEl.post_id === nextEl.post_id));
+    return nextResults.filter((nextEl: Post) => !currentFeed.find((prevEl: Post) => prevEl.postId === nextEl.postId));
   }
 
-  if (loading) {
+  if (loading || !data) {
     return null;
   }
 
@@ -87,7 +90,7 @@ export default function Feed({
       {userRemote || query ? (
         <Header>
           {userRemote ? (
-            <a href={userRemote.profile_url} target="_blank" rel="noopener noreferrer">
+            <a href={userRemote.profileUrl} target="_blank" rel="noopener noreferrer">
               {userRemote.username}
             </a>
           ) : (
@@ -102,7 +105,7 @@ export default function Feed({
           <F defaultMessage="Nothing to read right now!" />
         </Empty>
       ) : (
-        feed.map((item) => <Item key={item.post_id} contentRemote={item} getEditor={getEditor} />)
+        feed.map((item) => <Item key={item.postId} contentRemote={item as Post} />)
       )}
     </InfiniteFeed>
   );
