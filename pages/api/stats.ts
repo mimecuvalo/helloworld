@@ -1,23 +1,33 @@
-import express from 'express';
-import { isRobotViewing } from 'server/util/crawler';
-import models from 'server/data/models';
+import { NextApiRequest, NextApiResponse } from 'next';
+
+import fs from 'fs';
+import { isRobotViewing } from 'util/crawler';
 import { parseContentUrl } from 'util/url-factory';
 import path from 'path';
 
-const router = express.Router();
-router.get('/', async (req, res) => {
-  const { username, name } = parseContentUrl(req.query.resource);
-  const content = await models.Content.findOne({ where: { username, name } });
+const filePath = path.resolve(process.cwd(), 'public/img/pixel.gif');
+const pixelImageBuffer = fs.readFileSync(filePath);
 
-  const attributes = isRobotViewing(req) ? { count_robot: content.count_robot + 1 } : { count: content.count + 1 };
-  await models.Content.update(attributes, {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const { username, name } = parseContentUrl(req.query['resource'] as string);
+  const content = await prisma?.content.findUnique({ where: { username_name: { username, name } } });
+
+  if (!content) {
+    res.status(404).json({ statusCode: 404, message: 'not found' });
+    return;
+  }
+
+  const attributes = isRobotViewing(req) ? { count_robot: content.countRobot + 1 } : { count: content.count + 1 };
+  await prisma?.content.update({
+    data: attributes,
     where: {
-      username,
-      name: content.name,
+      username_name: {
+        username,
+        name: content.name,
+      },
     },
   });
 
-  res.sendFile(path.resolve(process.cwd(), 'public/img/pixel.gif'));
-});
-
-export default router;
+  res.setHeader('Content-Type', 'image/gif');
+  res.send(pixelImageBuffer);
+}

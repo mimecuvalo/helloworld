@@ -1,22 +1,22 @@
 (function () {
-  var host;
-  var url = encodeURIComponent(window.location.href);
+  let host;
+  const url = encodeURIComponent(window.location.href);
 
   function findImages() {
-    var imageFinder = document.getElementById('hw-image-finder');
+    const imageFinder = document.getElementById('hw-image-finder');
     if (imageFinder) {
       imageFinder.parentNode.removeChild(imageFinder);
     }
 
-    var imagesArray = [];
+    const imagesArray = [];
 
-    var iframes = document.getElementsByTagName('IFRAME');
-    var imageElements = document.getElementsByTagName('IMG');
-    var dupCache = {};
+    const iframes = document.getElementsByTagName('IFRAME');
+    const imageElements = document.getElementsByTagName('IMG');
+    const dupCache = {};
 
     function parseImages(images) {
-      for (var i = 0; i < images.length; ++i) {
-        var img = document.createElement('IMG');
+      for (let i = 0; i < images.length; ++i) {
+        const img = document.createElement('IMG');
         images[i].setAttribute('width', '');
         images[i].setAttribute('height', '');
 
@@ -35,11 +35,13 @@
     parseImages(imageElements);
 
     // tumblr does photosets in iframes
-    for (var i = 0; i < iframes.length; ++i) {
+    for (let i = 0; i < iframes.length; ++i) {
       try {
-        var iframeImages = iframes[i].contentDocument.getElementsByTagName('IMG');
+        const iframeImages = iframes[i].contentDocument.getElementsByTagName('IMG');
         parseImages(iframeImages);
-      } catch (ex) {}
+      } catch (ex) {
+        /* do nothing */
+      }
     }
 
     if (!imagesArray.length) {
@@ -49,14 +51,14 @@
     }
 
     imagesArray.sort(function (a, b) {
-      var aArea = a.width * a.height;
-      var bArea = b.width * b.height;
+      const aArea = a.width * a.height;
+      const bArea = b.width * b.height;
       if (aArea > bArea) return -1;
       if (aArea < bArea) return 1;
       return 0;
     });
 
-    var wrapper = document.createElement('DIV');
+    const wrapper = document.createElement('DIV');
     wrapper.setAttribute('id', 'hw-image-finder');
     wrapper.style.position = 'fixed';
     wrapper.style.top = '0';
@@ -72,7 +74,7 @@
     wrapper.style.zIndex = '4294967295';
     wrapper.style.textAlign = 'left';
 
-    var selectImage = function (img) {
+    const selectImage = function (img) {
       // send it off!
       window.location.href = host + '/dashboard#reblog=' + url + '&img=' + encodeURIComponent(img.src);
     };
@@ -82,7 +84,7 @@
       return;
     }
 
-    for (var i = 0; i < imagesArray.length; ++i) {
+    for (let i = 0; i < imagesArray.length; ++i) {
       imagesArray[i].style.maxHeight = '190px';
       imagesArray[i].style.maxWidth = '270px';
       imagesArray[i].style.margin = '0';
@@ -102,7 +104,7 @@
       wrapper.appendChild(imagesArray[i]);
     }
 
-    var close = document.createElement('A');
+    const close = document.createElement('A');
     close.href = '#close-image-finder';
     close.textContent = '×';
     close.style.fontSize = '20px';
@@ -116,8 +118,8 @@
     close.style.border = '0';
     close.style.color = '#000';
 
-    var closePicker = function () {
-      var imageFinder = document.getElementById('hw-image-finder');
+    const closePicker = function () {
+      const imageFinder = document.getElementById('hw-image-finder');
       imageFinder.parentNode.removeChild(imageFinder);
 
       window.removeEventListener('keyup', documentKeyUp);
@@ -125,13 +127,13 @@
       return false;
     };
 
-    var documentKeyUp = function (event) {
+    const documentKeyUp = function (event) {
       if (event.key === 'Escape') {
         closePicker();
       }
     };
 
-    var documentClick = function (event) {
+    const documentClick = function (event) {
       if (document.getElementById('hw-image-finder').contains(event.target)) {
         return;
       }
@@ -147,26 +149,25 @@
     window.addEventListener('click', documentClick);
   }
 
-  var scripts = document.getElementsByTagName('SCRIPT');
-  for (var i = 0; i < scripts.length; ++i) {
+  const scripts = document.getElementsByTagName('SCRIPT');
+  for (let i = 0; i < scripts.length; ++i) {
     if (scripts[i].src.indexOf('helloworld_reblog.js') !== -1) {
       host = new URL(scripts[i].src).origin;
       break;
     }
   }
 
-  var hasOembedOrOpenGraph = false;
-  var links = document.getElementsByTagName('LINK');
-  for (var i = 0; i < links.length; ++i) {
+  let hasOembedOrOpenGraph = false;
+  const links = document.getElementsByTagName('LINK');
+  for (let i = 0; i < links.length; ++i) {
     if (links[i].getAttribute('type') === 'application/json+oembed') {
       hasOembedOrOpenGraph = true;
       break;
     }
   }
 
-  var meta = document.getElementsByTagName('META');
-  for (var i = 0; i < links.length; ++i) {
-    var property = links[i].getAttribute('property');
+  for (let i = 0; i < links.length; ++i) {
+    const property = links[i].getAttribute('property');
     if (property === 'og:title' || property === 'og:image') {
       hasOembedOrOpenGraph = true;
       break;

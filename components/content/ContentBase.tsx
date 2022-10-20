@@ -1,7 +1,7 @@
 import { Content, UserPublic } from 'data/graphql-generated';
 
+import ContentHead from './ContentHead';
 import { F } from 'i18n';
-import Head from 'next/head';
 import { PropsWithChildren } from 'react';
 import SiteMap from './SiteMap';
 import { styled } from 'components';
@@ -31,9 +31,9 @@ const Footer = styled('footer')`
 
 export default function ContentBase(
   props: PropsWithChildren<{
-    content: Content;
+    content?: Content;
     className?: string;
-    contentOwner: Pick<UserPublic, 'title' | 'description'>;
+    contentOwner: UserPublic;
     title: string;
     username: string;
   }>
@@ -42,9 +42,7 @@ export default function ContentBase(
 
   return (
     <>
-      <Head>
-        <title>{title}</title>
-      </Head>
+      <ContentHead content={content} contentOwner={contentOwner} title={title} username={username} />
       <Container id="hw-content" className={className}>
         <header>
           <h1>{`${contentOwner.title}` + (title ? ` - ${title}` : '')}</h1>

@@ -1,49 +1,67 @@
 import crypto from 'crypto';
 import magic from 'magic-signatures';
-import models from './data/models';
-import socialButterfly from './social-butterfly';
 
 // TODO(mime): all this user creation logic has to go somewhere else so we can reuse it later.
 export default async function setup() {
   const username = 'me';
 
   // Setup 'magic key' for signing Salmon envelopes.
-  const { magic_key, private_key } = generateMagicKey();
+  const { magicKey, privateKey } = generateMagicKey();
 
-  const newUser = await models.User.create({
-    description: 'Just another Hello, world blog',
-    email: 'example@mail.com',
-    favicon: '/favicon.jpg',
-    google_analytics: '',
-    hostname: '',
-    license: '',
-    logo: '',
-    magic_key,
-    name: 'Just another Hello, world user',
-    private_key,
-    superuser: true,
-    theme: '/css/themes/pixel.css',
-    title: 'Hello, world.',
-    username,
-    viewport: '',
+  await prisma?.user.create({
+    data: {
+      description: 'Just another Hello, world blog',
+      email: 'example@mail.com',
+      favicon: '/favicon.jpg',
+      googleAnalytics: '',
+      hostname: '',
+      license: '',
+      logo: '',
+      magicKey,
+      name: 'Just another Hello, world user',
+      privateKey,
+      superuser: true,
+      theme: '/css/themes/pixel.css',
+      title: 'Hello, world.',
+      username,
+      viewport: '',
+    },
   });
 
-  await models.Content.bulkCreate([
-    createStubContent({ username, section: 'main', name: 'home', title: 'Hello, world.', template: 'feed' }),
-    createStubContent({ username, section: 'main', name: 'photos', title: 'photos', template: 'album' }),
-    createStubContent({ username, section: 'main', name: 'microblog', title: 'microblog', template: 'feed' }),
-    createStubContent({ username, section: 'main', name: 'reblogged', title: 'reblogged', template: 'feed' }),
-    createStubContent({ username, section: 'main', name: 'links', title: 'links', template: 'album' }),
-    createStubContent({ username, section: 'main', name: 'about', view: 'I like turtles.' }),
-    createStubContent({ username, section: 'main', name: 'comments', hidden: true }),
-    createStubContent({ username, section: 'microblog', name: 'first', title: 'first!', view: 'Hello, world.' }),
-  ]);
+  await prisma?.content.createMany({
+    data: [
+      createStubContent({ username, section: 'main', name: 'home', title: 'Hello, world.', template: 'feed' }),
+      createStubContent({ username, section: 'main', name: 'photos', title: 'photos', template: 'album' }),
+      createStubContent({ username, section: 'main', name: 'microblog', title: 'microblog', template: 'feed' }),
+      createStubContent({ username, section: 'main', name: 'reblogged', title: 'reblogged', template: 'feed' }),
+      createStubContent({ username, section: 'main', name: 'links', title: 'links', template: 'album' }),
+      createStubContent({ username, section: 'main', name: 'about', view: 'I like turtles.' }),
+      createStubContent({ username, section: 'main', name: 'comments', hidden: true }),
+      createStubContent({ username, section: 'microblog', name: 'first', title: 'first!', view: 'Hello, world.' }),
+    ],
+  });
 
-  // Give a feed to follow to start with.
-  await socialButterfly().follow(null /* req */, { model: newUser }, 'https://kottke.org');
+  // // Give a feed to follow to start with.
+  // await socialButterfly().follow(null /* req */, { model: newUser }, 'https://kottke.org');
 }
 
-function createStubContent({ username, section, name, template, hidden, title, view }) {
+function createStubContent({
+  username,
+  section,
+  name,
+  template,
+  hidden,
+  title,
+  view,
+}: {
+  username: string;
+  section: string;
+  name: string;
+  template?: string;
+  hidden?: boolean;
+  title?: string;
+  view?: string;
+}) {
   return {
     username,
     section,
@@ -53,6 +71,9 @@ function createStubContent({ username, section, name, template, hidden, title, v
     title: title || '',
     hidden,
     content: '',
+    thumb: '',
+    style: '',
+    code: '',
     view: view || '',
   };
 }
@@ -69,8 +90,8 @@ function generateMagicKey() {
       format: 'pem',
     },
   });
-  const magic_key = magic.RSAToMagic(key.publicKey);
-  const private_key = key.privateKey;
+  const magicKey = magic.RSAToMagic(key.publicKey);
+  const privateKey = key.privateKey;
 
-  return { magic_key, private_key };
+  return { magicKey, privateKey };
 }

@@ -1,9 +1,14 @@
 migration notes
 
+- StructuredMetaData/OpenGraphMetadata/rel="canonical" needs absolute urls
+- why so many network requests
+
 - editor - switch to new editor
 - remove draft.js garbage - switch to markdown
 - image upload / resources go to s3 bucket
 - s3 url migration / rewrite
+  use md5 of user email
+- console errors
 - allow unfurl (pasting of iframe link)
 - image "u-photo" ?
 - u-in-reply-to Reply > to microblog
@@ -17,20 +22,11 @@ migration notes
 - app.use(bodyParser.text({ type: 'application/magic-envelope+xml' }));
 - make sure private_key isn't being sent down
 - transfer domains from digital ocean
-- router
-  /:username/search/:query
-  `/:username/:section/:album/:name`,
-  `/:username/:section/:name`,
-  `/:username/:name`,
-  `/:username`,
-  `/`,
-- HTMLHead graft
 - typescript pass
 - tests pass
 - upgrade packages and close unrelated dependabot PRs
 - use next image in places
 - fix up editing entries in place
-- disallow any
 - convert buttons/avatar over to mui, e.g. styled('button')
 - re-enable editing style/js
 - use mui breakpoints
@@ -39,3 +35,5 @@ migration notes
 - for some reason was doing this?
   // TODO(mime): hacky - how can we unify this (here and wherever we use syndicate())
   currentUser.url = profileUrl(currentUsername, req);
+- joy-ui?
+- kill social-butterfly package?

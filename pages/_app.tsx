@@ -3,7 +3,7 @@ import 'styles/globals.css';
 import * as serviceWorkerRegistration from 'app/serviceWorkerRegistration';
 
 import { APOLLO_STATE_PROP_NAME, useApollo } from 'app/apollo';
-import { ApolloProvider, NormalizedCacheObject, gql } from '@apollo/client';
+import { ApolloProvider, NormalizedCacheObject } from '@apollo/client';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import { Footer, Header } from 'components';
 import { IntlProvider, setupCreateIntl } from 'i18n';
@@ -64,6 +64,7 @@ function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }: 
   setupCreateIntl({ defaultLocale, locale, messages });
 
   return (
+    // @ts-ignore looks like IntlProvider still needs updated types after React 18 transition.
     <IntlProvider defaultLocale={locale} locale={locale} messages={messages}>
       <ApolloProvider client={apolloClient}>
         <CacheProvider value={emotionCache}>

@@ -507,13 +507,13 @@ export type UserRemotePublic = {
   webmentionUrl?: Maybe<Scalars['String']>;
 };
 
-export type ContentAndUserQueryQueryVariables = Exact<{
+export type ContentAndUserQueryVariables = Exact<{
   username: Scalars['String'];
   name: Scalars['String'];
 }>;
 
 
-export type ContentAndUserQueryQuery = { __typename?: 'Query', fetchContent?: { __typename?: 'Content', album: string, code: string, commentsCount: number, commentsUpdated?: any | null, content: string, count: number, countRobot: number, createdAt: any, forceRefresh?: boolean | null, hidden: boolean, name: string, section: string, style: string, template: string, thread?: string | null, thumb: string, title: string, updatedAt: any, username: string, view: string } | null, fetchCommentsRemote: Array<{ __typename?: 'Comment', avatar?: string | null, creator?: string | null, content?: string | null, deleted: boolean, favorited: boolean, fromUsername?: string | null, link: string, localContentName?: string | null, postId: string, type: string, username: string, view: string }>, fetchFavoritesRemote: Array<{ __typename?: 'Favorite', avatar?: string | null, fromUsername?: string | null, localContentName?: string | null, postId: string, type: string, username: string }>, fetchPublicUserData?: { __typename?: 'UserPublic', description?: string | null, favicon?: string | null, logo?: string | null, name: string, title: string } | null };
+export type ContentAndUserQuery = { __typename?: 'Query', fetchContent?: { __typename?: 'Content', album: string, code: string, commentsCount: number, commentsUpdated?: any | null, content: string, count: number, countRobot: number, createdAt: any, forceRefresh?: boolean | null, hidden: boolean, name: string, section: string, style: string, template: string, thread?: string | null, thumb: string, title: string, updatedAt: any, username: string, view: string } | null, fetchCommentsRemote: Array<{ __typename?: 'Comment', avatar?: string | null, creator?: string | null, content?: string | null, deleted: boolean, favorited: boolean, fromUsername?: string | null, link: string, localContentName?: string | null, postId: string, type: string, username: string, view: string }>, fetchFavoritesRemote: Array<{ __typename?: 'Favorite', avatar?: string | null, fromUsername?: string | null, localContentName?: string | null, postId: string, type: string, username: string }>, fetchPublicUserData?: { __typename?: 'UserPublic', description?: string | null, favicon?: string | null, logo?: string | null, name: string, title: string } | null };
 
 export type FetchCollectionQueryVariables = Exact<{
   username: Scalars['String'];
@@ -670,18 +670,18 @@ export type ContentAndUserQueryDocumentQueryVariables = Exact<{
 
 export type ContentAndUserQueryDocumentQuery = { __typename?: 'Query', fetchContentHead?: { __typename?: 'Content', username: string, section: string, album: string, name: string, thumb: string, title: string, createdAt: any, updatedAt: any, commentsCount: number, commentsUpdated?: any | null } | null, fetchPublicUserDataHead?: { __typename?: 'UserPublic', description?: string | null, favicon?: string | null, googleAnalytics?: string | null, logo?: string | null, name: string, theme: string, title: string, username: string, viewport?: string | null } | null };
 
-export type Unnamed_5_QueryVariables = Exact<{ [key: string]: never; }>;
+export type FetchAllUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type Unnamed_5_Query = { __typename?: 'Query', fetchAllUsers: Array<{ __typename?: 'UserPrivate', description?: string | null, email: string, favicon?: string | null, googleAnalytics?: string | null, hostname?: string | null, license?: string | null, logo?: string | null, magicKey: string, name: string, privateKey: string, superuser: boolean, theme: string, title: string, username: string, viewport?: string | null }> };
+export type FetchAllUsersQuery = { __typename?: 'Query', fetchAllUsers: Array<{ __typename?: 'UserPrivate', description?: string | null, email: string, favicon?: string | null, googleAnalytics?: string | null, hostname?: string | null, license?: string | null, logo?: string | null, magicKey: string, name: string, privateKey: string, superuser: boolean, theme: string, title: string, username: string, viewport?: string | null }> };
 
-export type SearchAndUserQueryQueryVariables = Exact<{
+export type SearchAndUserQueryVariables = Exact<{
   username: Scalars['String'];
   query: Scalars['String'];
 }>;
 
 
-export type SearchAndUserQueryQuery = { __typename?: 'Query', searchContent: Array<{ __typename?: 'SearchContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, preview: string, section: string, thumb: string, title: string, username: string }>, fetchPublicUserDataSearch?: { __typename?: 'UserPublic', description?: string | null, title: string, username: string } | null };
+export type SearchAndUserQuery = { __typename?: 'Query', searchContent: Array<{ __typename?: 'SearchContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, preview: string, section: string, thumb: string, title: string, username: string }>, fetchPublicUserDataSearch?: { __typename?: 'UserPublic', description?: string | null, title: string, username: string } | null };
 
 
 

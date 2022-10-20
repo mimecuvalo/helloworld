@@ -1,6 +1,6 @@
-import { DocumentNode, gql, useQuery } from '@apollo/client';
-import { FetchContentRemotePaginatedQuery, Post, UserRemotePrivate } from 'data/graphql-generated';
+import { FetchContentRemotePaginatedQuery, Post, UserRemotePublic } from 'data/graphql-generated';
 import { InfiniteFeed, styled } from 'components';
+import { gql, useQuery } from '@apollo/client';
 
 import { F } from 'i18n';
 import Item from './Item';
@@ -59,9 +59,9 @@ export default function Feed({
   shouldShowAllItems,
   didFeedLoad,
 }: {
-  userRemote: UserRemotePrivate;
+  userRemote: UserRemotePublic | null;
   specialFeed: string;
-  query: DocumentNode;
+  query: string;
   shouldShowAllItems: boolean;
   didFeedLoad: boolean;
 }) {

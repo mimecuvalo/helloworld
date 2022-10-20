@@ -10,6 +10,7 @@
 
 // Custom hook to check for experiment being enabled.
 export default function useExperiment(name: string) {
+  // @ts-ignore fix up later
   const { data } = {}; //useQuery(EXPERIMENTS_QUERY);
   const experiments = data?.experiments;
 

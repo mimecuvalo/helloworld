@@ -76,7 +76,7 @@ const SITE_MAP_AND_USER_QUERY = gql`
   }
 `;
 
-export default function SiteMap({ content, username }: { content: Content; username: string }) {
+export default function SiteMap({ content, username }: { content?: Content; username: string }) {
   const router = useRouter();
   const intl = useIntl();
   // TODO(mime): wtf
@@ -88,7 +88,7 @@ export default function SiteMap({ content, username }: { content: Content; usern
   });
 
   function generateItem(item: SiteMapAndUserQuery['fetchSiteMap'][0], albums?: ReactNode) {
-    const isSelected = item.name === content.name || item.name === content.album || item.name === content.section;
+    const isSelected = item.name === content?.name || item.name === content?.album || item.name === content?.section;
     return (
       <Item id={`hw-sitemap-${item.name}`} key={item.name} $isSelected={isSelected}>
         <ContentLink item={item} currentContent={content} className="notranslate">
@@ -188,7 +188,7 @@ export default function SiteMap({ content, username }: { content: Content; usern
             <a
               id="hw-sitemap-home"
               href={profileUrl(username)}
-              className={content.name === 'home' ? 'hw-selected' : ''}
+              className={content?.name === 'home' ? 'hw-selected' : ''}
             >
               <F defaultMessage="home" />
             </a>

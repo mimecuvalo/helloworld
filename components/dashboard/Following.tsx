@@ -20,7 +20,7 @@ export default function Following({
   specialFeed,
 }: {
   specialFeed: string;
-  userRemote: UserRemotePublic;
+  userRemote: UserRemotePublic | null;
   handleSetFeed: (userRemote: UserRemotePublic | string, search?: string) => void;
 }) {
   const intl = useIntl();

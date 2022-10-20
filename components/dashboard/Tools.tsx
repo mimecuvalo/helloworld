@@ -6,7 +6,7 @@ import Link from 'next/link';
 import UserContext from 'app/UserContext';
 import { profileUrl } from 'util/url-factory';
 
-export default function Tools({ className }: { className: string }) {
+export default function Tools() {
   const { user } = useContext(UserContext);
   const [origin, setOrigin] = useState('');
 
@@ -32,7 +32,7 @@ export default function Tools({ className }: { className: string }) {
   const reblogScript = createBookmarklet('/js/helloworld_reblog.js');
 
   return (
-    <ul className={className}>
+    <ul>
       <li>
         <a href={profileUrl(username)} target="_blank" rel="noopener noreferrer">
           <F defaultMessage="view site" />

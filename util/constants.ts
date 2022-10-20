@@ -41,3 +41,5 @@ const constants = {
 };
 
 export default constants;
+
+export const MAX_FILE_SIZE = 1024 * 1024 * 10; // up to 10 MB

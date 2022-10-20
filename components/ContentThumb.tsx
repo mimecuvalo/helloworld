@@ -26,15 +26,15 @@ const messages = defineMessages({
 export default function Thumb({
   className,
   item,
-  currentContent,
+  currentContent: currentContentProp,
 }: {
   className?: string;
   item: Content;
-  currentContent: Content;
+  currentContent?: Content;
 }) {
   const intl = useIntl();
 
-  currentContent = currentContent || {};
+  const currentContent = currentContentProp || { forceRefresh: false };
   const thumbAltText = intl.formatMessage(messages.thumbnail);
 
   const thumb = (

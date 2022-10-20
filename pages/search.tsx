@@ -1,7 +1,9 @@
+import { SearchAndUserQuery, SearchContentMetaInfo, UserPublic } from 'data/graphql-generated';
 import { defineMessages, useIntl } from 'i18n';
 import { gql, useQuery } from '@apollo/client';
 
 import ContentBase from '../components/content/ContentBase';
+import ContentHead from 'components/content/ContentHead';
 import ContentLink from 'components/ContentLink';
 import ContentThumb from 'components/ContentThumb';
 import { styled } from 'components';
@@ -61,7 +63,7 @@ const messages = defineMessages({
 });
 
 const SEARCH_AND_USER_QUERY = gql`
-  query SearchAndUserQuery($username: String!, $query: String!) {
+  query SearchAndUser($username: String!, $query: String!) {
     searchContent(username: $username, query: $query) {
       album
       forceRefresh
@@ -84,49 +86,53 @@ const SEARCH_AND_USER_QUERY = gql`
 
 export default function Search({ username, query }: { username: string; query: string }) {
   const intl = useIntl();
-  const { loading, data } = useQuery(SEARCH_AND_USER_QUERY, {
+  const { loading, data } = useQuery<SearchAndUserQuery>(SEARCH_AND_USER_QUERY, {
     variables: {
       username,
       query,
     },
   });
 
-  if (loading) {
+  if (loading || !data) {
     return null;
   }
 
-  const results = data.searchContent;
-  const contentOwner = data.fetchPublicUserDataSearch;
+  const results = data.searchContent as SearchContentMetaInfo[];
+  const contentOwner = data.fetchPublicUserDataSearch as UserPublic;
   const pageTitle = intl.formatMessage(messages.search);
   const untitled = intl.formatMessage(messages.untitled);
 
   return (
-    <ContentWrapper>
-      <ContentBase contentOwner={contentOwner} title={pageTitle} username={contentOwner.username}>
-        <List id="hw-results">
-          {results.map((item: Content) => (
-            <li key={item.name}>
-              <ListItemInner>
-                {item.thumb ? (
-                  <ContentThumbWrapper>
-                    <ContentThumb item={item} />
-                  </ContentThumbWrapper>
-                ) : null}
-                <div>
-                  <ContentLink item={item}>
-                    <Highlight str={item.title || untitled} term={query} />
-                  </ContentLink>
-                  <Preview>
-                    <Highlight str={item.preview} term={query} />
-                  </Preview>
-                </div>
-              </ListItemInner>
-              <div style={{ clear: 'both' }} />
-            </li>
-          ))}
-        </List>
-      </ContentBase>
-    </ContentWrapper>
+    <>
+      <ContentHead contentOwner={contentOwner} title={pageTitle} username={username} />
+      <ContentWrapper>
+        <ContentBase contentOwner={contentOwner} title={pageTitle} username={contentOwner?.username || ''}>
+          <List id="hw-results">
+            {results.map((item) => (
+              <li key={item.name}>
+                <ListItemInner>
+                  {item.thumb ? (
+                    <ContentThumbWrapper>
+                      {/* @ts-ignore TODO: this is just a hack */}
+                      <ContentThumb item={item} />
+                    </ContentThumbWrapper>
+                  ) : null}
+                  <div>
+                    <ContentLink item={item}>
+                      <Highlight str={item.title || untitled} term={query} />
+                    </ContentLink>
+                    <Preview>
+                      <Highlight str={item.preview} term={query} />
+                    </Preview>
+                  </div>
+                </ListItemInner>
+                <div style={{ clear: 'both' }} />
+              </li>
+            ))}
+          </List>
+        </ContentBase>
+      </ContentWrapper>
+    </>
   );
 }
 

@@ -80,8 +80,10 @@ const UserRemote = {
             sortType,
           },
           where: {
-            localUsername: currentUsername,
-            profileUrl,
+            localUsername_profileUrl: {
+              localUsername: currentUsername,
+              profileUrl,
+            },
           },
         });
 
@@ -97,7 +99,7 @@ const UserRemote = {
         { currentUsername, prisma, req }: Context
       ) => {
         const userRemote = await prisma.userRemote.findUnique({
-          where: { localUsername: currentUsername, profileUrl },
+          where: { localUsername_profileUrl: { localUsername: currentUsername, profileUrl } },
         });
 
         if (!userRemote) {

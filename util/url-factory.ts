@@ -58,7 +58,7 @@ export function buildUrl({
   pathname,
   searchParams,
 }: {
-  req?: NextApiRequest;
+  req?: NextApiRequest | false;
   isAbsolute?: boolean;
   pathname: string;
   searchParams?: { [key: string]: string };

@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export default gql`
-  query ContentAndUserQuery($username: String!, $name: String!) {
+  query ContentAndUser($username: String!, $name: String!) {
     fetchContent(username: $username, name: $name) {
       album
       code

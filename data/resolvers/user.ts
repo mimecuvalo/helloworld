@@ -1,7 +1,6 @@
 import {
   MutationCreateUserArgs,
   QueryFetchPublicUserDataArgs,
-  QueryFetchPublicUserDataHeadArgs,
   QueryFetchPublicUserDataSearchArgs,
   QueryFetchUserArgs,
   UserPrivate,
@@ -62,15 +61,7 @@ const User = {
       });
     },
 
-    // XXX(mime): see HTMLHead.js :(
-    async fetchPublicUserDataHead(
-      parent: UserPublicResolvers,
-      { username }: QueryFetchPublicUserDataHeadArgs,
-      ctx: Context
-    ) {
-      return await User.Query.fetchPublicUserData(parent, { username }, ctx);
-    },
-    // XXX(mime): see HTMLHead.js :(
+    // XXX(mime): might not need this anymore?
     async fetchPublicUserDataSearch(
       parent: UserPublicResolvers,
       { username }: QueryFetchPublicUserDataSearchArgs,

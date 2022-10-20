@@ -1,12 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { MAX_FILE_SIZE } from 'app/constants';
+import { MAX_FILE_SIZE } from 'util/constants';
+import { User } from '@prisma/client';
 import authenticate from 'app/authentication';
 import aws from 'aws-sdk';
+import crypto from 'crypto';
 import mime from 'mime/lite';
 
-// eslint-disable-next-line
-export default authenticate(async function handler(req: NextApiRequest, res: NextApiResponse, currentUser: any) {
+export default authenticate(async function handler(req: NextApiRequest, res: NextApiResponse, currentUser: User) {
   const AWS_CONFIG = {
     accessKeyId: process.env.S3_AWS_ACCESS_KEY,
     secretAccessKey: process.env.S3_AWS_SECRET_KEY,
@@ -27,10 +28,12 @@ export default authenticate(async function handler(req: NextApiRequest, res: Nex
       'Content-Type': mime.getType(req.query.file as string),
     };
 
+    const md5 = crypto.createHash('md5');
+    const emailHash = md5.update(currentUser.email).digest('hex');
     const post = await s3.createPresignedPost({
       Bucket: process.env.S3_AWS_S3_BUCKET_NAME,
       Fields: {
-        key: `${currentUser.ID}/${req.query.file}`,
+        key: `${emailHash}/${req.query.file}`,
         ...extraFields,
       },
       Expires: 60, // seconds

@@ -9,7 +9,6 @@ import {
   QueryFetchCollectionLatestArgs,
   QueryFetchCollectionPaginatedArgs,
   QueryFetchContentArgs,
-  QueryFetchContentHeadArgs,
   QueryFetchContentNeighborsArgs,
   QueryFetchSiteMapArgs,
 } from 'data/graphql-generated';
@@ -99,6 +98,7 @@ const Content = {
           content.template = sectionContent?.template || '';
         }
       }
+
       if (content && !content.template && content.album === 'main') {
         // This is when we're visiting a url of the form: /profile/section/album
         const parentContent = await prisma.content.findFirst({
@@ -108,7 +108,6 @@ const Content = {
       }
 
       // Update count
-      // lack of 'req' is a dumb check for !fetchContentHead :-/
       const isOwnerViewing = currentUsername === username;
       if (req && content && !isOwnerViewing) {
         const attributes = isRobotViewing(req) ? { count_robot: content.countRobot + 1 } : { count: content.count + 1 };
@@ -128,11 +127,6 @@ const Content = {
       }
 
       return decorateWithRefreshFlag(content);
-    },
-
-    // XXX(mime): see HTMLHead.js :(
-    async fetchContentHead(parent: ContentResolvers, { username, name }: QueryFetchContentHeadArgs, ctx: Context) {
-      return await Content.Query.fetchContent(parent, { username, name }, ctx);
     },
 
     async fetchContentNeighbors(

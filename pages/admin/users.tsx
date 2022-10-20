@@ -1,6 +1,7 @@
 import { F, defineMessages, useIntl } from 'i18n';
 import { gql, useQuery } from '@apollo/client';
 
+import { FetchAllUsersQuery } from 'data/graphql-generated';
 import Forbidden from 'components/error/403';
 import Head from 'next/head';
 import Unauthorized from 'components/error/401';
@@ -38,7 +39,7 @@ const messages = defineMessages({
 });
 
 const FETCH_ALL_USERS = gql`
-  {
+  query FetchAllUsers {
     fetchAllUsers {
       description
       email
@@ -66,7 +67,7 @@ export default function Admin() {
     return <Unauthorized />;
   }
 
-  if (!user?.model?.superuser) {
+  if (!user.superuser) {
     return <Forbidden />;
   }
 
@@ -75,11 +76,11 @@ export default function Admin() {
 
 function AdminApp() {
   const intl = useIntl();
-  const { loading, data } = useQuery(FETCH_ALL_USERS);
+  const { loading, data } = useQuery<FetchAllUsersQuery>(FETCH_ALL_USERS);
 
   const title = intl.formatMessage(messages.title);
 
-  if (loading) {
+  if (loading || !data) {
     return null;
   }
 
@@ -120,12 +121,15 @@ function AdminApp() {
                     </td>
                     {Object.keys(user)
                       .filter((k) => k !== 'username')
-                      .map((key) => (
+                      .map((key: string) => (
                         <td key={key}>
                           <input
                             readOnly
+                            // @ts-ignore this is fine
                             type={typeof user[key] === 'boolean' ? 'checkbox' : 'text'}
+                            // @ts-ignore this is fine
                             checked={typeof user[key] === 'boolean' ? user[key] : null}
+                            // @ts-ignore this is fine
                             value={user[key] || ''}
                           />
                         </td>

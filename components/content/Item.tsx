@@ -42,9 +42,7 @@ export default function Item(props: {
   // }));
 
   const { className, content, contentOwner, comments, favorites, isFeed } = props;
-  {
-    /* @ts-ignore */
-  }
+  /* @ts-ignore */
   const TemplateComponent = COMPONENT_TYPE_MAP[content.template] || Simple;
   const contentComponent = <TemplateComponent content={content} isFeed={isFeed} />;
 

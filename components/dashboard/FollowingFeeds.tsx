@@ -17,7 +17,7 @@ export default function FollowingFeeds({
   pollInterval: number;
   handleSetFeed: (userRemote: UserRemotePublic | string, search?: string) => void;
   following: UserRemotePublic[];
-  currentUserRemote: UserRemotePublic;
+  currentUserRemote: UserRemotePublic | null;
 }) {
   const { loading, data } = useQuery<FetchFeedCountsQuery>(FollowingFeedCountsQuery, {
     pollInterval: pollInterval,
@@ -39,7 +39,7 @@ export default function FollowingFeeds({
       {following.map((userRemote) => (
         <li
           key={userRemote.profileUrl}
-          style={{ fontWeight: currentUserRemote.profileUrl === userRemote.profileUrl ? 'bold' : 'normal' }}
+          style={{ fontWeight: currentUserRemote?.profileUrl === userRemote.profileUrl ? 'bold' : 'normal' }}
         >
           <button
             className="hw-button-link notranslate"

@@ -41,7 +41,6 @@ export default gql`
     fetchAllUsers: [UserPrivate!]!
     fetchUser(id: Int!): UserPrivate
     fetchPublicUserData(username: String): UserPublic
-    fetchPublicUserDataHead(username: String): UserPublic
     fetchPublicUserDataSearch(username: String): UserPublic
   }
 

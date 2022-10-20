@@ -1,5 +1,5 @@
 import { InMemoryCache, gql } from '@apollo/client';
-import React, { FC, ReactElement } from 'react';
+import React, { FC, PropsWithChildren, ReactElement } from 'react';
 import { RenderOptions, render } from '@testing-library/react';
 
 import { IntlProvider } from 'i18n';
@@ -27,12 +27,13 @@ cache.writeQuery({
   },
 });
 
-const AllTheProviders: FC = ({ children }) => {
+const AllTheProviders: FC<PropsWithChildren> = ({ children }) => {
   //const apolloClient = useApollo(pageProps);
 
   return (
     <ThemeProvider theme={muiTheme}>
       <MockedProvider cache={cache}>
+        {/* @ts-ignore looks like IntlProvider still needs updated types after React 18 transition. */}
         <IntlProvider defaultLocale="en" locale="en" messages={{}}>
           {children}
         </IntlProvider>

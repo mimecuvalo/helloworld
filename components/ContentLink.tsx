@@ -14,7 +14,7 @@ const StyledLink = styled(Link)<{
 const ContentLink: React.FC<
   PropsWithChildren<{
     item: Pick<Content, 'title' | 'forceRefresh' | 'hidden' | 'username' | 'section' | 'album' | 'name'>;
-    currentContent: Content;
+    currentContent?: Content;
     rel?: string;
     url?: string;
     className?: string;
@@ -23,7 +23,7 @@ const ContentLink: React.FC<
   const { user } = useContext(UserContext);
 
   const item = props.item;
-  const currentContent = props.currentContent || {};
+  const currentContent = props.currentContent || { forceRefresh: false };
   const isOwnerViewing = user?.username === item.username;
   const { rel, url } = props;
 

@@ -28,7 +28,6 @@ export const isAuthor = async (parent: unknown, args: unknown, ctx: Context) => 
 };
 
 export const isAdmin = async (parent: unknown, args: unknown, ctx: Context) => {
-  return skip;
   if (!ctx.user) {
     throw new Error(`Not logged in.`);
   }
