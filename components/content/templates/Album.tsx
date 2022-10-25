@@ -133,15 +133,16 @@ export default function Album({ content }: { content: Content }) {
         {collection.map((item: Content) => (
           <Item key={item.name}>
             {/* {isEditing ? (
-              <DeleteButton className="hw-button hw-delete" onClick={() => handleClick(item)}>
+              <DeleteButton onClick={() => handleClick(item)}>
                 x
               </DeleteButton>
             ) : null} */}
             <ContentThumb item={item} currentContent={content} />
-            <LinkWrapper>
-              {/* {!isEditing && item.externalLink ? (
+            {item.title && (
+              <LinkWrapper>
+                {/* {!isEditing && item.externalLink ? (
                 <a
-                  className="hw-album-title notranslate"
+                  className="notranslate"
                   href={item.externalLink}
                   target="_blank"
                   rel="noreferrer noopener"
@@ -149,14 +150,15 @@ export default function Album({ content }: { content: Content }) {
                   {item.title}
                 </a>
               ) : item.title ? (
-                <ContentLink item={item} currentContent={content} className="hw-album-title notranslate">
+                <ContentLink item={item} currentContent={content} className="notranslate">
                   {item.title}
                 </ContentLink>
               ) : null} */}
-              <ContentLink item={item} currentContent={content} className="hw-album-title notranslate">
-                {item.title}
-              </ContentLink>
-            </LinkWrapper>
+                <ContentLink item={item} currentContent={content} className="notranslate">
+                  {item.title}
+                </ContentLink>
+              </LinkWrapper>
+            )}
           </Item>
         ))}
       </StyledAlbum>

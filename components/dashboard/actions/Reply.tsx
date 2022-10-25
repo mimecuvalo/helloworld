@@ -22,7 +22,7 @@ export default function Reply(/*props: { contentRemote: ContentRemote }*/) {
   // };
 
   return (
-    <button className="hw-button-link">
+    <button>
       <F defaultMessage="reply" />
     </button>
   );

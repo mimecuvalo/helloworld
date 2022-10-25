@@ -135,13 +135,13 @@ export default function Comments({ comments, content }: { comments?: CommentType
   // }
 
   return (
-    <div className="hw-comments">
+    <div>
       <CommentsHeader>
         <F defaultMessage="comments" />
       </CommentsHeader>
       {/* {isLoggedIn ? (
-        <CommentEditorWrapper id="hw-comment-editor">
-          <button className="hw-button hw-save" disabled={isPosting} onClick={handlePost}>
+        <CommentEditorWrapper>
+          <button disabled={isPosting} onClick={handlePost}>
             <F defaultMessage="post" />
           </button>
         </CommentEditorWrapper>

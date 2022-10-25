@@ -66,7 +66,7 @@ export function buildUrl({
   let url = '';
 
   if (req) {
-    url += `${new URL(req.url || '').protocol}://${req.headers['host']}`;
+    url += `https://${req.headers['host']}`;
   } else if (isAbsolute) {
     url += `${window.location.origin}`;
   }

@@ -40,7 +40,7 @@ export default function Followers({
         {followers.map((follower) => (
           <li key={follower.profileUrl}>
             <button
-              className="hw-button-link notranslate"
+              className="notranslate"
               onClick={() => window.open(follower.profileUrl, follower.profileUrl, 'noopener,noreferrer')}
             >
               <Avatar src={follower.favicon || follower.avatar} />

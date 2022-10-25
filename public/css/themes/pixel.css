@@ -1,9 +1,8 @@
 /**
  * Pixel theme for Hello, world.
  *
- * theme: pixel (http://nite-lite.net)
- * designed_by: nightlight (http://nite-lite.net)
- *
+ * theme: pixel (http://nightlight.rocks)
+ * designed_by: nightlight (http://nightlight.rocks)
  */
 
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=block');
@@ -26,31 +25,6 @@ input::placeholder {
   border-right: 1px solid #0cf;
 }
 
-#hw-content .DraftEditor-root,
-#hw-content .ReactCodeMirror {
-  width: 650px;
-}
-
-#hw-dashboard .DraftEditor-root,
-#hw-comment-editor .DraftEditor-root,
-#hw-dashboard .ReactCodeMirror {
-  border: 1px solid #000;
-  box-shadow: 1px 1px #000, 2px 2px #000, 3px 3px #000;
-}
-
-#hw-dashboard .DraftEditor-root,
-#hw-dashboard .ReactCodeMirror {
-  width: 66vw;
-  margin-bottom: 20px;
-}
-
-#hw-dashboard .DraftEditor-root,
-#hw-dashboard .public-DraftEditor-content,
-#hw-dashboard .DraftEditor-editorContainer,
-#hw-dashboard .ReactCodeMirror {
-  min-height: 33vh;
-}
-
 #hw-content > header > h1 {
   padding: 5px;
   font-size: 14px;
@@ -60,51 +34,9 @@ input::placeholder {
   margin: 3px 3px 3px 0;
 }
 
-.hw-item {
-  content-visibility: auto;
-  contain-intrinsic-size: 90vh;
-}
-
-a.hw-button {
-  text-decoration: line-through;
-}
-a.hw-button[href],
-a.hw-button[href]:hover {
+a,
+a:hover {
   text-decoration: none;
-}
-
-.hw-button,
-.hw-button:visited {
-  margin: 0 3px 6px 3px;
-  display: inline-block;
-  transition: all 0.03s linear 0.1s;
-  float: left;
-  cursor: pointer;
-  padding: 0 7px;
-  line-height: 1.5;
-  border: 1px solid #0c0;
-  border-radius: 3px;
-  color: #060;
-  text-shadow: 0 1px 0 #fff;
-  user-select: none;
-}
-.hw-button:hover {
-  border: 1px solid #060;
-  color: #060;
-}
-
-.hw-save {
-  float: none;
-  align-self: flex-end;
-}
-
-button.hw-edit {
-  border: 1px solid #0c0;
-}
-
-.hw-edit.hw-button.hw-selected {
-  margin-top: 1px;
-  margin-bottom: 1px;
 }
 
 .hw-last,
@@ -117,14 +49,11 @@ button.hw-edit {
   color: #06f;
 }
 
-.hw-delete,
-.hw-delete:visited,
 .hw-next,
 .hw-next:visited {
   border: 1px solid #f90;
   color: #f90;
 }
-.hw-delete:hover,
 .hw-next:hover {
   border: 1px solid #f30;
   color: #f90;
@@ -194,19 +123,12 @@ button.hw-edit {
     max-width: calc(100vw - 20px);
   }
 
-  #hw-content .DraftEditor-root,
   .hw-item {
     width: calc(100vw - 20px);
   }
 
   .hw-item figure img {
     max-width: calc(82vw - 20px);
-  }
-
-  .hw-button.hw-selected,
-  .hw-button:active,
-  .hw-button[disabled] {
-    margin-top: 0;
   }
 }
 

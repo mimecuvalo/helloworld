@@ -58,7 +58,7 @@ export default function Dashboard() {
   };
 
   return (
-    <Container id="hw-dashboard">
+    <Container>
       <nav>
         <Tools />
         <Following handleSetFeed={handleSetFeed} specialFeed={specialFeed} userRemote={userRemote} />

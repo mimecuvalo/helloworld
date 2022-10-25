@@ -2,6 +2,11 @@
 @import '~sanitize.css/forms.css';
 @import '~sanitize.css/typography.css';
 
+:root {
+  --thumb-width: 154px;
+  --thumb-height: 115px;
+}
+
 html {
   scroll-behavior: smooth;
 }

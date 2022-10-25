@@ -14,14 +14,14 @@ const ContentWrapper = styled('div')`
   & > header {
     display: block;
     position: absolute;
-    top: var(--app-margin);
+    top: ${(props) => props.theme.spacing(1)};
     left: 180px;
     height: var(--search-header-height);
   }
 `;
 
 const List = styled('ol')`
-  margin-top: calc(var(--app-margin) + var(--search-header-height) + 10px);
+  margin-top: calc(${(props) => props.theme.spacing(1)} + var(--search-header-height) + 10px);
   margin-left: 25px;
 
   & > li {
@@ -107,7 +107,7 @@ export default function Search({ username, query }: { username: string; query: s
       <ContentHead contentOwner={contentOwner} title={pageTitle} username={username} />
       <ContentWrapper>
         <ContentBase contentOwner={contentOwner} title={pageTitle} username={contentOwner?.username || ''}>
-          <List id="hw-results">
+          <List>
             {results.map((item) => (
               <li key={item.name}>
                 <ListItemInner>

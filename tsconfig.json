@@ -30,6 +30,6 @@
       "vendor/*": ["./vendor/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.d.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.d.ts", "pages/api/social/.well-known/*.tsx"],
   "exclude": ["node_modules"]
 }

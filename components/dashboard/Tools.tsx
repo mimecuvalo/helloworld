@@ -54,7 +54,7 @@ export default function Tools() {
         </Link>
       </li>
       <li>
-        <Button className="hw-button-link" href="/api/auth/logout">
+        <Button href="/api/auth/logout">
           <F defaultMessage="logout" />
         </Button>
       </li>

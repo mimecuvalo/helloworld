@@ -1,25 +1,26 @@
+import { getRemoteAllUsers, removeOldRemoteContent } from './db';
 import { parseFeedAndInsertIntoDb, retrieveFeed } from './feeds';
 
-export default async function updateFeeds(options) {
-  await pruneOlderContent(options);
-  await getFreshContent(options);
+export default async function updateFeeds() {
+  await pruneOlderContent();
+  await getFreshContent();
 }
 
-async function pruneOlderContent(options) {
-  await options.removeOldRemoteContent();
+async function pruneOlderContent() {
+  await removeOldRemoteContent();
 }
 
-async function getFreshContent(options) {
-  const usersRemote = await options.getRemoteAllUsers();
+async function getFreshContent() {
+  const usersRemote = await getRemoteAllUsers();
 
   for (const userRemote of usersRemote) {
     let feedResponseText;
     try {
-      feedResponseText = await retrieveFeed(userRemote.feed_url);
+      feedResponseText = await retrieveFeed(userRemote.feedUrl);
     } catch (ex) {
       continue;
     }
 
-    await parseFeedAndInsertIntoDb(options, userRemote, feedResponseText);
+    await parseFeedAndInsertIntoDb(userRemote, feedResponseText);
   }
 }

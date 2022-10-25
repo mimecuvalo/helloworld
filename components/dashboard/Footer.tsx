@@ -14,7 +14,7 @@ const StyledFooter = styled('footer')`
   font-size: 11px;
   box-shadow: 0px -1px 0 #0bf, 0 -9px 0 #fafafa;
   padding: 3px 6px 5px 3px;
-  margin-top:  '12px',
+  margin-top: 12px;
   background: #fafafa;
 `;
 

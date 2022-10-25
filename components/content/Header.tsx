@@ -9,9 +9,9 @@ const StyledHeader = styled('header')`
   margin-bottom: 6px;
   padding: 6px 10px;
   position: sticky;
-  top: 0,
+  top: 0;
   background: #111;
-  z-index: 1,
+  z-index: 1;
 `;
 
 const Title = styled('h1')`
@@ -58,7 +58,7 @@ export default function Header({ content }: { content: Content }) {
         </ContentLink>
 
         {/* {isOwnerViewing ? (
-          <EditButton onClick={handleEdit} className="hw-button hw-button-link hw-edit">
+          <EditButton onClick={handleEdit}>
             <F defaultMessage="edit" />
           </EditButton>
         ) : null} */}

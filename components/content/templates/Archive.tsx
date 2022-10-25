@@ -54,7 +54,7 @@ export default function Archive({ content }: { content: Content }) {
       {collection
         .filter((item: Content) => item.name !== content.name)
         .map((item: Content) => (
-          <li key={item.name} className="hw-content-item">
+          <li key={item.name}>
             <ContentLink item={item} currentContent={content}>
               {item.title}
             </ContentLink>

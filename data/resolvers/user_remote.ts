@@ -5,11 +5,12 @@ import {
   ToggleSortFeedMutationVariables,
   UserRemotePrivateResolvers,
 } from 'data/graphql-generated';
+import { follow, unfollow } from 'pages/api/social/follow';
 import { isAdmin, isAuthor } from './authorization';
 
 import { Context } from 'data/context';
+import { User } from '@prisma/client';
 import { combineResolvers } from 'graphql-resolvers';
-import socialButterfly from 'social-butterfly';
 
 const UserRemote = {
   Query: {
@@ -61,9 +62,9 @@ const UserRemote = {
       async (
         parent: UserRemotePrivateResolvers,
         { profileUrl }: CreateUserRemoteMutationVariables,
-        { currentUsername, req }: Context
+        { currentUser, req }: Context
       ) => {
-        return await socialButterfly().follow(req, currentUsername, profileUrl);
+        return await follow(req, currentUser as User, profileUrl);
       }
     ),
 
@@ -96,7 +97,7 @@ const UserRemote = {
       async (
         parent: UserRemotePrivateResolvers,
         { profileUrl }: DestroyFeedMutationVariables,
-        { currentUsername, prisma, req }: Context
+        { currentUsername, currentUser, prisma, req }: Context
       ) => {
         const userRemote = await prisma.userRemote.findUnique({
           where: { localUsername_profileUrl: { localUsername: currentUsername, profileUrl } },
@@ -114,7 +115,7 @@ const UserRemote = {
           await prisma.userRemote.update({ data: { following: false }, where: { id: userRemote.id } });
         }
 
-        await socialButterfly().unfollow(req, currentUsername, userRemote, userRemote.hubUrl, profileUrl);
+        await unfollow(req, currentUser as User, userRemote, userRemote.hubUrl, profileUrl);
 
         return true;
       }

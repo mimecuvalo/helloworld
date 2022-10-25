@@ -14,11 +14,12 @@ import NotFound from 'pages/404';
 import Simple from 'components/content/templates/Simple';
 import SwipeListener from 'swipe-listener';
 import { styled } from 'components';
+import { transientOptions } from 'util/css';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 
-const StyledContent = styled('article')<{ $isFeedWrapper: boolean }>`
-  margin: var(--app-margin);
+const StyledContent = styled('article', transientOptions)<{ $isFeedWrapper: boolean }>`
+  margin: ${(props) => props.theme.spacing(1)};
   padding: 0 3px 10px 3px;
 
   @media only screen and (max-width: 600px) {

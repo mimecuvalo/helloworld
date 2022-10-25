@@ -91,11 +91,14 @@ const FETCH_COLLECTION_PAGINATED = gql`
     }
 
     fetchPublicUserData(username: $username) {
+      username
       description
       favicon
       logo
       name
       title
+      theme
+      viewport
     }
   }
 `;

@@ -48,7 +48,7 @@ export default function Help() {
     async function fetchData() {
       const response = await fetch('/api/admin/experiments');
       const json = await response.json();
-      setExperiments(json.experiments);
+      setExperiments(json.experiments ?? {});
     }
     fetchData();
   }, [setExperiments]);

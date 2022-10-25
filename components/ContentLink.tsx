@@ -1,15 +1,9 @@
-import { Link, styled } from 'components';
 import { PropsWithChildren, useContext } from 'react';
 
 import { Content } from 'data/graphql-generated';
+import { Link } from 'components';
 import UserContext from 'app/UserContext';
 import { contentUrl } from 'util/url-factory';
-
-const StyledLink = styled(Link)<{
-  $isHidden: boolean;
-}>`
-  ${(props) => props.$isHidden && `font-style: italic;`}
-`;
 
 const ContentLink: React.FC<
   PropsWithChildren<{
@@ -28,16 +22,16 @@ const ContentLink: React.FC<
   const { rel, url } = props;
 
   return (
-    <StyledLink
-      to={url || contentUrl(item)}
+    <Link
+      href={url || contentUrl(item)}
       title={item.title}
-      $isHidden={isOwnerViewing && item.hidden}
       className={props.className}
       target={item.forceRefresh || currentContent.forceRefresh ? '_self' : ''}
       rel={rel}
+      sx={{ fontStyle: isOwnerViewing && item.hidden ? 'italic' : 'normal' }}
     >
       {props.children}
-    </StyledLink>
+    </Link>
   );
 };
 

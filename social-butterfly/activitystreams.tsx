@@ -1,15 +1,29 @@
+import { Content, ContentRemote, User, UserRemote } from '@prisma/client';
+import { NextApiRequest, NextApiResponse } from 'next';
+import { buildUrl, contentUrl, profileUrl } from 'util/url-factory';
 import { getActivityPubActor, getUserRemoteInfo } from './discover-user';
+import {
+  getLocalContent,
+  getRemoteContent,
+  getRemoteUser,
+  getRemoteUserByActor,
+  removeRemoteContent,
+  removeRemoteUser,
+  saveRemoteContent,
+  saveRemoteUser,
+} from './db';
 
-import { buildUrl } from 'util/url-factory';
+import crypto from 'crypto';
 // import { follow as emailFollow } from './email';
 // import { mention as emailMention } from './email';
 import { fetchJSON } from 'util/crawler';
+import magic from 'magic-signatures';
 import { nanoid } from 'nanoid';
 import { sanitizeHTML } from 'util/crawler';
 
 //import syndicate from './syndicate';
 
-export async function accept(req, contentOwner, userRemote) {
+export async function accept(req: NextApiRequest, contentOwner: User, userRemote: UserRemote) {
   const id = buildUrl({
     req,
     pathname: '/api/social/activitypub/accept',
@@ -19,7 +33,14 @@ export async function accept(req, contentOwner, userRemote) {
   send(req, userRemote, contentOwner, message);
 }
 
-export async function like(req, contentOwner, contentRemote, userRemote, isFavorite) {
+// eslint-disable-next-line
+export async function like(
+  req: NextApiRequest,
+  contentOwner: User,
+  contentRemote: ContentRemote,
+  userRemote: UserRemote,
+  isFavorite: boolean
+) {
   // TODO(mime): add back unfavorite
   const id = buildUrl({
     req,
@@ -35,27 +56,34 @@ export async function like(req, contentOwner, contentRemote, userRemote, isFavor
   send(req, userRemote, contentOwner, message);
 }
 
-export async function follow(req, contentOwner, userRemote, isFollow) {
+// eslint-disable-next-line
+export async function follow(req: NextApiRequest, contentOwner: User, userRemote: UserRemote, isFollow: boolean) {
   // TODO(mime): add back unfollow
   const id = buildUrl({
     req,
     pathname: '/api/social/activitypub/follow',
-    searchParams: { id: nanoid(10), resource: userRemote.profile_url },
+    searchParams: { id: nanoid(10), resource: userRemote.profileUrl },
   });
-  const message = createGenericMessage('Follow', req, id, contentOwner, userRemote.profile_url);
+  const message = createGenericMessage('Follow', req, id, contentOwner, userRemote.profileUrl);
   send(req, userRemote, contentOwner, message);
 }
 
-export async function reply(req, contentOwner, content, userRemote, mentionedRemoteUsers) {
+export async function reply(
+  req: NextApiRequest,
+  contentOwner: User,
+  content: Content,
+  userRemote: UserRemote,
+  mentionedRemoteUsers: UserRemote[]
+) {
   const message = await createArticle(req, content, contentOwner, mentionedRemoteUsers);
   send(req, userRemote, contentOwner, message);
 }
 
-async function send(req, userRemote, contentOwner, message) {
+async function send(req: NextApiRequest, userRemote: UserRemote, contentOwner: User, message: GenericMessage) {
   try {
-    if (userRemote?.activitypub_inbox_url) {
+    if (userRemote?.activityPubInboxUrl) {
       activityPubSend(req, userRemote, contentOwner, message);
-    } else if (userRemote?.salmon_url) {
+    } else if (userRemote?.salmonUrl) {
       salmonSend(req, userRemote, contentOwner, message);
     }
   } catch (ex) {
@@ -64,24 +92,29 @@ async function send(req, userRemote, contentOwner, message) {
   }
 }
 
-export async function salmonSend(req, userRemote, contentOwner, data) {
-  data = JSON.stringify(data);
-  const body = magic.sign({ data, data_type: 'application/ld+json' }, contentOwner.private_key);
+export async function salmonSend(req: NextApiRequest, userRemote: UserRemote, contentOwner: User, msg: GenericMessage) {
+  const data = JSON.stringify(msg);
+  const body = magic.sign({ data, data_type: 'application/ld+json' }, contentOwner.privateKey);
   body.sigs[0].value = magic.btob64u(body.sigs[0].value);
 
-  await fetch(userRemote.salmon_url, {
+  await fetch(userRemote.salmonUrl || '', {
     method: 'POST',
     body: JSON.stringify(body),
     headers: { 'Content-Type': 'application/magic-envelope+json' },
   });
 }
 
-async function activityPubSend(req, userRemote, contentOwner, message) {
+async function activityPubSend(
+  req: NextApiRequest,
+  userRemote: UserRemote,
+  contentOwner: User,
+  message: GenericMessage
+) {
   const { currentDate, signatureHeader } = signMessage(req, contentOwner, userRemote);
-  const inboxUrl = new URL(userRemote.activitypub_inbox_url);
+  const inboxUrl = new URL(userRemote.activityPubInboxUrl || '');
 
   try {
-    await fetch(userRemote.activitypub_inbox_url, {
+    await fetch(userRemote.activityPubInboxUrl || '', {
       method: 'POST',
       body: JSON.stringify(message),
       headers: {
@@ -97,28 +130,49 @@ async function activityPubSend(req, userRemote, contentOwner, message) {
   }
 }
 
-function signMessage(req, contentOwner, userRemote) {
+function signMessage(req: NextApiRequest, contentOwner: User, userRemote: UserRemote) {
   const currentDate = new Date();
-  const inboxUrl = new URL(userRemote.activitypub_inbox_url);
+  const inboxUrl = new URL(userRemote.activityPubInboxUrl || '');
   const signer = crypto
     .createSign('sha256')
     .update(`(request-target): post ${inboxUrl.pathname}${inboxUrl.search}\n`)
     .update(`host: ${inboxUrl.hostname}\n`)
     .update(`date: ${currentDate.toUTCString()}`)
     .end();
-  const signature = signer.sign(contentOwner.private_key).toString('base64');
+  const signature = signer.sign(contentOwner.privateKey).toString('base64');
   const actorUrl = buildUrl({
     req,
     pathname: '/api/social/activitypub/actor',
-    searchParams: { resource: contentOwner.url },
+    searchParams: { resource: profileUrl(contentOwner.username, req) },
   });
   const signatureHeader = `keyId="${actorUrl}",headers="(request-target) host date",signature="${signature}"`;
 
   return { currentDate, signatureHeader };
 }
 
-export function createGenericMessage(type, req, id, localUser, object, opt_follower) {
-  const actor = buildUrl({ req, pathname: '/api/social/activitypub/actor', searchParams: { resource: localUser.url } });
+type GenericMessage = {
+  '@context': string;
+  type: string;
+  id: string;
+  actor: string;
+  to: string[];
+  cc?: string[];
+  object: Activity | string;
+};
+
+export function createGenericMessage(
+  type: string,
+  req: NextApiRequest,
+  id: string,
+  localUser: User,
+  object: Activity | string,
+  opt_follower?: UserRemote[]
+): GenericMessage {
+  const actor = buildUrl({
+    req,
+    pathname: '/api/social/activitypub/actor',
+    searchParams: { resource: profileUrl(localUser.username, req) },
+  });
 
   const json = {
     '@context': 'https://www.w3.org/ns/activitystreams',
@@ -126,32 +180,41 @@ export function createGenericMessage(type, req, id, localUser, object, opt_follo
     id,
     actor,
     to: ['https://www.w3.org/ns/activitystreams#Public'],
-    cc: opt_follower ? [opt_follower.profile_url] : undefined,
+    cc: opt_follower ? opt_follower.map((f) => f.profileUrl) : undefined,
     object,
   };
 
   return json;
 }
 
-export async function createArticle(req, localContent, localUser, opt_follower) {
+export async function createArticle(
+  req: NextApiRequest,
+  localContent: Content,
+  localUser: User,
+  opt_follower?: UserRemote[]
+) {
   const messageUrl = buildUrl({
     req,
     pathname: '/api/social/activitypub/message',
-    searchParams: { resource: localContent.url },
+    searchParams: { resource: contentUrl(localContent, req) },
   });
   const actorUrl = buildUrl({
     req,
     pathname: '/api/social/activitypub/actor',
-    searchParams: { resource: localUser.url },
+    searchParams: { resource: profileUrl(localUser.username, req) },
   });
-  const statsImgSrc = buildUrl({ req, pathname: '/api/stats', searchParams: { resource: localContent.url } });
+  const statsImgSrc = buildUrl({
+    req,
+    pathname: '/api/stats',
+    searchParams: { resource: contentUrl(localContent, req) },
+  });
   const statsImg = `<img src="${statsImgSrc}" />`;
   const absoluteUrlReplacement = buildUrl({ req, pathname: '/resource' });
 
   // TODO(mime): this replacement is nite-lite specific...
   const view = localContent.view.replace(/(['"])\/resource/gm, `$1${absoluteUrlReplacement}`) + statsImg;
 
-  let inReplyTo = localContent.thread;
+  let inReplyTo = localContent.thread || '';
   if (localContent.thread) {
     try {
       const activityObject = await fetchJSON(localContent.thread, {
@@ -160,108 +223,136 @@ export async function createArticle(req, localContent, localUser, opt_follower) 
       if (activityObject) {
         inReplyTo = activityObject.id;
       }
-    } catch (ex) {}
+    } catch (ex) {
+      /* do nothing */
+    }
   }
 
-  return createGenericMessage(
-    'Create',
-    req,
-    messageUrl,
-    localUser,
-    {
-      id: messageUrl,
-      url: localContent.url,
-      type: 'Article',
-      published: new Date(localContent.createdAt).toISOString(),
-      updated: new Date(localContent.updatedAt).toISOString(),
-      attributedTo: actorUrl,
-      inReplyTo,
-      title: localContent.title,
-      content: view,
-      to: 'https://www.w3.org/ns/activitystreams#Public',
-    },
-    opt_follower
-  );
+  const activityObject: Activity = {
+    id: messageUrl,
+    url: contentUrl(localContent, req),
+    type: 'Article',
+    published: new Date(localContent.createdAt || '').toISOString(),
+    updated: new Date(localContent.updatedAt || '').toISOString(),
+    attributedTo: actorUrl,
+    inReplyTo,
+    title: localContent.title,
+    content: view,
+    to: 'https://www.w3.org/ns/activitystreams#Public',
+  };
+
+  return createGenericMessage('Create', req, messageUrl, localUser, activityObject, opt_follower);
 }
 
-export async function handle(type, options, req, res, activity, user, userRemote) {
+export type Activity = {
+  id: string;
+  url: string;
+  type: string;
+  content?: string;
+  title?: string;
+  published?: string;
+  updated?: string;
+  to?: string;
+  repliesCount?: string;
+  repliesUpdated?: string;
+  attributedTo?: string;
+  inReplyTo?: string;
+  displayName?: string;
+};
+
+export async function handle(
+  type: string,
+  req: NextApiRequest,
+  res: NextApiResponse,
+  activity: GenericMessage,
+  user: User,
+  userRemote: UserRemote
+) {
   switch (type) {
     case 'Accept':
       // Do nothing.
       break;
     case 'Create':
-      await handleCreate(options, req, res, activity, user, userRemote);
+      await handleCreate(req, res, activity, user, userRemote);
       break;
     case 'Follow':
-      await handleFollow(options, req, user, userRemote, true);
+      await handleFollow(req, user, userRemote, true);
       break;
     case 'Like':
-      await handleLike(options, req, res, activity, userRemote, true);
+      await handleLike(req, res, activity, userRemote, true);
       break;
     default:
       break;
   }
 }
 
-export async function findUserRemote(options, json, res, user) {
+export async function findUserRemote(json: { [key: string]: string }, res: NextApiResponse, user: User) {
   const actorUrl = json.actor;
-  let userRemote = await options.getRemoteUserByActor(user.username, actorUrl);
+  let userRemote = await getRemoteUserByActor(user.username, actorUrl);
   if (!userRemote) {
     const actorJSON = await getActivityPubActor(actorUrl);
     if (actorJSON.url) {
       const userRemoteInfo = await getUserRemoteInfo(actorJSON.url, user.username);
-      await options.saveRemoteUser(userRemoteInfo);
-      userRemote = await options.getRemoteUser(user.username, actorJSON.url);
+      await saveRemoteUser(userRemoteInfo);
+      userRemote = await getRemoteUser(user.username, actorJSON.url);
     } else {
-      return res.sendStatus(400);
+      res.status(400).end();
+      return;
     }
   }
 
   return userRemote;
 }
 
-async function handleFollow(options, req, user, userRemote, isFollow) {
+async function handleFollow(req: NextApiRequest, user: User, userRemote: UserRemote, isFollow: boolean) {
   if (isFollow) {
-    await options.saveRemoteUser(Object.assign({}, userRemote.dataValues, { follower: true }));
-    //emailFollow(req, user.username, user.email, userRemote.profile_url);
+    await saveRemoteUser(Object.assign({}, userRemote, { follower: true }));
+    //emailFollow(req, user.username, user.email, userRemote.profileUrl);
   } else {
     if (userRemote.following) {
-      await options.saveRemoteUser(Object.assign({}, userRemote.dataValues, { follower: false }));
+      await saveRemoteUser(Object.assign({}, userRemote, { follower: false }));
     } else {
-      await options.removeRemoteUser(userRemote);
+      await removeRemoteUser(userRemote);
     }
   }
 }
 
-async function handleLike(options, req, res, activity, userRemote, isLike) {
-  const localContentUrl = activity.object;
-  const { username, name } = await options.getLocalContent(localContentUrl, req);
+async function handleLike(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  activity: GenericMessage,
+  userRemote: UserRemote,
+  isLike: boolean
+) {
+  const localContentUrl = activity.object as Activity;
+  const content = await getLocalContent(localContentUrl.inReplyTo || '');
 
-  if (!name) {
-    return res.sendStatus(400);
+  if (!content) {
+    return res.status(400).end();
   }
+  const { username, name } = content;
 
-  const postId = `${userRemote.profile_url},${localContentUrl},favorite`;
+  const postId = `${userRemote.profileUrl},${localContentUrl},favorite`;
   const remoteContent = {
-    from_user: userRemote.profile_url,
-    local_content_name: name,
-    post_id: postId,
-    to_username: username,
+    fromUsername: userRemote.profileUrl,
+    localContentName: name,
+    postId: postId,
+    toUsername: username,
     type: 'favorite',
     username: userRemote.username,
   };
 
   if (!isLike) {
-    await options.removeRemoteContent(remoteContent);
+    await removeRemoteContent(remoteContent as ContentRemote);
     return;
   }
 
-  const existingFavorite = await options.getRemoteContent(username, postId);
+  const existingFavorite = await getRemoteContent(username, postId);
   if (existingFavorite) {
     return;
   }
 
-  await options.saveRemoteContent(
+  await saveRemoteContent(
     Object.assign({}, remoteContent, {
       content: '',
       createdAt: new Date(),
@@ -269,39 +360,46 @@ async function handleLike(options, req, res, activity, userRemote, isLike) {
       link: '',
       title: '',
       view: '',
-    })
+    }) as ContentRemote
   );
 }
 
-async function handleCreate(options, req, res, activity, user, userRemote) {
-  const activityObject = activity.object;
-  const atomContent = sanitizeHTML(activityObject.content);
+async function handleCreate(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  activity: GenericMessage,
+  user: User,
+  userRemote: UserRemote
+) {
+  const activityObject = activity.object as Activity;
+  const atomContent = sanitizeHTML(activityObject.content || '');
 
-  const existingContentRemote = await options.getRemoteContent(user.username, activityObject.id);
+  const existingContentRemote = await getRemoteContent(user.username, activityObject.id.toString());
 
-  const contentRemote = {
-    id: existingContentRemote?.id || undefined,
+  // @ts-ignore it's fine.
+  const contentRemote: ContentRemote = {
+    id: existingContentRemote?.id || -1,
     avatar: userRemote.avatar,
-    comments_count: parseInt(activityObject.repliesCount),
-    comments_updated: new Date(activityObject.repliesUpdated || new Date()),
+    commentsCount: parseInt(activityObject.repliesCount || ''),
+    commentsUpdated: new Date(activityObject.repliesUpdated || new Date()),
     content: '',
     createdAt: new Date(activityObject.published || new Date()),
-    from_user: userRemote.profile_url,
-    from_user_remote_id: userRemote.id,
+    fromUsername: userRemote.profileUrl,
+    fromUserRemoteId: userRemote.id.toString(),
     creator: userRemote.name,
     link: activityObject.id,
-    post_id: activityObject.id,
-    title: activityObject.title,
-    to_username: user.username,
+    postId: activityObject.id,
+    title: activityObject.title || '',
+    toUsername: user.username,
     updatedAt: new Date(activityObject.updated || new Date()),
     username: userRemote.username,
     view: atomContent,
   };
 
   if (activityObject.inReplyTo) {
-    handleComment(options, req, res, contentRemote, activityObject.inReplyTo);
+    handleComment(req, res, contentRemote, activityObject.inReplyTo);
   } else {
-    handlePost(options, req, res, contentRemote, user, activityObject);
+    handlePost(req, res, contentRemote, user, activityObject);
   }
 
   //const repliesCount = activityObject.repliesCount;
@@ -313,29 +411,40 @@ async function handleCreate(options, req, res, activity, user, userRemote) {
   // }
 }
 
-async function handlePost(options, req, res, contentRemote, user, activityObject) {
+async function handlePost(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  contentRemote: ContentRemote,
+  user: User,
+  activityObject: { [key: string]: string }
+) {
   // TODO(mime): need to unify this with activitypub.js, currently salmon specific...
   const wasUserMentioned = activityObject.mentioned || activityObject.attention;
 
   contentRemote.type = 'post';
-  await options.saveRemoteContent(contentRemote);
+  await saveRemoteContent(contentRemote);
 
   if (wasUserMentioned) {
     //emailMention(req, 'Remote User', undefined /* fromEmail */, user.email, contentRemote.link);
   }
 }
 
-async function handleComment(options, req, res, contentRemote, inReplyTo) {
-  const content = await options.getLocalContent(inReplyTo, req);
+async function handleComment(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  contentRemote: ContentRemote,
+  inReplyTo: string
+) {
+  const content = await getLocalContent(inReplyTo);
   if (!content) {
-    return res.sendStatus(404);
+    return res.status(404).end();
   }
 
   contentRemote.type = 'comment';
-  contentRemote.local_content_name = content.name;
-  await options.saveRemoteContent(contentRemote);
+  contentRemote.localContentName = content.name;
+  await saveRemoteContent(contentRemote);
 
-  //const contentOwner = await options.getLocalUser(inReplyTo, req);
+  //const contentOwner = await getLocalUser(inReplyTo, req);
 
   // TODO(mime): fix
   //await syndicate(req, contentOwner, content, contentRemote, true /* isComment */);

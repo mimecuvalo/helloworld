@@ -30,7 +30,7 @@ const Nav = styled('nav')`
   top: 0;
   width: 235px;
   height: 100vh;
-  padding: var(--app-margin);
+  padding: ${(props) => props.theme.spacing(1)};
   overflow: scroll;
 `;
 
@@ -91,7 +91,7 @@ function AdminApp() {
       <Head>
         <title>{title}</title>
       </Head>
-      <Container id="hw-admin">
+      <Container>
         <Nav>
           <F defaultMessage="Users" />
         </Nav>

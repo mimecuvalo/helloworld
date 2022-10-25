@@ -16,7 +16,7 @@ export default function Reblog({ contentRemote }: { contentRemote: ContentRemote
   // };
 
   return (
-    <button disabled={type === 'remote-comment'} className="hw-button-link">
+    <button disabled={type === 'remote-comment'}>
       <F defaultMessage="reblog" />
     </button>
   );

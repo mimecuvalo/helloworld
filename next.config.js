@@ -20,6 +20,11 @@ const sentryWebpackPluginOptions = {
 const nextConfig = {
   reactStrictMode: true,
 
+  images: {
+    domains: ['i.creativecommons.org', 's3.amazonaws.com', 'media.nightlight.rocks'],
+    minimumCacheTTL: 60,
+  },
+
   compiler: {
     styledComponents: true,
   },
@@ -31,6 +36,26 @@ const nextConfig = {
 
   sentry: {
     hideSourceMaps: true,
+  },
+
+  async redirects() {
+    return [
+      {
+        source: '/resource/:path*',
+        destination: 'https://media.nightlight.rocks/:path*',
+        permanent: false,
+      },
+      {
+        source: '/.well-known/host-meta',
+        destination: '/api/social/.well-known/host-meta',
+        permanent: false,
+      },
+      {
+        source: '/.well-known/webfinger',
+        destination: '/api/social/.well-known/webfinger',
+        permanent: false,
+      },
+    ];
   },
 
   webpack: (config, { dev, buildId, ...other }) => {

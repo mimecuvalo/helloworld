@@ -9,7 +9,7 @@ const authenticate =
     const session = getSession(req, res);
 
     if (!session) {
-      return res.status(401).end('Not logged in.');
+      return res.status(401).send({ msg: 'Not logged in.' });
     }
 
     const user = await prisma?.user.findUnique({
@@ -22,7 +22,7 @@ const authenticate =
     });
 
     if (!user) {
-      return res.status(403).end('I call shenanigans.');
+      return res.status(403).send({ msg: 'I call shenanigans.' });
     }
 
     return handler(req, res, user as User);

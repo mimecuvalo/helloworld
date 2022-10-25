@@ -1,7 +1,7 @@
 import { ApolloClient, ApolloLink, HttpLink, InMemoryCache, NormalizedCacheObject, split } from '@apollo/client';
+import { clientCache, dataIdFromObject } from 'data/localState';
 
 import { BatchHttpLink } from '@apollo/client/link/batch-http';
-import { clientCache } from 'data/localState';
 import isEqual from 'lodash/isEqual';
 import merge from 'deepmerge';
 import { onError } from '@apollo/client/link/error';
@@ -43,7 +43,7 @@ function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
     link,
-    cache: typeof window === 'undefined' ? new InMemoryCache({}) : clientCache,
+    cache: typeof window === 'undefined' ? new InMemoryCache({ dataIdFromObject }) : clientCache,
     typeDefs: schema,
   });
 }

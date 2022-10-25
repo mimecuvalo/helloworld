@@ -47,11 +47,7 @@ export default function Favorite({
     });
 
   return (
-    <Button
-      onClick={handleClick}
-      className="hw-button-link"
-      sx={{ fontWeight: contentRemote.favorited ? 'bold' : 'normal' }}
-    >
+    <Button onClick={handleClick} sx={{ fontWeight: contentRemote.favorited ? 'bold' : 'normal' }}>
       <F defaultMessage="favorite" />
     </Button>
   );

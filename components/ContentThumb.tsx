@@ -5,10 +5,6 @@ import { Content } from 'data/graphql-generated';
 import { contentUrl } from 'util/url-factory';
 
 const ThumbLink = styled(Link)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--thumb-width);
   max-width: var(--thumb-width);
   min-height: var(--thumb-height);
 `;
@@ -16,7 +12,7 @@ const ThumbLink = styled(Link)`
 const StyledThumb = styled('img')`
   display: inline-block;
   max-width: var(--thumb-width);
-  max-height: var(--thumb-height)';
+  max-height: var(--thumb-height);
 `;
 
 const messages = defineMessages({
@@ -49,7 +45,7 @@ export default function Thumb({
   //   </ThumbLink>
   // ) : (
   //   <ThumbLink
-  //     to={contentUrl(item)}
+  //     href={contentUrl(item)}
   //     className={className}
   //     title={item.title}
   //     target={item.forceRefresh || currentContent.forceRefresh ? '_self' : ''}
@@ -60,7 +56,7 @@ export default function Thumb({
 
   return (
     <ThumbLink
-      to={contentUrl(item)}
+      href={contentUrl(item)}
       className={className}
       title={item.title}
       target={item.forceRefresh || currentContent.forceRefresh ? '_self' : ''}

@@ -10,7 +10,7 @@ export default function KeepUnread({ keepUnreadCb }: { keepUnreadCb: (enabled: b
   };
 
   return (
-    <button onClick={handleClick} disabled={!enabled} className="hw-button-link">
+    <button onClick={handleClick} disabled={!enabled}>
       <F defaultMessage="keep unread" />
     </button>
   );

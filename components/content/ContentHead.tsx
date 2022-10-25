@@ -21,6 +21,7 @@ export default function ContentHead(props: {
   let description,
     favicon,
     rss,
+    theme,
     webmentionUrl = '';
 
   if (contentOwner) {
@@ -29,7 +30,7 @@ export default function ContentHead(props: {
     favicon = contentOwner.favicon;
     const feedUrl = buildUrl({ pathname: '/api/social/feed', searchParams: { resource } });
     rss = <link rel="alternate" type="application/atom+xml" title={title} href={feedUrl} />;
-    //theme = contentOwner.theme && <link rel="stylesheet" href={contentOwner.theme} />;
+    theme = contentOwner.theme && <link rel="stylesheet" href={contentOwner.theme} />;
     viewport = contentOwner.viewport || viewport;
     webmentionUrl = buildUrl({ pathname: '/api/social/webmention', searchParams: { resource } });
   }
@@ -71,6 +72,7 @@ export default function ContentHead(props: {
         <link rel="replies" type="application/atom+xml" href={repliesUrl} {...repliesAttribs} />
       ) : null}
       {contentOwner ? <GoogleAnalytics contentOwner={contentOwner} /> : null}
+      {theme}
     </Head>
   );
 }

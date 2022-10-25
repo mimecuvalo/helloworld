@@ -5,9 +5,9 @@ import { contentUrl, profileUrl } from 'util/url-factory';
 
 const StyledFooter = styled('footer')`
   position: sticky;
-  bottom: -1, // XXX: chrome has a bit of a problem here with content leaking out
+  bottom: -1; // XXX: chrome has a bit of a problem here with content leaking out
   background: #111;
-  z-index: 1,
+  z-index: 1;
 
   font-size: 11px;
   color: #666;
@@ -19,7 +19,7 @@ const StyledFooter = styled('footer')`
     width: 16px;
     height: 16px;
     margin-right: 10px;
-    margin-top:  2,
+    margin-top: 2px;
   }
 `;
 
@@ -45,7 +45,7 @@ export default function Footer({ content, contentOwner }: { content: Content; co
       <F
         defaultMessage="posted {date}"
         values={{
-          date: () => (
+          date: (
             <time className="t-published" dateTime={createdAt}>
               <FormattedDate value={createdAt} year="2-digit" month="2-digit" day="2-digit" />
             </time>
@@ -57,7 +57,7 @@ export default function Footer({ content, contentOwner }: { content: Content; co
         <F defaultMessage="permalink" />
       </a>
       <span className="notranslate">&nbsp;•</span>
-      <button className="hw-button-link" onClick={handleFullscreen}>
+      <button onClick={handleFullscreen}>
         <F defaultMessage="fullscreen" />
       </button>
       <span className="notranslate">•&nbsp;</span>

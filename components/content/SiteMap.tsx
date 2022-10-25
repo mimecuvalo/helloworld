@@ -10,19 +10,21 @@ import ContentLink from 'components/ContentLink';
 import Image from 'next/image';
 import MenuIcon from '@mui/icons-material/Menu';
 import constants from 'util/constants';
+import { transientOptions } from 'util/css';
 import { useRouter } from 'next/router';
 
-const Nav = styled('nav')<{ $forceMenuOpen: boolean }>`
-  margin: var(--app-margin);
+const Nav = styled('nav', transientOptions)<{ $forceMenuOpen: boolean }>`
+  margin: ${(props) => props.theme.spacing(1)};
   min-width: 155px;
   padding: 6px;
 `;
 
 const Album = styled('ul')`
   padding-left: 7px;
+  font-weight: normal;
 `;
 
-const Item = styled('li')<{ $isSelected: boolean }>`
+const Item = styled('li', transientOptions)<{ $isSelected: boolean }>`
   ${(props) => props.$isSelected && `font-weight: bold;`}
 `;
 
@@ -67,11 +69,14 @@ const SITE_MAP_AND_USER_QUERY = gql`
     }
 
     fetchPublicUserData(username: $username) {
+      username
       license
       logo
       name
       title
       sidebarHtml
+      theme
+      viewport
     }
   }
 `;
@@ -90,7 +95,12 @@ export default function SiteMap({ content, username }: { content?: Content; user
   function generateItem(item: SiteMapAndUserQuery['fetchSiteMap'][0], albums?: ReactNode) {
     const isSelected = item.name === content?.name || item.name === content?.album || item.name === content?.section;
     return (
-      <Item id={`hw-sitemap-${item.name}`} key={item.name} $isSelected={isSelected}>
+      <Item
+        id={`hw-sitemap-${item.name}`}
+        key={item.name}
+        $isSelected={isSelected}
+        data-x={JSON.stringify({ content, item })}
+      >
         <ContentLink item={item} currentContent={content} className="notranslate">
           {item.title}
         </ContentLink>
@@ -174,7 +184,7 @@ export default function SiteMap({ content, username }: { content?: Content; user
         <ul>
           {contentOwner.logo ? (
             <LogoWrapper className="h-card">
-              <a id="hw-sitemap-logo" href={profileUrl(username)} className="u-url u-uid">
+              <a href={profileUrl(username)} className="u-url u-uid">
                 <Logo
                   className="u-photo"
                   src={contentOwner.logo}
@@ -185,11 +195,7 @@ export default function SiteMap({ content, username }: { content?: Content; user
             </LogoWrapper>
           ) : null}
           <li>
-            <a
-              id="hw-sitemap-home"
-              href={profileUrl(username)}
-              className={content?.name === 'home' ? 'hw-selected' : ''}
-            >
+            <a href={profileUrl(username)}>
               <F defaultMessage="home" />
             </a>
           </li>
@@ -208,7 +214,7 @@ export default function SiteMap({ content, username }: { content?: Content; user
             ) : (
               <a href={contentOwner.license} target="_blank" rel="noopener noreferrer">
                 {/* @ts-ignore */}
-                <Image src={constants.licenses[contentOwner.license].img} alt="license" />
+                <Image width={44} height={15} src={constants.licenses[contentOwner.license].img} alt="license" />
               </a>
             )}
           </License>

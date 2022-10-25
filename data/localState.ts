@@ -3,7 +3,7 @@ import { InMemoryCache, StoreObject, defaultDataIdFromObject } from '@apollo/cli
 // This is your app's local state. Which can be queried and modified via Apollo.
 // Learn more here: https://www.apollographql.com/docs/react/data/local-state/
 
-export const clientCache: InMemoryCache = new InMemoryCache({});
+export const clientCache: InMemoryCache = new InMemoryCache({ dataIdFromObject });
 
 export function initializeLocalState() {
   /* todo */

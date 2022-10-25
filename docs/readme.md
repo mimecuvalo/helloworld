@@ -106,6 +106,7 @@ yarn config
 
 ### p0 (high pri)
 
+- refix websub/pubsubhubbub
 - creating comment doesn't load in comment properly (text missing)
 - replying from dashboard when body of editor isn't selected throws error
 - possible to pause compilation while building package?

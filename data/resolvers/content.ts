@@ -180,7 +180,6 @@ const Content = {
         select: ATTRIBUTES_NAVIGATION_WITH_VIEW,
         where: collectionItemConstraints,
       });
-      console.log(ATTRIBUTES_NAVIGATION_WITH_VIEW, collectionItemConstraints);
 
       if (!collectionItem) {
         return null;

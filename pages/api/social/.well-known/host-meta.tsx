@@ -1,9 +1,11 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
+
 import { buildUrl } from 'util/url-factory';
 
-export default function hostMeta(req, res) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const webFingerUrl = buildUrl({ req, pathname: `/.well-known/webfinger` });
 
-  res.type('application/xrd+xml');
+  res.setHeader('Content-Type', 'application/xrd+xml');
   res.send(`<?xml version="1.0" encoding="UTF-8"?>
     <XRD xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0" xmlns:hm="http://host-meta.net/xrd/1.0">
       <hm:Host>${buildUrl({ req, pathname: '' })}</hm:Host>

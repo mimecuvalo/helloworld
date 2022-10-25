@@ -48,7 +48,7 @@ export default function FollowingSpecialFeeds({
   return (
     <>
       <li>
-        <button className="hw-button-link" onClick={handleEntireFeedClick}>
+        <button onClick={handleEntireFeedClick}>
           <F defaultMessage="read all" />
         </button>
         <span>
@@ -57,14 +57,14 @@ export default function FollowingSpecialFeeds({
         <FollowingAllMenu />
       </li>
       <li>
-        <button className="hw-button-link" onClick={handleMyFeedClick}>
+        <button onClick={handleMyFeedClick}>
           {userAvatar}
           <F defaultMessage="your feed" />
         </button>
         <span />
       </li>
       <li>
-        <button className="hw-button-link" onClick={handleFavoritesClick}>
+        <button onClick={handleFavoritesClick}>
           {userAvatar}
           <F defaultMessage="favorites" />
         </button>
@@ -73,7 +73,7 @@ export default function FollowingSpecialFeeds({
         </span>
       </li>
       <li>
-        <button className="hw-button-link" onClick={handleCommentsClick}>
+        <button onClick={handleCommentsClick}>
           {userAvatar}
           <F defaultMessage="comments" />
         </button>

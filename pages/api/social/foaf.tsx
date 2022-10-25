@@ -1,24 +1,38 @@
-import { buildUrl } from 'util/url-factory';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { User, UserRemote } from '@prisma/client';
+import { buildUrl, profileUrl } from 'util/url-factory';
+import { getLocalUser, getRemoteFriends } from 'social-butterfly/db';
+
 import { createElement } from 'react';
 import crypto from 'crypto';
 import { renderToString } from 'react-dom/server';
 
-export default (options) => async (req, res) => {
-  const user = await options.getLocalUser(req.query.resource, req);
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const user = await getLocalUser(req.query.resource as string);
   if (!user) {
-    return res.sendStatus(404);
+    return res.status(404).end();
   }
 
-  const [followers, following] = await options.getRemoteFriends(req.query.resource);
+  const [followers, following] = await getRemoteFriends(req.query.resource as string);
 
-  res.type('application/rdf+xml');
+  res.setHeader('Content-Type', 'application/xrd+xml');
   res.send(
     `<?xml version='1.0' encoding='UTF-8'?>` +
       renderToString(<FOAF req={req} user={user} followers={followers} following={following} />)
   );
-};
+}
 
-function FOAF({ followers, following, user, req }) {
+function FOAF({
+  followers,
+  following,
+  user,
+  req,
+}: {
+  followers: UserRemote[];
+  following: UserRemote[];
+  user: User;
+  req: NextApiRequest;
+}) {
   const namespaces = {
     xmlns: 'http://xmlns.com/foaf/0.1/',
     'xmlns:bio': 'http://purl.org/vocab/bio/0.1/',
@@ -31,48 +45,52 @@ function FOAF({ followers, following, user, req }) {
 
   return (
     <RDF {...namespaces}>
-      <PersonalProfileDocument user={user} />
+      <PersonalProfileDocument user={user} req={req} />
       <SelfAgent following={following} user={user} req={req} />
       {followers.map((f) => (
-        <Agent key={f.profile_url} follower={f} user={user} />
+        <Agent key={f.profileUrl} follower={f} user={user} req={req} />
       ))}
     </RDF>
   );
 }
 
-function PersonalProfileDocument({ user }) {
+function PersonalProfileDocument({ user, req }: { user: User; req: NextApiRequest }) {
   const about = { 'rdf:about': '' };
-  const resource = { 'rdf:resource': user.url };
+  const resource = { 'rdf:resource': profileUrl(user.username, req) };
 
   return (
     <XML.PersonalProfileDocument {...about}>
+      {/* @ts-ignore this is fine. */}
       <maker {...resource} />
+      {/* @ts-ignore this is fine. */}
       <primaryTopic {...resource} />
     </XML.PersonalProfileDocument>
   );
 }
 
-function SelfAgent({ following, user, req }) {
+function SelfAgent({ following, user, req }: { following: UserRemote[]; user: User; req: NextApiRequest }) {
   const { username, logo } = user;
 
   const sha1 = crypto.createHash('sha1');
   const emailHash = sha1.update(`mailto:${user.email}`).digest('hex');
 
-  const about = { 'rdf:about': user.url };
-  const acctAbout = { 'rdf:about': `${user.url}#acct` };
+  const about = { 'rdf:about': profileUrl(user.username, req) };
+  const acctAbout = { 'rdf:about': `${profileUrl(user.username, req)}#acct` };
   const imgAbout = { 'rdf:about': buildUrl({ req, pathname: logo || '' }) };
   const homepageAbout = { 'rdf:resource': buildUrl({ req, pathname: '/' }) };
-  const resource = { 'rdf:resource': user.url };
+  const resource = { 'rdf:resource': profileUrl(user.username, req) };
 
   return (
     <XML.Agent {...about}>
       <XML.mbox_sha1sum>{emailHash}</XML.mbox_sha1sum>
+      {/* @ts-ignore this is fine. */}
       <weblog {...resource} />
       {logo ? (
         <FOAFImg>
           <XML.Image {...imgAbout} />
         </FOAFImg>
       ) : null}
+      {/* @ts-ignore this is fine. */}
       <account>
         <XML.OnlineAccount {...acctAbout}>
           <XML.accountServiceHomepage {...homepageAbout} />
@@ -80,25 +98,27 @@ function SelfAgent({ following, user, req }) {
           <XML.accountProfilePage {...resource} />
           <SIOCAcctOf {...resource} />
           {following.map((f) => (
-            <SIOCFollows key={f.profile_url} {...{ 'rdf:resource': `${f.profile_url}#acct` }} />
+            <SIOCFollows key={f.profileUrl} {...{ 'rdf:resource': `${f.profileUrl}#acct` }} />
           ))}
         </XML.OnlineAccount>
+        {/* @ts-ignore this is fine. */}
       </account>
       {following
         .filter((f) => f.follower)
         .map((f) => (
-          <knows key={f.profile_url} {...{ 'rdf:resource': `${f.profile_url}` }} />
+          /* @ts-ignore this is fine. */
+          <knows key={f.profileUrl} {...{ 'rdf:resource': `${f.profileUrl}` }} />
         ))}
     </XML.Agent>
   );
 }
 
-function Agent({ follower, user }) {
-  const agentAbout = { 'rdf:about': follower.profile_url };
-  const accountAbout = { 'rdf:about': `${follower.profile_url}#acct` };
-  const profileResource = { 'rdf:resource': follower.profile_url };
-  const followsResource = { 'rdf:resource': `${user.url}#acct` };
-  const resource = { 'rdf:resource': user.url };
+function Agent({ follower, user, req }: { follower: UserRemote; user: User; req: NextApiRequest }) {
+  const agentAbout = { 'rdf:about': follower.profileUrl };
+  const accountAbout = { 'rdf:about': `${follower.profileUrl}#acct` };
+  const profileResource = { 'rdf:resource': follower.profileUrl };
+  const followsResource = { 'rdf:resource': `${profileUrl(user.username, req)}#acct` };
+  const resource = { 'rdf:resource': profileUrl(user.username, req) };
 
   return (
     <XML.Agent {...agentAbout}>
@@ -115,7 +135,9 @@ function Agent({ follower, user }) {
   );
 }
 
-const createElementFactory = (type) => (p) => {
+// meh.
+// eslint-disable-next-line
+const createElementFactory = (type: string) => (p: Record<string, any>) => {
   const { children, ...props } = p;
   return createElement(type, props, children);
 };
@@ -124,7 +146,7 @@ const RDF = createElementFactory('rdf:RDF');
 const FOAFImg = createElementFactory('foaf:img');
 const SIOCAcctOf = createElementFactory('sioc:account_of');
 const SIOCFollows = createElementFactory('sioc:follows');
-const XML = {};
+const XML: { [key: string]: React.ComponentClass<any> } = {};
 [
   'PersonalProfileDocument',
   'Agent',
@@ -134,4 +156,5 @@ const XML = {};
   'accountServiceHomepage',
   'accountName',
   'accountProfilePage',
+  // @ts-ignore this is fine, i think...
 ].forEach((type) => (XML[type] = createElementFactory(type)));

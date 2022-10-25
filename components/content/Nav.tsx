@@ -134,7 +134,7 @@ const PersistedNav = memo(
     content: Content;
     data: any;
   }) {
-    if (loading) {
+    if (loading || !data) {
       return <LoadingEmptyBox />;
     }
 
@@ -151,7 +151,7 @@ const PersistedNav = memo(
           <a
             href={url}
             rel={name}
-            className={classNames(`hw-${name} hw-button`, { notranslate: name === 'top' })}
+            className={classNames(`hw-${name}`, { notranslate: name === 'top' })}
             title={contentMeta.title}
           >
             {msg}
@@ -179,7 +179,7 @@ const PersistedNav = memo(
           item={contentMeta}
           currentContent={content}
           rel={name}
-          className={classNames(`hw-${name} hw-button`, { notranslate: name === 'top' })}
+          className={classNames(`hw-${name}`, { notranslate: name === 'top' })}
         >
           {msg}
         </ContentLink>

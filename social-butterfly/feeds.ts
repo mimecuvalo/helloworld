@@ -1,18 +1,20 @@
+import { ContentRemote, UserRemote } from '@prisma/client';
+import { Readable, ReadableOptions } from 'stream';
 import { createAbsoluteUrl, fetchText, fetchUrl, sanitizeHTML } from 'util/crawler';
+import { getRemoteContent, saveRemoteContent } from './db';
 
 import FeedParser from 'feedparser';
 import { HTTPError } from 'util/exceptions';
-import { Readable } from 'stream';
 import cheerio from 'cheerio';
 
-export async function discoverAndParseFeedFromUrl(url) {
+export async function discoverAndParseFeedFromUrl(url: string) {
   const { content, feedUrl } = await discoverAndRetrieveFeedFromUrl(url);
   const { feedEntries, feedMeta } = await parseFeed(content);
 
   return { feedEntries, feedMeta, feedUrl };
 }
 
-async function discoverAndRetrieveFeedFromUrl(url) {
+async function discoverAndRetrieveFeedFromUrl(url: string) {
   const response = await fetchUrl(url);
   const content = await response.text();
 
@@ -25,9 +27,9 @@ async function discoverAndRetrieveFeedFromUrl(url) {
   return { content, feedUrl: url };
 }
 
-async function parseHtmlAndRetrieveFeed(websiteUrl, html) {
+async function parseHtmlAndRetrieveFeed(websiteUrl: string, html: string) {
   const $ = cheerio.load(html);
-  const links = $('link[rel="alternate"]').filter((index, el) => ($(el).attr('type') || '').match(/(rss|atom)/));
+  const links = $('link[rel="alternate"]').filter((index, el) => !!($(el).attr('type') || '').match(/(rss|atom)/));
 
   let feedUrl = links.first().attr('href');
   if (!feedUrl) {
@@ -39,87 +41,97 @@ async function parseHtmlAndRetrieveFeed(websiteUrl, html) {
   return { content, feedUrl };
 }
 
-export async function parseFeedAndInsertIntoDb(options, userRemote, feedResponseText, logger) {
+export async function parseFeedAndInsertIntoDb(userRemote: UserRemote, feedResponseText: string) {
   try {
     const { feedEntries } = await parseFeed(feedResponseText);
-    await mapFeedAndInsertIntoDb(options, userRemote, feedEntries, logger);
+    await mapFeedAndInsertIntoDb(userRemote, feedEntries);
   } catch (ex) {
-    logger && logger.error(`${userRemote.local_username} - ${userRemote.profile_url}: parseFeed FAILED.\n${ex}`);
+    // TODO(mime) add logging later.
+    // logger && logger.error(`${userRemote.local_username} - ${userRemote.profile_url}: parseFeed FAILED.\n${ex}`);
   }
 }
 
-export async function mapFeedAndInsertIntoDb(options, userRemote, feedEntries, logger) {
-  let newEntries, skippedCount;
+export async function mapFeedAndInsertIntoDb(userRemote: UserRemote, feedEntries: FeedParser.Node[]) {
+  let newEntries: ContentRemote[] = [];
   try {
-    [newEntries, skippedCount] = await mapFeedEntriesToModelEntries(options, feedEntries, userRemote);
-    logger &&
-      logger.info(
-        `${userRemote.local_username} - ${userRemote.profile_url}: ` +
-          `parsed ${newEntries.length} entries, skipped ${skippedCount}.`
-      );
+    [newEntries] = (await mapFeedEntriesToModelEntries(feedEntries, userRemote)) as [ContentRemote[], number];
+    // TODO(mime) add logging later.
+    // logger &&
+    //   logger.info(
+    //     `${userRemote.local_username} - ${userRemote.profile_url}: ` +
+    //       `parsed ${newEntries.length} entries, skipped ${skippedCount}.`
+    //   );
   } catch (ex) {
-    logger && logger.error(`${userRemote.local_username} - ${userRemote.profile_url}: mapFeed FAILED.\n${ex}`);
+    // TODO(mime) add logging later.
+    // logger && logger.error(`${userRemote.local_username} - ${userRemote.profile_url}: mapFeed FAILED.\n${ex}`);
     return;
   }
 
   try {
-    newEntries.length && (await options.saveRemoteContent(newEntries));
-    logger &&
-      logger.info(
-        `${userRemote.local_username} - ${userRemote.profile_url}: inserted ${newEntries.length} entries into db.`
-      );
+    newEntries.length && (await saveRemoteContent(newEntries));
+    // TODO(mime) add logging later.
+    // logger &&
+    //   logger.info(
+    //     `${userRemote.local_username} - ${userRemote.profile_url}: inserted ${newEntries.length} entries into db.`
+    //   );
   } catch (ex) {
-    logger &&
-      logger.error(`${userRemote.local_username} - ${userRemote.profile_url}: db insertion failed.\n${ex.stack}`);
+    // TODO(mime) add logging later.
+    // logger &&
+    //   logger.error(`${userRemote.local_username} - ${userRemote.profile_url}: db insertion failed.\n${ex.stack}`);
   }
 }
 
-export async function retrieveFeed(feedUrl) {
+export async function retrieveFeed(feedUrl: string) {
   return await fetchText(feedUrl);
 }
 
-export async function parseFeed(content) {
-  const { feedEntries, feedMeta } = await new Promise((resolve, reject) => {
-    const feedEntries = [];
-    new TextStream({}, content)
-      .pipe(new FeedParser())
-      .on('error', function (error) {
-        reject(`FeedParser failed to parse feed: ${error}`);
-      })
-      .on('readable', function () {
-        try {
-          let feedEntry = this.read();
-          while (feedEntry) {
-            feedEntries.push(feedEntry);
-            feedEntry = this.read();
+export async function parseFeed(content: string) {
+  const { feedEntries, feedMeta }: { feedEntries: FeedParser.Node[]; feedMeta: FeedParser.Node } = await new Promise(
+    (resolve, reject) => {
+      const feedEntries: string[] = [];
+      new TextStream({}, content)
+        .pipe(new FeedParser({}))
+        .on('error', function (error: any) {
+          reject(`FeedParser failed to parse feed: ${error}`);
+        })
+        .on('readable', function () {
+          try {
+            // @ts-ignore meh.
+            let feedEntry = this.read();
+            while (feedEntry) {
+              feedEntries.push(feedEntry);
+              // @ts-ignore meh.
+              feedEntry = this.read();
+            }
+          } catch (ex) {
+            // @ts-ignore
+            reject(ex.message);
           }
-        } catch (ex) {
-          reject(ex.message);
-        }
-      })
-      .on('end', function () {
-        resolve({ feedEntries, feedMeta: this.meta });
-      });
-  });
+        })
+        .on('end', function () {
+          // @ts-ignore meh.
+          resolve({ feedEntries, feedMeta: this.meta });
+        });
+    }
+  );
 
   return { feedEntries, feedMeta };
 }
 
-async function mapFeedEntriesToModelEntries(options, feedEntries, userRemote) {
-  const entries = await Promise.all(
-    feedEntries.map(async (feedEntry) => await handleEntry(options, feedEntry, userRemote))
-  );
+async function mapFeedEntriesToModelEntries(feedEntries: FeedParser.Node[], userRemote: UserRemote) {
+  const entries = await Promise.all(feedEntries.map(async (feedEntry) => await handleEntry(feedEntry, userRemote)));
   const filteredEntries = entries.filter((entry) => entry);
   const skippedCount = entries.length - filteredEntries.length;
 
   return [filteredEntries, skippedCount];
 }
 
-async function handleEntry(options, feedEntry, userRemote) {
+const FEED_MAX_DAYS_OLD = 30 * 24 * 60 * 60 * 1000; // 30 days
+async function handleEntry(feedEntry: FeedParser.Node, userRemote: UserRemote): Promise<Partial<ContentRemote> | null> {
   const entryId = feedEntry.guid || feedEntry.link || feedEntry.permalink;
   const link = feedEntry.link || feedEntry.permalink;
 
-  const existingModelEntry = await options.getRemoteContent(userRemote.local_username, entryId);
+  const existingModelEntry = await getRemoteContent(userRemote.localUsername, entryId);
 
   let dateUpdated = new Date();
   if (feedEntry.date) {
@@ -129,13 +141,13 @@ async function handleEntry(options, feedEntry, userRemote) {
   }
 
   // We ignore if we already have the item in our DB.
-  // Also, we don't keep items that are over options.feedMaxDaysOld.
+  // Also, we don't keep items that are over feedMaxDaysOld.
   if (
     existingModelEntry?.type === 'comment' ||
-    (existingModelEntry && +existingModelEntry.updatedAt === +dateUpdated) ||
-    dateUpdated < new Date(Date.now() - options.constants.feedMaxDaysOld)
+    (existingModelEntry && +(existingModelEntry.updatedAt || 0) === +dateUpdated) ||
+    dateUpdated < new Date(Date.now() - FEED_MAX_DAYS_OLD)
   ) {
-    return;
+    return null;
   }
 
   let view = feedEntry.description || feedEntry.summary;
@@ -162,16 +174,16 @@ async function handleEntry(options, feedEntry, userRemote) {
     'usemap',
   ];
   const RELATIVE_REGEXP = new RegExp(`(${HTML_ATTRIBUTES_WITH_LINKS.join('|')})(=['"])/`, 'gi');
-  view = view.replace(RELATIVE_REGEXP, `$1$2${userRemote.profile_url}/`);
+  view = view.replace(RELATIVE_REGEXP, `$1$2${userRemote.profileUrl}/`);
 
   // Comments and threads
-  let comments_count = 0;
-  let comments_updated;
+  let commentsCount = 0;
+  let commentsUpdated = null;
   const atomLinks = feedEntry['atom:link'] ? [feedEntry['atom:link']].flat(1) : [];
   const replies = atomLinks.find((el) => el['@'].rel === 'replies');
   if (replies) {
-    comments_count = parseInt(replies['@'].count);
-    comments_updated = new Date(replies['@'].updated);
+    commentsCount = parseInt(replies['@'].count);
+    commentsUpdated = new Date(replies['@'].updated);
   }
   const thread = feedEntry['thr:in-reply-to']?.['@'].ref;
 
@@ -180,20 +192,20 @@ async function handleEntry(options, feedEntry, userRemote) {
   const avatar = pocoPhotos && pocoPhotos['poco:value']['#'];
 
   return {
-    id: existingModelEntry?.id || undefined,
+    id: existingModelEntry?.id || -1,
     avatar,
-    comments_count,
-    comments_updated,
+    commentsCount,
+    commentsUpdated,
     content: '',
     createdAt: feedEntry.pubdate || new Date(),
     creator: feedEntry.author,
-    from_user: userRemote.profile_url,
-    from_user_remote_id: userRemote.id,
+    fromUsername: userRemote.profileUrl,
+    fromUserRemoteId: userRemote.id.toString(),
     link,
-    post_id: entryId,
+    postId: entryId,
     thread,
     title: feedEntry.title || 'untitled',
-    to_username: userRemote.local_username,
+    toUsername: userRemote.localUsername,
     type: 'post',
     updatedAt: dateUpdated,
     username: userRemote.username,
@@ -202,7 +214,9 @@ async function handleEntry(options, feedEntry, userRemote) {
 }
 
 class TextStream extends Readable {
-  constructor(options, text) {
+  text: string;
+
+  constructor(options: ReadableOptions, text: string) {
     super(options);
     this.text = text;
   }

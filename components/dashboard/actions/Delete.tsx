@@ -43,7 +43,7 @@ export default function Delete({ contentRemote }: { contentRemote: ContentRemote
     });
 
   return (
-    <button onClick={handleClick} disabled={!contentRemote.deleted} className="hw-button-link">
+    <button onClick={handleClick} disabled={!contentRemote.deleted}>
       <F defaultMessage="delete" />
     </button>
   );

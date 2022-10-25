@@ -34,7 +34,7 @@ export default function Favorites({ favorites }: { favorites?: Favorite[] }) {
           <F
             defaultMessage="{user}: favorited this post."
             values={{
-              user: () => (
+              user: (
                 <Author>
                   {favorite.fromUsername ? (
                     <a href={favorite.fromUsername} target="_blank" rel="noopener noreferrer">

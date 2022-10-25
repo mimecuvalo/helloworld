@@ -1,13 +1,16 @@
-import { buildUrl, ensureAbsoluteUrl } from 'util/url-factory';
 import { createAbsoluteUrl, fetchJSON, fetchText } from 'util/crawler';
+import { getRemoteUser, saveRemoteUser } from './db';
 
+import { NextApiRequest } from 'next';
+import { UserRemote } from '@prisma/client';
 import cheerio from 'cheerio';
 import { discoverAndParseFeedFromUrl } from './feeds';
+import { ensureAbsoluteUrl } from 'util/url-factory';
 
 // Get the /.well-known/host-meta resource.
 // In other words, get the link to the WebFinger resource.
 // We prefer JSON, or XML if JSON is not found.
-export async function getLRDD(url) {
+export async function getLRDD(url: string) {
   const parsedUrl = new URL(url);
   const hostMetaUrl = `${parsedUrl.protocol}//${parsedUrl.host}/.well-known/host-meta`;
 
@@ -20,13 +23,15 @@ export async function getLRDD(url) {
     if (!lrddUrl) {
       lrddUrl = $('link[rel="lrdd"]').attr('template');
     }
-  } catch (ex) {}
+  } catch (ex) {
+    /* do nothing */
+  }
 
   return lrddUrl;
 }
 
 // Has all the links to different feeds/data about the user. See webfinger.js for example.
-export async function getWebfinger(lrddUrl, uri) {
+export async function getWebfinger(lrddUrl: string, uri: string) {
   const webfingerUrl = lrddUrl.replace('{uri}', encodeURIComponent(uri));
 
   let webfingerDoc, webfingerInfo;
@@ -50,19 +55,19 @@ export async function getWebfinger(lrddUrl, uri) {
   let success = false;
   try {
     const json = JSON.parse(webfingerDoc);
-    const linkMap = {};
-    json.links.map((link) => (linkMap[link.rel] = link));
+    const linkMap: { [key: string]: HTMLAnchorElement } = {};
+    json.links.map((link: HTMLAnchorElement) => (linkMap[link.rel] = link));
     const activityPubActorUrl = json.links.find(
-      (link) => link.rel === 'self' && link.type === 'application/activity+json'
+      (link: HTMLAnchorElement) => link.rel === 'self' && link.type === 'application/activity+json'
     );
 
     webfingerInfo = {
-      feed_url: linkMap['http://schemas.google.com/g/2010#updates-from']?.href,
-      salmon_url: linkMap['salmon']?.href,
-      activitypub_actor_url: activityPubActorUrl?.href,
-      webmention_url: linkMap['webmention']?.href,
-      magic_key: (linkMap['magic-public-key']?.href || '').replace('data:application/magic-public-key,', ''),
-      profile_url: json.aliases.find((alias) => alias.startsWith('https:') || alias.startsWith('http:')),
+      feedUrl: linkMap['http://schemas.google.com/g/2010#updates-from']?.href,
+      salmonUrl: linkMap['salmon']?.href,
+      activityPubActorUrl: activityPubActorUrl?.href,
+      webmentionUrl: linkMap['webmention']?.href,
+      magicKey: (linkMap['magic-public-key']?.href || '').replace('data:application/magic-public-key,', ''),
+      profileUrl: json.aliases.find((alias: string) => alias.startsWith('https:') || alias.startsWith('http:')),
     };
     success = true;
   } catch (ex) {
@@ -74,29 +79,30 @@ export async function getWebfinger(lrddUrl, uri) {
       const $ = cheerio.load(webfingerDoc);
 
       webfingerInfo = {
-        feed_url: $('link[rel="http://schemas.google.com/g/2010#updates-from"]').attr('href'),
-        salmon_url: $('link[rel="salmon"]').attr('href'),
-        activitypub_actor_url: $('link[rel="self"][type="application/activity+json"]').attr('href'),
-        webmention_url: $('link[rel="webmention"]').attr('href'),
-        magic_key: $('link[rel="magic-public-key"]').attr('href').replace('data:application/magic-public-key,', ''),
-        profile_url:
+        feedUrl: $('link[rel="http://schemas.google.com/g/2010#updates-from"]').attr('href'),
+        salmonUrl: $('link[rel="salmon"]').attr('href'),
+        activityPubActorUrl: $('link[rel="self"][type="application/activity+json"]').attr('href'),
+        webmentionUrl: $('link[rel="webmention"]').attr('href'),
+        magicKey: $('link[rel="magic-public-key"]')?.attr('href')?.replace('data:application/magic-public-key,', ''),
+        profileUrl:
           $('alias').first().text().startsWith('https:') ||
           $('alias').first().text().startsWith('http:') ||
           $('alias').last().text(),
+        activityPubInboxUrl: '',
       };
     } catch (ex) {
       return null;
     }
   }
 
-  if (webfingerInfo.activitypub_actor_url) {
+  if (webfingerInfo && webfingerInfo.activityPubActorUrl) {
     try {
-      const actorJSON = await getActivityPubActor(webfingerInfo.activitypub_actor_url);
+      const actorJSON = await getActivityPubActor(webfingerInfo.activityPubActorUrl);
 
       // TODO(mime): not the cleanest naming, we're overwriting the magic_key and preferring the PEM from
       // the actor JSON. should rename this field to reflect that it is has magic or PEM format for public key.
-      webfingerInfo.magic_key = actorJSON['publicKey']['publicKeyPem'];
-      webfingerInfo.activitypub_inbox_url = actorJSON['inbox'];
+      webfingerInfo.magicKey = actorJSON['publicKey']['publicKeyPem'];
+      webfingerInfo.activityPubInboxUrl = actorJSON['inbox'];
     } catch (ex) {
       // Ignore, if we can't get the actor info.
     }
@@ -105,13 +111,13 @@ export async function getWebfinger(lrddUrl, uri) {
   return webfingerInfo;
 }
 
-export async function getActivityPubActor(url) {
+export async function getActivityPubActor(url: string) {
   return await fetchJSON(url, {
     Accept: 'application/activity+json',
   });
 }
 
-export async function getHTML(url) {
+export async function getHTML(url: string) {
   let $;
   try {
     const html = await fetchText(url);
@@ -123,26 +129,28 @@ export async function getHTML(url) {
   return $;
 }
 
-export async function discoverUserRemoteInfoSaveAndSubscribe(req, options, url, local_username) {
-  const userRemote = await getUserRemoteInfo(url, local_username);
+export async function discoverUserRemoteInfoSaveAndSubscribe(req: NextApiRequest, url: string, localUsername: string) {
+  const userRemote = await getUserRemoteInfo(url, localUsername);
 
-  const existingUserRemote = await options.getRemoteUser(userRemote.local_username, userRemote.profile_url);
+  const existingUserRemote = await getRemoteUser(userRemote.localUsername || '', userRemote.profileUrl || '');
 
-  userRemote.id = existingUserRemote?.id || undefined;
+  userRemote.id = existingUserRemote?.id || -1;
   userRemote.following = true;
-  await options.saveRemoteUser(userRemote);
+  await saveRemoteUser(userRemote as UserRemote);
 
-  if (req && userRemote.hub_url) {
-    const userRemoteParams = { localUsername: userRemote.local_username, remoteProfileUrl: userRemote.profile_url };
-    const callbackUrl = buildUrl({ req, pathname: '/websub', searchParams: userRemoteParams });
-    await options.webSubSubscriberServer.subscribe(userRemote.hub_url, options.constants.webSubHub, callbackUrl);
-  }
+  // TODO(mime)
+  // if (req && userRemote.hubUrl) {
+  //   const userRemoteParams = { localUsername: userRemote.localUsername, remoteProfileUrl: userRemote.profileUrl };
+  //   const callbackUrl = buildUrl({ req, pathname: '/websub', searchParams: userRemoteParams });
+  //   await webSubSubscriberServer.subscribe(userRemote.hubUrl, WEB_SUB_HUB, callbackUrl);
+  // }
 
-  return await options.getRemoteUser(userRemote.local_username, userRemote.profile_url);
+  return await getRemoteUser(userRemote.localUsername || '', userRemote.profileUrl || '');
 }
 
-export async function getUserRemoteInfo(websiteUrl, local_username) {
-  let userRemote = { local_username };
+export async function getUserRemoteInfo(websiteUrl: string, localUsername: string) {
+  // @ts-ignore meh this is fine.
+  let userRemote: UserRemote = { localUsername };
 
   const lrddUrl = await getLRDD(websiteUrl);
   if (lrddUrl) {
@@ -150,37 +158,43 @@ export async function getUserRemoteInfo(websiteUrl, local_username) {
     userRemote = Object.assign({}, userRemote, webfingerInfo);
   }
 
-  userRemote.feed_url = ensureAbsoluteUrl(websiteUrl, userRemote.feed_url);
-  const { feedMeta, feedUrl } = await discoverAndParseFeedFromUrl(userRemote.feed_url || websiteUrl);
-  userRemote.feed_url = feedUrl;
+  userRemote.feedUrl = ensureAbsoluteUrl(websiteUrl, userRemote.feedUrl || '');
+  const { feedMeta, feedUrl } = await discoverAndParseFeedFromUrl(userRemote.feedUrl || websiteUrl);
+  userRemote.feedUrl = feedUrl;
 
-  const htmlDoc = await getHTML(websiteUrl);
+  const htmlDoc =
+    (await getHTML(websiteUrl)) ||
+    (() => {
+      /* do nothing */
+    });
   const atomLinks = feedMeta['atom:link'] ? [feedMeta['atom:link']].flat(1) : [];
-  userRemote.profile_url = userRemote.profile_url || feedMeta['atom:author']?.['uri']?.['#'] || websiteUrl;
-  userRemote.hub_url = atomLinks.find((el) => el['@'].rel === 'hub')?.['@'].href;
-  userRemote.salmon_url = userRemote.salmon_url || atomLinks.find((el) => el['@'].rel === 'salmon')?.['@'].href;
-  userRemote.webmention_url = userRemote.webmention_url || htmlDoc('link[rel="webmention"]').attr('href');
+  userRemote.profileUrl = userRemote.profileUrl || feedMeta['atom:author']?.['uri']?.['#'] || websiteUrl || '';
+  userRemote.hubUrl = atomLinks.find((el) => el['@'].rel === 'hub')?.['@'].href || '';
+  userRemote.salmonUrl = userRemote.salmonUrl || atomLinks.find((el) => el['@'].rel === 'salmon')?.['@'].href || '';
+  userRemote.webmentionUrl = userRemote.webmentionUrl || htmlDoc('link[rel="webmention"]')?.attr('href') || '';
   userRemote.username =
     userRemote.username || feedMeta['atom:author']?.['poco:preferredusername']?.['#'] || feedMeta.title;
   userRemote.name = feedMeta['atom:author']?.['poco:displayname']?.['#'] || '';
   userRemote.favicon =
     feedMeta.favicon ||
-    createAbsoluteUrl(websiteUrl, htmlDoc('link[rel="shortcut icon"]')['href']) ||
-    createAbsoluteUrl(websiteUrl, htmlDoc('link[rel="icon"]')['href']) ||
+    // @ts-ignore no idea.
+    createAbsoluteUrl(websiteUrl, htmlDoc('link[rel="shortcut icon"]')?.['href']) ||
+    // @ts-ignore no idea.
+    createAbsoluteUrl(websiteUrl, htmlDoc('link[rel="icon"]')?.['href']) ||
     createAbsoluteUrl(websiteUrl, '/favicon.jpg');
   userRemote.avatar = feedMeta.image?.url || userRemote.favicon;
   userRemote.order = Math.pow(2, 31) - 1;
 
-  // If activitypub_actor_url not found, fallback to profile_url. Used in Salmon lookups.
-  userRemote.activitypub_actor_url = userRemote.activitypub_actor_url || userRemote.profile_url;
+  // If activityPubActorUrl not found, fallback to profileUrl. Used in Salmon lookups.
+  userRemote.activityPubActorUrl = userRemote.activityPubActorUrl || userRemote.profileUrl;
 
-  userRemote.salmon_url = ensureAbsoluteUrl(websiteUrl, userRemote.salmon_url);
-  userRemote.activitypub_actor_url = ensureAbsoluteUrl(websiteUrl, userRemote.activitypub_actor_url);
-  userRemote.activitypub_inbox_url = ensureAbsoluteUrl(websiteUrl, userRemote.activitypub_inbox_url);
-  userRemote.webmention_url = ensureAbsoluteUrl(websiteUrl, userRemote.webmention_url);
-  userRemote.profile_url = ensureAbsoluteUrl(websiteUrl, userRemote.profile_url);
-  userRemote.feed_url = ensureAbsoluteUrl(websiteUrl, userRemote.feed_url);
-  userRemote.hub_url = ensureAbsoluteUrl(websiteUrl, userRemote.hub_url);
+  userRemote.salmonUrl = ensureAbsoluteUrl(websiteUrl, userRemote.salmonUrl || '');
+  userRemote.activityPubActorUrl = ensureAbsoluteUrl(websiteUrl, userRemote.activityPubActorUrl || '');
+  userRemote.activityPubInboxUrl = ensureAbsoluteUrl(websiteUrl, userRemote.activityPubInboxUrl || '');
+  userRemote.webmentionUrl = ensureAbsoluteUrl(websiteUrl, userRemote.webmentionUrl);
+  userRemote.profileUrl = ensureAbsoluteUrl(websiteUrl, userRemote.profileUrl || '');
+  userRemote.feedUrl = ensureAbsoluteUrl(websiteUrl, userRemote.feedUrl);
+  userRemote.hubUrl = ensureAbsoluteUrl(websiteUrl, userRemote.hubUrl || '');
 
   return userRemote;
 }

@@ -59,8 +59,8 @@ export default function ContentBase(
           <F
             defaultMessage="powered by {br} {link}"
             values={{
-              br: () => <br />,
-              link: () => (
+              br: <br />,
+              link: (
                 <a href="https://github.com/mimecuvalo/helloworld" rel="generator">
                   Hello, world.
                 </a>

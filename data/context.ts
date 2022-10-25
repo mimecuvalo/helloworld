@@ -1,8 +1,8 @@
 import { Claims, getSession } from '@auth0/nextjs-auth0';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { PrismaClient, User } from '@prisma/client';
 
 import DataLoader from 'dataloader';
-import { PrismaClient } from '@prisma/client';
 import createLoaders from './loaders';
 import prisma from './prisma';
 
@@ -10,6 +10,7 @@ export type Context = {
   currentUsername: string;
   currentUserEmail: string;
   currentUserPicture: string;
+  currentUser: User | null;
   user?: Claims;
   accessToken?: string;
   prisma: PrismaClient;
@@ -21,9 +22,11 @@ export type Context = {
 export async function createContext({ req, res }: { req: NextApiRequest; res: NextApiResponse }): Promise<Context> {
   const session = getSession(req, res);
 
-  let currentUsername = 'mime';
+  let currentUsername = '';
+  let currentUser = null;
   if (session) {
-    currentUsername = (await prisma.user.findUnique({ where: { email: session?.user.email } }))?.username || '';
+    currentUser = await prisma.user.findUnique({ where: { email: session?.user.email } });
+    currentUsername = currentUser?.username || '';
   }
 
   return {
@@ -35,6 +38,7 @@ export async function createContext({ req, res }: { req: NextApiRequest; res: Ne
     prisma,
     hostname: req.headers['host'] || '',
     req,
+    currentUser,
     loaders: createLoaders(),
   };
 }

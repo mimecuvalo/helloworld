@@ -42,7 +42,7 @@ export default function FollowingFeeds({
           style={{ fontWeight: currentUserRemote?.profileUrl === userRemote.profileUrl ? 'bold' : 'normal' }}
         >
           <button
-            className="hw-button-link notranslate"
+            className="notranslate"
             onClick={(evt) => handleClick(evt, userRemote)}
             title={userRemote.name || userRemote.username}
           >
