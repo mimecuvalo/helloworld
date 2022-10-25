@@ -40,4 +40,4 @@ migration notes
   // TODO(mime): hacky - how can we unify this (here and wherever we use syndicate())
   currentUser.url = profileUrl(currentUsername, req);
 - joy-ui?
-- kill social-butterfly package?
+- get rid of social-butterfly package?

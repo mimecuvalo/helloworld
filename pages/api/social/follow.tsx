@@ -46,12 +46,13 @@ export async function follow(req: NextApiRequest, currentUser: User, profileUrl:
   return userRemote;
 }
 
-// eslint-disable-next-line
 export async function unfollow(
   req: NextApiRequest,
   currentUser: User,
   userRemote: UserRemote,
+  // eslint-disable-next-line
   hubUrl: string | null,
+  // eslint-disable-next-line
   profileUrl: string
 ) {
   // TODO(mime): websub / pubsubhubbub doesn't work on next.js - figure something else

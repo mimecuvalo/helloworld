@@ -29,12 +29,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   res.status(202).end();
 }
 
-// eslint-disable-next-line
 export async function reply(
   req: NextApiRequest,
   contentOwner: User,
   content: Content,
   userRemote: UserRemote,
+  // eslint-disable-next-line
   mentionedRemoteUsers: UserRemote[]
 ) {
   try {

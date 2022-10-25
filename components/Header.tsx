@@ -18,7 +18,7 @@ const StyledHeader = styled('header')`
   }
 
   & button {
-    marginsreft: 10px;
+    margin-left: 10px;
   }
 `;
 
