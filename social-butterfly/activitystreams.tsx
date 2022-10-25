@@ -33,12 +33,12 @@ export async function accept(req: NextApiRequest, contentOwner: User, userRemote
   send(req, userRemote, contentOwner, message);
 }
 
-// eslint-disable-next-line
 export async function like(
   req: NextApiRequest,
   contentOwner: User,
   contentRemote: ContentRemote,
   userRemote: UserRemote,
+  // eslint-disable-next-line
   isFavorite: boolean
 ) {
   // TODO(mime): add back unfavorite
