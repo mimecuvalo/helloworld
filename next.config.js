@@ -21,7 +21,7 @@ const nextConfig = {
   reactStrictMode: true,
 
   images: {
-    domains: ['i.creativecommons.org', 's3.amazonaws.com', process.env.S3_AWS_S3_BUCKET_NAME],
+    domains: ['i.creativecommons.org', 's3.amazonaws.com', process.env.S3_AWS_S3_BUCKET_NAME].filter((i) => !!i),
     minimumCacheTTL: 60,
   },
 

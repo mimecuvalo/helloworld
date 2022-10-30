@@ -139,10 +139,10 @@ export default function SiteMap({ content, username }: { content?: Content; user
 
   useEffect(() => {
     if (user?.username === username) {
-      // @ts-ignore
       client.refetchQueries({
         include: [
           {
+            // @ts-ignore
             query: SITE_MAP_AND_USER_QUERY,
             variables: {
               username,

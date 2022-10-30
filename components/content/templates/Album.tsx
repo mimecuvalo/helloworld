@@ -1,9 +1,10 @@
 import { Alert, Snackbar, styled } from 'components';
-import ContentThumb, { THUMB_HEIGHT, THUMB_WIDTH } from 'components/ContentThumb';
+import { THUMB_HEIGHT, THUMB_WIDTH } from 'util/constants';
 import { gql, useQuery } from '@apollo/client';
 
 import { Content } from 'data/graphql-generated';
 import ContentLink from 'components/ContentLink';
+import ContentThumb from 'components/ContentThumb';
 import { F } from 'i18n';
 import { useState } from 'react';
 
