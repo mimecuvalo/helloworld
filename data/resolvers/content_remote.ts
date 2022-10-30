@@ -222,12 +222,12 @@ const contentRemote = {
     postComment: async (
       parent: ContentRemoteResolvers,
       { username, name, content }: MutationPostCommentArgs,
-      { currentUserEmail, currentUserPicture, prisma, req }: Context
+      { currentUserEmail, currentUserPicture, hostname, prisma, req }: Context
     ) => {
       const localUrl = `/${username}/remote-comments/comment-${uuidv4()}`;
       const tagDate = new Date().toISOString().slice(0, 10);
-      const postId = `tag:${req.headers.host},${tagDate}:${localUrl}`;
-      const link = `${req.headers.origin}${localUrl}`;
+      const postId = `tag:${hostname},${tagDate}:${localUrl}`;
+      const link = `https://${hostname}${localUrl}`;
 
       const commentUsername = currentUserEmail.split('@')[0];
       const md5 = crypto.createHash('md5');

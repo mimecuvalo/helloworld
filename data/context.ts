@@ -36,7 +36,7 @@ export async function createContext({ req, res }: { req: NextApiRequest; res: Ne
     user: session?.user,
     accessToken: session?.accessToken,
     prisma,
-    hostname: req.headers['host'] || '',
+    hostname: (req.headers['x-hw-host'] as string) || '',
     req,
     currentUser,
     loaders: createLoaders(),

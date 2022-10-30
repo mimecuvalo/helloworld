@@ -9,6 +9,7 @@ const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
   context,
+  cache: 'bounded', // Prevent DOS. See: https://www.apollographql.com/docs/apollo-server/performance/cache-backends/
 });
 
 const startServer = apolloServer.start();

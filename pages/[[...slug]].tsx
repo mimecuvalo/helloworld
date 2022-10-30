@@ -148,11 +148,11 @@ export default function Content({ username, name, host }: { username: string; na
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ params, req, res }) => {
-  const client = initializeApollo();
+  const host = req.headers['host'] || '';
+  const client = initializeApollo(null /* initialState */, { 'x-hw-host': host });
   const slug = (params?.slug as string[]) || [];
   const username = slug[0] || '';
   const name = slug.length > 1 ? slug.slice(-1)[0] : '';
-  const host = req.headers['host'];
 
   /** Paths can look like:
       /:username/search/:query
