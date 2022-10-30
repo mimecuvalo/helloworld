@@ -13,7 +13,10 @@ export const APOLLO_STATE_PROP_NAME = '__APOLLO_STATE__';
 let apolloClient: ApolloClient<NormalizedCacheObject>;
 
 function createApolloClient(headers?: { [key: string]: string }) {
-  const uri = process.env.NEXT_PUBLIC_APOLLO_URL;
+  const uri =
+    headers?.['x-hw-host'] && headers?.['x-hw-host'] !== 'localhost:3000'
+      ? `https://${headers?.['x-hw-host']}/api/graphql`
+      : process.env.NEXT_PUBLIC_APOLLO_URL;
   const options = {
     uri, // Server URL (must be absolute)
     credentials: 'same-origin', // Additional fetch() options like `credentials` or `headers`
