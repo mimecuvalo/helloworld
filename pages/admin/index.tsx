@@ -1,6 +1,5 @@
-import { Container, List, ListItem } from '@mui/material';
+import { Container, Link, List, ListItem } from 'components';
 
-import Link from 'next/link';
 import authServerSideProps from 'app/authServerSideProps';
 
 export default function AdminApp() {
@@ -8,24 +7,16 @@ export default function AdminApp() {
     <Container>
       <List className="notranslate">
         <ListItem>
-          <Link href="/admin" passHref>
-            <a>System Info</a>
-          </Link>
+          <Link href="/admin">System Info</Link>
         </ListItem>
         <ListItem>
-          <Link href="/admin/exceptions" passHref>
-            <a>Exceptions</a>
-          </Link>
+          <Link href="/admin/exceptions">Exceptions</Link>
         </ListItem>
         <ListItem>
-          <Link href="/admin/experiments" passHref>
-            <a>Experiments</a>
-          </Link>
+          <Link href="/admin/experiments">Experiments</Link>
         </ListItem>
         <ListItem>
-          <Link href="/admin/repl" passHref>
-            <a>REPL</a>
-          </Link>
+          <Link href="/admin/repl">REPL</Link>
         </ListItem>
       </List>
     </Container>

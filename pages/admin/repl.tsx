@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 
-import { Button } from '@mui/material';
+import { Button } from 'components';
 import authServerSideProps from 'app/authServerSideProps';
 
 // TODO(mime): This has a lot of work left to do.

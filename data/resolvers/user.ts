@@ -15,6 +15,11 @@ import { isAdmin } from './authorization';
 const User = {
   Query: {
     // eslint-disable-next-line
+    currentUser: async (parent: UserPrivateResolvers, args: any, { currentUser }: Context) => {
+      return currentUser;
+    },
+
+    // eslint-disable-next-line
     fetchAllUsers: combineResolvers(isAdmin, async (parent: UserPrivateResolvers, args: any, { prisma }: Context) => {
       return await prisma.user.findMany();
     }),

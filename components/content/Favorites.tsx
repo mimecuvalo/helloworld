@@ -1,13 +1,12 @@
-import { Avatar, styled } from 'components';
+import { Avatar, Link, List, ListItem, styled } from 'components';
 import { F, defineMessages, useIntl } from 'i18n';
 
 import { Favorite } from 'data/graphql-generated';
 
-const StyledFavorite = styled('li')`
+const StyledFavorite = styled(ListItem)`
   display: flex;
-  margin-bottom: 10px;
+  margin-bottom: ${(props) => props.theme.spacing(1)};
   clear: both;
-  font-size: 11px;
 `;
 
 const Author = styled('span')`
@@ -27,19 +26,19 @@ export default function Favorites({ favorites }: { favorites?: Favorite[] }) {
   }
 
   return (
-    <ul>
+    <List>
       {favorites?.map((favorite) => (
         <StyledFavorite key={favorite.postId}>
-          <Avatar src={favorite.avatar || '/img/pixel.gif'} alt={ariaImgMsg} />
+          <Avatar src={favorite.avatar || '/img/pixel.gif'} alt={ariaImgMsg} sx={{ width: 16, height: 16 }} />
           <F
             defaultMessage="{user}: favorited this post."
             values={{
               user: (
                 <Author>
                   {favorite.fromUsername ? (
-                    <a href={favorite.fromUsername} target="_blank" rel="noopener noreferrer">
+                    <Link href={favorite.fromUsername} target="_blank">
                       {favorite.username}
-                    </a>
+                    </Link>
                   ) : (
                     <span>{favorite.username}</span>
                   )}
@@ -49,6 +48,6 @@ export default function Favorites({ favorites }: { favorites?: Favorite[] }) {
           />
         </StyledFavorite>
       ))}
-    </ul>
+    </List>
   );
 }

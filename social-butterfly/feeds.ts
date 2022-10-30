@@ -46,38 +46,34 @@ export async function parseFeedAndInsertIntoDb(userRemote: UserRemote, feedRespo
     const { feedEntries } = await parseFeed(feedResponseText);
     await mapFeedAndInsertIntoDb(userRemote, feedEntries);
   } catch (ex) {
-    // TODO(mime) add logging later.
-    // logger && logger.error(`${userRemote.local_username} - ${userRemote.profile_url}: parseFeed FAILED.\n${ex}`);
+    console.error(`${userRemote.localUsername} - ${userRemote.profileUrl}: parseFeed FAILED.\n${ex}`);
   }
 }
 
 export async function mapFeedAndInsertIntoDb(userRemote: UserRemote, feedEntries: FeedParser.Node[]) {
   let newEntries: ContentRemote[] = [];
+  let skippedCount = 0;
   try {
-    [newEntries] = (await mapFeedEntriesToModelEntries(feedEntries, userRemote)) as [ContentRemote[], number];
-    // TODO(mime) add logging later.
-    // logger &&
-    //   logger.info(
-    //     `${userRemote.local_username} - ${userRemote.profile_url}: ` +
-    //       `parsed ${newEntries.length} entries, skipped ${skippedCount}.`
-    //   );
+    [newEntries, skippedCount] = (await mapFeedEntriesToModelEntries(feedEntries, userRemote)) as [
+      ContentRemote[],
+      number
+    ];
+    console.info(
+      `${userRemote.localUsername} - ${userRemote.profileUrl}: ` +
+        `parsed ${newEntries.length} entries, skipped ${skippedCount}.`
+    );
   } catch (ex) {
-    // TODO(mime) add logging later.
-    // logger && logger.error(`${userRemote.local_username} - ${userRemote.profile_url}: mapFeed FAILED.\n${ex}`);
+    console.error(`${userRemote.localUsername} - ${userRemote.profileUrl}: mapFeed FAILED.\n${ex}`);
     return;
   }
 
   try {
     newEntries.length && (await saveRemoteContent(newEntries));
-    // TODO(mime) add logging later.
-    // logger &&
-    //   logger.info(
-    //     `${userRemote.local_username} - ${userRemote.profile_url}: inserted ${newEntries.length} entries into db.`
-    //   );
-  } catch (ex) {
-    // TODO(mime) add logging later.
-    // logger &&
-    //   logger.error(`${userRemote.local_username} - ${userRemote.profile_url}: db insertion failed.\n${ex.stack}`);
+    console.info(
+      `${userRemote.localUsername} - ${userRemote.profileUrl}: inserted ${newEntries.length} entries into db.`
+    );
+  } catch (ex: any) {
+    console.error(`${userRemote.localUsername} - ${userRemote.profileUrl}: db insertion failed.\n${ex.stack}`);
   }
 }
 
@@ -140,7 +136,7 @@ async function handleEntry(feedEntry: FeedParser.Node, userRemote: UserRemote): 
     dateUpdated = new Date(feedEntry.pubdate);
   }
 
-  // We ignore if we already have the item in our DB.
+  // We ignore if we already have the item in our DB and it hasn't been updated.
   // Also, we don't keep items that are over feedMaxDaysOld.
   if (
     existingModelEntry?.type === 'comment' ||
@@ -192,7 +188,7 @@ async function handleEntry(feedEntry: FeedParser.Node, userRemote: UserRemote): 
   const avatar = pocoPhotos && pocoPhotos['poco:value']['#'];
 
   return {
-    id: existingModelEntry?.id || -1,
+    id: existingModelEntry?.id || undefined,
     avatar,
     commentsCount,
     commentsUpdated,

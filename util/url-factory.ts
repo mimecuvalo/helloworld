@@ -4,7 +4,8 @@ import { NextApiRequest } from 'next';
 export function contentUrl(
   content: Pick<Content, 'username' | 'name' | 'section' | 'album'>,
   req?: NextApiRequest | false,
-  searchParams?: { [key: string]: string }
+  searchParams?: { [key: string]: string },
+  host?: string
 ) {
   if (!content?.name) {
     return '';
@@ -30,7 +31,7 @@ export function contentUrl(
     pathname += '/';
   }
 
-  return buildUrl({ req, pathname, searchParams });
+  return buildUrl({ req, host, pathname, searchParams });
 }
 
 export function parseContentUrl(url: string): { username: string; name: string } {
@@ -48,17 +49,19 @@ export function parseContentUrl(url: string): { username: string; name: string }
   return { username, name };
 }
 
-export function profileUrl(username: string, req?: NextApiRequest): string {
-  return buildUrl({ req, pathname: `/${username}` });
+export function profileUrl(username: string, req?: NextApiRequest, host?: string): string {
+  return buildUrl({ req, host, pathname: `/${username}` });
 }
 
 export function buildUrl({
   req,
+  host,
   isAbsolute,
   pathname,
   searchParams,
 }: {
   req?: NextApiRequest | false;
+  host?: string;
   isAbsolute?: boolean;
   pathname: string;
   searchParams?: { [key: string]: string };
@@ -68,7 +71,9 @@ export function buildUrl({
   if (req) {
     url += `https://${req.headers['host']}`;
   } else if (isAbsolute) {
-    url += `${window.location.origin}`;
+    url += window.location.origin;
+  } else if (host) {
+    url += host.startsWith('localhost:') ? `http://${host}` : `https://${host}`;
   }
 
   url += !pathname || pathname.startsWith('/') ? pathname : new URL(pathname).pathname;
@@ -90,4 +95,8 @@ export function ensureAbsoluteUrl(basisAbsoluteUrl: string, urlOrPath: string) {
 
   urlOrPath = urlOrPath || '';
   return urlOrPath[0] === '/' ? `${hostnameAndProtocol}${urlOrPath}` : urlOrPath;
+}
+
+export function constructNextImageURL(src: string, size = 3840) {
+  return `/_next/image?url=${encodeURIComponent(src)}&w=${size}&q=75`;
 }

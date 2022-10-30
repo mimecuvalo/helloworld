@@ -1,5 +1,5 @@
 import { Comment, Content, Favorite, UserPublic } from 'data/graphql-generated';
-import { animated, useTransition } from 'react-spring';
+import { ItemWrapper, styled } from 'components';
 
 import Album from './templates/Album';
 import Archive from './templates/Archive';
@@ -9,7 +9,19 @@ import Footer from './Footer';
 import Header from './Header';
 import Latest from './templates/Latest';
 import Simple from './templates/Simple';
-import classNames from 'classnames';
+//import { animated, useTransition } from 'react-spring';
+
+const StyledItem = styled('article', { label: 'Item' })`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
+
+const InnerView = styled('div', { label: 'InnerView' })`
+  flex: 1;
+  display: flex;
+  align-items: center;
+`;
 
 const COMPONENT_TYPE_MAP = {
   album: Album,
@@ -26,11 +38,11 @@ export default function Item(props: {
   favorites?: Favorite[];
   isFeed?: boolean;
 }) {
-  const transitions = useTransition(props.content, {
-    from: { opacity: 0 },
-    enter: { opacity: 1 },
-    leave: { display: 'none', opacity: 0 },
-  });
+  // const transitions = useTransition(props.content, {
+  //   from: { opacity: 0 },
+  //   enter: { opacity: 1 },
+  //   leave: { display: 'none', opacity: 0 },
+  // });
 
   // TODO
   //const template = useRef(null);
@@ -47,15 +59,15 @@ export default function Item(props: {
   const contentComponent = <TemplateComponent content={content} isFeed={isFeed} />;
 
   return (
-    <article className={classNames('hw-item', 'h-entry', className)}>
-      <Header content={content} />
-      {/* @ts-ignore */}
-      {COMPONENT_TYPE_MAP[content.template]
-        ? contentComponent
-        : transitions((style) => <animated.div style={style}>{contentComponent}</animated.div>)}
-      <Footer content={content} contentOwner={contentOwner} />
-      {!isFeed ? <Comments comments={comments} content={content} /> : null}
-      {!isFeed ? <Favorites favorites={favorites} /> : null}
-    </article>
+    <ItemWrapper>
+      <StyledItem className={`hw-item h-entry ${className || ''}`}>
+        <Header content={content} />
+        {/* @ts-ignore */}
+        {COMPONENT_TYPE_MAP[content.template] ? contentComponent : <InnerView>{contentComponent}</InnerView>}
+        <Footer content={content} contentOwner={contentOwner} />
+        {!isFeed && comments?.length ? <Comments comments={comments} content={content} /> : null}
+        {!isFeed && favorites?.length ? <Favorites favorites={favorites} /> : null}
+      </StyledItem>
+    </ItemWrapper>
   );
 }

@@ -14,7 +14,7 @@ import cheerio from 'cheerio';
 import { contentUrl } from 'util/url-factory';
 // import { mention as emailMention } from './email';
 import fetch from 'node-fetch';
-import { getUserRemoteInfo } from '../../../social-butterfly/discover-user';
+import { getUserRemoteInfo } from 'social-butterfly/discover-user';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!req.query.resource || !req.body.source || !req.body.target) {

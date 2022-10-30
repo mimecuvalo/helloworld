@@ -1,17 +1,17 @@
 import { Suspense, lazy, memo, useEffect, useState } from 'react';
 
 import Help from './Help';
-import { styled } from '@mui/material/styles';
+import { styled } from '@mui/material';
 
 const Debug = lazy(() => import('components/internal/Debug'));
 
 const StyledFooter = styled('footer')`
   position: fixed;
-  bottom: 0;
-  right: 0;
+  bottom: ${(props) => props.theme.spacing(1)};
+  right: ${(props) => props.theme.spacing(2.5)}; // Swipeable drawer width.
 
   & button {
-    margin-left: 10px;
+    margin-left: ${(props) => props.theme.spacing(1)};
   }
 `;
 
@@ -20,17 +20,19 @@ const Footer = memo(function Footer() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    setIsLoaded(false);
+    setIsLoaded(true);
   }, []);
 
   return (
     <StyledFooter>
       {process.env.NODE_ENV === 'development' && isLoaded && (
-        <Suspense fallback={<span />}>
-          <Debug />
-        </Suspense>
+        <>
+          <Suspense fallback={<span />}>
+            <Debug />
+          </Suspense>
+          <Help />
+        </>
       )}
-      <Help />
     </StyledFooter>
   );
 });

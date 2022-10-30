@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { findUserRemote, handle } from '../../../social-butterfly/activitystreams';
+import { findUserRemote, handle } from 'social-butterfly/activitystreams';
 
 import { getLocalUser } from 'social-butterfly/db';
 import magic from 'magic-signatures';

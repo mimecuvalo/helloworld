@@ -1,0 +1,13 @@
+name: daily-cron
+on:
+  schedule:
+    - cron: '0 1 * * *'
+jobs:
+  cron:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update RSS/Atom feeds
+        run: |
+          curl --request POST \
+          --url 'https://${{ secrets.BASE_URL }}/api/social/update-feeds' \
+          --header 'Authorization: Bearer ${{ secrets.CRON_JOB_SECRET }}'

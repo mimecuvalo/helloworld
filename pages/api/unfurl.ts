@@ -54,7 +54,8 @@ async function parseHtmlAndRetrieveOEmbedOrOpenGraphData(websiteUrl: string, htm
 // We don't bother with XML support for oEmbed. Basically everyone supports JSON at this point.
 async function retrieveOEmbedData(oEmbedUrl: string) {
   const response = await fetchUrl(oEmbedUrl);
-  const json = await response.json();
+  // TODO: type as html/oembed object later?
+  const json = (await response.json()) as unknown as any;
 
   const html = json.html;
 

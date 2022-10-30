@@ -37,8 +37,10 @@ export function F(props: FType) {
   const id = generateId(props);
   return (
     <span className="i18n-msg">
-      {/* eslint-disable-next-line  */}
+      {/* eslint-disable */}
+      {/* @ts-ignore fix up */}
       <FormattedMessage id={id} {...props} />
+      {/* eslint-enable */}
     </span>
   );
 }

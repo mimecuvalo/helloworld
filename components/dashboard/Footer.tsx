@@ -1,21 +1,30 @@
 import { F, FormattedDate } from 'i18n';
+import { Grid, Link, styled } from 'components';
+import { Post, UserRemotePublic } from 'data/graphql-generated';
 
 import Favorite from './actions/Favorite';
 import KeepUnread from './actions/KeepUnread';
-import { Post } from 'data/graphql-generated';
 import Reblog from './actions/Reblog';
 import Reply from './actions/Reply';
-import { styled } from 'components';
 
 const StyledFooter = styled('footer')`
   position: sticky;
   bottom: 0;
   display: flex;
-  font-size: 11px;
-  box-shadow: 0px -1px 0 #0bf, 0 -9px 0 #fafafa;
-  padding: 3px 6px 5px 3px;
-  margin-top: 12px;
-  background: #fafafa;
+  justify-content: space-between;
+  padding: ${(props) => props.theme.spacing(0.5, 1)};
+  margin-top: ${(props) => props.theme.spacing(1)};
+  background: ${(props) => props.theme.palette.background.default};
+
+  &,
+  & button {
+    font-size: ${(props) => props.theme.typography.subtitle1.fontSize};
+  }
+
+  button {
+    padding: ${(props) => props.theme.spacing(0, 0.5)};
+    min-width: 0;
+  }
 `;
 
 export default function Footer({
@@ -23,39 +32,44 @@ export default function Footer({
   keepUnreadCb,
 }: {
   contentRemote: Post;
+  // TODO(mime): match footer to the way regular Content->footer looks like
+  userRemote: UserRemotePublic;
   keepUnreadCb: (keepUnread: boolean) => void;
 }) {
   const { createdAt, link, updatedAt, username } = contentRemote;
 
   return (
     <StyledFooter>
-      <div>
-        <a href={link} target="_blank" rel="noopener noreferrer">
+      <Grid container item xs>
+        <Link href={link} target="_blank">
           <F
             defaultMessage="{username} posted on {date}"
             values={{
               username: username,
-              date: () => (
-                <time dateTime={createdAt}>
-                  <FormattedDate
-                    value={createdAt}
-                    year="numeric"
-                    month="long"
-                    day="2-digit"
-                    hour="2-digit"
-                    minute="2-digit"
-                  />
-                </time>
+              date: (
+                <>
+                  <br />{' '}
+                  <time dateTime={createdAt}>
+                    <FormattedDate
+                      value={createdAt}
+                      year="numeric"
+                      month="long"
+                      day="2-digit"
+                      hour="2-digit"
+                      minute="2-digit"
+                    />
+                  </time>
+                </>
               ),
             }}
           />
           {updatedAt && updatedAt !== createdAt && (
             <>
-              &nbsp;
+              <br />
               <F
                 defaultMessage="(updated {date})"
                 values={{
-                  date: () => (
+                  date: (
                     <time dateTime={updatedAt}>
                       <FormattedDate
                         value={updatedAt}
@@ -71,17 +85,14 @@ export default function Footer({
               />
             </>
           )}
-        </a>
-      </div>
-      <div>
+        </Link>
+      </Grid>
+      <Grid container item xs flexWrap="nowrap" alignItems="center" justifyContent="flex-end">
         <Reblog contentRemote={contentRemote} />
-        &nbsp;•&nbsp;
         <Favorite contentRemote={contentRemote} isDashboard={true} />
-        &nbsp;•&nbsp;
         <KeepUnread keepUnreadCb={keepUnreadCb} />
-        &nbsp;•&nbsp;
         <Reply />
-      </div>
+      </Grid>
     </StyledFooter>
   );
 }

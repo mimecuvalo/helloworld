@@ -1,6 +1,6 @@
 import A11y from './A11y';
 import Performance from './Performance';
-import { styled } from '@mui/material/styles';
+import { styled } from 'components';
 
 const Container = styled('div')`
   white-space: nowrap;

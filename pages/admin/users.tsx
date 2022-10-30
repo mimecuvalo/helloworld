@@ -12,7 +12,7 @@ import { useContext } from 'react';
 const Container = styled('div')`
   display: flex;
   align-items: flex-start;
-  margin: 64px 8px;
+  margin: ${(props) => props.theme.spacing(8, 1)};
 `;
 
 const Content = styled('article')`
@@ -21,7 +21,7 @@ const Content = styled('article')`
   flex-flow: wrap;
   align-items: flex-start;
   width: 82%;
-  margin: 6px;
+  margin: ${(props) => props.theme.spacing(1)};
   overflow-x: scroll;
 `;
 

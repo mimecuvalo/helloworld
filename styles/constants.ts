@@ -24,12 +24,15 @@ const zIndices: { [key: string]: string } = {
   abovePage: '1',
 
   // Register custom z-indices here, they will get auto-populated with the correct value:
+  nav: '0',
   popup: '0',
   abovePageShadow: '0',
   loading: '0',
   navigation: '0',
   datePickers: '0',
   notificationContainer: '0',
+  siteMap: '0',
+  siteMapHamburger: '0',
 
   // At same level as Material-UI modal, https://material-ui.com/customization/z-index/
   // TODO(mime): we can configure Material z-indices instead of us working with them.

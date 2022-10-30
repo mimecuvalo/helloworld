@@ -1,9 +1,8 @@
-import { Accordion, AccordionDetails, AccordionSummary, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Link, Typography, styled } from 'components';
 import { useEffect, useState } from 'react';
 
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import authServerSideProps from 'app/authServerSideProps';
-import { styled } from '@mui/material/styles';
 
 const Container = styled('div')`
   max-width: 75vw;
@@ -31,17 +30,17 @@ export default function Exceptions() {
   // TODO(mime): Either have a Sentry embed or a way to look at server exceptions locally.
   return (
     <Container>
-      <h1>Client Exceptions (today’s)</h1>
+      <Typography variant="h1">Client Exceptions (today’s)</Typography>
       <ExceptionsDisplay exceptions={clientExceptions} />
 
-      <h1>Server Exceptions (today’s)</h1>
+      <Typography variant="h1">Server Exceptions (today’s)</Typography>
       <ExceptionsDisplay exceptions={serverExceptions} />
 
-      <h1>Server Exceptions (on Sentry)</h1>
+      <Typography variant="h1">Server Exceptions (on Sentry)</Typography>
       {process.env.SENTRY_DSN ? (
-        <a href="https://sentry.io/" target="_blank" rel="noopener noreferrer">
+        <Link href="https://sentry.io/" target="_blank">
           View Sentry issues
-        </a>
+        </Link>
       ) : (
         'process.env.SENTRY_DSN is not set.'
       )}
@@ -62,7 +61,7 @@ function ExceptionsDisplay({ exceptions }: { exceptions: Exception }) {
       {sortedMessages.map((msg, idx) => (
         <Accordion key={idx}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls={`${idx}-content`} id={`${idx}-header`}>
-            <Typography>
+            <Typography variant="body1">
               <strong>{exceptions[msg].length}</strong>: {msg}
             </Typography>
           </AccordionSummary>

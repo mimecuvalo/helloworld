@@ -2,6 +2,7 @@ import { PropsWithChildren, useContext } from 'react';
 
 import { Content } from 'data/graphql-generated';
 import { Link } from 'components';
+import { LinkProps } from '@mui/material';
 import UserContext from 'app/UserContext';
 import { contentUrl } from 'util/url-factory';
 
@@ -12,6 +13,7 @@ const ContentLink: React.FC<
     rel?: string;
     url?: string;
     className?: string;
+    sx?: LinkProps['sx'];
   }>
 > = (props) => {
   const { user } = useContext(UserContext);
@@ -28,7 +30,7 @@ const ContentLink: React.FC<
       className={props.className}
       target={item.forceRefresh || currentContent.forceRefresh ? '_self' : ''}
       rel={rel}
-      sx={{ fontStyle: isOwnerViewing && item.hidden ? 'italic' : 'normal' }}
+      sx={{ fontStyle: isOwnerViewing && item.hidden ? 'italic' : 'normal', ...props.sx }}
     >
       {props.children}
     </Link>

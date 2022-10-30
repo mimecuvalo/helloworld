@@ -5,7 +5,7 @@ const SYSTEM_FONTS =
 
 const constants = {
   fontFamily: `${SYSTEM_FONTS}`,
-  fontFamilyHeader: `${SYSTEM_FONTS}`,
+  fontFamilyHeader: `'Press Start 2P', ${SYSTEM_FONTS}`,
   fontMonospace:
     'Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
 
@@ -25,9 +25,9 @@ const constants = {
   fontSizeXS: '0.75rem',
   fontSizeSM: '0.875rem',
   fontSizeBase: '1rem',
-  fontSizeMD: '1.25rem',
-  fontSizeLG: '1.5rem',
-  fontSizeXL: '2rem',
+  fontSizeMD: '1.1rem',
+  fontSizeLG: '1.25rem',
+  fontSizeXL: '1.25rem',
 };
 
 const typography = {

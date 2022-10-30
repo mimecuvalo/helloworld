@@ -1,7 +1,7 @@
 import { gql, useMutation } from '@apollo/client';
 
 import { F } from 'i18n';
-import MenuItem from '@mui/material/MenuItem';
+import { MenuItem } from 'components';
 import { UserRemotePublic } from 'data/graphql-generated';
 
 const TOGGLE_SORT_FEED = gql`

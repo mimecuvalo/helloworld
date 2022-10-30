@@ -20,7 +20,7 @@ const generateCsp = (): [csp: string, nonce: string] => {
     // TODO(mime)
     //'frame-ancestors': ["'self'"],
     'frame-src': ["'self'", 'http:', 'https:'],
-    'img-src': ['data:', 'http:', 'https:'],
+    'img-src': ['data:', 'http:', 'https:', 'blob:'],
     'manifest-src': ["'self'"],
     'media-src': ["'self'", 'blob:'],
     'object-src': ["'self'"],

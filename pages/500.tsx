@@ -1,6 +1,8 @@
 import { Emoji, Message } from 'components/error/error.styles';
 import { F, defineMessages, useIntl } from 'i18n';
 
+import { Typography } from 'components';
+
 const messages = defineMessages({
   monkeys: { defaultMessage: 'see no evil, hear no evil, speak no evil monkeys' },
 });
@@ -14,9 +16,9 @@ export default function InternalServerError() {
       <Emoji role="img" aria-label={emojiAriaLabel}>
         🙈 🙉 🙊
       </Emoji>
-      <h1>
+      <Typography variant="h1">
         <span className="notranslate">500:</span> <F defaultMessage="internal server error" />
-      </h1>
+      </Typography>
       <div>
         <F defaultMessage="it's not you, it's us. our server is monkeying around." />
         <br />

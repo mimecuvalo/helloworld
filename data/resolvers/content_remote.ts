@@ -10,12 +10,14 @@ import {
   QueryFetchFavoritesRemoteArgs,
   ReadContentRemoteMutationVariables,
 } from 'data/graphql-generated';
+import { Prisma, User } from '@prisma/client';
 import { isAdmin, isAuthor } from './authorization';
 
 import { Context } from 'data/context';
-import { Prisma } from '@prisma/client';
 import { combineResolvers } from 'graphql-resolvers';
 import crypto from 'crypto';
+import { like } from 'social-butterfly/activitystreams';
+import { syndicate } from 'social-butterfly/syndicate';
 import { v4 as uuidv4 } from 'uuid';
 
 const contentRemote = {
@@ -149,7 +151,7 @@ const contentRemote = {
           where: { toUsername: currentUsername, deleted: false, isSpam: false, read: false, type: 'post' },
         });
 
-        return result;
+        return result.map((c) => ({ count: c._count, ...c }));
       }
     ),
 
@@ -233,46 +235,38 @@ const contentRemote = {
       const gravatar = `http://www.gravatar.com/avatar/${emailHash}`;
       const avatar = currentUserPicture || gravatar;
 
-      // const createdRemoteContent = await prisma.contentRemote.create({
-      //   avatar,
-      //   comment_user: currentUserEmail,
-      //   content,
-      //   fromUser: null,
-      //   link,
-      //   localContentName: name,
-      //   postId,
-      //   title: '',
-      //   toUsername: username,
-      //   type: 'comment',
-      //   username: commentUsername,
-      //   view: content,
-      // });
+      const createdRemoteContent = await prisma.contentRemote.create({
+        data: {
+          avatar,
+          commentUser: currentUserEmail,
+          content,
+          fromUsername: null,
+          link,
+          localContentName: name,
+          postId,
+          title: '',
+          toUsername: username,
+          type: 'comment',
+          username: commentUsername,
+          view: content,
+        },
+      });
 
       const commentedContent = await prisma.content.findUnique({
         select: { id: true, hidden: true, commentsCount: true },
         where: { username_name: { username, name } },
       });
-      await prisma.content.update({
+      const updatedCommentedContent = await prisma.content.update({
         data: {
           commentsCount: (commentedContent?.commentsCount || 0) + 1,
           commentsUpdated: new Date(),
         },
         where: { id: commentedContent?.id },
       });
-      // const updatedCommentedContent = await prisma.content.findUnique({ where: { id: commentedContent?.id } });
-      // const contentOwner = await prisma.user.findUnique({ where: { username } });
+      const contentOwner = await prisma.user.findUnique({ where: { username } });
 
-      if (!commentedContent?.hidden) {
-        // // TODO(mime): hacky - how can we unify this (here and wherever we use syndicate())
-        // contentOwner.url = profileUrl(contentOwner.username, req);
-        // updatedCommentedContent.url = contentUrl(updatedCommentedContent, req);
-        // await socialButterfly().syndicate(
-        //   req,
-        //   contentOwner,
-        //   updatedCommentedContent,
-        //   createdRemoteContent,
-        //   true /* isComment */
-        // );
+      if (!commentedContent?.hidden && contentOwner && updatedCommentedContent) {
+        await syndicate(req, contentOwner, updatedCommentedContent, createdRemoteContent, true /* isComment */);
       }
 
       return {
@@ -295,27 +289,30 @@ const contentRemote = {
       async (
         parent: ContentRemoteResolvers,
         { fromUsername, postId, type, favorited }: FavoriteContentRemoteMutationVariables,
-        { currentUsername, prisma }: Context
+        { currentUsername, req, currentUser, prisma }: Context
       ) => {
-        const remoteContentWhere = {
-          toUsername_fromUsername_postId: {
-            toUsername: currentUsername,
-            fromUsername,
-            postId,
+        const contentRemote = await prisma.contentRemote.update({
+          data: { favorited },
+          where: {
+            toUsername_fromUsername_postId: {
+              toUsername: currentUsername,
+              fromUsername,
+              postId,
+            },
           },
-        };
-        await prisma.contentRemote.update({ data: { favorited }, where: remoteContentWhere });
-        // const contentRemote = await prisma.contentRemote.findOne({ where: remoteContentWhere });
-        // const userRemote = await prisma.userRemote.findOne({
-        //   where: {
-        //     localUsername: currentUsername,
-        //     profile_url: contentRemote.fromUsername,
-        //   },
-        // });
+        });
+        const userRemote = await prisma.userRemote.findUnique({
+          where: {
+            localUsername_profileUrl: {
+              localUsername: currentUsername,
+              profileUrl: contentRemote.fromUsername || '',
+            },
+          },
+        });
 
-        // // TODO(mime): hacky - how can we unify this (here and wherever we use syndicate())
-        // currentUser.model.url = profileUrl(currentUsername, req);
-        // socialButterfly().like(req, currentUser.model, contentRemote, userRemote, favorited);
+        if (userRemote) {
+          like(req, currentUser as User, contentRemote, userRemote, favorited);
+        }
 
         return { fromUsername, postId, type, favorited };
       }

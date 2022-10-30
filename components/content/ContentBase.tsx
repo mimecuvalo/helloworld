@@ -1,12 +1,13 @@
 import { Content, UserPublic } from 'data/graphql-generated';
+import { CssBaseline, GlobalStyles, ThemeProvider } from '@mui/material';
+import { Grid, Typography, styled } from 'components';
+import { themeGlobalCss, themes } from 'styles/theme';
 
 import ContentHead from './ContentHead';
-import { F } from 'i18n';
 import { PropsWithChildren } from 'react';
 import SiteMap from './SiteMap';
-import { styled } from 'components';
 
-const Container = styled('div')`
+const Container = styled('div', { label: 'ContentBaseContainer' })`
   display: flex;
   align-items: flex-start;
   flex-direction: column;
@@ -16,19 +17,6 @@ const Container = styled('div')`
   }
 `;
 
-const ArticleNavContainer = styled('div')`
-  display: flex;
-  align-items: flex-start;
-`;
-
-const Footer = styled('footer')`
-  width: 154px;
-  margin-left: 6px;
-  padding: 10px 0;
-  font-size: 11px;
-  text-align: center;
-`;
-
 export default function ContentBase(
   props: PropsWithChildren<{
     content?: Content;
@@ -36,39 +24,28 @@ export default function ContentBase(
     contentOwner: UserPublic;
     title: string;
     username: string;
+    host: string;
   }>
 ) {
-  const { children, content, className, contentOwner, title, username } = props;
+  const { children, content, className, contentOwner, host, title, username } = props;
 
   return (
-    <>
-      <ContentHead content={content} contentOwner={contentOwner} title={title} username={username} />
+    <ThemeProvider theme={themes[contentOwner.theme as keyof typeof themes]}>
+      <CssBaseline />
+      <GlobalStyles styles={() => themeGlobalCss[contentOwner.theme as keyof typeof themes]} />
+      <ContentHead host={host} content={content} contentOwner={contentOwner} title={title} username={username} />
       <Container id="hw-content" className={className}>
+        {/* TODO(mime): why is this here? a11y? */}
         <header>
-          <h1>{`${contentOwner.title}` + (title ? ` - ${title}` : '')}</h1>
-          <h2>{contentOwner.description}</h2>
+          <Typography variant="h1">{title}</Typography>
+          <Typography variant="h2">{contentOwner.description}</Typography>
         </header>
 
-        <ArticleNavContainer>
+        <Grid container flexWrap="nowrap" alignItems="flex-start">
           <SiteMap content={content} username={username} />
-
           {children}
-        </ArticleNavContainer>
-
-        <Footer>
-          <F
-            defaultMessage="powered by {br} {link}"
-            values={{
-              br: <br />,
-              link: (
-                <a href="https://github.com/mimecuvalo/helloworld" rel="generator">
-                  Hello, world.
-                </a>
-              ),
-            }}
-          />
-        </Footer>
+        </Grid>
       </Container>
-    </>
+    </ThemeProvider>
   );
 }

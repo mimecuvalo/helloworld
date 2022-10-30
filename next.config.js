@@ -21,7 +21,7 @@ const nextConfig = {
   reactStrictMode: true,
 
   images: {
-    domains: ['i.creativecommons.org', 's3.amazonaws.com', 'media.nightlight.rocks'],
+    domains: ['i.creativecommons.org', 's3.amazonaws.com', process.env.S3_AWS_S3_BUCKET_NAME],
     minimumCacheTTL: 60,
   },
 
@@ -42,7 +42,7 @@ const nextConfig = {
     return [
       {
         source: '/resource/:path*',
-        destination: 'https://media.nightlight.rocks/:path*',
+        destination: `https://${process.env.S3_AWS_S3_BUCKET_NAME}/:path*`,
         permanent: false,
       },
       {

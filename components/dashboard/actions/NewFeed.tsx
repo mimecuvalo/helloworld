@@ -1,3 +1,4 @@
+import { MenuItem, TextField } from 'components';
 import { defineMessages, useIntl } from 'i18n';
 import { gql, useMutation } from '@apollo/client';
 
@@ -6,8 +7,8 @@ import { F } from 'i18n';
 import FollowingFeedCountsQuery from 'components/dashboard/FollowingFeedCountsQuery';
 import FollowingQuery from 'components/dashboard/FollowingQuery';
 import FollowingSpecialFeedCountsQuery from 'components/dashboard/FollowingSpecialFeedCountsQuery';
-import { MenuItem } from 'components';
 import { UserRemotePublic } from 'data/graphql-generated';
+import { useTheme } from '@mui/material';
 
 const messages = defineMessages({
   error: { defaultMessage: 'Error subscribing to new feed.' },
@@ -37,6 +38,7 @@ export default function NewFeed({
   handleSetFeed: (feed: UserRemotePublic | string, search?: string) => void;
 }) {
   const intl = useIntl();
+  const theme = useTheme();
   const [createUserRemote] = useMutation(CREATE_USER_REMOTE);
 
   // when NewFeed is used as an input field.
@@ -85,5 +87,15 @@ export default function NewFeed({
     );
   }
 
-  return <input className="notranslate" placeholder={followPlaceholder} onPaste={handleNewFeedPaste} />;
+  return (
+    <TextField
+      size="small"
+      margin="dense"
+      className="notranslate"
+      placeholder={followPlaceholder}
+      onPaste={handleNewFeedPaste}
+      color="primary"
+      InputProps={{ sx: { color: theme.palette.text.primary } }}
+    />
+  );
 }

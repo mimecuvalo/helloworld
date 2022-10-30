@@ -1,15 +1,15 @@
+import { ListItem, styled } from 'components';
 import { SearchAndUserQuery, SearchContentMetaInfo, UserPublic } from 'data/graphql-generated';
 import { defineMessages, useIntl } from 'i18n';
 import { gql, useQuery } from '@apollo/client';
 
-import ContentBase from '../components/content/ContentBase';
-import ContentHead from 'components/content/ContentHead';
+import ContentBase from 'components/content/ContentBase';
 import ContentLink from 'components/ContentLink';
 import ContentThumb from 'components/ContentThumb';
-import { styled } from 'components';
+import { GetServerSideProps } from 'next';
 
 const ContentWrapper = styled('div')`
-  --search-header-height: 32px;
+  --search-header-height: ${(props) => props.theme.spacing(4)};
 
   & > header {
     display: block;
@@ -22,10 +22,10 @@ const ContentWrapper = styled('div')`
 
 const List = styled('ol')`
   margin-top: calc(${(props) => props.theme.spacing(1)} + var(--search-header-height) + 10px);
-  margin-left: 25px;
+  margin-left: ${(props) => props.theme.spacing(3)};
 
   & > li {
-    padding: 7px 0;
+    padding: ${(props) => props.theme.spacing(1)} 0;
     border-top: 1px solid #ccc;
     clear: both;
   }
@@ -42,11 +42,11 @@ const ListItemInner = styled('div')`
 const ContentThumbWrapper = styled('span')`
   min-height: auto;
   width: auto;
-  margin-right: 5px;
+  margin-right: ${(props) => props.theme.spacing(0.5)};
 
   & > img {
     min-height: auto;
-    max-height: 48px;
+    max-height: ${(props) => props.theme.spacing(6)};
   }
 `;
 
@@ -84,7 +84,7 @@ const SEARCH_AND_USER_QUERY = gql`
   }
 `;
 
-export default function Search({ username, query }: { username: string; query: string }) {
+export default function Search({ username, query, host }: { username: string; query: string; host: string }) {
   const intl = useIntl();
   const { loading, data } = useQuery<SearchAndUserQuery>(SEARCH_AND_USER_QUERY, {
     variables: {
@@ -104,12 +104,11 @@ export default function Search({ username, query }: { username: string; query: s
 
   return (
     <>
-      <ContentHead contentOwner={contentOwner} title={pageTitle} username={username} />
       <ContentWrapper>
-        <ContentBase contentOwner={contentOwner} title={pageTitle} username={contentOwner?.username || ''}>
+        <ContentBase host={host} contentOwner={contentOwner} title={pageTitle} username={contentOwner?.username || ''}>
           <List>
             {results.map((item) => (
-              <li key={item.name}>
+              <ListItem key={item.name}>
                 <ListItemInner>
                   {item.thumb ? (
                     <ContentThumbWrapper>
@@ -127,7 +126,7 @@ export default function Search({ username, query }: { username: string; query: s
                   </div>
                 </ListItemInner>
                 <div style={{ clear: 'both' }} />
-              </li>
+              </ListItem>
             ))}
           </List>
         </ContentBase>
@@ -147,3 +146,11 @@ function Highlight({ str, term }: { str: string; term: string }) {
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const host = req.headers['host'];
+
+  return {
+    props: { host },
+  };
+};

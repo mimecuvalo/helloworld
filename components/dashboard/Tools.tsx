@@ -1,10 +1,21 @@
+import { Button, Link, List, ListItem, styled } from 'components';
 import { useContext, useEffect, useState } from 'react';
 
-import { Button } from 'components';
 import { F } from 'i18n';
-import Link from 'next/link';
 import UserContext from 'app/UserContext';
 import { profileUrl } from 'util/url-factory';
+
+const StyledList = styled(List)`
+  margin: 0 ${(props) => props.theme.spacing(2)} ${(props) => props.theme.spacing(3.5)} 0;
+  padding: ${(props) => props.theme.spacing(1)};
+  border: 1px solid ${(props) => props.theme.palette.secondary.main};
+  box-shadow: 1px 1px ${(props) => props.theme.palette.secondary.main},
+    2px 2px ${(props) => props.theme.palette.secondary.main}, 3px 3px ${(props) => props.theme.palette.secondary.main};
+
+  a {
+    font-size: ${(props) => props.theme.typography.body2};
+  }
+`;
 
 export default function Tools() {
   const { user } = useContext(UserContext);
@@ -32,32 +43,32 @@ export default function Tools() {
   const reblogScript = createBookmarklet('/js/helloworld_reblog.js');
 
   return (
-    <ul>
-      <li>
-        <a href={profileUrl(username)} target="_blank" rel="noopener noreferrer">
+    <StyledList>
+      <ListItem>
+        <Link href={profileUrl(username)} target="_blank">
           <F defaultMessage="view site" />
-        </a>
-      </li>
-      <li>
-        <a href={followScript}>
+        </Link>
+      </ListItem>
+      <ListItem>
+        <a href={followScript} style={{ textDecoration: 'none' }}>
           <F defaultMessage="follow bookmarklet" />
         </a>
-      </li>
-      <li>
-        <a href={reblogScript}>
+      </ListItem>
+      <ListItem>
+        <a href={reblogScript} style={{ textDecoration: 'none' }}>
           <F defaultMessage="reblog bookmarklet" />
         </a>
-      </li>
-      <li>
-        <Link passHref href="/api/data-liberation">
+      </ListItem>
+      {/* <ListItem>
+        <Link href="/api/data-liberation">
           <F defaultMessage="data liberation" />
         </Link>
-      </li>
-      <li>
+      </ListItem> */}
+      <ListItem>
         <Button href="/api/auth/logout">
           <F defaultMessage="logout" />
         </Button>
-      </li>
-    </ul>
+      </ListItem>
+    </StyledList>
   );
 }

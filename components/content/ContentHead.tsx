@@ -2,14 +2,18 @@ import { Content, UserPublic } from 'data/graphql-generated';
 import { buildUrl, contentUrl, profileUrl } from 'util/url-factory';
 
 import Head from 'next/head';
+import { themes } from 'styles/theme';
+import { useTheme } from '@mui/material';
 
 export default function ContentHead(props: {
   content?: Content;
   contentOwner: UserPublic;
   title: string;
   username: string;
+  host: string;
 }) {
-  const { content, contentOwner, title, username } = props;
+  const { content, contentOwner, host, title, username } = props;
+  const theme = useTheme();
 
   const repliesUrl =
     content && buildUrl({ pathname: '/api/social/comments', searchParams: { resource: contentUrl(content) } });
@@ -21,23 +25,27 @@ export default function ContentHead(props: {
   let description,
     favicon,
     rss,
-    theme,
     webmentionUrl = '';
+  let fontHeader = '';
 
   if (contentOwner) {
-    const resource = profileUrl(username);
+    const resource = profileUrl(username, undefined, host);
     description = <meta name="description" content={contentOwner.description || 'Hello, world.'} />;
     favicon = contentOwner.favicon;
     const feedUrl = buildUrl({ pathname: '/api/social/feed', searchParams: { resource } });
     rss = <link rel="alternate" type="application/atom+xml" title={title} href={feedUrl} />;
-    theme = contentOwner.theme && <link rel="stylesheet" href={contentOwner.theme} />;
     viewport = contentOwner.viewport || viewport;
-    webmentionUrl = buildUrl({ pathname: '/api/social/webmention', searchParams: { resource } });
+    webmentionUrl = buildUrl({ host, pathname: '/api/social/webmention', searchParams: { resource } });
+    const ownerTheme = themes[contentOwner.theme as keyof typeof themes];
+    fontHeader = (ownerTheme.typography.h1.fontFamily as unknown as string).split(',')[0].replace(/['"]/g, '');
   }
 
   return (
     <Head>
       <title>{title}</title>
+      {/* TODO refactor to allow different fonts */}
+      {/* eslint-disable-next-line */}
+      <link href={`https://fonts.googleapis.com/css2?family=${fontHeader}&display=block`} rel="stylesheet" />
       {contentOwner ? (
         <link rel="author" href={contentUrl({ username, section: 'main', album: '', name: 'about' })} />
       ) : null}
@@ -50,14 +58,14 @@ export default function ContentHead(props: {
         type="application/opensearchdescription+xml"
         title={title}
       />
-      <link rel="canonical" href={content && contentUrl(content)} />
+      <link rel="canonical" href={content && contentUrl(content, undefined, undefined, host)} />
       {rss}
       {!content && <meta name="robots" content="noindex" />}
       <meta name="viewport" content={viewport} />
-      <meta name="theme-color" content="#000000" />
+      <meta name="theme-color" content={theme.palette.background.default} />
       {description}
-      <OpenGraphMetadata contentOwner={contentOwner} content={content} title={title} />
-      <StructuredMetaData contentOwner={contentOwner} content={content} title={title} />
+      <OpenGraphMetadata host={host} contentOwner={contentOwner} content={content} title={title} />
+      <StructuredMetaData host={host} contentOwner={contentOwner} content={content} title={title} />
       <link
         rel="alternate"
         type="application/json+oembed"
@@ -72,7 +80,6 @@ export default function ContentHead(props: {
         <link rel="replies" type="application/atom+xml" href={repliesUrl} {...repliesAttribs} />
       ) : null}
       {contentOwner ? <GoogleAnalytics contentOwner={contentOwner} /> : null}
-      {theme}
     </Head>
   );
 }
@@ -83,36 +90,38 @@ function OpenGraphMetadata({
   contentOwner,
   content,
   title,
+  host,
 }: {
   contentOwner: UserPublic;
   content?: Content;
   title: string;
+  host: string;
 }) {
-  const thumb = buildThumb(contentOwner, content);
+  const thumb = buildThumb(contentOwner, host, content);
 
   return (
     <>
       <meta property="og:title" content={content?.title} />
       <meta property="og:description" content={contentOwner?.description || ''} />
       <meta property="og:type" content="website" />
-      <meta property="og:url" content={content && contentUrl(content)} />
+      <meta property="og:url" content={content && contentUrl(content, undefined, undefined, host)} />
       <meta property="og:site_name" content={title} />
       <meta property="og:image" content={thumb} />
     </>
   );
 }
 
-function buildThumb(contentOwner: UserPublic, content?: Content) {
+function buildThumb(contentOwner: UserPublic, host: string, content?: Content) {
   let thumb;
   if (content?.thumb) {
     thumb = content.thumb;
     if (!/^https?:/.test(thumb)) {
-      thumb = buildUrl({ pathname: thumb });
+      thumb = buildUrl({ host, pathname: thumb });
     }
   }
 
   if (!thumb) {
-    thumb = buildUrl({ pathname: contentOwner?.logo || contentOwner?.favicon || '' });
+    thumb = buildUrl({ host, pathname: contentOwner?.logo || contentOwner?.favicon || '' });
   }
 
   return thumb;
@@ -124,13 +133,15 @@ function StructuredMetaData({
   contentOwner,
   content,
   title,
+  host,
 }: {
   contentOwner: UserPublic;
   content?: Content;
   title: string;
+  host: string;
 }) {
-  const url = buildUrl({ pathname: '/' });
-  const thumb = buildThumb(contentOwner, content);
+  const url = buildUrl({ host, pathname: '/' });
+  const thumb = buildThumb(contentOwner, host, content);
 
   return (
     <script
@@ -142,7 +153,7 @@ function StructuredMetaData({
           "@type": "NewsArticle",
           "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "${content ? contentUrl(content) : ''}"
+            "@id": "${content ? contentUrl(content, undefined, undefined, host) : ''}"
           },
           "headline": "${content?.title}",
           "image": [

@@ -1,23 +1,38 @@
-import { ApolloClient, InMemoryCache, gql, useQuery } from '@apollo/client';
 import { Content, ContentMetaInfo } from 'data/graphql-generated';
+import { Link, styled } from 'components';
+import { Palette, PaletteColor, useTheme } from '@mui/material';
+import { gql, useQuery } from '@apollo/client';
 
 import ContentLink from 'components/ContentLink';
-import ContentQuery from './ContentQuery';
 import { F } from 'i18n';
-import classNames from 'classnames';
+import baseTheme from 'styles';
 import { contentUrl } from 'util/url-factory';
-import { memo } from 'react';
-import { styled } from 'components';
 
 const StyledNav = styled('nav')`
+  position: relative;
   float: right;
-  padding: 4px 0;
+  margin-left: ${(props) => props.theme.spacing(3.5)};
   white-space: nowrap;
+  z-index: ${baseTheme.zindex.nav};
+
+  a {
+    display: inline-block;
+    background-color: ${(props) => props.theme.palette.background.default};
+    margin-right: ${(props) => props.theme.spacing(1)};
+    margin-bottom: ${(props) => props.theme.spacing(2)};
+    padding: ${(props) => props.theme.spacing(0, 1)};
+  }
+
+  ${(props) => props.theme.breakpoints.down('md')} {
+    width: 75px;
+    text-align: right;
+    white-space: normal;
+  }
 `;
 
 const LoadingEmptyBox = styled('div')`
   float: right;
-  height: 32px;
+  height: ${(props) => props.theme.spacing(4)};
 `;
 
 const NAV_FIELDS = `
@@ -31,8 +46,8 @@ const NAV_FIELDS = `
 `;
 
 const FETCH_CONTENT_NEIGHBORS = gql`
-  query FetchContentNeighbors($username: String!, $section: String!, $album: String!, $name: String!) {
-    fetchContentNeighbors(username: $username, section: $section, album: $album, name: $name) {
+  query FetchContentNeighbors($username: String!, $name: String!) {
+    fetchContentNeighbors(username: $username, name: $name) {
       first {
         ${NAV_FIELDS}
       }
@@ -56,12 +71,11 @@ const FETCH_CONTENT_NEIGHBORS = gql`
 `;
 
 export default function Nav({ content }: { content: Content }) {
-  const { username, section, album, name } = content;
-  const { loading, data, client } = useQuery(FETCH_CONTENT_NEIGHBORS, {
+  const { username, name } = content;
+  const theme = useTheme();
+  const { loading, data /*client */ } = useQuery(FETCH_CONTENT_NEIGHBORS, {
     variables: {
       username,
-      section,
-      album,
       name,
     },
   });
@@ -117,86 +131,71 @@ export default function Nav({ content }: { content: Content }) {
     return null;
   }
 
-  return <PersistedNav loading={loading} client={client} content={content} data={data} />;
-}
+  if (loading || !data || !data.fetchContentNeighbors) {
+    return <LoadingEmptyBox />;
+  }
 
-// This is separate and memoized so that we don't re-render while loading.
-// Otherwise, it's a bit jarring when the navigation menu disappears everytime you click next/prev.
-const PersistedNav = memo(
-  function PersistedNav({
-    loading,
-    client,
-    content,
-    data,
-  }: {
-    loading: boolean;
-    client: ApolloClient<InMemoryCache>;
-    content: Content;
-    data: any;
-  }) {
-    if (loading || !data) {
-      return <LoadingEmptyBox />;
-    }
+  function renderLink(contentMeta: ContentMetaInfo, name: string, msg: JSX.Element, colorPalette: keyof Palette) {
+    contentMeta = contentMeta || {};
 
-    function renderLink(contentMeta: ContentMetaInfo, name: string, msg: JSX.Element) {
-      contentMeta = contentMeta || {};
-
-      const url = contentUrl(
-        contentMeta,
-        false /* isAbsolute */,
-        contentMeta.template === 'latest' ? { mode: 'archive' } : undefined
-      );
-      if (!url) {
-        return (
-          <a
-            href={url}
-            rel={name}
-            className={classNames(`hw-${name}`, { notranslate: name === 'top' })}
-            title={contentMeta.title}
-          >
-            {msg}
-          </a>
-        );
-      }
-
-      // Preload surrounding content. We preload the GraphQL data here. Then, we also preload the images.
-      if (['prev', 'next'].indexOf(name) !== -1) {
-        client.query({
-          query: ContentQuery,
-          variables: { username: contentMeta.username, name: contentMeta.name },
-        });
-
-        if (typeof window !== 'undefined') {
-          for (const img of contentMeta.prefetchImages || []) {
-            new Image().src = img;
-          }
-        }
-      }
-
+    const linkCommonProperties = {
+      rel: name,
+      className: name === 'top' ? `hw-${name} notranslate` : `hw-${name}`,
+      sx: {
+        border: `1px solid ${(theme.palette[colorPalette] as PaletteColor).main}`,
+        boxShadow: `1px 1px ${(theme.palette[colorPalette] as PaletteColor).main},
+              2px 2px ${(theme.palette[colorPalette] as PaletteColor).main},
+              3px 3px ${(theme.palette[colorPalette] as PaletteColor).main}`,
+        '&:hover': {
+          border: `1px solid ${(theme.palette[colorPalette] as PaletteColor).dark}`,
+          boxShadow: `1px 1px ${(theme.palette[colorPalette] as PaletteColor).dark},
+              2px 2px ${(theme.palette[colorPalette] as PaletteColor).dark},
+              3px 3px ${(theme.palette[colorPalette] as PaletteColor).dark}`,
+        },
+      },
+    };
+    const url = contentUrl(
+      contentMeta,
+      false /* isAbsolute */,
+      contentMeta.template === 'latest' ? { mode: 'archive' } : undefined
+    );
+    if (!url) {
       return (
-        <ContentLink
-          url={url}
-          item={contentMeta}
-          currentContent={content}
-          rel={name}
-          className={classNames(`hw-${name}`, { notranslate: name === 'top' })}
-        >
+        <Link href={url} title={contentMeta.title} {...linkCommonProperties}>
           {msg}
-        </ContentLink>
+        </Link>
       );
     }
+
+    // TODO - re-enable later
+    // Preload surrounding content. We preload the GraphQL data here. Then, we also preload the images.
+    // if (['prev', 'next'].indexOf(name) !== -1) {
+    //   client.query({
+    //     query: ContentQuery,
+    //     variables: { username: contentMeta.username, name: contentMeta.name },
+    //   });
+
+    //   if (typeof window !== 'undefined') {
+    //     for (const img of contentMeta.prefetchImages || []) {
+    //       new Image().src = img;
+    //     }
+    //   }
+    // }
 
     return (
-      <StyledNav>
-        {renderLink(data.fetchContentNeighbors.last, 'last', <F defaultMessage="last" />)}
-        {renderLink(data.fetchContentNeighbors.next, 'next', <F defaultMessage="next" />)}
-        {renderLink(data.fetchContentNeighbors.top, 'top', data.fetchContentNeighbors.top?.name)}
-        {renderLink(data.fetchContentNeighbors.prev, 'prev', <F defaultMessage="prev" />)}
-        {renderLink(data.fetchContentNeighbors.first, 'first', <F defaultMessage="first" />)}
-      </StyledNav>
+      <ContentLink url={url} item={contentMeta} currentContent={content} {...linkCommonProperties}>
+        {msg}
+      </ContentLink>
     );
-  },
-  (prevProps, nextProps) => {
-    return nextProps.loading;
   }
-);
+
+  return (
+    <StyledNav>
+      {renderLink(data.fetchContentNeighbors.last, 'last', <F defaultMessage="last" />, 'info')}
+      {renderLink(data.fetchContentNeighbors.next, 'next', <F defaultMessage="next" />, 'warning')}
+      {renderLink(data.fetchContentNeighbors.top, 'top', data.fetchContentNeighbors.top?.name, 'success')}
+      {renderLink(data.fetchContentNeighbors.prev, 'prev', <F defaultMessage="prev" />, 'error')}
+      {renderLink(data.fetchContentNeighbors.first, 'first', <F defaultMessage="first" />, 'secondary')}
+    </StyledNav>
+  );
+}

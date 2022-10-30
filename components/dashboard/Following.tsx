@@ -1,6 +1,7 @@
 import { F, defineMessages, useIntl } from 'i18n';
 import { FetchFollowingQuery, UserRemotePublic } from 'data/graphql-generated';
 import { KeyboardEvent, useRef } from 'react';
+import { List, TextField, Typography, styled } from 'components';
 
 import FollowingFeeds from './FollowingFeeds';
 import FollowingQuery from './FollowingQuery';
@@ -13,6 +14,18 @@ const messages = defineMessages({
 });
 
 const POLL_INTERVAL = 60 * 1000;
+
+const Container = styled('div')`
+  margin: 0 ${(props) => props.theme.spacing(2)} ${(props) => props.theme.spacing(3.5)} 0;
+  padding: ${(props) => props.theme.spacing(1)};
+  border: 1px solid ${(props) => props.theme.palette.success.main};
+  box-shadow: 1px 1px ${(props) => props.theme.palette.success.main},
+    2px 2px ${(props) => props.theme.palette.success.main}, 3px 3px ${(props) => props.theme.palette.success.main};
+
+  h2 {
+    margin: 0;
+  }
+`;
 
 export default function Following({
   userRemote,
@@ -48,12 +61,12 @@ export default function Following({
   const searchPlaceholder = intl.formatMessage(messages.search);
 
   return (
-    <div>
-      <h2>
+    <Container>
+      <Typography variant="h2">
         <F defaultMessage="following" />
-      </h2>
+      </Typography>
 
-      <ul>
+      <List>
         <FollowingSpecialFeeds handleSetFeed={handleSetFeed} specialFeed={specialFeed} pollInterval={POLL_INTERVAL} />
         <FollowingFeeds
           following={following as UserRemotePublic[]}
@@ -61,17 +74,20 @@ export default function Following({
           currentUserRemote={userRemote}
           pollInterval={POLL_INTERVAL}
         />
-      </ul>
+      </List>
 
       <NewFeed handleSetFeed={handleSetFeed} />
 
-      <input
+      <TextField
+        size="small"
+        margin="dense"
         type="search"
         onKeyUp={handleSearchKeyUp}
         onChange={handleSearchChange}
         ref={searchInput}
         placeholder={searchPlaceholder}
+        className="notranslate"
       />
-    </div>
+    </Container>
   );
 }

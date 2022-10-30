@@ -1,3 +1,4 @@
+import { Button } from 'components';
 import { ContentRemote } from 'data/graphql-generated';
 import { F } from 'i18n';
 
@@ -16,8 +17,8 @@ export default function Reblog({ contentRemote }: { contentRemote: ContentRemote
   // };
 
   return (
-    <button disabled={type === 'remote-comment'}>
+    <Button disabled={type === 'remote-comment'}>
       <F defaultMessage="reblog" />
-    </button>
+    </Button>
   );
 }

@@ -1,7 +1,5 @@
-import { Button, Popover } from '@mui/material';
+import { Button, Popover, styled } from 'components';
 import { MouseEvent, useEffect, useState } from 'react';
-
-import { styled } from '@mui/material/styles';
 
 const Table = styled('div')`
   white-space: nowrap;
@@ -10,12 +8,13 @@ const Table = styled('div')`
 
 const EntryType = styled('td')`
   font-weight: bold;
-  padding: 5px 20px 5px 5px;
+  padding: ${(props) => props.theme.spacing(0.5)};
+  padding-right: ${(props) => props.theme.spacing(2)};
 `;
 
 const EntryValue = styled('td')`
   text-align: right;
-  padding: 5px;
+  padding: ${(props) => props.theme.spacing(0.5)};
 `;
 
 const WEB_VITALS_NAME_TO_READABLE: { [key: string]: string } = {
@@ -49,17 +48,20 @@ export default function Performance() {
       return;
     }
 
-    const observer = new PerformanceObserver(() => {
+    function perfCallback() {
       const perfNavigationEntry = window['performance'].getEntriesByType('navigation')[0];
       const perfPaintEntries = window['performance'].getEntriesByType('paint');
       setDuration(perfNavigationEntry.duration);
       setNavigationEntry(perfNavigationEntry);
       setPaintEntries(perfPaintEntries);
-    });
+    }
 
+    const observer = new PerformanceObserver(perfCallback);
     observer.observe({
       entryTypes: ['navigation', 'paint'],
     });
+
+    perfCallback();
   }, []);
 
   function renderPerfInfo() {

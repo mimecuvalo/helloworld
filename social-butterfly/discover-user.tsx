@@ -97,7 +97,8 @@ export async function getWebfinger(lrddUrl: string, uri: string) {
 
   if (webfingerInfo && webfingerInfo.activityPubActorUrl) {
     try {
-      const actorJSON = await getActivityPubActor(webfingerInfo.activityPubActorUrl);
+      // TODO: type later
+      const actorJSON = (await getActivityPubActor(webfingerInfo.activityPubActorUrl)) as unknown as any;
 
       // TODO(mime): not the cleanest naming, we're overwriting the magic_key and preferring the PEM from
       // the actor JSON. should rename this field to reflect that it is has magic or PEM format for public key.

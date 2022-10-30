@@ -1,14 +1,15 @@
 import { Alert, Snackbar, styled } from 'components';
+import ContentThumb, { THUMB_HEIGHT, THUMB_WIDTH } from 'components/ContentThumb';
 import { gql, useQuery } from '@apollo/client';
 
 import { Content } from 'data/graphql-generated';
 import ContentLink from 'components/ContentLink';
-import ContentThumb from 'components/ContentThumb';
 import { F } from 'i18n';
 import { useState } from 'react';
 
 const StyledAlbum = styled('ul')`
   list-style: none;
+  padding: 0;
 `;
 
 const LoadingEmptyBox = styled('div')`
@@ -21,28 +22,28 @@ const Item = styled('li')`
   overflow: hidden;
   vertical-align: top;
   text-align: center;
-  margin: 3px;
+  margin: ${(props) => props.theme.spacing(0.5)};
   transition: all 0.2s ease-out;
-  box-shadow: 0px 0px 0px 1px transparent;
+  box-shadow: 0 0 0 1px transparent;
 
   &:hover {
-    box-shadow: 0px 0px 0px 1px #06e;
+    box-shadow: 0 0 0 1px ${(props) => props.theme.palette.primary.main};
   }
 `;
 
 const LinkWrapper = styled('span')`
   & a {
     display: block;
-    width: var(--thumb-width);
-    max-width: var(--thumb-width);
+    width: ${THUMB_WIDTH}px;
+    max-width: ${THUMB_HEIGHT}px;
     min-height: 1.1em;
   }
 `;
 
 // const DeleteButton = styled(IconButton)`
 //   position: absolute;
-//   top: 5px;
-//   right: 5px;
+//   top: ${(props) => props.theme.spacing(0.5)};
+//   right: ${(props) => props.theme.spacing(0.5)};
 // `;
 
 // const messages = defineMessages({

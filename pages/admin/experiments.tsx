@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { Typography } from 'components';
 import authServerSideProps from 'app/authServerSideProps';
 
 export default function Experiments() {
@@ -16,7 +17,7 @@ export default function Experiments() {
 
   return (
     <>
-      <h1>Experiments</h1>
+      <Typography variant="h1">Experiments</Typography>
       <pre>{JSON.stringify(experiments, undefined, 2)}</pre>
     </>
   );

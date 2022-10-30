@@ -1,4 +1,4 @@
-import { styled } from '@mui/material/styles';
+import { styled } from 'components';
 
 export const Message = styled('div')`
   min-height: 100vh;

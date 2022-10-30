@@ -4,7 +4,6 @@ import { MAX_FILE_SIZE } from 'util/constants';
 import { User } from '@prisma/client';
 import authenticate from 'app/authentication';
 import aws from 'aws-sdk';
-import crypto from 'crypto';
 import mime from 'mime/lite';
 
 export default authenticate(async function handler(req: NextApiRequest, res: NextApiResponse, currentUser: User) {
@@ -28,12 +27,10 @@ export default authenticate(async function handler(req: NextApiRequest, res: Nex
       'Content-Type': mime.getType(req.query.file as string),
     };
 
-    const md5 = crypto.createHash('md5');
-    const emailHash = md5.update(currentUser.email).digest('hex');
     const post = await s3.createPresignedPost({
       Bucket: process.env.S3_AWS_S3_BUCKET_NAME,
       Fields: {
-        key: `${emailHash}/${req.query.file}`,
+        key: `${currentUser.username}/${req.query.file}`,
         ...extraFields,
       },
       Expires: 60, // seconds

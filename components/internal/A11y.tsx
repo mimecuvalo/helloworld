@@ -1,23 +1,22 @@
-import { Button, Popover } from '@mui/material';
+import { Button, List, ListItem, Popover, Typography, styled } from 'components';
 import { MouseEvent, useEffect, useState } from 'react';
 
 import axe from 'axe-core';
-import { styled } from '@mui/material/styles';
 
 const Container = styled('div')`
-  padding: 10px;
+  padding: ${(props) => props.theme.spacing(1)};
   max-width: 40vw;
   max-height: 40vh;
 `;
 
-const TypeFilter = styled('h3')`
+const TypeFilter = styled(Typography)`
   text-transform: capitalize;
 `;
 
 const AuditButton = styled(Button)`
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: ${(props) => props.theme.spacing(1)};
+  right: ${(props) => props.theme.spacing(1)};
 `;
 
 // Provides information about the app's shortcomings when it comes to accessibility.
@@ -71,16 +70,16 @@ export default function A11y() {
 
     return (
       <div>
-        <TypeFilter>{typeFilter}</TypeFilter>
-        <ul>
+        <TypeFilter variant="h3">{typeFilter}</TypeFilter>
+        <List>
           {violationsByType.map((violation) => (
-            <li key={violation.id}>
+            <ListItem key={violation.id}>
               <strong>{violation.id}</strong>: {violation.description}
               &nbsp;(
               <em>{violation.nodes.map((node) => node.target).join(', ')}</em>)
-            </li>
+            </ListItem>
           ))}
-        </ul>
+        </List>
       </div>
     );
   }
@@ -95,7 +94,7 @@ export default function A11y() {
         <AuditButton variant="contained" onClick={handleRerun}>
           Re-run audits
         </AuditButton>
-        <h2>Violations</h2>
+        <Typography variant="h2">Violations</Typography>
         {results.violations.length ? null : (
           <div>
             No violations!

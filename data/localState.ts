@@ -16,7 +16,7 @@ export function dataIdFromObject(obj: StoreObject) {
     case 'Post':
     case 'Comment':
     case 'Favorite':
-      return `${prefixIdFromObject(obj)}${obj.post_id}`;
+      return `${prefixIdFromObject(obj)}${obj.postId}`;
     case 'UserPublic':
       return `${prefixIdFromObject(obj)}`;
     case 'UserRemotePublic':
@@ -37,13 +37,13 @@ export function prefixIdFromObject(obj: StoreObject) {
     case 'Post':
     case 'Comment':
     case 'Favorite':
-      return obj.from_user ? `${type} ${obj.from_user} ` : `${type} `;
+      return obj.fromUsername ? `${type} ${obj.fromUsername} ` : `${type} `;
     case 'UserPublic':
       return `${type} ${obj.username}`;
     case 'UserRemotePublic':
-      return `${type} ${obj.profile_url}`;
+      return `${type} ${obj.profileUrl}`;
     case 'FeedCount':
-      return `${type} ${obj.from_user}`;
+      return `${type} ${obj.fromUsername}`;
     default:
       throw new Error('not supported');
   }

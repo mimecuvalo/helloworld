@@ -15,7 +15,6 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** Date custom scalar type */
   Date: any;
 };
 
@@ -267,6 +266,7 @@ export type Query = {
   allContent: Array<Content>;
   allContentRemote: Array<ContentRemote>;
   allUsersRemote: Array<UserRemotePrivate>;
+  currentUser?: Maybe<UserPrivate>;
   echoExample?: Maybe<Echo>;
   fetchAllUsers: Array<UserPrivate>;
   fetchCollection: Array<ContentMetaInfo>;
@@ -274,8 +274,7 @@ export type Query = {
   fetchCollectionPaginated: Array<Content>;
   fetchCommentsRemote: Array<Comment>;
   fetchContent?: Maybe<Content>;
-  fetchContentHead?: Maybe<Content>;
-  fetchContentNeighbors: Neighbors;
+  fetchContentNeighbors?: Maybe<Neighbors>;
   fetchContentRemote?: Maybe<ContentRemote>;
   fetchContentRemotePaginated: Array<Post>;
   fetchFavoritesRemote: Array<Favorite>;
@@ -283,7 +282,6 @@ export type Query = {
   fetchFollowers: Array<UserRemotePublic>;
   fetchFollowing: Array<UserRemotePublic>;
   fetchPublicUserData?: Maybe<UserPublic>;
-  fetchPublicUserDataHead?: Maybe<UserPublic>;
   fetchPublicUserDataSearch?: Maybe<UserPublic>;
   fetchSiteMap: Array<ContentMetaInfo>;
   fetchUser?: Maybe<UserPrivate>;
@@ -334,16 +332,8 @@ export type QueryFetchContentArgs = {
 };
 
 
-export type QueryFetchContentHeadArgs = {
-  name?: InputMaybe<Scalars['String']>;
-  username?: InputMaybe<Scalars['String']>;
-};
-
-
 export type QueryFetchContentNeighborsArgs = {
-  album?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
-  section?: InputMaybe<Scalars['String']>;
   username?: InputMaybe<Scalars['String']>;
 };
 
@@ -368,11 +358,6 @@ export type QueryFetchFavoritesRemoteArgs = {
 
 
 export type QueryFetchPublicUserDataArgs = {
-  username?: InputMaybe<Scalars['String']>;
-};
-
-
-export type QueryFetchPublicUserDataHeadArgs = {
   username?: InputMaybe<Scalars['String']>;
 };
 
@@ -513,7 +498,7 @@ export type ContentAndUserQueryVariables = Exact<{
 }>;
 
 
-export type ContentAndUserQuery = { __typename?: 'Query', fetchContent?: { __typename?: 'Content', album: string, code: string, commentsCount: number, commentsUpdated?: any | null, content: string, count: number, countRobot: number, createdAt: any, forceRefresh?: boolean | null, hidden: boolean, name: string, section: string, style: string, template: string, thread?: string | null, thumb: string, title: string, updatedAt: any, username: string, view: string } | null, fetchCommentsRemote: Array<{ __typename?: 'Comment', avatar?: string | null, creator?: string | null, content?: string | null, deleted: boolean, favorited: boolean, fromUsername?: string | null, link: string, localContentName?: string | null, postId: string, type: string, username: string, view: string }>, fetchFavoritesRemote: Array<{ __typename?: 'Favorite', avatar?: string | null, fromUsername?: string | null, localContentName?: string | null, postId: string, type: string, username: string }>, fetchPublicUserData?: { __typename?: 'UserPublic', description?: string | null, favicon?: string | null, logo?: string | null, name: string, title: string } | null };
+export type ContentAndUserQuery = { __typename?: 'Query', fetchContent?: { __typename?: 'Content', album: string, code: string, commentsCount: number, commentsUpdated?: any | null, content: string, count: number, countRobot: number, createdAt: any, forceRefresh?: boolean | null, hidden: boolean, name: string, section: string, style: string, template: string, thread?: string | null, thumb: string, title: string, updatedAt: any, username: string, view: string } | null, fetchCommentsRemote: Array<{ __typename?: 'Comment', avatar?: string | null, creator?: string | null, content?: string | null, deleted: boolean, favorited: boolean, fromUsername?: string | null, link: string, localContentName?: string | null, postId: string, type: string, username: string, view: string }>, fetchFavoritesRemote: Array<{ __typename?: 'Favorite', avatar?: string | null, fromUsername?: string | null, localContentName?: string | null, postId: string, type: string, username: string }>, fetchPublicUserData?: { __typename?: 'UserPublic', username: string, description?: string | null, favicon?: string | null, logo?: string | null, name: string, sidebarHtml?: string | null, title: string, theme: string, viewport?: string | null, license?: string | null } | null, fetchSiteMap: Array<{ __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string }>, fetchContentNeighbors?: { __typename?: 'Neighbors', first?: { __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string } | null, last?: { __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string } | null, next?: { __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string, prefetchImages?: Array<string> | null } | null, prev?: { __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string, prefetchImages?: Array<string> | null } | null, top?: { __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string, template: string } | null } | null };
 
 export type FetchCollectionQueryVariables = Exact<{
   username: Scalars['String'];
@@ -523,14 +508,14 @@ export type FetchCollectionQueryVariables = Exact<{
 }>;
 
 
-export type FetchCollectionQuery = { __typename?: 'Query', fetchCollectionPaginated: Array<{ __typename?: 'Content', album: string, code: string, commentsCount: number, commentsUpdated?: any | null, count: number, countRobot: number, createdAt: any, updatedAt: any, hidden: boolean, name: string, order: number, redirect: number, section: string, sortType?: string | null, style: string, template: string, thumb: string, title: string, username: string, view: string, content: string }>, fetchPublicUserData?: { __typename?: 'UserPublic', description?: string | null, favicon?: string | null, logo?: string | null, name: string, title: string } | null };
+export type FetchCollectionQuery = { __typename?: 'Query', fetchCollectionPaginated: Array<{ __typename?: 'Content', album: string, code: string, commentsCount: number, commentsUpdated?: any | null, count: number, countRobot: number, createdAt: any, updatedAt: any, hidden: boolean, name: string, order: number, redirect: number, section: string, sortType?: string | null, style: string, template: string, thumb: string, title: string, username: string, view: string, content: string }>, fetchPublicUserData?: { __typename?: 'UserPublic', username: string, description?: string | null, favicon?: string | null, logo?: string | null, name: string, title: string, theme: string, viewport?: string | null } | null };
 
 export type SiteMapAndUserQueryVariables = Exact<{
   username: Scalars['String'];
 }>;
 
 
-export type SiteMapAndUserQuery = { __typename?: 'Query', fetchSiteMap: Array<{ __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string }>, fetchPublicUserData?: { __typename?: 'UserPublic', license?: string | null, logo?: string | null, name: string, title: string, sidebarHtml?: string | null } | null };
+export type SiteMapAndUserQuery = { __typename?: 'Query', fetchSiteMap: Array<{ __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string }>, fetchPublicUserData?: { __typename?: 'UserPublic', username: string, license?: string | null, logo?: string | null, name: string, title: string, sidebarHtml?: string | null, theme: string, viewport?: string | null } | null };
 
 export type Unnamed_1_QueryVariables = Exact<{
   username: Scalars['String'];
@@ -567,6 +552,21 @@ export type SiteMapAndUserEditorQueryVariables = Exact<{
 
 
 export type SiteMapAndUserEditorQuery = { __typename?: 'Query', fetchSiteMap: Array<{ __typename?: 'ContentMetaInfo', album: string, hidden: boolean, name: string, section: string, title: string, username: string }>, fetchFollowing: Array<{ __typename?: 'UserRemotePublic', name: string, username: string, profileUrl: string, avatar: string, favicon?: string | null }> };
+
+export type PostContentMutationVariables = Exact<{
+  section: Scalars['String'];
+  album: Scalars['String'];
+  name: Scalars['String'];
+  title: Scalars['String'];
+  hidden: Scalars['Boolean'];
+  thumb: Scalars['String'];
+  style: Scalars['String'];
+  code: Scalars['String'];
+  content: Scalars['String'];
+}>;
+
+
+export type PostContentMutation = { __typename?: 'Mutation', postContent: { __typename?: 'Content', username: string, section: string, album: string, name: string, title: string, hidden: boolean, thumb: string, style: string, code: string, content: string } };
 
 export type FetchContentRemotePaginatedQueryVariables = Exact<{
   profileUrlOrSpecialFeed: Scalars['String'];
@@ -662,13 +662,10 @@ export type DestroyFeedMutationVariables = Exact<{
 
 export type DestroyFeedMutation = { __typename?: 'Mutation', destroyFeed: boolean };
 
-export type ContentAndUserQueryDocumentQueryVariables = Exact<{
-  username: Scalars['String'];
-  name: Scalars['String'];
-}>;
+export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ContentAndUserQueryDocumentQuery = { __typename?: 'Query', fetchContentHead?: { __typename?: 'Content', username: string, section: string, album: string, name: string, thumb: string, title: string, createdAt: any, updatedAt: any, commentsCount: number, commentsUpdated?: any | null } | null, fetchPublicUserDataHead?: { __typename?: 'UserPublic', description?: string | null, favicon?: string | null, googleAnalytics?: string | null, logo?: string | null, name: string, theme: string, title: string, username: string, viewport?: string | null } | null };
+export type CurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'UserPrivate', id: number, username: string, name: string, email: string, theme: string, title: string, favicon?: string | null } | null };
 
 export type FetchAllUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -966,6 +963,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   allContent?: Resolver<Array<ResolversTypes['Content']>, ParentType, ContextType>;
   allContentRemote?: Resolver<Array<ResolversTypes['ContentRemote']>, ParentType, ContextType>;
   allUsersRemote?: Resolver<Array<ResolversTypes['UserRemotePrivate']>, ParentType, ContextType>;
+  currentUser?: Resolver<Maybe<ResolversTypes['UserPrivate']>, ParentType, ContextType>;
   echoExample?: Resolver<Maybe<ResolversTypes['Echo']>, ParentType, ContextType, RequireFields<QueryEchoExampleArgs, 'str'>>;
   fetchAllUsers?: Resolver<Array<ResolversTypes['UserPrivate']>, ParentType, ContextType>;
   fetchCollection?: Resolver<Array<ResolversTypes['ContentMetaInfo']>, ParentType, ContextType, RequireFields<QueryFetchCollectionArgs, 'album' | 'name' | 'section' | 'username'>>;
@@ -973,8 +971,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   fetchCollectionPaginated?: Resolver<Array<ResolversTypes['Content']>, ParentType, ContextType, RequireFields<QueryFetchCollectionPaginatedArgs, 'name' | 'offset' | 'section' | 'username'>>;
   fetchCommentsRemote?: Resolver<Array<ResolversTypes['Comment']>, ParentType, ContextType, Partial<QueryFetchCommentsRemoteArgs>>;
   fetchContent?: Resolver<Maybe<ResolversTypes['Content']>, ParentType, ContextType, Partial<QueryFetchContentArgs>>;
-  fetchContentHead?: Resolver<Maybe<ResolversTypes['Content']>, ParentType, ContextType, Partial<QueryFetchContentHeadArgs>>;
-  fetchContentNeighbors?: Resolver<ResolversTypes['Neighbors'], ParentType, ContextType, Partial<QueryFetchContentNeighborsArgs>>;
+  fetchContentNeighbors?: Resolver<Maybe<ResolversTypes['Neighbors']>, ParentType, ContextType, Partial<QueryFetchContentNeighborsArgs>>;
   fetchContentRemote?: Resolver<Maybe<ResolversTypes['ContentRemote']>, ParentType, ContextType, RequireFields<QueryFetchContentRemoteArgs, 'id'>>;
   fetchContentRemotePaginated?: Resolver<Array<ResolversTypes['Post']>, ParentType, ContextType, RequireFields<QueryFetchContentRemotePaginatedArgs, 'offset' | 'profileUrlOrSpecialFeed'>>;
   fetchFavoritesRemote?: Resolver<Array<ResolversTypes['Favorite']>, ParentType, ContextType, Partial<QueryFetchFavoritesRemoteArgs>>;
@@ -982,7 +979,6 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   fetchFollowers?: Resolver<Array<ResolversTypes['UserRemotePublic']>, ParentType, ContextType>;
   fetchFollowing?: Resolver<Array<ResolversTypes['UserRemotePublic']>, ParentType, ContextType>;
   fetchPublicUserData?: Resolver<Maybe<ResolversTypes['UserPublic']>, ParentType, ContextType, Partial<QueryFetchPublicUserDataArgs>>;
-  fetchPublicUserDataHead?: Resolver<Maybe<ResolversTypes['UserPublic']>, ParentType, ContextType, Partial<QueryFetchPublicUserDataHeadArgs>>;
   fetchPublicUserDataSearch?: Resolver<Maybe<ResolversTypes['UserPublic']>, ParentType, ContextType, Partial<QueryFetchPublicUserDataSearchArgs>>;
   fetchSiteMap?: Resolver<Array<ResolversTypes['ContentMetaInfo']>, ParentType, ContextType, RequireFields<QueryFetchSiteMapArgs, 'username'>>;
   fetchUser?: Resolver<Maybe<ResolversTypes['UserPrivate']>, ParentType, ContextType, RequireFields<QueryFetchUserArgs, 'id'>>;

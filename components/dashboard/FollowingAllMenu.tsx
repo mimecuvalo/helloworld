@@ -1,4 +1,4 @@
-import { IconButton, Menu } from 'components';
+import { Button, Menu } from 'components';
 import { MouseEvent, useState } from 'react';
 import { defineMessages, useIntl } from 'i18n';
 
@@ -27,15 +27,15 @@ export default function FollowingAllMenu() {
 
   return (
     <>
-      <IconButton
+      <Button
         aria-label={menuAriaLabel}
         aria-owns={isOpen ? id : undefined}
         aria-haspopup="true"
         onClick={handleMenuOpenerClick}
-        size="large"
+        sx={{ minWidth: 0 }}
       >
         <ArrowDropDownIcon />
-      </IconButton>
+      </Button>
       <Menu id={id} anchorEl={anchorEl} open={isOpen} onClose={handleClose} transitionDuration={0}>
         <MarkAllFeedsAsRead key="read" handleClose={handleClose} />
       </Menu>

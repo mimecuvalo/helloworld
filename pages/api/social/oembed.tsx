@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { THUMB_HEIGHT, THUMB_WIDTH } from 'util/constants';
 import { buildUrl, contentUrl, profileUrl } from 'util/url-factory';
 import { getLocalContent, getLocalUser } from 'social-butterfly/db';
 
@@ -22,8 +23,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const statsImg = `<img src="${statsUrl}" alt="stats" />`;
 
   res.setHeader('Content-Type', 'application/json+oembed');
-  const thumbWidth = 154;
-  const thumbHeight = 115;
+  const thumbWidth = THUMB_WIDTH;
+  const thumbHeight = THUMB_HEIGHT;
   res.json({
     type: 'rich',
     version: '1.0',

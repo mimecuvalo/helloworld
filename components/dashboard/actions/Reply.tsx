@@ -1,5 +1,6 @@
-import { F } from 'i18n';
 //import { MouseEvent } from 'react';
+import { Button } from 'components';
+import { F } from 'i18n';
 
 // const messages = defineMessages({
 //   reply: { defaultMessage: 'replying to' },
@@ -22,8 +23,8 @@ export default function Reply(/*props: { contentRemote: ContentRemote }*/) {
   // };
 
   return (
-    <button>
+    <Button>
       <F defaultMessage="reply" />
-    </button>
+    </Button>
   );
 }

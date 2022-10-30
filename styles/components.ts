@@ -1,28 +1,87 @@
+import { SimplePaletteColorOptions, createTheme } from '@mui/material';
+
+import palette from './palette';
+import typography from './typography';
+
+// Reference theme:
+const referenceTheme = createTheme();
+
 const components = {
   MuiButton: {
     styleOverrides: {
       root: {
-        fontSize: '13px',
-        lineHeight: 1.5,
-        fontWeight: 400,
-        margin: '0 3px 6px 3px',
-        padding: '0 7px',
+        background: palette.background?.default,
+        fontSize: typography.fontSizeBase,
+        lineHeight: typography.lineHeightBase,
+        textTransform: 'none',
+        verticalAlign: 'baseline',
+
+        '&.MuiButton-text[href]': {
+          textTransform: 'none',
+          padding: 0,
+          minWidth: 0,
+          margin: 0,
+          border: 0,
+        },
       },
 
-      containedPrimary: {
-        backgroundColor: '#eff',
-        border: '1px solid #0c0',
-        borderRadius: '3px',
-        color: '#060',
-        textShadow: '0 1px 0 #fff',
-        boxShadow: 'none',
+      contained: {
+        background: palette.background?.default,
+        border: `1px solid ${(palette.primary as SimplePaletteColorOptions)?.light}`,
+        boxShadow: `
+          1px 1px ${(palette.primary as SimplePaletteColorOptions)?.light},
+          2px 2px ${(palette.primary as SimplePaletteColorOptions)?.light},
+          3px 3px ${(palette.primary as SimplePaletteColorOptions)?.light}`,
+        borderRadius: 0,
+        color: palette.text?.primary,
+        padding: referenceTheme.spacing(0, 1),
 
-        '&:hover, &:active': {
-          backgroundColor: '#eff',
-          border: '1px solid #090',
-          color: '#060',
-          boxShadow: 'none',
+        '&:hover': {
+          boxShadow: `
+            1px 1px ${(palette.primary as SimplePaletteColorOptions)?.light},
+            2px 2px ${(palette.primary as SimplePaletteColorOptions)?.light},
+            3px 3px ${(palette.primary as SimplePaletteColorOptions)?.light}`,
         },
+      },
+    },
+  },
+
+  MuiChip: {
+    styleOverrides: {
+      labelSmall: {
+        fontSize: typography.fontSizeXS,
+        padding: referenceTheme.spacing(0, 0.5),
+      },
+
+      sizeSmall: {
+        height: '14px',
+      },
+    },
+  },
+
+  MuiList: {
+    styleOverrides: {
+      root: {
+        margin: 0,
+        padding: 0,
+      },
+    },
+  },
+
+  MuiListItem: {
+    styleOverrides: {
+      root: {
+        margin: 0,
+        padding: 0,
+      },
+    },
+  },
+
+  MuiOutlinedInput: {
+    styleOverrides: {
+      notchedOutline: {
+        borderColor: (palette.primary as SimplePaletteColorOptions)?.light,
+        borderRadius: 0,
       },
     },
   },

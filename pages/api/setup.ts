@@ -1,14 +1,23 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
+
+import { User } from '@prisma/client';
 import crypto from 'crypto';
+import { follow } from 'social-butterfly/activitystreams';
 import magic from 'magic-signatures';
 
 // TODO(mime): all this user creation logic has to go somewhere else so we can reuse it later.
-export default async function setup() {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const anyUser = await prisma?.user.findFirst();
+  if (anyUser) {
+    return res.status(400).send('already setup.');
+  }
+
   const username = 'me';
 
   // Setup 'magic key' for signing Salmon envelopes.
   const { magicKey, privateKey } = generateMagicKey();
 
-  await prisma?.user.create({
+  const newUser = await prisma?.user.create({
     data: {
       description: 'Just another Hello, world blog',
       email: 'example@mail.com',
@@ -41,8 +50,10 @@ export default async function setup() {
     ],
   });
 
-  // // Give a feed to follow to start with.
-  // await socialButterfly().follow(null /* req */, { model: newUser }, 'https://kottke.org');
+  // Give a feed to follow to start with.
+  follow(req, newUser as User, { profileUrl: 'https://kottke.org' }, true /* isFollow */);
+
+  res.status(200).end();
 }
 
 function createStubContent({

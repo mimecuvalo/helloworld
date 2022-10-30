@@ -1,4 +1,3 @@
-// import socialButterfly from 'social-butterfly';
 import {
   ContentResolvers,
   Content as ContentType,
@@ -15,10 +14,12 @@ import {
 import { isAdmin, isAuthor } from './authorization';
 
 import { Context } from 'data/context';
+import { User } from '@prisma/client';
 import cheerio from 'cheerio';
 import { combineResolvers } from 'graphql-resolvers';
 import { isRobotViewing } from 'util/crawler';
 import { nanoid } from 'nanoid';
+import { syndicate } from 'social-butterfly/syndicate';
 
 const ATTRIBUTES_NAVIGATION = {
   username: true,
@@ -56,18 +57,23 @@ const Content = {
             name = name || 'home';
           }
         }
+
         if (!username) {
           username = (await prisma.user.findUnique({ select: { username: true }, where: { id: 1 } }))?.username;
           name = name || 'main';
         }
       }
 
-      let content = (await prisma.content.findFirst({ where: { username, name } })) as ContentType | null;
+      let content = (await prisma.content.findUnique({
+        where: { username_name: { username: username || '', name: name || '' } },
+      })) as ContentType | null;
 
       if (!content) {
         name = 'home';
         // Could be that we don't have a 'main' page. Look for a 'home' page instead.
-        content = (await prisma.content.findFirst({ where: { username, name } })) as ContentType | null;
+        content = (await prisma.content.findUnique({
+          where: { username_name: { username: username || '', name: name || '' } },
+        })) as ContentType | null;
       }
 
       // Inherit style, code, template from the album.
@@ -75,9 +81,11 @@ const Content = {
         const albumContent = await prisma.content.findFirst({
           where: { username, section: content.section, album: 'main', name: content.album },
         });
+
         if (albumContent?.style) {
           content.style = albumContent.style + content.style;
         }
+
         if (albumContent?.code) {
           content.code = albumContent.code + content.code;
         }
@@ -131,17 +139,20 @@ const Content = {
 
     async fetchContentNeighbors(
       parent: ContentResolvers,
-      { username, section, album, name }: QueryFetchContentNeighborsArgs,
+      { username, name }: QueryFetchContentNeighborsArgs,
       { currentUsername, prisma }: Context
     ) {
       const ATTRIBUTES_NAVIGATION_WITH_VIEW = Object.assign({ view: true }, ATTRIBUTES_NAVIGATION);
+      const content = (await prisma.content.findUnique({
+        where: { username_name: { username: username || '', name: name || '' } },
+      })) as ContentType | null;
 
       if (!username) {
         username = (await prisma.user.findFirst({ select: { username: true }, where: { id: 1 } }))?.username;
       }
       name = name || 'main';
-      album = album || undefined;
-      section = section || undefined;
+      const album = content?.album || undefined;
+      const section = content?.section || undefined;
 
       const sectionContent = await prisma.content.findFirst({
         where: { username, section: 'main', name: section === 'main' ? name : section },
@@ -417,13 +428,12 @@ const Content = {
       async (
         parent: ContentResolvers,
         { name, hidden, title, thumb, style, code, content }: MutationSaveContentArgs,
-        { currentUsername, prisma }: Context
+        { currentUsername, currentUser, req, prisma }: Context
       ) => {
         const username = currentUsername;
-        const view = 'FIXME';
-        const thread = discoverThreadInHTML(view);
+        const thread = discoverThreadInHTML(content);
 
-        await prisma.content.update({
+        const updatedContent = await prisma.content.update({
           data: {
             hidden,
             title,
@@ -432,7 +442,6 @@ const Content = {
             thread,
             code,
             content,
-            view,
           },
           where: {
             username_name: {
@@ -442,13 +451,8 @@ const Content = {
           },
         });
 
-        // const updatedContent = await prisma.content.findOne({ where: { username, name } });
-
-        if (!hidden) {
-          // // TODO(mime): hacky - how can we unify this (here and wherever we use syndicate())
-          // currentUser.model.url = profileUrl(currentUsername, req);
-          // updatedContent.url = contentUrl(updatedContent, req);
-          // await socialButterfly().syndicate(req, currentUser.model, updatedContent);
+        if (!hidden && updatedContent) {
+          await syndicate(req, currentUser as User, updatedContent);
         }
 
         return { username: currentUsername, name, hidden, title, thumb, style, code, content };
@@ -460,34 +464,35 @@ const Content = {
       async (
         parent: ContentResolvers,
         { section, album, name, title, hidden, thumb, style, code, content }: MutationPostContentArgs,
-        { currentUsername }: Context
+        { currentUsername, currentUser, prisma, req }: Context
       ) => {
         name = (name || 'untitled') + '-' + nanoid(10);
         name = name.replace(/[^A-Za-z0-9-]/, '-');
 
-        // const view = 'FIXME';
-        // const thread = discoverThreadInHTML(view);
+        const thread = discoverThreadInHTML(content);
 
-        // const createdContent = await prisma.content.create({
-        //   username: currentUsername,
-        //   section,
-        //   album,
-        //   name,
-        //   title,
-        //   thumb,
-        //   thread,
-        //   hidden,
-        //   style,
-        //   code,
-        //   content,
-        //   view,
-        // });
+        const createdContent = await prisma.content.create({
+          data: {
+            username: currentUsername,
+            section,
+            album,
+            name,
+            title,
+            thumb,
+            thread,
+            hidden,
+            redirect: 0,
+            template: '',
+            sortType: '',
+            style,
+            code,
+            content,
+            view: '',
+          },
+        });
 
         if (!hidden) {
-          // // TODO(mime): hacky - how can we unify this (here and wherever we use syndicate())
-          // currentUser.model.url = profileUrl(currentUsername, req);
-          // createdContent.url = contentUrl(createdContent, req);
-          // await socialButterfly().syndicate(req, currentUsername, createdContent);
+          await syndicate(req, currentUser as User, createdContent);
         }
 
         return {

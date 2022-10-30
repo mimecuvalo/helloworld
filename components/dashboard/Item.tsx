@@ -1,3 +1,4 @@
+import { Post, UserRemotePublic } from 'data/graphql-generated';
 import { gql, useMutation } from '@apollo/client';
 import { useEffect, useRef, useState } from 'react';
 
@@ -5,9 +6,24 @@ import FollowingFeedCountsQuery from './FollowingFeedCountsQuery';
 import FollowingSpecialFeedCountsQuery from './FollowingSpecialFeedCountsQuery';
 import Footer from './Footer';
 import Header from './Header';
-import { ItemWrapper } from 'components/content/Feed';
-import { Post } from 'data/graphql-generated';
-import throttle from 'lodash/throttle';
+import debounce from 'lodash/debounce';
+import { styled } from 'components';
+
+const StyledItem = styled('article', { label: 'DashboardStyledItem' })`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
+
+const View = styled('div', { label: 'DashboardView' })`
+  flex: 1;
+  padding: ${(props) => props.theme.spacing(0, 1)};
+
+  & img,
+  & figure {
+    margin: ${(props) => props.theme.spacing(0, -1)};
+  }
+`;
 
 const READ_CONTENT_REMOTE = gql`
   mutation readContentRemote($fromUsername: String!, $postId: String!, $read: Boolean!) {
@@ -19,15 +35,17 @@ const READ_CONTENT_REMOTE = gql`
   }
 `;
 
-export default function Item({ contentRemote }: { contentRemote: Post }) {
+export default function Item({ contentRemote, userRemote }: { contentRemote: Post; userRemote: UserRemotePublic }) {
   const [readContentRemote] = useMutation(READ_CONTENT_REMOTE);
   const [keepUnread, setKeepUnread] = useState(false);
   const [manuallyMarkedAsRead, setManuallyMarkedAsRead] = useState(contentRemote.read);
-  const item = useRef<Element>(null);
+  const item = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (!manuallyMarkedAsRead) {
       addEventListeners();
+    } else {
+      removeEventListeners();
     }
 
     return () => removeEventListeners();
@@ -36,21 +54,27 @@ export default function Item({ contentRemote }: { contentRemote: Post }) {
   const maybeMarkAsRead = () => {
     const doc = document.documentElement;
     const bottomOfFeed = doc.scrollTop + window.innerHeight >= doc.scrollHeight - 50;
-    if (!keepUnread && item.current && (item.current.getBoundingClientRect().top < 5 || bottomOfFeed)) {
+    if (
+      !manuallyMarkedAsRead &&
+      !keepUnread &&
+      item.current &&
+      (item.current.getBoundingClientRect().top < -50 || bottomOfFeed)
+    ) {
+      removeEventListeners();
       setManuallyMarkedAsRead(true);
       readContentRemoteCall(true);
     }
   };
-  const throttledMaybeMarkAsRead = throttle(maybeMarkAsRead, 100);
+  const debouncedMaybeMarkAsRead = debounce(maybeMarkAsRead, 100);
 
   function addEventListeners() {
-    window.addEventListener('scroll', throttledMaybeMarkAsRead, { passive: true });
-    window.addEventListener('resize', throttledMaybeMarkAsRead, { passive: true });
+    window.addEventListener('scroll', debouncedMaybeMarkAsRead, { passive: true });
+    window.addEventListener('resize', debouncedMaybeMarkAsRead, { passive: true });
   }
 
   function removeEventListeners() {
-    window.removeEventListener('scroll', throttledMaybeMarkAsRead);
-    window.removeEventListener('resize', throttledMaybeMarkAsRead);
+    window.removeEventListener('scroll', debouncedMaybeMarkAsRead);
+    window.removeEventListener('resize', debouncedMaybeMarkAsRead);
   }
 
   function readContentRemoteCall(read: boolean) {
@@ -66,12 +90,14 @@ export default function Item({ contentRemote }: { contentRemote: Post }) {
       },
       update: (store) => {
         const specialQuery = FollowingSpecialFeedCountsQuery;
-        const specialData: any = store.readQuery({ query: specialQuery });
+        const specialData: any = Object.assign({}, store.readQuery({ query: specialQuery }));
+        specialData.fetchUserTotalCounts = Object.assign({}, specialData.fetchUserTotalCounts);
         specialData.fetchUserTotalCounts.totalCount += variables.read ? -1 : 1;
         store.writeQuery({ query: specialQuery, data: specialData });
 
         const query = FollowingFeedCountsQuery;
-        const data: any = store.readQuery({ query });
+        const data: any = Object.assign({}, store.readQuery({ query }));
+        data.fetchFeedCounts = data.fetchFeedCounts.slice(0).map((i: Post) => Object.assign({}, i));
         data.fetchFeedCounts.find((i: Post) => i.fromUsername === fromUsername).count += read ? -1 : 1;
         store.writeQuery({ query, data });
       },
@@ -91,10 +117,10 @@ export default function Item({ contentRemote }: { contentRemote: Post }) {
   const decoratedView = contentRemote.view.replace(/<a ([^>]+)/g, '<a $1 target="_blank" rel="noreferrer noopener"');
 
   return (
-    <ItemWrapper className="hw-item">
-      <Header contentRemote={contentRemote} />
-      <div className="notranslate" dangerouslySetInnerHTML={{ __html: decoratedView }} />
-      <Footer contentRemote={contentRemote} keepUnreadCb={keepUnreadCb} />
-    </ItemWrapper>
+    <StyledItem ref={item}>
+      <Header contentRemote={contentRemote} manuallyMarkedAsRead={manuallyMarkedAsRead} />
+      <View className="notranslate" dangerouslySetInnerHTML={{ __html: decoratedView }} />
+      <Footer contentRemote={contentRemote} userRemote={userRemote} keepUnreadCb={keepUnreadCb} />
+    </StyledItem>
   );
 }

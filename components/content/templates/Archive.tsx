@@ -1,11 +1,11 @@
+import { List, ListItem, styled } from 'components';
 import { gql, useQuery } from '@apollo/client';
 
 import { Content } from 'data/graphql-generated';
 import ContentLink from 'components/ContentLink';
 import { F } from 'i18n';
-import { styled } from 'components';
 
-const StyledArchive = styled('ul')`
+const StyledArchive = styled(List)`
   list-style: inside square;
 `;
 
@@ -47,18 +47,18 @@ export default function Archive({ content }: { content: Content }) {
   return (
     <StyledArchive>
       {!collection.length && (
-        <li>
+        <ListItem>
           <F defaultMessage="No content here yet." />
-        </li>
+        </ListItem>
       )}
       {collection
         .filter((item: Content) => item.name !== content.name)
         .map((item: Content) => (
-          <li key={item.name}>
+          <ListItem key={item.name}>
             <ContentLink item={item} currentContent={content}>
               {item.title}
             </ContentLink>
-          </li>
+          </ListItem>
         ))}
     </StyledArchive>
   );

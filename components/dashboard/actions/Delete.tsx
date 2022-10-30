@@ -1,5 +1,6 @@
 import { gql, useMutation } from '@apollo/client';
 
+import { Button } from 'components';
 import { ContentRemote } from 'data/graphql-generated';
 import { F } from 'i18n';
 
@@ -43,8 +44,8 @@ export default function Delete({ contentRemote }: { contentRemote: ContentRemote
     });
 
   return (
-    <button onClick={handleClick} disabled={!contentRemote.deleted}>
+    <Button onClick={handleClick} disabled={!contentRemote.deleted}>
       <F defaultMessage="delete" />
-    </button>
+    </Button>
   );
 }

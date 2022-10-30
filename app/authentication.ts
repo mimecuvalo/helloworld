@@ -15,6 +15,7 @@ const authenticate =
     const user = await prisma?.user.findUnique({
       select: {
         email: true,
+        username: true,
       },
       where: {
         email: session.user.email,

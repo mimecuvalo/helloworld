@@ -56,16 +56,21 @@ export async function like(
   send(req, userRemote, contentOwner, message);
 }
 
-// eslint-disable-next-line
-export async function follow(req: NextApiRequest, contentOwner: User, userRemote: UserRemote, isFollow: boolean) {
+export async function follow(
+  req: NextApiRequest,
+  contentOwner: User,
+  userRemote: Pick<UserRemote, 'profileUrl'>,
   // TODO(mime): add back unfollow
+  // eslint-disable-next-line
+  isFollow: boolean
+) {
   const id = buildUrl({
     req,
     pathname: '/api/social/activitypub/follow',
     searchParams: { id: nanoid(10), resource: userRemote.profileUrl },
   });
   const message = createGenericMessage('Follow', req, id, contentOwner, userRemote.profileUrl);
-  send(req, userRemote, contentOwner, message);
+  send(req, userRemote as UserRemote, contentOwner, message);
 }
 
 export async function reply(
@@ -217,9 +222,9 @@ export async function createArticle(
   let inReplyTo = localContent.thread || '';
   if (localContent.thread) {
     try {
-      const activityObject = await fetchJSON(localContent.thread, {
+      const activityObject = (await fetchJSON(localContent.thread, {
         Accept: 'application/activity+json',
-      });
+      })) as unknown as Activity;
       if (activityObject) {
         inReplyTo = activityObject.id;
       }
@@ -290,7 +295,7 @@ export async function findUserRemote(json: { [key: string]: string }, res: NextA
   const actorUrl = json.actor;
   let userRemote = await getRemoteUserByActor(user.username, actorUrl);
   if (!userRemote) {
-    const actorJSON = await getActivityPubActor(actorUrl);
+    const actorJSON = (await getActivityPubActor(actorUrl)) as unknown as Activity;
     if (actorJSON.url) {
       const userRemoteInfo = await getUserRemoteInfo(actorJSON.url, user.username);
       await saveRemoteUser(userRemoteInfo);

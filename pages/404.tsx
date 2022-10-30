@@ -1,7 +1,6 @@
 import { Emoji, Message } from 'components/error/error.styles';
 import { F, defineMessages, useIntl } from 'i18n';
-
-import Link from 'next/link';
+import { Link, Typography } from 'components';
 
 const messages = defineMessages({
   upsideDownFace: { defaultMessage: 'upside down face' },
@@ -16,20 +15,16 @@ export default function NotFound() {
       <Emoji role="img" aria-label={emojiAriaLabel}>
         🙃
       </Emoji>
-      <h1>
+      <Typography variant="h1">
         <span className="notranslate">404:</span> <F defaultMessage="not found" />
-      </h1>
+      </Typography>
       <div>
         <F defaultMessage="i'm sorry, dave. i'm afraid i can't do that." />
         <br />
         <F
           defaultMessage="try going back to the <a>beginning</a>."
           values={{
-            a: (msg: string) => (
-              <Link href="/" passHref>
-                <a>{msg}</a>
-              </Link>
-            ),
+            a: (msg: string) => <Link href="/">{msg}</Link>,
           }}
         />
       </div>

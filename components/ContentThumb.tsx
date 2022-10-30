@@ -1,18 +1,22 @@
 import { Link, styled } from 'components';
+import { THUMB_HEIGHT, THUMB_WIDTH } from 'util/constants';
+import { constructNextImageURL, contentUrl } from 'util/url-factory';
 import { defineMessages, useIntl } from 'i18n';
 
 import { Content } from 'data/graphql-generated';
-import { contentUrl } from 'util/url-factory';
 
 const ThumbLink = styled(Link)`
-  max-width: var(--thumb-width);
-  min-height: var(--thumb-height);
+  max-width: ${THUMB_WIDTH}px;
+  min-height: ${THUMB_HEIGHT}px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const StyledThumb = styled('img')`
   display: inline-block;
-  max-width: var(--thumb-width);
-  max-height: var(--thumb-height);
+  max-width: ${THUMB_WIDTH}px;
+  max-height: ${THUMB_HEIGHT}px;
 `;
 
 const messages = defineMessages({
@@ -35,7 +39,18 @@ export default function Thumb({
 
   const thumb = (
     // TODO(mime): is loading lazy necessary here for next.js? i forget
-    <StyledThumb loading="lazy" src={item.thumb || '/img/pixel.gif'} alt={thumbAltText} />
+    <StyledThumb
+      loading="lazy"
+      src={
+        item.thumb
+          ? item.thumb.startsWith(`https://${process.env.S3_AWS_S3_BUCKET_NAME}`) ||
+            item.thumb.startsWith(`https://s3.amazonaws.com`)
+            ? constructNextImageURL(item.thumb, 640 /* size */)
+            : item.thumb
+          : '/img/pixel.gif'
+      }
+      alt={thumbAltText}
+    />
   );
 
   // We're using the fancy new "loading" attribute for images to lazy load thumbs. Woo!

@@ -70,7 +70,7 @@ export default gql`
   extend type Query {
     allContent: [Content!]!
     fetchContent(username: String, name: String): Content
-    fetchContentNeighbors(username: String, section: String, album: String, name: String): Neighbors!
+    fetchContentNeighbors(username: String, name: String): Neighbors
     fetchCollection(username: String!, section: String!, album: String!, name: String!): [ContentMetaInfo!]!
     fetchCollectionPaginated(username: String!, section: String!, name: String!, offset: Int!): [Content!]!
     fetchCollectionLatest(username: String!, section: String!, name: String!): Content

@@ -2,17 +2,14 @@
 @import '~sanitize.css/forms.css';
 @import '~sanitize.css/typography.css';
 
-:root {
-  --thumb-width: 154px;
-  --thumb-height: 115px;
-}
-
 html {
   scroll-behavior: smooth;
+  font-size: 14px;
 }
 
-body::backdrop {
-  background-color: #fafafa;
+a:any-link {
+  color: #06e;
+  text-decoration: none;
 }
 
 @media print {
@@ -38,15 +35,4 @@ h6 {
 .App-is-development .i18n-msg,
 .App-is-development .i18n-msg * {
   text-shadow: none;
-}
-
-figure a {
-  text-align: center;
-  display: block;
-}
-
-figcaption {
-  text-align: center;
-  color: #666;
-  font-size: 12px;
 }

@@ -1,34 +1,20 @@
+import { Avatar, Link, List, ListItem, Typography, styled } from 'components';
 import { Comment as CommentType, Content } from 'data/graphql-generated';
 import { F, defineMessages, useIntl } from 'i18n';
 
 import Delete from 'components/dashboard/actions/Delete';
 import Favorite from 'components/dashboard/actions/Favorite';
 import UserContext from 'app/UserContext';
-import { styled } from 'components';
 import { useContext } from 'react';
 
-const Comment = styled('li')`
+const Comment = styled(ListItem)`
   display: flex;
-  margin-bottom: 10px;
+  margin-bottom: ${(props) => props.theme.spacing(1)};
   clear: both;
-  font-size: 11px;
 `;
 
-const CommentsHeader = styled('h3')`
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 3px;
-  margin-bottom: 10px;
-  font-weight: 50;
-`;
-
-const StyledComments = styled('ul')`
-  margin-top: '10px';
-`;
-
-const Avatar = styled('img')`
-  max-width: 32px;
-  max-height: 32px;
-  margin: 0 10px 0 0;
+const StyledComments = styled(List)`
+  margin-top: ${(props) => props.theme.spacing(1)};
 `;
 
 const Author = styled('span')`
@@ -134,16 +120,20 @@ export default function Comments({ comments, content }: { comments?: CommentType
   //   );
   // }
 
+  if (!comments?.length) {
+    return null;
+  }
+
   return (
     <div>
-      <CommentsHeader>
+      <Typography variant="subtitle1">
         <F defaultMessage="comments" />
-      </CommentsHeader>
+      </Typography>
       {/* {isLoggedIn ? (
         <CommentEditorWrapper>
-          <button disabled={isPosting} onClick={handlePost}>
+          <Button disabled={isPosting} onClick={handlePost}>
             <F defaultMessage="post" />
-          </button>
+          </Button>
         </CommentEditorWrapper>
       ) : (
         <Login />
@@ -152,12 +142,12 @@ export default function Comments({ comments, content }: { comments?: CommentType
         <StyledComments>
           {comments.map((comment) => (
             <Comment key={comment.postId}>
-              <Avatar src={comment.avatar || '/img/pixel.gif'} alt={ariaImgMsg} />
+              <Avatar src={comment.avatar || '/img/pixel.gif'} alt={ariaImgMsg} sx={{ width: 16, height: 16 }} />
               <div>
                 {comment.fromUsername ? (
-                  <a href={comment.fromUsername} target="_blank" rel="noopener noreferrer">
+                  <Link href={comment.fromUsername} target="_blank">
                     {comment.creator || comment.username}
-                  </a>
+                  </Link>
                 ) : (
                   <Author>{comment.creator || comment.username}: </Author>
                 )}

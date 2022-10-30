@@ -1,67 +1,15 @@
 import { Content, FetchCollectionQuery, UserPublic } from 'data/graphql-generated';
+import { FeedWrapper, InfiniteFeed, styled } from 'components';
 import { gql, useQuery } from '@apollo/client';
 
 import { F } from 'i18n';
-import InfiniteFeed from 'components/InfiniteFeed';
 import Item from './Item';
-import { styled } from 'components';
 
-export const ItemWrapper = styled('div')`
-  clear: both;
-  zoom: 0.75;
-  margin-right: 32px;
-  flex: 0 1;
-  max-height: 90vh;
-  min-width: 34vw;
-  overflow-y: scroll;
-  padding-bottom: 0;
-  margin-bottom: 32px;
-  box-shadow: 0 0 0 1px #09f;
-  transition: box-shadow 100ms;
-
-  & .hw-view {
-    margin: 6px 10px;
-  }
-
-  & p {
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    margin-inline-start: 0px;
-    margin-inline-end: 0px;
-  }
-
-  & ul,
-  & ol,
-  & blockquote {
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    margin-inline-start: 0px;
-    margin-inline-end: 0px;
-    padding-inline-start: 20px;
-  }
-
-  & blockquote {
-    border-left: 1px solid #666;
-  }
-
-  & a {
-    word-wrap: break-word;
-  }
-
-  & pre {
-    white-space: pre-wrap;
-    word-wrap: break-word;
-  }
-
-  & img {
-    max-width: 100%;
-    height: auto;
-  }
-
-  & iframe {
-    border: 0;
-    max-width: 100%;
-  }
+const FeedContainer = styled('div', { label: 'FeedContainer' })`
+  display: flex;
+  flex-direction: row;
+  flex-flow: wrap;
+  justify-content: space-between;
 `;
 
 const FETCH_COLLECTION_PAGINATED = gql`
@@ -132,12 +80,14 @@ export default function Feed({
   }
 
   return (
-    <InfiniteFeed fetchMore={fetchMore} queryName="fetchCollectionPaginated">
-      {collection.map((item) => (
-        <ItemWrapper key={item.name}>
-          <Item content={item as Content} contentOwner={contentOwner as UserPublic} isFeed={true} />
-        </ItemWrapper>
-      ))}
-    </InfiniteFeed>
+    <FeedContainer>
+      <InfiniteFeed fetchMore={fetchMore} queryName="fetchCollectionPaginated">
+        {collection.map((item) => (
+          <FeedWrapper key={item.name}>
+            <Item content={item as Content} contentOwner={contentOwner as UserPublic} isFeed={true} />
+          </FeedWrapper>
+        ))}
+      </InfiniteFeed>
+    </FeedContainer>
   );
 }

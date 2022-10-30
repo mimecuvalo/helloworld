@@ -10,7 +10,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
       <ShortName>${appName}</ShortName>
       <Description>Search ${appName}</Description>
-      <Url type="text/html" method="get" template="${url}?q={searchTerms}"/>
+      <Url type="text/html" method="get" template="${url}/${req.query.username}/search/{searchTerms}"/>
       <Image height="16" width="16" type="image/jpeg">${url}/favicon.jpg</Image>
     </OpenSearchDescription>
   `);

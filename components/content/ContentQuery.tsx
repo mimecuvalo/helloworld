@@ -55,9 +55,72 @@ export default gql`
       favicon
       logo
       name
+      sidebarHtml
       title
       theme
       viewport
+      license
+    }
+
+    fetchSiteMap(username: $username) {
+      album
+      forceRefresh
+      hidden
+      name
+      section
+      title
+      username
+    }
+
+    fetchContentNeighbors(username: $username, name: $name) {
+      first {
+        album
+        forceRefresh
+        hidden
+        name
+        section
+        title
+        username
+      }
+      last {
+        album
+        forceRefresh
+        hidden
+        name
+        section
+        title
+        username
+      }
+      next {
+        album
+        forceRefresh
+        hidden
+        name
+        section
+        title
+        username
+        prefetchImages
+      }
+      prev {
+        album
+        forceRefresh
+        hidden
+        name
+        section
+        title
+        username
+        prefetchImages
+      }
+      top {
+        album
+        forceRefresh
+        hidden
+        name
+        section
+        title
+        username
+        template
+      }
     }
   }
 `;

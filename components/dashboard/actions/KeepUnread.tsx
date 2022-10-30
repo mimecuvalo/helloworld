@@ -1,3 +1,4 @@
+import { Button } from 'components';
 import { F } from 'i18n';
 import { useState } from 'react';
 
@@ -10,8 +11,8 @@ export default function KeepUnread({ keepUnreadCb }: { keepUnreadCb: (enabled: b
   };
 
   return (
-    <button onClick={handleClick} disabled={!enabled}>
+    <Button onClick={handleClick} sx={{ whiteSpace: 'nowrap' }}>
       <F defaultMessage="keep unread" />
-    </button>
+    </Button>
   );
 }

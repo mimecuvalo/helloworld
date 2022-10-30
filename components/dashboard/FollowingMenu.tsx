@@ -1,11 +1,9 @@
+import { Button, Menu, MenuItem } from 'components';
 import { F, defineMessages, useIntl } from 'i18n';
 import { MouseEvent, useState } from 'react';
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import IconButton from '@mui/material/IconButton';
 import MarkAllAsRead from './actions/MarkAllAsRead';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import Sort from './actions/Sort';
 import UnfollowFeed from './actions/UnfollowFeed';
 import { UserRemotePublic } from 'data/graphql-generated';
@@ -44,15 +42,15 @@ export default function FollowingMenu({
 
   return (
     <>
-      <IconButton
+      <Button
         aria-label={menuAriaLabel}
         aria-owns={isOpen ? id : undefined}
         aria-haspopup="true"
         onClick={handleMenuOpenerClick}
-        size="large"
+        sx={{ minWidth: 0 }}
       >
         <ArrowDropDownIcon />
-      </IconButton>
+      </Button>
       <Menu id={id} anchorEl={anchorEl} open={isOpen} onClose={handleClose} transitionDuration={0}>
         <MenuItem key="visit" onClick={handleVisit}>
           <F defaultMessage="visit" />
