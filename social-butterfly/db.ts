@@ -27,7 +27,7 @@ export async function getLocalLatestContent(localContentUrl: string) {
     section: { not: 'main' },
     album: { not: 'main' },
     hidden: false,
-    redirect: null,
+    redirect: 0,
   };
   return await prisma.content.findMany({
     where: contentConstraints,

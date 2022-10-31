@@ -139,7 +139,7 @@ function Entry({ content, req }: { content: Content; req: NextApiRequest }) {
   });
   const repliesAttribs = {
     'thr:count': content.commentsCount,
-    'thr:updated': new Date(content.commentsUpdated || '').toISOString(),
+    'thr:updated': content.commentsUpdated ? new Date(content.commentsUpdated || '').toISOString() : undefined,
   };
 
   return (
