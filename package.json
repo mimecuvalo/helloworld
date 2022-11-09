@@ -60,6 +60,7 @@
     "@mui/material": "5.10.11",
     "@prisma/client": "4.5.0",
     "@sentry/nextjs": "7.17.2",
+    "@vercel/analytics": "0.1.4",
     "apollo-server-micro": "3.10.3",
     "aws-sdk": "2.1242.0",
     "babel-plugin-formatjs": "10.3.31",
