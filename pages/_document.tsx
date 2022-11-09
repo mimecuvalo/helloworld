@@ -14,7 +14,9 @@ const generateCsp = (): [csp: string, nonce: string] => {
 
   const isDevelopment = process.env.NODE_ENV === 'development';
   const cspDirectives: { [key: string]: string[] } = {
-    'connect-src': isDevelopment ? ['*'] : ["'self'", 'https://*.ingest.sentry.io'],
+    'connect-src': isDevelopment
+      ? ['*']
+      : ["'self'", 'https://*.ingest.sentry.io', 'https://vitals.vercel-insights.com'],
     'default-src': ["'self'"],
     'font-src': ["'self'", 'https:'],
     // TODO(mime)
