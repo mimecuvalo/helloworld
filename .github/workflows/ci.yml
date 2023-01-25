@@ -11,7 +11,7 @@ jobs:
         id: yarn-cache
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-modules-NODE-14-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-modules-NODE-18-${{ hashFiles('**/yarn.lock', '**/schema.prisma') }}
       - name: Install
         if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: yarn
