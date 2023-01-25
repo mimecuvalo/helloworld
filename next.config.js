@@ -34,6 +34,9 @@ const nextConfig = {
     defaultLocale: 'en',
   },
 
+  // N.B. Production builds complain that this is not allowed (warning in Next.js version 13)
+  // However, it's ok for now. In the future, Sentry v8 will make this the default, it will
+  // be safe to remove then.
   sentry: {
     hideSourceMaps: true,
   },
