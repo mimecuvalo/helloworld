@@ -28,11 +28,7 @@ const customRenderers = {
     <span className={`image image-${props.title || ''}`}>
       <span className="image-inner-wrapper">
         {/* eslint-disable-next-line */}
-        <img
-          {...omit(props, 'node', 'src')}
-          className="u-photo"
-          src={process.env.IS_STORYBOOK ? props.src : constructNextImageURL(props.src)}
-        />
+        <img {...omit(props, 'node', 'src')} className="u-photo" src={constructNextImageURL(props.src)} />
       </span>
       <span className="caption">{props.alt}</span>
     </span>

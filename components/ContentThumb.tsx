@@ -41,14 +41,7 @@ export default function Thumb({
     // TODO(mime): is loading lazy necessary here for next.js? i forget
     <StyledThumb
       loading="lazy"
-      src={
-        item.thumb
-          ? item.thumb.startsWith(`https://${process.env.S3_AWS_S3_BUCKET_NAME}`) ||
-            item.thumb.startsWith(`https://s3.amazonaws.com`)
-            ? constructNextImageURL(item.thumb, 640 /* size */)
-            : item.thumb
-          : '/img/pixel.gif'
-      }
+      src={item.thumb ? constructNextImageURL(item.thumb, 640 /* size */) : '/img/pixel.gif'}
       alt={thumbAltText}
     />
   );
