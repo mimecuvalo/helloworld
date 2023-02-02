@@ -16,7 +16,12 @@ const generateCsp = (): [csp: string, nonce: string] => {
   const cspDirectives: { [key: string]: string[] } = {
     'connect-src': isDevelopment
       ? ['*']
-      : ["'self'", 'https://*.ingest.sentry.io', 'https://vitals.vercel-insights.com'],
+      : [
+          "'self'",
+          'https://*.ingest.sentry.io',
+          'https://vitals.vercel-insights.com',
+          `https://s3.amazonaws.com/${process.env.S3_AWS_S3_BUCKET_NAME}`,
+        ],
     'default-src': ["'self'"],
     'font-src': ["'self'", 'https:'],
     // TODO(mime)
