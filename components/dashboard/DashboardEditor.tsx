@@ -386,7 +386,7 @@ export async function unfurl(url: string) {
     const alt = '';
 
     return {
-      result: `[![${alt}](${src} "${alt}")]${href})`,
+      result: `[![${alt}](${src} "${alt}")](${href})`,
       isError: false,
       wasMediaFound: true,
       isImg: true,
