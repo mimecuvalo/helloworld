@@ -29,8 +29,9 @@ export {
   Toolbar,
   Tooltip,
   Typography,
-  styled,
 } from '@mui/material';
+
+export { useTheme, styled } from '@mui/material/styles';
 
 export { default as FeedWrapper } from './FeedWrapper';
 export { default as Footer } from './Footer';

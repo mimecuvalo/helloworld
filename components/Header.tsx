@@ -1,5 +1,5 @@
 import Login from './Login';
-import { styled } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 const StyledHeader = styled('header')`
   position: fixed;

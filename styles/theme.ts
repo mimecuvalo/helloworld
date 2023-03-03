@@ -2,7 +2,7 @@ import { breakpoints, shape } from './constants';
 
 import components from './components';
 import createCache from '@emotion/cache';
-import { createTheme } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
 import flowersComponents from './flowers/components';
 import flowersGlobalCss from './flowers/globals';
 import flowersPalette from './flowers/palette';

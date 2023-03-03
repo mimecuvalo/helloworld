@@ -1,4 +1,4 @@
-import { SimplePaletteColorOptions, createTheme } from '@mui/material';
+import { SimplePaletteColorOptions, createTheme } from '@mui/material/styles';
 
 import palette from './palette';
 import typography from './typography';

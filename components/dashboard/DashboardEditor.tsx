@@ -9,15 +9,16 @@ import {
   Snackbar,
   Toolbar,
   styled,
+  useTheme,
 } from 'components';
 import { F, defineMessages, useIntl } from 'i18n';
-import { SelectChangeEvent, useTheme } from '@mui/material';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
 
 import { ArrowDropDown } from '@mui/icons-material';
 import Cookies from 'js-cookie';
 import Editor from 'components/Editor';
+import { SelectChangeEvent } from '@mui/material';
 import { SiteMapAndUserEditorQuery } from 'data/graphql-generated';
 import baseTheme from 'styles';
 import mime from 'mime/lite';

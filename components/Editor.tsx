@@ -1,6 +1,7 @@
-import { Alert, Skeleton, Snackbar, styled } from '@mui/material';
+import { Alert, Skeleton, Snackbar } from '@mui/material';
 import { ClipboardEvent, Suspense, lazy, useState } from 'react';
 
+import { styled } from '@mui/material/styles';
 import uploadFileToS3 from 'util/s3';
 
 const HelloWorldEditor = lazy(() => import('hello-world-editor'));

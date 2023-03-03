@@ -1,7 +1,7 @@
 import { Suspense, lazy, memo, useEffect, useState } from 'react';
 
 import Help from './Help';
-import { styled } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 const Debug = lazy(() => import('components/internal/Debug'));
 

@@ -1,11 +1,12 @@
 import { Content, UserPublic } from 'data/graphql-generated';
-import { CssBaseline, GlobalStyles, ThemeProvider } from '@mui/material';
+import { CssBaseline, GlobalStyles } from '@mui/material';
 import { Grid, Typography, styled } from 'components';
 import { themeGlobalCss, themes } from 'styles/theme';
 
 import ContentHead from './ContentHead';
 import { PropsWithChildren } from 'react';
 import SiteMap from './SiteMap';
+import { ThemeProvider } from '@mui/material/styles';
 
 const Container = styled('div', { label: 'ContentBaseContainer' })`
   display: flex;

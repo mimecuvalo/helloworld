@@ -1,5 +1,5 @@
 import { Comment, ContentAndUserQuery, Content as ContentType, Favorite, UserPublic } from 'data/graphql-generated';
-import { CssBaseline, GlobalStyles, ThemeProvider } from '@mui/material';
+import { CssBaseline, GlobalStyles } from '@mui/material';
 import { addApolloState, initializeApollo } from 'app/apollo';
 import { buildUrl, contentUrl } from 'util/url-factory';
 import { themeGlobalCss, themes } from 'styles/theme';
@@ -15,6 +15,7 @@ import Nav from 'components/content/Nav';
 import NotFound from 'pages/404';
 import Simple from 'components/content/templates/Simple';
 import SwipeListener from 'swipe-listener';
+import { ThemeProvider } from '@mui/material/styles';
 import { styled } from 'components';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';

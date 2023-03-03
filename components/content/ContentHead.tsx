@@ -3,7 +3,7 @@ import { buildUrl, contentUrl, profileUrl } from 'util/url-factory';
 
 import Head from 'next/head';
 import { themes } from 'styles/theme';
-import { useTheme } from '@mui/material';
+import { useTheme } from 'components';
 
 export default function ContentHead(props: {
   content?: Content;

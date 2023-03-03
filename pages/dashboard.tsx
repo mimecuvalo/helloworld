@@ -1,5 +1,5 @@
 import { Close as CloseIcon, Menu as MenuIcon } from '@mui/icons-material';
-import { Grid, IconButton, styled } from 'components';
+import { Grid, IconButton, styled, useTheme } from 'components';
 import { defineMessages, useIntl } from 'i18n';
 import { useContext, useState } from 'react';
 
@@ -15,7 +15,6 @@ import { UserRemotePublic } from 'data/graphql-generated';
 import authServerSideProps from 'app/authServerSideProps';
 import baseTheme from 'styles';
 import { transientOptions } from 'util/css';
-import { useTheme } from '@mui/material';
 
 const NAV_WIDTH = '235px';
 const MOBILE_NAV_WIDTH = '45px';

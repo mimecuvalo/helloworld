@@ -1,6 +1,6 @@
 import { Content, ContentMetaInfo } from 'data/graphql-generated';
 import { Link, styled } from 'components';
-import { Palette, PaletteColor, useTheme } from '@mui/material';
+import { Palette, PaletteColor, useTheme } from '@mui/material/styles';
 import { gql, useQuery } from '@apollo/client';
 
 import ContentLink from 'components/ContentLink';

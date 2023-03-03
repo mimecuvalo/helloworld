@@ -1,4 +1,4 @@
-import { MenuItem, TextField } from 'components';
+import { MenuItem, TextField, useTheme } from 'components';
 import { defineMessages, useIntl } from 'i18n';
 import { gql, useMutation } from '@apollo/client';
 
@@ -8,7 +8,6 @@ import FollowingFeedCountsQuery from 'components/dashboard/FollowingFeedCountsQu
 import FollowingQuery from 'components/dashboard/FollowingQuery';
 import FollowingSpecialFeedCountsQuery from 'components/dashboard/FollowingSpecialFeedCountsQuery';
 import { UserRemotePublic } from 'data/graphql-generated';
-import { useTheme } from '@mui/material';
 
 const messages = defineMessages({
   error: { defaultMessage: 'Error subscribing to new feed.' },

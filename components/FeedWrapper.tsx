@@ -1,4 +1,4 @@
-import { styled } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 const FeedWrapper = styled('div', { label: 'FeedWrapper' })`
   width: calc(33% - ${(props) => props.theme.spacing(2)});

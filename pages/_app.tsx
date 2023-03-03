@@ -17,7 +17,7 @@ import { CssBaseline } from '@mui/material';
 import ErrorBoundary from 'components/error/ErrorBoundary';
 import { F } from 'i18n';
 import Head from 'next/head';
-import { ThemeProvider } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
 import UserContext from 'app/UserContext';
 import { UserPrivate } from 'data/graphql-generated';
 import { UserProvider } from '@auth0/nextjs-auth0';

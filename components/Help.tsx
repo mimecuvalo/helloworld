@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { F, defineMessages, useIntl } from 'i18n';
 import { MouseEvent, useEffect, useState } from 'react';
-import { styled, useTheme } from '@mui/material';
+import { styled, useTheme } from '@mui/material/styles';
 
 import { $Experiment } from 'app/experiments';
 import Cookies from 'js-cookie';

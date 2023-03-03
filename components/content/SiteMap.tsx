@@ -1,4 +1,4 @@
-import { Avatar, Box, IconButton, Link, TextField, styled } from 'components';
+import { Avatar, Box, IconButton, Link, TextField, styled, useTheme } from 'components';
 import { Content, SiteMapAndUserQuery } from 'data/graphql-generated';
 import { F, defineMessages, useIntl } from 'i18n';
 import { FormEvent, ReactNode, useContext, useEffect, useState } from 'react';
@@ -15,7 +15,6 @@ import baseTheme from 'styles';
 import constants from 'util/constants';
 import { transientOptions } from 'util/css';
 import { useRouter } from 'next/router';
-import { useTheme } from '@mui/material';
 
 export const SITE_MAP_WIDTH = 175;
 

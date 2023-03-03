@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react';
-import { styled } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 const StyledItemWrapper = styled('div', { label: 'ItemWrapper' })`
   padding-bottom: 0;
