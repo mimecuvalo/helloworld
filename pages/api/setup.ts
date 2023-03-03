@@ -4,6 +4,7 @@ import { User } from '@prisma/client';
 import crypto from 'crypto';
 import { follow } from 'social-butterfly/activitystreams';
 import magic from 'magic-signatures';
+import prisma from 'data/prisma';
 
 // TODO(mime): all this user creation logic has to go somewhere else so we can reuse it later.
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 import { isRobotViewing } from 'util/crawler';
 import { parseContentUrl } from 'util/url-factory';
+import prisma from 'data/prisma';
 
 const buf = new Buffer(43);
 buf.write('R0lGODlhAQABAIAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==', 'base64');
