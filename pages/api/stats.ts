@@ -1,11 +1,15 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import fs from 'fs';
+import getConfig from 'next/config';
 import { isRobotViewing } from 'util/crawler';
 import { parseContentUrl } from 'util/url-factory';
 import path from 'path';
+import prisma from 'data/prisma';
 
-const filePath = path.resolve(process.cwd(), 'public/img/pixel.gif');
+const { serverRuntimeConfig } = getConfig();
+
+const filePath = path.join(serverRuntimeConfig.PROJECT_ROOT, 'public/img/pixel.gif');
 const pixelImageBuffer = fs.readFileSync(filePath);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
