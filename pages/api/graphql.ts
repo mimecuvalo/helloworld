@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { ApolloServer } from 'apollo-server-micro';
 import { createContext as context } from 'data/context';
+import pick from 'lodash/pick';
 import resolvers from 'data/resolvers';
 import typeDefs from 'data/schema';
 
@@ -10,6 +11,9 @@ const apolloServer = new ApolloServer({
   resolvers,
   context,
   cache: 'bounded', // Prevent DOS. See: https://www.apollographql.com/docs/apollo-server/performance/cache-backends/
+  formatError: (err) => {
+    return pick(err, 'message');
+  },
 });
 
 const startServer = apolloServer.start();
