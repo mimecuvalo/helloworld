@@ -1,12 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import fs from 'fs';
 import { isRobotViewing } from 'util/crawler';
 import { parseContentUrl } from 'util/url-factory';
-import path from 'path';
 
-const filePath = path.resolve(process.cwd(), 'public/img/pixel.gif');
-const pixelImageBuffer = fs.readFileSync(filePath);
+const buf = new Buffer(43);
+buf.write('R0lGODlhAQABAIAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==', 'base64');
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { username, name } = parseContentUrl(req.query['resource'] as string);
@@ -29,5 +27,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
 
   res.setHeader('Content-Type', 'image/gif');
-  res.send(pixelImageBuffer);
+  res.send(buf);
 }
