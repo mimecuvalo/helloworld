@@ -7,7 +7,6 @@ import { NextApiRequest } from 'next';
 import { WEB_SUB_HUB } from 'util/constants';
 import { reply as activityStreamsReply } from './activitystreams';
 import cheerio from 'cheerio';
-import fetch from 'node-fetch';
 import { fetchText } from 'util/crawler';
 import { reply as webmentionReply } from '../pages/api/social/webmention';
 

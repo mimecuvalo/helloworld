@@ -1,6 +1,5 @@
 import { HTTPError } from 'util/exceptions';
 import { NextApiRequest } from 'next';
-import fetch from 'node-fetch';
 import sanitizer from 'sanitize-html';
 
 export async function fetchUrl(url: string, opt_headers?: { [key: string]: string }) {
