@@ -56,11 +56,6 @@ const nextConfig = {
     hideSourceMaps: true,
   },
 
-  // Used to allow /api/stats on Vercel to work
-  serverRuntimeConfig: {
-    PROJECT_ROOT: __dirname,
-  },
-
   async redirects() {
     return [
       {
