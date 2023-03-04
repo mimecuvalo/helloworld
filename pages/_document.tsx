@@ -5,7 +5,6 @@ import { createEmotionCache } from 'styles';
 import createEmotionServer from '@emotion/server/create-instance';
 import crypto from 'crypto';
 import { v4 } from 'uuid';
-import { withRouter } from 'next/router';
 
 const generateCsp = (): [csp: string, nonce: string] => {
   const hash = crypto.createHash('sha256');
@@ -34,7 +33,7 @@ const generateCsp = (): [csp: string, nonce: string] => {
     'prefetch-src': ["'self'"],
     // TODO(mime)
     //'report-uri': ['/api/report-csp-violation'],
-    'script-src': ["'self'", 'https://cdn.auth0.com', 'https://storage.googleapis.com'].concat(
+    'script-src': ["'self'", 'https://cdn.auth0.com'].concat(
       isDevelopment ? ["'unsafe-inline'", "'unsafe-eval'"] : [`'nonce-${nonce}'`]
     ),
 
@@ -55,7 +54,7 @@ export interface CustomDocumentInitialProps extends DocumentInitialProps {
   emotionStyleTags: ReactNode[];
 }
 
-class MyDocument extends Document {
+export default class MyDocument extends Document {
   // Based off of: https://github.com/mui-org/material-ui/blob/master/examples/nextjs/pages/_document.js
   static async getInitialProps(ctx: DocumentContext): Promise<CustomDocumentInitialProps> {
     const originalRenderPage = ctx.renderPage;
@@ -104,11 +103,6 @@ class MyDocument extends Document {
             <meta charSet="utf-8" />
             <meta property="csp-nonce" content={nonce} />
             <meta httpEquiv="Content-Security-Policy" content={csp} />
-            <link rel="preconnect" href="https://fonts.gstatic.com" />
-            {/* This is because of the withRouter */}
-            {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-            <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-            <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
             <link rel="author" href={`/humans.txt`} />
             <meta name="generator" content="Hello, world. https://github.com/mimecuvalo/helloworld" />
             {/*
@@ -132,9 +126,6 @@ class MyDocument extends Document {
     );
   }
 }
-
-// @ts-ignore not sure how to fix this yet
-export default withRouter(MyDocument);
 
 // If there is an error that occurs upon page load, i.e. when executing the initial app code,
 // then we send the error up to the server via this mechanism.

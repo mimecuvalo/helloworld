@@ -4,7 +4,7 @@ import { RenderOptions, render } from '@testing-library/react';
 
 import { IntlProvider } from 'i18n';
 import { MockedProvider } from '@apollo/client/testing';
-import { ThemeProvider } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
 import { muiTheme } from 'styles';
 
 const cache = new InMemoryCache();

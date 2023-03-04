@@ -5,7 +5,7 @@ const SYSTEM_FONTS =
 
 const constants = {
   fontFamily: `${SYSTEM_FONTS}`,
-  fontFamilyHeader: `'Press Start 2P', ${SYSTEM_FONTS}`,
+  fontFamilyHeader: `var(--font-press-start-2p), ${SYSTEM_FONTS}`,
   fontMonospace:
     'Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
 

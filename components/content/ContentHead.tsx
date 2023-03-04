@@ -2,7 +2,6 @@ import { Content, UserPublic } from 'data/graphql-generated';
 import { buildUrl, contentUrl, profileUrl } from 'util/url-factory';
 
 import Head from 'next/head';
-import { themes } from 'styles/theme';
 import { useTheme } from 'components';
 
 export default function ContentHead(props: {
@@ -26,7 +25,6 @@ export default function ContentHead(props: {
     favicon,
     rss,
     webmentionUrl = '';
-  let fontHeader = '';
 
   if (contentOwner) {
     const resource = profileUrl(username, undefined, host);
@@ -36,16 +34,11 @@ export default function ContentHead(props: {
     rss = <link rel="alternate" type="application/atom+xml" title={title} href={feedUrl} />;
     viewport = contentOwner.viewport || viewport;
     webmentionUrl = buildUrl({ host, pathname: '/api/social/webmention', searchParams: { resource } });
-    const ownerTheme = themes[contentOwner.theme as keyof typeof themes];
-    fontHeader = (ownerTheme.typography.h1.fontFamily as unknown as string).split(',')[0].replace(/['"]/g, '');
   }
 
   return (
     <Head>
       <title>{title}</title>
-      {/* TODO refactor to allow different fonts */}
-      {/* eslint-disable-next-line */}
-      <link href={`https://fonts.googleapis.com/css2?family=${fontHeader}&display=block`} rel="stylesheet" />
       {contentOwner ? (
         <link rel="author" href={contentUrl({ username, section: 'main', album: '', name: 'about' })} />
       ) : null}

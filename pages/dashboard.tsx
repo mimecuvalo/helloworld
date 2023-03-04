@@ -136,9 +136,6 @@ export default function Dashboard() {
         <title>Dashboard – {user.title}</title>
         <link rel="icon" href={user.favicon || `/favicon.jpg`} />
         <link rel="shortcut icon" href={user.favicon || `/favicon.jpg`} />
-        {/* TODO refactor to allow different fonts */}
-        {/* eslint-disable-next-line */}
-        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=block" rel="stylesheet" />
       </Head>
       <Hamburger
         aria-label={menuButtonLabel}

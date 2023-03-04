@@ -4,8 +4,8 @@ const SYSTEM_FONTS =
   'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"';
 
 const constants = {
-  fontFamily: `'Marck Script', cursive, ${SYSTEM_FONTS}`,
-  fontFamilyHeader: `'Marck Script', cursive, ${SYSTEM_FONTS}`,
+  fontFamily: `var(--font-marck-script), cursive, ${SYSTEM_FONTS}`,
+  fontFamilyHeader: `var(--font-marck-script), cursive, ${SYSTEM_FONTS}`,
   fontMonospace:
     'Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
 

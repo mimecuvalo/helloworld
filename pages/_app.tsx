@@ -7,6 +7,7 @@ import { ApolloProvider, NormalizedCacheObject, gql } from '@apollo/client';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import { Footer, Header } from 'components';
 import { IntlProvider, setupCreateIntl } from 'i18n';
+import { Marck_Script, Press_Start_2P } from 'next/font/google';
 import { createEmotionCache, muiTheme } from 'styles';
 import { disposeAnalytics, setupAnalytics } from 'app/analytics';
 import { useEffect, useState } from 'react';
@@ -23,6 +24,20 @@ import { UserPrivate } from 'data/graphql-generated';
 import { UserProvider } from '@auth0/nextjs-auth0';
 import clientHealthCheck from 'app/clientHealthCheck';
 import { useRouter } from 'next/router';
+
+// If loading a variable font, you don't need to specify the font weight
+const pressStart2P = Press_Start_2P({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-press-start-2p',
+  display: 'swap',
+});
+const marckScript = Marck_Script({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-marck-script',
+  display: 'swap',
+});
 
 export { reportWebVitals } from 'app/reportWebVitals';
 
@@ -101,7 +116,12 @@ function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }: 
             <UserProvider>
               <UserContext.Provider value={{ user: currentUser }}>
                 <ErrorBoundary>
-                  <div className={process.env.NODE_ENV === 'development' ? 'App App-is-development' : 'App'}>
+                  <div
+                    className={
+                      (process.env.NODE_ENV === 'development' ? 'App App-is-development' : 'App') +
+                      ` ${pressStart2P.variable} ${marckScript.variable}`
+                    }
+                  >
                     <Header />
                     <Head>
                       <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
