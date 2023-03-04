@@ -96,7 +96,9 @@ const nextConfig = {
     config.plugins.push(
       new webpack.DefinePlugin({
         'process.env.BUILD_ID': JSON.stringify(buildId),
-        'process.env.NEXT_PUBLIC_VERCEL_GITHUB_COMMIT_SHA': process.env.VERCEL_GITHUB_COMMIT_SHA,
+        'process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA': JSON.stringify(
+          process.env.VERCEL_GIT_COMMIT_SHA || '-missing-'
+        ),
       })
     );
 
