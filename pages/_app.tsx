@@ -47,6 +47,7 @@ const clientSideEmotionCache = createEmotionCache();
 export interface CustomAppProps extends AppProps {
   [APOLLO_STATE_PROP_NAME]: NormalizedCacheObject;
   emotionCache: EmotionCache;
+  nonce: string;
 }
 
 const CURRENT_USER_QUERY = gql`

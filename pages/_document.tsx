@@ -6,11 +6,7 @@ import createEmotionServer from '@emotion/server/create-instance';
 import crypto from 'crypto';
 import { v4 } from 'uuid';
 
-const generateCsp = (): [csp: string, nonce: string] => {
-  const hash = crypto.createHash('sha256');
-  hash.update(v4());
-  const nonce = hash.digest('base64');
-
+const generateCsp = (nonce: string) => {
   const isDevelopment = process.env.NODE_ENV === 'development';
   const cspDirectives: { [key: string]: string[] } = {
     'connect-src': isDevelopment
@@ -47,11 +43,12 @@ const generateCsp = (): [csp: string, nonce: string] => {
     .map((directive) => `${directive} ${cspDirectives[directive].join(' ')}`)
     .join('; ');
 
-  return [csp, nonce];
+  return csp;
 };
 
 export interface CustomDocumentInitialProps extends DocumentInitialProps {
   emotionStyleTags: ReactNode[];
+  nonce: string;
 }
 
 export default class MyDocument extends Document {
@@ -64,12 +61,16 @@ export default class MyDocument extends Document {
     const cache = createEmotionCache();
     const { extractCriticalToChunks } = createEmotionServer(cache);
 
+    const hash = crypto.createHash('sha256');
+    hash.update(v4());
+    const nonce = hash.digest('base64');
+
     ctx.renderPage = () =>
       originalRenderPage({
         enhanceApp: (App) =>
           function EnhanceApp(props) {
             // @ts-ignore not sure how to fix this yet
-            return <App emotionCache={cache} {...props} />;
+            return <App emotionCache={cache} nonce={nonce} {...props} />;
           },
       });
 
@@ -89,12 +90,15 @@ export default class MyDocument extends Document {
     return {
       ...initialProps,
       emotionStyleTags,
+      nonce,
     };
   }
 
   render(): JSX.Element {
     const { locale } = this.props;
-    const [csp, nonce] = generateCsp();
+    // @ts-ignore not sure how to fix this yet
+    const { nonce } = this.props;
+    const csp = generateCsp(nonce);
 
     return (
       <StrictMode>
