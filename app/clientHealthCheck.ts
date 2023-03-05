@@ -6,7 +6,7 @@ async function runCheck() {
     '/api/client-health-check?' +
     new URLSearchParams({
       buildId: process.env.BUILD_ID || '',
-      commitSHA: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA || '',
+      commitSHA: process.env.NEXT_PUBLIC_VERCEL_GITHUB_COMMIT_SHA || '',
     });
   const response = await fetch(url);
   const data = await response.text();
@@ -21,10 +21,6 @@ async function runCheck() {
   // tell the App to do a hard navigation at the next opportunity.
 }
 
-let checkIntervalId: NodeJS.Timeout;
 export default function clientHealthCheck() {
-  if (checkIntervalId) {
-    clearInterval(checkIntervalId);
-  }
-  checkIntervalId = setInterval(runCheck, 5 * 60 * 1000 /* every 5 min */);
+  setInterval(runCheck, 5 * 60 * 1000 /* every 5 min */);
 }
