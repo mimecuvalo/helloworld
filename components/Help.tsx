@@ -10,13 +10,14 @@ import {
   Typography,
 } from '@mui/material';
 import { F, defineMessages, useIntl } from 'i18n';
-import { MouseEvent, useEffect, useState } from 'react';
+import { MouseEvent, useContext, useEffect, useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 
 import { $Experiment } from 'app/experiments';
 import Cookies from 'js-cookie';
 import { Help as HelpIcon } from '@mui/icons-material';
 import Link from './Link';
+import UserContext from 'app/UserContext';
 
 const HelpContainer = styled('div')`
   display: inline-block;
@@ -35,6 +36,7 @@ const messages = defineMessages({
 // `;
 
 export default function Help() {
+  const { user } = useContext(UserContext);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>();
   const [experiments, setExperiments] = useState<$Experiment[]>([]);
   const [isExperimentsOpen, setIsExperimentsOpen] = useState(false);
@@ -49,8 +51,10 @@ export default function Help() {
       const json = await response.json();
       setExperiments(json.experiments ?? {});
     }
-    fetchData();
-  }, [setExperiments]);
+    if (user) {
+      fetchData();
+    }
+  }, [setExperiments, user]);
 
   const allExperiments = Object.keys(experiments).map((name: string) => ({
     name,
