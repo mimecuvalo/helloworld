@@ -32,15 +32,15 @@ const nextConfig = {
   experimental: {
     externalDir: true,
     scrollRestoration: true,
+  },
 
-    // N.B. This is super important so that our bundles don't slow down the whole site.
-    modularizeImports: {
-      '@mui/material': {
-        transform: '@mui/material/{{member}}',
-      },
-      '@mui/icons-material': {
-        transform: '@mui/icons-material/{{member}}',
-      },
+  // N.B. This is super important so that our bundles don't slow down the whole site.
+  modularizeImports: {
+    '@mui/material': {
+      transform: '@mui/material/{{member}}',
+    },
+    '@mui/icons-material': {
+      transform: '@mui/icons-material/{{member}}',
     },
   },
 
