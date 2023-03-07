@@ -29,7 +29,7 @@ const generateCsp = (nonce: string) => {
     'prefetch-src': ["'self'"],
     // TODO(mime)
     //'report-uri': ['/api/report-csp-violation'],
-    'script-src': ["'self'", 'https://cdn.auth0.com'].concat(
+    'script-src': ["'self'", 'https://cdn.auth0.com', 'https://cdn.vercel-insights.com'].concat(
       isDevelopment ? ["'unsafe-inline'", "'unsafe-eval'"] : [`'nonce-${nonce}'`]
     ),
 
