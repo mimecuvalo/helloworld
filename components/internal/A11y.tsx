@@ -54,12 +54,16 @@ export default function A11y() {
 
   function runAudit() {
     console.log('[a11y]: running accessibility audit...');
-    axe.run(document, {}, (err, results) => {
-      if (err) throw err;
-      console.log('[a11y]:', results);
-      setErrorCount(results.violations.length);
-      setResults(results);
-    });
+    try {
+      axe.run(document, {}, (err, results) => {
+        if (err) throw err;
+        console.log('[a11y]:', results);
+        setErrorCount(results.violations.length);
+        setResults(results);
+      });
+    } catch (ex) {
+      console.error(ex);
+    }
   }
 
   function renderViolationByType(typeFilter: string) {
