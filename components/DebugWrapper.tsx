@@ -5,7 +5,7 @@ import { styled } from '@mui/material/styles';
 
 const Debug = lazy(() => import('components/internal/Debug'));
 
-const StyledFooter = styled('footer')`
+const StyledDebugger = styled('div')`
   position: fixed;
   bottom: ${(props) => props.theme.spacing(1)};
   right: ${(props) => props.theme.spacing(2.5)}; // Swipeable drawer width.
@@ -16,7 +16,7 @@ const StyledFooter = styled('footer')`
 `;
 
 // NB: we memoize here because it has the a11y script included on dev which is expensive.
-const Footer = memo(function Footer() {
+const DebugWrapper = memo(function DebugWrapper() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ const Footer = memo(function Footer() {
   }, []);
 
   return (
-    <StyledFooter>
+    <StyledDebugger>
       {process.env.NODE_ENV === 'development' && isLoaded && (
         <>
           <Suspense fallback={<span />}>
@@ -33,7 +33,7 @@ const Footer = memo(function Footer() {
           <Help />
         </>
       )}
-    </StyledFooter>
+    </StyledDebugger>
   );
 });
-export default Footer;
+export default DebugWrapper;

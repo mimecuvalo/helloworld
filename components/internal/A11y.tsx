@@ -72,15 +72,35 @@ export default function A11y() {
       return null;
     }
 
+    const handleMouseOver = (target: string) => {
+      document.querySelector(target)?.setAttribute('style', 'outline: 3px solid hotpink');
+    };
+    const handleMouseOut = (target: string) => {
+      document.querySelector(target)?.setAttribute('style', '');
+    };
+
     return (
       <div>
         <TypeFilter variant="h3">{typeFilter}</TypeFilter>
         <List>
           {violationsByType.map((violation) => (
-            <ListItem key={violation.id}>
-              <strong>{violation.id}</strong>: {violation.description}
-              &nbsp;(
-              <em>{violation.nodes.map((node) => node.target).join(', ')}</em>)
+            <ListItem key={violation.id} sx={{ mb: 2 }}>
+              <strong style={{ minWidth: '200px' }}>{violation.id}:</strong>
+              <span style={{ minWidth: '200px' }}>{violation.description}</span>
+              &nbsp;
+              <em style={{ minWidth: '200px' }}>
+                <pre>
+                  {violation.nodes.map((node, idx) => (
+                    <div
+                      key={idx}
+                      onMouseOver={() => handleMouseOver(node.target as unknown as string)}
+                      onMouseOut={() => handleMouseOut(node.target as unknown as string)}
+                    >
+                      {node.target}
+                    </div>
+                  ))}
+                </pre>
+              </em>
             </ListItem>
           ))}
         </List>

@@ -124,9 +124,9 @@ export default function Content({ username, name, host }: { username: string; na
           title={title}
           username={content.username}
         />
-        <div id="hw-content">
+        <main id="hw-content">
           <Simple content={content} />
-        </div>
+        </main>
       </ThemeProvider>
     );
   }

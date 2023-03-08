@@ -8,9 +8,9 @@ export function Experiment({ children, name }: { children: React.ReactNode; name
   Children.map(children, (child) => {
     if (
       // @ts-ignore fix up later
-      (isExperimentOn && (child.type.name !== 'Variant' || child.props.name.toLowerCase() !== 'off')) ||
+      (isExperimentOn && (child.type.displayName !== 'Variant' || child.props.name.toLowerCase() !== 'off')) ||
       // @ts-ignore fix up later
-      (!isExperimentOn && child.type.name === 'Variant' && child.props.name.toLowerCase() === 'off')
+      (!isExperimentOn && child.type.displayName === 'Variant' && child.props.name.toLowerCase() === 'off')
     ) {
       filteredChildren.push(child);
     }
@@ -22,3 +22,4 @@ export function Experiment({ children, name }: { children: React.ReactNode; name
 export function Variant({ children }: { children: React.ReactNode; name: string }) {
   return <>{children}</>;
 }
+Variant.displayName = 'Variant';

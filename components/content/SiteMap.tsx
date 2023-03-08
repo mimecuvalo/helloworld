@@ -250,7 +250,7 @@ export default function SiteMap({ content, username }: { content?: Content; user
       >
         {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
       </Hamburger>
-      <Nav id="hw-sitemap" $isMenuOpen={isMenuOpen} onMouseUp={handleCloseMenu}>
+      <Nav id="hw-sitemap" title="sitemap" $isMenuOpen={isMenuOpen} onMouseUp={handleCloseMenu}>
         <ul>
           {contentOwner.logo ? (
             <LogoWrapper id="hw-sitemap-logo" className="h-card">

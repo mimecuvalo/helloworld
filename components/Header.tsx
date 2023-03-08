@@ -15,7 +15,7 @@ const StyledHeader = styled('header')`
 export default function Header() {
   return (
     <StyledHeader>
-      <nav>
+      <nav title="Login">
         <Login />
       </nav>
     </StyledHeader>

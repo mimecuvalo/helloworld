@@ -34,7 +34,7 @@ export {
 export { useTheme, styled } from '@mui/material/styles';
 
 export { default as FeedWrapper } from './FeedWrapper';
-export { default as Footer } from './Footer';
+export { default as DebugWrapper } from './DebugWrapper';
 export { default as Header } from './Header';
 export { default as InfiniteFeed } from './InfiniteFeed';
 export { default as ItemWrapper } from './ItemWrapper';

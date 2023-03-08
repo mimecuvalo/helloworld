@@ -2,7 +2,7 @@ import { PaletteOptions } from '@mui/material';
 
 const primary = {
   light: '#09f',
-  main: '#06e',
+  main: '#3984ff',
   dark: '#16147f',
 };
 
@@ -49,7 +49,7 @@ const basics = {
   faintTransparentGrey: 'rgba(0, 0, 0, 0.04)',
   transparentGrey: 'rgba(0, 0, 0, 0.1)',
   transparentBlack: 'rgba(0, 0, 0, 0.75)',
-  black: '#111',
+  black: '#161313',
 };
 
 const accents = {};

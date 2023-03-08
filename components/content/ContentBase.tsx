@@ -8,7 +8,7 @@ import { PropsWithChildren } from 'react';
 import SiteMap from './SiteMap';
 import { ThemeProvider } from '@mui/material/styles';
 
-const Container = styled('div', { label: 'ContentBaseContainer' })`
+const Container = styled('main', { label: 'ContentBaseContainer' })`
   display: flex;
   align-items: flex-start;
   flex-direction: column;
