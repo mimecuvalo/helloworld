@@ -44,11 +44,11 @@ function handleMouseDown(evt: MouseEvent) {
     target.getAttribute('data-track') ||
     target.getAttribute('aria-label') ||
     target.title ||
-    target.id ||
     target.innerText ||
     target.getAttribute('placeholder') ||
     target.getAttribute('name') ||
     target.getAttribute('alt') ||
+    target.id ||
     target.className ||
     (target as HTMLImageElement).src ||
     (target as HTMLImageElement).srcset;
