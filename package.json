@@ -26,7 +26,7 @@
   },
   "scripts": {
     "predev": "yarn i18n:compile",
-    "dev": "open http://localhost:3000 && NODE_OPTIONS='--inspect' next dev",
+    "dev": "open http://localhost:3000 && next dev",
     "prebuild": "yarn i18n:compile",
     "build": "next build",
     "start": "next start",
