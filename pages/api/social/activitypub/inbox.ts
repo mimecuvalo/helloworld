@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const userRemote = await findUserRemote(req.body, res, user);
 
   if (!userRemote) {
-    console.log('activitypub fail: ', req.body);
+    console.error('activitypub fail: ', req.body);
     return res.status(401).end();
   }
 

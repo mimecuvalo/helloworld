@@ -39,7 +39,7 @@ export default authenticate(async function handler(req: NextApiRequest, res: Nex
 
     return res.status(200).json(post);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.end(400);
   }
 });

@@ -18,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const userRemote = await findUserRemote(activityPubJSON, res, user);
 
   if (!userRemote) {
-    console.log('salmon fail: ', activityPubJSON);
+    console.error('salmon fail: ', activityPubJSON);
     return res.status(401).end();
   }
 

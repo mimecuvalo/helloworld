@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!req.query.resource || !req.body.source || !req.body.target) {
     return res.status(400).end();
   }
-  console.log(
+  console.debug(
     `Received webmention: resource: ${req.query.resource}, source: ${req.body.source}, target: ${req.body.target}`
   );
   const user = await getLocalUser(req.query.resource as string);

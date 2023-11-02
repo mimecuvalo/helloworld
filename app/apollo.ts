@@ -30,11 +30,11 @@ function createApolloClient(headers?: { [key: string]: string }) {
   const errorLink = onError(({ graphQLErrors, networkError }) => {
     if (graphQLErrors) {
       graphQLErrors.map(({ message, locations, path }) =>
-        console.log(`\n[GraphQL error]: Message: ${message}, Location: ${JSON.stringify(locations)}, Path: ${path}\n`)
+        console.error(`\n[GraphQL error]: Message: ${message}, Location: ${JSON.stringify(locations)}, Path: ${path}\n`)
       );
     }
     if (networkError) {
-      console.log(`\n[Network error]: ${networkError}\n`);
+      console.error(`\n[Network error]: ${networkError}\n`);
     }
   });
   const splitLink = split(

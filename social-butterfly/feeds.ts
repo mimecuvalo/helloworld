@@ -58,7 +58,7 @@ export async function mapFeedAndInsertIntoDb(userRemote: UserRemote, feedEntries
       ContentRemote[],
       number
     ];
-    console.log(
+    console.debug(
       `${userRemote.localUsername} - ${userRemote.profileUrl}: ` +
         `parsed ${newEntries.length} entries, skipped ${skippedCount}.`
     );
@@ -69,7 +69,7 @@ export async function mapFeedAndInsertIntoDb(userRemote: UserRemote, feedEntries
 
   try {
     newEntries.length && (await saveRemoteContent(newEntries));
-    console.log(
+    console.debug(
       `${userRemote.localUsername} - ${userRemote.profileUrl}: inserted ${newEntries.length} entries into db.`
     );
   } catch (ex: any) {

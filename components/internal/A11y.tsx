@@ -53,11 +53,11 @@ export default function A11y() {
   }, [loaded]);
 
   function runAudit() {
-    console.log('[a11y]: running accessibility audit...');
+    console.debug('[a11y]: running accessibility audit...');
     try {
       axe.run(document, {}, (err, results) => {
         if (err) throw err;
-        console.log('[a11y]:', results);
+        console.debug('[a11y]:', results);
         setErrorCount(results.violations.length);
         setResults(results);
       });

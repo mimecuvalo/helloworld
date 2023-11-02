@@ -19,7 +19,7 @@ export default async function loadIntlMessages({
       const contents = await fs.readFile(languagePath, 'utf-8');
       return JSON.parse(contents);
     } catch (error) {
-      console.info('Could not load compiled language files. Please run "yarn i18n:compile" first"');
+      console.error('Could not load compiled language files. Please run "yarn i18n:compile" first"');
       console.error(error);
     }
   }
