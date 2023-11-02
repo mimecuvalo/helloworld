@@ -26,7 +26,7 @@ const generateCsp = (nonce: string) => {
     'manifest-src': ["'self'"],
     'media-src': ["'self'", 'blob:'],
     'object-src': ["'self'"],
-    'prefetch-src': ["'self'"],
+    // 'prefetch-src': ["'self'"],
     // TODO(mime)
     //'report-uri': ['/api/report-csp-violation'],
     'script-src': ["'self'", 'https://cdn.auth0.com', 'https://cdn.vercel-insights.com'].concat(
