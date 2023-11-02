@@ -14,4 +14,11 @@ Sentry.init({
   // Note: if you want to override the automatic release value, do not set a
   // `release` value here - use the environment variable `SENTRY_RELEASE`, so
   // that it will also get attached to your source maps
+
+  integrations: [
+    new Sentry.Integrations.Breadcrumbs({
+      // N.B. Disabled this option because it's garbage and ruins all console.log stack traces.
+      console: false,
+    }),
+  ],
 });
