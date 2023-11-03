@@ -1,5 +1,5 @@
 import { NextWebVitalsMetric } from 'next/app';
 
-export function reportWebVitals(metric: NextWebVitalsMetric): void {
+export function trackWebVitals(metric: NextWebVitalsMetric): void {
   console.debug('web vitals', metric);
 }

@@ -24,6 +24,8 @@ import { UserPrivate } from 'data/graphql-generated';
 import { UserProvider } from '@auth0/nextjs-auth0/client';
 import clientHealthCheck from 'app/clientHealthCheck';
 import { useRouter } from 'next/router';
+import { trackWebVitals } from 'app/reportWebVitals';
+import { useReportWebVitals } from 'next/web-vitals';
 
 // If loading a variable font, you don't need to specify the font weight
 const pressStart2P = Press_Start_2P({
@@ -38,8 +40,6 @@ const marckScript = Marck_Script({
   variable: '--font-marck-script',
   display: 'swap',
 });
-
-export { reportWebVitals } from 'app/reportWebVitals';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -68,6 +68,7 @@ function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }: 
   const { locale = 'en', defaultLocale = 'en' } = useRouter();
   const apolloClient = useApollo(pageProps);
   const [currentUser, setCurrentUser] = useState<UserPrivate>();
+  useReportWebVitals(trackWebVitals);
 
   useEffect(() => {
     // Upon starting the app, kick off a client health check which runs periodically.
