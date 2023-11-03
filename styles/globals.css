@@ -7,6 +7,11 @@ html {
   font-size: 14px;
 }
 
+::selection {
+  background-color: oklch(51.64% 0.188 257.723);
+  color: #fff;
+}
+
 a:any-link {
   color: #3984ff;
   text-decoration: none;
