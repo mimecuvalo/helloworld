@@ -178,21 +178,20 @@ function StructuredMetaData({
 // contentOwner currently.
 function GoogleAnalytics({ contentOwner }: { contentOwner: UserPublic }) {
   return (
-    <script
-      async
-      dangerouslySetInnerHTML={{
-        __html: `
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', '${contentOwner.googleAnalytics}']);
-        _gaq.push(['_trackPageview']);
+    <>
+      <script async src={`https://www.googletagmanager.com/gtag/js?id=${contentOwner.googleAnalytics}`} />
+      <script
+        async
+        dangerouslySetInnerHTML={{
+          __html: `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
 
-        (function() {
-          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-          ga.src = 'https://ssl.google-analytics.com/ga.js';
-          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-        })();
-        `,
-      }}
-    />
+          gtag('config', '${contentOwner.googleAnalytics}');
+          `,
+        }}
+      />
+    </>
   );
 }
