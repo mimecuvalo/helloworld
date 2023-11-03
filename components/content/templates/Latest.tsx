@@ -8,7 +8,7 @@ import { contentUrl } from 'util/url-factory';
 import { useRouter } from 'next/router';
 
 const FETCH_COLLECTION_LINKS = gql`
-  query ($username: String!, $section: String!, $name: String!) {
+  query FetchCollectionLatest($username: String!, $section: String!, $name: String!) {
     fetchCollectionLatest(username: $username, section: $section, name: $name) {
       album
       name

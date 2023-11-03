@@ -30,7 +30,6 @@ const nextConfig = {
   },
 
   experimental: {
-    externalDir: true,
     scrollRestoration: true,
   },
 

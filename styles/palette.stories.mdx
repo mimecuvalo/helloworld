@@ -1,15 +1,13 @@
-import { Meta, Story, Preview } from '@storybook/addon-docs/blocks'
+import { Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
 
-import { storybook } from './palette'
-import { Typography } from '../components/index';
+import { storybook } from './palette';
+import { Typography } from '@mui/material';
 
 <Meta title="Design System/Palette" />
 
-<Preview>
-  <Story
-    name="Palette"
-  >
-    {Object.keys(storybook).map(colorGroup => (
+<Canvas>
+  <Story name="Palette">
+    {Object.keys(storybook).map((colorGroup) => (
       <>
         <Typography variant="h2" style={{ textTransform: 'capitalize' }}>
           {colorGroup}
@@ -17,8 +15,8 @@ import { Typography } from '../components/index';
         <ul style={{ display: 'flex', flexWrap: 'wrap', listStyle: 'none' }}>
           {Object.keys(storybook[colorGroup])
             .reverse()
-            .map(color => (
-              <li style={{ text-align: 'center', margin: '0 2em 2em 0' }}>
+            .map((color) => (
+              <li style={{ textAlign: 'center', margin: '0 2em 2em 0' }}>
                 <div
                   style={{
                     display: 'flex',
@@ -27,9 +25,9 @@ import { Typography } from '../components/index';
                     backgroundColor: storybook[colorGroup][color],
                     width: '100px',
                     height: '100px',
-                    border-radius: '50%',
+                    borderRadius: '50%',
                     color: storybook.basics.black,
-                    font-size: '12px',
+                    fontSize: '12px',
                     border: `1px solid ${storybook.grey[300]}`,
                   }}
                 >
@@ -42,4 +40,4 @@ import { Typography } from '../components/index';
       </>
     ))}
   </Story>
-</Preview>
+</Canvas>

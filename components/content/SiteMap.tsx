@@ -28,8 +28,10 @@ const Nav = styled('nav', transientOptions)<{ $isMenuOpen: boolean }>`
   padding: ${(props) => props.theme.spacing(0.5)};
 
   border: 1px solid ${(props) => props.theme.palette.primary.light};
-  box-shadow: 1px 1px ${(props) => props.theme.palette.primary.light},
-    2px 2px ${(props) => props.theme.palette.primary.light}, 3px 3px ${(props) => props.theme.palette.primary.light};
+  box-shadow:
+    1px 1px ${(props) => props.theme.palette.primary.light},
+    2px 2px ${(props) => props.theme.palette.primary.light},
+    3px 3px ${(props) => props.theme.palette.primary.light};
 
   ${(props) => props.theme.breakpoints.down('md')} {
     ${(props) => !props.$isMenuOpen && 'display: none;'}

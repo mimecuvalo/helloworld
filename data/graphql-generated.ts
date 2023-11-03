@@ -7,128 +7,130 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
-  Date: any;
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+  Date: { input: any; output: any; }
 };
 
 export type Comment = ContentRemote & {
   __typename?: 'Comment';
-  avatar?: Maybe<Scalars['String']>;
-  content?: Maybe<Scalars['String']>;
-  createdAt: Scalars['Date'];
-  creator?: Maybe<Scalars['String']>;
-  deleted: Scalars['Boolean'];
-  favorited: Scalars['Boolean'];
-  fromUsername?: Maybe<Scalars['String']>;
-  link: Scalars['String'];
-  localContentName?: Maybe<Scalars['String']>;
-  postId: Scalars['String'];
-  toUsername: Scalars['String'];
-  type: Scalars['String'];
-  username: Scalars['String'];
-  view: Scalars['String'];
+  avatar?: Maybe<Scalars['String']['output']>;
+  content?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['Date']['output'];
+  creator?: Maybe<Scalars['String']['output']>;
+  deleted: Scalars['Boolean']['output'];
+  favorited: Scalars['Boolean']['output'];
+  fromUsername?: Maybe<Scalars['String']['output']>;
+  link: Scalars['String']['output'];
+  localContentName?: Maybe<Scalars['String']['output']>;
+  postId: Scalars['String']['output'];
+  toUsername: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+  username: Scalars['String']['output'];
+  view: Scalars['String']['output'];
 };
 
 export type Content = {
   __typename?: 'Content';
-  album: Scalars['String'];
-  avatar?: Maybe<Scalars['String']>;
-  code: Scalars['String'];
-  commentsCount: Scalars['Int'];
-  commentsUpdated?: Maybe<Scalars['Date']>;
-  content: Scalars['String'];
-  count: Scalars['Int'];
-  countRobot: Scalars['Int'];
-  createdAt: Scalars['Date'];
-  externalLink?: Maybe<Scalars['String']>;
-  favorited: Scalars['Boolean'];
-  forceRefresh?: Maybe<Scalars['Boolean']>;
-  hidden: Scalars['Boolean'];
-  name: Scalars['String'];
-  order: Scalars['Int'];
-  prefetchImages?: Maybe<Array<Scalars['String']>>;
-  redirect: Scalars['Int'];
-  section: Scalars['String'];
-  sortType?: Maybe<Scalars['String']>;
-  style: Scalars['String'];
-  template: Scalars['String'];
-  thread?: Maybe<Scalars['String']>;
-  threadUser?: Maybe<Scalars['String']>;
-  thumb: Scalars['String'];
-  title: Scalars['String'];
-  updatedAt: Scalars['Date'];
-  username: Scalars['String'];
-  view: Scalars['String'];
+  album: Scalars['String']['output'];
+  avatar?: Maybe<Scalars['String']['output']>;
+  code: Scalars['String']['output'];
+  commentsCount: Scalars['Int']['output'];
+  commentsUpdated?: Maybe<Scalars['Date']['output']>;
+  content: Scalars['String']['output'];
+  count: Scalars['Int']['output'];
+  countRobot: Scalars['Int']['output'];
+  createdAt: Scalars['Date']['output'];
+  externalLink?: Maybe<Scalars['String']['output']>;
+  favorited: Scalars['Boolean']['output'];
+  forceRefresh?: Maybe<Scalars['Boolean']['output']>;
+  hidden: Scalars['Boolean']['output'];
+  name: Scalars['String']['output'];
+  order: Scalars['Int']['output'];
+  prefetchImages?: Maybe<Array<Scalars['String']['output']>>;
+  redirect: Scalars['Int']['output'];
+  section: Scalars['String']['output'];
+  sortType?: Maybe<Scalars['String']['output']>;
+  style: Scalars['String']['output'];
+  template: Scalars['String']['output'];
+  thread?: Maybe<Scalars['String']['output']>;
+  threadUser?: Maybe<Scalars['String']['output']>;
+  thumb: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['Date']['output'];
+  username: Scalars['String']['output'];
+  view: Scalars['String']['output'];
 };
 
 export type ContentMetaInfo = {
   __typename?: 'ContentMetaInfo';
-  album: Scalars['String'];
-  externalLink?: Maybe<Scalars['String']>;
-  forceRefresh: Scalars['Boolean'];
-  hidden: Scalars['Boolean'];
-  name: Scalars['String'];
-  prefetchImages?: Maybe<Array<Scalars['String']>>;
-  section: Scalars['String'];
-  template: Scalars['String'];
-  thumb: Scalars['String'];
-  title: Scalars['String'];
-  username: Scalars['String'];
+  album: Scalars['String']['output'];
+  externalLink?: Maybe<Scalars['String']['output']>;
+  forceRefresh: Scalars['Boolean']['output'];
+  hidden: Scalars['Boolean']['output'];
+  name: Scalars['String']['output'];
+  prefetchImages?: Maybe<Array<Scalars['String']['output']>>;
+  section: Scalars['String']['output'];
+  template: Scalars['String']['output'];
+  thumb: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  username: Scalars['String']['output'];
 };
 
 export type ContentRemote = {
-  avatar?: Maybe<Scalars['String']>;
-  createdAt: Scalars['Date'];
-  deleted: Scalars['Boolean'];
-  favorited: Scalars['Boolean'];
-  fromUsername?: Maybe<Scalars['String']>;
-  localContentName?: Maybe<Scalars['String']>;
-  postId: Scalars['String'];
-  toUsername: Scalars['String'];
-  type: Scalars['String'];
-  username: Scalars['String'];
+  avatar?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['Date']['output'];
+  deleted: Scalars['Boolean']['output'];
+  favorited: Scalars['Boolean']['output'];
+  fromUsername?: Maybe<Scalars['String']['output']>;
+  localContentName?: Maybe<Scalars['String']['output']>;
+  postId: Scalars['String']['output'];
+  toUsername: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+  username: Scalars['String']['output'];
 };
 
 export type Echo = {
   __typename?: 'Echo';
-  exampleField: Scalars['String'];
+  exampleField: Scalars['String']['output'];
 };
 
 export type Favorite = ContentRemote & {
   __typename?: 'Favorite';
-  avatar?: Maybe<Scalars['String']>;
-  createdAt: Scalars['Date'];
-  deleted: Scalars['Boolean'];
-  favorited: Scalars['Boolean'];
-  fromUsername?: Maybe<Scalars['String']>;
-  localContentName?: Maybe<Scalars['String']>;
-  postId: Scalars['String'];
-  toUsername: Scalars['String'];
-  type: Scalars['String'];
-  username: Scalars['String'];
+  avatar?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['Date']['output'];
+  deleted: Scalars['Boolean']['output'];
+  favorited: Scalars['Boolean']['output'];
+  fromUsername?: Maybe<Scalars['String']['output']>;
+  localContentName?: Maybe<Scalars['String']['output']>;
+  postId: Scalars['String']['output'];
+  toUsername: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+  username: Scalars['String']['output'];
 };
 
 export type FeedCount = {
   __typename?: 'FeedCount';
-  count: Scalars['Int'];
-  fromUsername: Scalars['String'];
+  count: Scalars['Int']['output'];
+  fromUsername: Scalars['String']['output'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  _?: Maybe<Scalars['Boolean']>;
+  _?: Maybe<Scalars['Boolean']['output']>;
   createUser?: Maybe<UserPrivate>;
   createUserRemote?: Maybe<UserRemotePublic>;
-  deleteContent: Scalars['Boolean'];
+  deleteContent: Scalars['Boolean']['output'];
   deleteContentRemote: ContentRemote;
-  destroyFeed: Scalars['Boolean'];
+  destroyFeed: Scalars['Boolean']['output'];
   favoriteContentRemote: ContentRemote;
   markAllContentInFeedAsRead: FeedCount;
   markAllFeedsAsRead: FeedCount;
@@ -141,89 +143,89 @@ export type Mutation = {
 
 
 export type MutationCreateUserArgs = {
-  email: Scalars['String'];
-  username: Scalars['String'];
+  email: Scalars['String']['input'];
+  username: Scalars['String']['input'];
 };
 
 
 export type MutationCreateUserRemoteArgs = {
-  profileUrl: Scalars['String'];
+  profileUrl: Scalars['String']['input'];
 };
 
 
 export type MutationDeleteContentArgs = {
-  name: Scalars['String'];
+  name: Scalars['String']['input'];
 };
 
 
 export type MutationDeleteContentRemoteArgs = {
-  deleted: Scalars['Boolean'];
-  fromUsername: Scalars['String'];
-  localContentName: Scalars['String'];
-  postId: Scalars['String'];
-  type: Scalars['String'];
+  deleted: Scalars['Boolean']['input'];
+  fromUsername: Scalars['String']['input'];
+  localContentName: Scalars['String']['input'];
+  postId: Scalars['String']['input'];
+  type: Scalars['String']['input'];
 };
 
 
 export type MutationDestroyFeedArgs = {
-  profileUrl: Scalars['String'];
+  profileUrl: Scalars['String']['input'];
 };
 
 
 export type MutationFavoriteContentRemoteArgs = {
-  favorited: Scalars['Boolean'];
-  fromUsername: Scalars['String'];
-  postId: Scalars['String'];
-  type: Scalars['String'];
+  favorited: Scalars['Boolean']['input'];
+  fromUsername: Scalars['String']['input'];
+  postId: Scalars['String']['input'];
+  type: Scalars['String']['input'];
 };
 
 
 export type MutationMarkAllContentInFeedAsReadArgs = {
-  fromUsername: Scalars['String'];
+  fromUsername: Scalars['String']['input'];
 };
 
 
 export type MutationPostCommentArgs = {
-  content: Scalars['String'];
-  name: Scalars['String'];
-  username: Scalars['String'];
+  content: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  username: Scalars['String']['input'];
 };
 
 
 export type MutationPostContentArgs = {
-  album: Scalars['String'];
-  code: Scalars['String'];
-  content: Scalars['String'];
-  hidden: Scalars['Boolean'];
-  name: Scalars['String'];
-  section: Scalars['String'];
-  style: Scalars['String'];
-  thumb: Scalars['String'];
-  title: Scalars['String'];
+  album: Scalars['String']['input'];
+  code: Scalars['String']['input'];
+  content: Scalars['String']['input'];
+  hidden: Scalars['Boolean']['input'];
+  name: Scalars['String']['input'];
+  section: Scalars['String']['input'];
+  style: Scalars['String']['input'];
+  thumb: Scalars['String']['input'];
+  title: Scalars['String']['input'];
 };
 
 
 export type MutationReadContentRemoteArgs = {
-  fromUsername: Scalars['String'];
-  postId: Scalars['String'];
-  read: Scalars['Boolean'];
+  fromUsername: Scalars['String']['input'];
+  postId: Scalars['String']['input'];
+  read: Scalars['Boolean']['input'];
 };
 
 
 export type MutationSaveContentArgs = {
-  code: Scalars['String'];
-  content: Scalars['String'];
-  hidden: Scalars['Boolean'];
-  name: Scalars['String'];
-  style: Scalars['String'];
-  thumb: Scalars['String'];
-  title: Scalars['String'];
+  code: Scalars['String']['input'];
+  content: Scalars['String']['input'];
+  hidden: Scalars['Boolean']['input'];
+  name: Scalars['String']['input'];
+  style: Scalars['String']['input'];
+  thumb: Scalars['String']['input'];
+  title: Scalars['String']['input'];
 };
 
 
 export type MutationToggleSortFeedArgs = {
-  currentSortType: Scalars['String'];
-  profileUrl: Scalars['String'];
+  currentSortType: Scalars['String']['input'];
+  profileUrl: Scalars['String']['input'];
 };
 
 export type Neighbors = {
@@ -237,32 +239,32 @@ export type Neighbors = {
 
 export type Post = ContentRemote & {
   __typename?: 'Post';
-  avatar?: Maybe<Scalars['String']>;
-  commentUser?: Maybe<Scalars['String']>;
-  commentsCount: Scalars['Int'];
-  commentsUpdated?: Maybe<Scalars['Date']>;
-  createdAt: Scalars['Date'];
-  creator?: Maybe<Scalars['String']>;
-  deleted: Scalars['Boolean'];
-  favorited: Scalars['Boolean'];
-  fromUsername?: Maybe<Scalars['String']>;
-  isSpam: Scalars['Boolean'];
-  link: Scalars['String'];
-  localContentName?: Maybe<Scalars['String']>;
-  postId: Scalars['String'];
-  read: Scalars['Boolean'];
-  thread?: Maybe<Scalars['String']>;
-  title: Scalars['String'];
-  toUsername: Scalars['String'];
-  type: Scalars['String'];
-  updatedAt?: Maybe<Scalars['Date']>;
-  username: Scalars['String'];
-  view: Scalars['String'];
+  avatar?: Maybe<Scalars['String']['output']>;
+  commentUser?: Maybe<Scalars['String']['output']>;
+  commentsCount: Scalars['Int']['output'];
+  commentsUpdated?: Maybe<Scalars['Date']['output']>;
+  createdAt: Scalars['Date']['output'];
+  creator?: Maybe<Scalars['String']['output']>;
+  deleted: Scalars['Boolean']['output'];
+  favorited: Scalars['Boolean']['output'];
+  fromUsername?: Maybe<Scalars['String']['output']>;
+  isSpam: Scalars['Boolean']['output'];
+  link: Scalars['String']['output'];
+  localContentName?: Maybe<Scalars['String']['output']>;
+  postId: Scalars['String']['output'];
+  read: Scalars['Boolean']['output'];
+  thread?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  toUsername: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+  updatedAt?: Maybe<Scalars['Date']['output']>;
+  username: Scalars['String']['output'];
+  view: Scalars['String']['output'];
 };
 
 export type Query = {
   __typename?: 'Query';
-  _?: Maybe<Scalars['Boolean']>;
+  _?: Maybe<Scalars['Boolean']['output']>;
   allContent: Array<Content>;
   allContentRemote: Array<ContentRemote>;
   allUsersRemote: Array<UserRemotePrivate>;
@@ -287,292 +289,292 @@ export type Query = {
   fetchUser?: Maybe<UserPrivate>;
   fetchUserRemote?: Maybe<UserRemotePrivate>;
   fetchUserTotalCounts: UserCounts;
-  hello?: Maybe<Scalars['String']>;
+  hello?: Maybe<Scalars['String']['output']>;
   searchContent: Array<SearchContentMetaInfo>;
 };
 
 
 export type QueryEchoExampleArgs = {
-  str: Scalars['String'];
+  str: Scalars['String']['input'];
 };
 
 
 export type QueryFetchCollectionArgs = {
-  album: Scalars['String'];
-  name: Scalars['String'];
-  section: Scalars['String'];
-  username: Scalars['String'];
+  album: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  section: Scalars['String']['input'];
+  username: Scalars['String']['input'];
 };
 
 
 export type QueryFetchCollectionLatestArgs = {
-  name: Scalars['String'];
-  section: Scalars['String'];
-  username: Scalars['String'];
+  name: Scalars['String']['input'];
+  section: Scalars['String']['input'];
+  username: Scalars['String']['input'];
 };
 
 
 export type QueryFetchCollectionPaginatedArgs = {
-  name: Scalars['String'];
-  offset: Scalars['Int'];
-  section: Scalars['String'];
-  username: Scalars['String'];
+  name: Scalars['String']['input'];
+  offset: Scalars['Int']['input'];
+  section: Scalars['String']['input'];
+  username: Scalars['String']['input'];
 };
 
 
 export type QueryFetchCommentsRemoteArgs = {
-  name?: InputMaybe<Scalars['String']>;
-  username?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  username?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryFetchContentArgs = {
-  name?: InputMaybe<Scalars['String']>;
-  username?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  username?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryFetchContentNeighborsArgs = {
-  name?: InputMaybe<Scalars['String']>;
-  username?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  username?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryFetchContentRemoteArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 
 export type QueryFetchContentRemotePaginatedArgs = {
-  offset: Scalars['Int'];
-  profileUrlOrSpecialFeed: Scalars['String'];
-  query?: InputMaybe<Scalars['String']>;
-  shouldShowAllItems?: InputMaybe<Scalars['Boolean']>;
+  offset: Scalars['Int']['input'];
+  profileUrlOrSpecialFeed: Scalars['String']['input'];
+  query?: InputMaybe<Scalars['String']['input']>;
+  shouldShowAllItems?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
 export type QueryFetchFavoritesRemoteArgs = {
-  name?: InputMaybe<Scalars['String']>;
-  username?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  username?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryFetchPublicUserDataArgs = {
-  username?: InputMaybe<Scalars['String']>;
+  username?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryFetchPublicUserDataSearchArgs = {
-  username?: InputMaybe<Scalars['String']>;
+  username?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryFetchSiteMapArgs = {
-  username: Scalars['String'];
+  username: Scalars['String']['input'];
 };
 
 
 export type QueryFetchUserArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 
 export type QueryFetchUserRemoteArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 
 export type QuerySearchContentArgs = {
-  query: Scalars['String'];
-  username: Scalars['String'];
+  query: Scalars['String']['input'];
+  username: Scalars['String']['input'];
 };
 
 export type SearchContentMetaInfo = {
   __typename?: 'SearchContentMetaInfo';
-  album: Scalars['String'];
-  forceRefresh: Scalars['Boolean'];
-  hidden: Scalars['Boolean'];
-  name: Scalars['String'];
-  preview: Scalars['String'];
-  section: Scalars['String'];
-  template: Scalars['String'];
-  thumb: Scalars['String'];
-  title: Scalars['String'];
-  username: Scalars['String'];
+  album: Scalars['String']['output'];
+  forceRefresh: Scalars['Boolean']['output'];
+  hidden: Scalars['Boolean']['output'];
+  name: Scalars['String']['output'];
+  preview: Scalars['String']['output'];
+  section: Scalars['String']['output'];
+  template: Scalars['String']['output'];
+  thumb: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  username: Scalars['String']['output'];
 };
 
 export type Subscription = {
   __typename?: 'Subscription';
-  _?: Maybe<Scalars['Boolean']>;
+  _?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type UserCounts = {
   __typename?: 'UserCounts';
-  commentsCount: Scalars['Int'];
-  favoritesCount: Scalars['Int'];
-  totalCount: Scalars['Int'];
+  commentsCount: Scalars['Int']['output'];
+  favoritesCount: Scalars['Int']['output'];
+  totalCount: Scalars['Int']['output'];
 };
 
 export type UserPrivate = {
   __typename?: 'UserPrivate';
-  description?: Maybe<Scalars['String']>;
-  email: Scalars['String'];
-  favicon?: Maybe<Scalars['String']>;
-  googleAnalytics?: Maybe<Scalars['String']>;
-  hostname?: Maybe<Scalars['String']>;
-  id: Scalars['Int'];
-  license?: Maybe<Scalars['String']>;
-  logo?: Maybe<Scalars['String']>;
-  magicKey: Scalars['String'];
-  name: Scalars['String'];
-  privateKey: Scalars['String'];
-  sidebarHtml?: Maybe<Scalars['String']>;
-  superuser: Scalars['Boolean'];
-  theme: Scalars['String'];
-  title: Scalars['String'];
-  username: Scalars['String'];
-  viewport?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']['output']>;
+  email: Scalars['String']['output'];
+  favicon?: Maybe<Scalars['String']['output']>;
+  googleAnalytics?: Maybe<Scalars['String']['output']>;
+  hostname?: Maybe<Scalars['String']['output']>;
+  id: Scalars['Int']['output'];
+  license?: Maybe<Scalars['String']['output']>;
+  logo?: Maybe<Scalars['String']['output']>;
+  magicKey: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  privateKey: Scalars['String']['output'];
+  sidebarHtml?: Maybe<Scalars['String']['output']>;
+  superuser: Scalars['Boolean']['output'];
+  theme: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  username: Scalars['String']['output'];
+  viewport?: Maybe<Scalars['String']['output']>;
 };
 
 export type UserPublic = {
   __typename?: 'UserPublic';
-  description?: Maybe<Scalars['String']>;
-  email: Scalars['String'];
-  favicon?: Maybe<Scalars['String']>;
-  googleAnalytics?: Maybe<Scalars['String']>;
-  license?: Maybe<Scalars['String']>;
-  logo?: Maybe<Scalars['String']>;
-  magicKey: Scalars['String'];
-  name: Scalars['String'];
-  sidebarHtml?: Maybe<Scalars['String']>;
-  theme: Scalars['String'];
-  title: Scalars['String'];
-  username: Scalars['String'];
-  viewport?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']['output']>;
+  email: Scalars['String']['output'];
+  favicon?: Maybe<Scalars['String']['output']>;
+  googleAnalytics?: Maybe<Scalars['String']['output']>;
+  license?: Maybe<Scalars['String']['output']>;
+  logo?: Maybe<Scalars['String']['output']>;
+  magicKey: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  sidebarHtml?: Maybe<Scalars['String']['output']>;
+  theme: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  username: Scalars['String']['output'];
+  viewport?: Maybe<Scalars['String']['output']>;
 };
 
 export type UserRemotePrivate = {
   __typename?: 'UserRemotePrivate';
-  activityPubActorUrl?: Maybe<Scalars['String']>;
-  activityPubInboxUrl?: Maybe<Scalars['String']>;
-  avatar: Scalars['String'];
-  favicon?: Maybe<Scalars['String']>;
-  feedUrl: Scalars['String'];
-  follower: Scalars['Boolean'];
-  following: Scalars['Boolean'];
-  hubUrl?: Maybe<Scalars['String']>;
-  localUsername: Scalars['String'];
-  magicKey?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
-  order: Scalars['Int'];
-  profileUrl: Scalars['String'];
-  salmonUrl?: Maybe<Scalars['String']>;
-  sortType?: Maybe<Scalars['String']>;
-  username: Scalars['String'];
-  webmentionUrl?: Maybe<Scalars['String']>;
+  activityPubActorUrl?: Maybe<Scalars['String']['output']>;
+  activityPubInboxUrl?: Maybe<Scalars['String']['output']>;
+  avatar: Scalars['String']['output'];
+  favicon?: Maybe<Scalars['String']['output']>;
+  feedUrl: Scalars['String']['output'];
+  follower: Scalars['Boolean']['output'];
+  following: Scalars['Boolean']['output'];
+  hubUrl?: Maybe<Scalars['String']['output']>;
+  localUsername: Scalars['String']['output'];
+  magicKey?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  order: Scalars['Int']['output'];
+  profileUrl: Scalars['String']['output'];
+  salmonUrl?: Maybe<Scalars['String']['output']>;
+  sortType?: Maybe<Scalars['String']['output']>;
+  username: Scalars['String']['output'];
+  webmentionUrl?: Maybe<Scalars['String']['output']>;
 };
 
 export type UserRemotePublic = {
   __typename?: 'UserRemotePublic';
-  activityPubActorUrl?: Maybe<Scalars['String']>;
-  activityPubInboxUrl?: Maybe<Scalars['String']>;
-  avatar: Scalars['String'];
-  favicon?: Maybe<Scalars['String']>;
-  feedUrl: Scalars['String'];
-  follower: Scalars['Boolean'];
-  following: Scalars['Boolean'];
-  hubUrl?: Maybe<Scalars['String']>;
-  localUsername: Scalars['String'];
-  magicKey?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
-  profileUrl: Scalars['String'];
-  salmonUrl?: Maybe<Scalars['String']>;
-  sortType?: Maybe<Scalars['String']>;
-  username: Scalars['String'];
-  webmentionUrl?: Maybe<Scalars['String']>;
+  activityPubActorUrl?: Maybe<Scalars['String']['output']>;
+  activityPubInboxUrl?: Maybe<Scalars['String']['output']>;
+  avatar: Scalars['String']['output'];
+  favicon?: Maybe<Scalars['String']['output']>;
+  feedUrl: Scalars['String']['output'];
+  follower: Scalars['Boolean']['output'];
+  following: Scalars['Boolean']['output'];
+  hubUrl?: Maybe<Scalars['String']['output']>;
+  localUsername: Scalars['String']['output'];
+  magicKey?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  profileUrl: Scalars['String']['output'];
+  salmonUrl?: Maybe<Scalars['String']['output']>;
+  sortType?: Maybe<Scalars['String']['output']>;
+  username: Scalars['String']['output'];
+  webmentionUrl?: Maybe<Scalars['String']['output']>;
 };
 
 export type ContentAndUserQueryVariables = Exact<{
-  username: Scalars['String'];
-  name: Scalars['String'];
+  username: Scalars['String']['input'];
+  name: Scalars['String']['input'];
 }>;
 
 
 export type ContentAndUserQuery = { __typename?: 'Query', fetchContent?: { __typename?: 'Content', album: string, code: string, commentsCount: number, commentsUpdated?: any | null, content: string, count: number, countRobot: number, createdAt: any, forceRefresh?: boolean | null, hidden: boolean, name: string, section: string, style: string, template: string, thread?: string | null, thumb: string, title: string, updatedAt: any, username: string, view: string } | null, fetchCommentsRemote: Array<{ __typename?: 'Comment', avatar?: string | null, creator?: string | null, content?: string | null, deleted: boolean, favorited: boolean, fromUsername?: string | null, link: string, localContentName?: string | null, postId: string, type: string, username: string, view: string }>, fetchFavoritesRemote: Array<{ __typename?: 'Favorite', avatar?: string | null, fromUsername?: string | null, localContentName?: string | null, postId: string, type: string, username: string }>, fetchPublicUserData?: { __typename?: 'UserPublic', username: string, description?: string | null, favicon?: string | null, logo?: string | null, name: string, sidebarHtml?: string | null, title: string, theme: string, viewport?: string | null, license?: string | null } | null, fetchSiteMap: Array<{ __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string }>, fetchContentNeighbors?: { __typename?: 'Neighbors', first?: { __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string } | null, last?: { __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string } | null, next?: { __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string, prefetchImages?: Array<string> | null } | null, prev?: { __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string, prefetchImages?: Array<string> | null } | null, top?: { __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string, template: string } | null } | null };
 
 export type FetchCollectionQueryVariables = Exact<{
-  username: Scalars['String'];
-  section: Scalars['String'];
-  name: Scalars['String'];
-  offset: Scalars['Int'];
+  username: Scalars['String']['input'];
+  section: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  offset: Scalars['Int']['input'];
 }>;
 
 
 export type FetchCollectionQuery = { __typename?: 'Query', fetchCollectionPaginated: Array<{ __typename?: 'Content', album: string, code: string, commentsCount: number, commentsUpdated?: any | null, count: number, countRobot: number, createdAt: any, updatedAt: any, hidden: boolean, name: string, order: number, redirect: number, section: string, sortType?: string | null, style: string, template: string, thumb: string, title: string, username: string, view: string, content: string }>, fetchPublicUserData?: { __typename?: 'UserPublic', username: string, description?: string | null, favicon?: string | null, logo?: string | null, name: string, title: string, theme: string, viewport?: string | null } | null };
 
 export type SiteMapAndUserQueryVariables = Exact<{
-  username: Scalars['String'];
+  username: Scalars['String']['input'];
 }>;
 
 
 export type SiteMapAndUserQuery = { __typename?: 'Query', fetchSiteMap: Array<{ __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string }>, fetchPublicUserData?: { __typename?: 'UserPublic', username: string, license?: string | null, logo?: string | null, name: string, title: string, sidebarHtml?: string | null, theme: string, viewport?: string | null } | null };
 
-export type Unnamed_1_QueryVariables = Exact<{
-  username: Scalars['String'];
-  section: Scalars['String'];
-  album: Scalars['String'];
-  name: Scalars['String'];
+export type FetchAlbumCollectionQueryVariables = Exact<{
+  username: Scalars['String']['input'];
+  section: Scalars['String']['input'];
+  album: Scalars['String']['input'];
+  name: Scalars['String']['input'];
 }>;
 
 
-export type Unnamed_1_Query = { __typename?: 'Query', fetchCollection: Array<{ __typename?: 'ContentMetaInfo', album: string, externalLink?: string | null, forceRefresh: boolean, hidden: boolean, name: string, section: string, thumb: string, title: string, username: string }> };
+export type FetchAlbumCollectionQuery = { __typename?: 'Query', fetchCollection: Array<{ __typename?: 'ContentMetaInfo', album: string, externalLink?: string | null, forceRefresh: boolean, hidden: boolean, name: string, section: string, thumb: string, title: string, username: string }> };
 
-export type Unnamed_2_QueryVariables = Exact<{
-  username: Scalars['String'];
-  section: Scalars['String'];
-  album: Scalars['String'];
-  name: Scalars['String'];
+export type FetchArchiveCollectionQueryVariables = Exact<{
+  username: Scalars['String']['input'];
+  section: Scalars['String']['input'];
+  album: Scalars['String']['input'];
+  name: Scalars['String']['input'];
 }>;
 
 
-export type Unnamed_2_Query = { __typename?: 'Query', fetchCollection: Array<{ __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string }> };
+export type FetchArchiveCollectionQuery = { __typename?: 'Query', fetchCollection: Array<{ __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string }> };
 
-export type Unnamed_3_QueryVariables = Exact<{
-  username: Scalars['String'];
-  section: Scalars['String'];
-  name: Scalars['String'];
+export type FetchCollectionLatestQueryVariables = Exact<{
+  username: Scalars['String']['input'];
+  section: Scalars['String']['input'];
+  name: Scalars['String']['input'];
 }>;
 
 
-export type Unnamed_3_Query = { __typename?: 'Query', fetchCollectionLatest?: { __typename?: 'Content', album: string, name: string, section: string, title: string, username: string, view: string, content: string } | null };
+export type FetchCollectionLatestQuery = { __typename?: 'Query', fetchCollectionLatest?: { __typename?: 'Content', album: string, name: string, section: string, title: string, username: string, view: string, content: string } | null };
 
 export type SiteMapAndUserEditorQueryVariables = Exact<{
-  username: Scalars['String'];
+  username: Scalars['String']['input'];
 }>;
 
 
 export type SiteMapAndUserEditorQuery = { __typename?: 'Query', fetchSiteMap: Array<{ __typename?: 'ContentMetaInfo', album: string, hidden: boolean, name: string, section: string, title: string, username: string }>, fetchFollowing: Array<{ __typename?: 'UserRemotePublic', name: string, username: string, profileUrl: string, avatar: string, favicon?: string | null }> };
 
 export type PostContentMutationVariables = Exact<{
-  section: Scalars['String'];
-  album: Scalars['String'];
-  name: Scalars['String'];
-  title: Scalars['String'];
-  hidden: Scalars['Boolean'];
-  thumb: Scalars['String'];
-  style: Scalars['String'];
-  code: Scalars['String'];
-  content: Scalars['String'];
+  section: Scalars['String']['input'];
+  album: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+  hidden: Scalars['Boolean']['input'];
+  thumb: Scalars['String']['input'];
+  style: Scalars['String']['input'];
+  code: Scalars['String']['input'];
+  content: Scalars['String']['input'];
 }>;
 
 
 export type PostContentMutation = { __typename?: 'Mutation', postContent: { __typename?: 'Content', username: string, section: string, album: string, name: string, title: string, hidden: boolean, thumb: string, style: string, code: string, content: string } };
 
 export type FetchContentRemotePaginatedQueryVariables = Exact<{
-  profileUrlOrSpecialFeed: Scalars['String'];
-  offset: Scalars['Int'];
-  query?: InputMaybe<Scalars['String']>;
-  shouldShowAllItems?: InputMaybe<Scalars['Boolean']>;
+  profileUrlOrSpecialFeed: Scalars['String']['input'];
+  offset: Scalars['Int']['input'];
+  query?: InputMaybe<Scalars['String']['input']>;
+  shouldShowAllItems?: InputMaybe<Scalars['Boolean']['input']>;
 }>;
 
 
@@ -593,43 +595,43 @@ export type FetchFollowingQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type FetchFollowingQuery = { __typename?: 'Query', fetchFollowing: Array<{ __typename?: 'UserRemotePublic', avatar: string, favicon?: string | null, name: string, profileUrl: string, sortType?: string | null, username: string }> };
 
-export type Unnamed_4_QueryVariables = Exact<{ [key: string]: never; }>;
+export type FetchSpecialFeedCountsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type Unnamed_4_Query = { __typename?: 'Query', fetchUserTotalCounts: { __typename?: 'UserCounts', commentsCount: number, favoritesCount: number, totalCount: number } };
+export type FetchSpecialFeedCountsQuery = { __typename?: 'Query', fetchUserTotalCounts: { __typename?: 'UserCounts', commentsCount: number, favoritesCount: number, totalCount: number } };
 
 export type ReadContentRemoteMutationVariables = Exact<{
-  fromUsername: Scalars['String'];
-  postId: Scalars['String'];
-  read: Scalars['Boolean'];
+  fromUsername: Scalars['String']['input'];
+  postId: Scalars['String']['input'];
+  read: Scalars['Boolean']['input'];
 }>;
 
 
 export type ReadContentRemoteMutation = { __typename?: 'Mutation', readContentRemote: { __typename?: 'Post', fromUsername?: string | null, postId: string, read: boolean } };
 
 export type DeleteContentRemoteMutationVariables = Exact<{
-  fromUsername: Scalars['String'];
-  localContentName: Scalars['String'];
-  postId: Scalars['String'];
-  type: Scalars['String'];
-  deleted: Scalars['Boolean'];
+  fromUsername: Scalars['String']['input'];
+  localContentName: Scalars['String']['input'];
+  postId: Scalars['String']['input'];
+  type: Scalars['String']['input'];
+  deleted: Scalars['Boolean']['input'];
 }>;
 
 
 export type DeleteContentRemoteMutation = { __typename?: 'Mutation', deleteContentRemote: { __typename?: 'Comment', deleted: boolean, fromUsername?: string | null, localContentName?: string | null, postId: string, type: string } | { __typename?: 'Favorite', deleted: boolean, fromUsername?: string | null, localContentName?: string | null, postId: string, type: string } | { __typename?: 'Post', deleted: boolean, fromUsername?: string | null, localContentName?: string | null, postId: string, type: string } };
 
 export type FavoriteContentRemoteMutationVariables = Exact<{
-  fromUsername: Scalars['String'];
-  postId: Scalars['String'];
-  type: Scalars['String'];
-  favorited: Scalars['Boolean'];
+  fromUsername: Scalars['String']['input'];
+  postId: Scalars['String']['input'];
+  type: Scalars['String']['input'];
+  favorited: Scalars['Boolean']['input'];
 }>;
 
 
 export type FavoriteContentRemoteMutation = { __typename?: 'Mutation', favoriteContentRemote: { __typename?: 'Comment', favorited: boolean, fromUsername?: string | null, postId: string, type: string } | { __typename?: 'Favorite', favorited: boolean, fromUsername?: string | null, postId: string, type: string } | { __typename?: 'Post', favorited: boolean, fromUsername?: string | null, postId: string, type: string } };
 
 export type MarkAllContentInFeedAsReadMutationVariables = Exact<{
-  fromUsername: Scalars['String'];
+  fromUsername: Scalars['String']['input'];
 }>;
 
 
@@ -641,22 +643,22 @@ export type MarkAllFeedsAsReadMutationVariables = Exact<{ [key: string]: never; 
 export type MarkAllFeedsAsReadMutation = { __typename?: 'Mutation', markAllFeedsAsRead: { __typename?: 'FeedCount', count: number } };
 
 export type CreateUserRemoteMutationVariables = Exact<{
-  profileUrl: Scalars['String'];
+  profileUrl: Scalars['String']['input'];
 }>;
 
 
 export type CreateUserRemoteMutation = { __typename?: 'Mutation', createUserRemote?: { __typename?: 'UserRemotePublic', avatar: string, favicon?: string | null, name: string, profileUrl: string, sortType?: string | null, username: string } | null };
 
 export type ToggleSortFeedMutationVariables = Exact<{
-  profileUrl: Scalars['String'];
-  currentSortType: Scalars['String'];
+  profileUrl: Scalars['String']['input'];
+  currentSortType: Scalars['String']['input'];
 }>;
 
 
 export type ToggleSortFeedMutation = { __typename?: 'Mutation', toggleSortFeed: { __typename?: 'UserRemotePublic', profileUrl: string, sortType?: string | null } };
 
 export type DestroyFeedMutationVariables = Exact<{
-  profileUrl: Scalars['String'];
+  profileUrl: Scalars['String']['input'];
 }>;
 
 
@@ -673,8 +675,8 @@ export type FetchAllUsersQueryVariables = Exact<{ [key: string]: never; }>;
 export type FetchAllUsersQuery = { __typename?: 'Query', fetchAllUsers: Array<{ __typename?: 'UserPrivate', description?: string | null, email: string, favicon?: string | null, googleAnalytics?: string | null, hostname?: string | null, license?: string | null, logo?: string | null, magicKey: string, name: string, privateKey: string, superuser: boolean, theme: string, title: string, username: string, viewport?: string | null }> };
 
 export type SearchAndUserQueryVariables = Exact<{
-  username: Scalars['String'];
-  query: Scalars['String'];
+  username: Scalars['String']['input'];
+  query: Scalars['String']['input'];
 }>;
 
 
@@ -747,24 +749,30 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
+
+/** Mapping of interface types */
+export type ResolversInterfaceTypes<RefType extends Record<string, unknown>> = {
+  ContentRemote: ( Comment ) | ( Favorite ) | ( Post );
+};
+
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Comment: ResolverTypeWrapper<Comment>;
   Content: ResolverTypeWrapper<Content>;
   ContentMetaInfo: ResolverTypeWrapper<ContentMetaInfo>;
-  ContentRemote: ResolversTypes['Comment'] | ResolversTypes['Favorite'] | ResolversTypes['Post'];
-  Date: ResolverTypeWrapper<Scalars['Date']>;
+  ContentRemote: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['ContentRemote']>;
+  Date: ResolverTypeWrapper<Scalars['Date']['output']>;
   Echo: ResolverTypeWrapper<Echo>;
   Favorite: ResolverTypeWrapper<Favorite>;
   FeedCount: ResolverTypeWrapper<FeedCount>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
+  Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Mutation: ResolverTypeWrapper<{}>;
   Neighbors: ResolverTypeWrapper<Neighbors>;
   Post: ResolverTypeWrapper<Post>;
   Query: ResolverTypeWrapper<{}>;
   SearchContentMetaInfo: ResolverTypeWrapper<SearchContentMetaInfo>;
-  String: ResolverTypeWrapper<Scalars['String']>;
+  String: ResolverTypeWrapper<Scalars['String']['output']>;
   Subscription: ResolverTypeWrapper<{}>;
   UserCounts: ResolverTypeWrapper<UserCounts>;
   UserPrivate: ResolverTypeWrapper<UserPrivate>;
@@ -775,22 +783,22 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  Boolean: Scalars['Boolean'];
+  Boolean: Scalars['Boolean']['output'];
   Comment: Comment;
   Content: Content;
   ContentMetaInfo: ContentMetaInfo;
-  ContentRemote: ResolversParentTypes['Comment'] | ResolversParentTypes['Favorite'] | ResolversParentTypes['Post'];
-  Date: Scalars['Date'];
+  ContentRemote: ResolversInterfaceTypes<ResolversParentTypes>['ContentRemote'];
+  Date: Scalars['Date']['output'];
   Echo: Echo;
   Favorite: Favorite;
   FeedCount: FeedCount;
-  Int: Scalars['Int'];
+  Int: Scalars['Int']['output'];
   Mutation: {};
   Neighbors: Neighbors;
   Post: Post;
   Query: {};
   SearchContentMetaInfo: SearchContentMetaInfo;
-  String: Scalars['String'];
+  String: Scalars['String']['output'];
   Subscription: {};
   UserCounts: UserCounts;
   UserPrivate: UserPrivate;

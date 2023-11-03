@@ -19,8 +19,10 @@ const Container = styled('div')`
   margin: 0 ${(props) => props.theme.spacing(2)} ${(props) => props.theme.spacing(3.5)} 0;
   padding: ${(props) => props.theme.spacing(1)};
   border: 1px solid ${(props) => props.theme.palette.success.main};
-  box-shadow: 1px 1px ${(props) => props.theme.palette.success.main},
-    2px 2px ${(props) => props.theme.palette.success.main}, 3px 3px ${(props) => props.theme.palette.success.main};
+  box-shadow:
+    1px 1px ${(props) => props.theme.palette.success.main},
+    2px 2px ${(props) => props.theme.palette.success.main},
+    3px 3px ${(props) => props.theme.palette.success.main};
 
   h2 {
     margin: 0;

@@ -14,8 +14,10 @@ const EditorStyling = styled('div', { label: 'EditorStyling' })`
     width: 100%;
     min-height: 33vh;
     border: 1px solid ${(props) => props.theme.palette.primary.light};
-    box-shadow: 1px 1px ${(props) => props.theme.palette.primary.light},
-      2px 2px ${(props) => props.theme.palette.primary.light}, 3px 3px ${(props) => props.theme.palette.primary.light};
+    box-shadow:
+      1px 1px ${(props) => props.theme.palette.primary.light},
+      2px 2px ${(props) => props.theme.palette.primary.light},
+      3px 3px ${(props) => props.theme.palette.primary.light};
     padding: ${(props) => props.theme.spacing(2, 2, 2, 3.5)};
     margin-bottom: ${(props) => props.theme.spacing(3.5)};
     background-color: ${(props) => props.theme.palette.background.default};

@@ -1,4 +1,6 @@
 import {
+  FormattedDate as originalFormattedDate,
+  FormattedNumber as originalFormattedNumber,
   FormattedMessage,
   IntlConfig,
   IntlShape,
@@ -13,6 +15,11 @@ import { ReactNode } from 'react';
 
 // Re-export everything and override below what we want to override.
 export * from 'react-intl';
+
+// @ts-ignore ugh, why are the types from react-intl crap right now??
+export const FormattedDate: React.FC<any> = originalFormattedDate;
+// @ts-ignore ugh, why are the types from react-intl crap right now??
+export const FormattedNumber: React.FC<any> = originalFormattedNumber;
 
 const INTERNAL_LOCALES = ['xx-AE', 'xx-LS'];
 

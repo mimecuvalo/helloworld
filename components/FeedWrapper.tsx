@@ -3,8 +3,10 @@ import { styled } from '@mui/material/styles';
 const FeedWrapper = styled('div', { label: 'FeedWrapper' })`
   width: calc(33% - ${(props) => props.theme.spacing(2)});
   border: 1px solid ${(props) => props.theme.palette.primary.light};
-  box-shadow: 1px 1px ${(props) => props.theme.palette.primary.light},
-    2px 2px ${(props) => props.theme.palette.primary.light}, 3px 3px ${(props) => props.theme.palette.primary.light};
+  box-shadow:
+    1px 1px ${(props) => props.theme.palette.primary.light},
+    2px 2px ${(props) => props.theme.palette.primary.light},
+    3px 3px ${(props) => props.theme.palette.primary.light};
   transition: box-shadow 100ms;
   margin-bottom: ${(props) => props.theme.spacing(4)};
   clear: both;

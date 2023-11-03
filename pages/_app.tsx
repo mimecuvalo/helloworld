@@ -21,7 +21,7 @@ import Head from 'next/head';
 import { ThemeProvider } from '@mui/material/styles';
 import UserContext from 'app/UserContext';
 import { UserPrivate } from 'data/graphql-generated';
-import { UserProvider } from '@auth0/nextjs-auth0';
+import { UserProvider } from '@auth0/nextjs-auth0/client';
 import clientHealthCheck from 'app/clientHealthCheck';
 import { useRouter } from 'next/router';
 

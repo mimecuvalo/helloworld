@@ -29,9 +29,12 @@ const generateCsp = (nonce: string) => {
     // 'prefetch-src': ["'self'"],
     // TODO(mime)
     //'report-uri': ['/api/report-csp-violation'],
-    'script-src': ["'self'", 'https://cdn.auth0.com', 'https://cdn.vercel-insights.com'].concat(
-      isDevelopment ? ["'unsafe-inline'", "'unsafe-eval'"] : [`'nonce-${nonce}'`]
-    ),
+    'script-src': [
+      "'self'",
+      'https://cdn.auth0.com',
+      'https://cdn.vercel-insights.com',
+      'https://va.vercel-scripts.com',
+    ].concat(isDevelopment ? ["'unsafe-inline'", "'unsafe-eval'"] : [`'nonce-${nonce}'`]),
 
     // XXX(mime): we have inline styles around - can we pass nonce around the app properly?
     'style-src': ["'self'", 'https:', "'unsafe-inline'"], //(req, res) => `'nonce-${nonce}'`],

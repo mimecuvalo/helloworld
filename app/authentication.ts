@@ -1,13 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import { User } from '@prisma/client';
-import { getSession } from '@auth0/nextjs-auth0';
+import auth0 from 'vendor/auth0';
 import prisma from 'data/prisma';
 
 const authenticate =
   (handler: (req: NextApiRequest, res: NextApiResponse, currentUser: User) => void) =>
   async (req: NextApiRequest, res: NextApiResponse) => {
-    const session = getSession(req, res);
+    const session = await auth0.getSession(req, res);
 
     if (!session) {
       return res.status(401).send({ msg: 'Not logged in.' });

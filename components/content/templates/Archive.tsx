@@ -14,7 +14,7 @@ const LoadingEmptyBox = styled('div')`
 `;
 
 const FETCH_COLLECTION = gql`
-  query ($username: String!, $section: String!, $album: String!, $name: String!) {
+  query FetchArchiveCollection($username: String!, $section: String!, $album: String!, $name: String!) {
     fetchCollection(username: $username, section: $section, album: $album, name: $name) {
       album
       forceRefresh

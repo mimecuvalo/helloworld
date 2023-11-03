@@ -56,7 +56,7 @@ export async function mapFeedAndInsertIntoDb(userRemote: UserRemote, feedEntries
   try {
     [newEntries, skippedCount] = (await mapFeedEntriesToModelEntries(feedEntries, userRemote)) as [
       ContentRemote[],
-      number
+      number,
     ];
     console.debug(
       `${userRemote.localUsername} - ${userRemote.profileUrl}: ` +

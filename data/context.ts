@@ -1,4 +1,5 @@
-import { Claims, getSession } from '@auth0/nextjs-auth0';
+import { Claims } from '@auth0/nextjs-auth0';
+import auth0 from 'vendor/auth0';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient, User } from '@prisma/client';
 
@@ -20,7 +21,7 @@ export type Context = {
 };
 
 export async function createContext({ req, res }: { req: NextApiRequest; res: NextApiResponse }): Promise<Context> {
-  const session = getSession(req, res);
+  const session = await auth0.getSession(req, res);
 
   let currentUsername = '';
   let currentUser = null;

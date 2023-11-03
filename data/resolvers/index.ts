@@ -5,7 +5,7 @@ import contentResolvers from './content';
 import userRemoteResolvers from './user_remote';
 import userResolvers from './user';
 
-const exampleResolvers = {
+const baseResolvers = {
   Date: new GraphQLScalarType({
     name: 'Date',
     description: 'Date custom scalar type',
@@ -34,5 +34,5 @@ const exampleResolvers = {
   },
 };
 
-const resolvers = [exampleResolvers, contentResolvers, contentRemoteResolvers, userRemoteResolvers, userResolvers];
+const resolvers = [baseResolvers, contentResolvers, contentRemoteResolvers, userRemoteResolvers, userResolvers];
 export default resolvers;

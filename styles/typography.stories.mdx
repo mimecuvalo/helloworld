@@ -1,12 +1,11 @@
-import { Meta, Story, Preview } from '@storybook/addon-docs/blocks'
+import { Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
 
-import { Global, css, ThemeProvider } from '@emotion/react'
-import { storybook } from './typography'
-import { Typography } from '../components/index'
+import { Global, css, ThemeProvider } from '@emotion/react';
+import { Typography } from '@mui/material';
 
 <Meta title="Design System/Typography" />
 
-<Preview>
+<Canvas>
   <Story name="Typography">
     <>
       <Global
@@ -17,8 +16,11 @@ import { Typography } from '../components/index'
         `}
       />
       {['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'body1', 'body2', 'overline', 'subtitle1', 'subtitle2'].map((variant) => (
-        <Typography variant={variant}>{variant}: Lorem ipsum title</Typography>
+        <>
+          <Typography variant={variant}>{variant}: Lorem ipsum title</Typography>
+          <br />
+        </>
       ))}
     </>
   </Story>
-</Preview>
+</Canvas>
