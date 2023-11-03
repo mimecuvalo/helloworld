@@ -4,7 +4,7 @@
 
 The following is a set of guidelines for contributing to this project. These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request. We're actively looking for folks interested in helping out and there are plenty of ways you can help!
 
-Please take a moment to review this document in order to make the contribution process straightforward and effective for everyone involved.
+Please take a moment to review this document in order to make the contribution process understandable and effective for everyone involved.
 
 Following these guidelines helps to communicate that you respect the time of the developers managing and developing this open source project. In return, they should reciprocate that respect in addressing your issue or assessing patches and features.
 
