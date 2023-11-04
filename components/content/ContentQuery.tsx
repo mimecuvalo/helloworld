@@ -60,6 +60,7 @@ export default gql`
       theme
       viewport
       license
+      googleAnalytics
     }
 
     fetchSiteMap(username: $username) {

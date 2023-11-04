@@ -3,6 +3,7 @@ import { buildUrl, contentUrl, profileUrl } from 'util/url-factory';
 
 import Head from 'next/head';
 import { useTheme } from 'components';
+import Script from 'next/script';
 
 export default function ContentHead(props: {
   content?: Content;
@@ -121,21 +122,18 @@ export default function ContentHead(props: {
         <link rel="replies" type="application/atom+xml" href={repliesUrl} {...repliesAttribs} />
       ) : null}
       {contentOwner ? (
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${contentOwner.googleAnalytics}`} />
+        <Script async src={`https://www.googletagmanager.com/gtag/js?id=${contentOwner.googleAnalytics}`} />
       ) : null}
       {contentOwner ? (
-        <script
-          async
-          dangerouslySetInnerHTML={{
-            __html: `
+        <Script id="google-analytics-script" async>
+          {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
 
           gtag('config', '${contentOwner.googleAnalytics}');
-          `,
-          }}
-        />
+        `}
+        </Script>
       ) : null}
     </Head>
   );
