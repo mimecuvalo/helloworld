@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# To use this add to .git/hooks/post-merge
+# This will run automatically because of husky in package.json.
+# Or, to ensure manually that it runs, add to .git/hooks/post-merge
 #   bin/post-merge.sh
 
 set -e

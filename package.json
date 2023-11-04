@@ -180,5 +180,11 @@
     "prosemirror-model": "1.13.3",
     "prosemirror-view": "1.18.1"
   },
+  "husky": {
+    "hooks": {
+      "post-checkout": "./bin/post-checkout",
+      "post-merge": "./bin/post-merge"
+    }
+  },
   "sideEffects": false
 }

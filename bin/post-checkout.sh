@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# To use this add to .git/hooks/post-checkout
+# This will run automatically because of husky in package.json.
+# Or, to ensure manually that it runs, add to .git/hooks/post-checkout
 #   bin/post-checkout.sh $1 $2
 
 set -e
