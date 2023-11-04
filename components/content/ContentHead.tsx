@@ -36,6 +36,9 @@ export default function ContentHead(props: {
     webmentionUrl = buildUrl({ host, pathname: '/api/social/webmention', searchParams: { resource } });
   }
 
+  const url = buildUrl({ host, pathname: '/' });
+  const thumb = buildThumb(contentOwner, host, content);
+
   return (
     <Head>
       <title>{title}</title>
@@ -57,90 +60,22 @@ export default function ContentHead(props: {
       <meta name="viewport" content={viewport} />
       <meta name="theme-color" content={theme.palette.background.default} />
       {description}
-      <OpenGraphMetadata host={host} contentOwner={contentOwner} content={content} title={title} />
-      <StructuredMetaData host={host} contentOwner={contentOwner} content={content} title={title} />
-      <link
-        rel="alternate"
-        type="application/json+oembed"
-        href={buildUrl({
-          pathname: '/api/social/oembed',
-          searchParams: { resource: content ? contentUrl(content) : '' },
-        })}
-        title={content?.title}
-      />
-      {content && webmentionUrl ? <link rel="webmention" href={webmentionUrl} /> : null}
-      {content?.commentsCount ? (
-        <link rel="replies" type="application/atom+xml" href={repliesUrl} {...repliesAttribs} />
-      ) : null}
-      {contentOwner ? <GoogleAnalytics contentOwner={contentOwner} /> : null}
-    </Head>
-  );
-}
 
-// This needs to be filled out by the developer to provide content for the site.
-// Learn more here: http://ogp.me/
-function OpenGraphMetadata({
-  contentOwner,
-  content,
-  title,
-  host,
-}: {
-  contentOwner: UserPublic;
-  content?: Content;
-  title: string;
-  host: string;
-}) {
-  const thumb = buildThumb(contentOwner, host, content);
-
-  return (
-    <>
+      {/* This needs to be filled out by the developer to provide content for the site. Learn more here: http://ogp.me/ */}
       <meta property="og:title" content={content?.title} />
       <meta property="og:description" content={contentOwner?.description || ''} />
       <meta property="og:type" content="website" />
       <meta property="og:url" content={content && contentUrl(content, undefined, undefined, host)} />
       <meta property="og:site_name" content={title} />
       <meta property="og:image" content={thumb} />
-    </>
-  );
-}
 
-function buildThumb(contentOwner: UserPublic, host: string, content?: Content) {
-  let thumb;
-  if (content?.thumb) {
-    thumb = content.thumb;
-    if (!/^https?:/.test(thumb)) {
-      thumb = buildUrl({ host, pathname: thumb });
-    }
-  }
-
-  if (!thumb) {
-    thumb = buildUrl({ host, pathname: contentOwner?.logo || contentOwner?.favicon || '' });
-  }
-
-  return thumb;
-}
-
-// This needs to be filled out by the developer to provide content for the site.
-// Learn more here: https://developers.google.com/search/docs/guides/intro-structured-data
-function StructuredMetaData({
-  contentOwner,
-  content,
-  title,
-  host,
-}: {
-  contentOwner: UserPublic;
-  content?: Content;
-  title: string;
-  host: string;
-}) {
-  const url = buildUrl({ host, pathname: '/' });
-  const thumb = buildThumb(contentOwner, host, content);
-
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{
-        __html: `
+      {/* This needs to be filled out by the developer to provide content for the site.
+          Learn more here: https://developers.google.com/search/docs/guides/intro-structured-data
+        */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: `
         {
           "@context": "http://schema.org",
           "@type": "NewsArticle",
@@ -169,29 +104,55 @@ function StructuredMetaData({
           "description": "${contentOwner?.description}"
         }
         `,
-      }}
-    />
-  );
-}
+        }}
+      />
 
-// TODO(mime): meh, lame that this is in the <head> but I don't feel like moving this to HTMLBase where we don't have
-// contentOwner currently.
-function GoogleAnalytics({ contentOwner }: { contentOwner: UserPublic }) {
-  return (
-    <>
-      <script async src={`https://www.googletagmanager.com/gtag/js?id=${contentOwner.googleAnalytics}`} />
-      <script
-        async
-        dangerouslySetInnerHTML={{
-          __html: `
+      <link
+        rel="alternate"
+        type="application/json+oembed"
+        href={buildUrl({
+          pathname: '/api/social/oembed',
+          searchParams: { resource: content ? contentUrl(content) : '' },
+        })}
+        title={content?.title}
+      />
+      {content && webmentionUrl ? <link rel="webmention" href={webmentionUrl} /> : null}
+      {content?.commentsCount ? (
+        <link rel="replies" type="application/atom+xml" href={repliesUrl} {...repliesAttribs} />
+      ) : null}
+      {contentOwner ? (
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${contentOwner.googleAnalytics}`} />
+      ) : null}
+      {contentOwner ? (
+        <script
+          async
+          dangerouslySetInnerHTML={{
+            __html: `
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
 
           gtag('config', '${contentOwner.googleAnalytics}');
           `,
-        }}
-      />
-    </>
+          }}
+        />
+      ) : null}
+    </Head>
   );
+}
+
+function buildThumb(contentOwner: UserPublic, host: string, content?: Content) {
+  let thumb;
+  if (content?.thumb) {
+    thumb = content.thumb;
+    if (!/^https?:/.test(thumb)) {
+      thumb = buildUrl({ host, pathname: thumb });
+    }
+  }
+
+  if (!thumb) {
+    thumb = buildUrl({ host, pathname: contentOwner?.logo || contentOwner?.favicon || '' });
+  }
+
+  return thumb;
 }
