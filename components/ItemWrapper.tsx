@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react';
+import { forwardRef } from 'react';
 import { styled } from '@mui/material/styles';
 
 const StyledItemWrapper = styled('div', { label: 'ItemWrapper' })`
@@ -86,8 +86,14 @@ const StyledItemWrapper = styled('div', { label: 'ItemWrapper' })`
   }
 `;
 
-const ItemWrapper: React.FC<PropsWithChildren<{ className?: string }>> = ({ children, className }) => {
-  return <StyledItemWrapper className={className}>{children}</StyledItemWrapper>;
-};
+const ItemWrapper = forwardRef(({ children, className }: { children: JSX.Element; className?: string }, ref) => {
+  // @ts-ignore this is fine.
+  return (
+    <StyledItemWrapper ref={ref} className={className}>
+      {children}
+    </StyledItemWrapper>
+  );
+});
+ItemWrapper.displayName = 'ItemWrapper';
 
 export default ItemWrapper;

@@ -42,7 +42,7 @@ export default function Content({ username, name, host }: { username: string; na
 
   const router = useRouter();
   const contentBase = useRef<Element>(null);
-  //const nav = useRef<Element>(null);
+  const nav = useRef<Element>(null);
   const swipeListener = useRef(null);
   const [currentCanonicalUrl, setCurrentCanonicalUrl] = useState('');
 
@@ -71,14 +71,6 @@ export default function Content({ username, name, host }: { username: string; na
     };
   }, [loading, data, router, currentCanonicalUrl]);
 
-  // useEffect(() => {
-  //   document.addEventListener('keydown', handleKeyDown);
-
-  //   return () => {
-  //     document.removeEventListener('keydown', handleKeyDown);
-  //   };
-  // });
-
   function setupSwipe() {
     if (swipeListener.current || !contentBase.current) {
       return;
@@ -87,13 +79,14 @@ export default function Content({ username, name, host }: { username: string; na
     swipeListener.current = SwipeListener(contentBase.current);
     // eslint-disable-next-line
     contentBase.current.addEventListener('swipe', (e: any) => {
-      //const directions = e.detail.directions;
-      // TODO fix
-      // if (directions.left) {
-      //   nav.current && nav.current.prev();
-      // } else if (directions.right) {
-      //   nav.current && nav.current.next();
-      // }
+      const directions = e.detail.directions;
+      if (directions.left) {
+        // @ts-ignore don't worry about it for now, we're using imperative handler.
+        nav.current?.prev();
+      } else if (directions.right) {
+        // @ts-ignore don't worry about it for now, we're using imperative handler.
+        nav.current?.next();
+      }
     });
   }
 
@@ -135,13 +128,13 @@ export default function Content({ username, name, host }: { username: string; na
     content.template === 'feed' ? (
       <Feed content={content} />
     ) : (
-      <Item content={content} contentOwner={contentOwner} comments={comments} favorites={favorites} />
+      <Item ref={contentBase} content={content} contentOwner={contentOwner} comments={comments} favorites={favorites} />
     );
 
   return (
     <ContentBase content={content} contentOwner={contentOwner} title={title} username={content.username} host={host}>
       <StyledContent>
-        <Nav content={content} />
+        <Nav ref={nav} content={content} />
         {itemEl}
       </StyledContent>
     </ContentBase>
@@ -156,13 +149,13 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req, res 
   const name = slug.length > 1 ? slug.slice(-1)[0] : '';
 
   /** Paths can look like:
-      /:username/search/:query
-      /:username/:section/:album/:name
-      /:username/:section/:name
-      /:username/:name
-      /:username
-      /
-   */
+    /:username/search/:query
+    /:username/:section/:album/:name
+    /:username/:section/:name
+    /:username/:name
+    /:username
+    /
+  */
 
   try {
     await client.query({

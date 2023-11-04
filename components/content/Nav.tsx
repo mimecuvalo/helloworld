@@ -7,6 +7,8 @@ import ContentLink from 'components/ContentLink';
 import { F } from 'i18n';
 import baseTheme from 'styles';
 import { contentUrl } from 'util/url-factory';
+import { Ref, forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import ContentQuery from './ContentQuery';
 
 const StyledNav = styled('nav')`
   position: relative;
@@ -70,57 +72,49 @@ const FETCH_CONTENT_NEIGHBORS = gql`
   }
 `;
 
-export default function Nav({ content }: { content: Content }) {
+const Nav = forwardRef(({ content }: { content: Content }, ref) => {
   const { username, name } = content;
   const theme = useTheme();
-  const { loading, data /*client */ } = useQuery(FETCH_CONTENT_NEIGHBORS, {
+  const { loading, data, client } = useQuery(FETCH_CONTENT_NEIGHBORS, {
     variables: {
       username,
       name,
     },
   });
 
-  // const last = useRef(null);
-  // const next = useRef(null);
-  // const top = useRef(null);
-  // const prev = useRef(null);
-  // const first = useRef(null);
-  // const navigationActions = { last, next, top, prev, first };
+  const next = useRef<HTMLElement>(null);
+  const top = useRef<HTMLElement>(null);
+  const prev = useRef<HTMLElement>(null);
 
-  // useEffect(() => {
-  //   window.addEventListener('keyup', handleKeyUp);
-  //   return () => window.removeEventListener('keyup', handleKeyUp);
-  // });
+  useEffect(() => {
+    window.addEventListener('keyup', handleKeyUp);
+    return () => window.removeEventListener('keyup', handleKeyUp);
+  });
 
-  // TODO
-  // useImperativeHandle(ref, () => ({
-  //   prev: () => {
-  //     prev?.current && prev.current.click();
-  //   },
-  //   next: () => {
-  //     next?.current && next.current.click();
-  //   },
-  // }));
+  useImperativeHandle(ref, () => ({
+    prev: () => {
+      prev?.current?.click();
+    },
+    next: () => {
+      next?.current?.click();
+    },
+  }));
 
-  // const handleKeyUp = (evt) => {
-  //   if (isEditing) {
-  //     return;
-  //   }
-
-  //   switch (evt.key) {
-  //     case 'ArrowUp':
-  //       top?.current && top.current.click();
-  //       break;
-  //     case 'ArrowLeft':
-  //       next?.current && next.current.click();
-  //       break;
-  //     case 'ArrowRight':
-  //       prev?.current && prev.current.click();
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // };
+  const handleKeyUp = (evt: KeyboardEvent) => {
+    switch (evt.key) {
+      case 'ArrowUp':
+        top?.current?.click();
+        break;
+      case 'ArrowLeft':
+        next?.current?.click();
+        break;
+      case 'ArrowRight':
+        prev?.current?.click();
+        break;
+      default:
+        break;
+    }
+  };
 
   if (
     content.template === 'feed' ||
@@ -135,7 +129,13 @@ export default function Nav({ content }: { content: Content }) {
     return <LoadingEmptyBox />;
   }
 
-  function renderLink(contentMeta: ContentMetaInfo, name: string, msg: JSX.Element, colorPalette: keyof Palette) {
+  function renderLink(
+    contentMeta: ContentMetaInfo,
+    name: string,
+    msg: JSX.Element,
+    colorPalette: keyof Palette,
+    ref?: Ref<HTMLElement>
+  ) {
     contentMeta = contentMeta || {};
 
     const linkCommonProperties = {
@@ -167,23 +167,22 @@ export default function Nav({ content }: { content: Content }) {
       );
     }
 
-    // TODO - re-enable later
     // Preload surrounding content. We preload the GraphQL data here. Then, we also preload the images.
-    // if (['prev', 'next'].indexOf(name) !== -1) {
-    //   client.query({
-    //     query: ContentQuery,
-    //     variables: { username: contentMeta.username, name: contentMeta.name },
-    //   });
+    if (['prev', 'next'].indexOf(name) !== -1) {
+      client.query({
+        query: ContentQuery,
+        variables: { username: contentMeta.username, name: contentMeta.name },
+      });
 
-    //   if (typeof window !== 'undefined') {
-    //     for (const img of contentMeta.prefetchImages || []) {
-    //       new Image().src = img;
-    //     }
-    //   }
-    // }
+      if (typeof window !== 'undefined') {
+        for (const img of contentMeta.prefetchImages || []) {
+          new Image().src = img;
+        }
+      }
+    }
 
     return (
-      <ContentLink url={url} item={contentMeta} currentContent={content} {...linkCommonProperties}>
+      <ContentLink ref={ref} url={url} item={contentMeta} currentContent={content} {...linkCommonProperties}>
         {msg}
       </ContentLink>
     );
@@ -192,10 +191,13 @@ export default function Nav({ content }: { content: Content }) {
   return (
     <StyledNav>
       {renderLink(data.fetchContentNeighbors.last, 'last', <F defaultMessage="last" />, 'info')}
-      {renderLink(data.fetchContentNeighbors.next, 'next', <F defaultMessage="next" />, 'warning')}
-      {renderLink(data.fetchContentNeighbors.top, 'top', data.fetchContentNeighbors.top?.name, 'success')}
-      {renderLink(data.fetchContentNeighbors.prev, 'prev', <F defaultMessage="prev" />, 'error')}
+      {renderLink(data.fetchContentNeighbors.next, 'next', <F defaultMessage="next" />, 'warning', next)}
+      {renderLink(data.fetchContentNeighbors.top, 'top', data.fetchContentNeighbors.top?.name, 'success', top)}
+      {renderLink(data.fetchContentNeighbors.prev, 'prev', <F defaultMessage="prev" />, 'error', prev)}
       {renderLink(data.fetchContentNeighbors.first, 'first', <F defaultMessage="first" />, 'secondary')}
     </StyledNav>
   );
-}
+});
+Nav.displayName = 'Nav';
+
+export default Nav;

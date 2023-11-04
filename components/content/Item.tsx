@@ -9,7 +9,8 @@ import Footer from './Footer';
 import Header from './Header';
 import Latest from './templates/Latest';
 import Simple from './templates/Simple';
-//import { animated, useTransition } from 'react-spring';
+import { forwardRef } from 'react';
+import { animated, useTransition } from 'react-spring';
 
 const StyledItem = styled('article', { label: 'Item' })`
   display: flex;
@@ -30,44 +31,58 @@ const COMPONENT_TYPE_MAP = {
   links: Album,
 };
 
-export default function Item(props: {
-  className?: string;
-  content: Content;
-  contentOwner: UserPublic;
-  comments?: Comment[];
-  favorites?: Favorite[];
-  isFeed?: boolean;
-}) {
-  // const transitions = useTransition(props.content, {
-  //   from: { opacity: 0 },
-  //   enter: { opacity: 1 },
-  //   leave: { display: 'none', opacity: 0 },
-  // });
+const Item = forwardRef(
+  (
+    props: {
+      className?: string;
+      content: Content;
+      contentOwner: UserPublic;
+      comments?: Comment[];
+      favorites?: Favorite[];
+      isFeed?: boolean;
+    },
+    ref
+  ) => {
+    const transitions = useTransition(props.content, {
+      from: { opacity: 0 },
+      enter: { opacity: 1 },
+      leave: { display: 'none', opacity: 0 },
+    });
 
-  // TODO
-  //const template = useRef(null);
+    // TODO
+    //const template = useRef(null);
 
-  // useImperativeHandle(ref, () => ({
-  //   getEditor: () => {
-  //     return template.current?.getEditor && template.current.getEditor();
-  //   },
-  // }));
+    // useImperativeHandle(ref, () => ({
+    //   getEditor: () => {
+    //     return template.current?.getEditor && template.current.getEditor();
+    //   },
+    // }));
 
-  const { className, content, contentOwner, comments, favorites, isFeed } = props;
-  /* @ts-ignore */
-  const TemplateComponent = COMPONENT_TYPE_MAP[content.template] || Simple;
-  const contentComponent = <TemplateComponent content={content} isFeed={isFeed} />;
+    const { className, content, contentOwner, comments, favorites, isFeed } = props;
+    /* @ts-ignore */
+    const TemplateComponent = COMPONENT_TYPE_MAP[content.template] || Simple;
+    const contentComponent = <TemplateComponent content={content} isFeed={isFeed} />;
 
-  return (
-    <ItemWrapper>
-      <StyledItem className={`hw-item h-entry ${className || ''}`}>
-        <Header content={content} />
-        {/* @ts-ignore */}
-        {COMPONENT_TYPE_MAP[content.template] ? contentComponent : <InnerView>{contentComponent}</InnerView>}
-        <Footer content={content} contentOwner={contentOwner} />
-        {!isFeed && comments?.length ? <Comments comments={comments} content={content} /> : null}
-        {!isFeed && favorites?.length ? <Favorites favorites={favorites} /> : null}
-      </StyledItem>
-    </ItemWrapper>
-  );
-}
+    return (
+      <ItemWrapper ref={ref}>
+        <StyledItem className={`hw-item h-entry ${className || ''}`}>
+          <Header content={content} />
+          {/* @ts-ignore */}
+          {COMPONENT_TYPE_MAP[content.template]
+            ? contentComponent
+            : transitions((style) => (
+                <animated.div style={style}>
+                  <InnerView>{contentComponent}</InnerView>
+                </animated.div>
+              ))}
+          <Footer content={content} contentOwner={contentOwner} />
+          {!isFeed && comments?.length ? <Comments comments={comments} content={content} /> : null}
+          {!isFeed && favorites?.length ? <Favorites favorites={favorites} /> : null}
+        </StyledItem>
+      </ItemWrapper>
+    );
+  }
+);
+Item.displayName = 'Item';
+
+export default Item;

@@ -118,6 +118,12 @@ function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }: 
             <UserProvider>
               <UserContext.Provider value={{ user: currentUser }}>
                 <ErrorBoundary>
+                  <style jsx global>{`
+                    :root {
+                      --font-press-start-2p: ${pressStart2P.style.fontFamily};
+                      --font-marck-script: ${marckScript.style.fontFamily};
+                    }
+                  `}</style>
                   <div
                     className={
                       (process.env.NODE_ENV === 'development' ? 'App App-is-development' : 'App') +
