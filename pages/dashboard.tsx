@@ -135,7 +135,7 @@ export default function Dashboard() {
         {user.theme && <link rel="stylesheet" href={user.theme} />}
         <title>Dashboard – {user.title}</title>
         <link rel="icon" href={user.favicon || `/favicon.jpg`} />
-        <link rel="shortcut icon" href={user.favicon || `/favicon.jpg`} />
+        <link rel="apple-touch-icon" href={user.favicon || `/favicon.jpg`} />
       </Head>
       <Hamburger
         aria-label={menuButtonLabel}

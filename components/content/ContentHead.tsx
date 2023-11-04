@@ -47,8 +47,8 @@ export default function ContentHead(props: {
         {contentOwner ? (
           <link rel="author" href={contentUrl({ username, section: 'main', album: '', name: 'about' })} />
         ) : null}
-        <link rel="icon" href={favicon || `/favicon.jpg`} />
-        <link rel="shortcut icon" href={favicon || `/favicon.jpg`} />
+        <link rel="icon" href={favicon || `/favicon.jpg`} sizes="32x32" />
+        <link rel="icon" href={favicon || `/favicon.svg`} type="image/svg+xml" />
         <link rel="apple-touch-icon" href={favicon || `/favicon.jpg`} />
         <link
           rel="search"
