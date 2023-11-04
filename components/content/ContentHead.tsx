@@ -41,42 +41,43 @@ export default function ContentHead(props: {
   const thumb = buildThumb(contentOwner, host, content);
 
   return (
-    <Head>
-      <title>{title}</title>
-      {contentOwner ? (
-        <link rel="author" href={contentUrl({ username, section: 'main', album: '', name: 'about' })} />
-      ) : null}
-      <link rel="icon" href={favicon || `/favicon.jpg`} />
-      <link rel="shortcut icon" href={favicon || `/favicon.jpg`} />
-      <link rel="apple-touch-icon" href={favicon || `/favicon.jpg`} />
-      <link
-        rel="search"
-        href={buildUrl({ pathname: '/api/opensearch', searchParams: { username } })}
-        type="application/opensearchdescription+xml"
-        title={title}
-      />
-      <link rel="canonical" href={content && contentUrl(content, undefined, undefined, host)} />
-      {rss}
-      {!content && <meta name="robots" content="noindex" />}
-      <meta name="viewport" content={viewport} />
-      <meta name="theme-color" content={theme.palette.background.default} />
-      {description}
+    <>
+      <Head>
+        <title>{title}</title>
+        {contentOwner ? (
+          <link rel="author" href={contentUrl({ username, section: 'main', album: '', name: 'about' })} />
+        ) : null}
+        <link rel="icon" href={favicon || `/favicon.jpg`} />
+        <link rel="shortcut icon" href={favicon || `/favicon.jpg`} />
+        <link rel="apple-touch-icon" href={favicon || `/favicon.jpg`} />
+        <link
+          rel="search"
+          href={buildUrl({ pathname: '/api/opensearch', searchParams: { username } })}
+          type="application/opensearchdescription+xml"
+          title={title}
+        />
+        <link rel="canonical" href={content && contentUrl(content, undefined, undefined, host)} />
+        {rss}
+        {!content && <meta name="robots" content="noindex" />}
+        <meta name="viewport" content={viewport} />
+        <meta name="theme-color" content={theme.palette.background.default} />
+        {description}
 
-      {/* This needs to be filled out by the developer to provide content for the site. Learn more here: http://ogp.me/ */}
-      <meta property="og:title" content={content?.title} />
-      <meta property="og:description" content={contentOwner?.description || ''} />
-      <meta property="og:type" content="website" />
-      <meta property="og:url" content={content && contentUrl(content, undefined, undefined, host)} />
-      <meta property="og:site_name" content={title} />
-      <meta property="og:image" content={thumb} />
+        {/* This needs to be filled out by the developer to provide content for the site. Learn more here: http://ogp.me/ */}
+        <meta property="og:title" content={content?.title} />
+        <meta property="og:description" content={contentOwner?.description || ''} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={content && contentUrl(content, undefined, undefined, host)} />
+        <meta property="og:site_name" content={title} />
+        <meta property="og:image" content={thumb} />
 
-      {/* This needs to be filled out by the developer to provide content for the site.
+        {/* This needs to be filled out by the developer to provide content for the site.
           Learn more here: https://developers.google.com/search/docs/guides/intro-structured-data
         */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: `
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: `
         {
           "@context": "http://schema.org",
           "@type": "NewsArticle",
@@ -105,22 +106,24 @@ export default function ContentHead(props: {
           "description": "${contentOwner?.description}"
         }
         `,
-        }}
-      />
+          }}
+        />
 
-      <link
-        rel="alternate"
-        type="application/json+oembed"
-        href={buildUrl({
-          pathname: '/api/social/oembed',
-          searchParams: { resource: content ? contentUrl(content) : '' },
-        })}
-        title={content?.title}
-      />
-      {content && webmentionUrl ? <link rel="webmention" href={webmentionUrl} /> : null}
-      {content?.commentsCount ? (
-        <link rel="replies" type="application/atom+xml" href={repliesUrl} {...repliesAttribs} />
-      ) : null}
+        <link
+          rel="alternate"
+          type="application/json+oembed"
+          href={buildUrl({
+            pathname: '/api/social/oembed',
+            searchParams: { resource: content ? contentUrl(content) : '' },
+          })}
+          title={content?.title}
+        />
+        {content && webmentionUrl ? <link rel="webmention" href={webmentionUrl} /> : null}
+        {content?.commentsCount ? (
+          <link rel="replies" type="application/atom+xml" href={repliesUrl} {...repliesAttribs} />
+        ) : null}
+      </Head>
+
       {contentOwner ? (
         <Script async src={`https://www.googletagmanager.com/gtag/js?id=${contentOwner.googleAnalytics}`} />
       ) : null}
@@ -135,7 +138,7 @@ export default function ContentHead(props: {
         `}
         </Script>
       ) : null}
-    </Head>
+    </>
   );
 }
 
