@@ -9,7 +9,7 @@ import { contentUrl } from 'util/url-factory';
 const ContentLink = forwardRef(
   (
     props: {
-      children: JSX.Element;
+      children: JSX.Element | string;
       item: Pick<Content, 'title' | 'forceRefresh' | 'hidden' | 'username' | 'section' | 'album' | 'name'>;
       currentContent?: Content;
       rel?: string;
