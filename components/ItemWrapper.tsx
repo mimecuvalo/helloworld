@@ -87,8 +87,8 @@ const StyledItemWrapper = styled('div', { label: 'ItemWrapper' })`
 `;
 
 const ItemWrapper = forwardRef(({ children, className }: { children: JSX.Element; className?: string }, ref) => {
-  // @ts-ignore this is fine.
   return (
+    // @ts-ignore this is fine.
     <StyledItemWrapper ref={ref} className={className}>
       {children}
     </StyledItemWrapper>

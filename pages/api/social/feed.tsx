@@ -16,7 +16,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const feed = await getLocalLatestContent(req.query.resource as string);
 
   let renderedTree =
-    `<?xml version='1.0' encoding='UTF-8'?>` +
+    `<?xml version="1.0" encoding="UTF-8"?>\n` +
+    `<?xml-stylesheet href="/rss.xsl" type="text/xsl"?>\n` +
     renderToString(<ContentFeed req={req} feed={feed} contentOwner={contentOwner} />);
   // XXX(mime): in the feeds I have some attributes that are `ref`. However, ref isn't allowed in React,
   // so in the DOM they are `refXXX`. Return them to normal here, sigh.
@@ -144,7 +145,7 @@ function Entry({ content, req }: { content: Content; req: NextApiRequest }) {
 
   return (
     <entry>
-      <title>{content.title}</title>
+      <title>{content.title || '(untitled)'}</title>
       <link href={contentUrl(content, req)} />
       <id>{contentUrl(content, req)}</id>
       <content type="html" dangerouslySetInnerHTML={{ __html: html }} />
