@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // so in the DOM they are `refXXX`. Return them to normal here, sigh.
   renderedTree = renderedTree.replace(/refXXX="([^"]+)"/g, 'ref="$1"');
 
-  res.setHeader('Content-Type', 'xml');
+  res.setHeader('Content-Type', 'application/xml');
   res.send(renderedTree);
 }
 

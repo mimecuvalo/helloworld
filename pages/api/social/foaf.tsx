@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   res.setHeader('Content-Type', 'application/xrd+xml');
   res.send(
-    `<?xml version='1.0' encoding='UTF-8'?>` +
+    `<?xml version="1.0' encoding='UTF-8"?>` +
       renderToString(<FOAF req={req} user={user} followers={followers} following={following} />)
   );
 }

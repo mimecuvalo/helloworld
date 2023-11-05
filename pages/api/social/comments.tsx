@@ -14,13 +14,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const comments = await getRemoteCommentsOnLocalContent(req.query.resource as string);
 
   let renderedTree =
-    `<?xml version='1.0' encoding='UTF-8'?>` +
+    `<?xml version="1.0" encoding="UTF-8"?>` +
     renderToString(<Comments contentOwner={contentOwner} comments={comments} req={req} />);
   // XXX(mime): in the feeds I have some attributes that are `ref`. However, ref isn't allowed in React,
   // so in the DOM they are `refXXX`. Return them to normal here, sigh.
   renderedTree = renderedTree.replace(/refXXX="([^"]+)"/g, 'ref="$1"');
 
-  res.setHeader('Content-Type', 'xml');
+  res.setHeader('Content-Type', 'application/xml');
   res.send(renderedTree);
 }
 
