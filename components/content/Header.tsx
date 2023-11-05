@@ -46,13 +46,15 @@ export default function Header({ content }: { content: Content }) {
       <Tooltip title={content.title} placement="top-start">
         <Typography variant="h1">
           <ContentLink item={content} currentContent={content}>
-            <span className="p-name notranslate">{content.title}</span>
-            {isOwnerViewing && content.hidden && (
-              <span>
-                &nbsp;
-                <F defaultMessage="(hidden)" />
-              </span>
-            )}
+            <>
+              <span className="p-name notranslate">{content.title}</span>
+              {isOwnerViewing && content.hidden && (
+                <span>
+                  &nbsp;
+                  <F defaultMessage="(hidden)" />
+                </span>
+              )}
+            </>
           </ContentLink>
 
           {/* {isOwnerViewing ? (
