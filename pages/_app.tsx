@@ -7,7 +7,7 @@ import { ApolloProvider, NormalizedCacheObject, gql } from '@apollo/client';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import { DebugWrapper, Header } from 'components';
 import { IntlProvider, setupCreateIntl } from 'i18n';
-import { Marck_Script, Press_Start_2P } from 'next/font/google';
+import { Marck_Script, Press_Start_2P, Noto_Color_Emoji } from 'next/font/google';
 import { createEmotionCache, muiTheme } from 'styles';
 import { disposeAnalytics, setupAnalytics } from 'app/analytics';
 import { useEffect, useState } from 'react';
@@ -34,6 +34,7 @@ const pressStart2P = Press_Start_2P({
   variable: '--font-press-start-2p',
   display: 'swap',
 });
+const notoColorEmoji = Noto_Color_Emoji({ subsets: ['emoji'], weight: '400', variable: '--noto-color-emoji' });
 const marckScript = Marck_Script({
   weight: '400',
   subsets: ['latin'],
@@ -120,6 +121,7 @@ function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }: 
                 <ErrorBoundary>
                   <style jsx global>{`
                     :root {
+                      --font-noto-color-emoji: ${notoColorEmoji.style.fontFamily};
                       --font-press-start-2p: ${pressStart2P.style.fontFamily};
                       --font-marck-script: ${marckScript.style.fontFamily};
                     }
@@ -127,7 +129,7 @@ function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }: 
                   <div
                     className={
                       (process.env.NODE_ENV === 'development' ? 'App App-is-development' : 'App') +
-                      ` ${pressStart2P.variable} ${marckScript.variable}`
+                      ` ${pressStart2P.variable} ${marckScript.variable} ${notoColorEmoji.variable}`
                     }
                   >
                     <Header />

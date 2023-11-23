@@ -1,5 +1,5 @@
 import { Alert, Snackbar, styled } from 'components';
-import { THUMB_HEIGHT, THUMB_WIDTH } from 'util/constants';
+import { THUMB_WIDTH } from 'util/constants';
 import { gql, useQuery } from '@apollo/client';
 
 import { Content } from 'data/graphql-generated';
@@ -36,7 +36,7 @@ const LinkWrapper = styled('span')`
   & a {
     display: block;
     width: ${THUMB_WIDTH}px;
-    max-width: ${THUMB_HEIGHT}px;
+    max-width: ${THUMB_WIDTH}px;
     min-height: 1.1em;
   }
 `;

@@ -1,4 +1,4 @@
-import { Avatar, Box, IconButton, Link, TextField, styled, useTheme } from 'components';
+import { AppBar, Avatar, Box, IconButton, Link, TextField, Toolbar, styled, useTheme } from 'components';
 import { Content, SiteMapAndUserQuery } from 'data/graphql-generated';
 import { F, defineMessages, useIntl } from 'i18n';
 import { FormEvent, ReactNode, useContext, useEffect, useState } from 'react';
@@ -15,10 +15,27 @@ import baseTheme from 'styles';
 import constants from 'util/constants';
 import { transientOptions } from 'util/css';
 import { useRouter } from 'next/router';
+import { SwipeableDrawer, useMediaQuery } from '@mui/material';
 
 export const SITE_MAP_WIDTH = 175;
 
-const Nav = styled('nav', transientOptions)<{ $isMenuOpen: boolean }>`
+const Nav = styled('nav', transientOptions)`
+  height: calc(100vh - ${(props) => props.theme.spacing(1)} * 2);
+  width: ${SITE_MAP_WIDTH}px;
+  overflow: auto;
+  background: ${(props) => props.theme.palette.background.default};
+  margin: ${(props) => props.theme.spacing(1)};
+  margin-right: ${(props) => props.theme.spacing(3.5)};
+  padding: ${(props) => props.theme.spacing(0.5)};
+
+  border: 1px solid ${(props) => props.theme.palette.primary.light};
+  box-shadow:
+    1px 1px ${(props) => props.theme.palette.primary.light},
+    2px 2px ${(props) => props.theme.palette.primary.light},
+    3px 3px ${(props) => props.theme.palette.primary.light};
+`;
+
+const SwipeableDrawerStyled = styled(SwipeableDrawer)`
   height: calc(100vh - ${(props) => props.theme.spacing(1)} * 2);
   width: ${SITE_MAP_WIDTH}px;
   overflow: auto;
@@ -34,7 +51,6 @@ const Nav = styled('nav', transientOptions)<{ $isMenuOpen: boolean }>`
     3px 3px ${(props) => props.theme.palette.primary.light};
 
   ${(props) => props.theme.breakpoints.down('md')} {
-    ${(props) => !props.$isMenuOpen && 'display: none;'}
     background: ${(props) => props.theme.palette.background.default};
     position: fixed;
     inset: 0;
@@ -45,16 +61,20 @@ const Nav = styled('nav', transientOptions)<{ $isMenuOpen: boolean }>`
     padding: ${(props) => props.theme.spacing(2)};
     z-index: ${baseTheme.zindex.siteMap};
 
-    & > ul > li {
-      margin-bottom: ${(props) => props.theme.spacing(2)};
-    }
+    .MuiPaper-root {
+      padding-top: ${(props) => props.theme.spacing(8)};
 
-    & > ul > li > ul {
-      display: none;
-    }
+      & > ul > li {
+        margin-bottom: ${(props) => props.theme.spacing(2)};
+      }
 
-    ul {
-      padding-left: 0;
+      & > ul > li > ul {
+        display: none;
+      }
+
+      ul {
+        padding-left: 0;
+      }
     }
   }
 `;
@@ -80,6 +100,7 @@ const License = styled('div')`
 const Hamburger = styled(IconButton)`
   display: none;
   z-index: ${baseTheme.zindex.siteMapHamburger};
+  margin-left: ${(props) => props.theme.spacing(-2)};
 
   ${(props) => props.theme.breakpoints.down('md')} {
     width: 45px;
@@ -129,7 +150,6 @@ export default function SiteMap({ content, username }: { content?: Content; user
   const intl = useIntl();
   const theme = useTheme();
   const { user } = useContext(UserContext);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { loading, data, client } = useQuery<SiteMapAndUserQuery>(SITE_MAP_AND_USER_QUERY, {
     variables: {
       username,
@@ -137,6 +157,8 @@ export default function SiteMap({ content, username }: { content?: Content; user
   });
   const menuButtonLabel = intl.formatMessage(messages.menu);
   const searchLabel = intl.formatMessage(messages.search);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const isTablet = useMediaQuery(theme.breakpoints.down(baseTheme.breakpoints.md));
 
   useEffect(() => {
     if (user?.username === username) {
@@ -196,10 +218,10 @@ export default function SiteMap({ content, username }: { content?: Content; user
   }
 
   const handleMobileClick = () => {
-    setIsMenuOpen(!isMenuOpen);
+    setIsDrawerOpen(!isDrawerOpen);
   };
   const handleCloseMenu = () => {
-    setIsMenuOpen(false);
+    setIsDrawerOpen(false);
   };
 
   const handleSearchSubmit = (evt: FormEvent) => {
@@ -214,17 +236,21 @@ export default function SiteMap({ content, username }: { content?: Content; user
 
   if (loading) {
     return (
-      <>
-        <Hamburger
-          aria-label={menuButtonLabel}
-          onClick={handleMobileClick}
-          size="large"
-          sx={{ color: theme.palette.text.primary }}
-        >
-          {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
-        </Hamburger>
-        <Nav $isMenuOpen={isMenuOpen} />
-      </>
+      <AppBar
+        sx={{ background: theme.palette.background.paper, boxShadow: 'none', display: { xs: 'block', md: 'none' } }}
+      >
+        <Toolbar>
+          <Hamburger
+            aria-label={menuButtonLabel}
+            onClick={handleMobileClick}
+            size="large"
+            sx={{ color: theme.palette.text.primary }}
+          >
+            {isDrawerOpen ? <CloseIcon /> : <MenuIcon />}
+          </Hamburger>
+          <Nav />
+        </Toolbar>
+      </AppBar>
     );
   }
 
@@ -240,19 +266,36 @@ export default function SiteMap({ content, username }: { content?: Content; user
   }
 
   const items = generateItems(siteMap);
+  const DrawerComponent = isTablet ? SwipeableDrawerStyled : Nav;
 
   return (
     <>
-      <Hamburger
-        id="hw-hamburger"
-        aria-label={menuButtonLabel}
-        onClick={handleMobileClick}
-        size="large"
-        sx={{ color: theme.palette.text.primary }}
+      <AppBar
+        sx={{ background: theme.palette.background.paper, boxShadow: 'none', display: { xs: 'block', md: 'none' } }}
       >
-        {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
-      </Hamburger>
-      <Nav id="hw-sitemap" title="sitemap" $isMenuOpen={isMenuOpen} onMouseUp={handleCloseMenu}>
+        <Toolbar>
+          <Hamburger
+            id="hw-hamburger"
+            aria-label={menuButtonLabel}
+            onClick={handleMobileClick}
+            size="large"
+            sx={{ color: theme.palette.text.primary }}
+          >
+            {isDrawerOpen ? <CloseIcon /> : <MenuIcon />}
+          </Hamburger>
+        </Toolbar>
+      </AppBar>
+
+      <DrawerComponent
+        id="hw-sitemap"
+        title="sitemap"
+        onMouseUp={handleCloseMenu}
+        anchor="left"
+        open={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        onOpen={() => setIsDrawerOpen(true)}
+        PaperProps={{ sx: { width: '100%' } }}
+      >
         <ul>
           {contentOwner.logo ? (
             <LogoWrapper id="hw-sitemap-logo" className="h-card">
@@ -271,7 +314,7 @@ export default function SiteMap({ content, username }: { content?: Content; user
               </Link>
             </LogoWrapper>
           ) : null}
-          {isMenuOpen && (
+          {isDrawerOpen && (
             <li>
               <LoginLogoutButton />
             </li>
@@ -319,7 +362,7 @@ export default function SiteMap({ content, username }: { content?: Content; user
             }}
           />
         </Box>
-      </Nav>
+      </DrawerComponent>
     </>
   );
 }

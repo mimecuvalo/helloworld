@@ -32,7 +32,20 @@ const StyledItemWrapper = styled('div', { label: 'ItemWrapper' })`
     margin-block-end: ${(props) => props.theme.spacing(0.5)};
     margin-inline-start: 0;
     margin-inline-end: 0;
-    padding-inline-start: ${(props) => props.theme.spacing(2)};
+  }
+
+  ${(props) => props.theme.breakpoints.down('sm')} {
+    & ul,
+    & ol,
+    & blockquote {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+
+      li {
+        flex: 0 0 40%;
+      }
+    }
   }
 
   & blockquote {

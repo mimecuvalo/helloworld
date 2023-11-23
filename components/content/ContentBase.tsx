@@ -1,6 +1,6 @@
 import { Content, UserPublic } from 'data/graphql-generated';
 import { CssBaseline, GlobalStyles } from '@mui/material';
-import { Grid, Typography, styled } from 'components';
+import { Box, Grid, Typography, styled } from 'components';
 import { themeGlobalCss, themes } from 'styles/theme';
 
 import ContentHead from './ContentHead';
@@ -44,7 +44,7 @@ export default function ContentBase(
 
         <Grid container flexWrap="nowrap" alignItems="flex-start">
           <SiteMap content={content} username={username} />
-          {children}
+          <Box sx={{ mt: { xs: 6, md: 0 }, px: { xs: 2, md: 0 } }}>{children}</Box>
         </Grid>
       </Container>
     </ThemeProvider>

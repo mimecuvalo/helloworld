@@ -161,7 +161,13 @@ const Nav = forwardRef(({ content }: { content: Content }, ref) => {
     );
     if (!url) {
       return (
-        <Link href={url} title={contentMeta.title} {...linkCommonProperties}>
+        <Link
+          href="#"
+          onClick={(evt: MouseEvent) => evt.preventDefault()}
+          title={contentMeta.title}
+          {...linkCommonProperties}
+          style={{ cursor: 'default' }}
+        >
           {msg}
         </Link>
       );

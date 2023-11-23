@@ -20,15 +20,13 @@ import { styled } from 'components';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 
-const MOBILE_NAV_WIDTH = '45px';
-
 const StyledContent = styled('article', { label: 'StyledContent' })`
   margin-top: ${(props) => props.theme.spacing(1)};
   padding: ${(props) => props.theme.spacing(0, 0.5, 1, 0)};
   width: 75vw;
 
   ${(props) => props.theme.breakpoints.down('md')} {
-    width: calc(100% - ${MOBILE_NAV_WIDTH} - ${(props) => props.theme.spacing(1)});
+    width: 100%;
   }
 `;
 
@@ -63,7 +61,11 @@ export default function Content({ username, name, host }: { username: string; na
       setCurrentCanonicalUrl(canonicalUrl);
     }
 
-    setupSwipe();
+    // Only swipe on photos section.
+    if (data.fetchContent.section === 'photos' && data.fetchContent.album !== 'main') {
+      setupSwipe();
+    }
+
     return () => {
       // @ts-ignore this is fine.
       swipeListener?.current && swipeListener.current.off();
