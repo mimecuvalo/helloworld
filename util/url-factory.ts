@@ -100,7 +100,8 @@ export function ensureAbsoluteUrl(basisAbsoluteUrl: string, urlOrPath: string) {
 export function constructNextImageURL(src: string, size = 3840) {
   if (
     !process.env.IS_STORYBOOK &&
-    (src.startsWith(`https://${process.env.S3_AWS_S3_BUCKET_NAME}`) || src.startsWith(`https://s3.amazonaws.com`))
+    (src.startsWith(`https://${process.env.NEXT_PUBLIC_S3_AWS_S3_BUCKET_NAME}`) ||
+      src.startsWith(`https://s3.amazonaws.com`))
   ) {
     return `/_next/image?url=${encodeURIComponent(src)}&w=${size}&q=75`;
   }

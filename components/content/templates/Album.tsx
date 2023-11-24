@@ -1,12 +1,10 @@
 import { Alert, Snackbar, styled } from 'components';
-import { THUMB_WIDTH } from 'util/constants';
 import { gql, useQuery } from '@apollo/client';
 
 import { Content } from 'data/graphql-generated';
-import ContentLink from 'components/ContentLink';
 import ContentThumb from 'components/ContentThumb';
 import { F } from 'i18n';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const StyledAlbum = styled('ul')`
   list-style: none;
@@ -32,14 +30,14 @@ const Item = styled('li')`
   }
 `;
 
-const LinkWrapper = styled('span')`
-  & a {
-    display: block;
-    width: ${THUMB_WIDTH}px;
-    max-width: ${THUMB_WIDTH}px;
-    min-height: 1.1em;
-  }
-`;
+// const LinkWrapper = styled('span')`
+//   & a {
+//     display: block;
+//     width: ${THUMB_WIDTH}px;
+//     max-width: ${THUMB_WIDTH}px;
+//     min-height: 1.1em;
+//   }
+// `;
 
 // const DeleteButton = styled(IconButton)`
 //   position: absolute;
@@ -63,6 +61,7 @@ const FETCH_COLLECTION = gql`
       thumb
       title
       username
+      prefetchImages
     }
   }
 `;
@@ -77,6 +76,32 @@ export default function Album({ content }: { content: Content }) {
   const { username, section, album, name } = content;
   const [errorMsg] = useState('');
   const [isToastOpen, setIsToastOpen] = useState(false);
+  const [currentIndexOpen, setCurrentIndexOpen] = useState(-1);
+
+  useEffect(() => {
+    window.addEventListener('keyup', handleKeyUp);
+    return () => window.removeEventListener('keyup', handleKeyUp);
+  });
+
+  const handleNext = () => setCurrentIndexOpen(Math.min(collection.length - 1, currentIndexOpen + 1));
+  const handlePrev = () => setCurrentIndexOpen(Math.max(0, currentIndexOpen - 1));
+
+  const handleKeyUp = (evt: KeyboardEvent) => {
+    if (currentIndexOpen === -1) {
+      return;
+    }
+
+    switch (evt.key) {
+      case 'ArrowLeft':
+        handlePrev();
+        break;
+      case 'ArrowRight':
+        handleNext();
+        break;
+      default:
+        break;
+    }
+  };
 
   const { loading, data } = useQuery(FETCH_COLLECTION, {
     variables: {
@@ -132,17 +157,25 @@ export default function Album({ content }: { content: Content }) {
             <F defaultMessage="No content here yet." />
           </li>
         )}
-        {collection.map((item: Content) => (
+        {collection.map((item: Content, index: number) => (
           <Item key={item.name}>
             {/* {isEditing ? (
               <DeleteButton onClick={() => handleClick(item)}>
                 x
               </DeleteButton>
             ) : null} */}
-            <ContentThumb item={item} currentContent={content} />
-            {item.title && (
+            <ContentThumb
+              item={item}
+              currentContent={content}
+              isOpen={currentIndexOpen === index}
+              onOpen={() => setCurrentIndexOpen(index)}
+              handlePrev={handlePrev}
+              handleNext={handleNext}
+              onClose={() => setCurrentIndexOpen(-1)}
+            />
+            {/* {item.title && (
               <LinkWrapper>
-                {/* {!isEditing && item.externalLink ? (
+               {!isEditing && item.externalLink ? (
                 <a
                   className="notranslate"
                   href={item.externalLink}
@@ -155,15 +188,16 @@ export default function Album({ content }: { content: Content }) {
                 <ContentLink item={item} currentContent={content} className="notranslate">
                   {item.title}
                 </ContentLink>
-              ) : null} */}
+              ) : null}
                 <ContentLink item={item} currentContent={content} className="notranslate">
                   {item.title}
                 </ContentLink>
               </LinkWrapper>
-            )}
+            )} */}
           </Item>
         ))}
       </StyledAlbum>
+
       <Snackbar open={isToastOpen} autoHideDuration={3000} onClose={handleToastClose}>
         <Alert elevation={6} variant="filled" onClose={handleToastClose} severity="error" sx={{ width: '100%' }}>
           {errorMsg}

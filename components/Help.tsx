@@ -1,14 +1,4 @@
-import {
-  Checkbox,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  Menu,
-  MenuItem,
-  SwipeableDrawer,
-  Typography,
-} from '@mui/material';
+import { Checkbox, IconButton, List, ListItem, ListItemText, Menu, MenuItem, Drawer, Typography } from '@mui/material';
 import { F, defineMessages, useIntl } from 'i18n';
 import { MouseEvent, useContext, useEffect, useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
@@ -148,12 +138,7 @@ export default function Help() {
         </MenuItem>
       </Menu>
 
-      <SwipeableDrawer
-        anchor="right"
-        open={isExperimentsOpen}
-        onClose={() => setIsExperimentsOpen(false)}
-        onOpen={() => setIsExperimentsOpen(true)}
-      >
+      <Drawer anchor="right" open={isExperimentsOpen} onClose={() => setIsExperimentsOpen(false)}>
         <Typography variant="h1" style={{ padding: `0 ${theme.spacing(1)}` }}>
           Experiments
         </Typography>
@@ -170,7 +155,7 @@ export default function Help() {
             </ListItem>
           ))}
         </List>
-      </SwipeableDrawer>
+      </Drawer>
     </HelpContainer>
   );
 }

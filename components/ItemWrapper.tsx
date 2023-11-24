@@ -80,7 +80,6 @@ const StyledItemWrapper = styled('div', { label: 'ItemWrapper' })`
   & img {
     max-width: calc(100% + 16px);
     margin: ${(props) => props.theme.spacing(0, -1)};
-    height: auto;
   }
 
   & img:not([alt='thumbnail']) {

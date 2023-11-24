@@ -142,7 +142,7 @@ const Content = {
       { username, name }: QueryFetchContentNeighborsArgs,
       { currentUsername, prisma }: Context
     ) {
-      const ATTRIBUTES_NAVIGATION_WITH_VIEW = Object.assign({ view: true }, ATTRIBUTES_NAVIGATION);
+      const ATTRIBUTES_NAVIGATION_WITH_VIEW = Object.assign({ content: true, view: true }, ATTRIBUTES_NAVIGATION);
       const content = (await prisma.content.findUnique({
         where: { username_name: { username: username || '', name: name || '' } },
       })) as ContentType | null;
@@ -225,7 +225,10 @@ const Content = {
       }
 
       // For links section, we grab the anchor url in the view.
-      const select = section === 'links' ? Object.assign({ view: true }, ATTRIBUTES_NAVIGATION) : ATTRIBUTES_NAVIGATION;
+      const select =
+        section === 'links' || section === 'photos'
+          ? Object.assign({ content: true, view: true }, ATTRIBUTES_NAVIGATION)
+          : ATTRIBUTES_NAVIGATION;
 
       let collection: ContentType[] = [];
       // Check first to see if this is an album and grab items within it.
@@ -293,7 +296,7 @@ const Content = {
         });
       }
 
-      return decorateArrayWithRefreshFlag(collection);
+      return decorateArrayWithPrefetchImages(decorateArrayWithRefreshFlag(collection));
     },
 
     async fetchCollectionPaginated(
@@ -560,9 +563,19 @@ function decorateWithRefreshFlag(item: ContentType) {
   return item;
 }
 
+function decorateArrayWithPrefetchImages(list: ContentType[]) {
+  for (const item of list) {
+    decoratePrefetchImages(item);
+  }
+
+  return list;
+}
+
 function decoratePrefetchImages(item: ContentType) {
   if (item) {
-    item.prefetchImages = (item.view.match(/src=['"][^'"]+['"]/g) || []).map((i) => i.slice(5, -1));
+    item.prefetchImages = (item.view.match(/src=['"][^'"]+['"]/g) || [])
+      .map((i) => i.slice(5, -1))
+      .concat((item.content.match(/https[^)]*/g) || []).map((i) => i.slice(5, -1)));
   }
 
   return item;

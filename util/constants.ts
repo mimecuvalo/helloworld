@@ -46,4 +46,4 @@ export const WEB_SUB_HUB = 'https://pubsubhubbub.appspot.com/';
 export const MAX_FILE_SIZE = 1024 * 1024 * 10; // up to 10 MB
 
 export const THUMB_WIDTH = 154;
-export const THUMB_HEIGHT = 115;
+export const THUMB_HEIGHT = 154;

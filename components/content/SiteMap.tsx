@@ -15,7 +15,7 @@ import baseTheme from 'styles';
 import constants from 'util/constants';
 import { transientOptions } from 'util/css';
 import { useRouter } from 'next/router';
-import { SwipeableDrawer, useMediaQuery } from '@mui/material';
+import { Drawer, useMediaQuery } from '@mui/material';
 
 export const SITE_MAP_WIDTH = 175;
 
@@ -35,7 +35,7 @@ const Nav = styled('nav', transientOptions)`
     3px 3px ${(props) => props.theme.palette.primary.light};
 `;
 
-const SwipeableDrawerStyled = styled(SwipeableDrawer)`
+const DrawerStyled = styled(Drawer)`
   height: calc(100vh - ${(props) => props.theme.spacing(1)} * 2);
   width: ${SITE_MAP_WIDTH}px;
   overflow: auto;
@@ -266,7 +266,7 @@ export default function SiteMap({ content, username }: { content?: Content; user
   }
 
   const items = generateItems(siteMap);
-  const DrawerComponent = isTablet ? SwipeableDrawerStyled : Nav;
+  const DrawerComponent = isTablet ? DrawerStyled : Nav;
 
   return (
     <>
@@ -293,7 +293,6 @@ export default function SiteMap({ content, username }: { content?: Content; user
         anchor="left"
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        onOpen={() => setIsDrawerOpen(true)}
         PaperProps={{ sx: { width: '100%' } }}
       >
         <ul>

@@ -10,6 +10,7 @@ export {
   ButtonGroup,
   Chip,
   Container,
+  Dialog,
   FormControl,
   FormGroup,
   Grid,
