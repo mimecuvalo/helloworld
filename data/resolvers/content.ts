@@ -573,9 +573,9 @@ function decorateArrayWithPrefetchImages(list: ContentType[]) {
 
 function decoratePrefetchImages(item: ContentType) {
   if (item) {
-    item.prefetchImages = (item.view.match(/src=['"][^'"]+['"]/g) || [])
+    item.prefetchImages = (item.view?.match(/src=['"][^'"]+['"]/g) || [])
       .map((i) => i.slice(5, -1))
-      .concat((item.content.match(/https[^)]*/g) || []).map((i) => i.slice(5, -1)));
+      .concat(item.content?.match(/https[^)]*/g) || []);
   }
 
   return item;
