@@ -5,6 +5,8 @@ import { Content } from 'data/graphql-generated';
 import ContentThumb from 'components/ContentThumb';
 import { F } from 'i18n';
 import { useEffect, useState } from 'react';
+import ContentLink from '@/components/ContentLink';
+import { THUMB_WIDTH } from '@/util/constants';
 
 const StyledAlbum = styled('ul')`
   list-style: none;
@@ -30,14 +32,14 @@ const Item = styled('li')`
   }
 `;
 
-// const LinkWrapper = styled('span')`
-//   & a {
-//     display: block;
-//     width: ${THUMB_WIDTH}px;
-//     max-width: ${THUMB_WIDTH}px;
-//     min-height: 1.1em;
-//   }
-// `;
+const LinkWrapper = styled('span')`
+  & a {
+    display: block;
+    width: ${THUMB_WIDTH}px;
+    max-width: ${THUMB_WIDTH}px;
+    min-height: 1.1em;
+  }
+`;
 
 // const DeleteButton = styled(IconButton)`
 //   position: absolute;
@@ -173,9 +175,9 @@ export default function Album({ content }: { content: Content }) {
               handleNext={handleNext}
               onClose={() => setCurrentIndexOpen(-1)}
             />
-            {/* {item.title && (
+            {item.title && (
               <LinkWrapper>
-               {!isEditing && item.externalLink ? (
+                {/* {!isEditing && item.externalLink ? (
                 <a
                   className="notranslate"
                   href={item.externalLink}
@@ -188,12 +190,12 @@ export default function Album({ content }: { content: Content }) {
                 <ContentLink item={item} currentContent={content} className="notranslate">
                   {item.title}
                 </ContentLink>
-              ) : null}
+              ) : null} */}
                 <ContentLink item={item} currentContent={content} className="notranslate">
                   {item.title}
                 </ContentLink>
               </LinkWrapper>
-            )} */}
+            )}
           </Item>
         ))}
       </StyledAlbum>
