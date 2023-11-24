@@ -134,7 +134,7 @@ function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }: 
                   >
                     <Header />
                     <Head>
-                      <meta name="viewport" content="minimum-scale=1, initial-scale=10, width=device-width" />
+                      <meta name="viewport" content="minimum-scale=0.1, initial-scale=0.1, width=device-width" />
                     </Head>
                     <Component {...pageProps} />
                     <Analytics />
