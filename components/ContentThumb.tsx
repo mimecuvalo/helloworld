@@ -1,6 +1,6 @@
 import { Link, Dialog, styled, IconButton, useTheme } from 'components';
 import { THUMB_HEIGHT, THUMB_WIDTH } from 'util/constants';
-import { constructNextImageURL, contentUrl } from 'util/url-factory';
+import { contentUrl } from 'util/url-factory';
 import { defineMessages, useIntl } from 'i18n';
 
 import { Content } from 'data/graphql-generated';
@@ -8,7 +8,6 @@ import { MouseEvent, useEffect, useState } from 'react';
 import { ArrowBackIosNew, ArrowForwardIos, Close } from '@mui/icons-material';
 import { Backdrop } from '@mui/material';
 import Header from './content/Header';
-import Image from 'next/image';
 
 const ThumbLink = styled(Link)`
   width: ${THUMB_WIDTH}px;
@@ -75,7 +74,8 @@ export default function Thumb({
   const thumb =
     // TODO(mime): is loading lazy necessary here for next.js? i forget
     item.thumb.startsWith('/resource') ? (
-      <Image
+      // eslint-disable-next-line
+      <img
         loading="lazy"
         src={
           item.thumb
@@ -94,7 +94,8 @@ export default function Thumb({
     ) : (
       <StyledThumb
         loading="lazy"
-        src={item.thumb ? constructNextImageURL(item.thumb, 640 /* size */) : '/img/pixel.gif'}
+        // src={item.thumb ? constructNextImageURL(item.thumb, 640 /* size */) : '/img/pixel.gif'}
+        src={item.thumb ? item.thumb : '/img/pixel.gif'}
         alt={thumbAltText}
       />
     );
