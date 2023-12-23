@@ -1,6 +1,5 @@
 import { Content } from 'data/graphql-generated';
 import ReactMarkdown from 'react-markdown';
-import { constructNextImageURL } from 'util/url-factory';
 import { omit } from 'lodash';
 import rehypeRaw from 'rehype-raw';
 import { styled } from 'components';
@@ -27,8 +26,9 @@ const customRenderers = {
   img: (props: any) => (
     <span className={`image image-${props.title || ''}`}>
       <span className="image-inner-wrapper">
+        {/* <img {...omit(props, 'node', 'src')} className="u-photo" src={constructNextImageURL(props.src)} /> */}
         {/* eslint-disable-next-line */}
-        <img {...omit(props, 'node', 'src')} className="u-photo" src={constructNextImageURL(props.src)} />
+        <img {...omit(props, 'node', 'src')} className="u-photo" src={props.src} />
       </span>
       <span className="caption">{props.alt}</span>
     </span>
