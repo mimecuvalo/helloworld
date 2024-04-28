@@ -7,6 +7,8 @@ import { F } from 'i18n';
 import { useEffect, useState } from 'react';
 import ContentLink from '@/components/ContentLink';
 import { THUMB_WIDTH } from '@/util/constants';
+import { useRouter } from 'next/router';
+import { contentUrl } from '@/util/url-factory';
 
 const StyledAlbum = styled('ul')`
   list-style: none;
@@ -79,14 +81,23 @@ export default function Album({ content }: { content: Content }) {
   const [errorMsg] = useState('');
   const [isToastOpen, setIsToastOpen] = useState(false);
   const [currentIndexOpen, setCurrentIndexOpen] = useState(-1);
+  const router = useRouter();
 
   useEffect(() => {
     window.addEventListener('keyup', handleKeyUp);
     return () => window.removeEventListener('keyup', handleKeyUp);
   });
 
-  const handleNext = () => setCurrentIndexOpen(Math.min(collection.length - 1, currentIndexOpen + 1));
-  const handlePrev = () => setCurrentIndexOpen(Math.max(0, currentIndexOpen - 1));
+  const handleNext = () => {
+    const nextIndex = Math.min(collection.length - 1, currentIndexOpen + 1);
+    router.replace(contentUrl(collection[nextIndex]), undefined, { shallow: true });
+    setCurrentIndexOpen(nextIndex);
+  };
+  const handlePrev = () => {
+    const nextIndex = Math.max(0, currentIndexOpen - 1);
+    router.replace(contentUrl(collection[nextIndex]), undefined, { shallow: true });
+    setCurrentIndexOpen(nextIndex);
+  };
 
   const handleKeyUp = (evt: KeyboardEvent) => {
     if (currentIndexOpen === -1) {
@@ -170,10 +181,16 @@ export default function Album({ content }: { content: Content }) {
               item={item}
               currentContent={content}
               isOpen={currentIndexOpen === index}
-              onOpen={() => setCurrentIndexOpen(index)}
+              onOpen={() => {
+                router.replace(contentUrl(collection[index]), undefined, { shallow: true });
+                setCurrentIndexOpen(index);
+              }}
               handlePrev={handlePrev}
               handleNext={handleNext}
-              onClose={() => setCurrentIndexOpen(-1)}
+              onClose={() => {
+                router.replace(contentUrl(content), undefined, { shallow: true });
+                setCurrentIndexOpen(-1);
+              }}
             />
             {item.title && (
               <LinkWrapper>
