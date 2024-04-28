@@ -187,6 +187,14 @@ async function handleEntry(feedEntry: FeedParser.Node, userRemote: UserRemote): 
   const pocoPhotos = feedEntry['atom:author']?.['poco:photos'];
   const avatar = pocoPhotos && pocoPhotos['poco:value']['#'];
 
+  const title = (feedEntry.title || 'untitled')
+    .replace(/&#8220;/g, '“')
+    .replace(/&#8221;/g, '”')
+    .replace(/&#8216;/g, '‘')
+    .replace(/&#8217;/g, '’')
+    .replace(/&#8211;/g, '–')
+    .replace(/&#8212;/g, '—');
+
   return {
     id: existingModelEntry?.id || undefined,
     avatar,
@@ -200,7 +208,7 @@ async function handleEntry(feedEntry: FeedParser.Node, userRemote: UserRemote): 
     link,
     postId: entryId,
     thread,
-    title: feedEntry.title || 'untitled',
+    title,
     toUsername: userRemote.localUsername,
     type: 'post',
     updatedAt: dateUpdated,
