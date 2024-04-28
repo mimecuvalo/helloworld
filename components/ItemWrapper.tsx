@@ -19,19 +19,16 @@ const StyledItemWrapper = styled('div', { label: 'ItemWrapper' })`
 
   // HTML Normalization below, used for Content and ContentRemote
   & p {
-    margin-block-start: ${(props) => props.theme.spacing(0.5)};
-    margin-block-end: ${(props) => props.theme.spacing(0.5)};
-    margin-inline-start: 0;
-    margin-inline-end: 0;
+    margin-block: ${(props) => props.theme.spacing(0.5)};
+    margin-inline: 0;
   }
 
   & ul,
   & ol,
   & blockquote {
-    margin-block-start: ${(props) => props.theme.spacing(0.5)};
-    margin-block-end: ${(props) => props.theme.spacing(0.5)};
-    margin-inline-start: 0;
-    margin-inline-end: 0;
+    margin-block: ${(props) => props.theme.spacing(0.5)};
+    margin-inline: 0;
+    padding-left: ${(props) => props.theme.spacing(2)};
   }
 
   ${(props) => props.theme.breakpoints.down('sm')} {
@@ -84,6 +81,7 @@ const StyledItemWrapper = styled('div', { label: 'ItemWrapper' })`
 
   & img:not([alt='thumbnail']) {
     max-height: calc(100vh - 50px);
+    height: auto;
   }
 
   ${(props) => props.theme.breakpoints.down('md')} {

@@ -20,6 +20,8 @@ import { Drawer, useMediaQuery } from '@mui/material';
 export const SITE_MAP_WIDTH = 175;
 
 const Nav = styled('nav', transientOptions)`
+  position: sticky;
+  top: ${(props) => props.theme.spacing(1)};
   height: calc(100vh - ${(props) => props.theme.spacing(1)} * 2);
   width: ${SITE_MAP_WIDTH}px;
   overflow: auto;
