@@ -45,7 +45,9 @@ export function sanitizeHTML(rawHTML: string) {
     allowedTags: sanitizer.defaults.allowedTags.concat(['img']),
     allowedAttributes: {
       a: ['href', 'name', 'target', 'title'],
-      img: ['src', 'srcset', 'width', 'height', 'alt', 'title'],
+      // N.B. For now we don't allow srcset because sometimes we have relative urls in there
+      // and I don't feel like parsing it right now to add the correct base origin, e.g. kottke.org.
+      img: ['src', 'width', 'height', 'alt', 'title'],
       iframe: ['src', 'width', 'height', 'alt', 'title'],
     },
   });
