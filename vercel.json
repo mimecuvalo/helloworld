@@ -1,0 +1,20 @@
+{
+  "crons": [
+    {
+      "path": "/?keep-warm-cron-job",
+      "schedule": "*/4 * * * *"
+    },
+    {
+      "path": "/?keep-warm-cron-job",
+      "schedule": "*/4 * * * *"
+    },
+    {
+      "path": "/api/graphql?keep-warm-cron-job",
+      "schedule": "*/4 * * * *"
+    },
+    {
+      "path": "/api/graphql?keep-warm-cron-job",
+      "schedule": "*/4 * * * *"
+    }
+  ]
+}
