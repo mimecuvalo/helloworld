@@ -23,7 +23,7 @@ const FeedWrapper = styled('div', { label: 'FeedWrapper' })`
   }
 
   && header {
-    height: 77px;
+    height: auto;
     border: 0;
     border-bottom: 1px solid ${(props) => props.theme.palette.primary.light};
     box-shadow: none;

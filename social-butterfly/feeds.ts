@@ -188,12 +188,13 @@ async function handleEntry(feedEntry: FeedParser.Node, userRemote: UserRemote): 
   const avatar = pocoPhotos && pocoPhotos['poco:value']['#'];
 
   const title = (feedEntry.title || 'untitled')
-    .replace(/&#8220;/g, '“')
-    .replace(/&#8221;/g, '”')
+    .replace(/&#8211;/g, '–')
+    .replace(/&#8212;/g, '—')
     .replace(/&#8216;/g, '‘')
     .replace(/&#8217;/g, '’')
-    .replace(/&#8211;/g, '–')
-    .replace(/&#8212;/g, '—');
+    .replace(/&#8220;/g, '“')
+    .replace(/&#8221;/g, '”')
+    .replace(/&#8230;/g, '…');
 
   return {
     id: existingModelEntry?.id || undefined,
