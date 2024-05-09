@@ -22,6 +22,14 @@ const FeedWrapper = styled('div', { label: 'FeedWrapper' })`
     overflow-y: scroll;
   }
 
+  & .hw-item p {
+    margin-block: 0;
+  }
+
+  & img:not([alt='thumbnail']) {
+    max-height: none;
+  }
+
   && header {
     height: auto;
     border: 0;

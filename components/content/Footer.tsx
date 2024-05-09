@@ -51,10 +51,10 @@ export default function Footer({ content, contentOwner }: { content: Content; co
           {name}
         </Link>
       </span>
-      <span className="notranslate">:&nbsp;</span>
+      <span className="notranslate">&nbsp;•&nbsp;</span>
       <Link href={contentUrl(content)}>
         <F
-          defaultMessage="posted {date}"
+          defaultMessage="{date}"
           values={{
             date: (
               <time className="t-published" dateTime={createdAt}>
