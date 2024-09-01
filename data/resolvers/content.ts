@@ -12,6 +12,7 @@ import {
   QueryFetchSiteMapArgs,
 } from 'data/graphql-generated';
 import { isAdmin, isAuthor } from './authorization';
+import { kv } from '@vercel/kv';
 
 import { Context } from 'data/context';
 import { User } from '@prisma/client';
@@ -210,6 +211,12 @@ const Content = {
       { username, section, album, name }: QueryFetchCollectionArgs,
       { currentUsername, prisma }: Context
     ) {
+      if (!currentUsername) {
+        const data = await kv.hgetall(`${username}:${section}:${album}:${name}`);
+        if (data) {
+          return data.decoratedCollection;
+        }
+      }
       const isOwnerViewing = currentUsername === username;
 
       const sectionContent = await prisma.content.findFirst({
@@ -296,7 +303,11 @@ const Content = {
         });
       }
 
-      return decorateArrayWithPrefetchImages(decorateArrayWithRefreshFlag(collection));
+      const decoratedCollection = decorateArrayWithPrefetchImages(decorateArrayWithRefreshFlag(collection));
+      if (!currentUsername) {
+        await kv.hset(`${username}:${section}:${album}:${name}`, { decoratedCollection });
+      }
+      return decoratedCollection;
     },
 
     async fetchCollectionPaginated(
