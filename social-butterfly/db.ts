@@ -104,7 +104,7 @@ export async function removeOldRemoteContent() {
       type: 'post',
       favorited: false,
       localContentName: null,
-      createdAt: { lt: new Date(Date.now() - FEED_MAX_DAYS_OLD) },
+      createdAt: { lt: new Date(Date.now() - FEED_MAX_DAYS_OLD).toISOString() },
     },
   });
 }
