@@ -174,7 +174,7 @@ const Content = {
         section,
         album,
       };
-      let collection
+      let collection: ContentType[] | null = null;
       if (!isOwnerViewing) {
         const data = await kv.hgetall(`neighbors-collection:${username}:${section}:${album}`);
         if (data) {
@@ -193,7 +193,7 @@ const Content = {
         }
       }
 
-      const contentIndex = collection.findIndex((i: ContentType) => i.name === name);
+      const contentIndex = collection.findIndex((i) => i.name === name);
 
       const collectionItemConstraints = {
         username,
