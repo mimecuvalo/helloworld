@@ -178,7 +178,7 @@ const Content = {
       if (!isOwnerViewing) {
         const data = await kv.hgetall(`neighbors-collection:${username}:${section}:${album}`);
         if (data) {
-          collection = data.neighbors;
+          collection = data.neighbors as ContentType[];
         }
       }
       if (!collection) {
