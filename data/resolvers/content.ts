@@ -143,6 +143,14 @@ const Content = {
       { username, name }: QueryFetchContentNeighborsArgs,
       { currentUsername, prisma }: Context
     ) {
+      const isOwnerViewing = currentUsername === username;
+      if (!isOwnerViewing) {
+        const data = await kv.hgetall(`neighbors:${username}:${name}`);
+        if (data) {
+          return data.neighbors;
+        }
+      }
+
       const ATTRIBUTES_NAVIGATION_WITH_VIEW = Object.assign({ content: true, view: true }, ATTRIBUTES_NAVIGATION);
       const content = (await prisma.content.findUnique({
         where: { username_name: { username: username || '', name: name || '' } },
@@ -159,8 +167,6 @@ const Content = {
         where: { username, section: 'main', name: section === 'main' ? name : section },
       });
       const orderBy = [{ order: 'asc' }, getSQLSortType(sectionContent?.sortType || '')];
-
-      const isOwnerViewing = currentUsername === username;
 
       const constraints: { [key: string]: boolean | number } = {
         redirect: 0,
@@ -197,13 +203,19 @@ const Content = {
         return null;
       }
 
-      return {
+      const neighbors = {
         first: decorateWithRefreshFlag(collection[collection.length - 1]),
         prev: decoratePrefetchImages(decorateWithRefreshFlag(collection[contentIndex + 1])),
         top: decorateWithRefreshFlag(collectionItem as ContentType),
         next: decoratePrefetchImages(decorateWithRefreshFlag(collection[contentIndex - 1])),
         last: decorateWithRefreshFlag(collection[0]),
       };
+
+      if (!isOwnerViewing) {
+        await kv.hset(`neighbors:${username}:${name}`, { neighbors });
+      }
+
+      return neighbors
     },
 
     async fetchCollection(
@@ -211,13 +223,13 @@ const Content = {
       { username, section, album, name }: QueryFetchCollectionArgs,
       { currentUsername, prisma }: Context
     ) {
-      if (!currentUsername) {
+      const isOwnerViewing = currentUsername === username;
+      if (!isOwnerViewing) {
         const data = await kv.hgetall(`${username}:${section}:${album}:${name}`);
         if (data) {
           return data.decoratedCollection;
         }
       }
-      const isOwnerViewing = currentUsername === username;
 
       const sectionContent = await prisma.content.findFirst({
         where: { username, section: !album ? 'main' : section, name },
@@ -304,7 +316,7 @@ const Content = {
       }
 
       const decoratedCollection = decorateArrayWithPrefetchImages(decorateArrayWithRefreshFlag(collection));
-      if (!currentUsername) {
+      if (!isOwnerViewing) {
         await kv.hset(`${username}:${section}:${album}:${name}`, { decoratedCollection });
       }
       return decoratedCollection;
@@ -366,6 +378,13 @@ const Content = {
       { currentUsername, prisma }: Context
     ) {
       const isOwnerViewing = currentUsername === username;
+      if (!isOwnerViewing) {
+        const data = await kv.hgetall(`sitemap:${username}`);
+        if (data) {
+          return data.decoratedSiteMap;
+        }
+      }
+
       const constraints: { [key: string]: boolean } = {};
       if (!isOwnerViewing) {
         constraints['hidden'] = false;
@@ -404,7 +423,11 @@ const Content = {
         }
       }
 
-      return decorateArrayWithRefreshFlag(siteMap);
+      const decoratedSiteMap = decorateArrayWithRefreshFlag(siteMap);
+      if (!isOwnerViewing) {
+        await kv.hset(`sitemap:${username}`, { decoratedSiteMap });
+      }
+      return decoratedSiteMap
     },
 
     // TODO: re-enable
