@@ -144,12 +144,6 @@ const Content = {
       { currentUsername, prisma }: Context
     ) {
       const isOwnerViewing = currentUsername === username;
-      if (!isOwnerViewing) {
-        const data = await kv.hgetall(`neighbors:${username}:${name}`);
-        if (data) {
-          return data.neighbors;
-        }
-      }
 
       const ATTRIBUTES_NAVIGATION_WITH_VIEW = Object.assign({ content: true, view: true }, ATTRIBUTES_NAVIGATION);
       const content = (await prisma.content.findUnique({
@@ -180,11 +174,24 @@ const Content = {
         section,
         album,
       };
-      const collection = (await prisma.content.findMany({
-        select: ATTRIBUTES_NAVIGATION_WITH_VIEW,
-        where: Object.assign({}, constraints, collectionConstraints),
-        orderBy,
-      })) as ContentType[];
+      let collection
+      if (!isOwnerViewing) {
+        const data = await kv.hgetall(`neighbors-collection:${username}:${section}:${album}`);
+        if (data) {
+          collection = data.neighbors;
+        }
+      }
+      if (!collection) {
+        collection = (await prisma.content.findMany({
+          select: ATTRIBUTES_NAVIGATION_WITH_VIEW,
+          where: Object.assign({}, constraints, collectionConstraints),
+          orderBy,
+        })) as ContentType[];
+
+        if (!isOwnerViewing) {
+          await kv.hset(`neighbors-collection:${username}:${section}:${album}`, { neighbors: collection });
+        }
+      }
 
       const contentIndex = collection.findIndex((i) => i.name === name);
 
@@ -210,10 +217,6 @@ const Content = {
         next: decoratePrefetchImages(decorateWithRefreshFlag(collection[contentIndex - 1])),
         last: decorateWithRefreshFlag(collection[0]),
       };
-
-      if (!isOwnerViewing) {
-        await kv.hset(`neighbors:${username}:${name}`, { neighbors });
-      }
 
       return neighbors
     },
