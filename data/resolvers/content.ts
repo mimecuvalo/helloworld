@@ -193,7 +193,7 @@ const Content = {
         }
       }
 
-      const contentIndex = collection.findIndex((i) => i.name === name);
+      const contentIndex = collection.findIndex((i: ContentType) => i.name === name);
 
       const collectionItemConstraints = {
         username,
