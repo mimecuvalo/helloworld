@@ -8,7 +8,6 @@ import { F } from 'i18n';
 import baseTheme from 'styles';
 import { contentUrl } from 'util/url-factory';
 import { Ref, forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
-import ContentQuery from './ContentQuery';
 
 const StyledNav = styled('nav')`
   position: relative;
@@ -75,7 +74,7 @@ const FETCH_CONTENT_NEIGHBORS = gql`
 const Nav = forwardRef(({ content }: { content: Content }, ref) => {
   const { username, name } = content;
   const theme = useTheme();
-  const { loading, data, client } = useQuery(FETCH_CONTENT_NEIGHBORS, {
+  const { loading, data } = useQuery(FETCH_CONTENT_NEIGHBORS, {
     variables: {
       username,
       name,
@@ -175,10 +174,11 @@ const Nav = forwardRef(({ content }: { content: Content }, ref) => {
 
     // Preload surrounding content. We preload the GraphQL data here. Then, we also preload the images.
     if (['prev', 'next'].indexOf(name) !== -1) {
-      client.query({
-        query: ContentQuery,
-        variables: { username: contentMeta.username, name: contentMeta.name },
-      });
+      // TODO disabled, save data for now.
+      // client.query({
+      //   query: ContentQuery,
+      //   variables: { username: contentMeta.username, name: contentMeta.name },
+      // });
 
       if (typeof window !== 'undefined') {
         for (const img of contentMeta.prefetchImages || []) {
