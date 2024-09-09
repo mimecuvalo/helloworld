@@ -150,6 +150,13 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req, res 
   const username = slug[0] || '';
   const name = slug.length > 1 ? slug.slice(-1)[0] : '';
 
+  // so much spam
+  if (name.includes('.') || username === 'login' || username.includes('.')) {
+    return {
+      notFound: true,
+    };
+  }
+
   /** Paths can look like:
     /:username/search/:query
     /:username/:section/:album/:name

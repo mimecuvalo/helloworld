@@ -12,7 +12,6 @@ import {
   QueryFetchSiteMapArgs,
 } from 'data/graphql-generated';
 import { isAdmin, isAuthor } from './authorization';
-import { kv } from '@vercel/kv';
 
 import { Context } from 'data/context';
 import { User } from '@prisma/client';
@@ -34,6 +33,10 @@ const ATTRIBUTES_NAVIGATION = {
   style: true,
   code: true,
 };
+
+// KV cache for neighbors and collection.
+// Vercel's limit got hit way too soon.
+const customCache: { [key: string]: any } = {};
 
 const Content = {
   Query: {
@@ -176,9 +179,9 @@ const Content = {
       };
       let collection: ContentType[] | null = null;
       if (!isOwnerViewing) {
-        const data = await kv.hgetall(`neighbors-collection:${username}:${section}:${album}`);
+        const data = customCache[`neighbors-collection:${username}:${section}:${album}`];
         if (data) {
-          collection = data.neighbors as ContentType[];
+          collection = data as ContentType[];
         }
       }
       if (!collection) {
@@ -189,7 +192,7 @@ const Content = {
         })) as ContentType[];
 
         if (!isOwnerViewing) {
-          await kv.hset(`neighbors-collection:${username}:${section}:${album}`, { neighbors: collection });
+          customCache[`neighbors-collection:${username}:${section}:${album}`] = collection;
         }
       }
 
@@ -218,7 +221,7 @@ const Content = {
         last: decorateWithRefreshFlag(collection[0]),
       };
 
-      return neighbors
+      return neighbors;
     },
 
     async fetchCollection(
@@ -228,9 +231,9 @@ const Content = {
     ) {
       const isOwnerViewing = currentUsername === username;
       if (!isOwnerViewing) {
-        const data = await kv.hgetall(`${username}:${section}:${album}:${name}`);
+        const data = customCache[`${username}:${section}:${album}:${name}`];
         if (data) {
-          return data.decoratedCollection;
+          return data;
         }
       }
 
@@ -320,7 +323,7 @@ const Content = {
 
       const decoratedCollection = decorateArrayWithPrefetchImages(decorateArrayWithRefreshFlag(collection));
       if (!isOwnerViewing) {
-        await kv.hset(`${username}:${section}:${album}:${name}`, { decoratedCollection });
+        customCache[`${username}:${section}:${album}:${name}`] = decoratedCollection;
       }
       return decoratedCollection;
     },
@@ -382,9 +385,9 @@ const Content = {
     ) {
       const isOwnerViewing = currentUsername === username;
       if (!isOwnerViewing) {
-        const data = await kv.hgetall(`sitemap:${username}`);
+        const data = customCache[`sitemap:${username}`];
         if (data) {
-          return data.decoratedSiteMap;
+          return data;
         }
       }
 
@@ -428,9 +431,9 @@ const Content = {
 
       const decoratedSiteMap = decorateArrayWithRefreshFlag(siteMap);
       if (!isOwnerViewing) {
-        await kv.hset(`sitemap:${username}`, { decoratedSiteMap });
+        customCache[`sitemap:${username}`] = decoratedSiteMap;
       }
-      return decoratedSiteMap
+      return decoratedSiteMap;
     },
 
     // TODO: re-enable
