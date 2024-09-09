@@ -23,7 +23,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // so in the DOM they are `refXXX`. Return them to normal here, sigh.
   renderedTree = renderedTree.replace(/refXXX="([^"]+)"/g, 'ref="$1"');
 
+  const oneDay = 60 * 60 * 24;
   res.setHeader('Content-Type', 'application/xml');
+  res.setHeader('Cache-Control', `public, s-maxage=${oneDay}`);
   res.send(renderedTree);
 }
 
