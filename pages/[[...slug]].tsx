@@ -147,11 +147,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req, res 
   const host = req.headers['host'] || '';
   const client = initializeApollo(null /* initialState */, { 'x-hw-host': host });
   const slug = (params?.slug as string[]) || [];
+  const path = '/' + slug.join('/');
   const username = slug[0] || '';
   const name = slug.length > 1 ? slug.slice(-1)[0] : '';
 
   // so much spam
-  if (name.includes('.') || username === 'login' || username.includes('.')) {
+  if (name.includes('.') || username === 'login' || username.includes('.') || path === '/api/v1/instance') {
     return {
       notFound: true,
     };
