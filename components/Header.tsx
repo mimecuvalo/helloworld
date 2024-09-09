@@ -1,4 +1,3 @@
-import Login from './Login';
 import { styled } from '@mui/material/styles';
 
 const StyledHeader = styled('header')`
@@ -15,9 +14,7 @@ const StyledHeader = styled('header')`
 export default function Header() {
   return (
     <StyledHeader>
-      <nav title="Login">
-        <Login />
-      </nav>
+      <nav title="Login">{/* <Login /> */}</nav>
     </StyledHeader>
   );
 }

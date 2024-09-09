@@ -3,7 +3,7 @@ import 'styles/globals.css';
 import * as serviceWorkerRegistration from 'app/serviceWorkerRegistration';
 
 import { APOLLO_STATE_PROP_NAME, useApollo } from 'app/apollo';
-import { ApolloProvider, NormalizedCacheObject, gql } from '@apollo/client';
+import { ApolloClient, ApolloProvider, NormalizedCacheObject, gql } from '@apollo/client';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import { DebugWrapper, Header } from 'components';
 import { IntlProvider, setupCreateIntl } from 'i18n';
@@ -21,11 +21,10 @@ import Head from 'next/head';
 import { ThemeProvider } from '@mui/material/styles';
 import UserContext from 'app/UserContext';
 import { UserPrivate } from 'data/graphql-generated';
-import { UserProvider } from '@auth0/nextjs-auth0/client';
-import clientHealthCheck from 'app/clientHealthCheck';
 import { useRouter } from 'next/router';
 import { trackWebVitals } from 'app/reportWebVitals';
 import { useReportWebVitals } from 'next/web-vitals';
+import { UserProvider, useUser } from '@auth0/nextjs-auth0/client';
 
 // If loading a variable font, you don't need to specify the font weight
 const pressStart2P = Press_Start_2P({
@@ -65,15 +64,41 @@ const CURRENT_USER_QUERY = gql`
   }
 `;
 
-function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }: CustomAppProps) {
+function CustomUserProvider({
+  apolloClient,
+  children,
+}: {
+  apolloClient: ApolloClient<NormalizedCacheObject>;
+  children: React.ReactNode;
+}) {
+  const [currentUser, setCurrentUser] = useState<UserPrivate>();
+  const auth0User = useUser();
+
+  useEffect(() => {
+    async function loadUser() {
+      if (auth0User.user) {
+        const { data } = await apolloClient.query({
+          query: CURRENT_USER_QUERY,
+        });
+        setCurrentUser(data.currentUser);
+      }
+    }
+
+    loadUser();
+  }, [apolloClient, auth0User]);
+
+  return <UserContext.Provider value={{ user: currentUser }}>{children}</UserContext.Provider>;
+}
+
+function HelloWorldApp({ Component, emotionCache = clientSideEmotionCache, pageProps }: CustomAppProps) {
   const { locale = 'en', defaultLocale = 'en' } = useRouter();
   const apolloClient = useApollo(pageProps);
-  const [currentUser, setCurrentUser] = useState<UserPrivate>();
   useReportWebVitals(trackWebVitals);
 
   useEffect(() => {
     // Upon starting the app, kick off a client health check which runs periodically.
-    clientHealthCheck();
+    // TODO disabled
+    // clientHealthCheck();
 
     setupAnalytics();
 
@@ -93,17 +118,6 @@ function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }: 
     };
   });
 
-  useEffect(() => {
-    async function loadUser() {
-      const { data } = await apolloClient.query({
-        query: CURRENT_USER_QUERY,
-      });
-      setCurrentUser(data.currentUser);
-    }
-
-    loadUser();
-  });
-
   const messages = pageProps.intlMessages || {};
   // createIntl is used in non-React locations.
   setupCreateIntl({ defaultLocale, locale, messages });
@@ -117,7 +131,7 @@ function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }: 
             {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
             <CssBaseline />
             <UserProvider>
-              <UserContext.Provider value={{ user: currentUser }}>
+              <CustomUserProvider apolloClient={apolloClient}>
                 <ErrorBoundary>
                   <style jsx global>{`
                     :root {
@@ -141,7 +155,7 @@ function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }: 
                     <DebugWrapper />
                   </div>
                 </ErrorBoundary>
-              </UserContext.Provider>
+              </CustomUserProvider>
             </UserProvider>
 
             <noscript>
@@ -169,4 +183,4 @@ function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }: 
   );
 }
 
-export default MyApp;
+export default HelloWorldApp;
