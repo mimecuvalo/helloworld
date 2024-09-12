@@ -178,11 +178,10 @@ const Content = {
         album,
       };
       let collection: ContentType[] | null = null;
-      if (!isOwnerViewing) {
-        const data = customCache[`neighbors-collection:${username}:${section}:${album}`];
-        if (data) {
-          collection = data as ContentType[];
-        }
+      const cacheKey = `neighbors-collection:${username}:${section}:${album}`;
+      const cachedData = !isOwnerViewing && customCache[cacheKey];
+      if (cachedData) {
+        collection = cachedData as ContentType[];
       }
       if (!collection) {
         collection = (await prisma.content.findMany({
@@ -192,7 +191,7 @@ const Content = {
         })) as ContentType[];
 
         if (!isOwnerViewing) {
-          customCache[`neighbors-collection:${username}:${section}:${album}`] = collection;
+          customCache[cacheKey] = collection;
         }
       }
 
@@ -230,11 +229,10 @@ const Content = {
       { currentUsername, prisma }: Context
     ) {
       const isOwnerViewing = currentUsername === username;
-      if (!isOwnerViewing) {
-        const data = customCache[`${username}:${section}:${album}:${name}`];
-        if (data) {
-          return data;
-        }
+      const cacheKey = `${username}:${section}:${album}:${name}`;
+      const cachedData = !isOwnerViewing && customCache[cacheKey];
+      if (cachedData) {
+        return cachedData;
       }
 
       const sectionContent = await prisma.content.findFirst({
@@ -323,7 +321,7 @@ const Content = {
 
       const decoratedCollection = decorateArrayWithPrefetchImages(decorateArrayWithRefreshFlag(collection));
       if (!isOwnerViewing) {
-        customCache[`${username}:${section}:${album}:${name}`] = decoratedCollection;
+        customCache[cacheKey] = decoratedCollection;
       }
       return decoratedCollection;
     },
@@ -334,6 +332,11 @@ const Content = {
       { currentUsername, prisma }: Context
     ) {
       const isOwnerViewing = currentUsername === username;
+      const cacheKey = `paginatedCollection:${username}:${section}:${name}:${offset}`;
+      const cachedData = !isOwnerViewing && customCache[cacheKey];
+      if (cachedData) {
+        return cachedData;
+      }
       const take = 20;
 
       const constraints: { [key: string]: boolean | number } = {
@@ -349,12 +352,16 @@ const Content = {
         section: section !== 'main' ? section : name !== 'home' ? name : notEqualToMain,
         album: section !== 'main' ? name : notEqualToMain,
       };
-      return await prisma.content.findMany({
+      const paginatedCollection = await prisma.content.findMany({
         where: Object.assign({}, constraints, contentConstraints),
         orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
         take,
         skip: offset * take,
       });
+      if (!isOwnerViewing) {
+        customCache[cacheKey] = paginatedCollection;
+      }
+      return paginatedCollection;
     },
 
     async fetchCollectionLatest(
@@ -384,11 +391,10 @@ const Content = {
       { currentUsername, prisma }: Context
     ) {
       const isOwnerViewing = currentUsername === username;
-      if (!isOwnerViewing) {
-        const data = customCache[`sitemap:${username}`];
-        if (data) {
-          return data;
-        }
+      const cacheKey = `sitemap:${username}`;
+      const cachedData = !isOwnerViewing && customCache[cacheKey];
+      if (cachedData) {
+        return cachedData;
       }
 
       const constraints: { [key: string]: boolean } = {};
@@ -431,7 +437,7 @@ const Content = {
 
       const decoratedSiteMap = decorateArrayWithRefreshFlag(siteMap);
       if (!isOwnerViewing) {
-        customCache[`sitemap:${username}`] = decoratedSiteMap;
+        customCache[cacheKey] = decoratedSiteMap;
       }
       return decoratedSiteMap;
     },
