@@ -146,8 +146,6 @@ const Content = {
       { username, name }: QueryFetchContentNeighborsArgs,
       { currentUsername, prisma }: Context
     ) {
-      const isOwnerViewing = currentUsername === username;
-
       const ATTRIBUTES_NAVIGATION_WITH_VIEW = Object.assign({ content: true, view: true }, ATTRIBUTES_NAVIGATION);
       const content = (await prisma.content.findUnique({
         where: { username_name: { username: username || '', name: name || '' } },
@@ -156,6 +154,9 @@ const Content = {
       if (!username) {
         username = (await prisma.user.findFirst({ select: { username: true }, where: { id: 1 } }))?.username;
       }
+
+      const isOwnerViewing = currentUsername === username;
+
       name = name || 'main';
       const album = content?.album || undefined;
       const section = content?.section || undefined;
