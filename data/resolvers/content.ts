@@ -161,6 +161,17 @@ const Content = {
       const album = content?.album || undefined;
       const section = content?.section || undefined;
 
+      if (!section && !album) {
+        // homepage, no neighbors, save data egress.
+        return {
+          first: null,
+          prev: null,
+          top: null,
+          next: null,
+          last: null,
+        };
+      }
+
       const sectionContent = await prisma.content.findFirst({
         where: { username, section: 'main', name: section === 'main' ? name : section },
       });
