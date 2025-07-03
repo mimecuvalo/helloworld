@@ -11,15 +11,20 @@ const FeedWrapper = styled('div', { label: 'FeedWrapper' })`
   margin-bottom: ${(props) => props.theme.spacing(4)};
   clear: both;
 
-  ${(props) => props.theme.breakpoints.down('md')} {
-    width: 100%;
-  }
-
   // ItemWrapper
   & > div {
     max-height: 75vh;
     height: 100%;
     overflow-y: scroll;
+  }
+
+  ${(props) => props.theme.breakpoints.down('md')} {
+    width: 100%;
+
+    & > div {
+      max-height: none;
+      overflow-y: auto;
+    }
   }
 
   & .hw-item p {

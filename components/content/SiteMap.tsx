@@ -30,6 +30,10 @@ const Nav = styled('nav', transientOptions)`
   margin-right: ${(props) => props.theme.spacing(3.5)};
   padding: ${(props) => props.theme.spacing(0.5)};
 
+  ${(props) => props.theme.breakpoints.down('md')} {
+    display: none;
+  }
+
   border: 1px solid ${(props) => props.theme.palette.primary.light};
   box-shadow:
     1px 1px ${(props) => props.theme.palette.primary.light},
