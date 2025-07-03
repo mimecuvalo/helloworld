@@ -1,15 +1,27 @@
 import { Content, FetchCollectionQuery, UserPublic } from 'data/graphql-generated';
 import { FeedWrapper, InfiniteFeed, styled } from 'components';
 import { gql, useQuery } from '@apollo/client';
+import Masonry from 'react-masonry-css';
 
 import { F } from 'i18n';
 import Item from './Item';
 
 const FeedContainer = styled('div', { label: 'FeedContainer' })`
-  display: flex;
-  flex-direction: row;
-  flex-flow: wrap;
-  justify-content: space-between;
+  width: 100%;
+  /* Remove grid styles, let Masonry handle layout */
+
+  .masonry-grid {
+    display: flex;
+    margin-left: -${(props) => props.theme.spacing(2)};
+    width: auto;
+  }
+  .masonry-grid_column {
+    padding-left: ${(props) => props.theme.spacing(2)};
+    background-clip: padding-box;
+  }
+  .masonry-grid_column > div {
+    margin-bottom: ${(props) => props.theme.spacing(2)};
+  }
 `;
 
 const FETCH_COLLECTION_PAGINATED = gql`
@@ -79,14 +91,22 @@ export default function Feed({
     return <F defaultMessage="Nothing to read right now!" />;
   }
 
+  // Masonry breakpoints
+  const breakpointColumnsObj = {
+    default: 3,
+    960: 1,
+  };
+
   return (
     <FeedContainer>
       <InfiniteFeed fetchMore={fetchMore} queryName="fetchCollectionPaginated">
-        {collection.map((item) => (
-          <FeedWrapper key={item.name}>
-            <Item content={item as Content} contentOwner={contentOwner as UserPublic} isFeed={true} />
-          </FeedWrapper>
-        ))}
+        <Masonry breakpointCols={breakpointColumnsObj} className="masonry-grid" columnClassName="masonry-grid_column">
+          {collection.map((item) => (
+            <FeedWrapper key={item.name}>
+              <Item content={item as Content} contentOwner={contentOwner as UserPublic} isFeed={true} />
+            </FeedWrapper>
+          ))}
+        </Masonry>
       </InfiniteFeed>
     </FeedContainer>
   );

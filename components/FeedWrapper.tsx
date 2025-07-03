@@ -1,7 +1,7 @@
 import { styled } from '@mui/material/styles';
 
 const FeedWrapper = styled('div', { label: 'FeedWrapper' })`
-  width: calc(33% - ${(props) => props.theme.spacing(2)});
+  width: 100%;
   border: 1px solid ${(props) => props.theme.palette.primary.light};
   box-shadow:
     1px 1px ${(props) => props.theme.palette.primary.light},

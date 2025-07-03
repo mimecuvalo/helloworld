@@ -24,7 +24,7 @@ export default function InfiniteFeed({
         return;
       }
 
-      setOffset(offset + 1);
+      setOffset((prev) => prev + 1);
       setFetchingMore(true);
     };
 
