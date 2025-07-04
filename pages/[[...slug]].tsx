@@ -181,10 +181,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req, res 
     };
   }
 
-  // XXX: staunch bleeding for now for supabase overuse. one month caching.
-  const oneMonth = 60 * 60 * 24 * 30;
-  res.setHeader('Cache-Control', `public, s-maxage=${oneMonth}`);
-  // res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=3600');
+  res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
 
   return addApolloState(client, {
     props: { username, name, host },
