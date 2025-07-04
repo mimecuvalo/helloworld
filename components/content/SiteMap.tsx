@@ -68,6 +68,7 @@ const DrawerStyled = styled(Drawer)`
     z-index: ${baseTheme.zindex.siteMap};
 
     .MuiPaper-root {
+      width: 100vw;
       padding-top: ${(props) => props.theme.spacing(8)};
 
       & > ul > li {

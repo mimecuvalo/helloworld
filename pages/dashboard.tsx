@@ -22,6 +22,10 @@ const MOBILE_NAV_WIDTH = '45px';
 const Container = styled('div', { label: 'DashboardContainer' })`
   display: flex;
   align-items: flex-start;
+
+  ${(props) => props.theme.breakpoints.down('md')} {
+    flex-direction: column;
+  }
 `;
 
 const Content = styled('article', { label: 'DashboardContent' })`
@@ -30,7 +34,8 @@ const Content = styled('article', { label: 'DashboardContent' })`
   margin-right: ${(props) => props.theme.spacing(1)};
 
   ${(props) => props.theme.breakpoints.down('md')} {
-    width: calc(100% - ${MOBILE_NAV_WIDTH} - ${(props) => props.theme.spacing(1.5)});
+    width: calc(100% - ${(props) => props.theme.spacing(1.5)});
+    margin-left: ${(props) => props.theme.spacing(0.5)};
   }
 `;
 

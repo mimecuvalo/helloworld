@@ -1,6 +1,7 @@
 import { FeedWrapper, InfiniteFeed, ItemWrapper, Link, Typography, styled } from 'components';
 import { FetchContentRemotePaginatedQuery, Post, UserRemotePublic } from 'data/graphql-generated';
 import { gql, useQuery } from '@apollo/client';
+import Masonry from 'react-masonry-css';
 
 import { F } from 'i18n';
 import Item from './Item';
@@ -59,6 +60,22 @@ const FETCH_CONTENT_REMOTE_PAGINATED = gql`
   }
 `;
 
+const FeedContainer = styled('div', { label: 'FeedContainer' })`
+  width: 100%;
+  .masonry-grid {
+    display: flex;
+    margin-left: -${(props) => props.theme.spacing(2)};
+    width: auto;
+  }
+  .masonry-grid_column {
+    padding-left: ${(props) => props.theme.spacing(2)};
+    background-clip: padding-box;
+  }
+  .masonry-grid_column > div {
+    margin-bottom: ${(props) => props.theme.spacing(2)};
+  }
+`;
+
 export default function Feed({
   userRemote,
   specialFeed,
@@ -92,34 +109,44 @@ export default function Feed({
 
   const feed = data.fetchContentRemotePaginated;
 
+  // Masonry breakpoints
+  const breakpointColumnsObj = {
+    default: 3,
+    960: 1,
+  };
+
   return (
-    <InfiniteFeed deduper={dedupe} fetchMore={fetchMore} queryName="fetchContentRemotePaginated">
-      {userRemote || query ? (
-        <Header variant="h1">
-          {userRemote ? (
-            <Link href={userRemote.profileUrl} target="_blank" className="notranslate">
-              {userRemote.username}
-            </Link>
-          ) : (
-            <>
-              <F defaultMessage="Search:" /> {query}
-            </>
-          )}
-        </Header>
-      ) : null}
-      {!feed.length ? (
-        <Empty>
-          <F defaultMessage="Nothing to read right now!" />
-        </Empty>
-      ) : (
-        feed.map((item) => (
-          <FeedWrapper key={item.postId}>
-            <ItemWrapper className="hw-item">
-              <Item contentRemote={item as Post} userRemote={userRemote as UserRemotePublic} />
-            </ItemWrapper>
-          </FeedWrapper>
-        ))
-      )}
-    </InfiniteFeed>
+    <FeedContainer>
+      <InfiniteFeed deduper={dedupe} fetchMore={fetchMore} queryName="fetchContentRemotePaginated">
+        {userRemote || query ? (
+          <Header variant="h1">
+            {userRemote ? (
+              <Link href={userRemote.profileUrl} target="_blank" className="notranslate">
+                {userRemote.username}
+              </Link>
+            ) : (
+              <>
+                <F defaultMessage="Search:" /> {query}
+              </>
+            )}
+          </Header>
+        ) : null}
+        {!feed.length ? (
+          <Empty>
+            <F defaultMessage="Nothing to read right now!" />
+          </Empty>
+        ) : (
+          <Masonry breakpointCols={breakpointColumnsObj} className="masonry-grid" columnClassName="masonry-grid_column">
+            {feed.map((item) => (
+              <FeedWrapper key={item.postId}>
+                <ItemWrapper className="hw-item">
+                  <Item contentRemote={item as Post} userRemote={userRemote as UserRemotePublic} />
+                </ItemWrapper>
+              </FeedWrapper>
+            ))}
+          </Masonry>
+        )}
+      </InfiniteFeed>
+    </FeedContainer>
   );
 }
