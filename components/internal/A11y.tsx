@@ -5,8 +5,8 @@ import axe from 'axe-core';
 
 const Container = styled('div')`
   padding: ${(props) => props.theme.spacing(1)};
-  max-width: 40vw;
-  max-height: 40vh;
+  max-width: 80vw;
+  max-height: 80vh;
 `;
 
 const TypeFilter = styled(Typography)`
@@ -46,7 +46,6 @@ export default function A11y() {
     if (loaded) {
       return;
     }
-
     // Wait a tick until the page more or less finishes rendering to make sure this doesn't block
     // the app's main functionality.
     const timeoutId = setTimeout(() => runAudit(), 0);
@@ -62,7 +61,7 @@ export default function A11y() {
       axe.run(document, {}, (err, results) => {
         if (err) throw err;
         console.debug('[a11y]:', results);
-        setErrorCount(results.violations.length);
+        setErrorCount(results.violations.length + results.incomplete.length);
         setResults(results);
       });
     } catch (ex) {
@@ -70,9 +69,15 @@ export default function A11y() {
     }
   }
 
-  function renderViolationByType(typeFilter: string) {
-    const violationsByType = results?.violations.filter((violation) => violation.impact === typeFilter);
-    if (!violationsByType?.length) {
+  function renderIssueByType(typeFilter: string) {
+    if (!results) return null;
+    const { violations, incomplete } = results;
+    const allIssues = [
+      ...violations.map((v) => ({ ...v, type: 'violation' })),
+      ...incomplete.map((i) => ({ ...i, type: 'incomplete' })),
+    ];
+    const issuesByType = allIssues.filter((issue) => issue.impact === typeFilter);
+    if (!issuesByType?.length) {
       return null;
     }
 
@@ -87,14 +92,17 @@ export default function A11y() {
       <div>
         <TypeFilter variant="h3">{typeFilter}</TypeFilter>
         <List>
-          {violationsByType.map((violation) => (
-            <ListItem key={violation.id} sx={{ mb: 2 }}>
-              <strong style={{ minWidth: '200px' }}>{violation.id}:</strong>
-              <span style={{ minWidth: '200px' }}>{violation.description}</span>
+          {issuesByType.map((issue) => (
+            <ListItem key={issue.id} sx={{ mb: 2 }}>
+              <strong style={{ minWidth: '200px' }}>
+                {issue.type === 'violation' ? '⚠️ Violation' : '⚙️ Incomplete'}
+              </strong>
+              <strong style={{ minWidth: '200px' }}>{issue.id}</strong>
+              <span style={{ minWidth: '200px' }}>{issue.description}</span>
               &nbsp;
               <em style={{ minWidth: '200px' }}>
                 <pre>
-                  {violation.nodes.map((node, idx) => (
+                  {issue.nodes.map((node, idx) => (
                     <div
                       key={idx}
                       onMouseOver={() => handleMouseOver(node.target as unknown as string)}
@@ -105,6 +113,15 @@ export default function A11y() {
                   ))}
                 </pre>
               </em>
+              <span style={{ minWidth: '200px' }}>
+                {issue.helpUrl ? (
+                  <a href={issue.helpUrl} target="_blank" rel="noopener noreferrer">
+                    More info
+                  </a>
+                ) : (
+                  <span>No more info</span>
+                )}
+              </span>
             </ListItem>
           ))}
         </List>
@@ -122,18 +139,18 @@ export default function A11y() {
         <AuditButton variant="contained" onClick={handleRerun}>
           Re-run audits
         </AuditButton>
-        <Typography variant="h2">Violations</Typography>
-        {results.violations.length ? null : (
+        <Typography variant="h2">Issues</Typography>
+        {results.violations.length || results.incomplete.length ? null : (
           <div>
-            No violations!
+            No issues!
             <br />
             <br />
           </div>
         )}
-        {renderViolationByType('critical')}
-        {renderViolationByType('serious')}
-        {renderViolationByType('moderate')}
-        {renderViolationByType('minor')}
+        {renderIssueByType('critical')}
+        {renderIssueByType('serious')}
+        {renderIssueByType('moderate')}
+        {renderIssueByType('minor')}
         <strong>Passing tests</strong>: {results.passes.length}
         <br />
         <strong>Inapplicable tests</strong>: {results.inapplicable.length}
