@@ -42,7 +42,7 @@ export function isRobotViewing(req: NextApiRequest) {
 
 export function sanitizeHTML(rawHTML: string) {
   return sanitizer(rawHTML, {
-    allowedTags: sanitizer.defaults.allowedTags.concat(['img']),
+    allowedTags: sanitizer.defaults.allowedTags.concat(['img', 'audio', 'video', 'picture', 'svg', 'iframe', 'embed']),
     allowedAttributes: {
       a: ['href', 'name', 'target', 'title'],
       // N.B. For now we don't allow srcset because sometimes we have relative urls in there
