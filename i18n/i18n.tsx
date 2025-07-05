@@ -8,10 +8,13 @@ import {
   createIntlCache,
   createIntl as originalCreateIntl,
   defineMessages as originalDefineMessages,
+  PrimitiveType,
+  useIntl,
 } from 'react-intl';
+import { FormatXMLElementFn } from 'intl-messageformat';
 
 import MD5 from 'md5.js';
-import { ReactNode } from 'react';
+import { ComponentPropsWithoutRef } from 'react';
 
 // Re-export everything and override below what we want to override.
 export * from 'react-intl';
@@ -36,34 +39,62 @@ function generateId({ id, description, defaultMessage }: MessageDescriptor) {
     .slice(0, 10);
 }
 
-interface FType extends MessageDescriptor {
-  values?: { [key: string]: ((msg: string) => ReactNode) | ReactNode | string | number };
-}
-
-export function F(props: FType) {
+export function F(props: ComponentPropsWithoutRef<typeof FormattedMessage>) {
+  const intl = useIntl();
   const id = generateId(props);
+  let internalMessage = (props.defaultMessage || '') as string;
+  if (intl.locale === 'xx-AE') {
+    internalMessage = makeAccented(internalMessage);
+  } else if (intl.locale === 'xx-LS') {
+    internalMessage = makeLong(internalMessage);
+  }
+
   return (
     <span className="i18n-msg">
-      {/* eslint-disable */}
-      {/* @ts-ignore fix up */}
-      <FormattedMessage id={id} {...props} />
-      {/* eslint-enable */}
+      {isInternalLocale(intl.locale) ? (
+        <>{internalMessage}</>
+      ) : (
+        /* eslint-disable-next-line formatjs/enforce-default-message */
+        <FormattedMessage id={id} {...props} />
+      )}
     </span>
   );
 }
 
+export function useMsg(
+  message: MessageDescriptor,
+  values?: Record<string, PrimitiveType | FormatXMLElementFn<string, string>>
+) {
+  const intl = useIntl();
+  return intl.formatMessage(message, values);
+}
+
 // We programmatically define ID's for messages to make things easier for devs.
-export function defineMessages(values: Record<string | number | symbol, MessageDescriptor>) {
-  for (const key in values) {
-    if (!values[key].id) {
-      values[key].id = generateId(values[key]);
+export function defineMessages<T extends string, D extends MessageDescriptor>(msgs: Record<T, D>): Record<T, D> {
+  for (const key in msgs) {
+    if (!msgs[key].id) {
+      msgs[key].id = generateId(msgs[key]);
     }
   }
-  return originalDefineMessages(values);
+  return originalDefineMessages(msgs);
 }
 
 export function isInternalLocale(locale: string) {
   return process.env.NODE_ENV === 'development' && INTERNAL_LOCALES.indexOf(locale) !== -1;
+}
+
+function makeAccented(str: string) {
+  const accents = 'áƃçđéƒǵȟíǰķłɱñóƥɋřšťúṽẃẍýž';
+  return str.replace(/[a-zA-Z]/g, (char) => {
+    const isUpper = char === char.toUpperCase();
+    const index = char.toLowerCase().charCodeAt(0) - 97;
+    const accentedChar = accents[index] || char;
+    return isUpper ? accentedChar.toUpperCase() : accentedChar;
+  });
+}
+
+function makeLong(str: string) {
+  return `${str} loooooooo oo ooooooong`;
 }
 
 // This is optional but highly recommended since it prevents memory leaks.
