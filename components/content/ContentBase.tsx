@@ -44,7 +44,7 @@ export default function ContentBase(
 
         <Grid container flexWrap="nowrap" alignItems="flex-start">
           <SiteMap content={content} username={username} />
-          <Box sx={{ mt: { xs: 8, md: 0 }, px: { xs: 2, md: 0 } }}>{children}</Box>
+          <Box sx={{ width: '100%', mt: { xs: 8, md: 0 }, px: { xs: 1, md: 0 } }}>{children}</Box>
         </Grid>
       </Container>
     </ThemeProvider>

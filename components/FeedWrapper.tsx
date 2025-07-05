@@ -19,8 +19,6 @@ const FeedWrapper = styled('div', { label: 'FeedWrapper' })`
   }
 
   ${(props) => props.theme.breakpoints.down('md')} {
-    width: calc(100vw - ${(props) => props.theme.spacing(4)});
-
     & > div {
       max-height: none;
       overflow-y: auto;

@@ -17,7 +17,6 @@ import baseTheme from 'styles';
 import { transientOptions } from 'util/css';
 
 const NAV_WIDTH = '235px';
-const MOBILE_NAV_WIDTH = '45px';
 
 const Container = styled('div', { label: 'DashboardContainer' })`
   display: flex;

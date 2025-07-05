@@ -334,9 +334,11 @@ export default function SiteMap({ content, username }: { content?: Content; user
           {items}
         </ul>
 
-        <Form method="get" action="/search" onSubmit={handleSearchSubmit} className="notranslate">
-          <TextField aria-label={searchLabel} size="small" type="search" name="q" placeholder="search" required />
-        </Form>
+        <search>
+          <Form method="get" action="/search" onSubmit={handleSearchSubmit} className="notranslate">
+            <TextField aria-label={searchLabel} size="small" type="search" name="q" placeholder="search" required />
+          </Form>
+        </search>
 
         {contentOwner.license ? (
           <License className="notranslate">

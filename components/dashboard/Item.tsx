@@ -18,6 +18,7 @@ const StyledItem = styled('article', { label: 'DashboardStyledItem' })`
 const View = styled('div', { label: 'DashboardView' })`
   flex: 1;
   padding: ${(props) => props.theme.spacing(0, 1)};
+  text-wrap-style: balance;
 
   & img,
   & figure {

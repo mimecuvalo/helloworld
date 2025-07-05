@@ -80,16 +80,18 @@ export default function Following({
 
       <NewFeed handleSetFeed={handleSetFeed} />
 
-      <TextField
-        size="small"
-        margin="dense"
-        type="search"
-        onKeyUp={handleSearchKeyUp}
-        onChange={handleSearchChange}
-        ref={searchInput}
-        placeholder={searchPlaceholder}
-        className="notranslate"
-      />
+      <search>
+        <TextField
+          size="small"
+          margin="dense"
+          type="search"
+          onKeyUp={handleSearchKeyUp}
+          onChange={handleSearchChange}
+          ref={searchInput}
+          placeholder={searchPlaceholder}
+          className="notranslate"
+        />
+      </search>
     </Container>
   );
 }
