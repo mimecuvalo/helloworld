@@ -93,9 +93,8 @@ const nextConfig = {
     );
 
     if (!dev) {
-      // TODO(mime): try to re-enable this but with SWC it was breaking, was only working with Babel.
       // https://formatjs.io/docs/guides/advanced-usage#react-intl-without-parser-40-smaller
-      // config.resolve.alias['@formatjs/icu-messageformat-parser'] = '@formatjs/icu-messageformat-parser/no-parser';
+      config.resolve.alias['@formatjs/icu-messageformat-parser'] = '@formatjs/icu-messageformat-parser/no-parser';
     }
 
     return config;

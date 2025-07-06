@@ -1,4 +1,4 @@
-import { forwardRef, useContext } from 'react';
+import { forwardRef, ReactNode, useContext } from 'react';
 
 import { Content } from 'data/graphql-generated';
 import { Link } from 'components';
@@ -9,7 +9,7 @@ import { contentUrl } from 'util/url-factory';
 const ContentLink = forwardRef(
   (
     props: {
-      children: JSX.Element | string;
+      children: ReactNode | string;
       item: Pick<Content, 'title' | 'forceRefresh' | 'hidden' | 'username' | 'section' | 'album' | 'name'>;
       currentContent?: Content;
       rel?: string;

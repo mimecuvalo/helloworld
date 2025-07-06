@@ -297,6 +297,7 @@ export default function SiteMap({ content, username }: { content?: Content; user
         id="hw-sitemap"
         title="sitemap"
         onMouseUp={handleCloseMenu}
+        // @ts-ignore we're messing around here with using Drawer or Nav
         anchor="left"
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}

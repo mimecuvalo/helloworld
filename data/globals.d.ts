@@ -15,7 +15,7 @@ declare module 'magic-signatures';
 declare module 'md5.js';
 declare module 'swipe-listener';
 
-declare namespace JSX {
+declare namespace React.JSX {
   interface IntrinsicElements {
     account: any;
     author: any;

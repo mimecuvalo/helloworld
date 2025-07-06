@@ -24,7 +24,7 @@ export default function NotFound() {
         <F
           defaultMessage="try going back to the <a>beginning</a>."
           values={{
-            a: (msg: string) => <Link href="/">{msg}</Link>,
+            a: (msg) => <Link href="/">{msg}</Link>,
           }}
         />
       </div>

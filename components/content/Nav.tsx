@@ -7,7 +7,7 @@ import ContentLink from 'components/ContentLink';
 import { F } from 'i18n';
 import baseTheme from 'styles';
 import { contentUrl } from 'util/url-factory';
-import { Ref, forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import { MouseEvent, ReactNode, Ref, forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 
 const StyledNav = styled('nav')`
   position: relative;
@@ -131,7 +131,7 @@ const Nav = forwardRef(({ content }: { content: Content }, ref) => {
   function renderLink(
     contentMeta: ContentMetaInfo,
     name: string,
-    msg: JSX.Element,
+    msg: ReactNode,
     colorPalette: keyof Palette,
     ref?: Ref<HTMLElement>
   ) {

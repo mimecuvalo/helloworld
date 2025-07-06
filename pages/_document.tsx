@@ -99,7 +99,7 @@ export default class MyDocument extends Document {
     };
   }
 
-  render(): JSX.Element {
+  render() {
     const { locale } = this.props;
     // @ts-ignore not sure how to fix this yet
     const { nonce } = this.props;

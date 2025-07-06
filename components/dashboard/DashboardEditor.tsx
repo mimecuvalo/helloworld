@@ -13,7 +13,7 @@ import {
 } from 'components';
 import { F, defineMessages, useIntl } from 'i18n';
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 import { ArrowDropDown } from '@mui/icons-material';
 import Cookies from 'js-cookie';
@@ -253,7 +253,7 @@ export default function DashboardEditor({ username }: { username: string }) {
 
   function generateSiteMapItem(
     item: SiteMapAndUserEditorQuery['fetchSiteMap'][0],
-    albums: JSX.Element[] | undefined,
+    albums: ReactNode[] | undefined,
     sectionName?: string
   ) {
     const value = {
@@ -269,7 +269,7 @@ export default function DashboardEditor({ username }: { username: string }) {
   }
 
   function generateSiteMap(siteMap: SiteMapAndUserEditorQuery['fetchSiteMap']) {
-    let items: JSX.Element[] = [];
+    let items: ReactNode[] = [];
     for (let i = 0; i < siteMap.length; ++i) {
       const item = siteMap[i];
       const nextItem = siteMap[i + 1];
