@@ -1,4 +1,4 @@
-import { forwardRef, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { styled } from '@mui/material/styles';
 
 const StyledItemWrapper = styled('div', { label: 'ItemWrapper' })`
@@ -96,14 +96,18 @@ const StyledItemWrapper = styled('div', { label: 'ItemWrapper' })`
   }
 `;
 
-const ItemWrapper = forwardRef(({ children, className }: { children: ReactNode; className?: string }, ref) => {
+export default function ItemWrapper({
+  children,
+  className,
+  ref,
+}: {
+  children: ReactNode;
+  className?: string;
+  ref: React.Ref<HTMLDivElement>;
+}) {
   return (
-    // @ts-ignore this is fine.
     <StyledItemWrapper ref={ref} className={className}>
       {children}
     </StyledItemWrapper>
   );
-});
-ItemWrapper.displayName = 'ItemWrapper';
-
-export default ItemWrapper;
+}

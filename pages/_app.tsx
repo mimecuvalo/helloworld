@@ -87,7 +87,7 @@ function CustomUserProvider({
     loadUser();
   }, [apolloClient, auth0User]);
 
-  return <UserContext.Provider value={{ user: currentUser }}>{children}</UserContext.Provider>;
+  return <UserContext value={{ user: currentUser }}>{children}</UserContext>;
 }
 
 function HelloWorldApp({ Component, emotionCache = clientSideEmotionCache, pageProps }: CustomAppProps) {

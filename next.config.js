@@ -34,6 +34,16 @@ const nextConfig = {
   experimental: {
     useDeploymentId: true, // skew protection
     scrollRestoration: true,
+    swcPlugins: [
+      [
+        require.resolve('@swc/plugin-formatjs'),
+        {
+          idInterpolationPattern: '[md5:contenthash:hex:10]',
+          additionalComponentNames: ['F'],
+          ast: true,
+        },
+      ],
+    ],
   },
 
   i18n: {

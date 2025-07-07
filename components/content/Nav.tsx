@@ -7,7 +7,8 @@ import ContentLink from 'components/ContentLink';
 import { F } from 'i18n';
 import baseTheme from 'styles';
 import { contentUrl } from 'util/url-factory';
-import { MouseEvent, ReactNode, Ref, forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import { MouseEvent, ReactNode, Ref, useEffect, useImperativeHandle, useRef } from 'react';
+import { LinkProps } from '@mui/material';
 
 const StyledNav = styled('nav')`
   position: relative;
@@ -71,7 +72,13 @@ const FETCH_CONTENT_NEIGHBORS = gql`
   }
 `;
 
-const Nav = forwardRef(({ content }: { content: Content }, ref) => {
+export default function Nav({
+  content,
+  ref,
+}: {
+  content: Content;
+  ref: LinkProps['ref'] & Ref<{ prev: () => void; next: () => void }>;
+}) {
   const { username, name } = content;
   const theme = useTheme();
   const { loading, data } = useQuery(FETCH_CONTENT_NEIGHBORS, {
@@ -81,9 +88,9 @@ const Nav = forwardRef(({ content }: { content: Content }, ref) => {
     },
   });
 
-  const next = useRef<HTMLElement>(null);
-  const top = useRef<HTMLElement>(null);
-  const prev = useRef<HTMLElement>(null);
+  const next = useRef<HTMLAnchorElement>(null);
+  const top = useRef<HTMLAnchorElement>(null);
+  const prev = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
     window.addEventListener('keyup', handleKeyUp);
@@ -133,7 +140,7 @@ const Nav = forwardRef(({ content }: { content: Content }, ref) => {
     name: string,
     msg: ReactNode,
     colorPalette: keyof Palette,
-    ref?: Ref<HTMLElement>
+    ref?: Ref<HTMLAnchorElement>
   ) {
     contentMeta = contentMeta || {};
 
@@ -203,7 +210,4 @@ const Nav = forwardRef(({ content }: { content: Content }, ref) => {
       {renderLink(data.fetchContentNeighbors.first, 'first', <F defaultMessage="first" />, 'secondary')}
     </StyledNav>
   );
-});
-Nav.displayName = 'Nav';
-
-export default Nav;
+}
