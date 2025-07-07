@@ -40,7 +40,7 @@ export default function Footer({
 
   return (
     <StyledFooter>
-      <Grid container item xs>
+      <Grid container size="grow">
         <Link href={link} target="_blank">
           <F
             defaultMessage="{username} posted on {date}"
@@ -87,7 +87,7 @@ export default function Footer({
           )}
         </Link>
       </Grid>
-      <Grid container item xs flexWrap="nowrap" alignItems="center" justifyContent="flex-end">
+      <Grid container size="grow" flexWrap="nowrap" alignItems="center" justifyContent="flex-end">
         <Reblog contentRemote={contentRemote} />
         <Favorite contentRemote={contentRemote} isDashboard={true} />
         <KeepUnread keepUnreadCb={keepUnreadCb} />

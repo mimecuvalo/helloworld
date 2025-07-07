@@ -39,8 +39,8 @@ export default function Content({ username, name, host }: { username: string; na
   });
 
   const router = useRouter();
-  const contentBase = useRef<Element>(null);
-  const nav = useRef<Element>(null);
+  const contentBase = useRef<HTMLDivElement>(null);
+  const nav = useRef<HTMLAnchorElement & { prev: () => void; next: () => void }>(null);
   const swipeListener = useRef(null);
   const [currentCanonicalUrl, setCurrentCanonicalUrl] = useState('');
 

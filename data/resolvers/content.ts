@@ -15,7 +15,7 @@ import { isAdmin, isAuthor } from './authorization';
 
 import { Context } from 'data/context';
 import { User } from '@prisma/client';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import { combineResolvers } from 'graphql-resolvers';
 import { isRobotViewing } from 'util/crawler';
 import { nanoid } from 'nanoid';

@@ -5,7 +5,7 @@ import { getRemoteContent, saveRemoteContent } from './db';
 
 import FeedParser from 'feedparser';
 import { HTTPError } from 'util/exceptions';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 
 export async function discoverAndParseFeedFromUrl(url: string) {
   const { content, feedUrl } = await discoverAndRetrieveFeedFromUrl(url);

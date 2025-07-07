@@ -14,7 +14,7 @@ export default function ContentLink(props: {
   url?: string;
   className?: string;
   sx?: LinkProps['sx'];
-  ref: LinkProps['ref'];
+  ref?: LinkProps['ref'];
 }) {
   const { user } = useContext(UserContext);
 

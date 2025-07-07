@@ -158,10 +158,8 @@ function Entry({ content, req }: { content: Content; req: NextApiRequest }) {
         /* XXX(mime): we'll never get here currently because we never render main sections in our feed */
         <>
           {RcE('activity:object-type', {}, `http://activitystrea.ms/schema/1.0/comment`)}
-
           {/* see endpoint_with_apollo for refXXX transform */}
           {content.thread ? RcE('thr:in-reply-to', { refXXX: content.thread }) : null}
-
           {content.threadUser ? (
             <>
               <link rel="ostatus:attention" href={content.threadUser} />

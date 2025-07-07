@@ -77,7 +77,7 @@ export default function Nav({
   ref,
 }: {
   content: Content;
-  ref: LinkProps['ref'] & Ref<{ prev: () => void; next: () => void }>;
+  ref?: LinkProps['ref'] & Ref<{ prev: () => void; next: () => void }>;
 }) {
   const { username, name } = content;
   const theme = useTheme();

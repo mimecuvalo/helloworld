@@ -1,4 +1,14 @@
-import { Checkbox, IconButton, List, ListItem, ListItemText, Menu, MenuItem, Drawer, Typography } from '@mui/material';
+import {
+  Checkbox,
+  IconButton,
+  List,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Drawer,
+  Typography,
+  ListItemButton,
+} from '@mui/material';
 import { F, defineMessages, useIntl } from 'i18n';
 import { MouseEvent, useContext, useEffect, useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
@@ -144,7 +154,7 @@ export default function Help() {
         </Typography>
         <List>
           {allExperiments.map((exp) => (
-            <ListItem button key={exp.name}>
+            <ListItemButton key={exp.name}>
               <Checkbox
                 checked={enabledExperiments.includes(exp.name)}
                 onChange={() => handleExperimentChange(exp.name)}
@@ -152,7 +162,7 @@ export default function Help() {
                 color="primary"
               />
               <ListItemText primary={exp.name} />
-            </ListItem>
+            </ListItemButton>
           ))}
         </List>
       </Drawer>

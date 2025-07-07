@@ -3,7 +3,7 @@ import { getRemoteUser, saveRemoteUser } from './db';
 
 import { NextApiRequest } from 'next';
 import { UserRemote } from '@prisma/client';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import { discoverAndParseFeedFromUrl } from './feeds';
 import { ensureAbsoluteUrl } from 'util/url-factory';
 

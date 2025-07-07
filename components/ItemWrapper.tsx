@@ -103,7 +103,7 @@ export default function ItemWrapper({
 }: {
   children: ReactNode;
   className?: string;
-  ref: React.Ref<HTMLDivElement>;
+  ref?: React.Ref<HTMLDivElement>;
 }) {
   return (
     <StyledItemWrapper ref={ref} className={className}>

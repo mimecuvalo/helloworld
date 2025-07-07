@@ -2,6 +2,7 @@ import '@testing-library/jest-dom';
 import { InMemoryCache, gql } from '@apollo/client';
 import React, { FC, PropsWithChildren, ReactElement } from 'react';
 import { RenderOptions, render } from '@testing-library/react';
+import { screen } from '@testing-library/dom';
 
 import { IntlProvider } from 'i18n';
 import { MockedProvider } from '@apollo/client/testing';
@@ -48,4 +49,5 @@ const customRender = (ui: ReactElement<any>, options?: Omit<RenderOptions, 'wrap
   render(ui, { wrapper: AllTheProviders, ...options });
 
 export * from '@testing-library/react';
+export { screen };
 export { customRender as render };

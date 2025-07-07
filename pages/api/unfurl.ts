@@ -3,7 +3,7 @@ import { createAbsoluteUrl, fetchUrl } from 'util/crawler';
 
 import _ from 'lodash';
 import authenticate from 'app/authentication';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 
 const IFRAME_ALLOW = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
 
@@ -78,7 +78,7 @@ async function retrieveOEmbedData(oEmbedUrl: string) {
   return { type: 'oEmbed', title: json.title, image: json.thumbnail_url, iframe };
 }
 
-function retrieveOpenGraphData($: cheerio.Root) {
+function retrieveOpenGraphData($: cheerio.CheerioAPI) {
   const openGraphProperties = $('meta[property]').filter(
     (index, el) => ($(el).attr('property') || '').indexOf('og:') === 0
   );

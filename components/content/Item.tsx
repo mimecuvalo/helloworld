@@ -37,7 +37,7 @@ export default function Item(props: {
   comments?: Comment[];
   favorites?: Favorite[];
   isFeed?: boolean;
-  ref: React.Ref<HTMLDivElement>;
+  ref?: React.Ref<HTMLDivElement>;
 }) {
   const transitions = useTransition(props.content, {
     from: { opacity: 0 },

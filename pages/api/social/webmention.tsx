@@ -10,7 +10,7 @@ import {
   saveRemoteUser,
 } from 'social-butterfly/db';
 
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import { contentUrl } from 'util/url-factory';
 // import { mention as emailMention } from './email';
 import { getUserRemoteInfo } from 'social-butterfly/discover-user';
