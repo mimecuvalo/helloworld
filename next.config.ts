@@ -1,3 +1,5 @@
+import { NextConfig } from 'next';
+
 /* eslint-disable */
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
@@ -16,14 +18,13 @@ const sentryWebpackPluginOptions = {
   // https://github.com/getsentry/sentry-webpack-plugin#options.
 };
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
   reactStrictMode: true,
 
   images: {
     domains: ['i.creativecommons.org', 's3.amazonaws.com', process.env.S3_AWS_S3_BUCKET_NAME, 'i.ytimg.com'].filter(
       (i) => !!i
-    ),
+    ) as string[],
     minimumCacheTTL: 60,
   },
 
@@ -32,7 +33,6 @@ const nextConfig = {
   },
 
   experimental: {
-    useDeploymentId: true, // skew protection
     scrollRestoration: true,
     swcPlugins: [
       [
