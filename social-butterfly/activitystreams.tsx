@@ -91,7 +91,7 @@ async function send(req: NextApiRequest, userRemote: UserRemote, contentOwner: U
     } else if (userRemote?.salmonUrl) {
       salmonSend(req, userRemote, contentOwner, message);
     }
-  } catch (ex) {
+  } catch {
     // Not a big deal if this fails.
     // TODO(mime): add logging later.
   }
@@ -129,7 +129,7 @@ async function activityPubSend(
         'Content-Type': 'application/ld+json',
       },
     });
-  } catch (ex) {
+  } catch {
     // Not a big deal if this fails.
     // TODO(mime): add logging later.
   }
@@ -228,7 +228,7 @@ export async function createArticle(
       if (activityObject) {
         inReplyTo = activityObject.id;
       }
-    } catch (ex) {
+    } catch {
       /* do nothing */
     }
   }

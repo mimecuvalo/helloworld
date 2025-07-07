@@ -67,7 +67,7 @@ function verifyMessage(req: NextApiRequest, userRemote: UserRemote) {
     }
 
     return verify.verify(publicKey, signatureMap['signature'], 'base64');
-  } catch (ex) {
+  } catch {
     return false;
   }
 }

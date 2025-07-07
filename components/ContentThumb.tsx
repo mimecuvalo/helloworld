@@ -216,7 +216,9 @@ export default function Thumb({
             }}
           >
             <Header content={item} />
-            {item.prefetchImages?.map((image) => <DialogImage key={image} src={image} alt={item.title} />)}
+            {item.prefetchImages?.map((image) => (
+              <DialogImage key={image} src={image} alt={item.title} />
+            ))}
             {/* <Simple content={item} /> */}
           </DialogContent>
         </Dialog>

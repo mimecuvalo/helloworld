@@ -81,7 +81,9 @@ export async function parseMentions(
 
     if (userRemote.salmonUrl || userRemote.activityPubInboxUrl || userRemote.webmentionUrl) {
       remoteUsers.push(userRemote);
-      shouldAddToMentions && mentionedRemoteUsers.push(userRemote);
+      if (shouldAddToMentions) {
+        mentionedRemoteUsers.push(userRemote);
+      }
     }
   }
 
@@ -92,7 +94,9 @@ export async function parseMentions(
     if (threadContent) {
       threadUserRemote = await getRemoteUser(content.username, threadContent.fromUsername || '');
     }
-    threadUserRemote && (await addToUsersList(threadUserRemote, content.thread, true));
+    if (threadUserRemote) {
+      await addToUsersList(threadUserRemote, content.thread, true);
+    }
   }
 
   // Find mentions in the text.
@@ -101,7 +105,9 @@ export async function parseMentions(
   const mentions: string[] = []; // (content.content && findMentionsInDraftJS(content.content)) || [];
   for (const mention of mentions) {
     const userRemote = await getRemoteUser(content.username, mention);
-    userRemote && (await addToUsersList(userRemote, undefined /* threadUrl */, true));
+    if (userRemote) {
+      await addToUsersList(userRemote, undefined /* threadUrl */, true);
+    }
   }
 
   // Find all users from the comments.
@@ -109,7 +115,9 @@ export async function parseMentions(
     const comments = await getRemoteCommentsOnLocalContent(contentUrl(content, req));
     for (const comment of comments) {
       const userRemote = await getRemoteUser(content.username, comment.fromUsername || '');
-      userRemote && (await addToUsersList(userRemote, undefined /* threadUrl */, false));
+      if (userRemote) {
+        await addToUsersList(userRemote, undefined /* threadUrl */, false);
+      }
     }
   }
 
@@ -120,7 +128,9 @@ export async function parseMentions(
     const mentions: string[] = []; //(opt_remoteContent.content && findMentionsInDraftJS(opt_remoteContent.content)) || [];
     for (const mention of mentions) {
       const userRemote = await getRemoteUser(content.username, mention);
-      userRemote && (await addToUsersList(userRemote, undefined /* threadUrl */, true));
+      if (userRemote) {
+        await addToUsersList(userRemote, undefined /* threadUrl */, true);
+      }
     }
   }
 
@@ -140,7 +150,7 @@ export async function webSubPush(req: NextApiRequest, content: Content) {
       method: 'POST',
       body: new URLSearchParams({ 'hub.url': contentUrl(content, req), 'hub.mode': 'publish' }),
     });
-  } catch (ex) {
+  } catch {
     // Not a big deal if this fails.
   }
 }

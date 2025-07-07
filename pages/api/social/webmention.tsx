@@ -47,7 +47,7 @@ export async function reply(
         target: content.thread || userRemote.profileUrl,
       }),
     });
-  } catch (ex) {
+  } catch {
     // Not a big deal if this fails.
     // TODO(mime): add logging later.
   }

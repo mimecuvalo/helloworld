@@ -30,7 +30,6 @@ const contentRemote = {
   // },
 
   Query: {
-    // eslint-disable-next-line
     allContentRemote: combineResolvers(
       isAdmin,
       async (parent: ContentRemoteResolvers, args: any, { prisma }: Context) => {
@@ -111,7 +110,6 @@ const contentRemote = {
       }
     ),
 
-    // eslint-disable-next-line
     fetchUserTotalCounts: combineResolvers(
       isAuthor,
       async (parent: ContentRemoteResolvers, args: any, { currentUsername, prisma }: Context) => {
@@ -141,7 +139,6 @@ const contentRemote = {
       }
     ),
 
-    // eslint-disable-next-line
     fetchFeedCounts: combineResolvers(
       isAuthor,
       async (parent: ContentRemoteResolvers, args: any, { currentUsername, prisma }: Context) => {
@@ -372,7 +369,6 @@ const contentRemote = {
       }
     ),
 
-    // eslint-disable-next-line
     markAllFeedsAsRead: combineResolvers(
       isAuthor,
       async (parent: ContentRemoteResolvers, args: any, { currentUsername, prisma }: Context) => {

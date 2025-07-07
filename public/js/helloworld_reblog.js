@@ -39,7 +39,7 @@
       try {
         const iframeImages = iframes[i].contentDocument.getElementsByTagName('IMG');
         parseImages(iframeImages);
-      } catch (ex) {
+      } catch {
         /* do nothing */
       }
     }

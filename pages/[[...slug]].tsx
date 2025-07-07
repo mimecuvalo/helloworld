@@ -67,8 +67,10 @@ export default function Content({ username, name, host }: { username: string; na
     }
 
     return () => {
-      // @ts-ignore this is fine.
-      swipeListener?.current && swipeListener.current.off();
+      if (swipeListener.current) {
+        // @ts-ignore this is fine.
+        swipeListener.current.off();
+      }
       swipeListener.current = null;
     };
   }, [loading, data, router, currentCanonicalUrl]);
@@ -79,7 +81,6 @@ export default function Content({ username, name, host }: { username: string; na
     }
 
     swipeListener.current = SwipeListener(contentBase.current);
-    // eslint-disable-next-line
     contentBase.current.addEventListener('swipe', (e: any) => {
       const directions = e.detail.directions;
       if (directions.left) {
@@ -175,7 +176,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req, res 
         name: username ? name || 'home' : '',
       },
     });
-  } catch (ex) {
+  } catch {
     return {
       props: { username, name },
     };

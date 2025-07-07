@@ -15,7 +15,6 @@ export async function getS3Info(filename: string) {
   return data;
 }
 
-// eslint-disable-next-line
 export async function uploadFileUsingS3Info(data: any, file: Blob, filename: string) {
   const { bucket, key } = data.fields;
 

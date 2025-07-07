@@ -155,7 +155,7 @@ export default function DashboardEditor({ username }: { username: string }) {
           postContent: Object.assign({}, variables, { __typename: 'Content' }),
         },
       });
-    } catch (ex) {
+    } catch {
       setToastMsg(errorMsg);
       setIsPostSuccess(false);
       return;
@@ -407,7 +407,7 @@ export async function unfurl(url: string) {
         'Content-Type': 'application/json',
       },
     });
-  } catch (ex) {
+  } catch {
     return { result: '', isError: true, wasMediaFound: false, isImg: false, thumb: '', title: '' };
   }
 

@@ -94,7 +94,7 @@ function sendWebfingerAsJson(req: NextApiRequest, res: NextApiResponse, user: Us
 }
 
 function getAccountInfo(req: NextApiRequest, user: User) {
-  const { username, magicKey } = user;
+  const { username } = user;
   const resource = profileUrl(user.username, req);
 
   const account = `acct:${username}@${req.headers['host']}`;
@@ -147,6 +147,7 @@ function WebFinger({ req, user }: { req: NextApiRequest; user: User }) {
   );
 }
 
+// eslint-disable-next-line react/display-name
 const createElementFactory = (type: string) => (p: Record<string, any>) => {
   const { children, ...props } = p;
   return createElement(type, props, children);

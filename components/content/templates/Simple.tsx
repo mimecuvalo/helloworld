@@ -22,7 +22,6 @@ const View = styled('div', { label: 'SimpleView' })`
 
 const customRenderers = {
   // N.B. This div/span wrapper matches the structure, more or less, of the Outline editor's img wrapper.
-  // eslint-disable-next-line
   img: (props: any) => (
     <span className={`image image-${props.title || ''}`}>
       <span className="image-inner-wrapper">

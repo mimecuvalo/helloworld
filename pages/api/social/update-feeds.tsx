@@ -24,7 +24,7 @@ async function getFreshContent() {
     let feedResponseText;
     try {
       feedResponseText = await retrieveFeed(userRemote.feedUrl);
-    } catch (ex) {
+    } catch {
       continue;
     }
 

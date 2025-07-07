@@ -14,7 +14,6 @@ import { combineResolvers } from 'graphql-resolvers';
 
 const UserRemote = {
   Query: {
-    // eslint-disable-next-line
     allUsersRemote: combineResolvers(
       isAdmin,
       async (parent: UserRemotePrivateResolvers, args: any, { prisma }: Context) => {
@@ -29,7 +28,6 @@ const UserRemote = {
       }
     ),
 
-    // eslint-disable-next-line
     async fetchFollowers(parent: UserRemotePrivateResolvers, args: any, { currentUsername, prisma }: Context) {
       return await prisma.userRemote.findMany({
         select: {
@@ -46,7 +44,6 @@ const UserRemote = {
       });
     },
 
-    // eslint-disable-next-line
     async fetchFollowing(parent: UserRemotePrivateResolvers, args: any, { currentUsername, prisma }: Context) {
       return await prisma.userRemote.findMany({
         select: { username: true, name: true, profileUrl: true, avatar: true, favicon: true, sortType: true },

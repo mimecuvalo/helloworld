@@ -16,7 +16,7 @@ Sentry.init({
   // that it will also get attached to your source maps
 
   integrations: [
-    new Sentry.Integrations.Breadcrumbs({
+    Sentry.breadcrumbsIntegration({
       // N.B. Disabled this option because it's garbage and ruins all console.log stack traces.
       console: false,
     }),

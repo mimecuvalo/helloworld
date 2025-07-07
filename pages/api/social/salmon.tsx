@@ -24,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     magic.verify(req.body, userRemote.magicKey);
-  } catch (ex) {
+  } catch {
     return res.status(401).end();
   }
 

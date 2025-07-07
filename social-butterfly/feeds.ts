@@ -68,7 +68,9 @@ export async function mapFeedAndInsertIntoDb(userRemote: UserRemote, feedEntries
   }
 
   try {
-    newEntries.length && (await saveRemoteContent(newEntries));
+    if (newEntries.length) {
+      await saveRemoteContent(newEntries);
+    }
     console.debug(
       `${userRemote.localUsername} - ${userRemote.profileUrl}: inserted ${newEntries.length} entries into db.`
     );

@@ -40,7 +40,6 @@ const customCache: { [key: string]: any } = {};
 
 const Content = {
   Query: {
-    // eslint-disable-next-line
     allContent: combineResolvers(isAdmin, async (parent: ContentResolvers, args: any, { prisma }: Context) => {
       return await prisma.content.findMany();
     }),
@@ -326,8 +325,8 @@ const Content = {
           item.externalLink = youTubeSeriesMatch
             ? `https://www.youtube.com/playlist?list=${youTubeSeriesMatch[1]}`
             : youTubeMatch
-            ? `https://youtu.be/${youTubeMatch[1]}`
-            : link?.[0];
+              ? `https://youtu.be/${youTubeMatch[1]}`
+              : link?.[0];
         });
       }
 

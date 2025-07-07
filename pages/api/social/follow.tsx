@@ -41,7 +41,9 @@ export async function follow(req: NextApiRequest, currentUser: User, profileUrl:
     console.error(ex);
   }
 
-  req && userRemote && activityStreamsFollow(req, currentUser, userRemote, true /* isFollow */);
+  if (req && userRemote) {
+    activityStreamsFollow(req, currentUser, userRemote, true /* isFollow */);
+  }
 
   return userRemote;
 }

@@ -23,7 +23,7 @@ export async function getLRDD(url: string) {
     if (!lrddUrl) {
       lrddUrl = $('link[rel="lrdd"]').attr('template');
     }
-  } catch (ex) {
+  } catch {
     /* do nothing */
   }
 
@@ -37,7 +37,7 @@ export async function getWebfinger(lrddUrl: string, uri: string) {
   let webfingerDoc, webfingerInfo;
   try {
     webfingerDoc = await fetchText(webfingerUrl);
-  } catch (ex) {
+  } catch {
     try {
       // Fallback to probing for username@hostname if possible. Some sites like socialhome require this.
       const parsedUrl = new URL(uri);
@@ -47,7 +47,7 @@ export async function getWebfinger(lrddUrl: string, uri: string) {
         .slice(-1)}@${parsedUrl.hostname}`;
       const acctWebfingerUrl = lrddUrl.replace('{uri}', encodeURIComponent(acct));
       webfingerDoc = await fetchText(acctWebfingerUrl);
-    } catch (ex) {
+    } catch {
       return null;
     }
   }
@@ -70,7 +70,7 @@ export async function getWebfinger(lrddUrl: string, uri: string) {
       profileUrl: json.aliases.find((alias: string) => alias.startsWith('https:') || alias.startsWith('http:')),
     };
     success = true;
-  } catch (ex) {
+  } catch {
     // Fall-through, and try XML parsing.
   }
 
@@ -90,7 +90,7 @@ export async function getWebfinger(lrddUrl: string, uri: string) {
           $('alias').last().text(),
         activityPubInboxUrl: '',
       };
-    } catch (ex) {
+    } catch {
       return null;
     }
   }
@@ -104,7 +104,7 @@ export async function getWebfinger(lrddUrl: string, uri: string) {
       // the actor JSON. should rename this field to reflect that it is has magic or PEM format for public key.
       webfingerInfo.magicKey = actorJSON['publicKey']['publicKeyPem'];
       webfingerInfo.activityPubInboxUrl = actorJSON['inbox'];
-    } catch (ex) {
+    } catch {
       // Ignore, if we can't get the actor info.
     }
   }
@@ -123,7 +123,7 @@ export async function getHTML(url: string) {
   try {
     const html = await fetchText(url);
     $ = cheerio.load(html);
-  } catch (ex) {
+  } catch {
     return null;
   }
 

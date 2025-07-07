@@ -99,7 +99,7 @@ export default function Editor({ name, section, album, onBlur, onChange, onMedia
       }
 
       onChange(name, value);
-    } catch (ex) {
+    } catch {
       // XXX(mime): initial load causes an exception. weird.
       // investigate further later.
     }
@@ -110,7 +110,7 @@ export default function Editor({ name, section, album, onBlur, onChange, onMedia
       const url = await uploadFileToS3(file, file.name, section, album);
       onMediaAdd(url);
       return url;
-    } catch (ex) {
+    } catch {
       setToastMsg('Failed to upload image.');
     }
   };
