@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`renders homepage unchanged 1`] = `
 <div>
@@ -13,7 +13,7 @@ exports[`renders homepage unchanged 1`] = `
       🙃
     </span>
     <h1
-      class="MuiTypography-root MuiTypography-h1 css-tjvwk5-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-h1 css-17fn2vo-MuiTypography-root"
     >
       <span
         class="notranslate"
@@ -39,7 +39,7 @@ exports[`renders homepage unchanged 1`] = `
       >
         try going back to the 
         <a
-          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineHover css-2y06fq-MuiTypography-root-MuiLink-root"
+          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineHover css-11ywehy-MuiTypography-root-MuiLink-root"
           href="/"
         >
           beginning
