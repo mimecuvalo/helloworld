@@ -12,7 +12,6 @@ interface Window {
 
 declare module 'js-cookie';
 declare module 'magic-signatures';
-declare module 'md5.js';
 declare module 'swipe-listener';
 
 declare namespace React.JSX {

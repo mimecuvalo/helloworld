@@ -102,12 +102,8 @@ const nextConfig: NextConfig = {
       })
     );
 
-    // Commented out: This optimization requires properly compiled AST format messages
-    // The current compilation setup doesn't produce AST format, so we need the parser in production
-    // if (!dev) {
-    //   // https://formatjs.io/docs/guides/advanced-usage#react-intl-without-parser-40-smaller
-    //   config.resolve.alias['@formatjs/icu-messageformat-parser'] = '@formatjs/icu-messageformat-parser/no-parser';
-    // }
+    // https://formatjs.io/docs/guides/advanced-usage#react-intl-without-parser-40-smaller
+    config.resolve.alias['@formatjs/icu-messageformat-parser'] = '@formatjs/icu-messageformat-parser/no-parser';
 
     return config;
   },

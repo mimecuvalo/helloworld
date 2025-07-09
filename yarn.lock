@@ -13044,7 +13044,6 @@ __metadata:
     lint-staged: "npm:16.1.2"
     lodash: "npm:4.17.21"
     magic-signatures: "npm:2.0.0"
-    md5.js: "npm:1.3.5"
     micro: "npm:10.0.1"
     mime: "npm:4.0.7"
     nanoid: "npm:5.1.5"
@@ -15940,7 +15939,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"md5.js@npm:1.3.5, md5.js@npm:^1.3.4":
+"md5.js@npm:^1.3.4":
   version: 1.3.5
   resolution: "md5.js@npm:1.3.5"
   dependencies:

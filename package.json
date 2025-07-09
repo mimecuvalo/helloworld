@@ -32,7 +32,7 @@
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint --fix .",
     "i18n:extract": "formatjs extract 'pages/**/*.ts*' 'components/**/*.ts*' --out-file i18n/en.json --additional-component-names F --id-interpolation-pattern '[md5:contenthash:hex:10]' --format smartling",
-    "i18n:compile": "formatjs compile-folder i18n i18n-compiled-lang --format smartling",
+    "i18n:compile": "formatjs compile-folder i18n i18n-compiled-lang --format smartling --ast",
     "alex": "alex .",
     "analyze": "source-map-explorer .next/static/**/*.js",
     "codegen": "graphql-codegen",
@@ -76,7 +76,6 @@
     "js-cookie": "3.0.5",
     "lodash": "4.17.21",
     "magic-signatures": "2.0.0",
-    "md5.js": "1.3.5",
     "micro": "10.0.1",
     "mime": "4.0.7",
     "nanoid": "5.1.5",
@@ -169,6 +168,9 @@
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
       "prettier --write"
+    ],
+    "**/*.{js,jsx,ts,tsx,json}": [
+      "yarn i18n:extract && yarn i18n:compile"
     ],
     "**/*/(schema|resolvers)/*.ts": [
       "yarn codegen"

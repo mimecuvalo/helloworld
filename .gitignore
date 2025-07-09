@@ -42,9 +42,6 @@ sessions/
 # vim
 *.sw[a-p]
 
-# i18n
-i18n-compiled-lang
-
 # storybook
 build-storybook.log
 storybook-static

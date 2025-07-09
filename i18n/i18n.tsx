@@ -13,7 +13,6 @@ import {
 } from 'react-intl';
 import { FormatXMLElementFn } from 'intl-messageformat';
 
-import MD5 from 'md5.js';
 import { ComponentPropsWithoutRef } from 'react';
 
 // Re-export everything and override below what we want to override.
@@ -26,17 +25,14 @@ export const FormattedNumber: React.FC<any> = originalFormattedNumber;
 
 const INTERNAL_LOCALES = ['xx-AE', 'xx-LS'];
 
-// This matches the extraction tool pattern:
-//   --id-interpolation-pattern '[md5:contenthash:hex:10]'
-function generateId({ id, description, defaultMessage }: MessageDescriptor) {
+// We use `@swc/plugin-formatjs` in `next.config.ts` to generate IDs for messages.
+// This should always have an ID, so we throw an error if it's missing.
+function generateId({ id }: MessageDescriptor) {
   if (id) {
     return id;
   }
 
-  return new MD5()
-    .update(description ? `${defaultMessage}#${description}` : defaultMessage)
-    .digest('hex')
-    .slice(0, 10);
+  throw new Error('MessageDescriptor must have an id');
 }
 
 export function F(props: ComponentPropsWithoutRef<typeof FormattedMessage>) {
