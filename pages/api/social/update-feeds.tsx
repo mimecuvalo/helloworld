@@ -3,7 +3,7 @@ import { getRemoteAllUsers, removeOldRemoteContent } from 'social-butterfly/db';
 import { parseFeedAndInsertIntoDb, retrieveFeed } from 'social-butterfly/feeds';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'POST' && req.headers.authorization === `Bearer ${process.env.CRON_JOB_SECRET}`) {
+  if (req.method === 'POST' && req.headers.authorization === `Bearer ${process.env.CRON_SECRET}`) {
     await pruneOlderContent();
     await getFreshContent();
 

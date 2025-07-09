@@ -1,0 +1,7 @@
+{
+  "crons": {
+    "/api/update-feeds.tsx": {
+      "schedule": "0 1 * * *"
+    }
+  }
+}
