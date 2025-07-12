@@ -4,7 +4,7 @@ import { F, defineMessages, useIntl } from 'i18n';
 
 import Delete from 'components/dashboard/actions/Delete';
 import Favorite from 'components/dashboard/actions/Favorite';
-import UserContext from 'app/UserContext';
+import UserContext from '@/application/UserContext';
 import { useContext } from 'react';
 
 const Comment = styled(ListItem)`

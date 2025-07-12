@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 
 import { Button } from 'components';
-import authServerSideProps from 'app/authServerSideProps';
+import authServerSideProps from '@/application/authServerSideProps';
 
 // TODO(mime): This has a lot of work left to do.
 // In particular, need to be able to unbundle server side code so we properly require local code()

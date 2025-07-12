@@ -1,6 +1,6 @@
 import { Container, Link, List, ListItem } from 'components';
 
-import authServerSideProps from 'app/authServerSideProps';
+import authServerSideProps from '@/application/authServerSideProps';
 
 export default function AdminApp() {
   return (

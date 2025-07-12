@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import authenticate from 'app/authentication';
+import authenticate from '@/application/authentication';
 
 export default authenticate(async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Also, this is disabled by default because it's so powerful (a powerful footgun, that is).

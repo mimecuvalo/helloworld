@@ -2,7 +2,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Link, Typography, styled
 import { useEffect, useState } from 'react';
 
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import authServerSideProps from 'app/authServerSideProps';
+import authServerSideProps from '@/application/authServerSideProps';
 
 const Container = styled('div')`
   max-width: 75vw;

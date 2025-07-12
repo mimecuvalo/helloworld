@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { MAX_FILE_SIZE } from 'util/constants';
 import { User } from '@prisma/client';
-import authenticate from 'app/authentication';
+import authenticate from '@/application/authentication';
 import aws from 'aws-sdk';
 import mime from 'mime/lite';
 

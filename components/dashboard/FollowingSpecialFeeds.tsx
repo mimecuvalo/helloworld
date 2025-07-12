@@ -5,7 +5,7 @@ import { F } from 'i18n';
 import FollowingAllMenu from './FollowingAllMenu';
 import FollowingSpecialFeedCountsQuery from './FollowingSpecialFeedCountsQuery';
 import { FormattedNumber } from 'i18n';
-import UserContext from 'app/UserContext';
+import UserContext from '@/application/UserContext';
 import { UserRemotePublic } from 'data/graphql-generated';
 import { useContext } from 'react';
 import { useQuery } from '@apollo/client';

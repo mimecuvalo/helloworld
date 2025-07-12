@@ -1,6 +1,6 @@
 import { Comment, ContentAndUserQuery, Content as ContentType, Favorite, UserPublic } from 'data/graphql-generated';
 import { CssBaseline, GlobalStyles } from '@mui/material';
-import { addApolloState, initializeApollo } from 'app/apollo';
+import { addApolloState, initializeApollo } from '@/application/apollo';
 import { buildUrl, contentUrl } from 'util/url-factory';
 import { themeGlobalCss, themes } from 'styles/theme';
 import { useEffect, useRef, useState } from 'react';

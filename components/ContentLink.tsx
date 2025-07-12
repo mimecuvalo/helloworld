@@ -3,7 +3,7 @@ import { ReactNode, useContext } from 'react';
 import { Content } from 'data/graphql-generated';
 import { Link } from 'components';
 import { LinkProps } from '@mui/material';
-import UserContext from 'app/UserContext';
+import UserContext from '@/application/UserContext';
 import { contentUrl } from 'util/url-factory';
 
 export default function ContentLink(props: {

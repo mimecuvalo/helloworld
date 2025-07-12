@@ -13,11 +13,11 @@ import { F, defineMessages, useIntl } from 'i18n';
 import { MouseEvent, useContext, useEffect, useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 
-import { $Experiment } from 'app/experiments';
+import { $Experiment } from '@/application/experiments';
 import Cookies from 'js-cookie';
 import { Help as HelpIcon } from '@mui/icons-material';
 import Link from './Link';
-import UserContext from 'app/UserContext';
+import UserContext from '@/application/UserContext';
 
 const HelpContainer = styled('div')`
   display: inline-block;

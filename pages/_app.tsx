@@ -1,15 +1,15 @@
 import 'styles/globals.css';
 
-import * as serviceWorkerRegistration from 'app/serviceWorkerRegistration';
+import * as serviceWorkerRegistration from '@/application/serviceWorkerRegistration';
 
-import { APOLLO_STATE_PROP_NAME, useApollo } from 'app/apollo';
+import { APOLLO_STATE_PROP_NAME, useApollo } from '@/application/apollo';
 import { ApolloClient, ApolloProvider, NormalizedCacheObject, gql } from '@apollo/client';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import { DebugWrapper, Header } from 'components';
 import { IntlProvider, setupCreateIntl } from 'i18n';
 import { Marck_Script, Press_Start_2P, Noto_Color_Emoji } from 'next/font/google';
 import { createEmotionCache, muiTheme } from 'styles';
-import { disposeAnalytics, setupAnalytics } from 'app/analytics';
+import { disposeAnalytics, setupAnalytics } from '@/application/analytics';
 import { useEffect, useState } from 'react';
 
 import { Analytics } from '@vercel/analytics/react';
@@ -19,10 +19,10 @@ import ErrorBoundary from 'components/error/ErrorBoundary';
 import { F } from 'i18n';
 import Head from 'next/head';
 import { ThemeProvider } from '@mui/material/styles';
-import UserContext from 'app/UserContext';
+import UserContext from '@/application/UserContext';
 import { UserPrivate } from 'data/graphql-generated';
 import { useRouter } from 'next/router';
-import { trackWebVitals } from 'app/reportWebVitals';
+import { trackWebVitals } from '@/application/reportWebVitals';
 import { useReportWebVitals } from 'next/web-vitals';
 import { UserProvider, useUser } from '@auth0/nextjs-auth0/client';
 

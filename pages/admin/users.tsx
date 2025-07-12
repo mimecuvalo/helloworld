@@ -5,7 +5,7 @@ import { FetchAllUsersQuery } from 'data/graphql-generated';
 import Forbidden from 'components/error/403';
 import Head from 'next/head';
 import Unauthorized from 'components/error/401';
-import UserContext from 'app/UserContext';
+import UserContext from '@/application/UserContext';
 import { styled } from 'components';
 import { useContext } from 'react';
 

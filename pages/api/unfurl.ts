@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { createAbsoluteUrl, fetchUrl } from 'util/crawler';
 
 import _ from 'lodash';
-import authenticate from 'app/authentication';
+import authenticate from '@/application/authentication';
 import * as cheerio from 'cheerio';
 
 const IFRAME_ALLOW = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';

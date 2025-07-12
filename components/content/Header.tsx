@@ -3,7 +3,7 @@ import { Tooltip, Typography, styled } from 'components';
 import { Content } from 'data/graphql-generated';
 import ContentLink from 'components/ContentLink';
 import { F } from 'i18n';
-import UserContext from 'app/UserContext';
+import UserContext from '@/application/UserContext';
 import { useContext } from 'react';
 import { transientOptions } from '@/util/css';
 

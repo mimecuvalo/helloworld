@@ -2,7 +2,7 @@ import { Button, Link, List, ListItem, styled } from 'components';
 import { useContext, useEffect, useState } from 'react';
 
 import { F } from 'i18n';
-import UserContext from 'app/UserContext';
+import UserContext from '@/application/UserContext';
 import { profileUrl } from 'util/url-factory';
 
 const StyledList = styled(List)`

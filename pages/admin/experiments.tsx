@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { Typography } from 'components';
-import authServerSideProps from 'app/authServerSideProps';
+import authServerSideProps from '@/application/authServerSideProps';
 
 export default function Experiments() {
   const [experiments, setExperiments] = useState({});

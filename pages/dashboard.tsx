@@ -10,9 +10,9 @@ import Following from 'components/dashboard/Following';
 import Head from 'next/head';
 import MyFeed from 'components/content/Feed';
 import Tools from 'components/dashboard/Tools';
-import UserContext from 'app/UserContext';
+import UserContext from '@/application/UserContext';
 import { UserRemotePublic } from 'data/graphql-generated';
-import authServerSideProps from 'app/authServerSideProps';
+import authServerSideProps from '@/application/authServerSideProps';
 import baseTheme from 'styles';
 import { transientOptions } from 'util/css';
 

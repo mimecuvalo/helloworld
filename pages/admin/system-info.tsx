@@ -1,5 +1,5 @@
 import { Typography } from 'components';
-import authServerSideProps from 'app/authServerSideProps';
+import authServerSideProps from '@/application/authServerSideProps';
 
 export default function SystemInfo() {
   return (
