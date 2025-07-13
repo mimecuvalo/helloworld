@@ -1,4 +1,4 @@
-import Page404 from 'pages/404';
+import Page404 from 'app/[lang]/not-found';
 import { render } from 'util/testing';
 
 it('renders homepage unchanged', () => {

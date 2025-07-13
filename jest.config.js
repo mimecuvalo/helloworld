@@ -12,15 +12,15 @@ const customJestConfig = {
   moduleNameMapper: {
     // Handle module aliases (this will be automatically configured for you soon)
     '^@/components/(.*)$': '<rootDir>/components/$1',
-    '^@/pages/(.*)$': '<rootDir>/pages/$1',
-    '^app/(.*)$': '<rootDir>/app/$1',
+    '^@/app/(.*)$': '<rootDir>/app/$1',
+    '^application/(.*)$': '<rootDir>/application/$1',
     '^components$': '<rootDir>/components',
     '^components/(.*)$': '<rootDir>/components/$1',
     '^data/(.*)$': '<rootDir>/data/$1',
     '^hooks/(.*)$': '<rootDir>/hooks/$1',
     '^i18n$': '<rootDir>/i18n',
     '^i18n/(.*)$': '<rootDir>/i18n/$1',
-    '^pages/(.*)$': '<rootDir>/pages/$1',
+    '^app/(.*)$': '<rootDir>/app/$1',
     '^styles$': '<rootDir>/styles',
     '^util/(.*)$': '<rootDir>/util/$1',
   },

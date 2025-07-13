@@ -9,5 +9,239 @@
       }
     ],
     "variants_enabled": true
+  },
+  "050a298166": {
+    "message": "paste url to follow"
+  },
+  "06a943c59f": {
+    "message": "search"
+  },
+  "099af53f60": {
+    "message": "delete"
+  },
+  "0e002f7647": {
+    "message": "powered by {br} {link}"
+  },
+  "106a6c241b": {
+    "message": "home"
+  },
+  "24c29702dc": {
+    "message": "Search:"
+  },
+  "2511fc6cb0": {
+    "message": "following"
+  },
+  "2a552760ef": {
+    "message": "{count, plural, =0 {no robot views} one {# robot view} other {# robot views}}"
+  },
+  "2d000429fd": {
+    "message": "Nothing to read right now!"
+  },
+  "2f9a4413fa": {
+    "message": "keep unread"
+  },
+  "30b9f6c879": {
+    "message": "reblog bookmarklet"
+  },
+  "350f9d6822": {
+    "message": "forbidden"
+  },
+  "36fd540552": {
+    "message": "unauthorized"
+  },
+  "3d728e1b6e": {
+    "message": "we've logged this error and we'll fix it soon."
+  },
+  "3f947b57fc": {
+    "message": "person gesturing no"
+  },
+  "402e7a0877": {
+    "message": "Success!"
+  },
+  "4236a440a6": {
+    "message": "logout"
+  },
+  "42b90196b4": {
+    "message": "post"
+  },
+  "44f00c21a1": {
+    "message": "try going back to the <a>beginning</a>."
+  },
+  "4829262cec": {
+    "message": "Experiments"
+  },
+  "4937452da0": {
+    "message": "sort by newest"
+  },
+  "529723465a": {
+    "message": "view thread"
+  },
+  "5754749583": {
+    "message": "mark all feeds as read"
+  },
+  "5a2351b91b": {
+    "message": "internal server error"
+  },
+  "5c342ee9ce": {
+    "message": "followers"
+  },
+  "60f3b1ff9b": {
+    "message": "(hidden)"
+  },
+  "64af1b1f5f": {
+    "message": "upside down face"
+  },
+  "690d8ebdfb": {
+    "message": "i'm sorry, dave. i'm afraid i can't do that."
+  },
+  "6a26f54883": {
+    "message": "Help"
+  },
+  "6b06791057": {
+    "message": "Test language alternative"
+  },
+  "6cac132a3b": {
+    "message": "try <a>logging in</a>."
+  },
+  "7253d1f504": {
+    "message": "read all"
+  },
+  "7b3ccaa0c1": {
+    "message": "mark all as read"
+  },
+  "7c1d61bf89": {
+    "message": "view site"
+  },
+  "7c673b1dab": {
+    "message": "(updated {date})"
+  },
+  "7d5dfff022": {
+    "message": "{username} posted on {date}"
+  },
+  "7e95f4b1b6": {
+    "message": "Error updating content."
+  },
+  "7f2da27591": {
+    "message": "reblog"
+  },
+  "803fbc4585": {
+    "message": "view all items"
+  },
+  "835ca8f9cf": {
+    "message": "it's not you, it's us. our server is monkeying around."
+  },
+  "87ff166137": {
+    "message": "your feed"
+  },
+  "88d162b834": {
+    "message": "unfollow"
+  },
+  "8a6b6ea3aa": {
+    "message": "favorite"
+  },
+  "8b04d5e377": {
+    "message": "first"
+  },
+  "951d4dff3c": {
+    "message": "thumbnail"
+  },
+  "960284559f": {
+    "message": "An error has occurred while rendering this page."
+  },
+  "9672391408": {
+    "message": "Error subscribing to new feed."
+  },
+  "98088e4b13": {
+    "message": "Something went wrong. 😦"
+  },
+  "98bd1c4568": {
+    "message": "last"
+  },
+  "99dea78007": {
+    "message": "Login"
+  },
+  "9de70f6546": {
+    "message": "visit"
+  },
+  "a5d4910609": {
+    "message": "comments"
+  },
+  "a99500c918": {
+    "message": "by {creator}"
+  },
+  "aaca0f5eb4": {
+    "message": "avatar"
+  },
+  "b004d4b8c6": {
+    "message": "Error posting content."
+  },
+  "b21522fa2f": {
+    "message": "favorites"
+  },
+  "b61541208d": {
+    "message": "Menu"
+  },
+  "b689884ca9": {
+    "message": "follower options"
+  },
+  "baf33637a2": {
+    "message": "You need to enable JavaScript to run this app."
+  },
+  "bd397bea18": {
+    "message": "follow bookmarklet"
+  },
+  "c6701602de": {
+    "message": "Something went wrong!"
+  },
+  "cdcfbe51f7": {
+    "message": "follow back"
+  },
+  "d095c31656": {
+    "message": "sort by oldest"
+  },
+  "d0cab90d8d": {
+    "message": "next"
+  },
+  "d0fb5e8106": {
+    "message": "try logging in."
+  },
+  "d40cbcb573": {
+    "message": "see no evil, hear no evil, speak no evil monkeys"
+  },
+  "d46327daae": {
+    "message": "{user}: favorited this post."
+  },
+  "d8f4a19935": {
+    "message": "not found"
+  },
+  "dc7161be3d": {
+    "message": "dashboard"
+  },
+  "e24d4f227e": {
+    "message": "No content here yet."
+  },
+  "e3afed0047": {
+    "message": "Admin"
+  },
+  "e84afaab83": {
+    "message": "reply"
+  },
+  "e8d169f54a": {
+    "message": "{count, plural, =0 {no human views} one {# human view} other {# human views}}"
+  },
+  "f291840f72": {
+    "message": "{date}"
+  },
+  "f31e88af11": {
+    "message": "user options"
+  },
+  "f915a95e60": {
+    "message": "Try again"
+  },
+  "fcb08b164a": {
+    "message": "prev"
+  },
+  "search.untitled": {
+    "message": "untitled"
   }
 }

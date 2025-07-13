@@ -1,11 +1,11 @@
 import { createAbsoluteUrl, fetchJSON, fetchText } from 'util/crawler';
 import { getRemoteUser, saveRemoteUser } from './db';
 
-import { NextApiRequest } from 'next';
 import { UserRemote } from '@prisma/client';
 import * as cheerio from 'cheerio';
 import { discoverAndParseFeedFromUrl } from './feeds';
 import { ensureAbsoluteUrl } from 'util/url-factory';
+import { NextRequest } from 'next/server';
 
 // Get the /.well-known/host-meta resource.
 // In other words, get the link to the WebFinger resource.
@@ -130,7 +130,7 @@ export async function getHTML(url: string) {
   return $;
 }
 
-export async function discoverUserRemoteInfoSaveAndSubscribe(req: NextApiRequest, url: string, localUsername: string) {
+export async function discoverUserRemoteInfoSaveAndSubscribe(req: NextRequest, url: string, localUsername: string) {
   const userRemote = await getUserRemoteInfo(url, localUsername);
 
   const existingUserRemote = await getRemoteUser(userRemote.localUsername || '', userRemote.profileUrl || '');

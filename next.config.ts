@@ -14,6 +14,7 @@ const sentryWebpackPluginOptions = {
   //   urlPrefix, include, ignore
 
   silent: true, // Suppresses all logs
+  hideSourceMaps: true, // Moved from deprecated sentry config
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options.
 };
@@ -44,18 +45,6 @@ const nextConfig: NextConfig = {
         },
       ],
     ],
-  },
-
-  i18n: {
-    locales: ['en', 'fr'],
-    defaultLocale: 'en',
-  },
-
-  // N.B. Production builds complain that this is not allowed (warning in Next.js version 13)
-  // However, it's ok for now. In the future, Sentry v8 will make this the default, it will
-  // be safe to remove then.
-  sentry: {
-    hideSourceMaps: true,
   },
 
   async redirects() {
@@ -102,7 +91,7 @@ const nextConfig: NextConfig = {
       })
     );
 
-    // https://formatjs.io/docs/guides/advanced-usage#react-intl-without-parser-40-smaller
+    // https://formatjs.io/docs/guides/advanced-usage\#react-intl-without-parser-40-smaller
     config.resolve.alias['@formatjs/icu-messageformat-parser'] = '@formatjs/icu-messageformat-parser/no-parser';
 
     return config;
@@ -135,4 +124,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-module.exports = withSentryConfig(nextConfig, sentryWebpackPluginOptions);
+export default withSentryConfig(nextConfig, sentryWebpackPluginOptions);

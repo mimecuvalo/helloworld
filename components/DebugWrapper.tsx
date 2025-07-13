@@ -1,3 +1,5 @@
+'use client';
+
 import { Suspense, lazy, memo, useEffect, useState } from 'react';
 
 import Help from './Help';

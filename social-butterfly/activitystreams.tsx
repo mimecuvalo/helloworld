@@ -1,5 +1,5 @@
 import { Content, ContentRemote, User, UserRemote } from '@prisma/client';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest } from 'next/server';
 import { buildUrl, contentUrl, profileUrl } from 'util/url-factory';
 import { getActivityPubActor, getUserRemoteInfo } from './discover-user';
 import {
@@ -23,18 +23,19 @@ import { sanitizeHTML } from 'util/crawler';
 
 //import syndicate from './syndicate';
 
-export async function accept(req: NextApiRequest, contentOwner: User, userRemote: UserRemote) {
+export async function accept(req: NextRequest, contentOwner: User, userRemote: UserRemote, body?: any) {
+  const requestBody = body || (await req.json());
   const id = buildUrl({
     req,
     pathname: '/api/social/activitypub/accept',
-    searchParams: { id: nanoid(10), resource: req.body },
+    searchParams: { id: nanoid(10), resource: requestBody },
   });
-  const message = createGenericMessage('Accept', req, id, contentOwner, req.body);
+  const message = createGenericMessage('Accept', req, id, contentOwner, requestBody);
   send(req, userRemote, contentOwner, message);
 }
 
 export async function like(
-  req: NextApiRequest,
+  req: NextRequest,
   contentOwner: User,
   contentRemote: ContentRemote,
   userRemote: UserRemote,
@@ -57,7 +58,7 @@ export async function like(
 }
 
 export async function follow(
-  req: NextApiRequest,
+  req: NextRequest,
   contentOwner: User,
   userRemote: Pick<UserRemote, 'profileUrl'>,
   // TODO(mime): add back unfollow
@@ -74,7 +75,7 @@ export async function follow(
 }
 
 export async function reply(
-  req: NextApiRequest,
+  req: NextRequest,
   contentOwner: User,
   content: Content,
   userRemote: UserRemote,
@@ -84,7 +85,7 @@ export async function reply(
   send(req, userRemote, contentOwner, message);
 }
 
-async function send(req: NextApiRequest, userRemote: UserRemote, contentOwner: User, message: GenericMessage) {
+async function send(req: NextRequest, userRemote: UserRemote, contentOwner: User, message: GenericMessage) {
   try {
     if (userRemote?.activityPubInboxUrl) {
       activityPubSend(req, userRemote, contentOwner, message);
@@ -97,7 +98,7 @@ async function send(req: NextApiRequest, userRemote: UserRemote, contentOwner: U
   }
 }
 
-export async function salmonSend(req: NextApiRequest, userRemote: UserRemote, contentOwner: User, msg: GenericMessage) {
+export async function salmonSend(req: NextRequest, userRemote: UserRemote, contentOwner: User, msg: GenericMessage) {
   const data = JSON.stringify(msg);
   const body = magic.sign({ data, data_type: 'application/ld+json' }, contentOwner.privateKey);
   body.sigs[0].value = magic.btob64u(body.sigs[0].value);
@@ -109,12 +110,7 @@ export async function salmonSend(req: NextApiRequest, userRemote: UserRemote, co
   });
 }
 
-async function activityPubSend(
-  req: NextApiRequest,
-  userRemote: UserRemote,
-  contentOwner: User,
-  message: GenericMessage
-) {
+async function activityPubSend(req: NextRequest, userRemote: UserRemote, contentOwner: User, message: GenericMessage) {
   const { currentDate, signatureHeader } = signMessage(req, contentOwner, userRemote);
   const inboxUrl = new URL(userRemote.activityPubInboxUrl || '');
 
@@ -135,7 +131,7 @@ async function activityPubSend(
   }
 }
 
-function signMessage(req: NextApiRequest, contentOwner: User, userRemote: UserRemote) {
+function signMessage(req: NextRequest, contentOwner: User, userRemote: UserRemote) {
   const currentDate = new Date();
   const inboxUrl = new URL(userRemote.activityPubInboxUrl || '');
   const signer = crypto
@@ -167,7 +163,7 @@ type GenericMessage = {
 
 export function createGenericMessage(
   type: string,
-  req: NextApiRequest,
+  req: NextRequest,
   id: string,
   localUser: User,
   object: Activity | string,
@@ -193,7 +189,7 @@ export function createGenericMessage(
 }
 
 export async function createArticle(
-  req: NextApiRequest,
+  req: NextRequest,
   localContent: Content,
   localUser: User,
   opt_follower?: UserRemote[]
@@ -267,8 +263,7 @@ export type Activity = {
 
 export async function handle(
   type: string,
-  req: NextApiRequest,
-  res: NextApiResponse,
+  req: NextRequest,
   activity: GenericMessage,
   user: User,
   userRemote: UserRemote
@@ -278,20 +273,20 @@ export async function handle(
       // Do nothing.
       break;
     case 'Create':
-      await handleCreate(req, res, activity, user, userRemote);
+      await handleCreate(req, activity, user, userRemote);
       break;
     case 'Follow':
       await handleFollow(req, user, userRemote, true);
       break;
     case 'Like':
-      await handleLike(req, res, activity, userRemote, true);
+      await handleLike(req, activity, userRemote, true);
       break;
     default:
       break;
   }
 }
 
-export async function findUserRemote(json: { [key: string]: string }, res: NextApiResponse, user: User) {
+export async function findUserRemote(json: { [key: string]: string }, user: User): Promise<UserRemote | null> {
   const actorUrl = json.actor;
   let userRemote = await getRemoteUserByActor(user.username, actorUrl);
   if (!userRemote) {
@@ -301,15 +296,14 @@ export async function findUserRemote(json: { [key: string]: string }, res: NextA
       await saveRemoteUser(userRemoteInfo);
       userRemote = await getRemoteUser(user.username, actorJSON.url);
     } else {
-      res.status(400).end();
-      return;
+      throw new Error('Invalid actor URL');
     }
   }
 
   return userRemote;
 }
 
-async function handleFollow(req: NextApiRequest, user: User, userRemote: UserRemote, isFollow: boolean) {
+async function handleFollow(req: NextRequest, user: User, userRemote: UserRemote, isFollow: boolean) {
   if (isFollow) {
     await saveRemoteUser(Object.assign({}, userRemote, { follower: true }));
     //emailFollow(req, user.username, user.email, userRemote.profileUrl);
@@ -322,18 +316,12 @@ async function handleFollow(req: NextApiRequest, user: User, userRemote: UserRem
   }
 }
 
-async function handleLike(
-  req: NextApiRequest,
-  res: NextApiResponse,
-  activity: GenericMessage,
-  userRemote: UserRemote,
-  isLike: boolean
-) {
+async function handleLike(req: NextRequest, activity: GenericMessage, userRemote: UserRemote, isLike: boolean) {
   const localContentUrl = activity.object as Activity;
   const content = await getLocalContent(localContentUrl.inReplyTo || '');
 
   if (!content) {
-    return res.status(400).end();
+    throw new Error('Content not found');
   }
   const { username, name } = content;
 
@@ -369,13 +357,7 @@ async function handleLike(
   );
 }
 
-async function handleCreate(
-  req: NextApiRequest,
-  res: NextApiResponse,
-  activity: GenericMessage,
-  user: User,
-  userRemote: UserRemote
-) {
+async function handleCreate(req: NextRequest, activity: GenericMessage, user: User, userRemote: UserRemote) {
   const activityObject = activity.object as Activity;
   const atomContent = sanitizeHTML(activityObject.content || '');
 
@@ -402,9 +384,9 @@ async function handleCreate(
   };
 
   if (activityObject.inReplyTo) {
-    handleComment(req, res, contentRemote, activityObject.inReplyTo);
+    await handleComment(req, contentRemote, activityObject.inReplyTo);
   } else {
-    handlePost(req, res, contentRemote, user, activityObject);
+    await handlePost(req, contentRemote, user, activityObject);
   }
 
   //const repliesCount = activityObject.repliesCount;
@@ -417,8 +399,7 @@ async function handleCreate(
 }
 
 async function handlePost(
-  req: NextApiRequest,
-  res: NextApiResponse,
+  req: NextRequest,
   contentRemote: ContentRemote,
   user: User,
   activityObject: { [key: string]: string }
@@ -434,19 +415,15 @@ async function handlePost(
   }
 }
 
-async function handleComment(
-  req: NextApiRequest,
-  res: NextApiResponse,
-  contentRemote: ContentRemote,
-  inReplyTo: string
-) {
+async function handleComment(req: NextRequest, contentRemote: ContentRemote, inReplyTo: string) {
   const content = await getLocalContent(inReplyTo);
   if (!content) {
-    return res.status(404).end();
+    throw new Error('Content not found');
   }
 
   contentRemote.type = 'comment';
   contentRemote.localContentName = content.name;
+
   await saveRemoteContent(contentRemote);
 
   //const contentOwner = await getLocalUser(inReplyTo, req);

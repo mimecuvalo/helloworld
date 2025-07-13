@@ -5,7 +5,7 @@ import {
   ToggleSortFeedMutationVariables,
   UserRemotePrivateResolvers,
 } from 'data/graphql-generated';
-import { follow, unfollow } from 'pages/api/social/follow';
+import { follow, unfollow } from 'app/api/social/follow';
 import { isAdmin, isAuthor } from './authorization';
 
 import { Context } from 'data/context';

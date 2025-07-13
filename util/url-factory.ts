@@ -1,9 +1,12 @@
 import { Content } from 'data/graphql-generated';
 import { NextApiRequest } from 'next';
+import { NextRequest } from 'next/server';
+
+type RequestType = NextApiRequest | NextRequest | false;
 
 export function contentUrl(
   content: Pick<Content, 'username' | 'name' | 'section' | 'album'>,
-  req?: NextApiRequest | false,
+  req?: RequestType,
   searchParams?: { [key: string]: string },
   host?: string
 ) {
@@ -49,8 +52,24 @@ export function parseContentUrl(url: string): { username: string; name: string }
   return { username, name };
 }
 
-export function profileUrl(username: string, req?: NextApiRequest, host?: string): string {
+export function profileUrl(username: string, req?: RequestType, host?: string): string {
   return buildUrl({ req, host, pathname: `/${username}` });
+}
+
+function getHostFromRequest(req: RequestType): string | undefined {
+  if (!req) return undefined;
+
+  // NextRequest from App Router
+  if ('nextUrl' in req) {
+    return req.headers.get('host') || req.nextUrl.host;
+  }
+
+  // NextApiRequest from Pages Router
+  if ('headers' in req) {
+    return req.headers['host'] as string;
+  }
+
+  return undefined;
 }
 
 export function buildUrl({
@@ -60,7 +79,7 @@ export function buildUrl({
   pathname,
   searchParams,
 }: {
-  req?: NextApiRequest | false;
+  req?: RequestType;
   host?: string;
   isAbsolute?: boolean;
   pathname: string;
@@ -69,7 +88,10 @@ export function buildUrl({
   let url = '';
 
   if (req) {
-    url += `https://${req.headers['host']}`;
+    const requestHost = getHostFromRequest(req);
+    if (requestHost) {
+      url += `https://${requestHost}`;
+    }
   } else if (isAbsolute) {
     url += window.location.origin;
   } else if (host) {

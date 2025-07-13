@@ -1,6 +1,6 @@
 import { HTTPError } from 'util/exceptions';
-import { NextApiRequest } from 'next';
 import sanitizer from 'sanitize-html';
+import { NextRequest } from 'next/server';
 
 export async function fetchUrl(url: string, opt_headers?: { [key: string]: string }) {
   const headers = Object.assign(
@@ -35,8 +35,8 @@ export function createAbsoluteUrl(websiteUrl: string, url: string): string {
   return url;
 }
 
-export function isRobotViewing(req: NextApiRequest) {
-  const userAgent = (req.headers['x-user-agent'] || req.headers['user-agent']) as string;
+export function isRobotViewing(req: NextRequest) {
+  const userAgent = req.headers.get('x-user-agent') || req.headers.get('user-agent');
   return !!userAgent?.match(/bot|spider|crawl|slurp|ia_archiver/i);
 }
 

@@ -20,7 +20,8 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "app/*": ["application/*"],
+      "app/*": ["app/*"],
+      "application/*": ["application/*"],
       "components": ["./components"],
       "components/*": ["./components/*"],
       "data": ["./data"],
@@ -41,7 +42,7 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.d.ts",
-    "pages/api/social/.well-known/*.tsx",
+    "app/api/social/.well-known/*.tsx",
     ".next/types/**/*.ts"
   ],
   "exclude": ["node_modules"]

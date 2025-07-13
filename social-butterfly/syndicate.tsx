@@ -3,15 +3,15 @@ import { Content, ContentRemote, User, UserRemote } from '@prisma/client';
 import { contentUrl, ensureAbsoluteUrl } from 'util/url-factory';
 import { getRemoteCommentsOnLocalContent, getRemoteContent, getRemoteUser } from './db';
 
-import { NextApiRequest } from 'next';
+import { NextRequest } from 'next/server';
 import { WEB_SUB_HUB } from 'util/constants';
 import { reply as activityStreamsReply } from './activitystreams';
 import * as cheerio from 'cheerio';
 import { fetchText } from 'util/crawler';
-import { reply as webmentionReply } from '../pages/api/social/webmention';
+import { reply as webmentionReply } from 'app/api/social/webmention';
 
 export async function syndicate(
-  req: NextApiRequest,
+  req: NextRequest,
   contentOwner: User,
   localContent: Content,
   opt_remoteContent?: ContentRemote,
@@ -51,7 +51,7 @@ export async function syndicate(
 
 // TODO(mime)
 export async function parseMentions(
-  req: NextApiRequest,
+  req: NextRequest,
   contentOwner: User,
   content: Content,
   opt_remoteContent?: ContentRemote
@@ -144,7 +144,7 @@ export async function parseMentions(
 }
 
 // TODO(mime)
-export async function webSubPush(req: NextApiRequest, content: Content) {
+export async function webSubPush(req: NextRequest, content: Content) {
   try {
     await fetch(WEB_SUB_HUB, {
       method: 'POST',

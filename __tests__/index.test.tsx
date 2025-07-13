@@ -1,6 +1,6 @@
 import { render, screen } from 'util/testing';
 
-import Page404 from 'pages/404';
+import Page404 from 'app/[lang]/not-found';
 
 describe('404', () => {
   it('renders a heading', async () => {

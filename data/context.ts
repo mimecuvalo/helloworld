@@ -1,8 +1,7 @@
-import { Claims } from '@auth0/nextjs-auth0';
 import auth0 from 'vendor/auth0';
-import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient, User } from '@prisma/client';
+import { NextRequest } from 'next/server';
 
+import { PrismaClient, User } from '@prisma/client';
 import DataLoader from 'dataloader';
 import createLoaders from './loaders';
 import prisma from './prisma';
@@ -12,34 +11,50 @@ export type Context = {
   currentUserEmail: string;
   currentUserPicture: string;
   currentUser: User | null;
-  user?: Claims;
+  user?: any; // Use any for now - can be refined later when we know the exact type
   accessToken?: string;
   prisma: PrismaClient;
   hostname: string;
   loaders: { [key: string]: DataLoader<unknown, unknown> };
-  req: NextApiRequest;
+  req: NextRequest;
 };
 
-export async function createContext({ req, res }: { req: NextApiRequest; res: NextApiResponse }): Promise<Context> {
-  const session = await auth0.getSession(req, res);
+export async function createContext(req: NextRequest): Promise<Context> {
+  let session;
+
+  try {
+    session = await auth0.getSession();
+  } catch {
+    // fall through
+  }
 
   let currentUsername = '';
   let currentUser = null;
-  if (session) {
-    currentUser = await prisma.user.findUnique({ where: { email: session?.user.email } });
+  let currentUserEmail = '';
+  let currentUserPicture = '';
+  let hostname = '';
+
+  if (session?.user) {
+    currentUser = await prisma.user.findUnique({ where: { email: session.user.email } });
     currentUsername = currentUser?.username || '';
+    currentUserEmail = session.user.email || '';
+    currentUserPicture = session.user.picture || '';
+  }
+
+  if (req) {
+    hostname = req.headers.get('host') || req.nextUrl.host || '';
   }
 
   return {
     currentUsername,
-    currentUserEmail: session?.user.email,
-    currentUserPicture: session?.user.picture,
+    currentUserEmail,
+    currentUserPicture,
     user: session?.user,
-    accessToken: session?.accessToken,
+    accessToken: undefined, // Access token handling would need to be implemented separately if needed
     prisma,
-    hostname: (req.headers['x-hw-host'] as string) || '',
-    req,
+    hostname,
     currentUser,
     loaders: createLoaders(),
+    req,
   };
 }
