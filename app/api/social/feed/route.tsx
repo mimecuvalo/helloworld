@@ -6,7 +6,7 @@ import constants, { WEB_SUB_HUB } from 'util/constants';
 import { getLocalLatestContent, getLocalUser } from 'social-butterfly/db';
 
 import { HTTPError } from 'util/exceptions';
-import { renderToString } from 'react-dom/server';
+import { renderToString } from 'util/react-dom';
 
 export const GET = async (request: NextRequest) => {
   const { searchParams } = request.nextUrl;

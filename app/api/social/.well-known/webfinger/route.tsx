@@ -3,7 +3,7 @@ import { buildUrl, profileUrl } from 'util/url-factory';
 import { User } from '@prisma/client';
 import { createElement } from 'react';
 import { getLocalUser } from 'social-butterfly/db';
-import { renderToString } from 'react-dom/server';
+import { renderToString } from 'util/react-dom';
 
 export const GET = async (request: NextRequest) => {
   try {

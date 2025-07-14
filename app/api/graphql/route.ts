@@ -17,13 +17,11 @@ const server = new ApolloServer({
   allowBatchedHttpRequests: true,
 });
 
-const handler = startServerAndCreateNextHandler(server, {
+export default startServerAndCreateNextHandler(server, {
   context: async (req: NextRequest) => {
     return createContext(req);
   },
 });
-
-export { handler as GET, handler as POST };
 
 export async function OPTIONS() {
   if (process.env.NODE_ENV === 'development') {

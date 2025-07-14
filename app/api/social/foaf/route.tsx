@@ -5,7 +5,7 @@ import { getLocalUser, getRemoteFriends } from 'social-butterfly/db';
 
 import { createElement } from 'react';
 import crypto from 'crypto';
-import { renderToString } from 'react-dom/server';
+import { renderToString } from 'util/react-dom';
 
 export const GET = async (req: NextRequest) => {
   const resource = req.nextUrl.searchParams.get('resource');

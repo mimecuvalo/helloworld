@@ -1,9 +1,9 @@
 import { buildUrl } from 'util/url-factory';
 import auth0 from 'vendor/auth0';
 import prisma from 'data/prisma';
-import { renderToString } from 'react-dom/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { follow } from 'social-butterfly/follow';
+import { renderToString } from 'util/react-dom';
 
 export const GET = async (req: NextRequest) => {
   const session = await auth0.getSession();

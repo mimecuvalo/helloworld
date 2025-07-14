@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { GenericFeed } from '../feed/route';
 import { createElement as RcE } from 'react';
-import { renderToString } from 'react-dom/server';
+import { renderToString } from 'util/react-dom';
 
 export const GET = async (req: NextRequest) => {
   const contentOwner = await getLocalUser(req.nextUrl.searchParams.get('resource') as string);
