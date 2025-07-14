@@ -32,7 +32,16 @@ const oswald = Oswald({
   display: 'swap',
 });
 
-export default function Providers({ children, lang }: { children: ReactNode; nonce: string; lang: string }) {
+export default function Providers({
+  children,
+  lang,
+  host,
+}: {
+  children: ReactNode;
+  nonce: string;
+  lang: string;
+  host: string;
+}) {
   useReportWebVitals(trackWebVitals);
 
   const [messages, setMessages] = useState<any>(translationsEnJson);
@@ -79,7 +88,7 @@ export default function Providers({ children, lang }: { children: ReactNode; non
   }, [lang]);
 
   // Apollo client needs to be initialized per-page in app router
-  const apolloClient = useApollo({});
+  const apolloClient = useApollo({ host });
 
   // Use the actual compiled messages instead of empty object
   setupCreateIntl({ defaultLocale: 'en', locale: lang, messages });

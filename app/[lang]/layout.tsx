@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import crypto from 'crypto';
 import { v4 } from 'uuid';
 import Providers from './providers';
+import { headers } from 'next/headers';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const notoColorEmoji = Noto_Color_Emoji({ subsets: ['emoji'], weight: '400', variable: '--noto-color-emoji' });
@@ -114,6 +115,7 @@ export default async function RootLayout({
   children: ReactNode;
   params: Promise<{ lang: string }>;
 }) {
+  const host = (await headers()).get('x-hw-host') as string;
   const { lang } = await params;
 
   // Generate nonce for this request
@@ -168,7 +170,7 @@ export default async function RootLayout({
           />
         </head>
         <body className={classNames(oswald.variable, inter.variable, notoColorEmoji.variable, geistMono.variable)}>
-          <Providers nonce={nonce} lang={lang}>
+          <Providers nonce={nonce} lang={lang} host={host}>
             {children}
           </Providers>
 

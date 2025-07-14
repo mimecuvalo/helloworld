@@ -42,7 +42,7 @@ export async function createContext(req: NextRequest): Promise<Context> {
   }
 
   if (req) {
-    hostname = req.headers.get('host') || req.nextUrl.host || '';
+    hostname = req.headers.get('x-hw-host') || req.headers.get('host') || req.nextUrl.host || '';
   }
 
   return {

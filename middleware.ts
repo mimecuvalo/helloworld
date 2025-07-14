@@ -28,6 +28,9 @@ export async function middleware(request: NextRequest) {
     return await auth0.middleware(request);
   }
 
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-hw-host', request.nextUrl.host);
+
   // Skip middleware for:
   // - API routes
   // - Static files (_next/static)
@@ -40,7 +43,7 @@ export async function middleware(request: NextRequest) {
     pathname.includes('/public/') ||
     /\.(png|jpg|jpeg|json|gif|svg|ico|css|js|woff|woff2|ttf|eot)$/.test(pathname)
   ) {
-    return NextResponse.next();
+    return NextResponse.next({ request: { headers: requestHeaders } });
   }
 
   // Check if pathname already has a supported locale
@@ -48,7 +51,9 @@ export async function middleware(request: NextRequest) {
 
   // If pathname already has a locale, continue
   if (pathnameHasLocale) {
-    return NextResponse.next();
+    const res = NextResponse.next({ request: { headers: requestHeaders } });
+    res.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
+    return res;
   }
 
   // Redirect to locale-prefixed path

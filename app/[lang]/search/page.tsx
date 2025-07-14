@@ -16,7 +16,7 @@ export default async function SearchPage({
 }) {
   const { lang } = await params;
   const headersList = await headers();
-  const host = headersList.get('host') || '';
+  const host = headersList.get('x-hw-host') || headersList.get('host') || '';
   const { q: query } = await searchParams;
 
   return <SearchClient host={host} query={typeof query === 'string' ? query : ''} lang={lang} />;

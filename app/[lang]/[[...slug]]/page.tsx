@@ -5,7 +5,7 @@ import ContentClient from './content';
 export default async function ContentPage({ params }: { params: Promise<{ lang: string; slug?: string[] }> }) {
   const { slug } = await params;
   const headersList = await headers();
-  const host = headersList.get('host') || '';
+  const host = headersList.get('x-hw-host') || headersList.get('host') || '';
 
   const slugArray = slug || [];
   const path = '/' + slugArray.join('/');
