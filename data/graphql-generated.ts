@@ -494,6 +494,14 @@ export type UserRemotePublic = {
   webmentionUrl?: Maybe<Scalars['String']['output']>;
 };
 
+export type SearchAndUserQueryVariables = Exact<{
+  username: Scalars['String']['input'];
+  query: Scalars['String']['input'];
+}>;
+
+
+export type SearchAndUserQuery = { __typename?: 'Query', fetchPublicUserData?: { __typename?: 'UserPublic', username: string, name: string, favicon?: string | null, theme: string } | null, searchContent: Array<{ __typename?: 'SearchContentMetaInfo', name: string, title: string, preview: string, thumb: string, section: string, album: string }> };
+
 export type ContentAndUserQueryVariables = Exact<{
   username: Scalars['String']['input'];
   name: Scalars['String']['input'];
@@ -663,24 +671,6 @@ export type DestroyFeedMutationVariables = Exact<{
 
 
 export type DestroyFeedMutation = { __typename?: 'Mutation', destroyFeed: boolean };
-
-export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type CurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'UserPrivate', id: number, username: string, name: string, email: string, theme: string, title: string, favicon?: string | null } | null };
-
-export type FetchAllUsersQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type FetchAllUsersQuery = { __typename?: 'Query', fetchAllUsers: Array<{ __typename?: 'UserPrivate', description?: string | null, email: string, favicon?: string | null, googleAnalytics?: string | null, hostname?: string | null, license?: string | null, logo?: string | null, magicKey: string, name: string, privateKey: string, superuser: boolean, theme: string, title: string, username: string, viewport?: string | null }> };
-
-export type SearchAndUserQueryVariables = Exact<{
-  username: Scalars['String']['input'];
-  query: Scalars['String']['input'];
-}>;
-
-
-export type SearchAndUserQuery = { __typename?: 'Query', searchContent: Array<{ __typename?: 'SearchContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, preview: string, section: string, thumb: string, title: string, username: string }>, fetchPublicUserDataSearch?: { __typename?: 'UserPublic', description?: string | null, title: string, username: string } | null };
 
 
 
