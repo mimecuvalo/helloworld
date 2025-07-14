@@ -9,12 +9,12 @@ import typeDefs from 'data/schema';
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  cache: 'bounded', // Prevent DOS. See: https://www.apollographql.com/docs/apollo-server/performance/cache-
+  introspection: process.env.NODE_ENV === 'development',
+  plugins: [],
   formatError: (err) => {
     return pick(err, 'message');
   },
-  introspection: process.env.NODE_ENV === 'development',
-  plugins: [],
+  allowBatchedHttpRequests: true,
 });
 
 const handler = startServerAndCreateNextHandler(server, {

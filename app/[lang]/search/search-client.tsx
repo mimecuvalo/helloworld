@@ -66,23 +66,19 @@ const messages = defineMessages({
 
 const SEARCH_QUERY = gql`
   query SearchAndUser($username: String!, $query: String!) {
-    fetchUser(username: $username) {
+    fetchPublicUserData(username: $username) {
       username
       name
       favicon
       theme
     }
-    search(username: $username, query: $query) {
+    searchContent(username: $username, query: $query) {
       name
       title
       preview
       thumb
       section
       album
-      count_comments
-      count_favorites
-      createdAt
-      updatedAt
     }
   }
 `;

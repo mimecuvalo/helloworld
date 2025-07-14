@@ -7,7 +7,7 @@ import { F } from 'i18n';
 import { useEffect, useState } from 'react';
 import ContentLink from '@/components/ContentLink';
 import { THUMB_WIDTH } from '@/util/constants';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { contentUrl } from '@/util/url-factory';
 
 const StyledAlbum = styled('ul')`

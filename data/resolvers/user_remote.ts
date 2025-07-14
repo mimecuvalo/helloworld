@@ -5,12 +5,12 @@ import {
   ToggleSortFeedMutationVariables,
   UserRemotePrivateResolvers,
 } from 'data/graphql-generated';
-import { follow, unfollow } from 'app/api/social/follow';
 import { isAdmin, isAuthor } from './authorization';
 
 import { Context } from 'data/context';
 import { User } from '@prisma/client';
 import { combineResolvers } from 'graphql-resolvers';
+import { follow, unfollow } from 'social-butterfly/follow';
 
 const UserRemote = {
   Query: {

@@ -14,7 +14,7 @@ import UserContext from '@/application/UserContext';
 import baseTheme from 'styles';
 import constants from 'util/constants';
 import { transientOptions } from 'util/css';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { Drawer, useMediaQuery } from '@mui/material';
 
 export const SITE_MAP_WIDTH = 175;

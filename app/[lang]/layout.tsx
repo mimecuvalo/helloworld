@@ -1,3 +1,5 @@
+import 'styles/globals.css';
+
 import { Inter, Oswald, Noto_Color_Emoji, Geist_Mono } from 'next/font/google';
 import { ReactNode, StrictMode } from 'react';
 import { Metadata } from 'next';

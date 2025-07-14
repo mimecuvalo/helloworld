@@ -42,7 +42,7 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.d.ts",
-    "app/api/social/.well-known/*.tsx",
+    "app/api/social/.well-known/**/*.tsx",
     ".next/types/**/*.ts"
   ],
   "exclude": ["node_modules"]

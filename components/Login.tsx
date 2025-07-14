@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 import { F } from 'i18n';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useUser } from '@auth0/nextjs-auth0';
 
 export default function LoginLogoutButton() {

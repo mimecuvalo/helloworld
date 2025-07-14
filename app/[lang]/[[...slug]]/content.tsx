@@ -18,7 +18,7 @@ import SwipeListener from 'swipe-listener';
 import { ThemeProvider } from '@mui/material/styles';
 import { styled } from 'components';
 import { useQuery } from '@apollo/client';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 const StyledContent = styled('article', { label: 'StyledContent' })`
   margin-top: ${(props) => props.theme.spacing(1)};
@@ -38,7 +38,7 @@ export default function Content({ username, name, host }: { username: string; na
     },
   });
 
-  // const router = useRouter();
+  const router = useRouter();
   const contentBase = useRef<HTMLDivElement>(null);
   const nav = useRef<HTMLAnchorElement & { prev: () => void; next: () => void }>(null);
   const swipeListener = useRef(null);
@@ -49,17 +49,17 @@ export default function Content({ username, name, host }: { username: string; na
       return;
     }
 
-    // const canonicalUrl = contentUrl(data.fetchContent);
-    // if (currentCanonicalUrl !== canonicalUrl) {
-    //   const absoluteCanonicalUrl = buildUrl({ isAbsolute: true, pathname: canonicalUrl });
-    //   const parsedCanonicalUrl = new URL(absoluteCanonicalUrl);
-    //   const currentWindowUrl = new URL(window.location.href);
+    const canonicalUrl = contentUrl(data.fetchContent);
+    if (currentCanonicalUrl !== canonicalUrl) {
+      const absoluteCanonicalUrl = buildUrl({ isAbsolute: true, pathname: canonicalUrl });
+      const parsedCanonicalUrl = new URL(absoluteCanonicalUrl);
+      const currentWindowUrl = new URL(window.location.href);
 
-    //   if (currentWindowUrl.pathname !== parsedCanonicalUrl.pathname) {
-    //     router.replace(canonicalUrl);
-    //   }
-    //   setCurrentCanonicalUrl(canonicalUrl);
-    // }
+      if (currentWindowUrl.pathname !== parsedCanonicalUrl.pathname) {
+        router.replace(canonicalUrl);
+      }
+      setCurrentCanonicalUrl(canonicalUrl);
+    }
 
     // Only swipe on photos section.
     if (data.fetchContent.section === 'photos' && data.fetchContent.album !== 'main') {

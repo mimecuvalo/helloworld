@@ -8,7 +8,7 @@ import { WEB_SUB_HUB } from 'util/constants';
 import { reply as activityStreamsReply } from './activitystreams';
 import * as cheerio from 'cheerio';
 import { fetchText } from 'util/crawler';
-import { reply as webmentionReply } from 'app/api/social/webmention';
+import { reply as webmentionReply } from 'app/api/social/webmention/route';
 
 export async function syndicate(
   req: NextRequest,

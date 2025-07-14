@@ -5,7 +5,7 @@ import Archive from './Archive';
 import { Content } from 'data/graphql-generated';
 import Simple from './Simple';
 import { contentUrl } from 'util/url-factory';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 const FETCH_COLLECTION_LINKS = gql`
   query FetchCollectionLatest($username: String!, $section: String!, $name: String!) {
