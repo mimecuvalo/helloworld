@@ -5,15 +5,16 @@ import { parseFeedAndInsertIntoDb, retrieveFeed } from 'social-butterfly/feeds';
 import { follow as activityStreamsFollow } from 'social-butterfly/activitystreams';
 import { buildUrl } from 'util/url-factory';
 import { discoverUserRemoteInfoSaveAndSubscribe } from 'social-butterfly/discover-user';
-import auth0 from 'vendor/auth0';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../../../util/auth';
 import prisma from 'data/prisma';
 import { renderToString } from 'react-dom/server';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const session = await auth0.getSession(req, res);
+  const session = await getServerSession(req, res, authOptions);
   let currentUser;
-  if (session) {
-    currentUser = await prisma.user.findUnique({ where: { email: session?.user.email } });
+  if (session?.user?.email) {
+    currentUser = await prisma.user.findUnique({ where: { email: session.user.email } });
   }
   if (!currentUser) {
     res.status(400).end();

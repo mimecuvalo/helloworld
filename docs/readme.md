@@ -26,7 +26,7 @@ federated social web blog app. in short, i'm trying to build an open-source Tumb
   - CSS/JS/HTML editing via CodeMirror
 - technology features:
   - foundation: [CRA-all-the-things](https://github.com/mimecuvalo/all-the-things)
-  - Auth0 for logging
+  - Auth.js for logging
 
 ## 💾 Install
 
@@ -36,7 +36,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 yarn
 ```
 
-_Prerequisites: Node 14+ if you want proper internationalization (i18n) support (via full-icu)._
+_Prerequisites: Node 18+ if you want proper internationalization (i18n) support (via full-icu)._
 
 ## Getting Started
 
@@ -58,7 +58,7 @@ In dev or prod you'll want to setup your environment as well. Check out the `.en
 
 - `NEXT_PUBLIC_DB*` for your database
 - `NEXT_PUBLIC_SESSION_SECRET` for session management
-- `NEXT_PUBLIC_AUTH0*` variables if you would like to use Auth0 for logging in
+- `AUTH_*` variables if you would like to use Auth.js for logging in
 
 To run tests:
 
@@ -134,7 +134,7 @@ yarn config
 - Email is formatted wrong when getting webmention (says self sent email)
 - don't update updatedAt for view
 - migrate from user context to local state
-- split off dashboard, admin panel, draft.js code, auth0, and lodash code for performance
+- split off dashboard, admin panel, draft.js code, and lodash code for performance
 - social api:
   - provide function to generate RSA
   - provide function to generate <head> html

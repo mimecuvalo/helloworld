@@ -1,19 +1,21 @@
 import { Button } from '@mui/material';
 import { F } from 'i18n';
 import { useRouter } from 'next/router';
-import { useUser } from '@auth0/nextjs-auth0/client';
+import { useSession, signIn } from 'next-auth/react';
 
 export default function LoginLogoutButton() {
   const router = useRouter();
-  const { user } = useUser();
+  const { data: session } = useSession();
 
   if (router.asPath === '/dashboard') {
     return null;
   }
 
+  const handleClick = () => signIn();
+
   return (
-    <Button variant="contained" href={user ? '/dashboard' : '/api/auth/login'}>
-      {user ? <F defaultMessage="dashboard" /> : <F defaultMessage="Login" />}
+    <Button variant="contained" href={session ? '/dashboard' : undefined} onClick={!session ? handleClick : undefined}>
+      {session ? <F defaultMessage="dashboard" /> : <F defaultMessage="Login" />}
     </Button>
   );
 }

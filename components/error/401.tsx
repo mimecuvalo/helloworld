@@ -24,7 +24,7 @@ export default function Unauthorized() {
         <F
           defaultMessage="try <a>logging in</a>."
           values={{
-            a: (msg) => <Link href="/api/auth/login">{msg}</Link>,
+            a: (msg) => <Link href="/api/auth/signin">{msg}</Link>,
           }}
         />
       </div>

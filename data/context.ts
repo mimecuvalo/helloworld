@@ -1,5 +1,5 @@
-import { Claims } from '@auth0/nextjs-auth0';
-import auth0 from 'vendor/auth0';
+import { getServerSession, Session } from 'next-auth';
+import { authOptions } from '../util/auth';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient, User } from '@prisma/client';
 
@@ -12,7 +12,7 @@ export type Context = {
   currentUserEmail: string;
   currentUserPicture: string;
   currentUser: User | null;
-  user?: Claims;
+  user?: Session['user'];
   accessToken?: string;
   prisma: PrismaClient;
   hostname: string;
@@ -21,21 +21,21 @@ export type Context = {
 };
 
 export async function createContext({ req, res }: { req: NextApiRequest; res: NextApiResponse }): Promise<Context> {
-  const session = await auth0.getSession(req, res);
+  const session = await getServerSession(req, res, authOptions);
 
   let currentUsername = '';
   let currentUser = null;
-  if (session) {
-    currentUser = await prisma.user.findUnique({ where: { email: session?.user.email } });
+  if (session?.user?.email) {
+    currentUser = await prisma.user.findUnique({ where: { email: session.user.email } });
     currentUsername = currentUser?.username || '';
   }
 
   return {
     currentUsername,
-    currentUserEmail: session?.user.email,
-    currentUserPicture: session?.user.picture,
+    currentUserEmail: session?.user?.email || '',
+    currentUserPicture: '',
     user: session?.user,
-    accessToken: session?.accessToken,
+    accessToken: undefined, // Access token handling would need to be implemented separately if needed
     prisma,
     hostname: (req.headers['x-hw-host'] as string) || '',
     req,

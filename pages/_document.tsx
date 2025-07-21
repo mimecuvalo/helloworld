@@ -31,7 +31,6 @@ const generateCsp = (nonce: string) => {
     //'report-uri': ['/api/report-csp-violation'],
     'script-src': [
       "'self'",
-      'https://cdn.auth0.com',
       'https://cdn.vercel-insights.com',
       'https://va.vercel-scripts.com',
       'https://www.googletagmanager.com',

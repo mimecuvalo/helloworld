@@ -67,7 +67,7 @@ export default function Tools() {
         </Link>
       </ListItem> */}
       <ListItem>
-        <Button href="/api/auth/logout">
+        <Button href="/api/auth/signout">
           <F defaultMessage="logout" />
         </Button>
       </ListItem>

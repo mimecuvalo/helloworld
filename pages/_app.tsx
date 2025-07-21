@@ -24,7 +24,7 @@ import { UserPrivate } from 'data/graphql-generated';
 import { useRouter } from 'next/router';
 import { trackWebVitals } from '@/application/reportWebVitals';
 import { useReportWebVitals } from 'next/web-vitals';
-import { UserProvider, useUser } from '@auth0/nextjs-auth0/client';
+import { SessionProvider, useSession } from 'next-auth/react';
 
 // If loading a variable font, you don't need to specify the font weight
 const pressStart2P = Press_Start_2P({
@@ -72,11 +72,11 @@ function CustomUserProvider({
   children: React.ReactNode;
 }) {
   const [currentUser, setCurrentUser] = useState<UserPrivate>();
-  const auth0User = useUser();
+  const { data: session } = useSession();
 
   useEffect(() => {
     async function loadUser() {
-      if (auth0User.user) {
+      if (session?.user?.email) {
         const { data } = await apolloClient.query({
           query: CURRENT_USER_QUERY,
         });
@@ -85,7 +85,7 @@ function CustomUserProvider({
     }
 
     loadUser();
-  }, [apolloClient, auth0User]);
+  }, [apolloClient, session]);
 
   return <UserContext value={{ user: currentUser }}>{children}</UserContext>;
 }
@@ -130,7 +130,7 @@ function HelloWorldApp({ Component, emotionCache = clientSideEmotionCache, pageP
           <ThemeProvider theme={muiTheme}>
             {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
             <CssBaseline />
-            <UserProvider>
+            <SessionProvider session={pageProps.session}>
               <CustomUserProvider apolloClient={apolloClient}>
                 <ErrorBoundary>
                   <style jsx global>{`
@@ -156,7 +156,7 @@ function HelloWorldApp({ Component, emotionCache = clientSideEmotionCache, pageP
                   </div>
                 </ErrorBoundary>
               </CustomUserProvider>
-            </UserProvider>
+            </SessionProvider>
 
             <noscript>
               <F defaultMessage="You need to enable JavaScript to run this app." />
