@@ -35,6 +35,7 @@ const generateCsp = (nonce: string) => {
       'https://va.vercel-scripts.com',
       'https://www.googletagmanager.com',
       'https://www.google-analytics.com',
+      'https://unpkg.com/react-scan/dist/auto.global.js',
     ].concat(isDevelopment ? ["'unsafe-inline'", "'unsafe-eval'"] : [`'nonce-${nonce}'`]),
 
     // XXX(mime): we have inline styles around - can we pass nonce around the app properly?

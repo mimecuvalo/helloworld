@@ -41,6 +41,13 @@ jobs:
           node-version: 22
       - name: Enable Corepack
         run: corepack enable
-      - run: npm install && npm install -g @lhci/cli@0.15.x
-      - run: npm run build
-      - run: lhci autorun
+      - uses: actions/cache@v4
+        id: yarn-cache
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-NODE-22-${{ hashFiles('**/yarn.lock', '**/schema.prisma') }}
+      - name: Install
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        run: yarn install --immutable
+      - run: yarn build
+      - run: yarn dlx @lhci/cli@0.15.x autorun

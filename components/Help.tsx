@@ -92,6 +92,21 @@ export default function Help() {
     window.location.reload();
   };
 
+  const handleReactScan = () => {
+    if (document.getElementById('react-scan')) {
+      document.getElementById('react-scan')?.remove();
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.id = 'react-scan';
+    script.crossOrigin = 'anonymous';
+    script.src = 'https://unpkg.com/react-scan/dist/auto.global.js';
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+  };
+
   const renderStyleguide = () => {
     // Conditionally compile this code. Should not appear in production.
     if (process.env.NODE_ENV === 'development') {
@@ -139,6 +154,9 @@ export default function Help() {
         </MenuItem>
         <MenuItem key="experiments" onClick={handleExperiments}>
           <F defaultMessage="Experiments" />
+        </MenuItem>
+        <MenuItem key="react-scan" onClick={handleReactScan}>
+          <F defaultMessage="React Scan" />
         </MenuItem>
         {renderStyleguide()}
         <MenuItem key="language">
