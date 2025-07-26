@@ -49,5 +49,7 @@ jobs:
       - name: Install
         if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: yarn install --immutable
-      - run: yarn build
-      - run: yarn dlx @lhci/cli@0.15.x autorun
+      - name: Build Next.js app
+        run: yarn build
+      - name: Run Lighthouse CI
+        run: yarn dlx @lhci/cli@0.15.x autorun

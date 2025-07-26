@@ -3,6 +3,14 @@
     {
       "path": "/api/update-feeds.tsx",
       "schedule": "0 1 * * *"
+    },
+    {
+      "path": "/",
+      "schedule": "*/3 * * * *"
+    },
+    {
+      "path": "/mime",
+      "schedule": "*/3 * * * *"
     }
   ]
 }
