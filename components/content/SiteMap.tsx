@@ -7,7 +7,7 @@ import { gql, useQuery } from '@apollo/client';
 
 import CloseIcon from '@mui/icons-material/Close';
 import ContentLink from 'components/ContentLink';
-import Image from 'next/image';
+import Image from 'components/Image';
 import LoginLogoutButton from 'components/Login';
 import MenuIcon from '@mui/icons-material/Menu';
 import UserContext from '@/application/UserContext';
