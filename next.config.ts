@@ -41,6 +41,7 @@ const nextConfig: NextConfig = {
           idInterpolationPattern: '[md5:contenthash:hex:10]',
           additionalComponentNames: ['F'],
           ast: true,
+          removeDefaultMessage: true,
         },
       ],
     ],
