@@ -11,7 +11,7 @@ export default async function loadIntlMessages({ locale }: GetStaticPropsContext
     return compiledLangCache[locale];
   }
 
-  const languagePath = path.join(process.cwd(), `i18n-compiled-lang/${locale}.json`);
+  const languagePath = path.join(process.cwd(), `i18n/compiled/${locale}.json`);
   try {
     const contents = await fs.readFile(languagePath, 'utf-8');
     const messages = JSON.parse(contents);

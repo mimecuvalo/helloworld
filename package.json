@@ -24,15 +24,13 @@
     "url": "https://github.com/mimecuvalo/helloworld/issues"
   },
   "scripts": {
-    "predev": "yarn i18n:compile",
     "dev": "open http://localhost:3000 && next dev",
-    "prebuild": "yarn i18n:compile",
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint --fix .",
     "i18n:extract": "formatjs extract 'pages/**/*.ts*' 'components/**/*.ts*' --out-file i18n/en.json --additional-component-names F --id-interpolation-pattern '[md5:contenthash:hex:10]' --format smartling",
-    "i18n:compile": "formatjs compile-folder i18n i18n-compiled-lang --format smartling --ast",
+    "i18n:compile": "formatjs compile-folder i18n i18n/compiled --format smartling --ast",
     "alex": "alex .",
     "analyze": "source-map-explorer .next/static/**/*.js",
     "codegen": "graphql-codegen",

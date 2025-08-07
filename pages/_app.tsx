@@ -25,7 +25,7 @@ import { useRouter } from 'next/router';
 import { trackWebVitals } from '@/application/reportWebVitals';
 import { useReportWebVitals } from 'next/web-vitals';
 import { SessionProvider, useSession } from 'next-auth/react';
-import enJson from '../i18n-compiled-lang/en.json';
+import enJson from '../i18n/compiled/en.json';
 
 // If loading a variable font, you don't need to specify the font weight
 const pressStart2P = Press_Start_2P({
