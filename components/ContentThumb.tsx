@@ -38,6 +38,8 @@ const StyledThumb = styled('img')`
   width: ${THUMB_WIDTH}px;
   height: ${THUMB_HEIGHT}px;
   object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
 `;
 
 const messages = defineMessages({
@@ -66,7 +68,7 @@ export default function Thumb({
   const intl = useIntl();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const theme = useTheme();
-
+  const [isLoaded, setIsLoaded] = useState(false);
   useEffect(() => setIsDialogOpen(isOpen), [isOpen]);
 
   const currentContent = currentContentProp || { forceRefresh: false };
@@ -84,15 +86,24 @@ export default function Thumb({
               : item.thumb
             : '/img/pixel.gif'
         }
+        onLoad={() => setIsLoaded(true)}
         width={THUMB_WIDTH}
         height={THUMB_HEIGHT}
         alt={thumbAltText}
         style={{
+          opacity: isLoaded ? 1 : 0,
+          transition: 'opacity 0.3s ease-in-out',
           objectFit: 'cover',
         }}
       />
     ) : (
-      <StyledThumb loading="lazy" src={item.thumb || '/img/pixel.gif'} alt={thumbAltText} />
+      <StyledThumb
+        loading="lazy"
+        src={item.thumb || '/img/pixel.gif'}
+        alt={thumbAltText}
+        onLoad={() => setIsLoaded(true)}
+        style={{ opacity: isLoaded ? 1 : 0 }}
+      />
     );
 
   const handleClick = (evt: MouseEvent) => {

@@ -9,7 +9,6 @@ import Footer from './Footer';
 import Header from './Header';
 import Latest from './templates/Latest';
 import Simple from './templates/Simple';
-import { animated, useTransition } from 'react-spring';
 
 const StyledItem = styled('article', { label: 'Item' })`
   display: flex;
@@ -39,12 +38,6 @@ export default function Item(props: {
   isFeed?: boolean;
   ref?: React.Ref<HTMLDivElement>;
 }) {
-  const transitions = useTransition(props.content, {
-    from: { opacity: 0 },
-    enter: { opacity: 1 },
-    leave: { display: 'none', opacity: 0 },
-  });
-
   // TODO
   //const template = useRef(null);
 
@@ -64,13 +57,7 @@ export default function Item(props: {
       <StyledItem className={`hw-item h-entry ${className || ''}`}>
         <Header content={content} />
         {/* @ts-ignore */}
-        {COMPONENT_TYPE_MAP[content.template]
-          ? contentComponent
-          : transitions((style) => (
-              <animated.div style={style}>
-                <InnerView>{contentComponent}</InnerView>
-              </animated.div>
-            ))}
+        {COMPONENT_TYPE_MAP[content.template] ? contentComponent : <InnerView>{contentComponent}</InnerView>}
         <Footer content={content} contentOwner={contentOwner} />
         {!isFeed && comments?.length ? <Comments comments={comments} content={content} /> : null}
         {!isFeed && favorites?.length ? <Favorites favorites={favorites} /> : null}
