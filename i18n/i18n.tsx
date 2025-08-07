@@ -23,7 +23,7 @@ export const FormattedDate: React.FC<any> = originalFormattedDate;
 // @ts-ignore ugh, why are the types from react-intl crap right now??
 export const FormattedNumber: React.FC<any> = originalFormattedNumber;
 
-const INTERNAL_LOCALES = ['xx-AE', 'xx-LS'];
+const INTERNAL_LOCALES = ['xx-LS'];
 
 // We use `@swc/plugin-formatjs` in `next.config.ts` to generate IDs for messages.
 // This should always have an ID, so we throw an error if it's missing.
@@ -38,21 +38,12 @@ function generateId({ id }: MessageDescriptor) {
 export function F(props: ComponentPropsWithoutRef<typeof FormattedMessage>) {
   const intl = useIntl();
   const id = generateId(props);
-  let internalMessage = (props.defaultMessage || '') as string;
-  if (intl.locale === 'xx-AE') {
-    internalMessage = makeAccented(internalMessage);
-  } else if (intl.locale === 'xx-LS') {
-    internalMessage = makeLong(internalMessage);
-  }
 
   return (
     <span className="i18n-msg">
-      {isInternalLocale(intl.locale) ? (
-        <>{internalMessage}</>
-      ) : (
-        /* eslint-disable-next-line formatjs/enforce-default-message */
-        <FormattedMessage id={id} {...props} />
-      )}
+      {/* eslint-disable-next-line formatjs/enforce-default-message */}
+      <FormattedMessage id={id} {...props} />
+      {intl.locale === 'xx-LS' && ' loooooooo oo ooooooong'}
     </span>
   );
 }
@@ -77,20 +68,6 @@ export function defineMessages<T extends string, D extends MessageDescriptor>(ms
 
 export function isInternalLocale(locale: string) {
   return process.env.NODE_ENV === 'development' && INTERNAL_LOCALES.indexOf(locale) !== -1;
-}
-
-function makeAccented(str: string) {
-  const accents = 'áƃçđéƒǵȟíǰķłɱñóƥɋřšťúṽẃẍýž';
-  return str.replace(/[a-zA-Z]/g, (char) => {
-    const isUpper = char === char.toUpperCase();
-    const index = char.toLowerCase().charCodeAt(0) - 97;
-    const accentedChar = accents[index] || char;
-    return isUpper ? accentedChar.toUpperCase() : accentedChar;
-  });
-}
-
-function makeLong(str: string) {
-  return `${str} loooooooo oo ooooooong`;
 }
 
 // This is optional but highly recommended since it prevents memory leaks.

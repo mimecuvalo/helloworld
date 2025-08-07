@@ -41,14 +41,14 @@ const nextConfig: NextConfig = {
           idInterpolationPattern: '[md5:contenthash:hex:10]',
           additionalComponentNames: ['F'],
           ast: true,
-          removeDefaultMessage: true,
+          removeDefaultMessage: process.env.NODE_ENV === 'production',
         },
       ],
     ],
   },
 
   i18n: {
-    locales: ['en', 'fr'],
+    locales: ['en', 'fr', 'xx-LS'],
     defaultLocale: 'en',
   },
 

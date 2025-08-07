@@ -160,8 +160,13 @@ export default function Help() {
         </MenuItem>
         {renderStyleguide()}
         <MenuItem key="language">
-          <Link href="/" locale="fr" sx={{ textDecoration: 'none !important', color: '#000' }}>
-            <F defaultMessage="Test language alternative" />
+          <Link href="/xx-LS" locale="xx-LS" sx={{ textDecoration: 'none !important', color: '#000' }}>
+            <F defaultMessage="i18n: Long" />
+          </Link>
+        </MenuItem>
+        <MenuItem key="language">
+          <Link href="/fr" locale="fr" sx={{ textDecoration: 'none !important', color: '#000' }}>
+            <F defaultMessage="i18n: French" />
           </Link>
         </MenuItem>
       </Menu>

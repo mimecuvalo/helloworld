@@ -25,7 +25,7 @@
   },
   "scripts": {
     "dev": "open http://localhost:3000 && next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint --fix .",
