@@ -39,7 +39,7 @@
     "prettier:all": "prettier --check .",
     "prettier:fix": "prettier --write",
     "prettier:fix:all": "prettier --write .",
-    "postinstall": "prisma generate",
+    "prisma:generate": "prisma generate",
     "ts-script": "ts-node-script -r tsconfig-paths/register",
     "build-storybook": "build-storybook -s public",
     "storybook": "storybook dev -p 9001 -c .storybook --ci --quiet",
@@ -172,6 +172,9 @@
     ],
     "**/*/(schema|resolvers)/*.ts": [
       "yarn codegen"
+    ],
+    "prisma/schema.prisma": [
+      "yarn prisma:generate"
     ]
   },
   "importSort": {

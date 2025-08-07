@@ -1,7 +1,7 @@
 import { getServerSession, Session } from 'next-auth';
 import { authOptions } from '../util/auth';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient, User } from '@prisma/client';
+import { type PrismaClient, type User } from '../prisma/client';
 
 import DataLoader from 'dataloader';
 import createLoaders from './loaders';

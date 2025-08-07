@@ -1,0 +1,143 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              Int       @id @default(autoincrement())
+  createdAt       DateTime? @default(now())
+  updatedAt       DateTime? @default(now()) @updatedAt
+  username        String    @unique
+  name            String
+  email           String    @unique
+  superuser       Boolean   @default(false)
+  title           String
+  description     String?
+  hostname        String?   @unique
+  license         String?
+  googleAnalytics String?
+  favicon         String?
+  logo            String?
+  viewport        String?
+  sidebarHtml     String?
+  theme           String
+  magicKey        String
+  privateKey      String
+
+  Content       Content[]
+  ContentRemote ContentRemote[] @relation("toUser")
+}
+
+model UserRemote {
+  id                  Int       @id @default(autoincrement())
+  createdAt           DateTime? @default(now())
+  updatedAt           DateTime? @default(now()) @updatedAt
+  localUsername       String
+  username            String
+  name                String
+  profileUrl          String
+  feedUrl             String
+  magicKey            String?
+  salmonUrl           String?
+  activityPubActorUrl String?
+  activityPubInboxUrl String?
+  webmentionUrl       String?
+  hubUrl              String?
+  follower            Boolean   @default(false)
+  following           Boolean   @default(false)
+  avatar              String
+  favicon             String?
+  order               Int       @default(0)
+  sortType            String?
+
+  @@unique([localUsername, profileUrl])
+  @@unique([localUsername, activityPubActorUrl])
+  @@index([localUsername])
+  @@index([profileUrl])
+}
+
+model Content {
+  id              Int       @id @default(autoincrement())
+  createdAt       DateTime? @default(now())
+  updatedAt       DateTime? @default(now()) @updatedAt
+  user            User      @relation(fields: [username], references: [username])
+  username        String
+  section         String
+  album           String
+  name            String
+  template        String?
+  sortType        String?
+  redirect        Int?
+  hidden          Boolean   @default(false)
+  title           String
+  thumb           String
+  order           Int       @default(0)
+  count           Int       @default(0)
+  countRobot      Int       @default(0)
+  commentsCount   Int       @default(0)
+  commentsUpdated DateTime?
+  favoritesCount  Int       @default(0)
+  thread          String?
+  threadUser      String?
+  avatar          String?
+  style           String
+  code            String
+  view            String
+  content         String?
+
+  // TODO(mime): add full-text search?
+  //@@index([title, view])
+  //@@index([title, content])
+  @@unique([username, name])
+  @@index([section])
+  @@index([name])
+  @@index([username])
+  @@index([album])
+}
+
+model ContentRemote {
+  id               Int       @id @default(autoincrement())
+  createdAt        DateTime? @default(now())
+  updatedAt        DateTime? @default(now()) @updatedAt
+  toUser           User      @relation(name: "toUser", fields: [toUsername], references: [username])
+  toUsername       String
+  localContentName String?
+  fromUsername     String?
+  fromUserRemoteId String?
+  commentUser      String?
+  username         String
+  creator          String?
+  avatar           String?
+  title            String
+  postId           String
+  link             String
+  commentsUpdated  DateTime?
+  commentsCount    Int       @default(0)
+  thread           String?
+  type             String
+  favorited        Boolean   @default(false)
+  read             Boolean   @default(false)
+  isSpam           Boolean   @default(false)
+  deleted          Boolean   @default(false)
+  view             String
+  content          String?
+
+  @@unique([toUsername, fromUsername, postId])
+  // TODO(mime): add full-text search?
+  //@@index([title, view])
+  @@index([toUsername])
+  @@index([fromUsername])
+  @@index([commentUser])
+  @@index([toUsername, fromUsername])
+  @@index([toUsername, commentUser])
+  @@index([toUsername, postId])
+  @@index([thread])
+}
