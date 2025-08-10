@@ -29,6 +29,7 @@ export default defineConfig([
       '**/public/**',
       '**/.turbo/**',
       '**/graphql-generated.ts',
+      '**/prisma/client/**',
     ],
 
     extends: compat.extends(
