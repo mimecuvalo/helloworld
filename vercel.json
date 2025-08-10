@@ -1,4 +1,6 @@
 {
+  "installCommand": "corepack enable && corepack yarn install --immutable",
+  "buildCommand": "corepack enable && corepack yarn build",
   "crons": [
     {
       "path": "/api/update-feeds.tsx",
