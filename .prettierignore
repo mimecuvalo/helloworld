@@ -59,3 +59,6 @@ logs/*.log.gz
 
 # Apollo/Graphql
 graphql-generated.ts
+
+# Prisma
+prisma/client/
