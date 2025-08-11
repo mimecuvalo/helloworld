@@ -1,7 +1,7 @@
 import { Alert, Snackbar, styled } from 'components';
 import { gql, useQuery } from '@apollo/client';
 
-import { Content } from 'data/graphql-generated';
+import { Content, FetchAlbumCollectionQuery } from 'data/graphql-generated';
 import ContentThumb from 'components/ContentThumb';
 import { F } from 'i18n';
 import { useEffect, useState } from 'react';
@@ -88,16 +88,20 @@ export default function Album({ content }: { content: Content }) {
     return () => window.removeEventListener('keyup', handleKeyUp);
   });
 
-  const handleNext = () => {
-    const nextIndex = Math.min(collection.length - 1, currentIndexOpen + 1);
-    router.replace(contentUrl(collection[nextIndex]), undefined, { shallow: true });
-    setCurrentIndexOpen(nextIndex);
+  const setItem = (index: number) => {
+    const item = collection[index];
+    if (index + 1 < collection.length) {
+      collection[index + 1].prefetchImages?.forEach((img) => (new Image().src = img));
+    }
+    if (index - 1 >= 0) {
+      collection[index - 1].prefetchImages?.forEach((img) => (new Image().src = img));
+    }
+    router.replace(contentUrl(item), undefined, { shallow: true });
+    setCurrentIndexOpen(index);
   };
-  const handlePrev = () => {
-    const nextIndex = Math.max(0, currentIndexOpen - 1);
-    router.replace(contentUrl(collection[nextIndex]), undefined, { shallow: true });
-    setCurrentIndexOpen(nextIndex);
-  };
+
+  const handleNext = () => setItem(Math.min(collection.length - 1, currentIndexOpen + 1));
+  const handlePrev = () => setItem(Math.max(0, currentIndexOpen - 1));
 
   const handleKeyUp = (evt: KeyboardEvent) => {
     if (currentIndexOpen === -1) {
@@ -116,7 +120,7 @@ export default function Album({ content }: { content: Content }) {
     }
   };
 
-  const { loading, data } = useQuery(FETCH_COLLECTION, {
+  const { loading, data } = useQuery<FetchAlbumCollectionQuery>(FETCH_COLLECTION, {
     variables: {
       username,
       section,
@@ -160,7 +164,7 @@ export default function Album({ content }: { content: Content }) {
     return <LoadingEmptyBox />;
   }
 
-  const collection = data.fetchCollection;
+  const collection = data?.fetchCollection || [];
 
   return (
     <>
@@ -170,7 +174,7 @@ export default function Album({ content }: { content: Content }) {
             <F defaultMessage="No content here yet." />
           </li>
         )}
-        {collection.map((item: Content, index: number) => (
+        {collection.map((item, index) => (
           <Item key={item.name}>
             {/* {isEditing ? (
               <DeleteButton onClick={() => handleClick(item)}>
@@ -178,13 +182,10 @@ export default function Album({ content }: { content: Content }) {
               </DeleteButton>
             ) : null} */}
             <ContentThumb
-              item={item}
+              item={item as Content}
               currentContent={content}
               isOpen={currentIndexOpen === index}
-              onOpen={() => {
-                router.replace(contentUrl(collection[index]), undefined, { shallow: true });
-                setCurrentIndexOpen(index);
-              }}
+              onOpen={() => setItem(index)}
               handlePrev={handlePrev}
               handleNext={handleNext}
               onClose={() => {
