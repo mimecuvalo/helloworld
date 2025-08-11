@@ -239,12 +239,6 @@
       "value": "Help"
     }
   ],
-  "6b06791057": [
-    {
-      "type": 0,
-      "value": "Test language alternative"
-    }
-  ],
   "6cac132a3b": [
     {
       "type": 0,
@@ -401,6 +395,12 @@
       "value": "visit"
     }
   ],
+  "a4a78c3a33": [
+    {
+      "type": 0,
+      "value": "i18n: French"
+    }
+  ],
   "a5d4910609": [
     {
       "type": 0,
@@ -457,6 +457,12 @@
     {
       "type": 0,
       "value": "follow bookmarklet"
+    }
+  ],
+  "c84d77792c": [
+    {
+      "type": 0,
+      "value": "i18n: Long"
     }
   ],
   "cdcfbe51f7": [

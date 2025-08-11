@@ -155,7 +155,7 @@
       "prettier --write"
     ],
     "**/*.{js,jsx,ts,tsx,json}": [
-      "yarn i18n:extract && yarn i18n:compile"
+      "bash -c 'yarn i18n:extract && yarn i18n:compile'"
     ],
     "**/*/(schema|resolvers)/*.ts": [
       "yarn codegen"
