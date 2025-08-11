@@ -35,7 +35,7 @@
     "analyze": "source-map-explorer .next/static/**/*.js",
     "codegen": "graphql-codegen",
     "config": "node bin/config.js",
-    "prepare": "husky install",
+    "prepare": "husky",
     "prettier:all": "prettier --check .",
     "prettier:fix": "prettier --write",
     "prettier:fix:all": "prettier --write .",
@@ -195,5 +195,5 @@
     }
   },
   "sideEffects": false,
-  "packageManager": "yarn@4.9.2"
+  "packageManager": "yarn@1.22.19"
 }
