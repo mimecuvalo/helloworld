@@ -1,18 +1,10 @@
 import { Link as MuiLink, LinkProps as MuiLinkProps } from '@mui/material';
-import NextLink, { LinkProps } from 'next/link';
 
-const Link: React.FC<MuiLinkProps & LinkProps> = ({ children, as, href, shallow, target, ref, ...props }) => (
-  <NextLink href={href || ''} as={as} shallow={shallow} passHref legacyBehavior>
-    <MuiLink
-      underline="hover"
-      target={target}
-      rel={target === '_blank' ? 'noopener noreferrer' : undefined}
-      ref={ref}
-      {...props}
-    >
-      {children}
-    </MuiLink>
-  </NextLink>
+// TODO: Next.js's Link doesn't seem to work with view transitions.
+const Link: React.FC<MuiLinkProps> = ({ children, target, ...props }) => (
+  <MuiLink underline="hover" target={target} rel={target === '_blank' ? 'noopener noreferrer' : undefined} {...props}>
+    {children}
+  </MuiLink>
 );
 
 export default Link;

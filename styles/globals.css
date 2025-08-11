@@ -17,6 +17,18 @@ a:any-link {
   text-decoration: none;
 }
 
+@view-transition {
+  navigation: auto;
+}
+
+@media (prefers-reduced-motion) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
 @media print {
   body {
     background-color: #fff;
