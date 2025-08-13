@@ -177,7 +177,7 @@ export default function Thumb({
               position: 'fixed',
               transform: { xs: 'translateY(0)', md: 'translateY(-50%)' },
               bottom: { xs: theme.spacing(1), md: '50%' },
-              left: { xs: theme.spacing(1), md: theme.spacing(4) },
+              left: { xs: `calc(50% - ${theme.spacing(7)})`, md: theme.spacing(4) },
             }}
           >
             <ArrowBackIosNew width={32} height={32} />
@@ -191,7 +191,7 @@ export default function Thumb({
               position: 'fixed',
               transform: { xs: 'translateY(0)', md: 'translateY(-50%)' },
               bottom: { xs: theme.spacing(1), md: '50%' },
-              right: { xs: theme.spacing(1), md: theme.spacing(4) },
+              right: { xs: `calc(50% - ${theme.spacing(7)})`, md: theme.spacing(4) },
             }}
           >
             <ArrowForwardIos width={32} height={32} />

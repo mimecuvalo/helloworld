@@ -56,21 +56,20 @@ const Item = styled('li')`
   }
 `;
 
-const LinkWrapper = styled('span')`
+const TitleWrapper = styled('span')`
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  display: block;
   background-color: rgba(0, 0, 0, 0.82);
-  color: white;
+  color: #3984ff;
   padding: 4px;
+  pointer-events: none;
 
-  & a {
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-  }
+  display: block;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
 `;
 
 // const DeleteButton = styled(IconButton)`
@@ -224,19 +223,7 @@ export default function Album({ content }: { content: Content }) {
                 setCurrentIndexOpen(-1);
               }}
             />
-            {item.title && (
-              <LinkWrapper>
-                {!isEditing && item.externalLink ? (
-                  <a className="notranslate" href={item.externalLink} target="_blank" rel="noreferrer noopener">
-                    {item.title}
-                  </a>
-                ) : item.title ? (
-                  <ContentLink item={item} currentContent={content} className="notranslate">
-                    {item.title}
-                  </ContentLink>
-                ) : null}
-              </LinkWrapper>
-            )}
+            {item.title && <TitleWrapper className="notranslate">{item.title}</TitleWrapper>}
           </Item>
         ))}
       </StyledAlbum>

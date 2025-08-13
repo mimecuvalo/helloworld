@@ -309,11 +309,9 @@ export default function SiteMap({ content, username }: { content?: Content; user
               </Link>
             </LogoWrapper>
           ) : null}
-          {isDrawerOpen && (
-            <li>
-              <LoginLogoutButton />
-            </li>
-          )}
+          <li>
+            <LoginLogoutButton />
+          </li>
           <li>
             <Link href={profileUrl(username)}>
               <F defaultMessage="home" />
