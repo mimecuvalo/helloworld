@@ -7,8 +7,6 @@ import { F } from 'i18n';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { contentUrl } from '@/util/url-factory';
-import ContentLink from '@/components/ContentLink';
-import { THUMB_WIDTH } from '@/util/constants';
 
 // N.B. the && is overriding ItemWrapper's ul styles which isn't great.
 const StyledAlbum = styled('ul')`
@@ -194,7 +192,6 @@ export default function Album({ content }: { content: Content }) {
   }
 
   const collection = data?.fetchCollection || [];
-  const isEditing = false;
 
   return (
     <>
