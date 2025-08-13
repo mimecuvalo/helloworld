@@ -85,6 +85,14 @@ const components = {
       },
     },
   },
+
+  MuiTypography: {
+    styleOverrides: {
+      h1: {
+        lineHeight: 1,
+      },
+    },
+  },
 };
 
 export default components;

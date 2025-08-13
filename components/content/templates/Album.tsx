@@ -5,14 +5,24 @@ import { Content, FetchAlbumCollectionQuery } from 'data/graphql-generated';
 import ContentThumb from 'components/ContentThumb';
 import { F } from 'i18n';
 import { useEffect, useState } from 'react';
-import ContentLink from '@/components/ContentLink';
-import { THUMB_WIDTH } from '@/util/constants';
 import { useRouter } from 'next/router';
 import { contentUrl } from '@/util/url-factory';
+import ContentLink from '@/components/ContentLink';
+import { THUMB_WIDTH } from '@/util/constants';
 
+// N.B. the && is overriding ItemWrapper's ul styles which isn't great.
 const StyledAlbum = styled('ul')`
-  list-style: none;
-  padding: 0;
+  && {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  ${(props) => props.theme.breakpoints.down('sm')} {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: ${(props) => props.theme.spacing(0.5)};
+  }
 `;
 
 const LoadingEmptyBox = styled('div')`
@@ -32,14 +42,34 @@ const Item = styled('li')`
   &:hover {
     box-shadow: 0 0 0 1px ${(props) => props.theme.palette.primary.main};
   }
+
+  ${(props) => props.theme.breakpoints.down('sm')} {
+    margin: 0;
+
+    & a,
+    & img {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      aspect-ratio: 1;
+    }
+  }
 `;
 
 const LinkWrapper = styled('span')`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: block;
+  background-color: rgba(0, 0, 0, 0.82);
+  color: white;
+  padding: 4px;
+
   & a {
-    display: block;
-    width: ${THUMB_WIDTH}px;
-    max-width: ${THUMB_WIDTH}px;
-    min-height: 1.1em;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
   }
 `;
 
@@ -165,6 +195,7 @@ export default function Album({ content }: { content: Content }) {
   }
 
   const collection = data?.fetchCollection || [];
+  const isEditing = false;
 
   return (
     <>
@@ -195,23 +226,15 @@ export default function Album({ content }: { content: Content }) {
             />
             {item.title && (
               <LinkWrapper>
-                {/* {!isEditing && item.externalLink ? (
-                <a
-                  className="notranslate"
-                  href={item.externalLink}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  {item.title}
-                </a>
-              ) : item.title ? (
-                <ContentLink item={item} currentContent={content} className="notranslate">
-                  {item.title}
-                </ContentLink>
-              ) : null} */}
-                <ContentLink item={item} currentContent={content} className="notranslate">
-                  {item.title}
-                </ContentLink>
+                {!isEditing && item.externalLink ? (
+                  <a className="notranslate" href={item.externalLink} target="_blank" rel="noreferrer noopener">
+                    {item.title}
+                  </a>
+                ) : item.title ? (
+                  <ContentLink item={item} currentContent={content} className="notranslate">
+                    {item.title}
+                  </ContentLink>
+                ) : null}
               </LinkWrapper>
             )}
           </Item>

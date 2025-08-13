@@ -5,9 +5,8 @@ import ContentLink from 'components/ContentLink';
 import { F } from 'i18n';
 import UserContext from '@/application/UserContext';
 import { useContext } from 'react';
-import { transientOptions } from '@/util/css';
 
-const StyledHeader = styled('header', { ...transientOptions })<{ $isMainAlbum: boolean }>`
+const StyledHeader = styled('header')`
   position: sticky;
   top: ${(props) => props.theme.spacing(1)};
   max-height: 77px;
@@ -27,10 +26,6 @@ const StyledHeader = styled('header', { ...transientOptions })<{ $isMainAlbum: b
     -webkit-line-clamp: 2;
     overflow: hidden;
   }
-
-  ${(props) => props.theme.breakpoints.down('md')} {
-    top: ${(props) => props.theme.spacing(props.$isMainAlbum ? 8 : 0)};
-  }
 `;
 
 // const EditButton = styled(Button)`
@@ -47,7 +42,7 @@ export default function Header({ content }: { content: Content }) {
   }
 
   return (
-    <StyledHeader $isMainAlbum={content.album === 'main'}>
+    <StyledHeader>
       <Tooltip title={content.title} placement="top-start">
         <Typography variant="h1">
           <ContentLink item={content} currentContent={content}>

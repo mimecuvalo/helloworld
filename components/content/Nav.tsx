@@ -26,6 +26,10 @@ const StyledNav = styled('nav')`
   }
 
   ${(props) => props.theme.breakpoints.down('md')} {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
     width: 75px;
     text-align: right;
     white-space: normal;

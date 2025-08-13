@@ -29,6 +29,7 @@ const DialogImage = styled('img')`
 
 const DialogContent = styled('div')`
   header {
+    position: fixed;
     align-self: center;
   }
 `;
@@ -151,6 +152,7 @@ export default function Thumb({
               boxShadow: 'none',
               alignItems: 'center',
               width: theme.breakpoints.values.lg,
+              margin: theme.spacing(1),
             },
           }}
         >
@@ -160,8 +162,8 @@ export default function Thumb({
             sx={{
               backgroundColor: '#fff !important',
               position: 'fixed',
-              top: theme.spacing(4),
-              right: theme.spacing(4),
+              top: { xs: theme.spacing(1), md: theme.spacing(4) },
+              right: { xs: theme.spacing(1), md: theme.spacing(4) },
             }}
           >
             <Close width={32} height={32} />
@@ -173,9 +175,9 @@ export default function Thumb({
             sx={{
               backgroundColor: '#fff !important',
               position: 'fixed',
-              marginTop: theme.spacing(-2),
-              top: '50%',
-              left: theme.spacing(4),
+              transform: { xs: 'translateY(0)', md: 'translateY(-50%)' },
+              bottom: { xs: theme.spacing(1), md: '50%' },
+              left: { xs: theme.spacing(1), md: theme.spacing(4) },
             }}
           >
             <ArrowBackIosNew width={32} height={32} />
@@ -187,9 +189,9 @@ export default function Thumb({
             sx={{
               backgroundColor: '#fff !important',
               position: 'fixed',
-              marginTop: theme.spacing(-2),
-              top: '50%',
-              right: theme.spacing(4),
+              transform: { xs: 'translateY(0)', md: 'translateY(-50%)' },
+              bottom: { xs: theme.spacing(1), md: '50%' },
+              right: { xs: theme.spacing(1), md: theme.spacing(4) },
             }}
           >
             <ArrowForwardIos width={32} height={32} />

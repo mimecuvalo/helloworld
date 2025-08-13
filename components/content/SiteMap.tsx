@@ -110,8 +110,8 @@ const Hamburger = styled(IconButton)`
   margin-left: ${(props) => props.theme.spacing(-2)};
 
   ${(props) => props.theme.breakpoints.down('md')} {
-    width: 45px;
-    height: 45px;
+    width: 48px;
+    height: 48px;
     line-height: 0;
     display: block;
   }
@@ -241,27 +241,7 @@ export default function SiteMap({ content, username }: { content?: Content; user
     router.push(url);
   };
 
-  if (loading) {
-    return (
-      <AppBar
-        sx={{ background: theme.palette.background.paper, boxShadow: 'none', display: { xs: 'block', md: 'none' } }}
-      >
-        <Toolbar>
-          <Hamburger
-            aria-label={menuButtonLabel}
-            onClick={handleMobileClick}
-            size="large"
-            sx={{ color: theme.palette.text.primary }}
-          >
-            {isDrawerOpen ? <CloseIcon /> : <MenuIcon />}
-          </Hamburger>
-          <Nav />
-        </Toolbar>
-      </AppBar>
-    );
-  }
-
-  if (!data) {
+  if (!data || loading) {
     return null;
   }
 
@@ -278,9 +258,17 @@ export default function SiteMap({ content, username }: { content?: Content; user
   return (
     <>
       <AppBar
-        sx={{ background: theme.palette.background.paper, boxShadow: 'none', display: { xs: 'block', md: 'none' } }}
+        sx={{
+          background: theme.palette.background.paper,
+          boxShadow: 'none',
+          display: { xs: 'block', md: 'none' },
+          top: '10px',
+          height: '48px',
+          width: { xs: '48px', md: 'auto' },
+          right: '13px',
+        }}
       >
-        <Toolbar>
+        <Toolbar sx={{ justifyContent: 'flex-end', minHeight: { xs: '48px' }, padding: { xs: 0 } }}>
           <Hamburger
             id="hw-hamburger"
             aria-label={menuButtonLabel}

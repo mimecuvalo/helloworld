@@ -23,26 +23,20 @@ const StyledItemWrapper = styled('div', { label: 'ItemWrapper' })`
     margin-inline: 0;
   }
 
+  & p:first-child {
+    margin-top: 0;
+  }
+
+  & p:last-child {
+    margin-bottom: 0;
+  }
+
   & ul,
   & ol,
   & blockquote {
     margin-block: ${(props) => props.theme.spacing(0.5)};
     margin-inline: 0;
     padding-left: ${(props) => props.theme.spacing(2)};
-  }
-
-  ${(props) => props.theme.breakpoints.down('sm')} {
-    & ul,
-    & ol,
-    & blockquote {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-around;
-
-      li {
-        flex: 0 0 40%;
-      }
-    }
   }
 
   & blockquote {
