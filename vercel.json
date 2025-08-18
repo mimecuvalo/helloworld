@@ -1,7 +1,7 @@
 {
   "crons": [
     {
-      "path": "/api/update-feeds.tsx",
+      "path": "/api/social/update-feeds.tsx",
       "schedule": "0 1 * * *"
     }
   ]
