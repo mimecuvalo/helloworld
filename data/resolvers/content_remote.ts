@@ -96,12 +96,12 @@ const contentRemote = {
         });
 
         // So, a funny UI behavior quirk of having an infinite RSS feed that has the user scrolling while
-        // marking things as read as this messes with your offset limits. Set offset to 0 if we found no results
+        // marking things as read is this messes with your offset limits. Set offset to 0 if we found no results
         // the first time.
         if (!results.length && offset !== 0) {
           results = await prisma.contentRemote.findMany({
             where: constraints,
-            orderBy: [{ createdAt: 'desc' }],
+            orderBy: [{ createdAt: order }],
             take,
             skip: 0,
           });
