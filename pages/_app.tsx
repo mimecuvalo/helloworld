@@ -1,15 +1,15 @@
 import 'styles/globals.css';
 
-import { APOLLO_STATE_PROP_NAME, useApollo } from '@/application/apollo';
+import { APOLLO_STATE_PROP_NAME, useApollo } from 'application/apollo';
 import { ApolloClient, ApolloProvider, NormalizedCacheObject, gql } from '@apollo/client';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import { DebugWrapper, Header } from 'components';
 import { IntlProvider, setupCreateIntl } from 'i18n';
 import { Marck_Script, Press_Start_2P, Noto_Color_Emoji } from 'next/font/google';
 import { createEmotionCache, muiTheme } from 'styles';
-import { disposeAnalytics, setupAnalytics } from '@/application/analytics';
+import { disposeAnalytics, setupAnalytics } from 'application/analytics';
 import { useEffect, useState } from 'react';
-
+import { EditorProvider } from 'application/EditorContext';
 import { Analytics } from '@vercel/analytics/react';
 import type { AppProps } from 'next/app';
 import { CssBaseline } from '@mui/material';
@@ -17,10 +17,10 @@ import ErrorBoundary from 'components/error/ErrorBoundary';
 import { F } from 'i18n';
 import Head from 'next/head';
 import { ThemeProvider } from '@mui/material/styles';
-import UserContext from '@/application/UserContext';
+import UserContext from 'application/UserContext';
 import { UserPrivate } from 'data/graphql-generated';
 import { useRouter } from 'next/router';
-import { trackWebVitals } from '@/application/reportWebVitals';
+import { trackWebVitals } from 'application/reportWebVitals';
 import { useReportWebVitals } from 'next/web-vitals';
 import { SessionProvider, useSession } from 'next-auth/react';
 import enJson from '../i18n/compiled/en.json';
@@ -126,29 +126,31 @@ function HelloWorldApp({ Component, emotionCache = clientSideEmotionCache, pageP
             <CssBaseline />
             <SessionProvider session={pageProps.session}>
               <CustomUserProvider apolloClient={apolloClient}>
-                <ErrorBoundary>
-                  <style jsx global>{`
-                    :root {
-                      --font-noto-color-emoji: ${notoColorEmoji.style.fontFamily};
-                      --font-press-start-2p: ${pressStart2P.style.fontFamily};
-                      --font-marck-script: ${marckScript.style.fontFamily};
-                    }
-                  `}</style>
-                  <div
-                    className={
-                      (process.env.NODE_ENV === 'development' ? 'App App-is-development' : 'App') +
-                      ` ${pressStart2P.variable} ${marckScript.variable} ${notoColorEmoji.variable}`
-                    }
-                  >
-                    <Header />
-                    <Head>
-                      <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
-                    </Head>
-                    <Component {...pageProps} />
-                    <Analytics />
-                    <DebugWrapper />
-                  </div>
-                </ErrorBoundary>
+                <EditorProvider>
+                  <ErrorBoundary>
+                    <style jsx global>{`
+                      :root {
+                        --font-noto-color-emoji: ${notoColorEmoji.style.fontFamily};
+                        --font-press-start-2p: ${pressStart2P.style.fontFamily};
+                        --font-marck-script: ${marckScript.style.fontFamily};
+                      }
+                    `}</style>
+                    <div
+                      className={
+                        (process.env.NODE_ENV === 'development' ? 'App App-is-development' : 'App') +
+                        ` ${pressStart2P.variable} ${marckScript.variable} ${notoColorEmoji.variable}`
+                      }
+                    >
+                      <Header />
+                      <Head>
+                        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+                      </Head>
+                      <Component {...pageProps} />
+                      <Analytics />
+                      <DebugWrapper />
+                    </div>
+                  </ErrorBoundary>
+                </EditorProvider>
               </CustomUserProvider>
             </SessionProvider>
 

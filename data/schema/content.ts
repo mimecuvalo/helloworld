@@ -79,15 +79,7 @@ export default gql`
   }
 
   extend type Mutation {
-    saveContent(
-      name: String!
-      hidden: Boolean!
-      title: String!
-      thumb: String!
-      style: String!
-      code: String!
-      content: String!
-    ): Content!
+    saveContent(name: String!, title: String!, hidden: Boolean!, view: String!): Content!
     postContent(
       section: String!
       album: String!

@@ -13,17 +13,16 @@ import {
 } from 'components';
 import { F, defineMessages, useIntl } from 'i18n';
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 
 import { ArrowDropDown } from '@mui/icons-material';
 import Cookies from 'js-cookie';
-import Editor from 'components/Editor';
+import Editor from 'components/editor/Editor';
 import { SelectChangeEvent } from '@mui/material';
 import { SiteMapAndUserEditorQuery } from 'data/graphql-generated';
 import baseTheme from 'styles';
-import mime from 'mime/lite';
-
-const IFRAME_ALLOW = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
+import { useEditor } from 'application/EditorContext';
+import { reblog, unfurl } from './util';
 
 const messages = defineMessages({
   posted: { defaultMessage: 'Success!' },
@@ -93,6 +92,7 @@ const POST_CONTENT = gql`
 `;
 
 export default function DashboardEditor({ username }: { username: string }) {
+  const { editor } = useEditor();
   const theme = useTheme();
   const intl = useIntl();
   const { loading, data } = useQuery<SiteMapAndUserEditorQuery>(SITE_MAP_AND_USER_QUERY, {
@@ -106,7 +106,7 @@ export default function DashboardEditor({ username }: { username: string }) {
   const [contentThumb, setContentThumb] = useState('');
   // Not so clean but, meh, don't feel like implementing two separate <select>'s
   const [sectionAndAlbum, setSectionAndAlbum] = useState(
-    JSON.stringify({ section: data?.fetchSiteMap[0].name, album: '' })
+    JSON.stringify({ section: data?.fetchSiteMap[0].name, album: '', hidden: false })
   );
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
@@ -128,9 +128,13 @@ export default function DashboardEditor({ username }: { username: string }) {
   }, [hasUnsavedChanges]);
 
   const handlePost = async () => {
-    const title = editorValue.split('\n')[0].replace(/^# /, '');
+    const title = (
+      editorValue.match(/<h1>(.*?)<\/h1>/)?.[1] ||
+      editorValue.split('</p>')[0].split('\n')[0].trim() ||
+      ''
+    ).replace(/<[^>]*>?/g, '');
     const name = title.replace(/[^A-Za-z0-9-]/g, '-').toLowerCase();
-    const { section, album } = JSON.parse(sectionAndAlbum);
+    const { section, album, hidden } = JSON.parse(sectionAndAlbum);
 
     const thumb = contentThumb || '';
 
@@ -140,7 +144,7 @@ export default function DashboardEditor({ username }: { username: string }) {
       album,
       name,
       title,
-      hidden: false, // TODO(mime)
+      hidden,
       thumb,
       style: '', // TODO
       code: '', // TODO
@@ -176,73 +180,54 @@ export default function DashboardEditor({ username }: { username: string }) {
     }
   }, []);
 
-  // useEffect(() => {
-  //   if (window.location.hash.startsWith('#reblog')) {
-  //     const searchParams = new URLSearchParams(window.location.hash.slice(1));
-  //     const url = searchParams.get('reblog');
-  //     const img = searchParams.get('img');
+  useEffect(() => {
+    if (editor && window.location.hash.startsWith('#reblog')) {
+      const searchParams = new URLSearchParams(window.location.hash.slice(1));
+      const url = searchParams.get('reblog') || '';
+      const img = searchParams.get('img') || '';
 
-  //     reblog(img || url, url);
-  //     window.location.hash = '';
-  //   }
-  // }, []);
-
-  // async function reblog(text, opt_url) {
-  //   const contentEditor = editor.current.getContentEditor();
-  //   let editorState = contentEditor.editorState;
-  //   editorState = EditorUtils.Text.insertTextAtLine(editorState, 0, '\n');
-  //   await contentEditor.handlePastedText(text, undefined /* html */, editorState);
-
-  //   if (opt_url) {
-  //     editorState = EditorUtils.Text.insertTextAtLine(contentEditor.editorState, 2, opt_url);
-  //     contentEditor.onChange(editorState);
-  //   }
-  // }
-
-  if (loading || !data) {
-    return null;
-  }
-
-  const handleMediaAdd = (url: string) => {
-    setContentThumb(url);
-  };
-
-  const handlePaste = async (text: string) => {
-    const potentialLink = text.match(/^https?:\/\//) || text.match(/^<iframe /);
-    if (potentialLink) {
-      const unfurlInfo = await unfurl(text);
-
-      if (!unfurlInfo.wasMediaFound) {
-        return;
-      }
-
-      if (unfurlInfo.isError) {
-        setToastMsg(errorMsg);
-        setIsPostSuccess(false);
-        return;
-      }
-
-      if (unfurlInfo.thumb) {
-        setContentThumb(unfurlInfo.thumb);
-      }
-
-      if (!editorValue) {
-        unfurlInfo.result = `# ${unfurlInfo.title}\n\n` + unfurlInfo.result;
-      }
-      setEditorValue(unfurlInfo.result);
-      setHasUnsavedChanges(true);
-      setEditorKeyToClearState(editorKeyToClearState + 1);
+      reblog(editor, img || url, url);
+      window.location.hash = '';
     }
-  };
+  }, [editor]);
 
-  const handleEditorChange = (name: string, value: string) => {
+  const handleMediaAdd = useCallback((url: string) => {
+    setContentThumb(url);
+  }, []);
+
+  const handlePaste = useCallback(
+    async (text: string) => {
+      const potentialLink = text.match(/^https?:\/\//) || text.match(/^<iframe /);
+      if (potentialLink) {
+        const unfurlInfo = await unfurl(text);
+
+        if (!unfurlInfo.wasMediaFound) {
+          return;
+        }
+
+        if (unfurlInfo.isError) {
+          setToastMsg(errorMsg);
+          setIsPostSuccess(false);
+          return;
+        }
+
+        if (unfurlInfo.image) {
+          setContentThumb(unfurlInfo.image);
+        }
+
+        unfurlInfo.result =
+          `<h1>${unfurlInfo.title}</h1><br><br>` + unfurlInfo.result + `<br><br><a href="${text}">${text}</a>`;
+        setEditorValue(unfurlInfo.result);
+        setHasUnsavedChanges(true);
+      }
+    },
+    [errorMsg]
+  );
+
+  const handleEditorChange = useCallback((name: string, value: string) => {
     setEditorValue(value);
     setHasUnsavedChanges(true);
-  };
-
-  const handleEditorBlur = () => {
-    /* do nothing */
-  };
+  }, []);
 
   const handleToastClose = () => setToastMsg('');
 
@@ -259,6 +244,7 @@ export default function DashboardEditor({ username }: { username: string }) {
     const value = {
       section: sectionName || item.name,
       album: sectionName ? item.name : '',
+      hidden: item.hidden,
     };
     return (
       <MenuItem key={item.name} value={JSON.stringify(value)}>
@@ -292,6 +278,10 @@ export default function DashboardEditor({ username }: { username: string }) {
     }
 
     return items;
+  }
+
+  if (loading || !data) {
+    return null;
   }
 
   const { section, album } = JSON.parse(sectionAndAlbum);
@@ -337,9 +327,9 @@ export default function DashboardEditor({ username }: { username: string }) {
         name="dashboard-editor"
         section={section}
         album={album}
-        defaultValue={editorValue || `# Give me a name\n\nNow write something brilliant.`}
+        defaultValue={editorValue}
+        placeholder="Once upon a time, in cafe, far, far away."
         onChange={handleEditorChange}
-        onBlur={handleEditorBlur}
         onMediaAdd={handleMediaAdd}
         onPaste={handlePaste}
       />
@@ -357,81 +347,4 @@ export default function DashboardEditor({ username }: { username: string }) {
       </Snackbar>
     </DashboardEditorContainer>
   );
-}
-
-export async function unfurl(url: string) {
-  if (url.match(/^<iframe /)) {
-    const iframe = {
-      src: url.match(/src=['"]([^'"]+)['"]/)?.[1],
-      width: url.match(/width=['"]([^'"]+)['"]/)?.[1] || 400,
-      height: url.match(/height=['"]([^'"]+)['"]/)?.[1] || 300,
-      frameBorder: 0,
-      allow: url.match(/allow=['"]([^'"]+)['"]/)?.[1] || IFRAME_ALLOW,
-    };
-
-    return {
-      result: `<iframe ${Object.entries(iframe)
-        .map(([k, v]) => `${k}="${v}"`)
-        .join(' ')}></iframe>`,
-      isError: false,
-      wasMediaFound: true,
-      isImg: false,
-      thumb: '',
-      title: '',
-    };
-  }
-
-  if (mime.getType(url)?.match(/^image\//)) {
-    const src = url;
-    const href = url;
-    const alt = '';
-
-    return {
-      result: `[![${alt}](${src} "${alt}")](${href})`,
-      isError: false,
-      wasMediaFound: true,
-      isImg: true,
-      thumb: url,
-      title: '',
-    };
-  }
-
-  let response;
-  try {
-    response = await fetch('/api/unfurl', {
-      method: 'POST',
-      body: JSON.stringify({
-        url,
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  } catch {
-    return { result: '', isError: true, wasMediaFound: false, isImg: false, thumb: '', title: '' };
-  }
-
-  const json: any = await response.json();
-  let thumb = '';
-  let isImg = false;
-  let result = '';
-  let title = '';
-  if (json.wasMediaFound) {
-    if (json.iframe) {
-      result = `<iframe ${Object.entries(json.iframe)
-        .map(([k, v]) => `${k}="${v}"`)
-        .join(' ')}></iframe>`;
-      thumb = json.image;
-    } else {
-      const href = url;
-      const src = json.image;
-      const alt = json.title;
-      isImg = true;
-      result = `[![${alt}](${src} "${alt}")]${href})`;
-      thumb = json.image;
-    }
-    title = json.title;
-  }
-
-  return { result, isError: false, wasMediaFound: json.wasMediaFound, isImg, thumb, title };
 }

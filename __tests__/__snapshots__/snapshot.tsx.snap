@@ -13,7 +13,7 @@ exports[`renders homepage unchanged 1`] = `
       🙃
     </span>
     <h1
-      class="MuiTypography-root MuiTypography-h1 css-17fn2vo-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-h1 css-133ntni-MuiTypography-root"
     >
       <span
         class="notranslate"
@@ -39,7 +39,7 @@ exports[`renders homepage unchanged 1`] = `
       >
         try going back to the 
         <a
-          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineHover css-11ywehy-MuiTypography-root-MuiLink-root"
+          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineHover css-nrg916-MuiTypography-root-MuiLink-root"
           href="/"
         >
           beginning

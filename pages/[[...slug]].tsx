@@ -1,6 +1,6 @@
 import { Comment, ContentAndUserQuery, Content as ContentType, Favorite, UserPublic } from 'data/graphql-generated';
 import { CssBaseline, GlobalStyles } from '@mui/material';
-import { addApolloState, initializeApollo } from '@/application/apollo';
+import { addApolloState, initializeApollo } from 'application/apollo';
 import { buildUrl, contentUrl } from 'util/url-factory';
 import { themeGlobalCss, themes } from 'styles/theme';
 import { useEffect, useRef, useState } from 'react';
@@ -39,7 +39,7 @@ export default function Content({ username, name, host }: { username: string; na
   });
 
   const router = useRouter();
-  const contentBase = useRef<HTMLDivElement>(null);
+  const itemRef = useRef<HTMLDivElement>(null);
   const nav = useRef<HTMLAnchorElement & { prev: () => void; next: () => void }>(null);
   const swipeListener = useRef(null);
   const [currentCanonicalUrl, setCurrentCanonicalUrl] = useState('');
@@ -76,12 +76,12 @@ export default function Content({ username, name, host }: { username: string; na
   }, [loading, data, router, currentCanonicalUrl]);
 
   function setupSwipe() {
-    if (swipeListener.current || !contentBase.current) {
+    if (swipeListener.current || !itemRef.current) {
       return;
     }
 
-    swipeListener.current = SwipeListener(contentBase.current);
-    contentBase.current.addEventListener('swipe', (e: any) => {
+    swipeListener.current = SwipeListener(itemRef.current);
+    itemRef.current.addEventListener('swipe', (e: any) => {
       const directions = e.detail.directions;
       if (directions.left) {
         // @ts-ignore don't worry about it for now, we're using imperative handler.
@@ -131,7 +131,7 @@ export default function Content({ username, name, host }: { username: string; na
     content.template === 'feed' ? (
       <Feed content={content} />
     ) : (
-      <Item ref={contentBase} content={content} contentOwner={contentOwner} comments={comments} favorites={favorites} />
+      <Item ref={itemRef} content={content} contentOwner={contentOwner} comments={comments} favorites={favorites} />
     );
 
   return (

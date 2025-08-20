@@ -213,13 +213,10 @@ export type MutationReadContentRemoteArgs = {
 
 
 export type MutationSaveContentArgs = {
-  code: Scalars['String']['input'];
-  content: Scalars['String']['input'];
   hidden: Scalars['Boolean']['input'];
   name: Scalars['String']['input'];
-  style: Scalars['String']['input'];
-  thumb: Scalars['String']['input'];
   title: Scalars['String']['input'];
+  view: Scalars['String']['input'];
 };
 
 
@@ -494,6 +491,25 @@ export type UserRemotePublic = {
   webmentionUrl?: Maybe<Scalars['String']['output']>;
 };
 
+export type PostCommentMutationVariables = Exact<{
+  username: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  content: Scalars['String']['input'];
+}>;
+
+
+export type PostCommentMutation = { __typename?: 'Mutation', postComment: { __typename?: 'Comment', avatar?: string | null, content?: string | null, deleted: boolean, favorited: boolean, fromUsername?: string | null, link: string, localContentName?: string | null, postId: string, toUsername: string, type: string, username: string } };
+
+export type SaveContentMutationVariables = Exact<{
+  name: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+  hidden: Scalars['Boolean']['input'];
+  view: Scalars['String']['input'];
+}>;
+
+
+export type SaveContentMutation = { __typename?: 'Mutation', saveContent: { __typename?: 'Content', username: string, title: string, view: string } };
+
 export type ContentAndUserQueryVariables = Exact<{
   username: Scalars['String']['input'];
   name: Scalars['String']['input'];
@@ -528,6 +544,13 @@ export type FetchAlbumCollectionQueryVariables = Exact<{
 
 
 export type FetchAlbumCollectionQuery = { __typename?: 'Query', fetchCollection: Array<{ __typename?: 'ContentMetaInfo', album: string, externalLink?: string | null, forceRefresh: boolean, hidden: boolean, name: string, section: string, thumb: string, title: string, username: string, prefetchImages?: Array<string> | null }> };
+
+export type DeleteContentMutationVariables = Exact<{
+  name: Scalars['String']['input'];
+}>;
+
+
+export type DeleteContentMutation = { __typename?: 'Mutation', deleteContent: boolean };
 
 export type FetchArchiveCollectionQueryVariables = Exact<{
   username: Scalars['String']['input'];
@@ -928,7 +951,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   postComment?: Resolver<ResolversTypes['Comment'], ParentType, ContextType, RequireFields<MutationPostCommentArgs, 'content' | 'name' | 'username'>>;
   postContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<MutationPostContentArgs, 'album' | 'code' | 'content' | 'hidden' | 'name' | 'section' | 'style' | 'thumb' | 'title'>>;
   readContentRemote?: Resolver<ResolversTypes['Post'], ParentType, ContextType, RequireFields<MutationReadContentRemoteArgs, 'fromUsername' | 'postId' | 'read'>>;
-  saveContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<MutationSaveContentArgs, 'code' | 'content' | 'hidden' | 'name' | 'style' | 'thumb' | 'title'>>;
+  saveContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<MutationSaveContentArgs, 'hidden' | 'name' | 'title' | 'view'>>;
   toggleSortFeed?: Resolver<ResolversTypes['UserRemotePublic'], ParentType, ContextType, RequireFields<MutationToggleSortFeedArgs, 'currentSortType' | 'profileUrl'>>;
 };
 

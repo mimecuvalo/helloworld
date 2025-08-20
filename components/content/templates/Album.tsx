@@ -1,12 +1,14 @@
-import { Alert, Snackbar, styled } from 'components';
-import { gql, useQuery } from '@apollo/client';
+import { Alert, IconButton, Snackbar, styled } from 'components';
+import { gql, useMutation, useQuery } from '@apollo/client';
 
-import { Content, FetchAlbumCollectionQuery } from 'data/graphql-generated';
+import { Content, DeleteContentMutation, FetchAlbumCollectionQuery } from 'data/graphql-generated';
 import ContentThumb from 'components/ContentThumb';
-import { F } from 'i18n';
+import { defineMessages, F, useIntl } from 'i18n';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { contentUrl } from '@/util/url-factory';
+import { transientOptions } from '@/util/css';
+import { useEditor } from 'application/EditorContext';
 
 // N.B. the && is overriding ItemWrapper's ul styles which isn't great.
 const StyledAlbum = styled('ul')`
@@ -54,7 +56,7 @@ const Item = styled('li')`
   }
 `;
 
-const TitleWrapper = styled('span')`
+const TitleWrapper = styled('span', { ...transientOptions })<{ $isHidden: boolean }>`
   position: absolute;
   bottom: 0;
   left: 0;
@@ -68,17 +70,19 @@ const TitleWrapper = styled('span')`
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
+
+  ${(props) => props.$isHidden && 'font-style: italic;'}
 `;
 
-// const DeleteButton = styled(IconButton)`
-//   position: absolute;
-//   top: ${(props) => props.theme.spacing(0.5)};
-//   right: ${(props) => props.theme.spacing(0.5)};
-// `;
+const DeleteButton = styled(IconButton)`
+  position: absolute;
+  top: ${(props) => props.theme.spacing(0.5)};
+  right: ${(props) => props.theme.spacing(0.5)};
+`;
 
-// const messages = defineMessages({
-//   error: { defaultMessage: 'Error deleting content.' },
-// });
+const messages = defineMessages({
+  error: { defaultMessage: 'Error deleting content.' },
+});
 
 const FETCH_COLLECTION = gql`
   query FetchAlbumCollection($username: String!, $section: String!, $album: String!, $name: String!) {
@@ -97,15 +101,17 @@ const FETCH_COLLECTION = gql`
   }
 `;
 
-// const DELETE_CONTENT = gql`
-//   mutation deleteContent($name: String!) {
-//     deleteContent(name: $name)
-//   }
-// `;
+const DELETE_CONTENT = gql`
+  mutation deleteContent($name: String!) {
+    deleteContent(name: $name)
+  }
+`;
 
 export default function Album({ content }: { content: Content }) {
   const { username, section, album, name } = content;
-  const [errorMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+  const intl = useIntl();
+  const { isEditing } = useEditor();
   const [isToastOpen, setIsToastOpen] = useState(false);
   const [currentIndexOpen, setCurrentIndexOpen] = useState(-1);
   const router = useRouter();
@@ -156,36 +162,39 @@ export default function Album({ content }: { content: Content }) {
     },
   });
 
-  // const [deleteContent] = useMutation(DELETE_CONTENT);
+  const [deleteContent] = useMutation<DeleteContentMutation>(DELETE_CONTENT);
 
   const handleToastClose = () => setIsToastOpen(false);
 
-  // const handleClick = async (item: Content) => {
-  //   const variables = { name: item.name };
+  const handleClick = async (item: Content) => {
+    const variables = { name: item.name };
 
-  //   try {
-  //     await deleteContent({
-  //       variables,
-  //       optimisticResponse: {
-  //         __typename: 'Mutation',
-  //         deleteContent: true,
-  //       },
-  //       update: (store) => {
-  //         const { username, section, album, name } = content;
-  //         const queryVariables = { username, section, album, name };
-  //         const data = store.readQuery({ query: FETCH_COLLECTION, variables: queryVariables });
-  //         store.writeQuery({
-  //           query: FETCH_COLLECTION,
-  //           data: { fetchCollection: data.fetchCollection.filter((i: Content) => i.name !== item.name) },
-  //           variables: queryVariables,
-  //         });
-  //       },
-  //     });
-  //   } catch (ex) {
-  //     setErrorMsg(intl.formatMessage(messages.error));
-  //     setIsToastOpen(true);
-  //   }
-  // };
+    try {
+      await deleteContent({
+        variables,
+        optimisticResponse: {
+          __typename: 'Mutation',
+          deleteContent: true,
+        },
+        update: (store) => {
+          const { username, section, album, name } = content;
+          const queryVariables = { username, section, album, name };
+          const data = store.readQuery<FetchAlbumCollectionQuery>({
+            query: FETCH_COLLECTION,
+            variables: queryVariables,
+          });
+          store.writeQuery({
+            query: FETCH_COLLECTION,
+            data: { fetchCollection: data?.fetchCollection.filter((i) => i.name !== item.name) },
+            variables: queryVariables,
+          });
+        },
+      });
+    } catch {
+      setErrorMsg(intl.formatMessage(messages.error));
+      setIsToastOpen(true);
+    }
+  };
 
   if (loading) {
     return <LoadingEmptyBox />;
@@ -203,11 +212,11 @@ export default function Album({ content }: { content: Content }) {
         )}
         {collection.map((item, index) => (
           <Item key={item.name}>
-            {/* {isEditing ? (
-              <DeleteButton onClick={() => handleClick(item)}>
+            {isEditing ? (
+              <DeleteButton color="error" className="notranslate" onClick={() => handleClick(item as Content)}>
                 x
               </DeleteButton>
-            ) : null} */}
+            ) : null}
             <ContentThumb
               item={item as Content}
               currentContent={content}
@@ -220,7 +229,11 @@ export default function Album({ content }: { content: Content }) {
                 setCurrentIndexOpen(-1);
               }}
             />
-            {item.title && <TitleWrapper className="notranslate">{item.title}</TitleWrapper>}
+            {item.title && (
+              <TitleWrapper className="notranslate" $isHidden={item.hidden}>
+                {item.title}
+              </TitleWrapper>
+            )}
           </Item>
         ))}
       </StyledAlbum>

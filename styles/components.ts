@@ -1,4 +1,4 @@
-import { SimplePaletteColorOptions, createTheme } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 
 import palette from './palette';
 import typography from './typography';
@@ -27,20 +27,31 @@ const components = {
 
       contained: {
         background: palette.background?.default,
-        border: `1px solid ${(palette.primary as SimplePaletteColorOptions)?.light}`,
+        border: `1px solid ${palette.primary.light}`,
         boxShadow: `
-          1px 1px ${(palette.primary as SimplePaletteColorOptions)?.light},
-          2px 2px ${(palette.primary as SimplePaletteColorOptions)?.light},
-          3px 3px ${(palette.primary as SimplePaletteColorOptions)?.light}`,
+          1px 1px ${palette.primary.light},
+          2px 2px ${palette.primary.light},
+          3px 3px ${palette.primary.light}`,
         borderRadius: 0,
         color: palette.text?.primary,
         padding: referenceTheme.spacing(0, 1),
+        transition: 'all 0.2s ease-out',
 
         '&:hover': {
+          border: `1px solid ${palette.primary.main}`,
           boxShadow: `
-            1px 1px ${(palette.primary as SimplePaletteColorOptions)?.light},
-            2px 2px ${(palette.primary as SimplePaletteColorOptions)?.light},
-            3px 3px ${(palette.primary as SimplePaletteColorOptions)?.light}`,
+            1px 1px ${palette.primary.main},
+            2px 2px ${palette.primary.main},
+            3px 3px ${palette.primary.main}`,
+        },
+
+        '&:active,&.nl-pressed': {
+          boxShadow: `none`,
+          transform: 'translate(3px, 3px)',
+        },
+
+        '&.Mui-disabled': {
+          color: palette.text?.disabled,
         },
       },
     },
@@ -55,6 +66,70 @@ const components = {
 
       sizeSmall: {
         height: '14px',
+      },
+    },
+  },
+
+  MuiIconButton: {
+    styleOverrides: {
+      root: {
+        background: palette.background?.default,
+        fontSize: typography.fontSizeBase,
+        lineHeight: typography.lineHeightBase,
+        textTransform: 'none',
+        verticalAlign: 'baseline',
+
+        '&.MuiButton-text[href]': {
+          textTransform: 'none',
+          padding: 0,
+          minWidth: 0,
+          margin: 0,
+          border: 0,
+        },
+        border: `1px solid ${palette.primary.light}`,
+        boxShadow: `
+          1px 1px ${palette.primary.light},
+          2px 2px ${palette.primary.light},
+          3px 3px ${palette.primary.light}`,
+        borderRadius: 0,
+        color: palette.text?.primary,
+        padding: referenceTheme.spacing(0, 1),
+        transition: 'all 0.2s ease-out',
+
+        '&:hover': {
+          border: `1px solid ${palette.primary.main}`,
+          boxShadow: `
+            1px 1px ${palette.primary.main},
+            2px 2px ${palette.primary.main},
+            3px 3px ${palette.primary.main}`,
+        },
+
+        '&:active,&.Mui-selected': {
+          boxShadow: `none`,
+          transform: 'translate(3px, 3px)',
+        },
+
+        '&.Mui-disabled': {
+          color: palette.text?.disabled,
+        },
+      },
+
+      colorError: {
+        background: palette.background?.default,
+        border: `1px solid ${palette.error.light}`,
+        boxShadow: `
+          1px 1px ${palette.error.light},
+          2px 2px ${palette.error.light},
+          3px 3px ${palette.error.light}`,
+
+        '&:hover': {
+          background: palette.background?.default,
+          border: `1px solid ${palette.error.main}`,
+          boxShadow: `
+            1px 1px ${palette.error.main},
+            2px 2px ${palette.error.main},
+            3px 3px ${palette.error.main}`,
+        },
       },
     },
   },
@@ -80,8 +155,50 @@ const components = {
   MuiOutlinedInput: {
     styleOverrides: {
       notchedOutline: {
-        borderColor: (palette.primary as SimplePaletteColorOptions)?.light,
+        borderColor: palette.primary.light,
         borderRadius: 0,
+      },
+    },
+  },
+
+  MuiToggleButton: {
+    styleOverrides: {
+      root: {
+        background: palette.background?.default,
+        fontSize: typography.fontSizeBase,
+        lineHeight: typography.lineHeightBase,
+        textTransform: 'none',
+        verticalAlign: 'baseline',
+
+        '&.MuiButton-text[href]': {
+          textTransform: 'none',
+          padding: 0,
+          minWidth: 0,
+          margin: 0,
+          border: 0,
+        },
+        border: `1px solid ${palette.primary.light}`,
+        boxShadow: `
+          1px 1px ${palette.primary.light},
+          2px 2px ${palette.primary.light},
+          3px 3px ${palette.primary.light}`,
+        borderRadius: 0,
+        color: palette.text?.primary,
+        padding: referenceTheme.spacing(0, 1),
+        transition: 'all 0.2s ease-out',
+
+        '&:hover': {
+          border: `1px solid ${palette.primary.main}`,
+          boxShadow: `
+            1px 1px ${palette.primary.main},
+            2px 2px ${palette.primary.main},
+            3px 3px ${palette.primary.main}`,
+        },
+
+        '&:active,&.Mui-selected': {
+          boxShadow: `none`,
+          transform: 'translate(3px, 3px)',
+        },
       },
     },
   },

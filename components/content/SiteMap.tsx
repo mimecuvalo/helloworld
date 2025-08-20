@@ -10,7 +10,7 @@ import ContentLink from 'components/ContentLink';
 import Image from 'components/Image';
 import LoginLogoutButton from 'components/Login';
 import MenuIcon from '@mui/icons-material/Menu';
-import UserContext from '@/application/UserContext';
+import UserContext from 'application/UserContext';
 import baseTheme from 'styles';
 import constants from 'util/constants';
 import { transientOptions } from 'util/css';
@@ -309,9 +309,11 @@ export default function SiteMap({ content, username }: { content?: Content; user
               </Link>
             </LogoWrapper>
           ) : null}
-          <li>
-            <LoginLogoutButton />
-          </li>
+          {isTablet && (
+            <li>
+              <LoginLogoutButton />
+            </li>
+          )}
           <li>
             <Link href={profileUrl(username)}>
               <F defaultMessage="home" />

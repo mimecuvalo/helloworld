@@ -28,10 +28,10 @@ export default function Sort({
     handleClose();
 
     const mutationResult = await toggleSortFeed({
-      variables: { profileUrl: userRemote.profileUrl, currentSortType: userRemote.sortType },
+      variables: { profileUrl: userRemote.profileUrl, currentSortType: userRemote.sortType || '' },
     });
 
-    handleSetFeed(Object.assign({}, userRemote, mutationResult.data.toggleSortFeed));
+    handleSetFeed(Object.assign({}, userRemote, mutationResult.data.toggleSortFeed), `?sort=${userRemote.sortType}`);
   };
 
   return (

@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { createAbsoluteUrl, fetchUrl } from 'util/crawler';
 
 import _ from 'lodash';
-import authenticate from '@/application/authentication';
+import authenticate from 'application/authentication';
 import * as cheerio from 'cheerio';
 
 const IFRAME_ALLOW = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
@@ -33,7 +33,7 @@ async function parseHtmlAndRetrieveOEmbedOrOpenGraphData(websiteUrl: string, htm
   const parsedUrl = new URL(websiteUrl);
   const $ = cheerio.load(html);
   const oEmbedLinks = $('link[rel="alternate"]').filter(
-    (index, el) => ($(el).attr('type') || '') === 'application/json+oembed'
+    (_, el) => ($(el).attr('type') || '') === 'application/json+oembed'
   );
   let oEmbedUrl = oEmbedLinks.first().attr('href');
 
@@ -79,6 +79,7 @@ async function retrieveOEmbedData(oEmbedUrl: string) {
 }
 
 function retrieveOpenGraphData($: cheerio.CheerioAPI) {
+  const title = $('title').text();
   const openGraphProperties = $('meta[property]').filter(
     (index, el) => ($(el).attr('property') || '').indexOf('og:') === 0
   );
@@ -89,7 +90,7 @@ function retrieveOpenGraphData($: cheerio.CheerioAPI) {
 
   return {
     type: 'Open Graph',
-    title: openGraphObj['title'],
+    title: openGraphObj['title'] || title,
     image: openGraphObj['image:secure_url'] || openGraphObj['image'],
     iframe: openGraphObj['type'] === 'video' && {
       src: openGraphObj['video:secure_url'] || openGraphObj['video:url'],

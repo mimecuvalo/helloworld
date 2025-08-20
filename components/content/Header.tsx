@@ -1,10 +1,11 @@
-import { Tooltip, Typography, styled } from 'components';
+import { ToggleButton, Tooltip, Typography, styled } from 'components';
 
 import { Content } from 'data/graphql-generated';
 import ContentLink from 'components/ContentLink';
 import { F } from 'i18n';
-import UserContext from '@/application/UserContext';
+import UserContext from 'application/UserContext';
 import { useContext } from 'react';
+import { useEditor } from 'application/EditorContext';
 
 const StyledHeader = styled('header')`
   position: sticky;
@@ -28,16 +29,20 @@ const StyledHeader = styled('header')`
   }
 `;
 
-// const EditButton = styled(Button)`
-//   padding: 0 ${(props) => props.theme.spacing(1)};
-//   align-self: flex-start;
-// `;
+const EditButton = styled(ToggleButton)`
+  position: absolute;
+  top: ${(props) => props.theme.spacing(1.5)};
+  right: ${(props) => props.theme.spacing(1.5)};
+  padding: 0 ${(props) => props.theme.spacing(1)};
+  align-self: flex-start;
+`;
 
 export default function Header({ content }: { content: Content }) {
   const { user } = useContext(UserContext);
   const isOwnerViewing = user?.username === content.username;
+  const { isEditing, setIsEditing } = useEditor();
 
-  if (!content.title) {
+  if (!content.title && !isOwnerViewing) {
     return null;
   }
 
@@ -47,21 +52,21 @@ export default function Header({ content }: { content: Content }) {
         <Typography variant="h1">
           <ContentLink item={content} currentContent={content}>
             <>
-              <span className="p-name notranslate">{content.title}</span>
+              <span className="p-name notranslate">{content.title || <F defaultMessage="Untitled" />}</span>
               {isOwnerViewing && content.hidden && (
-                <span>
+                <>
                   &nbsp;
                   <F defaultMessage="(hidden)" />
-                </span>
+                </>
               )}
             </>
           </ContentLink>
 
-          {/* {isOwnerViewing ? (
-          <EditButton onClick={handleEdit}>
-            <F defaultMessage="edit" />
-          </EditButton>
-        ) : null} */}
+          {isOwnerViewing ? (
+            <EditButton onClick={() => setIsEditing(!isEditing)} selected={isEditing} value={isEditing}>
+              <F defaultMessage="edit" />
+            </EditButton>
+          ) : null}
         </Typography>
       </Tooltip>
     </StyledHeader>

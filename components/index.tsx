@@ -27,6 +27,7 @@ export {
   Tab,
   Tabs,
   TextField,
+  ToggleButton,
   Toolbar,
   Tooltip,
   Typography,

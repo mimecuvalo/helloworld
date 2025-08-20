@@ -1,4 +1,10 @@
 {
+  "01165dcf77": [
+    {
+      "type": 0,
+      "value": "Favorite"
+    }
+  ],
   "050a298166": [
     {
       "type": 0,
@@ -9,12 +15,6 @@
     {
       "type": 0,
       "value": "search"
-    }
-  ],
-  "099af53f60": [
-    {
-      "type": 0,
-      "value": "delete"
     }
   ],
   "0e002f7647": [
@@ -39,6 +39,12 @@
     {
       "type": 0,
       "value": "home"
+    }
+  ],
+  "14ae475404": [
+    {
+      "type": 0,
+      "value": "Error deleting content."
     }
   ],
   "24c29702dc": [
@@ -97,12 +103,6 @@
     {
       "type": 0,
       "value": "Nothing to read right now!"
-    }
-  ],
-  "2f9a4413fa": [
-    {
-      "type": 0,
-      "value": "keep unread"
     }
   ],
   "30b9f6c879": [
@@ -191,6 +191,12 @@
       "value": "view thread"
     }
   ],
+  "5519c56f47": [
+    {
+      "type": 0,
+      "value": "Keep unread"
+    }
+  ],
   "5754749583": [
     {
       "type": 0,
@@ -207,6 +213,12 @@
     {
       "type": 0,
       "value": "followers"
+    }
+  ],
+  "5ded01a747": [
+    {
+      "type": 0,
+      "value": "Reblog"
     }
   ],
   "60f3b1ff9b": [
@@ -231,6 +243,12 @@
     {
       "type": 0,
       "value": "i'm sorry, dave. i'm afraid i can't do that."
+    }
+  ],
+  "693e6f7bd6": [
+    {
+      "type": 0,
+      "value": "replying to"
     }
   ],
   "6a26f54883": [
@@ -317,12 +335,6 @@
       "value": "Error updating content."
     }
   ],
-  "7f2da27591": [
-    {
-      "type": 0,
-      "value": "reblog"
-    }
-  ],
   "803fbc4585": [
     {
       "type": 0,
@@ -347,16 +359,16 @@
       "value": "unfollow"
     }
   ],
-  "8a6b6ea3aa": [
-    {
-      "type": 0,
-      "value": "favorite"
-    }
-  ],
   "8b04d5e377": [
     {
       "type": 0,
       "value": "first"
+    }
+  ],
+  "911af7aa20": [
+    {
+      "type": 0,
+      "value": "Untitled"
     }
   ],
   "951d4dff3c": [
@@ -399,6 +411,12 @@
     {
       "type": 0,
       "value": "i18n: French"
+    }
+  ],
+  "a5b16c1e27": [
+    {
+      "type": 0,
+      "value": "Error saving content."
     }
   ],
   "a5d4910609": [
@@ -511,10 +529,22 @@
       "value": "not found"
     }
   ],
+  "dbbd2a35bb": [
+    {
+      "type": 0,
+      "value": "Reply to"
+    }
+  ],
   "dc7161be3d": [
     {
       "type": 0,
       "value": "dashboard"
+    }
+  ],
+  "de95b43bce": [
+    {
+      "type": 0,
+      "value": "edit"
     }
   ],
   "e24d4f227e": [
@@ -527,12 +557,6 @@
     {
       "type": 0,
       "value": "Admin"
-    }
-  ],
-  "e84afaab83": [
-    {
-      "type": 0,
-      "value": "reply"
     }
   ],
   "e8d169f54a": [
@@ -579,6 +603,12 @@
     {
       "type": 1,
       "value": "date"
+    }
+  ],
+  "f2a6c498fb": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "f31e88af11": [

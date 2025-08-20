@@ -58,6 +58,11 @@
     "@mui/material": "7.2.0",
     "@prisma/client": "6.11.1",
     "@sentry/nextjs": "^9.35.0",
+    "@tiptap/extension-image": "3.2.0",
+    "@tiptap/extensions": "3.2.0",
+    "@tiptap/pm": "3.2.0",
+    "@tiptap/react": "3.2.0",
+    "@tiptap/starter-kit": "3.2.0",
     "@vercel/analytics": "1.5.0",
     "apollo-server-micro": "3.13.0",
     "body-parser": "2.2.0",
@@ -70,7 +75,6 @@
     "graphql": "16.11.0",
     "graphql-resolvers": "0.4.2",
     "graphql-tools": "9.0.18",
-    "hello-world-editor": "12.0.3",
     "js-cookie": "3.0.5",
     "lodash": "4.17.21",
     "magic-signatures": "2.0.0",
@@ -171,12 +175,6 @@
     }
   },
   "browserslist": "last 2 versions",
-  "resolutions": {
-    "prosemirror-model": "1.13.3",
-    "prosemirror-view": "1.18.1",
-    "@types/react": "19.1.8",
-    "@types/react-dom": "19.1.6"
-  },
   "husky": {
     "hooks": {
       "post-checkout": "./bin/post-checkout",
@@ -184,5 +182,8 @@
     }
   },
   "sideEffects": false,
-  "packageManager": "yarn@1.22.19"
+  "packageManager": "yarn@1.22.19",
+  "resolutions": {
+    "prosemirror-model": "1.25.3"
+  }
 }

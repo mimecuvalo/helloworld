@@ -1,5 +1,3 @@
-import { PaletteOptions } from '@mui/material';
-
 const primary = {
   light: '#09f',
   main: '#3984ff',
@@ -21,13 +19,13 @@ const grey = {
 };
 
 const error = {
-  light: '#fde7e5',
-  main: '#f60',
+  light: '#f66',
+  main: '#f33',
   dark: '#f00',
 };
 
 const warning = {
-  light: '#fff0dc',
+  light: '#fa0',
   main: '#f90',
   dark: '#f30',
 };
@@ -59,7 +57,7 @@ const thirdParty = {
   googleBlue: '#4285f4',
 };
 
-const palette: PaletteOptions = {
+const palette = {
   primary,
   secondary,
   error,

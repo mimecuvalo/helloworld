@@ -139,5 +139,6 @@ model ContentRemote {
   @@index([toUsername, commentUser])
   @@index([toUsername, postId])
   @@unique([toUsername, fromUsername, postId])
+  @@unique([commentUser, postId])
   @@index([thread])
 }

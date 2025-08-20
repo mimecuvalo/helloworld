@@ -1,8 +1,8 @@
 import { Button, Link, List, ListItem, styled } from 'components';
-import { useContext, useEffect, useState } from 'react';
+import { AnchorHTMLAttributes, JSX, PropsWithChildren, useContext, useEffect, useRef, useState } from 'react';
 
 import { F } from 'i18n';
-import UserContext from '@/application/UserContext';
+import UserContext from 'application/UserContext';
 import { profileUrl } from 'util/url-factory';
 
 const StyledList = styled(List)`
@@ -52,14 +52,14 @@ export default function Tools() {
         </Link>
       </ListItem>
       <ListItem>
-        <a href={followScript} style={{ textDecoration: 'none' }}>
+        <BookmarkletLink code={followScript} style={{ textDecoration: 'none' }}>
           <F defaultMessage="follow bookmarklet" />
-        </a>
+        </BookmarkletLink>
       </ListItem>
       <ListItem>
-        <a href={reblogScript} style={{ textDecoration: 'none' }}>
+        <BookmarkletLink code={reblogScript} style={{ textDecoration: 'none' }}>
           <F defaultMessage="reblog bookmarklet" />
-        </a>
+        </BookmarkletLink>
       </ListItem>
       {/* <ListItem>
         <Link href="/api/data-liberation">
@@ -72,5 +72,26 @@ export default function Tools() {
         </Button>
       </ListItem>
     </StyledList>
+  );
+}
+
+type BookmarkletLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
+  code: string;
+};
+
+export function BookmarkletLink({ code, children, ...props }: PropsWithChildren<BookmarkletLinkProps>): JSX.Element {
+  const linkRef = useRef<HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    if (linkRef.current) {
+      // Set the javascript: URL after the component mounts
+      linkRef.current.setAttribute('href', code);
+    }
+  }, [code]);
+
+  return (
+    <a ref={linkRef} {...props}>
+      {children}
+    </a>
   );
 }

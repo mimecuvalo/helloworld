@@ -487,21 +487,21 @@ const Content = {
       isAuthor,
       async (
         parent: ContentResolvers,
-        { name, hidden, title, thumb, style, code, content }: MutationSaveContentArgs,
+        { name, hidden, title, view }: MutationSaveContentArgs,
         { currentUsername, currentUser, req, prisma }: Context
       ) => {
         const username = currentUsername;
-        const thread = discoverThreadInHTML(content);
+        const thread = discoverThreadInHTML(view);
 
         const updatedContent = await prisma.content.update({
           data: {
-            hidden,
             title,
-            thumb,
-            style,
+            hidden,
+            // thumb,
+            // style,
+            // code,
             thread,
-            code,
-            content,
+            view,
           },
           where: {
             username_name: {
@@ -515,7 +515,7 @@ const Content = {
           await syndicate(req, currentUser as User, updatedContent);
         }
 
-        return { username: currentUsername, name, hidden, title, thumb, style, code, content };
+        return { username: currentUsername, name, title, view };
       }
     ),
 

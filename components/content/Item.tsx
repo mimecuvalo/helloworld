@@ -38,28 +38,18 @@ export default function Item(props: {
   isFeed?: boolean;
   ref?: React.Ref<HTMLDivElement>;
 }) {
-  // TODO
-  //const template = useRef(null);
-
-  // useImperativeHandle(ref, () => ({
-  //   getEditor: () => {
-  //     return template.current?.getEditor && template.current.getEditor();
-  //   },
-  // }));
-
   const { className, content, contentOwner, comments, favorites, isFeed } = props;
-  /* @ts-ignore */
-  const TemplateComponent = COMPONENT_TYPE_MAP[content.template] || Simple;
-  const contentComponent = <TemplateComponent content={content} isFeed={isFeed} />;
+  const template = content.template as keyof typeof COMPONENT_TYPE_MAP;
+  const TemplateComponent = COMPONENT_TYPE_MAP[template] || Simple;
+  const contentComponent = <TemplateComponent content={content} />;
 
   return (
     <ItemWrapper ref={props.ref}>
       <StyledItem className={`hw-item h-entry ${className || ''}`}>
         <Header content={content} />
-        {/* @ts-ignore */}
-        {COMPONENT_TYPE_MAP[content.template] ? contentComponent : <InnerView>{contentComponent}</InnerView>}
+        {COMPONENT_TYPE_MAP[template] ? contentComponent : <InnerView>{contentComponent}</InnerView>}
         <Footer content={content} contentOwner={contentOwner} />
-        {!isFeed && comments?.length ? <Comments comments={comments} content={content} /> : null}
+        {!isFeed ? <Comments comments={comments} content={content} /> : null}
         {!isFeed && favorites?.length ? <Favorites favorites={favorites} /> : null}
       </StyledItem>
     </ItemWrapper>

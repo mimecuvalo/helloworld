@@ -11,6 +11,11 @@ const FeedWrapper = styled('div', { label: 'FeedWrapper' })`
   margin-bottom: ${(props) => props.theme.spacing(4)};
   clear: both;
 
+  ul,
+  ol {
+    padding-inline-start: ${(props) => props.theme.spacing(4)};
+  }
+
   // ItemWrapper
   & > div {
     max-height: 75vh;

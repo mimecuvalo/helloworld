@@ -1,14 +1,12 @@
-import { Link, Dialog, styled, IconButton, useTheme } from 'components';
+import { Link, styled } from 'components';
 import { THUMB_HEIGHT, THUMB_WIDTH } from 'util/constants';
 import { contentUrl } from 'util/url-factory';
 import { defineMessages, useIntl } from 'i18n';
 
 import { Content } from 'data/graphql-generated';
 import { MouseEvent, useEffect, useState } from 'react';
-import { ArrowBackIosNew, ArrowForwardIos, Close } from '@mui/icons-material';
-import { Backdrop } from '@mui/material';
-import Header from './content/Header';
 import Image from 'components/Image';
+import Lightbox from './Lightbox';
 
 const ThumbLink = styled(Link)`
   width: ${THUMB_WIDTH}px;
@@ -16,22 +14,6 @@ const ThumbLink = styled(Link)`
   display: flex;
   align-items: center;
   justify-content: center;
-`;
-
-const DialogImage = styled('img')`
-  max-height: 80vh;
-  max-width: 100%;
-
-  &:not(:last-child) {
-    margin-bottom: ${(props) => props.theme.spacing(1)};
-  }
-`;
-
-const DialogContent = styled('div')`
-  header {
-    position: fixed;
-    align-self: center;
-  }
 `;
 
 const StyledThumb = styled('img')`
@@ -68,7 +50,6 @@ export default function Thumb({
 }) {
   const intl = useIntl();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const theme = useTheme();
   const [isLoaded, setIsLoaded] = useState(false);
   useEffect(() => setIsDialogOpen(isOpen), [isOpen]);
 
@@ -133,88 +114,13 @@ export default function Thumb({
       </ThumbLink>
 
       {isPhotosSectionAndHasPhotos && (
-        <Dialog
-          open={isDialogOpen}
-          onClose={handleClose}
-          maxWidth="lg"
-          slots={{ backdrop: Backdrop }}
-          slotProps={{
-            backdrop: {
-              sx: {
-                backdropFilter: 'blur(3px)',
-                backgroundColor: 'rgba(0,0,30,0.4)',
-              },
-            },
-          }}
-          PaperProps={{
-            sx: {
-              background: 'transparent',
-              boxShadow: 'none',
-              alignItems: 'center',
-              width: theme.breakpoints.values.lg,
-              margin: theme.spacing(1),
-            },
-          }}
-        >
-          <IconButton
-            onClick={handleClose}
-            size="large"
-            sx={{
-              backgroundColor: '#fff !important',
-              position: 'fixed',
-              top: { xs: theme.spacing(1), md: theme.spacing(4) },
-              right: { xs: theme.spacing(1), md: theme.spacing(4) },
-            }}
-          >
-            <Close width={32} height={32} />
-          </IconButton>
-
-          <IconButton
-            onClick={handlePrev}
-            size="large"
-            sx={{
-              backgroundColor: '#fff !important',
-              position: 'fixed',
-              transform: { xs: 'translateY(0)', md: 'translateY(-50%)' },
-              bottom: { xs: theme.spacing(1), md: '50%' },
-              left: { xs: `calc(50% - ${theme.spacing(7)})`, md: theme.spacing(4) },
-            }}
-          >
-            <ArrowBackIosNew width={32} height={32} />
-          </IconButton>
-
-          <IconButton
-            onClick={handleNext}
-            size="large"
-            sx={{
-              backgroundColor: '#fff !important',
-              position: 'fixed',
-              transform: { xs: 'translateY(0)', md: 'translateY(-50%)' },
-              bottom: { xs: theme.spacing(1), md: '50%' },
-              right: { xs: `calc(50% - ${theme.spacing(7)})`, md: theme.spacing(4) },
-            }}
-          >
-            <ArrowForwardIos width={32} height={32} />
-          </IconButton>
-
-          <DialogContent
-            onClick={handleClose}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '100%',
-              height: '100%',
-            }}
-          >
-            <Header content={item} />
-            {item.prefetchImages?.map((image) => (
-              <DialogImage key={image} src={image} alt={item.title} />
-            ))}
-            {/* <Simple content={item} /> */}
-          </DialogContent>
-        </Dialog>
+        <Lightbox
+          isDialogOpen={isDialogOpen}
+          handleClose={handleClose}
+          handlePrev={handlePrev}
+          handleNext={handleNext}
+          item={item}
+        />
       )}
     </>
   );

@@ -3,6 +3,8 @@ import ReactMarkdown from 'react-markdown';
 import { omit } from 'lodash';
 import rehypeRaw from 'rehype-raw';
 import { styled } from 'components';
+import { useEditor } from 'application/EditorContext';
+import { lazy, Suspense, useEffect, useState } from 'react';
 
 const View = styled('div', { label: 'SimpleView' })`
   position: relative;
@@ -43,22 +45,16 @@ const customRenderers = {
   ),
 };
 
-export default function Simple({
-  content,
-  isFeed,
-}: {
-  content: Pick<Content, 'title' | 'style' | 'code' | 'view' | 'content'>;
-  isEditing?: boolean;
-  isFeed?: boolean;
-}) {
-  // if (isEditing && typeof window !== 'undefined') {
-  //   const ContentEditor = lazy(() => import('content/ContentEditor'));
-  //   return (
-  //     <Suspense fallback={<div />}>
-  //       <ContentEditor ref={editor} content={content} />
-  //     </Suspense>
-  //   );
-  // }
+export default function Simple({ content, isFeed }: { content: Content; isEditing?: boolean; isFeed?: boolean }) {
+  const [shouldLoadEditor, setShouldLoadEditor] = useState(false);
+  const { isEditing } = useEditor();
+  const ContentEditor = lazy(() => import('../ContentEditor'));
+
+  useEffect(() => {
+    if (isEditing) {
+      setShouldLoadEditor(true);
+    }
+  }, [isEditing]);
 
   const lines = content.content.split('\n');
   const title = lines[0].replace(/^# /, '');
@@ -66,20 +62,30 @@ export default function Simple({
 
   return (
     <>
-      {isFeed ? null : <div dangerouslySetInnerHTML={{ __html: content.style }} />}
-      {isFeed ? null : <div dangerouslySetInnerHTML={{ __html: content.code }} />}
-      {content.content ? (
-        <View className="e-content hw-view notranslate">
-          <ReactMarkdown components={customRenderers} rehypePlugins={[rehypeRaw]}>
-            {contentWithMaybeTitle}
-          </ReactMarkdown>
-        </View>
-      ) : (
-        // Legacy that just had straight-up HTML.
-        <View
-          dangerouslySetInnerHTML={{ __html: content.view.replaceAll('<p></p>', '') }}
-          className="e-content hw-view notranslate"
-        />
+      {shouldLoadEditor ? (
+        // We keep the editor loaded once loaded so that save events can finish.
+        <Suspense fallback={<div />}>
+          <ContentEditor content={content} />
+        </Suspense>
+      ) : null}
+      {isEditing ? null : (
+        <>
+          {isFeed ? null : <div dangerouslySetInnerHTML={{ __html: content.style }} />}
+          {isFeed ? null : <div dangerouslySetInnerHTML={{ __html: content.code }} />}
+          {content.content ? (
+            <View className="e-content hw-view notranslate">
+              <ReactMarkdown components={customRenderers} rehypePlugins={[rehypeRaw]}>
+                {contentWithMaybeTitle}
+              </ReactMarkdown>
+            </View>
+          ) : (
+            // Legacy that just had straight-up HTML.
+            <View
+              dangerouslySetInnerHTML={{ __html: content.view.replaceAll('<p></p>', '') }}
+              className="e-content hw-view notranslate"
+            />
+          )}
+        </>
       )}
     </>
   );

@@ -91,7 +91,7 @@ export default function Footer({
         <Reblog contentRemote={contentRemote} />
         <Favorite contentRemote={contentRemote} isDashboard={true} />
         <KeepUnread keepUnreadCb={keepUnreadCb} />
-        <Reply />
+        <Reply contentRemote={contentRemote} />
       </Grid>
     </StyledFooter>
   );

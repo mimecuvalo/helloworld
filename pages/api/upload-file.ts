@@ -2,16 +2,18 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { MAX_FILE_SIZE } from 'util/constants';
 import { User } from '@prisma/client';
-import authenticate from '@/application/authentication';
+import authenticate from 'application/authentication';
 import { createPresignedPost } from '@aws-sdk/s3-presigned-post';
 import { S3Client } from '@aws-sdk/client-s3';
 import mime from 'mime/lite';
 
 export default authenticate(async function handler(req: NextApiRequest, res: NextApiResponse, currentUser: User) {
   const AWS_CONFIG = {
-    accessKeyId: process.env.S3_AWS_ACCESS_KEY,
-    secretAccessKey: process.env.S3_AWS_SECRET_KEY,
-    region: process.env.S3_AWS_REGION,
+    region: process.env.S3_AWS_REGION || '',
+    credentials: {
+      accessKeyId: process.env.S3_AWS_ACCESS_KEY || '',
+      secretAccessKey: process.env.S3_AWS_SECRET_KEY || '',
+    },
   };
 
   try {
@@ -37,6 +39,6 @@ export default authenticate(async function handler(req: NextApiRequest, res: Nex
     return res.status(200).json(post);
   } catch (error) {
     console.error(error);
-    return res.end(400);
+    return res.status(400).end('failed uploading file');
   }
 });

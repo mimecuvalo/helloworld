@@ -21,13 +21,13 @@ import { syndicate } from 'social-butterfly/syndicate';
 import { v4 as uuidv4 } from 'uuid';
 
 const contentRemote = {
-  // ContentRemote: {
-  //   // XXX wtf is this?
-  //   // @ts-ignore
-  //   __resolveType(contentRemote, context, info) {
-  //     return contentRemote.type[0].toUpperCase() + contentRemote.type.slice(1);
-  //   },
-  // },
+  ContentRemote: {
+    // XXX wtf is this?
+    // it is def. needed for favoriting.
+    __resolveType(contentRemote: any) {
+      return contentRemote.type[0].toUpperCase() + contentRemote.type.slice(1);
+    },
+  },
 
   Query: {
     allContentRemote: combineResolvers(
@@ -271,7 +271,7 @@ const contentRemote = {
         content,
         deleted: false,
         favorited: false,
-        fromUser: null,
+        fromUsername: null,
         link,
         localContentName: name,
         postId,
@@ -286,29 +286,36 @@ const contentRemote = {
       async (
         parent: ContentRemoteResolvers,
         { fromUsername, postId, type, favorited }: FavoriteContentRemoteMutationVariables,
-        { currentUsername, req, currentUser, prisma }: Context
+        { currentUsername, currentUserEmail, req, currentUser, prisma }: Context
       ) => {
-        const contentRemote = await prisma.contentRemote.update({
-          data: { favorited },
-          where: {
-            toUsername_fromUsername_postId: {
-              toUsername: currentUsername,
-              fromUsername,
-              postId,
+        if (type === 'comment') {
+          await prisma.contentRemote.update({
+            data: { favorited },
+            where: { commentUser_postId: { commentUser: currentUserEmail, postId } },
+          });
+        } else {
+          const contentRemote = await prisma.contentRemote.update({
+            data: { favorited },
+            where: {
+              toUsername_fromUsername_postId: {
+                toUsername: currentUsername,
+                fromUsername,
+                postId,
+              },
             },
-          },
-        });
-        const userRemote = await prisma.userRemote.findUnique({
-          where: {
-            localUsername_profileUrl: {
-              localUsername: currentUsername,
-              profileUrl: contentRemote.fromUsername || '',
+          });
+          const userRemote = await prisma.userRemote.findUnique({
+            where: {
+              localUsername_profileUrl: {
+                localUsername: currentUsername,
+                profileUrl: contentRemote.fromUsername || '',
+              },
             },
-          },
-        });
+          });
 
-        if (userRemote) {
-          like(req, currentUser as User, contentRemote, userRemote, favorited);
+          if (userRemote) {
+            like(req, currentUser as User, contentRemote, userRemote, favorited);
+          }
         }
 
         return { fromUsername, postId, type, favorited };
@@ -320,16 +327,23 @@ const contentRemote = {
       async (
         parent: ContentRemoteResolvers,
         { fromUsername, postId, localContentName, type, deleted }: DeleteContentRemoteMutationVariables,
-        { currentUsername, prisma }: Context
+        { currentUsername, currentUserEmail, prisma }: Context
       ) => {
-        const where = {
-          toUsername_fromUsername_postId: {
-            toUsername: currentUsername,
-            fromUsername,
-            postId,
-          },
-        };
-        await prisma.contentRemote.update({ data: { deleted }, where });
+        if (type === 'comment') {
+          await prisma.contentRemote.update({
+            data: { deleted },
+            where: { commentUser_postId: { commentUser: currentUserEmail, postId } },
+          });
+        } else {
+          const where = {
+            toUsername_fromUsername_postId: {
+              toUsername: currentUsername,
+              fromUsername,
+              postId,
+            },
+          };
+          await prisma.contentRemote.update({ data: { deleted }, where });
+        }
 
         const localContentWhere = { username_name: { username: currentUsername, name: localContentName } };
         const commentedContent = await prisma.content.findUnique({

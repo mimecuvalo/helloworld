@@ -7163,6 +7163,7 @@ export namespace Prisma {
   export type ContentRemoteWhereUniqueInput = Prisma.AtLeast<{
     id?: number
     toUsername_fromUsername_postId?: ContentRemoteToUsernameFromUsernamePostIdCompoundUniqueInput
+    commentUser_postId?: ContentRemoteCommentUserPostIdCompoundUniqueInput
     AND?: ContentRemoteWhereInput | ContentRemoteWhereInput[]
     OR?: ContentRemoteWhereInput[]
     NOT?: ContentRemoteWhereInput | ContentRemoteWhereInput[]
@@ -7190,7 +7191,7 @@ export namespace Prisma {
     view?: StringFilter<"ContentRemote"> | string
     content?: StringNullableFilter<"ContentRemote"> | string | null
     toUser?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id" | "toUsername_fromUsername_postId">
+  }, "id" | "toUsername_fromUsername_postId" | "commentUser_postId">
 
   export type ContentRemoteOrderByWithAggregationInput = {
     id?: SortOrder
@@ -8421,6 +8422,11 @@ export namespace Prisma {
   export type ContentRemoteToUsernameFromUsernamePostIdCompoundUniqueInput = {
     toUsername: string
     fromUsername: string
+    postId: string
+  }
+
+  export type ContentRemoteCommentUserPostIdCompoundUniqueInput = {
+    commentUser: string
     postId: string
   }
 

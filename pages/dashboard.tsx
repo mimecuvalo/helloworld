@@ -1,7 +1,7 @@
 import { Close as CloseIcon, Menu as MenuIcon } from '@mui/icons-material';
 import { Grid, IconButton, styled, useTheme } from 'components';
 import { defineMessages, useIntl } from 'i18n';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import DashboardEditor from 'components/dashboard/DashboardEditor';
 import Feed from 'components/dashboard/Feed';
@@ -10,9 +10,9 @@ import Following from 'components/dashboard/Following';
 import Head from 'next/head';
 import MyFeed from 'components/content/Feed';
 import Tools from 'components/dashboard/Tools';
-import UserContext from '@/application/UserContext';
+import UserContext from 'application/UserContext';
 import { UserRemotePublic } from 'data/graphql-generated';
-import authServerSideProps from '@/application/authServerSideProps';
+import authServerSideProps from 'application/authServerSideProps';
 import baseTheme from 'styles';
 import { transientOptions } from 'util/css';
 
@@ -91,6 +91,7 @@ const messages = defineMessages({
 });
 
 export default function Dashboard() {
+  const [isLoaded, setIsLoaded] = useState(false);
   const [shouldShowAllItems, setShouldShowAllItems] = useState(false);
   const [didFeedLoad, setDidFeedLoad] = useState(false);
   const [query, setQuery] = useState('');
@@ -101,8 +102,9 @@ export default function Dashboard() {
   const theme = useTheme();
   const menuButtonLabel = intl.formatMessage(messages.menu);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  useEffect(() => setIsLoaded(true), []);
 
-  if (!user) {
+  if (!user || !isLoaded) {
     return null;
   }
 

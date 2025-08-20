@@ -156,11 +156,16 @@ export default function Nav({
         boxShadow: `1px 1px ${(theme.palette[colorPalette] as PaletteColor).main},
               2px 2px ${(theme.palette[colorPalette] as PaletteColor).main},
               3px 3px ${(theme.palette[colorPalette] as PaletteColor).main}`,
+        transition: 'all 0.2s ease-out',
         '&:hover': {
           border: `1px solid ${(theme.palette[colorPalette] as PaletteColor).dark}`,
           boxShadow: `1px 1px ${(theme.palette[colorPalette] as PaletteColor).dark},
               2px 2px ${(theme.palette[colorPalette] as PaletteColor).dark},
               3px 3px ${(theme.palette[colorPalette] as PaletteColor).dark}`,
+        },
+        '&:active': {
+          boxShadow: `none`,
+          transform: 'translate(3px, 3px)',
         },
       },
     };

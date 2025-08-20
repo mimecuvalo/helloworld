@@ -2,8 +2,13 @@ import { ContentRemote, FavoriteContentRemoteMutation } from 'data/graphql-gener
 import { gql, useMutation } from '@apollo/client';
 
 import { Button } from 'components';
-import { F } from 'i18n';
 import FollowingSpecialFeedCountsQuery from 'components/dashboard/FollowingSpecialFeedCountsQuery';
+import { FavoriteBorderOutlined, FavoriteOutlined } from '@mui/icons-material';
+import { defineMessages, useIntl } from '@/i18n';
+
+const messages = defineMessages({
+  favorite: { defaultMessage: 'Favorite' },
+});
 
 const FAVORITE_CONTENT_REMOTE = gql`
   mutation favoriteContentRemote($fromUsername: String!, $postId: String!, $type: String!, $favorited: Boolean!) {
@@ -23,8 +28,9 @@ export default function Favorite({
   contentRemote: ContentRemote;
   isDashboard?: boolean;
 }) {
+  const intl = useIntl();
   const { favorited, fromUsername, postId, type } = contentRemote;
-  const variables = { fromUsername, postId, type, favorited: !favorited };
+  const variables = { fromUsername: fromUsername || '', postId, type, favorited: !favorited };
 
   const [favoriteContentRemote] = useMutation<FavoriteContentRemoteMutation>(FAVORITE_CONTENT_REMOTE);
 
@@ -47,8 +53,12 @@ export default function Favorite({
     });
 
   return (
-    <Button onClick={handleClick} sx={{ fontWeight: contentRemote.favorited ? 'bold' : 'normal' }}>
-      <F defaultMessage="favorite" />
+    <Button
+      onClick={handleClick}
+      sx={{ fontWeight: contentRemote.favorited ? 'bold' : 'normal' }}
+      title={intl.formatMessage(messages.favorite)}
+    >
+      {contentRemote.favorited ? <FavoriteOutlined /> : <FavoriteBorderOutlined />}
     </Button>
   );
 }

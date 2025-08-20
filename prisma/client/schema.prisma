@@ -131,6 +131,7 @@ model ContentRemote {
   content          String?
 
   @@unique([toUsername, fromUsername, postId])
+  @@unique([commentUser, postId])
   // TODO(mime): add full-text search?
   //@@index([title, view])
   @@index([toUsername])
