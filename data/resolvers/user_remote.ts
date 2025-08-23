@@ -9,7 +9,7 @@ import { follow, unfollow } from 'pages/api/social/follow';
 import { isAdmin, isAuthor } from './authorization';
 
 import { Context } from 'data/context';
-import { User } from '@prisma/client';
+import { User } from 'prisma/client';
 import { combineResolvers } from 'graphql-resolvers';
 
 const UserRemote = {

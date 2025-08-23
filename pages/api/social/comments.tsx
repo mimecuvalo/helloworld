@@ -1,4 +1,4 @@
-import { ContentRemote, User } from '@prisma/client';
+import { ContentRemote, User } from 'prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getLocalUser, getRemoteCommentsOnLocalContent } from 'social-butterfly/db';
 

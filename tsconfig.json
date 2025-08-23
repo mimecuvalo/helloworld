@@ -28,6 +28,7 @@
       "hooks": ["./hooks"],
       "i18n": ["./i18n"],
       "i18n/*": ["./i18n/*"],
+      "prisma/*": ["./prisma/*"],
       "social-butterfly": ["./social-butterfly"],
       "styles": ["./styles"],
       "util/*": ["./util/*"],

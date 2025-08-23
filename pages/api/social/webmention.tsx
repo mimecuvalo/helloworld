@@ -1,4 +1,4 @@
-import { Content, User, UserRemote } from '@prisma/client';
+import { Content, User, UserRemote } from 'prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { fetchText, sanitizeHTML } from 'util/crawler';
 import {

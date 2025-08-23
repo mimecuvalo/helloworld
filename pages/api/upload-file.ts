@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { MAX_FILE_SIZE } from 'util/constants';
-import { User } from '@prisma/client';
+import { User } from 'prisma/client';
 import authenticate from 'application/authentication';
 import { createPresignedPost } from '@aws-sdk/s3-presigned-post';
 import { S3Client } from '@aws-sdk/client-s3';

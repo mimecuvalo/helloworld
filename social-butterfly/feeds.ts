@@ -1,4 +1,4 @@
-import { ContentRemote, UserRemote } from '@prisma/client';
+import { ContentRemote, UserRemote } from 'prisma/client';
 import { Readable, ReadableOptions } from 'stream';
 import { createAbsoluteUrl, fetchText, fetchUrl, sanitizeHTML } from 'util/crawler';
 import { getRemoteContent, saveRemoteContent } from './db';

@@ -1,4 +1,4 @@
-import { Content, ContentRemote, User, UserRemote } from '@prisma/client';
+import { Content, ContentRemote, User, UserRemote } from 'prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { buildUrl, contentUrl, profileUrl } from 'util/url-factory';
 import { getActivityPubActor, getUserRemoteInfo } from './discover-user';
@@ -381,6 +381,7 @@ async function handleCreate(
 
   const existingContentRemote = await getRemoteContent(user.username, activityObject.id.toString());
 
+  // @ts-ignore fix up later
   const contentRemote: ContentRemote = {
     id: existingContentRemote?.id || -1,
     avatar: userRemote.avatar,

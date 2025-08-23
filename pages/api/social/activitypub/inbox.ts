@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { accept, findUserRemote, handle } from 'social-butterfly/activitystreams';
 
-import { UserRemote } from '@prisma/client';
+import { UserRemote } from 'prisma/client';
 import crypto from 'crypto';
 import forge from 'node-forge';
 import { getLocalUser } from 'social-butterfly/db';

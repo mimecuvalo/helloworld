@@ -1,4 +1,4 @@
-import { ContentRemote, UserRemote } from '@prisma/client';
+import { ContentRemote, UserRemote } from 'prisma/client';
 
 import { parseContentUrl } from 'util/url-factory';
 import prisma from 'data/prisma';

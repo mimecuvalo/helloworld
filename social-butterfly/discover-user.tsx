@@ -2,7 +2,7 @@ import { createAbsoluteUrl, fetchJSON, fetchText } from 'util/crawler';
 import { getRemoteUser, saveRemoteUser } from './db';
 
 import { NextApiRequest } from 'next';
-import { UserRemote } from '@prisma/client';
+import { UserRemote } from 'prisma/client';
 import * as cheerio from 'cheerio';
 import { discoverAndParseFeedFromUrl } from './feeds';
 import { ensureAbsoluteUrl } from 'util/url-factory';

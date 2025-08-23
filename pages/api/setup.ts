@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { User } from '@prisma/client';
+import { User } from 'prisma/client';
 import crypto from 'crypto';
 import { follow } from 'social-butterfly/activitystreams';
 import magic from 'magic-signatures';

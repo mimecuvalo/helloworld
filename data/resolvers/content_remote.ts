@@ -10,7 +10,7 @@ import {
   QueryFetchFavoritesRemoteArgs,
   ReadContentRemoteMutationVariables,
 } from 'data/graphql-generated';
-import { Prisma, User } from '@prisma/client';
+import { Prisma, User } from 'prisma/client';
 import { isAdmin, isAuthor } from './authorization';
 
 import { Context } from 'data/context';

@@ -1,4 +1,4 @@
-import { Content, ContentRemote, User, UserRemote } from '@prisma/client';
+import { Content, ContentRemote, User, UserRemote } from 'prisma/client';
 //import { comment as emailComment } from './email';
 import { contentUrl, ensureAbsoluteUrl } from 'util/url-factory';
 import { getRemoteCommentsOnLocalContent, getRemoteContent, getRemoteUser } from './db';

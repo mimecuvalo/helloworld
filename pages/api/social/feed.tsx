@@ -1,4 +1,4 @@
-import { Content, User } from '@prisma/client';
+import { Content, User } from 'prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import React, { createElement as RcE, ReactNode } from 'react';
 import { buildUrl, contentUrl, profileUrl } from 'util/url-factory';

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { User, UserRemote } from '@prisma/client';
+import { User, UserRemote } from 'prisma/client';
 import { buildUrl, profileUrl } from 'util/url-factory';
 import { getLocalUser, getRemoteFriends } from 'social-butterfly/db';
 

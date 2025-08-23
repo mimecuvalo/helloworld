@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { User, UserRemote } from '@prisma/client';
+import { User, UserRemote } from 'prisma/client';
 import { parseFeedAndInsertIntoDb, retrieveFeed } from 'social-butterfly/feeds';
 
 import { follow as activityStreamsFollow } from 'social-butterfly/activitystreams';
