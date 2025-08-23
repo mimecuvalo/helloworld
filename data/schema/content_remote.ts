@@ -41,7 +41,6 @@ export default gql`
   type Comment implements ContentRemote {
     avatar: String
     creator: String
-    content: String
     createdAt: Date!
     deleted: Boolean!
     favorited: Boolean!

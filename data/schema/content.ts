@@ -26,7 +26,6 @@ export default gql`
     style: String!
     code: String!
     view: String!
-    content: String!
     forceRefresh: Boolean # If content contains style/code we can't do ajax navigation.
     prefetchImages: [String!]
     externalLink: String # If we have a direct link to an external site.
@@ -89,7 +88,7 @@ export default gql`
       thumb: String!
       style: String!
       code: String!
-      content: String!
+      view: String!
     ): Content!
     deleteContent(name: String!): Boolean!
   }

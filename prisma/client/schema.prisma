@@ -91,11 +91,9 @@ model Content {
   style           String
   code            String
   view            String
-  content         String?
 
   // TODO(mime): add full-text search?
   //@@index([title, view])
-  //@@index([title, content])
   @@unique([username, name])
   @@index([section])
   @@index([name])
@@ -128,7 +126,6 @@ model ContentRemote {
   isSpam           Boolean   @default(false)
   deleted          Boolean   @default(false)
   view             String
-  content          String?
 
   @@unique([toUsername, fromUsername, postId])
   @@unique([commentUser, postId])

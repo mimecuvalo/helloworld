@@ -1,7 +1,4 @@
 import { Content } from 'data/graphql-generated';
-import ReactMarkdown from 'react-markdown';
-import { omit } from 'lodash';
-import rehypeRaw from 'rehype-raw';
 import { styled } from 'components';
 import { useEditor } from 'application/EditorContext';
 import { lazy, Suspense, useContext } from 'react';
@@ -25,37 +22,10 @@ const View = styled('div', { label: 'SimpleView' })`
   }
 `;
 
-const customRenderers = {
-  // N.B. This div/span wrapper matches the structure, more or less, of the Outline editor's img wrapper.
-  img: (props: any) => (
-    <span className={`image image-${props.title || ''}`}>
-      <span className="image-inner-wrapper">
-        {/* eslint-disable-next-line */}
-        <img {...omit(props, 'node', 'src')} className="u-photo" src={props.src} />
-      </span>
-      <span className="caption">{props.alt}</span>
-    </span>
-  ),
-
-  /* XXX: react-markdown sometimes renders a lone \ - we hide these. See data-text code above. */
-  p: (props: any) => (
-    <p
-      data-text={props.children.toString().includes('[object Object]') ? undefined : props.children}
-      {...omit(props, 'node')}
-    >
-      {props.children}
-    </p>
-  ),
-};
-
 export default function Simple({ content, isFeed }: { content: Content; isEditing?: boolean; isFeed?: boolean }) {
   const { isEditing } = useEditor();
   const { user } = useContext(UserContext);
   const isOwnerViewing = user?.username === content.username;
-
-  const lines = content.content.split('\n');
-  const title = lines[0].replace(/^# /, '');
-  const contentWithMaybeTitle = title === content.title ? lines.slice(1).join('\n') : content.content;
 
   return (
     <>
@@ -68,19 +38,10 @@ export default function Simple({ content, isFeed }: { content: Content; isEditin
         <>
           {isFeed ? null : <div dangerouslySetInnerHTML={{ __html: content.style }} />}
           {isFeed ? null : <div dangerouslySetInnerHTML={{ __html: content.code }} />}
-          {content.content ? (
-            <View className="e-content hw-view notranslate">
-              <ReactMarkdown components={customRenderers} rehypePlugins={[rehypeRaw]}>
-                {contentWithMaybeTitle}
-              </ReactMarkdown>
-            </View>
-          ) : (
-            // Legacy that just had straight-up HTML.
-            <View
-              dangerouslySetInnerHTML={{ __html: content.view.replaceAll('<p></p>', '') }}
-              className="e-content hw-view notranslate"
-            />
-          )}
+          <View
+            dangerouslySetInnerHTML={{ __html: content.view.replaceAll('<p></p>', '') }}
+            className="e-content hw-view notranslate"
+          />
         </>
       )}
     </>

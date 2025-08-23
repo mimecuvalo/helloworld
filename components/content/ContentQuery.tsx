@@ -7,7 +7,6 @@ export default gql`
       code
       commentsCount
       commentsUpdated
-      content
       count
       countRobot
       createdAt
@@ -28,7 +27,6 @@ export default gql`
     fetchCommentsRemote(username: $username, name: $name) {
       avatar
       creator
-      content
       deleted
       favorited
       fromUsername

@@ -75,7 +75,7 @@ const POST_CONTENT = gql`
     $thumb: String!
     $style: String!
     $code: String!
-    $content: String!
+    $view: String!
   ) {
     postContent(
       section: $section
@@ -86,7 +86,7 @@ const POST_CONTENT = gql`
       thumb: $thumb
       style: $style
       code: $code
-      content: $content
+      view: $view
     ) {
       username
       section
@@ -97,7 +97,7 @@ const POST_CONTENT = gql`
       thumb
       style
       code
-      content
+      view
     }
   }
 `;
@@ -159,7 +159,7 @@ export default function DashboardEditor({ username }: { username: string }) {
       thumb,
       style: '', // TODO
       code: '', // TODO
-      content: editorValue,
+      view: editorValue,
     };
 
     try {

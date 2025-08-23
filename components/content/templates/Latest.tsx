@@ -16,7 +16,6 @@ const FETCH_COLLECTION_LINKS = gql`
       title
       username
       view
-      content
     }
   }
 `;

@@ -42,6 +42,10 @@ h6 {
   margin: 0;
 }
 
+:where(code, kbd, samp) {
+  font-size: 1rem;
+}
+
 /* In development, highlight untranslated strings. */
 .App-is-development *:not(.notranslate) {
   text-shadow: 3px 3px red;

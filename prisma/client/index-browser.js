@@ -190,8 +190,7 @@ exports.Prisma.ContentScalarFieldEnum = {
   avatar: 'avatar',
   style: 'style',
   code: 'code',
-  view: 'view',
-  content: 'content'
+  view: 'view'
 };
 
 exports.Prisma.ContentRemoteScalarFieldEnum = {
@@ -217,8 +216,7 @@ exports.Prisma.ContentRemoteScalarFieldEnum = {
   read: 'read',
   isSpam: 'isSpam',
   deleted: 'deleted',
-  view: 'view',
-  content: 'content'
+  view: 'view'
 };
 
 exports.Prisma.SortOrder = {

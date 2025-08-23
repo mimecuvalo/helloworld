@@ -203,7 +203,6 @@ async function handleEntry(feedEntry: FeedParser.Node, userRemote: UserRemote): 
     avatar,
     commentsCount,
     commentsUpdated,
-    content: '',
     createdAt: feedEntry.pubdate || new Date(),
     creator: feedEntry.author,
     fromUsername: userRemote.profileUrl,

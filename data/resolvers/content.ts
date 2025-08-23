@@ -145,7 +145,7 @@ const Content = {
       { username, name }: QueryFetchContentNeighborsArgs,
       { currentUsername, prisma }: Context
     ) {
-      const ATTRIBUTES_NAVIGATION_WITH_VIEW = Object.assign({ content: true, view: true }, ATTRIBUTES_NAVIGATION);
+      const ATTRIBUTES_NAVIGATION_WITH_VIEW = Object.assign({ view: true }, ATTRIBUTES_NAVIGATION);
       const content = (await prisma.content.findUnique({
         where: { username_name: { username: username || '', name: name || '' } },
       })) as ContentType | null;
@@ -261,7 +261,7 @@ const Content = {
       // For links section, we grab the anchor url in the view.
       const select =
         section === 'links' || section === 'photos'
-          ? Object.assign({ content: true, view: true }, ATTRIBUTES_NAVIGATION)
+          ? Object.assign({ view: true }, ATTRIBUTES_NAVIGATION)
           : ATTRIBUTES_NAVIGATION;
 
       let collection: ContentType[] = [];
@@ -523,13 +523,13 @@ const Content = {
       isAuthor,
       async (
         parent: ContentResolvers,
-        { section, album, name, title, hidden, thumb, style, code, content }: MutationPostContentArgs,
+        { section, album, name, title, hidden, thumb, style, code, view }: MutationPostContentArgs,
         { currentUsername, currentUser, prisma, req }: Context
       ) => {
         name = (name || 'untitled') + '-' + nanoid(10);
         name = name.replace(/[^A-Za-z0-9-]/, '-');
 
-        const thread = discoverThreadInHTML(content);
+        const thread = discoverThreadInHTML(view);
 
         const createdContent = await prisma.content.create({
           data: {
@@ -546,8 +546,7 @@ const Content = {
             sortType: '',
             style,
             code,
-            content,
-            view: '',
+            view,
           },
         });
 
@@ -565,7 +564,7 @@ const Content = {
           thumb,
           style,
           code,
-          content,
+          view,
         };
       }
     ),
@@ -630,9 +629,7 @@ function decorateArrayWithPrefetchImages(list: ContentType[]) {
 
 function decoratePrefetchImages(item: ContentType) {
   if (item) {
-    item.prefetchImages = (item.view?.match(/src=['"][^'"]+['"]/g) || [])
-      .map((i) => i.slice(5, -1))
-      .concat(item.content?.match(/https[^)]*/g) || []);
+    item.prefetchImages = (item.view?.match(/src=['"][^'"]+['"]/g) || []).map((i) => i.slice(5, -1));
   }
 
   return item;

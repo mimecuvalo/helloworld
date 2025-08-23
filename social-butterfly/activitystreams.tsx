@@ -359,7 +359,6 @@ async function handleLike(
 
   await saveRemoteContent(
     Object.assign({}, remoteContent, {
-      content: '',
       createdAt: new Date(),
       updatedAt: new Date(),
       link: '',
@@ -387,7 +386,6 @@ async function handleCreate(
     avatar: userRemote.avatar,
     commentsCount: parseInt(activityObject.repliesCount || ''),
     commentsUpdated: new Date(activityObject.repliesUpdated || new Date()),
-    content: '',
     createdAt: new Date(activityObject.published || new Date()),
     fromUsername: userRemote.profileUrl,
     fromUserRemoteId: userRemote.id.toString(),

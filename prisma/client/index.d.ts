@@ -3781,7 +3781,6 @@ export namespace Prisma {
     style: string | null
     code: string | null
     view: string | null
-    content: string | null
   }
 
   export type ContentMaxAggregateOutputType = {
@@ -3810,7 +3809,6 @@ export namespace Prisma {
     style: string | null
     code: string | null
     view: string | null
-    content: string | null
   }
 
   export type ContentCountAggregateOutputType = {
@@ -3839,7 +3837,6 @@ export namespace Prisma {
     style: number
     code: number
     view: number
-    content: number
     _all: number
   }
 
@@ -3890,7 +3887,6 @@ export namespace Prisma {
     style?: true
     code?: true
     view?: true
-    content?: true
   }
 
   export type ContentMaxAggregateInputType = {
@@ -3919,7 +3915,6 @@ export namespace Prisma {
     style?: true
     code?: true
     view?: true
-    content?: true
   }
 
   export type ContentCountAggregateInputType = {
@@ -3948,7 +3943,6 @@ export namespace Prisma {
     style?: true
     code?: true
     view?: true
-    content?: true
     _all?: true
   }
 
@@ -4064,7 +4058,6 @@ export namespace Prisma {
     style: string
     code: string
     view: string
-    content: string | null
     _count: ContentCountAggregateOutputType | null
     _avg: ContentAvgAggregateOutputType | null
     _sum: ContentSumAggregateOutputType | null
@@ -4112,7 +4105,6 @@ export namespace Prisma {
     style?: boolean
     code?: boolean
     view?: boolean
-    content?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["content"]>
 
@@ -4142,7 +4134,6 @@ export namespace Prisma {
     style?: boolean
     code?: boolean
     view?: boolean
-    content?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["content"]>
 
@@ -4172,7 +4163,6 @@ export namespace Prisma {
     style?: boolean
     code?: boolean
     view?: boolean
-    content?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["content"]>
 
@@ -4202,10 +4192,9 @@ export namespace Prisma {
     style?: boolean
     code?: boolean
     view?: boolean
-    content?: boolean
   }
 
-  export type ContentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "username" | "section" | "album" | "name" | "template" | "sortType" | "redirect" | "hidden" | "title" | "thumb" | "order" | "count" | "countRobot" | "commentsCount" | "commentsUpdated" | "favoritesCount" | "thread" | "threadUser" | "avatar" | "style" | "code" | "view" | "content", ExtArgs["result"]["content"]>
+  export type ContentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "username" | "section" | "album" | "name" | "template" | "sortType" | "redirect" | "hidden" | "title" | "thumb" | "order" | "count" | "countRobot" | "commentsCount" | "commentsUpdated" | "favoritesCount" | "thread" | "threadUser" | "avatar" | "style" | "code" | "view", ExtArgs["result"]["content"]>
   export type ContentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -4247,7 +4236,6 @@ export namespace Prisma {
       style: string
       code: string
       view: string
-      content: string | null
     }, ExtArgs["result"]["content"]>
     composites: {}
   }
@@ -4697,7 +4685,6 @@ export namespace Prisma {
     readonly style: FieldRef<"Content", 'String'>
     readonly code: FieldRef<"Content", 'String'>
     readonly view: FieldRef<"Content", 'String'>
-    readonly content: FieldRef<"Content", 'String'>
   }
     
 
@@ -5158,7 +5145,6 @@ export namespace Prisma {
     isSpam: boolean | null
     deleted: boolean | null
     view: string | null
-    content: string | null
   }
 
   export type ContentRemoteMaxAggregateOutputType = {
@@ -5185,7 +5171,6 @@ export namespace Prisma {
     isSpam: boolean | null
     deleted: boolean | null
     view: string | null
-    content: string | null
   }
 
   export type ContentRemoteCountAggregateOutputType = {
@@ -5212,7 +5197,6 @@ export namespace Prisma {
     isSpam: number
     deleted: number
     view: number
-    content: number
     _all: number
   }
 
@@ -5251,7 +5235,6 @@ export namespace Prisma {
     isSpam?: true
     deleted?: true
     view?: true
-    content?: true
   }
 
   export type ContentRemoteMaxAggregateInputType = {
@@ -5278,7 +5261,6 @@ export namespace Prisma {
     isSpam?: true
     deleted?: true
     view?: true
-    content?: true
   }
 
   export type ContentRemoteCountAggregateInputType = {
@@ -5305,7 +5287,6 @@ export namespace Prisma {
     isSpam?: true
     deleted?: true
     view?: true
-    content?: true
     _all?: true
   }
 
@@ -5419,7 +5400,6 @@ export namespace Prisma {
     isSpam: boolean
     deleted: boolean
     view: string
-    content: string | null
     _count: ContentRemoteCountAggregateOutputType | null
     _avg: ContentRemoteAvgAggregateOutputType | null
     _sum: ContentRemoteSumAggregateOutputType | null
@@ -5465,7 +5445,6 @@ export namespace Prisma {
     isSpam?: boolean
     deleted?: boolean
     view?: boolean
-    content?: boolean
     toUser?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["contentRemote"]>
 
@@ -5493,7 +5472,6 @@ export namespace Prisma {
     isSpam?: boolean
     deleted?: boolean
     view?: boolean
-    content?: boolean
     toUser?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["contentRemote"]>
 
@@ -5521,7 +5499,6 @@ export namespace Prisma {
     isSpam?: boolean
     deleted?: boolean
     view?: boolean
-    content?: boolean
     toUser?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["contentRemote"]>
 
@@ -5549,10 +5526,9 @@ export namespace Prisma {
     isSpam?: boolean
     deleted?: boolean
     view?: boolean
-    content?: boolean
   }
 
-  export type ContentRemoteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "toUsername" | "localContentName" | "fromUsername" | "fromUserRemoteId" | "commentUser" | "username" | "creator" | "avatar" | "title" | "postId" | "link" | "commentsUpdated" | "commentsCount" | "thread" | "type" | "favorited" | "read" | "isSpam" | "deleted" | "view" | "content", ExtArgs["result"]["contentRemote"]>
+  export type ContentRemoteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "toUsername" | "localContentName" | "fromUsername" | "fromUserRemoteId" | "commentUser" | "username" | "creator" | "avatar" | "title" | "postId" | "link" | "commentsUpdated" | "commentsCount" | "thread" | "type" | "favorited" | "read" | "isSpam" | "deleted" | "view", ExtArgs["result"]["contentRemote"]>
   export type ContentRemoteInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     toUser?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -5592,7 +5568,6 @@ export namespace Prisma {
       isSpam: boolean
       deleted: boolean
       view: string
-      content: string | null
     }, ExtArgs["result"]["contentRemote"]>
     composites: {}
   }
@@ -6040,7 +6015,6 @@ export namespace Prisma {
     readonly isSpam: FieldRef<"ContentRemote", 'Boolean'>
     readonly deleted: FieldRef<"ContentRemote", 'Boolean'>
     readonly view: FieldRef<"ContentRemote", 'String'>
-    readonly content: FieldRef<"ContentRemote", 'String'>
   }
     
 
@@ -6545,8 +6519,7 @@ export namespace Prisma {
     avatar: 'avatar',
     style: 'style',
     code: 'code',
-    view: 'view',
-    content: 'content'
+    view: 'view'
   };
 
   export type ContentScalarFieldEnum = (typeof ContentScalarFieldEnum)[keyof typeof ContentScalarFieldEnum]
@@ -6575,8 +6548,7 @@ export namespace Prisma {
     read: 'read',
     isSpam: 'isSpam',
     deleted: 'deleted',
-    view: 'view',
-    content: 'content'
+    view: 'view'
   };
 
   export type ContentRemoteScalarFieldEnum = (typeof ContentRemoteScalarFieldEnum)[keyof typeof ContentRemoteScalarFieldEnum]
@@ -6967,7 +6939,6 @@ export namespace Prisma {
     style?: StringFilter<"Content"> | string
     code?: StringFilter<"Content"> | string
     view?: StringFilter<"Content"> | string
-    content?: StringNullableFilter<"Content"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -6997,7 +6968,6 @@ export namespace Prisma {
     style?: SortOrder
     code?: SortOrder
     view?: SortOrder
-    content?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
   }
 
@@ -7031,7 +7001,6 @@ export namespace Prisma {
     style?: StringFilter<"Content"> | string
     code?: StringFilter<"Content"> | string
     view?: StringFilter<"Content"> | string
-    content?: StringNullableFilter<"Content"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "username_name">
 
@@ -7061,7 +7030,6 @@ export namespace Prisma {
     style?: SortOrder
     code?: SortOrder
     view?: SortOrder
-    content?: SortOrderInput | SortOrder
     _count?: ContentCountOrderByAggregateInput
     _avg?: ContentAvgOrderByAggregateInput
     _max?: ContentMaxOrderByAggregateInput
@@ -7098,7 +7066,6 @@ export namespace Prisma {
     style?: StringWithAggregatesFilter<"Content"> | string
     code?: StringWithAggregatesFilter<"Content"> | string
     view?: StringWithAggregatesFilter<"Content"> | string
-    content?: StringNullableWithAggregatesFilter<"Content"> | string | null
   }
 
   export type ContentRemoteWhereInput = {
@@ -7128,7 +7095,6 @@ export namespace Prisma {
     isSpam?: BoolFilter<"ContentRemote"> | boolean
     deleted?: BoolFilter<"ContentRemote"> | boolean
     view?: StringFilter<"ContentRemote"> | string
-    content?: StringNullableFilter<"ContentRemote"> | string | null
     toUser?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -7156,7 +7122,6 @@ export namespace Prisma {
     isSpam?: SortOrder
     deleted?: SortOrder
     view?: SortOrder
-    content?: SortOrderInput | SortOrder
     toUser?: UserOrderByWithRelationInput
   }
 
@@ -7189,7 +7154,6 @@ export namespace Prisma {
     isSpam?: BoolFilter<"ContentRemote"> | boolean
     deleted?: BoolFilter<"ContentRemote"> | boolean
     view?: StringFilter<"ContentRemote"> | string
-    content?: StringNullableFilter<"ContentRemote"> | string | null
     toUser?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "toUsername_fromUsername_postId" | "commentUser_postId">
 
@@ -7217,7 +7181,6 @@ export namespace Prisma {
     isSpam?: SortOrder
     deleted?: SortOrder
     view?: SortOrder
-    content?: SortOrderInput | SortOrder
     _count?: ContentRemoteCountOrderByAggregateInput
     _avg?: ContentRemoteAvgOrderByAggregateInput
     _max?: ContentRemoteMaxOrderByAggregateInput
@@ -7252,7 +7215,6 @@ export namespace Prisma {
     isSpam?: BoolWithAggregatesFilter<"ContentRemote"> | boolean
     deleted?: BoolWithAggregatesFilter<"ContentRemote"> | boolean
     view?: StringWithAggregatesFilter<"ContentRemote"> | string
-    content?: StringNullableWithAggregatesFilter<"ContentRemote"> | string | null
   }
 
   export type UserCreateInput = {
@@ -7596,7 +7558,6 @@ export namespace Prisma {
     style: string
     code: string
     view: string
-    content?: string | null
     user: UserCreateNestedOneWithoutContentInput
   }
 
@@ -7626,7 +7587,6 @@ export namespace Prisma {
     style: string
     code: string
     view: string
-    content?: string | null
   }
 
   export type ContentUpdateInput = {
@@ -7653,7 +7613,6 @@ export namespace Prisma {
     style?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
     view?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutContentNestedInput
   }
 
@@ -7683,7 +7642,6 @@ export namespace Prisma {
     style?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
     view?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ContentCreateManyInput = {
@@ -7712,7 +7670,6 @@ export namespace Prisma {
     style: string
     code: string
     view: string
-    content?: string | null
   }
 
   export type ContentUpdateManyMutationInput = {
@@ -7739,7 +7696,6 @@ export namespace Prisma {
     style?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
     view?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ContentUncheckedUpdateManyInput = {
@@ -7768,7 +7724,6 @@ export namespace Prisma {
     style?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
     view?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ContentRemoteCreateInput = {
@@ -7793,7 +7748,6 @@ export namespace Prisma {
     isSpam?: boolean
     deleted?: boolean
     view: string
-    content?: string | null
     toUser: UserCreateNestedOneWithoutContentRemoteInput
   }
 
@@ -7821,7 +7775,6 @@ export namespace Prisma {
     isSpam?: boolean
     deleted?: boolean
     view: string
-    content?: string | null
   }
 
   export type ContentRemoteUpdateInput = {
@@ -7846,7 +7799,6 @@ export namespace Prisma {
     isSpam?: BoolFieldUpdateOperationsInput | boolean
     deleted?: BoolFieldUpdateOperationsInput | boolean
     view?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
     toUser?: UserUpdateOneRequiredWithoutContentRemoteNestedInput
   }
 
@@ -7874,7 +7826,6 @@ export namespace Prisma {
     isSpam?: BoolFieldUpdateOperationsInput | boolean
     deleted?: BoolFieldUpdateOperationsInput | boolean
     view?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ContentRemoteCreateManyInput = {
@@ -7901,7 +7852,6 @@ export namespace Prisma {
     isSpam?: boolean
     deleted?: boolean
     view: string
-    content?: string | null
   }
 
   export type ContentRemoteUpdateManyMutationInput = {
@@ -7926,7 +7876,6 @@ export namespace Prisma {
     isSpam?: BoolFieldUpdateOperationsInput | boolean
     deleted?: BoolFieldUpdateOperationsInput | boolean
     view?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ContentRemoteUncheckedUpdateManyInput = {
@@ -7953,7 +7902,6 @@ export namespace Prisma {
     isSpam?: BoolFieldUpdateOperationsInput | boolean
     deleted?: BoolFieldUpdateOperationsInput | boolean
     view?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -8322,7 +8270,6 @@ export namespace Prisma {
     style?: SortOrder
     code?: SortOrder
     view?: SortOrder
-    content?: SortOrder
   }
 
   export type ContentAvgOrderByAggregateInput = {
@@ -8361,7 +8308,6 @@ export namespace Prisma {
     style?: SortOrder
     code?: SortOrder
     view?: SortOrder
-    content?: SortOrder
   }
 
   export type ContentMinOrderByAggregateInput = {
@@ -8390,7 +8336,6 @@ export namespace Prisma {
     style?: SortOrder
     code?: SortOrder
     view?: SortOrder
-    content?: SortOrder
   }
 
   export type ContentSumOrderByAggregateInput = {
@@ -8454,7 +8399,6 @@ export namespace Prisma {
     isSpam?: SortOrder
     deleted?: SortOrder
     view?: SortOrder
-    content?: SortOrder
   }
 
   export type ContentRemoteAvgOrderByAggregateInput = {
@@ -8486,7 +8430,6 @@ export namespace Prisma {
     isSpam?: SortOrder
     deleted?: SortOrder
     view?: SortOrder
-    content?: SortOrder
   }
 
   export type ContentRemoteMinOrderByAggregateInput = {
@@ -8513,7 +8456,6 @@ export namespace Prisma {
     isSpam?: SortOrder
     deleted?: SortOrder
     view?: SortOrder
-    content?: SortOrder
   }
 
   export type ContentRemoteSumOrderByAggregateInput = {
@@ -8865,7 +8807,6 @@ export namespace Prisma {
     style: string
     code: string
     view: string
-    content?: string | null
   }
 
   export type ContentUncheckedCreateWithoutUserInput = {
@@ -8893,7 +8834,6 @@ export namespace Prisma {
     style: string
     code: string
     view: string
-    content?: string | null
   }
 
   export type ContentCreateOrConnectWithoutUserInput = {
@@ -8928,7 +8868,6 @@ export namespace Prisma {
     isSpam?: boolean
     deleted?: boolean
     view: string
-    content?: string | null
   }
 
   export type ContentRemoteUncheckedCreateWithoutToUserInput = {
@@ -8954,7 +8893,6 @@ export namespace Prisma {
     isSpam?: boolean
     deleted?: boolean
     view: string
-    content?: string | null
   }
 
   export type ContentRemoteCreateOrConnectWithoutToUserInput = {
@@ -9012,7 +8950,6 @@ export namespace Prisma {
     style?: StringFilter<"Content"> | string
     code?: StringFilter<"Content"> | string
     view?: StringFilter<"Content"> | string
-    content?: StringNullableFilter<"Content"> | string | null
   }
 
   export type ContentRemoteUpsertWithWhereUniqueWithoutToUserInput = {
@@ -9058,7 +8995,6 @@ export namespace Prisma {
     isSpam?: BoolFilter<"ContentRemote"> | boolean
     deleted?: BoolFilter<"ContentRemote"> | boolean
     view?: StringFilter<"ContentRemote"> | string
-    content?: StringNullableFilter<"ContentRemote"> | string | null
   }
 
   export type UserCreateWithoutContentInput = {
@@ -9298,7 +9234,6 @@ export namespace Prisma {
     style: string
     code: string
     view: string
-    content?: string | null
   }
 
   export type ContentRemoteCreateManyToUserInput = {
@@ -9324,7 +9259,6 @@ export namespace Prisma {
     isSpam?: boolean
     deleted?: boolean
     view: string
-    content?: string | null
   }
 
   export type ContentUpdateWithoutUserInput = {
@@ -9351,7 +9285,6 @@ export namespace Prisma {
     style?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
     view?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ContentUncheckedUpdateWithoutUserInput = {
@@ -9379,7 +9312,6 @@ export namespace Prisma {
     style?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
     view?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ContentUncheckedUpdateManyWithoutUserInput = {
@@ -9407,7 +9339,6 @@ export namespace Prisma {
     style?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
     view?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ContentRemoteUpdateWithoutToUserInput = {
@@ -9432,7 +9363,6 @@ export namespace Prisma {
     isSpam?: BoolFieldUpdateOperationsInput | boolean
     deleted?: BoolFieldUpdateOperationsInput | boolean
     view?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ContentRemoteUncheckedUpdateWithoutToUserInput = {
@@ -9458,7 +9388,6 @@ export namespace Prisma {
     isSpam?: BoolFieldUpdateOperationsInput | boolean
     deleted?: BoolFieldUpdateOperationsInput | boolean
     view?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ContentRemoteUncheckedUpdateManyWithoutToUserInput = {
@@ -9484,7 +9413,6 @@ export namespace Prisma {
     isSpam?: BoolFieldUpdateOperationsInput | boolean
     deleted?: BoolFieldUpdateOperationsInput | boolean
     view?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 

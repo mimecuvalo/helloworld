@@ -42,7 +42,6 @@ const POST_COMMENT = gql`
   mutation postComment($username: String!, $name: String!, $content: String!) {
     postComment(username: $username, name: $name, content: $content) {
       avatar
-      content
       deleted
       favorited
       fromUsername
@@ -52,7 +51,7 @@ const POST_COMMENT = gql`
       toUsername
       type
       username
-      content
+      view
     }
   }
 `;

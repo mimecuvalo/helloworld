@@ -161,7 +161,6 @@ const contentRemote = {
         select: {
           avatar: true,
           creator: true,
-          content: true,
           createdAt: true,
           deleted: true,
           favorited: true,
@@ -236,7 +235,6 @@ const contentRemote = {
         data: {
           avatar,
           commentUser: currentUserEmail,
-          content,
           fromUsername: null,
           link,
           localContentName: name,

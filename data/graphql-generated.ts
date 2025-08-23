@@ -23,7 +23,6 @@ export type Scalars = {
 export type Comment = ContentRemote & {
   __typename?: 'Comment';
   avatar?: Maybe<Scalars['String']['output']>;
-  content?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['Date']['output'];
   creator?: Maybe<Scalars['String']['output']>;
   deleted: Scalars['Boolean']['output'];
@@ -45,7 +44,6 @@ export type Content = {
   code: Scalars['String']['output'];
   commentsCount: Scalars['Int']['output'];
   commentsUpdated?: Maybe<Scalars['Date']['output']>;
-  content: Scalars['String']['output'];
   count: Scalars['Int']['output'];
   countRobot: Scalars['Int']['output'];
   createdAt: Scalars['Date']['output'];
@@ -195,13 +193,13 @@ export type MutationPostCommentArgs = {
 export type MutationPostContentArgs = {
   album: Scalars['String']['input'];
   code: Scalars['String']['input'];
-  content: Scalars['String']['input'];
   hidden: Scalars['Boolean']['input'];
   name: Scalars['String']['input'];
   section: Scalars['String']['input'];
   style: Scalars['String']['input'];
   thumb: Scalars['String']['input'];
   title: Scalars['String']['input'];
+  view: Scalars['String']['input'];
 };
 
 
@@ -498,7 +496,7 @@ export type PostCommentMutationVariables = Exact<{
 }>;
 
 
-export type PostCommentMutation = { __typename?: 'Mutation', postComment: { __typename?: 'Comment', avatar?: string | null, content?: string | null, deleted: boolean, favorited: boolean, fromUsername?: string | null, link: string, localContentName?: string | null, postId: string, toUsername: string, type: string, username: string } };
+export type PostCommentMutation = { __typename?: 'Mutation', postComment: { __typename?: 'Comment', avatar?: string | null, deleted: boolean, favorited: boolean, fromUsername?: string | null, link: string, localContentName?: string | null, postId: string, toUsername: string, type: string, username: string, view: string } };
 
 export type SaveContentMutationVariables = Exact<{
   name: Scalars['String']['input'];
@@ -516,7 +514,7 @@ export type ContentAndUserQueryVariables = Exact<{
 }>;
 
 
-export type ContentAndUserQuery = { __typename?: 'Query', fetchContent?: { __typename?: 'Content', album: string, code: string, commentsCount: number, commentsUpdated?: any | null, content: string, count: number, countRobot: number, createdAt: any, forceRefresh?: boolean | null, hidden: boolean, name: string, section: string, style: string, template: string, thread?: string | null, thumb: string, title: string, updatedAt: any, username: string, view: string } | null, fetchCommentsRemote: Array<{ __typename?: 'Comment', avatar?: string | null, creator?: string | null, content?: string | null, deleted: boolean, favorited: boolean, fromUsername?: string | null, link: string, localContentName?: string | null, postId: string, type: string, username: string, view: string }>, fetchFavoritesRemote: Array<{ __typename?: 'Favorite', avatar?: string | null, fromUsername?: string | null, localContentName?: string | null, postId: string, type: string, username: string }>, fetchPublicUserData?: { __typename?: 'UserPublic', username: string, description?: string | null, favicon?: string | null, logo?: string | null, name: string, sidebarHtml?: string | null, title: string, theme: string, viewport?: string | null, license?: string | null, googleAnalytics?: string | null } | null, fetchSiteMap: Array<{ __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string }>, fetchContentNeighbors?: { __typename?: 'Neighbors', first?: { __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string } | null, last?: { __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string } | null, next?: { __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string, prefetchImages?: Array<string> | null } | null, prev?: { __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string, prefetchImages?: Array<string> | null } | null, top?: { __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string, template: string } | null } | null };
+export type ContentAndUserQuery = { __typename?: 'Query', fetchContent?: { __typename?: 'Content', album: string, code: string, commentsCount: number, commentsUpdated?: any | null, count: number, countRobot: number, createdAt: any, forceRefresh?: boolean | null, hidden: boolean, name: string, section: string, style: string, template: string, thread?: string | null, thumb: string, title: string, updatedAt: any, username: string, view: string } | null, fetchCommentsRemote: Array<{ __typename?: 'Comment', avatar?: string | null, creator?: string | null, deleted: boolean, favorited: boolean, fromUsername?: string | null, link: string, localContentName?: string | null, postId: string, type: string, username: string, view: string }>, fetchFavoritesRemote: Array<{ __typename?: 'Favorite', avatar?: string | null, fromUsername?: string | null, localContentName?: string | null, postId: string, type: string, username: string }>, fetchPublicUserData?: { __typename?: 'UserPublic', username: string, description?: string | null, favicon?: string | null, logo?: string | null, name: string, sidebarHtml?: string | null, title: string, theme: string, viewport?: string | null, license?: string | null, googleAnalytics?: string | null } | null, fetchSiteMap: Array<{ __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string }>, fetchContentNeighbors?: { __typename?: 'Neighbors', first?: { __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string } | null, last?: { __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string } | null, next?: { __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string, prefetchImages?: Array<string> | null } | null, prev?: { __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string, prefetchImages?: Array<string> | null } | null, top?: { __typename?: 'ContentMetaInfo', album: string, forceRefresh: boolean, hidden: boolean, name: string, section: string, title: string, username: string, template: string } | null } | null };
 
 export type FetchCollectionQueryVariables = Exact<{
   username: Scalars['String']['input'];
@@ -526,7 +524,7 @@ export type FetchCollectionQueryVariables = Exact<{
 }>;
 
 
-export type FetchCollectionQuery = { __typename?: 'Query', fetchCollectionPaginated: Array<{ __typename?: 'Content', album: string, code: string, commentsCount: number, commentsUpdated?: any | null, count: number, countRobot: number, createdAt: any, updatedAt: any, hidden: boolean, name: string, order: number, redirect: number, section: string, sortType?: string | null, style: string, template: string, thumb: string, title: string, username: string, view: string, content: string }>, fetchPublicUserData?: { __typename?: 'UserPublic', username: string, description?: string | null, favicon?: string | null, logo?: string | null, name: string, title: string, theme: string, viewport?: string | null } | null };
+export type FetchCollectionQuery = { __typename?: 'Query', fetchCollectionPaginated: Array<{ __typename?: 'Content', album: string, code: string, commentsCount: number, commentsUpdated?: any | null, count: number, countRobot: number, createdAt: any, updatedAt: any, hidden: boolean, name: string, order: number, redirect: number, section: string, sortType?: string | null, style: string, template: string, thumb: string, title: string, username: string, view: string }>, fetchPublicUserData?: { __typename?: 'UserPublic', username: string, description?: string | null, favicon?: string | null, logo?: string | null, name: string, title: string, theme: string, viewport?: string | null } | null };
 
 export type SiteMapAndUserQueryVariables = Exact<{
   username: Scalars['String']['input'];
@@ -569,7 +567,7 @@ export type FetchCollectionLatestQueryVariables = Exact<{
 }>;
 
 
-export type FetchCollectionLatestQuery = { __typename?: 'Query', fetchCollectionLatest?: { __typename?: 'Content', album: string, name: string, section: string, title: string, username: string, view: string, content: string } | null };
+export type FetchCollectionLatestQuery = { __typename?: 'Query', fetchCollectionLatest?: { __typename?: 'Content', album: string, name: string, section: string, title: string, username: string, view: string } | null };
 
 export type SiteMapAndUserEditorQueryVariables = Exact<{
   username: Scalars['String']['input'];
@@ -587,11 +585,11 @@ export type PostContentMutationVariables = Exact<{
   thumb: Scalars['String']['input'];
   style: Scalars['String']['input'];
   code: Scalars['String']['input'];
-  content: Scalars['String']['input'];
+  view: Scalars['String']['input'];
 }>;
 
 
-export type PostContentMutation = { __typename?: 'Mutation', postContent: { __typename?: 'Content', username: string, section: string, album: string, name: string, title: string, hidden: boolean, thumb: string, style: string, code: string, content: string } };
+export type PostContentMutation = { __typename?: 'Mutation', postContent: { __typename?: 'Content', username: string, section: string, album: string, name: string, title: string, hidden: boolean, thumb: string, style: string, code: string, view: string } };
 
 export type FetchContentRemotePaginatedQueryVariables = Exact<{
   profileUrlOrSpecialFeed: Scalars['String']['input'];
@@ -832,7 +830,6 @@ export type ResolversParentTypes = {
 
 export type CommentResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Comment'] = ResolversParentTypes['Comment']> = {
   avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   creator?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   deleted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -854,7 +851,6 @@ export type ContentResolvers<ContextType = Context, ParentType extends Resolvers
   code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   commentsCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   commentsUpdated?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
-  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   countRobot?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
@@ -949,7 +945,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   markAllContentInFeedAsRead?: Resolver<ResolversTypes['FeedCount'], ParentType, ContextType, RequireFields<MutationMarkAllContentInFeedAsReadArgs, 'fromUsername'>>;
   markAllFeedsAsRead?: Resolver<ResolversTypes['FeedCount'], ParentType, ContextType>;
   postComment?: Resolver<ResolversTypes['Comment'], ParentType, ContextType, RequireFields<MutationPostCommentArgs, 'content' | 'name' | 'username'>>;
-  postContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<MutationPostContentArgs, 'album' | 'code' | 'content' | 'hidden' | 'name' | 'section' | 'style' | 'thumb' | 'title'>>;
+  postContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<MutationPostContentArgs, 'album' | 'code' | 'hidden' | 'name' | 'section' | 'style' | 'thumb' | 'title' | 'view'>>;
   readContentRemote?: Resolver<ResolversTypes['Post'], ParentType, ContextType, RequireFields<MutationReadContentRemoteArgs, 'fromUsername' | 'postId' | 'read'>>;
   saveContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<MutationSaveContentArgs, 'hidden' | 'name' | 'title' | 'view'>>;
   toggleSortFeed?: Resolver<ResolversTypes['UserRemotePublic'], ParentType, ContextType, RequireFields<MutationToggleSortFeedArgs, 'currentSortType' | 'profileUrl'>>;

@@ -47,7 +47,6 @@ const FETCH_COLLECTION_PAGINATED = gql`
       title
       username
       view
-      content
     }
 
     fetchPublicUserData(username: $username) {

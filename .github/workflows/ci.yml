@@ -48,8 +48,8 @@ jobs:
           key: ${{ runner.os }}-modules-NODE-22-${{ hashFiles('**/yarn.lock', '**/schema.prisma') }}
       - name: Install
         if: steps.yarn-cache.outputs.cache-hit != 'true'
-        run: yarn install --immutable
+        run: yarn install --immutable && yarn global add @lhci/cli@0.15.x
       - name: Build Next.js app
         run: yarn build
       - name: Run Lighthouse CI
-        run: yarn dlx @lhci/cli@0.15.x autorun
+        run: lhci autorun
