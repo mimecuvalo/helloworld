@@ -41,7 +41,7 @@ export default function Content({ username, name, host }: { username: string; na
   const router = useRouter();
   const itemRef = useRef<HTMLDivElement>(null);
   const nav = useRef<HTMLAnchorElement & { prev: () => void; next: () => void }>(null);
-  const swipeListener = useRef(null);
+  const swipeListener = useRef<typeof SwipeListener | null>(null);
   const [currentCanonicalUrl, setCurrentCanonicalUrl] = useState('');
 
   useEffect(() => {
@@ -68,7 +68,6 @@ export default function Content({ username, name, host }: { username: string; na
 
     return () => {
       if (swipeListener.current) {
-        // @ts-ignore this is fine.
         swipeListener.current.off();
       }
       swipeListener.current = null;
@@ -84,10 +83,8 @@ export default function Content({ username, name, host }: { username: string; na
     itemRef.current.addEventListener('swipe', (e: any) => {
       const directions = e.detail.directions;
       if (directions.left) {
-        // @ts-ignore don't worry about it for now, we're using imperative handler.
         nav.current?.prev();
       } else if (directions.right) {
-        // @ts-ignore don't worry about it for now, we're using imperative handler.
         nav.current?.next();
       }
     });

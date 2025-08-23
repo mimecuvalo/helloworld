@@ -89,8 +89,7 @@ export function GenericFeed({
         <rights>
           {contentOwner.license === 'http://purl.org/atompub/license#unspecified'
             ? `Copyright ${new Date().getFullYear()} by ${contentOwner.name}`
-            : // @ts-ignore this is fine.
-              `${constants.licenses[contentOwner.license]?.['name']}: ${contentOwner.license}`}
+            : `${constants.licenses[contentOwner.license as keyof typeof constants.licenses]?.['name']}: ${contentOwner.license}`}
         </rights>
       ) : null}
       {updatedAt ? <updated>{new Date(updatedAt).toISOString()}</updated> : null}

@@ -381,7 +381,6 @@ async function handleCreate(
 
   const existingContentRemote = await getRemoteContent(user.username, activityObject.id.toString());
 
-  // @ts-ignore it's fine.
   const contentRemote: ContentRemote = {
     id: existingContentRemote?.id || -1,
     avatar: userRemote.avatar,

@@ -1,10 +1,11 @@
-import { Content } from 'data/graphql-generated';
+import { Content, ContentAndUserQuery } from 'data/graphql-generated';
 import Editor from '../editor/Editor';
 import { useCallback, useEffect, useState } from 'react';
 import { useEditor } from 'application/EditorContext';
 import { Alert, Snackbar } from '@mui/material';
 import { defineMessages, useIntl } from 'i18n';
 import { gql, useMutation } from '@apollo/client';
+import ContentQuery from './ContentQuery';
 
 const messages = defineMessages({
   posted: { defaultMessage: 'Success!' },
@@ -22,8 +23,9 @@ const SAVE_CONTENT = gql`
 `;
 
 export default function ContentEditor({ content }: { content: Content }) {
+  const [wasEditing, setWasEditing] = useState(false);
   const { isEditing, setIsEditing } = useEditor();
-  const [editorValue, setEditorValue] = useState('');
+  const [editorValue, setEditorValue] = useState(content.view);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
   const [isSaveSuccess, setIsSaveSuccess] = useState(false);
@@ -42,17 +44,23 @@ export default function ContentEditor({ content }: { content: Content }) {
   }, [hasUnsavedChanges]);
 
   useEffect(() => {
-    if (isEditing) return;
+    if (isEditing) {
+      setWasEditing(true);
+    }
+  }, [isEditing]);
 
+  useEffect(() => {
     const save = async () => {
       const successMsg = intl.formatMessage(messages.posted);
       const errorMsg = intl.formatMessage(messages.error);
       const title = (
         editorValue.match(/<h1>(.*?)<\/h1>/)?.[1] ||
         editorValue.split('</p>')[0].split('\n')[0].trim() ||
+        content.title ||
         ''
       ).replace(/<[^>]*>?/g, '');
       const variables = {
+        username: content.username,
         name: content.name,
         title,
         hidden: content.hidden,
@@ -69,6 +77,22 @@ export default function ContentEditor({ content }: { content: Content }) {
             __typename: 'Mutation',
             saveContent: Object.assign({}, variables, { __typename: 'Content' }),
           },
+          update: (store, { data: { saveContent } }) => {
+            const contentVariables = { username: content.username, name: content.name };
+            const query = ContentQuery;
+            const data = store.readQuery<ContentAndUserQuery>({ query, variables: contentVariables });
+            store.writeQuery({
+              query,
+              variables: contentVariables,
+              data: {
+                ...data,
+                fetchContent: {
+                  ...data?.fetchContent,
+                  ...saveContent,
+                },
+              },
+            });
+          },
         });
       } catch {
         setToastMsg(errorMsg);
@@ -81,8 +105,12 @@ export default function ContentEditor({ content }: { content: Content }) {
       setIsSaveSuccess(true);
       setHasUnsavedChanges(false);
     };
-    save();
-  }, [isEditing, editorValue, content, intl, saveContent, setIsEditing]);
+
+    if (wasEditing && !isEditing) {
+      setWasEditing(false);
+      save();
+    }
+  }, [isEditing, wasEditing, editorValue, content, intl, saveContent, setIsEditing]);
 
   const handleEditorChange = useCallback((name: string, value: string) => {
     setEditorValue(value);
@@ -91,17 +119,17 @@ export default function ContentEditor({ content }: { content: Content }) {
 
   const handleToastClose = () => setToastMsg('');
 
-  if (!isEditing) return null;
-
   return (
     <>
-      <Editor
-        name="content-editor"
-        section={content.section}
-        album={content.album}
-        defaultValue={content.view}
-        onChange={handleEditorChange}
-      />
+      {isEditing && (
+        <Editor
+          name="content-editor"
+          section={content.section}
+          album={content.album}
+          defaultValue={content.view}
+          onChange={handleEditorChange}
+        />
+      )}
       <Snackbar open={!!toastMsg} autoHideDuration={6000} onClose={handleToastClose}>
         <Alert
           className="notranslate"

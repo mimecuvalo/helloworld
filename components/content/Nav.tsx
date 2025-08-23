@@ -9,6 +9,7 @@ import baseTheme from 'styles';
 import { contentUrl } from 'util/url-factory';
 import { MouseEvent, ReactNode, Ref, useEffect, useImperativeHandle, useRef } from 'react';
 import { LinkProps } from '@mui/material';
+import { useEditor } from 'application/EditorContext';
 
 const StyledNav = styled('nav')`
   position: relative;
@@ -83,6 +84,7 @@ export default function Nav({
   content: Content;
   ref?: LinkProps['ref'] & Ref<{ prev: () => void; next: () => void }>;
 }) {
+  const { isEditing } = useEditor();
   const { username, name } = content;
   const theme = useTheme();
   const { loading, data } = useQuery(FETCH_CONTENT_NEIGHBORS, {
@@ -103,14 +105,16 @@ export default function Nav({
 
   useImperativeHandle(ref, () => ({
     prev: () => {
-      prev?.current?.click();
+      if (!isEditing) prev?.current?.click();
     },
     next: () => {
-      next?.current?.click();
+      if (!isEditing) next?.current?.click();
     },
   }));
 
   const handleKeyUp = (evt: KeyboardEvent) => {
+    if (isEditing) return;
+
     switch (evt.key) {
       case 'ArrowUp':
         top?.current?.click();

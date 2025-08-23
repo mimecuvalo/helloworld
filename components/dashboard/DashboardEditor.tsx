@@ -31,6 +31,17 @@ const messages = defineMessages({
 
 const DashboardEditorContainer = styled('div', { label: 'DashboardEditorContainer' })`
   position: relative;
+
+  .tiptap {
+    min-height: 33vh;
+    border: 1px solid ${(props) => props.theme.palette.primary.light};
+    box-shadow:
+      1px 1px ${(props) => props.theme.palette.primary.light},
+      2px 2px ${(props) => props.theme.palette.primary.light},
+      3px 3px ${(props) => props.theme.palette.primary.light};
+    padding: ${(props) => props.theme.spacing(2, 2, 2, 3.5)};
+    margin-bottom: ${(props) => props.theme.spacing(3.5)};
+  }
 `;
 
 const SITE_MAP_AND_USER_QUERY = gql`

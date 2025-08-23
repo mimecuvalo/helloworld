@@ -17,7 +17,8 @@ const StyledItemWrapper = styled('div', { label: 'ItemWrapper' })`
   }
   // Hello, world code specific above ^
 
-  // HTML Normalization below, used for Content and ContentRemote
+  // HTML Normalization below, used only for ContentRemote
+  // (it gets overriden for Content in Item.tsx)
   & p {
     margin-block: ${(props) => props.theme.spacing(0.5)};
     margin-inline: 0;

@@ -18,14 +18,7 @@ const EditorStyling = styled('div', { label: 'EditorStyling' })`
 
   .tiptap {
     width: 100%;
-    min-height: 33vh;
-    border: 1px solid ${(props) => props.theme.palette.primary.light};
-    box-shadow:
-      1px 1px ${(props) => props.theme.palette.primary.light},
-      2px 2px ${(props) => props.theme.palette.primary.light},
-      3px 3px ${(props) => props.theme.palette.primary.light};
-    padding: ${(props) => props.theme.spacing(2, 2, 2, 3.5)};
-    margin-bottom: ${(props) => props.theme.spacing(3.5)};
+    padding: ${(props) => props.theme.spacing(0, 1)};
     background-color: ${(props) => props.theme.palette.background.default};
     color: ${(props) => props.theme.palette.text.primary};
     outline: none;
@@ -33,6 +26,10 @@ const EditorStyling = styled('div', { label: 'EditorStyling' })`
     &:focus {
       outline: none;
     }
+  }
+
+  p {
+    margin-block: 0;
   }
 
   h1 {
@@ -167,6 +164,7 @@ export default function Editor({
         handleChange(editor);
       },
       onFocus: handleFocus,
+      autofocus: true,
       onBlur: handleBlur,
       editorProps: {
         handlePaste: (view: EditorView, event: ClipboardEvent) => {

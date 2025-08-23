@@ -4,7 +4,10 @@ import { omit } from 'lodash';
 import rehypeRaw from 'rehype-raw';
 import { styled } from 'components';
 import { useEditor } from 'application/EditorContext';
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useContext } from 'react';
+import UserContext from 'application/UserContext';
+
+const ContentEditor = lazy(() => import('../ContentEditor'));
 
 const View = styled('div', { label: 'SimpleView' })`
   position: relative;
@@ -46,15 +49,9 @@ const customRenderers = {
 };
 
 export default function Simple({ content, isFeed }: { content: Content; isEditing?: boolean; isFeed?: boolean }) {
-  const [shouldLoadEditor, setShouldLoadEditor] = useState(false);
   const { isEditing } = useEditor();
-  const ContentEditor = lazy(() => import('../ContentEditor'));
-
-  useEffect(() => {
-    if (isEditing) {
-      setShouldLoadEditor(true);
-    }
-  }, [isEditing]);
+  const { user } = useContext(UserContext);
+  const isOwnerViewing = user?.username === content.username;
 
   const lines = content.content.split('\n');
   const title = lines[0].replace(/^# /, '');
@@ -62,8 +59,7 @@ export default function Simple({ content, isFeed }: { content: Content; isEditin
 
   return (
     <>
-      {shouldLoadEditor ? (
-        // We keep the editor loaded once loaded so that save events can finish.
+      {isOwnerViewing ? (
         <Suspense fallback={<div />}>
           <ContentEditor content={content} />
         </Suspense>

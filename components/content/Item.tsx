@@ -14,6 +14,12 @@ const StyledItem = styled('article', { label: 'Item' })`
   display: flex;
   flex-direction: column;
   height: 100%;
+
+  // HTML Normalization below, used for Content.
+  & p {
+    margin-block: 0;
+    margin-inline: 0;
+  }
 `;
 
 const InnerView = styled('div', { label: 'InnerView' })`

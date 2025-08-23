@@ -7,6 +7,8 @@ import Delete from 'components/dashboard/actions/Delete';
 import Favorite from 'components/dashboard/actions/Favorite';
 import UserContext from 'application/UserContext';
 
+const CommentsEditor = lazy(() => import('./CommentsEditor'));
+
 const Comment = styled(ListItem)`
   display: flex;
   align-items: flex-start;
@@ -39,8 +41,6 @@ export default function Comments({ comments, content }: { comments?: CommentType
 
   const ariaImgMsg = intl.formatMessage(messages.avatar);
   const isOwnerViewing = user?.username === content.username;
-
-  const CommentsEditor = lazy(() => import('./CommentsEditor'));
 
   return (
     <div>
