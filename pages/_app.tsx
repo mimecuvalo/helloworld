@@ -1,4 +1,5 @@
 import 'styles/globals.css';
+import 'lite-youtube-embed/src/lite-yt-embed.css';
 
 import { APOLLO_STATE_PROP_NAME, useApollo } from 'application/apollo';
 import { ApolloClient, ApolloProvider, NormalizedCacheObject, gql } from '@apollo/client';
@@ -63,6 +64,13 @@ const CURRENT_USER_QUERY = gql`
   }
 `;
 
+let hasLoadedLiteYouTubeEmbed = false;
+async function loadLiteYouTubeEmbed() {
+  if (hasLoadedLiteYouTubeEmbed) return;
+  hasLoadedLiteYouTubeEmbed = true;
+  await import('lite-youtube-embed/src/lite-yt-embed.js' as any);
+}
+
 function CustomUserProvider({
   apolloClient,
   children,
@@ -106,6 +114,9 @@ function HelloWorldApp({ Component, emotionCache = clientSideEmotionCache, pageP
     //   experiments: getExperiments(user),
     // };
     // initializeLocalState(window.configuration.experiments);
+
+    // Load the lite-youtube-embed script.
+    loadLiteYouTubeEmbed();
 
     return () => {
       disposeAnalytics();

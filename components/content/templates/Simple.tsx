@@ -3,13 +3,14 @@ import { styled } from 'components';
 import { useEditor } from 'application/EditorContext';
 import { lazy, Suspense, useContext } from 'react';
 import UserContext from 'application/UserContext';
+import { createLiteYouTubeVideos } from 'util/media';
 
 const ContentEditor = lazy(() => import('../ContentEditor'));
 
 const View = styled('div', { label: 'SimpleView' })`
   position: relative;
   clear: both;
-
+  max-width: 100%;
   padding: ${(props) => props.theme.spacing(0, 1)};
 
   & figure img:hover {
@@ -26,6 +27,8 @@ export default function Simple({ content, isFeed }: { content: Content; isEditin
   const { isEditing } = useEditor();
   const { user } = useContext(UserContext);
   const isOwnerViewing = user?.username === content.username;
+  let html = content.view.replaceAll('<p></p>', '');
+  html = createLiteYouTubeVideos(html);
 
   return (
     <>
@@ -38,10 +41,7 @@ export default function Simple({ content, isFeed }: { content: Content; isEditin
         <>
           {isFeed ? null : <div dangerouslySetInnerHTML={{ __html: content.style }} />}
           {isFeed ? null : <div dangerouslySetInnerHTML={{ __html: content.code }} />}
-          <View
-            dangerouslySetInnerHTML={{ __html: content.view.replaceAll('<p></p>', '') }}
-            className="e-content hw-view notranslate"
-          />
+          <View dangerouslySetInnerHTML={{ __html: html }} className="e-content hw-view notranslate" />
         </>
       )}
     </>

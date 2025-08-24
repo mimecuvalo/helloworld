@@ -57,3 +57,17 @@ h6 {
 .App-is-development .i18n-msg * {
   text-shadow: none;
 }
+
+html lite-youtube {
+  max-width: 100%;
+  height: 270px;
+  aspect-ratio: 16 / 9;
+}
+
+html lite-youtube.lyt-activated {
+  background-image: none !important;
+}
+
+html lite-youtube > .lty-playbtn {
+  filter: grayscale(100%);
+}

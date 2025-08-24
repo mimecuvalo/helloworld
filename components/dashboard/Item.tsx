@@ -8,6 +8,7 @@ import Footer from './Footer';
 import Header from './Header';
 import debounce from 'lodash/debounce';
 import { styled } from 'components';
+import { createLiteYouTubeVideos } from 'util/media';
 
 const StyledItem = styled('article', { label: 'DashboardStyledItem' })`
   display: flex;
@@ -115,12 +116,13 @@ export default function Item({ contentRemote, userRemote }: { contentRemote: Pos
   };
 
   // Make all links open in new tab.
-  const decoratedView = contentRemote.view.replace(/<a ([^>]+)/g, '<a $1 target="_blank" rel="noreferrer noopener"');
+  let html = contentRemote.view.replace(/<a ([^>]+)/g, '<a $1 target="_blank" rel="noreferrer noopener"');
+  html = createLiteYouTubeVideos(html);
 
   return (
     <StyledItem ref={item}>
       <Header contentRemote={contentRemote} manuallyMarkedAsRead={manuallyMarkedAsRead} />
-      <View className="notranslate" dangerouslySetInnerHTML={{ __html: decoratedView }} />
+      <View className="notranslate" dangerouslySetInnerHTML={{ __html: html }} />
       <Footer contentRemote={contentRemote} userRemote={userRemote} keepUnreadCb={keepUnreadCb} />
     </StyledItem>
   );
