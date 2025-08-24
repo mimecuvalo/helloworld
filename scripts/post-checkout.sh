@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # This will run automatically because of husky in package.json.
-# Or, to ensure manually that it runs, add to .git/hooks/post-merge
-#   bin/post-merge.sh
+# Or, to ensure manually that it runs, add to .git/hooks/post-checkout
+#   scripts/post-checkout.sh $1 $2
 
 set -e
 
-CHANGED=$(git diff HEAD@{1} --stat -- ./package.json | wc -l)
+CHANGED=$(git diff "$1" "$2" --stat -- ./package.json | wc -l)
 if (( CHANGED > 0 )); then
     echo
     echo "🚨 🚨 🚨 package.json has changed! 🚨 🚨 🚨 "

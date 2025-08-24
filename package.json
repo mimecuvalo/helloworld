@@ -34,7 +34,7 @@
     "alex": "alex .",
     "analyze": "source-map-explorer .next/static/**/*.js",
     "codegen": "graphql-codegen",
-    "config": "node bin/config.js",
+    "config": "node scripts/config.js",
     "prepare": "husky",
     "prettier:all": "prettier --check .",
     "prettier:fix": "prettier --write",
@@ -176,8 +176,8 @@
   "browserslist": "last 2 versions",
   "husky": {
     "hooks": {
-      "post-checkout": "./bin/post-checkout",
-      "post-merge": "./bin/post-merge"
+      "post-checkout": "./scripts/post-checkout",
+      "post-merge": "./scripts/post-merge"
     }
   },
   "sideEffects": false,

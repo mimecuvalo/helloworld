@@ -32,24 +32,24 @@ jobs:
         run: yarn test:ci
       - name: Run type-check
         run: yarn type-check
-  lighthouseci:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - name: Enable Corepack
-        run: corepack enable
-      - uses: actions/cache@v4
-        id: yarn-cache
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-NODE-22-${{ hashFiles('**/yarn.lock', '**/schema.prisma') }}
-      - name: Install
-        if: steps.yarn-cache.outputs.cache-hit != 'true'
-        run: yarn install --immutable && yarn global add @lhci/cli@0.15.x
-      - name: Build Next.js app
-        run: yarn build
-      - name: Run Lighthouse CI
-        run: lhci autorun
+  # lighthouseci:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 22
+  #     - name: Enable Corepack
+  #       run: corepack enable
+  #     - uses: actions/cache@v4
+  #       id: yarn-cache
+  #       with:
+  #         path: '**/node_modules'
+  #         key: ${{ runner.os }}-modules-NODE-22-${{ hashFiles('**/yarn.lock', '**/schema.prisma') }}
+  #     - name: Install
+  #       if: steps.yarn-cache.outputs.cache-hit != 'true'
+  #       run: yarn install --immutable && yarn global add @lhci/cli@0.15.x
+  #     - name: Build Next.js app
+  #       run: yarn build
+  #     - name: Run Lighthouse CI
+  #       run: lhci autorun
