@@ -69,5 +69,5 @@ html lite-youtube.lyt-activated {
 }
 
 html lite-youtube > .lty-playbtn {
-  filter: grayscale(100%);
+  filter: grayscale(0%);
 }
