@@ -3568,15 +3568,15 @@
     "@emnapi/runtime" "^1.4.3"
     "@tybys/wasm-util" "^0.10.0"
 
-"@next/env@15.3.5":
-  version "15.3.5"
-  resolved "https://registry.yarnpkg.com/@next/env/-/env-15.3.5.tgz#1dd661b96c4730e999bb9f48a9b212dae6e290d5"
-  integrity sha512-7g06v8BUVtN2njAX/r8gheoVffhiKFVt4nx74Tt6G4Hqw9HCLYQVx/GkH2qHvPtAHZaUNZ0VXAa0pQP6v1wk7g==
+"@next/env@15.3.9":
+  version "15.3.9"
+  resolved "https://registry.yarnpkg.com/@next/env/-/env-15.3.9.tgz#b9fdfa7e8a4aae151f9c75a8062d3cc2921e1348"
+  integrity sha512-I7wMCjlHc85EvAebNYJCRBZ+shdrGhcIXBviWmDzGYXwTQ+WrYpfg1LBOnTK1Bn3b+ud5apesNObXKEGqi/C3g==
 
-"@next/eslint-plugin-next@15.3.5":
-  version "15.3.5"
-  resolved "https://registry.yarnpkg.com/@next/eslint-plugin-next/-/eslint-plugin-next-15.3.5.tgz#16f9555761530e51d70277c85816af178887f637"
-  integrity sha512-BZwWPGfp9po/rAnJcwUBaM+yT/+yTWIkWdyDwc74G9jcfTrNrmsHe+hXHljV066YNdVs8cxROxX5IgMQGX190w==
+"@next/eslint-plugin-next@15.3.9":
+  version "15.3.9"
+  resolved "https://registry.yarnpkg.com/@next/eslint-plugin-next/-/eslint-plugin-next-15.3.9.tgz#ad10a481dd6c71a692cdcf0f6d480cd3f00dab3b"
+  integrity sha512-9D0UQDmyCOQ4skK/delfp/kXINQQUC5Z0TwwazUbSHBeOojq8fQlZLfbpg3+jldwsmdewdIgjNJ6AzUH6OKe1w==
   dependencies:
     fast-glob "3.3.1"
 
@@ -9275,12 +9275,12 @@ escape-string-regexp@^5.0.0:
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-5.0.0.tgz#4683126b500b61762f2dbebace1806e8be31b1c8"
   integrity sha512-/veY75JbMK4j1yjvuUxuVsiS/hr/4iHs9FTT6cgTexxdE0Ly/glccBAkloH/DofkjRbZU3bnoj38mOmhkZ0lHw==
 
-eslint-config-next@15.3.5:
-  version "15.3.5"
-  resolved "https://registry.yarnpkg.com/eslint-config-next/-/eslint-config-next-15.3.5.tgz#6a71251fe3e8f1fc1b6b5c9a181a4a74ce8a9f4e"
-  integrity sha512-oQdvnIgP68wh2RlR3MdQpvaJ94R6qEFl+lnu8ZKxPj5fsAHrSF/HlAOZcsimLw3DT6bnEQIUdbZC2Ab6sWyptg==
+eslint-config-next@15.3.9:
+  version "15.3.9"
+  resolved "https://registry.yarnpkg.com/eslint-config-next/-/eslint-config-next-15.3.9.tgz#71d503edec308641f75a0f8a9b60f9f91081559f"
+  integrity sha512-tY/893UZ6rcfJd+G5c1KdRDceEJu3TerrWp+MCzElJD0KpPfrrHMJ8Tq2dTn0bcdRr/wElp0qrXM2vWVf/9uXw==
   dependencies:
-    "@next/eslint-plugin-next" "15.3.5"
+    "@next/eslint-plugin-next" "15.3.9"
     "@rushstack/eslint-patch" "^1.10.3"
     "@typescript-eslint/eslint-plugin" "^5.4.2 || ^6.0.0 || ^7.0.0 || ^8.0.0"
     "@typescript-eslint/parser" "^5.4.2 || ^6.0.0 || ^7.0.0 || ^8.0.0"
@@ -13603,12 +13603,12 @@ next-auth@^4.24.11:
     preact-render-to-string "^5.1.19"
     uuid "^8.3.2"
 
-next@15.3.5:
-  version "15.3.5"
-  resolved "https://registry.yarnpkg.com/next/-/next-15.3.5.tgz#9e892c1ed87954229d53194452b9d39429af8bf5"
-  integrity sha512-RkazLBMMDJSJ4XZQ81kolSpwiCt907l0xcgcpF4xC2Vml6QVcPNXW0NQRwQ80FFtSn7UM52XN0anaw8TEJXaiw==
+next@15.3.9:
+  version "15.3.9"
+  resolved "https://registry.yarnpkg.com/next/-/next-15.3.9.tgz#1562842cb65a2edb218e7b748d2b4359d9120031"
+  integrity sha512-bat50ogkh2esjfkbqmVocL5QunR9RGCSO2oQKFjKeDcEylIgw3JY6CMfGnzoVfXJ9SDLHI546sHmsk90D2ivwQ==
   dependencies:
-    "@next/env" "15.3.5"
+    "@next/env" "15.3.9"
     "@swc/counter" "0.1.3"
     "@swc/helpers" "0.5.15"
     busboy "1.6.0"
