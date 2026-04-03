@@ -16,7 +16,7 @@ const generateCsp = (nonce: string) => {
           'https://*.ingest.sentry.io',
           'https://vitals.vercel-insights.com',
           `https://s3.amazonaws.com/${process.env.S3_AWS_S3_BUCKET_NAME}`,
-          `https://s3.*.amazonaws.com/${process.env.S3_AWS_S3_BUCKET_NAME}`,
+          `https://*.amazonaws.com/${process.env.S3_AWS_S3_BUCKET_NAME}`,
         ],
     'default-src': ["'self'"],
     'font-src': ["'self'", 'https:'],
