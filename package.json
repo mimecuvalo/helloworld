@@ -65,7 +65,7 @@
     "@tiptap/starter-kit": "3.2.0",
     "@vercel/analytics": "1.5.0",
     "apollo-server-micro": "3.13.0",
-    "body-parser": "2.2.0",
+    "body-parser": "2.2.1",
     "cheerio": "1.1.0",
     "circular-dependency-plugin": "5.2.2",
     "cookie-parser": "1.4.7",
