@@ -77,7 +77,7 @@
     "graphql-tools": "9.0.18",
     "js-cookie": "3.0.5",
     "lite-youtube-embed": "0.3.3",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "magic-signatures": "2.0.0",
     "micro": "10.0.1",
     "mime": "4.0.7",
