@@ -1,31 +1,14 @@
-import { MenuItem, TextField, useTheme } from 'components';
-import { defineMessages, useIntl } from 'i18n';
-import { gql, useMutation } from '@apollo/client';
-
-import { ClipboardEvent } from 'react';
-import { F } from 'i18n';
-import FollowingFeedCountsQuery from 'components/dashboard/FollowingFeedCountsQuery';
-import FollowingQuery from 'components/dashboard/FollowingQuery';
-import FollowingSpecialFeedCountsQuery from 'components/dashboard/FollowingSpecialFeedCountsQuery';
-import { UserRemotePublic } from 'data/graphql-generated';
+import { type ClipboardEvent } from 'react';
+import { Menu } from '@base-ui/react/menu';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { F, defineMessages, useIntl } from 'i18n';
+import { rpc } from 'lib/rpc';
+import type { HandleSetFeed, RemoteUser } from 'lib/remote-queries';
+import styles from '../dashboard.module.css';
 
 const messages = defineMessages({
-  error: { defaultMessage: 'Error subscribing to new feed.' },
   follow: { defaultMessage: 'paste url to follow' },
 });
-
-const CREATE_USER_REMOTE = gql`
-  mutation createUserRemote($profileUrl: String!) {
-    createUserRemote(profileUrl: $profileUrl) {
-      avatar
-      favicon
-      name
-      profileUrl
-      sortType
-      username
-    }
-  }
-`;
 
 export default function NewFeed({
   profileUrl,
@@ -34,67 +17,50 @@ export default function NewFeed({
 }: {
   profileUrl?: string;
   isButton?: boolean;
-  handleSetFeed: (feed: UserRemotePublic | string, search?: string) => void;
+  handleSetFeed: HandleSetFeed;
 }) {
   const intl = useIntl();
-  const theme = useTheme();
-  const [createUserRemote] = useMutation(CREATE_USER_REMOTE);
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (url: string) =>
+      rpc.api['users-remote'].follow.$post({ json: { profileUrl: url } }).then((r) => r.json() as Promise<RemoteUser>),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['following'] });
+      queryClient.invalidateQueries({ queryKey: ['feed-counts'] });
+      queryClient.invalidateQueries({ queryKey: ['total-counts'] });
+    },
+  });
 
-  // when NewFeed is used as an input field.
-  const handleNewFeedPaste = (evt: ClipboardEvent) => {
+  const addNewFeed = async (url: string) => {
+    const created = await mutation.mutateAsync(url);
+    handleSetFeed(created);
+  };
+
+  const handleNewFeedPaste = (evt: ClipboardEvent<HTMLInputElement>) => {
     const inputField = evt.target as HTMLInputElement;
-
-    const func = () => {
-      const profileUrl = inputField.value;
+    // The <input> value isn't set yet on paste, so defer a tick.
+    setTimeout(() => {
+      const url = inputField.value;
       inputField.value = '';
       inputField.blur();
-
-      addNewFeed(profileUrl);
-    };
-
-    // Note: we do setTimeout b/c the <input /> field's value isn't set quite yet upon paste.
-    setTimeout(func, 0);
+      addNewFeed(url);
+    }, 0);
   };
-
-  // when NewFeed is used as a button.
-  const handleClick = () => {
-    addNewFeed(profileUrl || '');
-  };
-
-  async function addNewFeed(profileUrl: string) {
-    const { data } = await createUserRemote({
-      variables: { profileUrl },
-      refetchQueries: [{ query: FollowingSpecialFeedCountsQuery }, { query: FollowingFeedCountsQuery }],
-      update: (store, { data: { createUserRemote } }) => {
-        const data: any = store.readQuery({ query: FollowingQuery });
-        store.writeQuery({
-          query: FollowingQuery,
-          data: { fetchFollowing: [...data.fetchFollowing, createUserRemote] },
-        });
-      },
-    });
-    handleSetFeed(data.createUserRemote);
-  }
-
-  const followPlaceholder = intl.formatMessage(messages.follow);
 
   if (isButton) {
     return (
-      <MenuItem onClick={handleClick}>
+      <Menu.Item className={styles.menuItem} onClick={() => addNewFeed(profileUrl || '')}>
         <F defaultMessage="follow back" />
-      </MenuItem>
+      </Menu.Item>
     );
   }
 
   return (
-    <TextField
-      size="small"
-      margin="dense"
-      className="notranslate"
-      placeholder={followPlaceholder}
+    <input
+      type="text"
+      className={`${styles.newFeedInput} notranslate`}
+      placeholder={intl.formatMessage(messages.follow)}
       onPaste={handleNewFeedPaste}
-      color="primary"
-      InputProps={{ sx: { color: theme.palette.text.primary } }}
     />
   );
 }

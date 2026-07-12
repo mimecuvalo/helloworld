@@ -1,97 +1,128 @@
-import { F, defineMessages, useIntl } from 'i18n';
-import { FetchFollowingQuery, UserRemotePublic } from 'data/graphql-generated';
-import { KeyboardEvent, useRef } from 'react';
-import { List, TextField, Typography, styled } from 'components';
-
-import FollowingFeeds from './FollowingFeeds';
-import FollowingQuery from './FollowingQuery';
-import FollowingSpecialFeeds from './FollowingSpecialFeeds';
+import { type KeyboardEvent, useRef } from 'react';
+import { F, FormattedNumber, defineMessages, useIntl } from 'i18n';
+import { useFeedCounts, useFollowing, useTotalCounts, type HandleSetFeed, type RemoteUser } from 'lib/remote-queries';
+import FollowingMenu from './FollowingMenu';
+import FollowingAllMenu from './FollowingAllMenu';
 import NewFeed from './actions/NewFeed';
-import { useQuery } from '@apollo/client';
+import styles from './dashboard.module.css';
 
 const messages = defineMessages({
   search: { defaultMessage: 'search' },
 });
 
-const POLL_INTERVAL = 60 * 1000;
-
-const Container = styled('div')`
-  margin: 0 ${(props) => props.theme.spacing(2)} ${(props) => props.theme.spacing(3.5)} 0;
-  padding: ${(props) => props.theme.spacing(1)};
-  border: 1px solid ${(props) => props.theme.palette.success.main};
-  box-shadow:
-    1px 1px ${(props) => props.theme.palette.success.main},
-    2px 2px ${(props) => props.theme.palette.success.main},
-    3px 3px ${(props) => props.theme.palette.success.main};
-
-  h2 {
-    margin: 0;
-  }
-`;
-
 export default function Following({
-  userRemote,
   handleSetFeed,
-  specialFeed,
+  userRemote,
+  userFavicon,
 }: {
   specialFeed: string;
-  userRemote: UserRemotePublic | null;
-  handleSetFeed: (userRemote: UserRemotePublic | string, search?: string) => void;
+  userRemote: RemoteUser | null;
+  userFavicon?: string | null;
+  handleSetFeed: HandleSetFeed;
 }) {
   const intl = useIntl();
   const searchInput = useRef<HTMLInputElement>(null);
-  const { loading, data } = useQuery<FetchFollowingQuery>(FollowingQuery);
+  const following = useFollowing();
+  const feedCounts = useFeedCounts();
+  const totalCounts = useTotalCounts();
 
-  if (loading || !data) {
-    return null;
-  }
+  if (following.isPending || !following.data) return null;
+
+  const counts = totalCounts.data || { totalCount: 0, favoritesCount: 0, commentsCount: 0 };
+  const countByUrl = new Map((feedCounts.data || []).map((f) => [f.fromUsername, f.count]));
+  const avatar = <img className={styles.feedIcon} src={userFavicon || '/favicon.jpg'} alt="" />;
 
   const handleSearchKeyUp = (evt: KeyboardEvent<HTMLInputElement>) => {
-    if (evt.key === 'Enter') {
-      handleSetFeed('', searchInput.current?.value || '');
-    }
+    if (evt.key === 'Enter') handleSetFeed('', searchInput.current?.value || '');
   };
-
-  // It'd be nice to listen to the 'search' event for the (x) cancel button but it doesn't work w/ React?
-  const handleSearchChange = () => {
-    if (!searchInput.current?.value) {
-      handleSetFeed('', searchInput.current?.value || '');
-    }
-  };
-
-  const following = data.fetchFollowing;
-  const searchPlaceholder = intl.formatMessage(messages.search);
 
   return (
-    <Container>
-      <Typography variant="h2">
+    <div className={styles.followingBox}>
+      <h2>
         <F defaultMessage="following" />
-      </Typography>
+      </h2>
 
-      <List>
-        <FollowingSpecialFeeds handleSetFeed={handleSetFeed} specialFeed={specialFeed} pollInterval={POLL_INTERVAL} />
-        <FollowingFeeds
-          following={following as UserRemotePublic[]}
-          handleSetFeed={handleSetFeed}
-          currentUserRemote={userRemote}
-          pollInterval={POLL_INTERVAL}
-        />
-      </List>
+      <ul className={styles.feedList}>
+        <li className={styles.feedItemRow}>
+          <button type="button" className={styles.feedButton} onClick={() => handleSetFeed('')}>
+            <span className={styles.feedIcon} aria-hidden="true" />
+            <span className="feed-name">
+              <F defaultMessage="read all" />
+            </span>
+            <span className={styles.feedCount}>
+              <FormattedNumber value={counts.totalCount} />
+            </span>
+          </button>
+          <FollowingAllMenu />
+        </li>
+        <li className={styles.feedItemRow}>
+          <button type="button" className={styles.feedButton} onClick={() => handleSetFeed('me')}>
+            {avatar}
+            <span className="feed-name">
+              <F defaultMessage="your feed" />
+            </span>
+          </button>
+          <span className={styles.menuSpacer} aria-hidden="true" />
+        </li>
+        <li className={styles.feedItemRow}>
+          <button type="button" className={styles.feedButton} onClick={() => handleSetFeed('favorites')}>
+            {avatar}
+            <span className="feed-name">
+              <F defaultMessage="favorites" />
+            </span>
+            <span className={styles.feedCount}>
+              <FormattedNumber value={counts.favoritesCount} />
+            </span>
+          </button>
+          <span className={styles.menuSpacer} aria-hidden="true" />
+        </li>
+        <li className={styles.feedItemRow}>
+          <button type="button" className={styles.feedButton} onClick={() => handleSetFeed('comments')}>
+            {avatar}
+            <span className="feed-name">
+              <F defaultMessage="comments" />
+            </span>
+            <span className={styles.feedCount}>
+              <FormattedNumber value={counts.commentsCount} />
+            </span>
+          </button>
+          <span className={styles.menuSpacer} aria-hidden="true" />
+        </li>
+
+        {following.data.map((feed) => (
+          <li
+            key={feed.profileUrl}
+            className={styles.feedItemRow}
+            style={{ fontWeight: userRemote?.profileUrl === feed.profileUrl ? 'bold' : 'normal' }}
+          >
+            <button
+              type="button"
+              className={`${styles.feedButton} notranslate`}
+              onClick={() => handleSetFeed(feed)}
+              title={feed.name || feed.username}
+            >
+              <img className={styles.feedIcon} src={feed.favicon || feed.avatar || '/favicon.jpg'} alt="" />
+              <span className="feed-name">{feed.name || feed.username}</span>
+              <span className={styles.feedCount}>
+                <FormattedNumber value={countByUrl.get(feed.profileUrl) || 0} />
+              </span>
+            </button>
+            <FollowingMenu userRemote={feed} handleSetFeed={handleSetFeed} />
+          </li>
+        ))}
+      </ul>
 
       <NewFeed handleSetFeed={handleSetFeed} />
 
       <search>
-        <TextField
-          size="small"
-          margin="dense"
-          type="search"
-          onKeyUp={handleSearchKeyUp}
-          onChange={handleSearchChange}
+        <input
           ref={searchInput}
-          placeholder={searchPlaceholder}
-          className="notranslate"
+          type="search"
+          className={`${styles.searchInput} notranslate`}
+          onKeyUp={handleSearchKeyUp}
+          placeholder={intl.formatMessage(messages.search)}
         />
       </search>
-    </Container>
+    </div>
   );
 }

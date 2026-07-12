@@ -1,25 +1,18 @@
+import { Menu } from '@base-ui/react/menu';
 import { F } from 'i18n';
-import { MenuItem } from 'components';
-import { UserRemotePublic } from 'data/graphql-generated';
+import type { HandleSetFeed, RemoteUser } from 'lib/remote-queries';
+import styles from '../dashboard.module.css';
 
 export default function ViewAlreadyRead({
-  handleClose,
   handleSetFeed,
   userRemote,
 }: {
-  handleClose: () => void;
-  handleSetFeed: (userRemote: UserRemotePublic | string, query?: any, allItems?: boolean) => void;
-  userRemote: UserRemotePublic;
+  handleSetFeed: HandleSetFeed;
+  userRemote: RemoteUser;
 }) {
-  const handleClick = async () => {
-    handleClose();
-
-    handleSetFeed(userRemote, undefined /* query */, true /* all items */);
-  };
-
   return (
-    <MenuItem onClick={handleClick}>
+    <Menu.Item className={styles.menuItem} onClick={() => handleSetFeed(userRemote, undefined, true)}>
       <F defaultMessage="view all items" />
-    </MenuItem>
+    </Menu.Item>
   );
 }

@@ -1,26 +1,24 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
+    "jsx": "react-jsx",
     "strict": true,
     "noEmit": true,
+    "allowJs": true,
+    "skipLibCheck": true,
     "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
+    "verbatimModuleSyntax": false,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["vite/client", "node"],
     "paths": {
+      "*": ["./*"],
       "@/*": ["./*"],
-      "app/*": ["application/*"],
+      "app/*": ["./application/*"],
       "components": ["./components"],
       "components/*": ["./components/*"],
       "data": ["./data"],
@@ -30,20 +28,14 @@
       "i18n/*": ["./i18n/*"],
       "prisma/*": ["./prisma/*"],
       "social-butterfly": ["./social-butterfly"],
+      "social-butterfly/*": ["./social-butterfly/*"],
       "styles": ["./styles"],
       "util/*": ["./util/*"],
-      "vendor/*": ["./vendor/*"]
-    },
-    "forceConsistentCasingInFileNames": true,
-    "baseUrl": "."
+      "vendor/*": ["./vendor/*"],
+      "server/*": ["./server/*"],
+      "lib/*": ["./lib/*"]
+    }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.d.ts",
-    "pages/api/social/.well-known/*.tsx",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": ["node_modules"]
+  "include": ["**/*.ts", "**/*.tsx", "**/*.d.ts"],
+  "exclude": ["node_modules", "dist", ".output", ".vercel"]
 }

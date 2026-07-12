@@ -1,213 +1,65 @@
-import { AppBar, Avatar, Box, IconButton, Link, TextField, Toolbar, styled, useTheme } from 'components';
-import { Content, SiteMapAndUserQuery } from 'data/graphql-generated';
-import { F, defineMessages, useIntl } from 'i18n';
-import { FormEvent, ReactNode, useContext, useEffect, useState } from 'react';
-import { buildUrl, profileUrl } from 'util/url-factory';
-import { gql, useQuery } from '@apollo/client';
-
-import CloseIcon from '@mui/icons-material/Close';
+import { type FormEvent, type ReactNode, useState } from 'react';
+import { F } from 'i18n';
 import ContentLink from 'components/ContentLink';
-import Image from 'components/Image';
-import LoginLogoutButton from 'components/Login';
-import MenuIcon from '@mui/icons-material/Menu';
-import UserContext from 'application/UserContext';
-import baseTheme from 'styles';
-import constants from 'util/constants';
-import { transientOptions } from 'util/css';
-import { useRouter } from 'next/router';
-import { Drawer, useMediaQuery } from '@mui/material';
+import { buildUrl, profileUrl } from 'lib/url-factory';
+import styles from './content.module.css';
 
-export const SITE_MAP_WIDTH = 175;
+type SiteMapItem = {
+  username: string;
+  section: string;
+  album: string;
+  name: string;
+  title?: string | null;
+  forceRefresh?: boolean | null;
+  hidden?: boolean | null;
+};
 
-const Nav = styled('nav', transientOptions)`
-  position: sticky;
-  top: ${(props) => props.theme.spacing(1)};
-  height: calc(100vh - ${(props) => props.theme.spacing(1)} * 2);
-  width: ${SITE_MAP_WIDTH}px;
-  overflow: auto;
-  background: ${(props) => props.theme.palette.background.default};
-  margin: ${(props) => props.theme.spacing(1)};
-  margin-right: ${(props) => props.theme.spacing(3.5)};
-  padding: ${(props) => props.theme.spacing(0.5)};
+type Owner = {
+  name?: string | null;
+  title?: string | null;
+  logo?: string | null;
+  license?: string | null;
+  sidebarHtml?: string | null;
+} | null;
 
-  ${(props) => props.theme.breakpoints.down('md')} {
-    display: none;
-  }
-
-  border: 1px solid ${(props) => props.theme.palette.primary.light};
-  box-shadow:
-    1px 1px ${(props) => props.theme.palette.primary.light},
-    2px 2px ${(props) => props.theme.palette.primary.light},
-    3px 3px ${(props) => props.theme.palette.primary.light};
-`;
-
-const DrawerStyled = styled(Drawer)`
-  height: calc(100vh - ${(props) => props.theme.spacing(1)} * 2);
-  width: ${SITE_MAP_WIDTH}px;
-  overflow: auto;
-  background: ${(props) => props.theme.palette.background.default};
-  margin: ${(props) => props.theme.spacing(1)};
-  margin-right: ${(props) => props.theme.spacing(3.5)};
-  padding: ${(props) => props.theme.spacing(0.5)};
-
-  border: 1px solid ${(props) => props.theme.palette.primary.light};
-  box-shadow:
-    1px 1px ${(props) => props.theme.palette.primary.light},
-    2px 2px ${(props) => props.theme.palette.primary.light},
-    3px 3px ${(props) => props.theme.palette.primary.light};
-
-  ${(props) => props.theme.breakpoints.down('md')} {
-    background: ${(props) => props.theme.palette.background.default};
-    position: fixed;
-    inset: 0;
-    margin: 0;
-    width: 100vw;
-    height: 100vh;
-    text-align: center;
-    padding: ${(props) => props.theme.spacing(2)};
-    z-index: ${baseTheme.zindex.siteMap};
-
-    .MuiPaper-root {
-      width: 100vw;
-      padding-top: ${(props) => props.theme.spacing(8)};
-
-      & > ul > li {
-        margin-bottom: ${(props) => props.theme.spacing(2)};
-      }
-
-      & > ul > li > ul {
-        display: none;
-      }
-
-      ul {
-        padding-left: 0;
-      }
-    }
-  }
-`;
-
-const Album = styled('ul')`
-  padding-left: ${(props) => props.theme.spacing(1)};
-  font-weight: normal;
-`;
-
-const Item = styled('li', transientOptions)<{ $isSelected: boolean }>`
-  ${(props) => props.$isSelected && `font-weight: bold;`}
-`;
-
-const Form = styled('form')`
-  margin: ${(props) => props.theme.spacing(2)} 0 ${(props) => props.theme.spacing(1)} 0;
-`;
-
-const License = styled('div')`
-  margin: ${(props) => props.theme.spacing(2)} 0 ${(props) => props.theme.spacing(1)} 0;
-  text-align: center;
-`;
-
-const Hamburger = styled(IconButton)`
-  display: none;
-  z-index: ${baseTheme.zindex.siteMapHamburger};
-  margin-left: ${(props) => props.theme.spacing(-2)};
-
-  ${(props) => props.theme.breakpoints.down('md')} {
-    width: 48px;
-    height: 48px;
-    line-height: 0;
-    display: block;
-  }
-`;
-
-const LogoWrapper = styled('li')`
-  text-align: center;
-  margin-bottom: ${(props) => props.theme.spacing(1)};
-`;
-
-const messages = defineMessages({
-  menu: { defaultMessage: 'Menu' },
-  search: { defaultMessage: 'search' },
-});
-
-const SITE_MAP_AND_USER_QUERY = gql`
-  query SiteMapAndUser($username: String!) {
-    fetchSiteMap(username: $username) {
-      album
-      forceRefresh
-      hidden
-      name
-      section
-      title
-      username
-    }
-
-    fetchPublicUserData(username: $username) {
-      username
-      license
-      logo
-      name
-      title
-      sidebarHtml
-      theme
-      viewport
-    }
-  }
-`;
-
-export default function SiteMap({ content, username }: { content?: Content; username: string }) {
-  const router = useRouter();
-  const intl = useIntl();
-  const theme = useTheme();
-  const { user } = useContext(UserContext);
-  const { loading, data, client } = useQuery<SiteMapAndUserQuery>(SITE_MAP_AND_USER_QUERY, {
-    variables: {
-      username,
-    },
-  });
-  const menuButtonLabel = intl.formatMessage(messages.menu);
-  const searchLabel = intl.formatMessage(messages.search);
+export default function SiteMap({
+  siteMap,
+  contentOwner,
+  content,
+  username,
+}: {
+  siteMap: SiteMapItem[];
+  contentOwner: Owner;
+  content?: { name: string; album: string; section: string; forceRefresh?: boolean | null } | null;
+  username: string;
+}) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const isTablet = useMediaQuery(theme.breakpoints.down(baseTheme.breakpoints.md));
 
-  useEffect(() => {
-    if (user?.username === username) {
-      client.refetchQueries({
-        include: [
-          {
-            // @ts-ignore
-            query: SITE_MAP_AND_USER_QUERY,
-            variables: {
-              username,
-            },
-          },
-        ],
-      });
-    }
+  if (!siteMap || !contentOwner) return null;
 
-    // eslint-disable-next-line
-  }, [user, username]);
-
-  function generateItem(item: SiteMapAndUserQuery['fetchSiteMap'][0], albums?: ReactNode) {
+  function generateItem(item: SiteMapItem, albums?: ReactNode) {
     const isSelected = item.name === content?.name || item.name === content?.album || item.name === content?.section;
+    const cls = [isSelected ? styles.selected : '', item.hidden ? styles.hidden : ''].filter(Boolean).join(' ');
     return (
-      <Item key={item.name} $isSelected={isSelected}>
+      <li key={`${item.section}/${item.name}`} className={cls || undefined}>
         <ContentLink item={item} currentContent={content} className="notranslate">
           {item.title}
         </ContentLink>
         {albums}
-      </Item>
+      </li>
     );
   }
 
-  function generateItems(siteMap: SiteMapAndUserQuery['fetchSiteMap']) {
-    const items = [];
-    for (let i = 0; i < siteMap.length; ++i) {
-      const item = siteMap[i];
-      const nextItem = siteMap[i + 1];
-
-      let albums;
+  function generateItems(items: SiteMapItem[]) {
+    const out: ReactNode[] = [];
+    for (let i = 0; i < items.length; ++i) {
+      const item = items[i];
+      const nextItem = items[i + 1];
+      let albums: ReactNode;
       if (nextItem?.album === 'main') {
-        const albumItems = [];
-        for (i += 1; i < siteMap.length; ++i) {
-          const albumItem = siteMap[i];
+        const albumItems: ReactNode[] = [];
+        for (i += 1; i < items.length; ++i) {
+          const albumItem = items[i];
           if (albumItem.album === 'main') {
             albumItems.push(generateItem(albumItem));
           } else {
@@ -215,151 +67,97 @@ export default function SiteMap({ content, username }: { content?: Content; user
             break;
           }
         }
-        albums = <Album>{albumItems}</Album>;
+        albums = <ul className={styles.album}>{albumItems}</ul>;
       }
-
-      items.push(generateItem(item, albums));
+      out.push(generateItem(item, albums));
     }
-
-    return items;
+    return out;
   }
 
-  const handleMobileClick = () => {
-    setIsDrawerOpen(!isDrawerOpen);
-  };
-  const handleCloseMenu = () => {
-    setIsDrawerOpen(false);
-  };
-
-  const handleSearchSubmit = (evt: FormEvent) => {
+  function handleSearchSubmit(evt: FormEvent) {
     evt.preventDefault();
-
     const form = evt.target as HTMLFormElement;
-    const formUrl = new URL(form.action);
-    const query = form['q'].value;
-    const url = buildUrl({ pathname: `/${username}${formUrl.pathname}/${query}` });
-    router.push(url);
-  };
-
-  if (!data || loading) {
-    return null;
+    const query = (form.elements.namedItem('q') as HTMLInputElement)?.value;
+    window.location.href = buildUrl({ pathname: `/${username}/search/${query}` });
   }
-
-  const siteMap = data.fetchSiteMap;
-  const contentOwner = data.fetchPublicUserData;
-
-  if (!siteMap || !contentOwner) {
-    return null;
-  }
-
-  const items = generateItems(siteMap);
-  const DrawerComponent = isTablet ? DrawerStyled : Nav;
 
   return (
     <>
-      <AppBar
-        sx={{
-          background: theme.palette.background.paper,
-          boxShadow: 'none',
-          display: { xs: 'block', md: 'none' },
-          top: '10px',
-          height: '48px',
-          width: { xs: '48px', md: 'auto' },
-          right: '13px',
-        }}
+      <button
+        type="button"
+        className={`${styles.sitemapToggle} notranslate`}
+        aria-label="menu"
+        aria-expanded={isDrawerOpen}
+        onClick={() => setIsDrawerOpen((open) => !open)}
       >
-        <Toolbar sx={{ justifyContent: 'flex-end', minHeight: { xs: '48px' }, padding: { xs: 0 } }}>
-          <Hamburger
-            id="hw-hamburger"
-            aria-label={menuButtonLabel}
-            onClick={handleMobileClick}
-            size="large"
-            sx={{ color: theme.palette.text.primary }}
-          >
-            {isDrawerOpen ? <CloseIcon /> : <MenuIcon />}
-          </Hamburger>
-        </Toolbar>
-      </AppBar>
-
-      <DrawerComponent
-        id="hw-sitemap"
-        title="sitemap"
-        onMouseUp={handleCloseMenu}
-        // @ts-ignore we're messing around here with using Drawer or Nav
-        anchor="left"
-        open={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
-        PaperProps={{ sx: { width: '100%' } }}
-      >
+        ☰
+      </button>
+      {isDrawerOpen ? (
+        <div className={styles.sitemapBackdrop} onClick={() => setIsDrawerOpen(false)} aria-hidden="true" />
+      ) : null}
+      <nav id="hw-sitemap" className={`${styles.sitemap} ${isDrawerOpen ? styles.sitemapOpen : ''}`} title="sitemap">
         <ul>
           {contentOwner.logo ? (
-            <LogoWrapper id="hw-sitemap-logo" className="h-card">
-              <Link
-                href={profileUrl(username)}
-                className="u-url u-uid"
-                sx={{ display: 'flex', justifyContent: 'center' }}
-              >
-                <Avatar
-                  className="u-photo"
+            <li id="hw-sitemap-logo" className={`${styles.logoWrapper} h-card`}>
+              <a href={profileUrl(username)} className="u-url u-uid">
+                <img
+                  className={`${styles.logo} u-photo`}
                   src={contentOwner.logo}
-                  title={contentOwner.title}
+                  title={contentOwner.title || ''}
                   alt={contentOwner.name || username}
-                  sx={{ width: 64, height: 64 }}
                 />
-              </Link>
-            </LogoWrapper>
-          ) : null}
-          {isTablet && (
-            <li>
-              <LoginLogoutButton />
+              </a>
             </li>
-          )}
+          ) : null}
           <li>
-            <Link href={profileUrl(username)}>
+            <a href={profileUrl(username)}>
               <F defaultMessage="home" />
-            </Link>
+            </a>
           </li>
-
-          {items}
+          {generateItems(siteMap)}
         </ul>
 
         <search>
-          <Form method="get" action="/search" onSubmit={handleSearchSubmit} className="notranslate">
-            <TextField aria-label={searchLabel} size="small" type="search" name="q" placeholder="search" required />
-          </Form>
+          <form
+            method="get"
+            action="/search"
+            onSubmit={handleSearchSubmit}
+            className={`${styles.searchForm} notranslate`}
+          >
+            <input type="search" name="q" placeholder="search" required aria-label="search" />
+          </form>
         </search>
 
         {contentOwner.license ? (
-          <License className="notranslate">
+          <div className={`${styles.license} notranslate`}>
             {contentOwner.license === 'http://purl.org/atompub/license#unspecified' ? (
               `Copyright ${new Date().getFullYear()} by ${contentOwner.name}`
             ) : (
-              <Link href={contentOwner.license} target="_blank">
-                {/* @ts-ignore */}
-                <Image width={44} height={15} src={constants.licenses[contentOwner.license].img} alt="license" />
-              </Link>
+              <a href={contentOwner.license} target="_blank" rel="noopener noreferrer">
+                license
+              </a>
             )}
-          </License>
+          </div>
         ) : null}
 
         {contentOwner.sidebarHtml ? (
           <div className="notranslate" dangerouslySetInnerHTML={{ __html: contentOwner.sidebarHtml }} />
         ) : null}
 
-        <Box id="hw-powered-by" sx={{ textAlign: 'center', mt: 2, fontSize: theme.typography.subtitle1 }}>
+        <div id="hw-powered-by" className={styles.poweredBy}>
           <F
             defaultMessage="powered by {br} {link}"
             values={{
               br: <br />,
               link: (
-                <Link href="https://github.com/mimecuvalo/helloworld" rel="generator">
+                <a href="https://github.com/mimecuvalo/helloworld" rel="generator">
                   Hello, world.
-                </Link>
+                </a>
               ),
             }}
           />
-        </Box>
-      </DrawerComponent>
+        </div>
+      </nav>
     </>
   );
 }

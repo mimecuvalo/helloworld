@@ -1,0 +1,381 @@
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 4px 8px 0 0;
+  border: 0;
+  background: transparent;
+  color: var(--hw-primary, var(--color-primary));
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.actionActive {
+  color: var(--hw-primary-light, var(--color-primary-light));
+  font-weight: bold;
+}
+
+.actionDanger {
+  color: var(--color-error, #d32f2f);
+}
+
+.dashboard {
+  display: flex;
+  align-items: flex-start;
+}
+
+.nav {
+  position: sticky;
+  top: 8px;
+  width: 235px;
+  flex: 0 0 235px;
+  height: 100vh;
+  margin: 8px;
+  overflow: auto;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  margin: 8px 8px 0 0;
+}
+
+.navToggle {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .dashboard {
+    flex-direction: column;
+  }
+
+  .navToggle {
+    display: block;
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    z-index: 1202;
+    background: var(--hw-bg);
+    color: inherit;
+    border: 1px solid var(--hw-primary);
+    font-size: 1.2rem;
+    padding: 4px 8px;
+    cursor: pointer;
+  }
+
+  .nav {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1201;
+    margin: 0;
+    padding: 16px;
+    background: var(--hw-bg);
+    text-align: center;
+  }
+
+  .navOpen {
+    display: block;
+  }
+
+  .content {
+    width: 100%;
+    margin: 8px 4px;
+  }
+}
+
+.toolsBox,
+.followingBox {
+  margin: 0 16px 28px 0;
+  padding: 8px;
+  border: 1px solid;
+  border-radius: 0;
+}
+
+.toolsBox {
+  border-color: var(--hw-secondary, #f0f);
+  box-shadow:
+    1px 1px var(--hw-secondary, #f0f),
+    2px 2px var(--hw-secondary, #f0f),
+    3px 3px var(--hw-secondary, #f0f);
+}
+
+.followingBox {
+  border-color: var(--hw-success, #0c0);
+  box-shadow:
+    1px 1px var(--hw-success, #0c0),
+    2px 2px var(--hw-success, #0c0),
+    3px 3px var(--hw-success, #0c0);
+}
+
+/* Tools links use body2 (0.875rem). */
+.toolsBox a {
+  font-size: 0.875rem;
+}
+
+.toolsBox {
+  list-style: none;
+}
+
+.feedList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.followingBox h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+.feedItemRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.feedButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  padding: 6px 0;
+  border: 0;
+  background: transparent;
+  color: var(--hw-primary, var(--color-primary));
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+}
+
+.feedButton :global(.feed-name) {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.feedIcon {
+  width: 16px;
+  height: 16px;
+  object-fit: cover;
+  flex: 0 0 16px;
+  border-radius: 50%;
+}
+
+.feedCount {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  height: 14px;
+  font-size: 0.75rem;
+  color: var(--hw-bg, #161313);
+  background: var(--hw-info, #0cf);
+  border-radius: 8px;
+  padding: 0 4px;
+}
+
+.searchInput,
+.newFeedInput {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 8px;
+  padding: 8.5px 14px;
+  border: 1px solid var(--hw-primary-light, var(--color-grey-500));
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.composer {
+  position: relative;
+}
+
+.composer :global(.tiptap) {
+  min-height: 33vh;
+  padding: 16px 16px 16px 28px;
+  margin-bottom: 28px;
+  border: 1px solid var(--hw-primary-light);
+  box-shadow:
+    1px 1px var(--hw-primary-light),
+    2px 2px var(--hw-primary-light),
+    3px 3px var(--hw-primary-light);
+}
+
+.composerToolbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  position: absolute;
+  top: 8px;
+  right: 16px;
+  z-index: var(--z-above-page, 10);
+}
+
+.composerToolbar select {
+  min-width: 150px;
+  padding: 0 8px;
+  border: 1px solid var(--hw-primary-light);
+  border-radius: 0;
+  background: var(--hw-bg);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.feed {
+  width: 100%;
+}
+
+.feedHeader {
+  position: sticky;
+  top: 8px;
+  z-index: var(--z-above-page, 10);
+  background: var(--hw-bg);
+  border: 1px solid var(--hw-primary-light);
+  box-shadow:
+    1px 1px var(--hw-primary-light),
+    2px 2px var(--hw-primary-light),
+    3px 3px var(--hw-primary-light);
+  width: 100%;
+  margin-bottom: 24px;
+  padding: 4px 8px;
+}
+
+.feedSentinel {
+  height: 1px;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.itemHeader {
+  position: sticky;
+  top: 0;
+  background: var(--hw-bg);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--hw-primary-light);
+}
+
+.itemTitle {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.itemTitle > a {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+  overflow: hidden;
+}
+
+.itemRead {
+  font-style: italic;
+  opacity: 0.3;
+}
+
+.itemCreator {
+  margin-bottom: 8px;
+  padding: 4px;
+  font-size: 0.75rem;
+  color: rgb(117, 117, 117);
+}
+
+.itemAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.itemView {
+  flex: 1;
+  padding: 0 8px;
+  text-wrap-style: balance;
+}
+
+.itemView figure {
+  margin: 0 -8px;
+}
+
+.itemView img {
+  max-width: calc(100% + 16px);
+  margin: 0 -8px;
+  height: auto;
+}
+
+.itemFooter {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px;
+  margin-top: 8px;
+  background: var(--hw-bg);
+  border-top: 1px solid var(--hw-primary-light);
+  font-size: 0.75rem;
+}
+
+.itemActions {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.menuTrigger,
+.menuSpacer {
+  flex: 0 0 32px;
+  width: 32px;
+}
+
+.menuTrigger {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: center;
+  color: var(--hw-primary, var(--color-primary));
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.menuPopup {
+  min-width: 180px;
+  padding: 4px;
+  background: var(--hw-bg, var(--background));
+  color: inherit;
+  border: 1px solid var(--hw-primary-light, var(--color-grey-500));
+  border-radius: var(--radius, 4px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+  z-index: 1300;
+}
+
+.menuItem {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: var(--radius, 4px);
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+}
+
+.menuItem[data-highlighted],
+.menuItem:hover {
+  background: var(--hw-menu-hover);
+}

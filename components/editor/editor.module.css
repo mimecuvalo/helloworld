@@ -1,0 +1,78 @@
+/* Tiptap editor styling. */
+.editor {
+  width: 100%;
+}
+
+.editor :global(.tiptap) {
+  width: 100%;
+  padding: 0 8px;
+  background-color: var(--hw-bg, inherit);
+  color: inherit;
+  outline: none;
+}
+
+.editor :global(.tiptap:focus) {
+  outline: none;
+}
+
+.editor :global(p) {
+  margin-block: 0;
+}
+
+.editor :global(img) {
+  max-width: 100%;
+  height: auto;
+}
+
+.editor :global(iframe) {
+  width: 50%;
+  aspect-ratio: 16 / 9;
+}
+
+/* Bubble (selection) toolbar. */
+.bubbleMenu {
+  display: flex;
+  background-color: var(--hw-bg, var(--background));
+  border-radius: var(--radius, 4px);
+}
+
+.bubbleMenu button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 6px;
+  border: 1px solid var(--hw-primary-light, var(--color-grey-500));
+  border-right: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.bubbleMenu button:last-child {
+  border-right: 1px solid var(--hw-primary-light, var(--color-grey-500));
+}
+
+.bubbleMenu button.isActive {
+  background-color: var(--hw-primary-light, var(--color-primary-light));
+}
+
+/* Simple toast (replaces MUI Snackbar/Alert). */
+.toast {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2000;
+  padding: 8px 16px;
+  border-radius: var(--radius, 4px);
+  color: #fff;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+}
+
+.toastError {
+  background: var(--color-error, #d32f2f);
+}
+
+.toastSuccess {
+  background: var(--color-success, #2e7d32);
+}

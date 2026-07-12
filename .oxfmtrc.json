@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "singleQuote": true,
+  "trailingComma": "es5",
+  "printWidth": 120,
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    "/.output/",
+    "prisma/client/",
+    "graphql-generated.ts",
+    "routeTree.gen.ts",
+    "i18n/compiled/",
+    "i18n-compiled-lang"
+  ]
+}

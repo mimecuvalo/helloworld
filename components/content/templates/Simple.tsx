@@ -1,47 +1,53 @@
-import { Content } from 'data/graphql-generated';
-import { styled } from 'components';
-import { useEditor } from 'application/EditorContext';
-import { lazy, Suspense, useContext } from 'react';
-import UserContext from 'application/UserContext';
-import { createLiteYouTubeVideos } from 'util/media';
+import { lazy, Suspense } from 'react';
+import { useUser } from 'lib/user-context';
+import { useEditor } from 'lib/editor-context';
+import styles from '../content.module.css';
 
 const ContentEditor = lazy(() => import('../ContentEditor'));
 
-const View = styled('div', { label: 'SimpleView' })`
-  position: relative;
-  clear: both;
-  max-width: 100%;
-  padding: ${(props) => props.theme.spacing(0, 1)};
+type SimpleContent = {
+  username: string;
+  name: string;
+  section: string;
+  album: string;
+  title?: string | null;
+  hidden?: boolean | null;
+  view: string;
+  style?: string | null;
+  code?: string | null;
+};
 
-  & figure img:hover {
-    outline: 3px solid ${(props) => props.theme.palette.primary.main};
-  }
-
-  /* XXX: react-markdown sometimes renders a lone \ - we hide these. See data-text code below. */
-  p[data-text='\\\\'] {
-    visibility: hidden;
-  }
-`;
-
-export default function Simple({ content, isFeed }: { content: Content; isEditing?: boolean; isFeed?: boolean }) {
+export default function Simple({ content, isFeed }: { content: SimpleContent; isFeed?: boolean }) {
+  const user = useUser();
   const { isEditing } = useEditor();
-  const { user } = useContext(UserContext);
   const isOwnerViewing = user?.username === content.username;
-  let html = content.view.replaceAll('<p></p>', '');
-  html = createLiteYouTubeVideos(html);
 
   return (
     <>
       {isOwnerViewing ? (
         <Suspense fallback={<div />}>
-          <ContentEditor content={content} />
+          <ContentEditor
+            content={{
+              username: content.username,
+              name: content.name,
+              section: content.section,
+              album: content.album,
+              title: content.title || '',
+              hidden: !!content.hidden,
+              view: content.view,
+            }}
+          />
         </Suspense>
       ) : null}
+
       {isEditing ? null : (
         <>
-          {isFeed ? null : <div dangerouslySetInnerHTML={{ __html: content.style }} />}
-          {isFeed ? null : <div dangerouslySetInnerHTML={{ __html: content.code }} />}
-          <View dangerouslySetInnerHTML={{ __html: html }} className="e-content hw-view notranslate" />
+          {!isFeed && content.style ? <div dangerouslySetInnerHTML={{ __html: content.style }} /> : null}
+          {!isFeed && content.code ? <div dangerouslySetInnerHTML={{ __html: content.code }} /> : null}
+          <div
+            className={`e-content hw-view notranslate ${styles.simpleView}`}
+            dangerouslySetInnerHTML={{ __html: content.view }}
+          />
         </>
       )}
     </>

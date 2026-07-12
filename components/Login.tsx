@@ -1,21 +1,26 @@
-import { Button } from '@mui/material';
 import { F } from 'i18n';
-import { useRouter } from 'next/router';
-import { useSession, signIn } from 'next-auth/react';
+import { useLocation } from '@tanstack/react-router';
+import { signIn, useSession } from 'lib/auth-client';
 
 export default function LoginLogoutButton() {
-  const router = useRouter();
-  const { data: session } = useSession();
+  const { session } = useSession();
+  const { pathname } = useLocation();
 
-  if (router.asPath === '/dashboard') {
+  if (pathname === '/dashboard') {
     return null;
   }
 
-  const handleClick = () => signIn();
+  if (session) {
+    return (
+      <a className="btn" href="/dashboard">
+        <F defaultMessage="dashboard" />
+      </a>
+    );
+  }
 
   return (
-    <Button variant="contained" href={session ? '/dashboard' : undefined} onClick={!session ? handleClick : undefined}>
-      {session ? <F defaultMessage="dashboard" /> : <F defaultMessage="Login" />}
-    </Button>
+    <button type="button" className="btn" onClick={() => signIn()}>
+      <F defaultMessage="Login" />
+    </button>
   );
 }

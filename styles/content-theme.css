@@ -1,0 +1,56 @@
+/*
+ * Per-user content theme, ported from the MUI themes (styles/theme.ts +
+ * palette.ts + typography.ts). nightlight = dark palette + Press-Start-2P
+ * headers + monospace body. Applied via `.hw-content-theme[data-theme=...]`.
+ * The `flowers` image-skin is injected separately (see styles/theme-css.ts).
+ */
+.hw-content-theme {
+  /* palette (shared by nightlight + flowers) */
+  --hw-primary: #3984ff;
+  --hw-primary-light: #09f;
+  --hw-primary-dark: #16147f;
+  --hw-secondary: #ff00ff;
+  --hw-error: #ff3333;
+  --hw-info: #00ccff;
+  --hw-success: #00cc00;
+  --hw-grey-500: #cccccc;
+  --hw-grey-700: #666666;
+  --hw-bg: #161313;
+  --hw-text: #ffffff;
+  --hw-text-secondary: #cccccc;
+
+  /* typography */
+  --hw-font-body:
+    Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace, var(--font-noto-color-emoji),
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  --hw-font-header: 'Press Start 2P', var(--font-system);
+
+  min-height: 100vh;
+  background-color: var(--hw-bg);
+  color: var(--hw-text);
+  font-family: var(--hw-font-body);
+}
+
+.hw-content-theme h1,
+.hw-content-theme h2,
+.hw-content-theme h3,
+.hw-content-theme h4,
+.hw-content-theme h5,
+.hw-content-theme h6 {
+  font-family: var(--hw-font-header);
+  line-height: 1.4;
+}
+
+.hw-content-theme a,
+.hw-content-theme a:visited {
+  color: var(--hw-primary);
+  text-decoration: none;
+}
+
+.hw-content-theme a:hover {
+  text-decoration: underline;
+}
+
+.hw-content-theme figure img:hover {
+  outline: 3px solid var(--hw-primary);
+}

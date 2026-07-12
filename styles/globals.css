@@ -1,20 +1,119 @@
-@import '~sanitize.css';
-@import '~sanitize.css/forms.css';
-@import '~sanitize.css/typography.css';
+@import './theme.css';
+
+:root {
+  --hw-menu-hover: color-mix(in srgb, currentColor 14%, transparent);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
 
 html {
   scroll-behavior: smooth;
-  font-size: 14px;
 }
 
-::selection {
-  background-color: oklch(51.64% 0.188 257.723);
-  color: #fff;
+html,
+body {
+  max-width: 100vw;
+  /* XXX(mime): check this hack */
+  /* `clip` (not `hidden`) prevents horizontal scroll WITHOUT creating a scroll
+     container — `overflow-x: hidden` here broke `position: sticky` on the
+     sidebar. */
+  overflow-x: clip;
 }
 
-a:any-link {
-  color: #3984ff;
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-system);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-header);
+  font-weight: var(--font-weight-bold);
+  margin: var(--space-1) 0;
+}
+
+h1 {
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-tight);
+}
+
+h2 {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-snug);
+}
+
+h3 {
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-snug);
+}
+
+h4 {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+}
+
+a {
+  color: inherit;
   text-decoration: none;
+}
+
+.link {
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--space-1, 8px);
+  border: 1px solid var(--hw-primary-light, var(--color-primary));
+  border-radius: 0;
+  font: inherit;
+  color: inherit;
+  background: var(--hw-bg, var(--background));
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+  box-shadow:
+    1px 1px var(--hw-primary-light, var(--color-primary)),
+    2px 2px var(--hw-primary-light, var(--color-primary)),
+    3px 3px var(--hw-primary-light, var(--color-primary));
+}
+
+.btn:hover {
+  border-color: var(--hw-primary, var(--color-primary-dark));
+  box-shadow:
+    1px 1px var(--hw-primary, var(--color-primary-dark)),
+    2px 2px var(--hw-primary, var(--color-primary-dark)),
+    3px 3px var(--hw-primary, var(--color-primary-dark));
+}
+
+.btn:active {
+  box-shadow: none;
+  transform: translate(3px, 3px);
+}
+
+.btn:disabled {
+  color: var(--color-text-disabled);
+  cursor: default;
+  box-shadow: none;
 }
 
 @view-transition {
@@ -29,10 +128,28 @@ a:any-link {
   }
 }
 
-@media print {
-  body {
-    background-color: #fff;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
   }
+
+  html {
+    color-scheme: dark;
+  }
+}
+
+html {
+  font-size: 14px;
+}
+
+::selection {
+  background-color: oklch(51.64% 0.188 257.723);
+  color: #fff;
+}
+
+a:any-link {
+  color: #3984ff;
 }
 
 h3,
@@ -46,7 +163,13 @@ h6 {
   font-size: 1rem;
 }
 
-/* In development, highlight untranslated strings. */
+@media print {
+  body {
+    background-color: #fff;
+  }
+}
+
+/* Highlight untranslated strings in development (needs .App-is-development ancestor). */
 .App-is-development *:not(.notranslate) {
   text-shadow: 3px 3px red;
 }
@@ -58,6 +181,7 @@ h6 {
   text-shadow: none;
 }
 
+/* lite-youtube embeds */
 html lite-youtube {
   max-width: 100%;
   height: 270px;

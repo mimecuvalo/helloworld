@@ -58,3 +58,9 @@ logs/*.log.gz
 
 # Sentry
 .sentryclirc
+
+# tanstack start / vite / prisma7
+dist/
+.output/
+.vercel/
+generated/

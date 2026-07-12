@@ -1,0 +1,290 @@
+import crypto from 'node:crypto';
+import { v4 as uuidv4 } from 'uuid';
+import type { Context } from '../context';
+import type { Prisma } from '../../generated/prisma/client';
+import { syndicate } from '../social';
+import { like } from '../social';
+
+export function allContentRemote(ctx: Context) {
+  return ctx.prisma.contentRemote.findMany();
+}
+
+export function fetchContentRemote(ctx: Context, id: number) {
+  return ctx.prisma.contentRemote.findUnique({ where: { id } });
+}
+
+export async function fetchContentRemotePaginated(
+  ctx: Context,
+  args: { profileUrlOrSpecialFeed: string; offset: number; shouldShowAllItems?: boolean }
+) {
+  const { currentUsername, prisma } = ctx;
+  const { profileUrlOrSpecialFeed, offset, shouldShowAllItems } = args;
+  const take = 20;
+
+  const constraints: { [key: string]: string | boolean } = {
+    toUsername: currentUsername,
+    deleted: false,
+    isSpam: false,
+  };
+  let order: Prisma.SortOrder = 'desc';
+
+  switch (profileUrlOrSpecialFeed) {
+    case 'favorites':
+      constraints.favorited = true;
+      break;
+    case 'comments':
+      constraints.type = 'comment';
+      break;
+    default:
+      if (profileUrlOrSpecialFeed) {
+        constraints.fromUsername = profileUrlOrSpecialFeed;
+        const userRemote = await prisma.userRemote.findUnique({
+          select: { sortType: true },
+          where: {
+            localUsername_profileUrl: { localUsername: currentUsername, profileUrl: profileUrlOrSpecialFeed },
+          },
+        });
+        if (userRemote?.sortType === 'oldest') order = 'asc';
+      }
+      constraints.type = 'post';
+      if (!shouldShowAllItems) constraints.read = false;
+      break;
+  }
+
+  let results = await prisma.contentRemote.findMany({
+    where: constraints,
+    orderBy: [{ createdAt: order }],
+    take,
+    skip: offset * take,
+  });
+
+  // Infinite-feed quirk: reset offset to 0 if nothing found beyond the start.
+  if (!results.length && offset !== 0) {
+    results = await prisma.contentRemote.findMany({
+      where: constraints,
+      orderBy: [{ createdAt: order }],
+      take,
+      skip: 0,
+    });
+  }
+  return results;
+}
+
+export async function fetchUserTotalCounts(ctx: Context) {
+  const { currentUsername, prisma } = ctx;
+  const common: { [key: string]: string | boolean } = { toUsername: currentUsername, deleted: false, isSpam: false };
+
+  const commentsCount = await prisma.contentRemote.count({ where: Object.assign({}, common, { type: 'comment' }) });
+  const favoritesCount = await prisma.contentRemote.count({ where: Object.assign({}, common, { favorited: true }) });
+  const totalCount = await prisma.contentRemote.count({
+    where: Object.assign({}, common, { type: 'post', read: false }),
+  });
+
+  return { commentsCount, favoritesCount, totalCount };
+}
+
+export async function fetchFeedCounts(ctx: Context) {
+  const result = await ctx.prisma.contentRemote.groupBy({
+    by: ['fromUsername'],
+    _count: true,
+    where: { toUsername: ctx.currentUsername, deleted: false, isSpam: false, read: false, type: 'post' },
+  });
+  return result.map((c) => ({ count: c._count, ...c }));
+}
+
+export function fetchCommentsRemote(ctx: Context, args: { username?: string | null; name?: string | null }) {
+  return ctx.prisma.contentRemote.findMany({
+    select: {
+      avatar: true,
+      creator: true,
+      createdAt: true,
+      deleted: true,
+      favorited: true,
+      fromUsername: true,
+      link: true,
+      localContentName: true,
+      postId: true,
+      type: true,
+      username: true,
+      view: true,
+    },
+    where: {
+      toUsername: args.username || '',
+      localContentName: args.name,
+      deleted: false,
+      isSpam: false,
+      type: 'comment',
+    },
+    orderBy: [{ createdAt: 'desc' }],
+  });
+}
+
+export function fetchFavoritesRemote(ctx: Context, args: { username?: string | null; name?: string | null }) {
+  return ctx.prisma.contentRemote.findMany({
+    select: {
+      avatar: true,
+      createdAt: true,
+      fromUsername: true,
+      localContentName: true,
+      postId: true,
+      type: true,
+      username: true,
+    },
+    where: {
+      toUsername: args.username || '',
+      localContentName: args.name,
+      deleted: false,
+      isSpam: false,
+      type: 'favorite',
+    },
+    orderBy: [{ createdAt: 'desc' }],
+  });
+}
+
+export async function postComment(ctx: Context, args: { username: string; name: string; content: string }) {
+  const { currentUserEmail, currentUserPicture, hostname, prisma } = ctx;
+  const { username, name, content } = args;
+
+  const localUrl = `/${username}/remote-comments/comment-${uuidv4()}`;
+  const tagDate = new Date().toISOString().slice(0, 10);
+  const postId = `tag:${hostname},${tagDate}:${localUrl}`;
+  const link = `https://${hostname}${localUrl}`;
+
+  const commentUsername = currentUserEmail.split('@')[0];
+  const emailHash = crypto.createHash('md5').update(`mailto:${currentUserEmail}`).digest('hex');
+  const gravatar = `http://www.gravatar.com/avatar/${emailHash}`;
+  const avatar = currentUserPicture || gravatar;
+
+  const createdRemoteContent = await prisma.contentRemote.create({
+    data: {
+      avatar,
+      commentUser: currentUserEmail,
+      fromUsername: null,
+      link,
+      localContentName: name,
+      postId,
+      title: '',
+      toUsername: username,
+      type: 'comment',
+      username: commentUsername,
+      view: content,
+    },
+  });
+
+  const commentedContent = await prisma.content.findUnique({
+    select: { id: true, hidden: true, commentsCount: true },
+    where: { username_name: { username, name } },
+  });
+  const updatedCommentedContent = await prisma.content.update({
+    data: { commentsCount: (commentedContent?.commentsCount || 0) + 1, commentsUpdated: new Date() },
+    where: { id: commentedContent?.id },
+  });
+  const contentOwner = await prisma.user.findUnique({ where: { username } });
+
+  if (!commentedContent?.hidden && contentOwner && updatedCommentedContent) {
+    await syndicate(ctx, updatedCommentedContent, createdRemoteContent, true /* isComment */);
+  }
+
+  return {
+    avatar,
+    content,
+    deleted: false,
+    favorited: false,
+    fromUsername: null,
+    link,
+    localContentName: name,
+    postId,
+    toUsername: username,
+    type: 'comment',
+    username: commentUsername,
+  };
+}
+
+export async function favoriteContentRemote(
+  ctx: Context,
+  args: { fromUsername: string; postId: string; type: string; favorited: boolean }
+) {
+  const { currentUsername, currentUserEmail, prisma } = ctx;
+  const { fromUsername, postId, type, favorited } = args;
+
+  if (type === 'comment') {
+    await prisma.contentRemote.update({
+      data: { favorited },
+      where: { commentUser_postId: { commentUser: currentUserEmail, postId } },
+    });
+  } else {
+    const contentRemote = await prisma.contentRemote.update({
+      data: { favorited },
+      where: { toUsername_fromUsername_postId: { toUsername: currentUsername, fromUsername, postId } },
+    });
+    const userRemote = await prisma.userRemote.findUnique({
+      where: {
+        localUsername_profileUrl: { localUsername: currentUsername, profileUrl: contentRemote.fromUsername || '' },
+      },
+    });
+    if (userRemote) {
+      await like(ctx, contentRemote, userRemote, favorited);
+    }
+  }
+
+  return { fromUsername, postId, type, favorited };
+}
+
+export async function deleteContentRemote(
+  ctx: Context,
+  args: { fromUsername: string; postId: string; localContentName: string; type: string; deleted: boolean }
+) {
+  const { currentUsername, currentUserEmail, prisma } = ctx;
+  const { fromUsername, postId, localContentName, type, deleted } = args;
+
+  if (type === 'comment') {
+    await prisma.contentRemote.update({
+      data: { deleted },
+      where: { commentUser_postId: { commentUser: currentUserEmail, postId } },
+    });
+  } else {
+    await prisma.contentRemote.update({
+      data: { deleted },
+      where: { toUsername_fromUsername_postId: { toUsername: currentUsername, fromUsername, postId } },
+    });
+  }
+
+  const localContentWhere = { username_name: { username: currentUsername, name: localContentName } };
+  const commentedContent = await prisma.content.findUnique({
+    select: { commentsCount: true },
+    where: localContentWhere,
+  });
+  await prisma.content.update({
+    data: { commentsCount: (commentedContent?.commentsCount || 0) + (deleted ? -1 : 1) },
+    where: localContentWhere,
+  });
+
+  return { fromUsername, postId, localContentName, type, deleted };
+}
+
+export async function markAllContentInFeedAsRead(ctx: Context, args: { fromUsername: string }) {
+  await ctx.prisma.contentRemote.updateMany({
+    data: { read: true },
+    where: { toUsername: ctx.currentUsername, fromUsername: args.fromUsername },
+  });
+  return { fromUsername: args.fromUsername, count: 0 };
+}
+
+export async function markAllFeedsAsRead(ctx: Context) {
+  await ctx.prisma.contentRemote.updateMany({ data: { read: true }, where: { toUsername: ctx.currentUsername } });
+  return { count: 0 };
+}
+
+export async function readContentRemote(ctx: Context, args: { fromUsername: string; postId: string; read: boolean }) {
+  await ctx.prisma.contentRemote.update({
+    data: { read: args.read },
+    where: {
+      toUsername_fromUsername_postId: {
+        toUsername: ctx.currentUsername,
+        fromUsername: args.fromUsername,
+        postId: args.postId,
+      },
+    },
+  });
+  return { fromUsername: args.fromUsername, postId: args.postId, read: args.read };
+}

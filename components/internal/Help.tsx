@@ -1,0 +1,67 @@
+import { Menu } from '@base-ui/react/menu';
+import { F } from 'i18n';
+import styles from './dev.module.css';
+
+// Sets the `locale` cookie (read by lib/request-init on the server) and reloads.
+function setLocale(locale: string) {
+  document.cookie = `locale=${locale};path=/;max-age=31536000`;
+  window.location.reload();
+}
+
+// Toggles the react-scan render-highlight overlay (dev perf debugging).
+function toggleReactScan() {
+  const existing = document.getElementById('react-scan');
+  if (existing) {
+    existing.remove();
+    return;
+  }
+  const script = document.createElement('script');
+  script.id = 'react-scan';
+  script.crossOrigin = 'anonymous';
+  script.src = 'https://unpkg.com/react-scan/dist/auto.global.js';
+  script.async = true;
+  script.defer = true;
+  document.body.appendChild(script);
+}
+
+export default function Help() {
+  return (
+    <Menu.Root>
+      <Menu.Trigger className={styles.iconButton} aria-label="Help">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+          <line x1="12" y1="17" x2="12.01" y2="17" />
+        </svg>
+      </Menu.Trigger>
+      <Menu.Portal>
+        <Menu.Positioner sideOffset={8} side="top" align="end">
+          <Menu.Popup className={styles.menuPopup}>
+            <Menu.Item className={styles.menuItem} onClick={toggleReactScan}>
+              <F defaultMessage="React Scan" />
+            </Menu.Item>
+            <Menu.Item className={styles.menuItem} onClick={() => setLocale('en')}>
+              <F defaultMessage="i18n: English" />
+            </Menu.Item>
+            <Menu.Item className={styles.menuItem} onClick={() => setLocale('fr')}>
+              <F defaultMessage="i18n: French" />
+            </Menu.Item>
+            <Menu.Item className={styles.menuItem} onClick={() => setLocale('xx-LS')}>
+              <F defaultMessage="i18n: Long" />
+            </Menu.Item>
+          </Menu.Popup>
+        </Menu.Positioner>
+      </Menu.Portal>
+    </Menu.Root>
+  );
+}

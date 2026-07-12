@@ -1,55 +1,36 @@
-import { gql, useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
-
+import { useRouter } from '@tanstack/react-router';
+import { contentUrl } from 'lib/url-factory';
+import { useCollectionLatest } from 'lib/content-queries';
 import Archive from './Archive';
-import { Content } from 'data/graphql-generated';
 import Simple from './Simple';
-import { contentUrl } from 'util/url-factory';
-import { useRouter } from 'next/router';
 
-const FETCH_COLLECTION_LINKS = gql`
-  query FetchCollectionLatest($username: String!, $section: String!, $name: String!) {
-    fetchCollectionLatest(username: $username, section: $section, name: $name) {
-      album
-      name
-      section
-      title
-      username
-      view
-    }
-  }
-`;
+type LatestContent = {
+  username: string;
+  section: string;
+  album: string;
+  name: string;
+  forceRefresh?: boolean | null;
+};
 
-export default function Latest({ content }: { content: Content }) {
+export default function Latest({ content }: { content: LatestContent }) {
   const { username, section, name } = content;
   const router = useRouter();
   const [archiveMode, setArchiveMode] = useState(false);
-  const { loading, data } = useQuery(FETCH_COLLECTION_LINKS, {
-    variables: {
-      username,
-      section,
-      name,
-    },
-  });
+  const { data, isPending } = useCollectionLatest({ username, section, name });
 
   useEffect(() => {
     const url = new URL(window.location.href);
     if (url.searchParams.get('mode') === 'archive') {
       setArchiveMode(true);
-    } else {
-      // XXX(mime): we do setTimeout 0 because in Content.js we replace history with the canonical url
-      // so it's a shitty race condition :-/
-      setTimeout(() => router.replace(contentUrl(data.fetchCollectionLatest)), 0);
+    } else if (data) {
+      // XXX(mime): we do setTimeout 0 because in Content.js we replace history
+      // with the canonical url so it's a shitty race condition :-/
+      setTimeout(() => router.navigate({ to: contentUrl(data), replace: true }), 0);
     }
-  }, [archiveMode, data, router]);
+  }, [data, router]);
 
-  if (archiveMode) {
-    return <Archive content={content} />;
-  }
-
-  if (loading) {
-    return <></>;
-  }
-
-  return <Simple content={data.fetchCollectionLatest} />;
+  if (archiveMode) return <Archive content={content} />;
+  if (isPending || !data) return null;
+  return <Simple content={data} />;
 }

@@ -1,9 +1,7 @@
-import { Button, Menu } from 'components';
-import { MouseEvent, useState } from 'react';
+import { Menu } from '@base-ui/react/menu';
 import { defineMessages, useIntl } from 'i18n';
-
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import MarkAllFeedsAsRead from './actions/MarkAllFeedsAsRead';
+import styles from './dashboard.module.css';
 
 const messages = defineMessages({
   menu: { defaultMessage: 'user options' },
@@ -11,34 +9,18 @@ const messages = defineMessages({
 
 export default function FollowingAllMenu() {
   const intl = useIntl();
-  const [anchorEl, setAnchorEl] = useState<Element | null>(null);
-
-  const handleMenuOpenerClick = (event: MouseEvent) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const isOpen = Boolean(anchorEl);
-  const menuAriaLabel = intl.formatMessage(messages.menu);
-  const id = `following-all-menu`;
-
   return (
-    <>
-      <Button
-        aria-label={menuAriaLabel}
-        aria-owns={isOpen ? id : undefined}
-        aria-haspopup="true"
-        onClick={handleMenuOpenerClick}
-        sx={{ minWidth: 0 }}
-      >
-        <ArrowDropDownIcon />
-      </Button>
-      <Menu id={id} anchorEl={anchorEl} open={isOpen} onClose={handleClose} transitionDuration={0}>
-        <MarkAllFeedsAsRead key="read" handleClose={handleClose} />
-      </Menu>
-    </>
+    <Menu.Root>
+      <Menu.Trigger className={styles.menuTrigger} aria-label={intl.formatMessage(messages.menu)}>
+        ▾
+      </Menu.Trigger>
+      <Menu.Portal>
+        <Menu.Positioner sideOffset={4} side="bottom" align="end">
+          <Menu.Popup className={styles.menuPopup}>
+            <MarkAllFeedsAsRead />
+          </Menu.Popup>
+        </Menu.Positioner>
+      </Menu.Portal>
+    </Menu.Root>
   );
 }

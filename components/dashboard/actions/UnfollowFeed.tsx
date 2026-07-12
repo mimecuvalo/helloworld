@@ -1,52 +1,39 @@
-import { gql, useMutation } from '@apollo/client';
-
+import { Menu } from '@base-ui/react/menu';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { F } from 'i18n';
-import FollowingQuery from 'components/dashboard/FollowingQuery';
-import FollowingSpecialFeedCountsQuery from 'components/dashboard/FollowingSpecialFeedCountsQuery';
-import { MenuItem } from 'components';
-import { UserRemotePublic } from 'data/graphql-generated';
-
-const DESTROY_FEED = gql`
-  mutation destroyFeed($profileUrl: String!) {
-    destroyFeed(profileUrl: $profileUrl)
-  }
-`;
+import { rpc } from 'lib/rpc';
+import type { HandleSetFeed, RemoteUser } from 'lib/remote-queries';
+import styles from '../dashboard.module.css';
 
 export default function UnfollowFeed({
-  handleClose,
   handleSetFeed,
   userRemote,
 }: {
-  handleClose: () => void;
-  handleSetFeed: (userRemote: UserRemotePublic | string, query?: any, allItems?: boolean) => void;
-  userRemote: UserRemotePublic;
+  handleSetFeed: HandleSetFeed;
+  userRemote: RemoteUser;
 }) {
-  const profileUrl = userRemote.profileUrl;
-
-  const [destroyFeed] = useMutation(DESTROY_FEED);
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: () =>
+      rpc.api['users-remote'].unfollow.$post({ json: { profileUrl: userRemote.profileUrl } }).then((r) => {
+        if (!r.ok) throw new Error('unfollow failed');
+        return r.json();
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['following'] });
+      queryClient.invalidateQueries({ queryKey: ['total-counts'] });
+      queryClient.invalidateQueries({ queryKey: ['feed-counts'] });
+    },
+  });
 
   const handleClick = async () => {
-    handleClose();
-
-    await destroyFeed({
-      variables: { profileUrl },
-      refetchQueries: [{ query: FollowingSpecialFeedCountsQuery }],
-      update: (store) => {
-        const followingData: any = store.readQuery({ query: FollowingQuery });
-        store.writeQuery({
-          query: FollowingQuery,
-          data: {
-            fetchFollowing: followingData.fetchFollowing.filter((i: UserRemotePublic) => i.profileUrl !== profileUrl),
-          },
-        });
-      },
-    });
+    await mutation.mutateAsync();
     handleSetFeed('');
   };
 
   return (
-    <MenuItem onClick={handleClick}>
+    <Menu.Item className={styles.menuItem} onClick={handleClick}>
       <F defaultMessage="unfollow" />
-    </MenuItem>
+    </Menu.Item>
   );
 }

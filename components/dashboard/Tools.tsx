@@ -1,96 +1,54 @@
-import { Button, Link, List, ListItem, styled } from 'components';
-import { AnchorHTMLAttributes, JSX, PropsWithChildren, useContext, useEffect, useRef, useState } from 'react';
-
+import { type AnchorHTMLAttributes, type PropsWithChildren, useEffect, useRef, useState } from 'react';
 import { F } from 'i18n';
-import UserContext from 'application/UserContext';
-import { profileUrl } from 'util/url-factory';
+import { profileUrl } from 'lib/url-factory';
+import styles from './dashboard.module.css';
 
-const StyledList = styled(List)`
-  margin: 0 ${(props) => props.theme.spacing(2)} ${(props) => props.theme.spacing(3.5)} 0;
-  padding: ${(props) => props.theme.spacing(1)};
-  border: 1px solid ${(props) => props.theme.palette.secondary.main};
-  box-shadow:
-    1px 1px ${(props) => props.theme.palette.secondary.main},
-    2px 2px ${(props) => props.theme.palette.secondary.main},
-    3px 3px ${(props) => props.theme.palette.secondary.main};
-
-  a {
-    font-size: ${(props) => props.theme.typography.body2};
-  }
-`;
-
-export default function Tools() {
-  const { user } = useContext(UserContext);
+export default function Tools({ username }: { username: string }) {
   const [origin, setOrigin] = useState('');
+  useEffect(() => setOrigin(window.location.origin), []);
 
-  useEffect(() => {
-    // TODO(mime): need an isomorphic mechanism for host. Haven't written it yet.
-    // This is lame obvs.
-    setOrigin(window.location.origin);
-  }, [origin]);
-
-  function createBookmarklet(pathname: string) {
-    return `
-      javascript:void((function() {
-        var e = document.createElement('script');
-        var scriptUrl = '${origin}' + '${pathname}' + '?random=' + (Math.random() * 99999999);
-        e.setAttribute('src', scriptUrl);
-        document.body.appendChild(e)
-      })())
-    `;
-  }
-
-  const username = user?.username || '';
-  const followScript = createBookmarklet('/js/helloworld_follow.js');
-  const reblogScript = createBookmarklet('/js/helloworld_reblog.js');
+  const bookmarklet = (pathname: string) =>
+    `javascript:void((function(){var e=document.createElement('script');e.setAttribute('src','${origin}${pathname}?random='+(Math.random()*99999999));document.body.appendChild(e)})())`;
 
   return (
-    <StyledList>
-      <ListItem>
-        <Link href={profileUrl(username)} target="_blank">
+    <ul className={styles.toolsBox}>
+      <li>
+        <a href={profileUrl(username)} target="_blank" rel="noreferrer noopener">
           <F defaultMessage="view site" />
-        </Link>
-      </ListItem>
-      <ListItem>
-        <BookmarkletLink code={followScript} style={{ textDecoration: 'none' }}>
+        </a>
+      </li>
+      <li>
+        <BookmarkletLink code={bookmarklet('/js/helloworld_follow.js')}>
           <F defaultMessage="follow bookmarklet" />
         </BookmarkletLink>
-      </ListItem>
-      <ListItem>
-        <BookmarkletLink code={reblogScript} style={{ textDecoration: 'none' }}>
+      </li>
+      <li>
+        <BookmarkletLink code={bookmarklet('/js/helloworld_reblog.js')}>
           <F defaultMessage="reblog bookmarklet" />
         </BookmarkletLink>
-      </ListItem>
-      {/* <ListItem>
-        <Link href="/api/data-liberation">
-          <F defaultMessage="data liberation" />
-        </Link>
-      </ListItem> */}
-      <ListItem>
-        <Button href="/api/auth/signout">
+      </li>
+      <li>
+        <a href="/api/auth/signout">
           <F defaultMessage="logout" />
-        </Button>
-      </ListItem>
-    </StyledList>
+        </a>
+      </li>
+    </ul>
   );
 }
 
-type BookmarkletLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
-  code: string;
-};
-
-export function BookmarkletLink({ code, children, ...props }: PropsWithChildren<BookmarkletLinkProps>): JSX.Element {
-  const linkRef = useRef<HTMLAnchorElement>(null);
-
+// javascript: URLs can't be set via React's href (it strips them), so we set it
+// on the DOM node after mount.
+function BookmarkletLink({
+  code,
+  children,
+  ...props
+}: PropsWithChildren<AnchorHTMLAttributes<HTMLAnchorElement> & { code: string }>) {
+  const ref = useRef<HTMLAnchorElement>(null);
   useEffect(() => {
-    if (linkRef.current) {
-      // Set the javascript: URL after the component mounts
-      linkRef.current.setAttribute('href', code);
-    }
+    if (ref.current) ref.current.setAttribute('href', code);
   }, [code]);
-
   return (
-    <a ref={linkRef} {...props}>
+    <a ref={ref} {...props}>
       {children}
     </a>
   );

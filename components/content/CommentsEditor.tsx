@@ -1,127 +1,63 @@
-import { styled } from '@mui/material/styles';
-import { Editor, EditorContent, useEditor } from '@tiptap/react';
-import { Alert, Button, Snackbar } from 'components';
 import { useEffect, useState } from 'react';
-import { gql, useMutation } from '@apollo/client';
-import StarterKit from '@tiptap/starter-kit';
+import { Editor as TipTapEditor, EditorContent, useEditor } from '@tiptap/react';
+import { StarterKit } from '@tiptap/starter-kit';
 import { Placeholder } from '@tiptap/extensions';
-import { Content, ContentAndUserQuery } from '@/data/graphql-generated';
+import { useRouter } from '@tanstack/react-router';
+import { useMutation } from '@tanstack/react-query';
 import { useIntl, F, defineMessages } from 'i18n';
-import ContentQuery from './ContentQuery';
+import { rpc } from 'lib/rpc';
 import EditorToolbar from '../editor/Toolbar';
+import editorStyles from '../editor/editor.module.css';
+import styles from './content.module.css';
 
 const messages = defineMessages({
   error: { defaultMessage: 'Error updating content.' },
 });
 
-const EditorStyling = styled('div', { label: 'EditorStyling' })`
-  width: 100%;
-  font-family: ${(props) => props.theme.typography.fontFamily};
-
-  .tiptap {
-    width: 100%;
-    min-height: 10vh;
-    border: 1px solid ${(props) => props.theme.palette.primary.light};
-    box-shadow:
-      1px 1px ${(props) => props.theme.palette.primary.light},
-      2px 2px ${(props) => props.theme.palette.primary.light},
-      3px 3px ${(props) => props.theme.palette.primary.light};
-    padding: ${(props) => props.theme.spacing(2, 2, 2, 3.5)};
-    margin-bottom: ${(props) => props.theme.spacing(1.5)};
-    background-color: ${(props) => props.theme.palette.background.default};
-    color: ${(props) => props.theme.palette.text.primary};
-    outline: none;
-
-    &:focus {
-      outline: none;
-    }
-  }
-`;
-
-const POST_COMMENT = gql`
-  mutation postComment($username: String!, $name: String!, $content: String!) {
-    postComment(username: $username, name: $name, content: $content) {
-      avatar
-      deleted
-      favorited
-      fromUsername
-      link
-      localContentName
-      postId
-      toUsername
-      type
-      username
-      view
-    }
-  }
-`;
-
-export default function CommentsEditor({ content }: { content: Content }) {
+export default function CommentsEditor({ content }: { content: { username: string; name: string } }) {
   const intl = useIntl();
-  const [isPosting, setIsPosting] = useState(false);
+  const router = useRouter();
   const [toastMsg, setToastMsg] = useState('');
-  const [postComment] = useMutation(POST_COMMENT);
   const [commentContent, setCommentContent] = useState('');
   const [editorKeyToClearState, setEditorKeyToClearState] = useState(0);
 
-  const handleKeyDown = (evt: KeyboardEvent) => {
-    // TODO(mime): combine this logic somewhere. (also in keyboard.js)
-    const isMac = navigator.platform.toLowerCase().indexOf('mac') !== -1;
-    const isAccelKey = isMac ? evt.metaKey : evt.ctrlKey;
-    if (isAccelKey && evt.key === 'Enter') {
-      handlePost();
+  const postMutation = useMutation({
+    mutationFn: (json: { username: string; name: string; content: string }) =>
+      rpc.api['content-remote'].comment.$post({ json }).then((r) => {
+        if (!r.ok) throw new Error('post failed');
+        return r.json();
+      }),
+  });
+
+  const handlePost = async () => {
+    try {
+      await postMutation.mutateAsync({ username: content.username, name: content.name, content: commentContent });
+      setEditorKeyToClearState((k) => k + 1);
+      setCommentContent('');
+      router.invalidate();
+    } catch {
+      setToastMsg(intl.formatMessage(messages.error));
     }
   };
 
   useEffect(() => {
+    const handleKeyDown = (evt: KeyboardEvent) => {
+      const isMac = navigator.platform.toLowerCase().indexOf('mac') !== -1;
+      const isAccelKey = isMac ? evt.metaKey : evt.ctrlKey;
+      if (isAccelKey && evt.key === 'Enter') handlePost();
+    };
     document.addEventListener('keydown', handleKeyDown);
-
     return () => document.removeEventListener('keydown', handleKeyDown);
   });
-
-  const handlePost = async () => {
-    const { username, name } = content;
-    const variables = { username, name, content: commentContent };
-
-    setIsPosting(true);
-
-    try {
-      await postComment({
-        variables,
-        update: (store, { data: { postComment } }) => {
-          const contentVariables = { username, name };
-          const query = ContentQuery;
-          const data = store.readQuery<ContentAndUserQuery>({ query, variables: contentVariables });
-          data?.fetchCommentsRemote.unshift(postComment);
-          store.writeQuery({ query, variables: contentVariables, data });
-        },
-      });
-      setEditorKeyToClearState(editorKeyToClearState + 1);
-    } catch {
-      setToastMsg(intl.formatMessage(messages.error));
-    }
-
-    setIsPosting(false);
-  };
-
-  const handleToastClose = () => setToastMsg('');
 
   const editor = useEditor(
     {
       extensions: [
-        StarterKit.configure({
-          heading: false,
-          horizontalRule: false,
-          link: false,
-        }),
-        Placeholder.configure({
-          placeholder: 'Hello, world.',
-        }),
+        StarterKit.configure({ heading: false, horizontalRule: false, link: false }),
+        Placeholder.configure({ placeholder: 'Hello, world.' }),
       ],
       content: '',
-      onUpdate: ({ editor }: { editor: Editor }) => {
-        setCommentContent(editor.getHTML());
-      },
+      onUpdate: ({ editor }: { editor: TipTapEditor }) => setCommentContent(editor.getHTML()),
       immediatelyRender: false,
     },
     [editorKeyToClearState]
@@ -129,19 +65,28 @@ export default function CommentsEditor({ content }: { content: Content }) {
 
   return (
     <>
-      <EditorStyling>
+      <div className={`${editorStyles.editor} ${styles.commentEditor}`}>
         <EditorToolbar editor={editor} disableHeadings />
         <EditorContent editor={editor} className="notranslate" />
-      </EditorStyling>
-      <Button variant="contained" disabled={isPosting} onClick={handlePost} sx={{ float: 'right' }}>
+      </div>
+      <button
+        type="button"
+        className={`btn ${styles.commentPost}`}
+        disabled={postMutation.isPending}
+        onClick={handlePost}
+      >
         <F defaultMessage="post" />
-      </Button>
+      </button>
 
-      <Snackbar open={!!toastMsg} autoHideDuration={6000} onClose={handleToastClose}>
-        <Alert onClose={handleToastClose} severity="error" sx={{ width: '100%' }}>
+      {toastMsg ? (
+        <div
+          className={`${editorStyles.toast} ${editorStyles.toastError} notranslate`}
+          role="alert"
+          onClick={() => setToastMsg('')}
+        >
           {toastMsg}
-        </Alert>
-      </Snackbar>
+        </div>
+      ) : null}
     </>
   );
 }

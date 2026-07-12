@@ -1,142 +1,80 @@
-import {
-  Alert,
-  Button,
-  FormControl,
-  FormGroup,
-  InputLabel,
-  MenuItem,
-  Select,
-  Snackbar,
-  Toolbar,
-  styled,
-  useTheme,
-} from 'components';
+import { type ReactNode, useCallback, useEffect, useState } from 'react';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { F, defineMessages, useIntl } from 'i18n';
-import { gql, useMutation, useQuery } from '@apollo/client';
-import { ReactNode, useCallback, useEffect, useState } from 'react';
-
-import { ArrowDropDown } from '@mui/icons-material';
-import Cookies from 'js-cookie';
+import { rpc } from 'lib/rpc';
+import { useEditor } from 'lib/editor-context';
 import Editor from 'components/editor/Editor';
-import { SelectChangeEvent } from '@mui/material';
-import { SiteMapAndUserEditorQuery } from 'data/graphql-generated';
-import baseTheme from 'styles';
-import { useEditor } from 'application/EditorContext';
 import { reblog, unfurl } from './util';
+import editorStyles from 'components/editor/editor.module.css';
+import styles from './dashboard.module.css';
 
 const messages = defineMessages({
   posted: { defaultMessage: 'Success!' },
   error: { defaultMessage: 'Error posting content.' },
 });
 
-const DashboardEditorContainer = styled('div', { label: 'DashboardEditorContainer' })`
-  position: relative;
-
-  .tiptap {
-    min-height: 33vh;
-    border: 1px solid ${(props) => props.theme.palette.primary.light};
-    box-shadow:
-      1px 1px ${(props) => props.theme.palette.primary.light},
-      2px 2px ${(props) => props.theme.palette.primary.light},
-      3px 3px ${(props) => props.theme.palette.primary.light};
-    padding: ${(props) => props.theme.spacing(2, 2, 2, 3.5)};
-    margin-bottom: ${(props) => props.theme.spacing(3.5)};
-  }
-`;
-
-const SITE_MAP_AND_USER_QUERY = gql`
-  query SiteMapAndUserEditor($username: String!) {
-    fetchSiteMap(username: $username) {
-      album
-      hidden
-      name
-      section
-      title
-      username
-    }
-
-    fetchFollowing {
-      name
-      username
-      profileUrl
-      avatar
-      favicon
-    }
-  }
-`;
-
-const POST_CONTENT = gql`
-  mutation postContent(
-    $section: String!
-    $album: String!
-    $name: String!
-    $title: String!
-    $hidden: Boolean!
-    $thumb: String!
-    $style: String!
-    $code: String!
-    $view: String!
-  ) {
-    postContent(
-      section: $section
-      album: $album
-      name: $name
-      title: $title
-      hidden: $hidden
-      thumb: $thumb
-      style: $style
-      code: $code
-      view: $view
-    ) {
-      username
-      section
-      album
-      name
-      title
-      hidden
-      thumb
-      style
-      code
-      view
-    }
-  }
-`;
+type SiteMapItem = {
+  username: string;
+  section: string;
+  album: string;
+  name: string;
+  title?: string | null;
+  hidden?: boolean | null;
+};
 
 export default function DashboardEditor({ username }: { username: string }) {
   const { editor } = useEditor();
-  const theme = useTheme();
   const intl = useIntl();
-  const { loading, data } = useQuery<SiteMapAndUserEditorQuery>(SITE_MAP_AND_USER_QUERY, {
-    variables: {
-      username,
+  const [contentThumb, setContentThumb] = useState('');
+  const [sectionAndAlbum, setSectionAndAlbum] = useState('');
+  const [editorValue, setEditorValue] = useState('');
+  const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
+  const [editorKey, setEditorKey] = useState(0);
+
+  const siteMap = useQuery({
+    queryKey: ['sitemap', username],
+    queryFn: async () => {
+      const res = await rpc.api.content.sitemap.$get({ query: { username } });
+      if (!res.ok) throw new Error('sitemap failed');
+      return (await res.json()) as SiteMapItem[];
     },
   });
 
-  const [postContent] = useMutation(POST_CONTENT);
+  const postMutation = useMutation({
+    mutationFn: (json: {
+      section: string;
+      album: string;
+      name: string;
+      title: string;
+      hidden: boolean;
+      thumb: string;
+      style: string;
+      code: string;
+      view: string;
+    }) =>
+      rpc.api.content.post.$post({ json }).then((r) => {
+        if (!r.ok) throw new Error('post failed');
+        return r.json();
+      }),
+  });
 
-  const [contentThumb, setContentThumb] = useState('');
-  // Not so clean but, meh, don't feel like implementing two separate <select>'s
-  const [sectionAndAlbum, setSectionAndAlbum] = useState(
-    JSON.stringify({ section: data?.fetchSiteMap[0].name, album: '', hidden: false })
-  );
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [toastMsg, setToastMsg] = useState('');
-  const [isPostSuccess, setIsPostSuccess] = useState(false);
-  const [editorValue, setEditorValue] = useState('');
-  const successMsg = intl.formatMessage(messages.posted);
-  const errorMsg = intl.formatMessage(messages.error);
-  const [editorKeyToClearState, setEditorKeyToClearState] = useState(0);
-
+  // Default the section/album to the first sitemap entry (or a saved cookie).
   useEffect(() => {
-    const handleOnBeforeUnload = (evt: BeforeUnloadEvent) => {
-      if (hasUnsavedChanges) {
-        evt.returnValue = 'You have unfinished changes!';
-      }
-    };
-    window.addEventListener('beforeunload', handleOnBeforeUnload);
+    const saved = document.cookie.match(/(?:^|; )sectionAndAlbum=([^;]+)/)?.[1];
+    if (saved) setSectionAndAlbum(decodeURIComponent(saved));
+    else if (siteMap.data?.[0])
+      setSectionAndAlbum(JSON.stringify({ section: siteMap.data[0].name, album: '', hidden: false }));
+  }, [siteMap.data]);
 
-    return () => window.removeEventListener('beforeunload', handleOnBeforeUnload);
-  }, [hasUnsavedChanges]);
+  // Reblog bookmarklet deep-link: #reblog=<url>&img=<img>.
+  useEffect(() => {
+    if (editor && window.location.hash.startsWith('#reblog')) {
+      const params = new URLSearchParams(window.location.hash.slice(1));
+      const url = params.get('reblog') || '';
+      reblog(editor, params.get('img') || url, url);
+      window.location.hash = '';
+    }
+  }, [editor]);
 
   const handlePost = async () => {
     const title = (
@@ -145,217 +83,127 @@ export default function DashboardEditor({ username }: { username: string }) {
       ''
     ).replace(/<[^>]*>?/g, '');
     const name = title.replace(/[^A-Za-z0-9-]/g, '-').toLowerCase();
-    const { section, album, hidden } = JSON.parse(sectionAndAlbum);
-
-    const thumb = contentThumb || '';
-
-    const variables = {
-      username,
-      section,
-      album,
-      name,
-      title,
-      hidden,
-      thumb,
-      style: '', // TODO
-      code: '', // TODO
-      view: editorValue,
-    };
+    const { section, album, hidden } = JSON.parse(sectionAndAlbum || '{"section":"main","album":"","hidden":false}');
 
     try {
-      await postContent({
-        variables,
-        optimisticResponse: {
-          __typename: 'Mutation',
-          postContent: Object.assign({}, variables, { __typename: 'Content' }),
-        },
+      await postMutation.mutateAsync({
+        section,
+        album,
+        name,
+        title,
+        hidden,
+        thumb: contentThumb || '',
+        style: '',
+        code: '',
+        view: editorValue,
       });
     } catch {
-      setToastMsg(errorMsg);
-      setIsPostSuccess(false);
+      setToast({ msg: intl.formatMessage(messages.error), ok: false });
       return;
     }
-
     setContentThumb('');
-    setToastMsg(successMsg);
-    setIsPostSuccess(true);
-    setHasUnsavedChanges(false);
     setEditorValue('');
-    setEditorKeyToClearState(editorKeyToClearState + 1);
+    setEditorKey((k) => k + 1);
+    setToast({ msg: intl.formatMessage(messages.posted), ok: true });
   };
-
-  useEffect(() => {
-    const sectionAndAlbum = Cookies.get('sectionAndAlbum');
-    if (sectionAndAlbum) {
-      setSectionAndAlbum(sectionAndAlbum);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (editor && window.location.hash.startsWith('#reblog')) {
-      const searchParams = new URLSearchParams(window.location.hash.slice(1));
-      const url = searchParams.get('reblog') || '';
-      const img = searchParams.get('img') || '';
-
-      reblog(editor, img || url, url);
-      window.location.hash = '';
-    }
-  }, [editor]);
-
-  const handleMediaAdd = useCallback((url: string) => {
-    setContentThumb(url);
-  }, []);
 
   const handlePaste = useCallback(
     async (text: string) => {
-      const potentialLink = text.match(/^https?:\/\//) || text.match(/^<iframe /);
-      if (potentialLink) {
-        const unfurlInfo = await unfurl(text);
-
-        if (!unfurlInfo.wasMediaFound) {
-          return;
-        }
-
-        if (unfurlInfo.isError) {
-          setToastMsg(errorMsg);
-          setIsPostSuccess(false);
-          return;
-        }
-
-        if (unfurlInfo.image) {
-          setContentThumb(unfurlInfo.image);
-        }
-
-        unfurlInfo.result =
-          `<h1>${unfurlInfo.title}</h1><br><br>` + unfurlInfo.result + `<br><br><a href="${text}">${text}</a>`;
-        setEditorValue(unfurlInfo.result);
-        setHasUnsavedChanges(true);
+      if (!(text.match(/^https?:\/\//) || text.match(/^<iframe /))) return;
+      const info = await unfurl(text);
+      if (!info.wasMediaFound) return;
+      if (info.isError) {
+        setToast({ msg: intl.formatMessage(messages.error), ok: false });
+        return;
       }
+      if (info.image) setContentThumb(info.image);
+      setEditorValue(`<h1>${info.title}</h1><br><br>${info.result}<br><br><a href="${text}">${text}</a>`);
     },
-    [errorMsg]
+    [intl]
   );
 
-  const handleEditorChange = useCallback((name: string, value: string) => {
-    setEditorValue(value);
-    setHasUnsavedChanges(true);
-  }, []);
-
-  const handleToastClose = () => setToastMsg('');
-
-  const handleSectionAndAlbumChange = (evt: SelectChangeEvent) => {
-    setSectionAndAlbum(evt.target.value);
-    Cookies.set('sectionAndAlbum', evt.target.value);
+  const handleChange = useCallback((_name: string, value: string) => setEditorValue(value), []);
+  const handleMediaAdd = useCallback((url: string) => setContentThumb(url), []);
+  const handleSectionChange = (value: string) => {
+    setSectionAndAlbum(value);
+    document.cookie = `sectionAndAlbum=${encodeURIComponent(value)};path=/;max-age=31536000`;
   };
 
-  function generateSiteMapItem(
-    item: SiteMapAndUserEditorQuery['fetchSiteMap'][0],
-    albums: ReactNode[] | undefined,
-    sectionName?: string
-  ) {
-    const value = {
-      section: sectionName || item.name,
-      album: sectionName ? item.name : '',
-      hidden: item.hidden,
-    };
-    return (
-      <MenuItem key={item.name} value={JSON.stringify(value)}>
-        {!albums ? <>&nbsp;&nbsp;&nbsp;</> : null}
-        {item.title}
-      </MenuItem>
-    );
-  }
+  if (siteMap.isPending || !siteMap.data) return null;
 
-  function generateSiteMap(siteMap: SiteMapAndUserEditorQuery['fetchSiteMap']) {
-    let items: ReactNode[] = [];
-    for (let i = 0; i < siteMap.length; ++i) {
-      const item = siteMap[i];
-      const nextItem = siteMap[i + 1];
-
-      const albums = [];
-      if (nextItem?.album === 'main') {
-        for (i += 1; i < siteMap.length; ++i) {
-          const albumItem = siteMap[i];
-          if (albumItem.album === 'main') {
-            albums.push(generateSiteMapItem(albumItem, undefined, item.name));
-          } else {
-            i -= 1;
-            break;
-          }
-        }
-      }
-
-      items.push(generateSiteMapItem(item, albums));
-      items = items.concat(albums);
-    }
-
-    return items;
-  }
-
-  if (loading || !data) {
-    return null;
-  }
-
-  const { section, album } = JSON.parse(sectionAndAlbum);
+  const options = buildSectionOptions(siteMap.data);
+  const parsed = sectionAndAlbum ? JSON.parse(sectionAndAlbum) : { section: 'main', album: '' };
 
   return (
-    <DashboardEditorContainer>
-      <Toolbar
-        sx={{
-          position: 'absolute',
-          top: 0,
-          right: '8px',
-          justifyContent: 'flex-end',
-          zIndex: baseTheme.zindex.abovePage,
-        }}
-        disableGutters
-      >
-        <FormGroup row>
-          <FormControl>
-            <InputLabel id="section-and-album-select-label" className="notranslate">
-              section &amp; album
-            </InputLabel>
-            <Select
-              className="notranslate"
-              value={sectionAndAlbum}
-              onChange={handleSectionAndAlbumChange}
-              name="sectionAndAlbum"
-              size="small"
-              label="section & album"
-              labelId="section-and-album-select-label"
-              sx={{ minWidth: '150px' }}
-              IconComponent={(props) => <ArrowDropDown {...props} style={{ color: theme.palette.primary.main }} />}
-            >
-              {generateSiteMap(data.fetchSiteMap)}
-            </Select>
-          </FormControl>
-          <Button onClick={handlePost}>
-            <F defaultMessage="post" />
-          </Button>
-        </FormGroup>
-      </Toolbar>
+    <div className={styles.composer}>
+      <div className={styles.composerToolbar}>
+        <select
+          className="notranslate"
+          value={sectionAndAlbum}
+          onChange={(e) => handleSectionChange(e.target.value)}
+          aria-label="section & album"
+        >
+          {options}
+        </select>
+        <button type="button" className="btn" onClick={handlePost}>
+          <F defaultMessage="post" />
+        </button>
+      </div>
       <Editor
-        key={`editor-${editorKeyToClearState}`}
+        key={`dashboard-editor-${editorKey}`}
         name="dashboard-editor"
-        section={section}
-        album={album}
+        section={parsed.section}
+        album={parsed.album}
         defaultValue={editorValue}
         placeholder="Once upon a time, in cafe, far, far away."
-        onChange={handleEditorChange}
+        onChange={handleChange}
         onMediaAdd={handleMediaAdd}
         onPaste={handlePaste}
       />
-      <Snackbar open={!!toastMsg} autoHideDuration={3000} onClose={handleToastClose}>
-        <Alert
-          className="notranslate"
-          elevation={6}
-          variant="filled"
-          onClose={handleToastClose}
-          severity={isPostSuccess ? 'success' : 'error'}
-          sx={{ width: '100%' }}
+      {toast ? (
+        <div
+          className={`${editorStyles.toast} ${toast.ok ? editorStyles.toastSuccess : editorStyles.toastError} notranslate`}
+          role="alert"
+          onClick={() => setToast(null)}
         >
-          {toastMsg}
-        </Alert>
-      </Snackbar>
-    </DashboardEditorContainer>
+          {toast.msg}
+        </div>
+      ) : null}
+    </div>
   );
+}
+
+function buildSectionOptions(siteMap: SiteMapItem[]): ReactNode[] {
+  const out: ReactNode[] = [];
+  for (let i = 0; i < siteMap.length; ++i) {
+    const item = siteMap[i];
+    out.push(
+      <option
+        key={`${item.section}/${item.name}`}
+        value={JSON.stringify({ section: item.name, album: '', hidden: item.hidden })}
+      >
+        {item.title}
+      </option>
+    );
+    const next = siteMap[i + 1];
+    if (next?.album === 'main') {
+      for (i += 1; i < siteMap.length; ++i) {
+        const albumItem = siteMap[i];
+        if (albumItem.album === 'main') {
+          out.push(
+            <option
+              key={`${item.name}/${albumItem.name}`}
+              value={JSON.stringify({ section: item.name, album: albumItem.name, hidden: albumItem.hidden })}
+            >
+              &nbsp;&nbsp;&nbsp;{albumItem.title}
+            </option>
+          );
+        } else {
+          i -= 1;
+          break;
+        }
+      }
+    }
+  }
+  return out;
 }

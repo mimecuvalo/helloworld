@@ -1,76 +1,73 @@
-import { Avatar, Link, List, ListItem, Login, Typography, styled } from 'components';
-import { Comment as CommentType, Content } from 'data/graphql-generated';
+import { lazy, Suspense } from 'react';
 import { F, defineMessages, useIntl } from 'i18n';
-import { lazy, Suspense, useContext } from 'react';
-
-import Delete from 'components/dashboard/actions/Delete';
+import { useUser } from 'lib/user-context';
 import Favorite from 'components/dashboard/actions/Favorite';
-import UserContext from 'application/UserContext';
+import Delete from 'components/dashboard/actions/Delete';
+import styles from './content.module.css';
 
 const CommentsEditor = lazy(() => import('./CommentsEditor'));
 
-const Comment = styled(ListItem)`
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  margin-bottom: ${(props) => props.theme.spacing(1)};
-  clear: both;
-
-  button {
-    min-width: 0;
-    padding: ${(props) => props.theme.spacing(0.5)} ${(props) => props.theme.spacing(1)} 0 0;
-  }
-`;
-
-const StyledComments = styled(List)`
-  margin-top: ${(props) => props.theme.spacing(1)};
-`;
-
-const Author = styled('span')`
-  font-weight: bold;
-`;
+type Comment = {
+  postId: string;
+  avatar?: string | null;
+  creator?: string | null;
+  username: string;
+  fromUsername?: string | null;
+  localContentName?: string | null;
+  type: string;
+  favorited?: boolean | null;
+  deleted?: boolean | null;
+  view: string;
+};
 
 const messages = defineMessages({
   avatar: { defaultMessage: 'avatar' },
 });
 
-export default function Comments({ comments, content }: { comments?: CommentType[]; content: Content }) {
+export default function Comments({
+  comments,
+  content,
+}: {
+  comments?: Comment[];
+  content: { username: string; name: string };
+}) {
   const intl = useIntl();
-  const { user } = useContext(UserContext);
-  const isLoggedIn = !!user;
-
+  const user = useUser();
   const ariaImgMsg = intl.formatMessage(messages.avatar);
+  const isLoggedIn = !!user;
   const isOwnerViewing = user?.username === content.username;
 
   return (
     <div>
-      <Typography variant="h4" sx={{ marginTop: 3 }}>
-        <F defaultMessage="comments" /> {!isLoggedIn && <Login />}
-      </Typography>
-      {isLoggedIn && (
+      <h4 className={styles.commentsHeading}>
+        <F defaultMessage="comments" />{' '}
+        {!isLoggedIn ? (
+          <a href="/api/auth/signin">
+            <F defaultMessage="Login" />
+          </a>
+        ) : null}
+      </h4>
+
+      {isLoggedIn ? (
         <Suspense fallback={<div />}>
           <CommentsEditor content={content} />
         </Suspense>
-      )}
-      {comments ? (
-        <StyledComments>
+      ) : null}
+
+      {comments?.length ? (
+        <ul className={styles.comments}>
           {comments.map((comment) => (
-            <Comment key={comment.postId} className="notranslate">
-              <Avatar
-                src={comment.avatar || '/img/pixel.gif'}
-                alt={ariaImgMsg}
-                sx={{ width: 32, height: 32, marginRight: 2, marginTop: '7px' }}
-              />
+            <li key={comment.postId} className={`${styles.comment} notranslate`}>
+              <img className={styles.commentAvatar} src={comment.avatar || '/img/pixel.gif'} alt={ariaImgMsg} />
               <div>
                 {comment.fromUsername ? (
-                  <Link href={comment.fromUsername} target="_blank">
+                  <a href={comment.fromUsername} target="_blank" rel="noopener noreferrer">
                     {comment.creator || comment.username}
-                  </Link>
+                  </a>
                 ) : (
-                  <Author>{comment.creator || comment.username}: </Author>
+                  <strong>{comment.creator || comment.username}: </strong>
                 )}
                 <div dangerouslySetInnerHTML={{ __html: comment.view }} />
-
                 {isOwnerViewing ? (
                   <>
                     <Favorite contentRemote={comment} />
@@ -78,9 +75,9 @@ export default function Comments({ comments, content }: { comments?: CommentType
                   </>
                 ) : null}
               </div>
-            </Comment>
+            </li>
           ))}
-        </StyledComments>
+        </ul>
       ) : null}
     </div>
   );

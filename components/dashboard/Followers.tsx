@@ -1,69 +1,32 @@
-import { Avatar, Button, List, ListItem, Typography, styled } from 'components';
-import { FetchFollowersQuery, UserRemotePublic } from 'data/graphql-generated';
-import { gql, useQuery } from '@apollo/client';
-
 import { F } from 'i18n';
+import { useFollowers, type HandleSetFeed } from 'lib/remote-queries';
 import FollowerMenu from './FollowerMenu';
+import styles from './dashboard.module.css';
 
-const FETCH_FOLLOWERS = gql`
-  query FetchFollowers {
-    fetchFollowers {
-      avatar
-      favicon
-      following
-      name
-      profileUrl
-      username
-    }
-  }
-`;
-
-const Container = styled('div')`
-  margin: 0 ${(props) => props.theme.spacing(2)} ${(props) => props.theme.spacing(2)} 0;
-  padding: ${(props) => props.theme.spacing(1)};
-  border: 1px solid ${(props) => props.theme.palette.success.main};
-  box-shadow:
-    1px 1px ${(props) => props.theme.palette.success.main},
-    2px 2px ${(props) => props.theme.palette.success.main},
-    3px 3px ${(props) => props.theme.palette.success.main};
-
-  h2 {
-    margin: 0;
-  }
-`;
-
-export default function Followers({
-  handleSetFeed,
-}: {
-  handleSetFeed: (userRemote: UserRemotePublic | string) => void;
-}) {
-  const { loading, data } = useQuery<FetchFollowersQuery>(FETCH_FOLLOWERS);
-
-  if (loading || !data) {
-    return null;
-  }
-
-  const followers = data.fetchFollowers;
+export default function Followers({ handleSetFeed }: { handleSetFeed: HandleSetFeed }) {
+  const { data, isPending } = useFollowers();
+  if (isPending || !data) return null;
 
   return (
-    <Container>
-      <Typography variant="h2">
+    <div className={styles.followingBox}>
+      <h2>
         <F defaultMessage="followers" />
-      </Typography>
-      <List>
-        {followers.map((follower) => (
-          <ListItem key={follower.profileUrl}>
-            <Button
-              className="notranslate"
+      </h2>
+      <ul className={styles.feedList}>
+        {data.map((follower) => (
+          <li key={follower.profileUrl} className={styles.feedItemRow}>
+            <button
+              type="button"
+              className={`${styles.feedButton} notranslate`}
               onClick={() => window.open(follower.profileUrl, follower.profileUrl, 'noopener,noreferrer')}
-              startIcon={<Avatar src={follower.favicon || follower.avatar} sx={{ width: 16, height: 16 }} />}
             >
+              <img className={styles.feedIcon} src={follower.favicon || follower.avatar || '/favicon.jpg'} alt="" />
               <span className="feed-name">{follower.name || follower.username}</span>
-            </Button>
-            <FollowerMenu userRemote={follower as UserRemotePublic} handleSetFeed={handleSetFeed} />
-          </ListItem>
+            </button>
+            <FollowerMenu userRemote={follower} handleSetFeed={handleSetFeed} />
+          </li>
         ))}
-      </List>
-    </Container>
+      </ul>
+    </div>
   );
 }

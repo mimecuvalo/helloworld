@@ -1,47 +1,23 @@
-import { gql, useMutation } from '@apollo/client';
-
+import { Menu } from '@base-ui/react/menu';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { F } from 'i18n';
-import FollowingFeedCountsQuery from 'components/dashboard/FollowingFeedCountsQuery';
-import FollowingSpecialFeedCountsQuery from 'components/dashboard/FollowingSpecialFeedCountsQuery';
-import { MarkAllFeedsAsReadMutation } from 'data/graphql-generated';
-import { MenuItem } from 'components';
-import { escapeRegExp } from 'util/regex';
-import { prefixIdFromObject } from 'data/localState';
+import { rpc } from 'lib/rpc';
+import styles from '../dashboard.module.css';
 
-const MARK_ALL_FEEDS_AS_READ = gql`
-  mutation markAllFeedsAsRead {
-    markAllFeedsAsRead {
-      count
-    }
-  }
-`;
-
-export default function MarkAllFeedsAsRead({ handleClose }: { handleClose: () => void }) {
-  const [markAllFeedsAsRead] = useMutation<MarkAllFeedsAsReadMutation>(MARK_ALL_FEEDS_AS_READ);
-
-  const handleClick = () => {
-    handleClose();
-    markAllFeedsAsRead({
-      optimisticResponse: {
-        __typename: 'Mutation',
-        markAllFeedsAsRead: { __typename: 'FeedCount', count: 0 },
-      },
-      refetchQueries: [{ query: FollowingSpecialFeedCountsQuery }, { query: FollowingFeedCountsQuery }],
-      update: (store) => {
-        const prefixId = escapeRegExp(prefixIdFromObject({ __typename: 'Post' }));
-        const regex = new RegExp(`^${prefixId}`);
-        Object.keys((store as any).data.data).forEach(
-          (key) =>
-            key.match(regex) &&
-            (store as any).data.set(key, Object.assign({}, (store as any).data.get(key), { read: true }))
-        );
-      },
-    });
-  };
+export default function MarkAllFeedsAsRead() {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: () => rpc.api['content-remote']['mark-all-read'].$post().then((r) => r.json()),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['feed-counts'] });
+      queryClient.invalidateQueries({ queryKey: ['total-counts'] });
+      queryClient.invalidateQueries({ queryKey: ['feed-paginated'] });
+    },
+  });
 
   return (
-    <MenuItem onClick={handleClick}>
+    <Menu.Item className={styles.menuItem} onClick={() => mutation.mutate()}>
       <F defaultMessage="mark all feeds as read" />
-    </MenuItem>
+    </Menu.Item>
   );
 }

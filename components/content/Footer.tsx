@@ -1,73 +1,48 @@
-import { Avatar, Link, styled } from 'components';
-import { Content, UserPublic } from 'data/graphql-generated';
 import { F, FormattedDate } from 'i18n';
-import { contentUrl, profileUrl } from 'util/url-factory';
+import { contentUrl, profileUrl } from 'lib/url-factory';
+import styles from './content.module.css';
 
-const StyledFooter = styled('footer')`
-  position: sticky;
-  bottom: ${(props) => props.theme.spacing(1)};
-  display: flex;
-  align-items: center;
-  background: ${(props) => props.theme.palette.background.default};
-  white-space: nowrap;
-  flex-wrap: wrap;
+type FooterContent = {
+  username: string;
+  section: string;
+  album: string;
+  name: string;
+  count: number;
+  countRobot: number;
+  createdAt: string | Date;
+  thread?: string | null;
+};
 
-  &,
-  button {
-    font-size: ${(props) => props.theme.typography.subtitle1.fontSize};
-  }
+type Owner = { name?: string | null; logo?: string | null; favicon?: string | null } | null;
 
-  button {
-    font-weight: normal;
-    padding: 0;
-    min-width: 0;
-  }
-
-  color: ${(props) => props.theme.palette.grey[500]};
-  border: 1px solid ${(props) => props.theme.palette.primary.light};
-  box-shadow:
-    1px 1px ${(props) => props.theme.palette.primary.light},
-    2px 2px ${(props) => props.theme.palette.primary.light},
-    3px 3px ${(props) => props.theme.palette.primary.light};
-  padding: ${(props) => props.theme.spacing(0.5, 1)};
-`;
-
-export default function Footer({ content, contentOwner }: { content: Content; contentOwner: UserPublic }) {
+export default function Footer({ content, contentOwner }: { content: FooterContent; contentOwner: Owner }) {
   const { count, countRobot, createdAt, username } = content;
-  const name = contentOwner.name || username;
+  const name = contentOwner?.name || username;
 
   return (
-    <StyledFooter>
+    <footer className={styles.footer}>
       <span className="p-author h-card" style={{ display: 'flex', alignItems: 'center' }}>
-        <Link key="img" href={profileUrl(username)} className="u-url u-uid icon-container" sx={{ mr: 1 }}>
-          <Avatar
-            className="u-photo"
-            src={contentOwner.logo || contentOwner.favicon || ''}
+        <a href={profileUrl(username)} className="u-url u-uid" style={{ marginRight: 8 }}>
+          <img
+            className={`u-photo ${styles.footerAvatar}`}
+            src={contentOwner?.logo || contentOwner?.favicon || '/img/pixel.gif'}
             alt={name}
-            sx={{ width: 16, height: 16 }}
           />
-        </Link>
-        <Link key="name" href={profileUrl(username)} className="p-name fn u-url u-uid url notranslate">
+        </a>
+        <a href={profileUrl(username)} className="p-name fn u-url u-uid url notranslate">
           {name}
-        </Link>
+        </a>
       </span>
       <span className="notranslate">&nbsp;•&nbsp;</span>
-      <Link href={contentUrl(content)}>
-        <F
-          defaultMessage="{date}"
-          values={{
-            date: (
-              <time className="t-published" dateTime={createdAt}>
-                <FormattedDate value={createdAt} year="2-digit" month="2-digit" day="2-digit" />
-              </time>
-            ),
-          }}
-        />
-      </Link>
+      <a href={contentUrl(content)}>
+        <time className="t-published" dateTime={String(createdAt)}>
+          <FormattedDate value={createdAt} year="2-digit" month="2-digit" day="2-digit" />
+        </time>
+      </a>
       <span className="notranslate">&nbsp;•&nbsp;</span>
       <F
         defaultMessage="{count, plural, =0 {no human views} one {# human view} other {# human views}}"
-        values={{ count: count }}
+        values={{ count }}
       />
       <span className="notranslate">&nbsp;•&nbsp;</span>
       <F
@@ -77,11 +52,11 @@ export default function Footer({ content, contentOwner }: { content: Content; co
       {content.thread ? (
         <>
           <span className="notranslate">&nbsp;•&nbsp;</span>
-          <Link href={content.thread} target="_blank">
+          <a href={content.thread} target="_blank" rel="noopener noreferrer">
             <F defaultMessage="view thread" />
-          </Link>
+          </a>
         </>
       ) : null}
-    </StyledFooter>
+    </footer>
   );
 }

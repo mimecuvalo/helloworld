@@ -1,20 +1,14 @@
-import { styled } from '@mui/material/styles';
-
-const StyledHeader = styled('header')`
-  position: fixed;
-  top: ${(props) => props.theme.spacing(1)};
-  right: ${(props) => props.theme.spacing(1)};
-  display: block;
-
-  ${(props) => props.theme.breakpoints.down('md')} {
-    display: none;
-  }
-`;
+import Login from './Login';
+import styles from './header.module.css';
 
 export default function Header() {
   return (
-    <StyledHeader>
-      <nav title="Login">{/* <Login /> */}</nav>
-    </StyledHeader>
+    <header>
+      <nav></nav>
+
+      <div className={styles.loginWrapper}>
+        <Login />
+      </div>
+    </header>
   );
 }
