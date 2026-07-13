@@ -1,5 +1,18 @@
+import crypto from 'crypto';
+import magic from 'magic-signatures';
 import type { Context } from '../context';
 import type { User } from '../../generated/prisma/client';
+
+// RSA keypair for signing federation (Salmon / magic-envelope) messages. Ported
+// from the old pages/api/setup.ts — a user created without these can't federate.
+export function generateMagicKey(): { magicKey: string; privateKey: string } {
+  const key = crypto.generateKeyPairSync('rsa', {
+    modulusLength: 1024,
+    publicKeyEncoding: { type: 'pkcs1', format: 'pem' },
+    privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+  });
+  return { magicKey: magic.RSAToMagic(key.publicKey), privateKey: key.privateKey };
+}
 
 export function currentUser(ctx: Context) {
   return ctx.currentUser;
@@ -54,6 +67,7 @@ export function fetchPublicUserDataSearch(ctx: Context, username?: string | null
 }
 
 export function createUser(ctx: Context, input: { username: string; email: string }) {
+  const { magicKey, privateKey } = generateMagicKey();
   return ctx.prisma.user.create({
     data: {
       username: input.username,
@@ -61,8 +75,8 @@ export function createUser(ctx: Context, input: { username: string; email: strin
       name: '',
       title: '',
       theme: '',
-      magicKey: '',
-      privateKey: '',
+      magicKey,
+      privateKey,
     },
   });
 }

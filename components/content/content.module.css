@@ -13,7 +13,6 @@
 @media (max-width: 960px) {
   .main {
     width: 100%;
-    margin-top: 0;
     padding: 0 8px;
   }
 }
@@ -104,11 +103,16 @@
 
 @media (max-width: 960px) {
   .sitemapToggle {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: fixed;
-    top: 8px;
-    right: 8px;
-    z-index: 1202;
+    top: 10px;
+    right: 13px;
+    z-index: 1204;
+    width: 48px;
+    height: 48px;
+    padding: 0;
     background: var(--hw-bg);
     color: inherit;
     border: 1px solid var(--hw-primary-light);
@@ -117,24 +121,51 @@
       1px 1px var(--hw-primary-light),
       2px 2px var(--hw-primary-light),
       3px 3px var(--hw-primary-light);
-    font-size: 1.2rem;
-    line-height: 1;
-    padding: 4px 8px;
+    font-size: 1.5rem;
+    line-height: 0;
     cursor: pointer;
   }
 
   .sitemap {
-    display: none;
+    display: block;
     position: fixed;
-    top: 0;
-    left: 0;
+    inset: 0;
+    width: 100vw;
     height: 100vh;
-    z-index: 1203;
     margin: 0;
+    padding: 64px 0 0;
+    text-align: center;
+    overflow: auto;
+    z-index: 1203;
+    border: none;
+    box-shadow: none;
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition:
+      transform 0.225s cubic-bezier(0, 0, 0.2, 1),
+      visibility 0.225s;
   }
 
   .sitemapOpen {
-    display: block;
+    transform: translateX(0);
+    visibility: visible;
+  }
+
+  .sitemap ul {
+    padding-left: 0;
+  }
+
+  .sitemap > ul > li {
+    margin-bottom: 16px;
+  }
+
+  .sitemap .album {
+    display: none;
+  }
+
+  .sitemap .searchForm input {
+    width: 210px;
+    max-width: 100%;
   }
 
   .sitemapBackdrop {
@@ -150,6 +181,7 @@
   float: right;
   margin-left: 28px;
   white-space: nowrap;
+  z-index: 2;
 }
 
 .nav a {
@@ -296,6 +328,16 @@
   box-shadow: none;
   transform: translateY(-50%) translate(3px, 3px);
   background: var(--hw-primary-light);
+}
+
+@media (max-width: 960px) {
+  .itemHeader {
+    padding-right: 60px;
+  }
+
+  .editButton {
+    right: 60px;
+  }
 }
 
 .simpleView {

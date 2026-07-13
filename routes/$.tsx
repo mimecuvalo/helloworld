@@ -6,7 +6,8 @@ import ContentPage from 'components/pages/ContentPage';
 // Multi-tenant catch-all content route.
 //   /:username, /:username/:name, /:username/:section/:name, /:username/:section/:album/:name
 export const Route = createFileRoute('/$')({
-  loader: ({ params }) => {
+  headers: () => ({ 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' }),
+  loader: async ({ params }) => {
     const slug = (params._splat || '').split('/').filter(Boolean);
     const username = slug[0] || '';
     const name = slug.length > 1 ? slug[slug.length - 1] : '';
@@ -16,7 +17,9 @@ export const Route = createFileRoute('/$')({
       throw notFound();
     }
 
-    return loadContentPage({ data: { username, name: username ? name || 'home' : '' } });
+    const data = await loadContentPage({ data: { username, name: username ? name || 'home' : '' } });
+    if (!data.content) throw notFound();
+    return data;
   },
   head: ({ loaderData }) => {
     if (!loaderData) return { meta: [{ title: 'hello, world.' }] };

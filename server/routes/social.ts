@@ -112,12 +112,15 @@ export const socialRoutes = new Hono<AppEnv>()
     return c.body(xml, 200, { 'Content-Type': 'application/xrd+xml' });
   })
 
-  // WebFinger (JSON). XML (?format=xml) is served by the activitystreams pass.
+  // WebFinger account discovery in JSON or legacy XRD/XML form.
   .get('/.well-known/webfinger', async (c) => {
     const host = hostOf(c);
     const resourceQ = c.req.query('resource') || '';
     const user = await getLocalUser(resourceQ);
     if (!user) return c.body(null, 404);
+    if (c.req.query('format') === 'xml') {
+      return c.body(webfingerXml(host, user), 200, { 'Content-Type': 'application/xrd+xml' });
+    }
     return c.json(webfingerJson(host, user));
   })
 
@@ -350,4 +353,28 @@ function webfingerJson(host: string, user: User) {
       { rel: 'self', type: 'application/activity+json', href: url('/api/social/activitypub/actor') },
     ],
   };
+}
+
+function escapeXml(value: unknown): string {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&apos;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;');
+}
+
+function webfingerXml(host: string, user: User): string {
+  const document = webfingerJson(host, user);
+  const links = document.links
+    .map((link) => {
+      const attributes = Object.entries(link)
+        .filter(([, value]) => value !== undefined)
+        .map(([key, value]) => `${key}="${escapeXml(value)}"`)
+        .join(' ');
+      return `<Link ${attributes} />`;
+    })
+    .join('');
+
+  return `<?xml version="1.0" encoding="UTF-8"?><XRD xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0"><Subject>${escapeXml(document.subject)}</Subject>${document.aliases.map((alias) => `<Alias>${escapeXml(alias)}</Alias>`).join('')}${links}</XRD>`;
 }

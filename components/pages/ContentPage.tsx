@@ -1,8 +1,11 @@
 import 'styles/content-theme.css';
 import 'lite-youtube-embed/src/lite-yt-embed.css';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import { useRouter } from '@tanstack/react-router';
+import SwipeListener from 'swipe-listener';
 import { themeGlobalCss } from 'styles/theme-css';
 import type { ContentPageData } from 'lib/page-data';
+import { contentUrl } from 'lib/url-factory';
 import { UserProvider } from 'lib/user-context';
 import { EditorProvider } from 'lib/editor-context';
 import SiteMap from 'components/content/SiteMap';
@@ -18,6 +21,9 @@ import styles from 'components/content/content.module.css';
 //   feed  → SiteMap + Nav + paginated Feed
 //   else  → SiteMap + Nav + Item (Header / body / Footer / Comments / Favorites)
 export default function ContentPage({ data }: { data: ContentPageData }) {
+  const router = useRouter();
+  const itemRef = useRef<HTMLElement>(null);
+  const navRef = useRef<{ prev: () => void; next: () => void }>(null);
   const { content, contentOwner, comments, favorites, siteMap, neighbors, currentUsername } = data;
   const theme = (contentOwner?.theme as string) || 'nightlight';
   const skin = themeGlobalCss[theme] ?? '';
@@ -29,6 +35,31 @@ export default function ContentPage({ data }: { data: ContentPageData }) {
   useEffect(() => {
     import('lite-youtube-embed/src/lite-yt-embed.js' as string);
   }, []);
+
+  useEffect(() => {
+    if (!content) return;
+    const canonical = contentUrl(content);
+    if (canonical && window.location.pathname !== new URL(canonical, window.location.origin).pathname) {
+      router.navigate({ to: canonical, replace: true });
+    }
+  }, [content, router]);
+
+  useEffect(() => {
+    if (content?.section !== 'photos' || content.album === 'main' || !itemRef.current) return;
+
+    const element = itemRef.current;
+    const listener = SwipeListener(element);
+    const handleSwipe = (event: Event) => {
+      const directions = (event as CustomEvent<{ directions: { left?: boolean; right?: boolean } }>).detail.directions;
+      if (directions.left) navRef.current?.prev();
+      else if (directions.right) navRef.current?.next();
+    };
+    element.addEventListener('swipe', handleSwipe);
+    return () => {
+      element.removeEventListener('swipe', handleSwipe);
+      listener.off();
+    };
+  }, [content]);
 
   const title = (content?.title ? content.title + ' – ' : '') + (contentOwner?.title ?? '') || 'hello, world.';
 
@@ -65,8 +96,8 @@ export default function ContentPage({ data }: { data: ContentPageData }) {
     <div className={styles.layout}>
       <SiteMap siteMap={siteMap} contentOwner={contentOwner} content={content} username={username} />
 
-      <main id="hw-content" className={styles.main}>
-        <Nav content={content} neighbors={neighbors} />
+      <main ref={itemRef} id="hw-content" className={styles.main}>
+        <Nav ref={navRef} content={content} neighbors={neighbors} />
         {template === 'feed' ? (
           <Feed content={content} contentOwner={contentOwner} />
         ) : (

@@ -1,11 +1,16 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, notFound } from '@tanstack/react-router';
 import { loadContentPage } from 'lib/page-data';
 import { buildContentHead } from 'lib/content-head';
 import ContentPage from 'components/pages/ContentPage';
 
 // Homepage → the default user's main page (resolved server-side by hostname / id:1).
 export const Route = createFileRoute('/')({
-  loader: () => loadContentPage({ data: { username: '', name: '' } }),
+  headers: () => ({ 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' }),
+  loader: async () => {
+    const data = await loadContentPage({ data: { username: '', name: '' } });
+    if (!data.content) throw notFound();
+    return data;
+  },
   head: ({ loaderData }) => {
     if (!loaderData) return { meta: [{ title: 'hello, world.' }] };
     const title =

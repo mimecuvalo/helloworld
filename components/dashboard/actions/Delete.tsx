@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
+import { TrashIcon } from '@radix-ui/react-icons';
 import { defineMessages, useIntl } from 'i18n';
 import { rpc } from 'lib/rpc';
 import styles from '../dashboard.module.css';
@@ -52,17 +53,7 @@ export default function Delete({ contentRemote }: { contentRemote: DeletableRemo
       title={intl.formatMessage(messages.delete)}
       aria-pressed={deleted}
     >
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill={deleted ? 'currentColor' : 'none'}
-        stroke="currentColor"
-        strokeWidth="2"
-        aria-hidden="true"
-      >
-        <path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m2 0v14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V6" />
-      </svg>
+      <TrashIcon width={18} height={18} aria-hidden="true" />
     </button>
   );
 }

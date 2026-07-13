@@ -1,4 +1,5 @@
 import { Menu } from '@base-ui/react/menu';
+import { QuestionMarkCircledIcon } from '@radix-ui/react-icons';
 import { F } from 'i18n';
 import styles from './dev.module.css';
 
@@ -28,21 +29,7 @@ export default function Help() {
   return (
     <Menu.Root>
       <Menu.Trigger className={styles.iconButton} aria-label="Help">
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <circle cx="12" cy="12" r="10" />
-          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-          <line x1="12" y1="17" x2="12.01" y2="17" />
-        </svg>
+        <QuestionMarkCircledIcon width={24} height={24} aria-hidden="true" />
       </Menu.Trigger>
       <Menu.Portal>
         <Menu.Positioner sideOffset={8} side="top" align="end">

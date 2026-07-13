@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { EyeOpenIcon } from '@radix-ui/react-icons';
 import { defineMessages, useIntl } from 'i18n';
 import styles from '../dashboard.module.css';
 
@@ -23,18 +24,7 @@ export default function KeepUnread({ keepUnreadCb }: { keepUnreadCb: (enabled: b
       title={intl.formatMessage(messages.keepUnread)}
       aria-pressed={enabled}
     >
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        aria-hidden="true"
-      >
-        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-        <circle cx="12" cy="12" r="3" />
-      </svg>
+      <EyeOpenIcon width={18} height={18} aria-hidden="true" />
     </button>
   );
 }

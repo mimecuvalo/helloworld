@@ -5,9 +5,10 @@ import { nitro } from 'nitro/vite';
 import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 import { sentryTanstackStart } from '@sentry/tanstackstart-react/vite';
 import viteReact from '@vitejs/plugin-react';
-import babel from '@rolldown/plugin-babel';
+import formatjs from '@formatjs/unplugin/vite';
 
 const isProd = process.env.NODE_ENV === 'production';
+const clientSentryDsn = process.env.VITE_SENTRY_DSN || process.env.SENTRY_DSN || '';
 const abs = (p: string) => fileURLToPath(new URL(p, import.meta.url));
 
 // Load env for the dev/build server process. The vite dev server (unlike the
@@ -58,6 +59,9 @@ const sentryPlugins =
 
 export default defineConfig({
   server: { port: 3000 },
+  define: {
+    'import.meta.env.VITE_SENTRY_DSN': JSON.stringify(clientSentryDsn),
+  },
   resolve: { alias },
   // Server-only DB stack (reached via createServerFn → Prisma adapter). The
   // TanStack server-fn transform strips these from the client graph at build,
@@ -78,19 +82,12 @@ export default defineConfig({
     // entry (it would otherwise warn and disable it anyway).
     nitro({ serverEntry: false }),
     ...sentryPlugins,
-    viteReact(),
-    babel({
-      plugins: [
-        [
-          'formatjs',
-          {
-            idInterpolationPattern: '[md5:contenthash:hex:10]',
-            additionalComponentNames: ['F'],
-            ast: true,
-            removeDefaultMessage: isProd,
-          },
-        ],
-      ],
+    formatjs({
+      idInterpolationPattern: '[md5:contenthash:hex:10]',
+      additionalComponentNames: ['F'],
+      ast: true,
+      removeDefaultMessage: isProd,
     }),
+    viteReact(),
   ],
 });

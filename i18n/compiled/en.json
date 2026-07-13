@@ -41,12 +41,6 @@
       "value": "home"
     }
   ],
-  "14ae475404": [
-    {
-      "type": 0,
-      "value": "Error deleting content."
-    }
-  ],
   "24c29702dc": [
     {
       "type": 0,
@@ -111,28 +105,10 @@
       "value": "reblog bookmarklet"
     }
   ],
-  "350f9d6822": [
-    {
-      "type": 0,
-      "value": "forbidden"
-    }
-  ],
-  "36fd540552": [
-    {
-      "type": 0,
-      "value": "unauthorized"
-    }
-  ],
   "3d728e1b6e": [
     {
       "type": 0,
       "value": "we've logged this error and we'll fix it soon."
-    }
-  ],
-  "3f947b57fc": [
-    {
-      "type": 0,
-      "value": "person gesturing no"
     }
   ],
   "402e7a0877": [
@@ -171,12 +147,6 @@
     {
       "type": 0,
       "value": "."
-    }
-  ],
-  "4829262cec": [
-    {
-      "type": 0,
-      "value": "Experiments"
     }
   ],
   "4937452da0": [
@@ -221,6 +191,12 @@
       "value": "Reblog"
     }
   ],
+  "5f02f05c74": [
+    {
+      "type": 0,
+      "value": "Loading…"
+    }
+  ],
   "60f3b1ff9b": [
     {
       "type": 0,
@@ -239,6 +215,12 @@
       "value": "upside down face"
     }
   ],
+  "654b0a0a07": [
+    {
+      "type": 0,
+      "value": "i18n: English"
+    }
+  ],
   "690d8ebdfb": [
     {
       "type": 0,
@@ -249,32 +231,6 @@
     {
       "type": 0,
       "value": "replying to"
-    }
-  ],
-  "6a26f54883": [
-    {
-      "type": 0,
-      "value": "Help"
-    }
-  ],
-  "6cac132a3b": [
-    {
-      "type": 0,
-      "value": "try "
-    },
-    {
-      "children": [
-        {
-          "type": 0,
-          "value": "logging in"
-        }
-      ],
-      "type": 8,
-      "value": "a"
-    },
-    {
-      "type": 0,
-      "value": "."
     }
   ],
   "7253d1f504": [
@@ -299,20 +255,6 @@
     {
       "type": 0,
       "value": "view site"
-    }
-  ],
-  "7c673b1dab": [
-    {
-      "type": 0,
-      "value": "(updated "
-    },
-    {
-      "type": 1,
-      "value": "date"
-    },
-    {
-      "type": 0,
-      "value": ")"
     }
   ],
   "7d5dfff022": [
@@ -375,12 +317,6 @@
     {
       "type": 0,
       "value": "thumbnail"
-    }
-  ],
-  "9672391408": [
-    {
-      "type": 0,
-      "value": "Error subscribing to new feed."
     }
   ],
   "98088e4b13": [
@@ -465,12 +401,6 @@
       "value": "follower options"
     }
   ],
-  "baf33637a2": [
-    {
-      "type": 0,
-      "value": "You need to enable JavaScript to run this app."
-    }
-  ],
   "bd397bea18": [
     {
       "type": 0,
@@ -499,12 +429,6 @@
     {
       "type": 0,
       "value": "next"
-    }
-  ],
-  "d0fb5e8106": [
-    {
-      "type": 0,
-      "value": "try logging in."
     }
   ],
   "d40cbcb573": [
@@ -553,12 +477,6 @@
       "value": "No content here yet."
     }
   ],
-  "e3afed0047": [
-    {
-      "type": 0,
-      "value": "Admin"
-    }
-  ],
   "e8d169f54a": [
     {
       "offset": 0,
@@ -599,12 +517,6 @@
       "value": "count"
     }
   ],
-  "f291840f72": [
-    {
-      "type": 1,
-      "value": "date"
-    }
-  ],
   "f2a6c498fb": [
     {
       "type": 0,
@@ -615,12 +527,6 @@
     {
       "type": 0,
       "value": "user options"
-    }
-  ],
-  "f9aae5fda8": [
-    {
-      "type": 0,
-      "value": "Users"
     }
   ],
   "fcb08b164a": [

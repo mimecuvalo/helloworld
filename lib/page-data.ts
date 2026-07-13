@@ -71,8 +71,8 @@ export type SearchPageData = Awaited<ReturnType<typeof loadSearch>>;
 export const loadDashboard = createServerFn({ method: 'GET' }).handler(async () => {
   const ctx = await createContext(getRequest());
   if (!ctx.currentUser) return { user: null };
-  const { username, title, favicon, theme } = ctx.currentUser;
-  return { user: { username, title, favicon, theme } };
+  const { username, title, favicon, theme, superuser } = ctx.currentUser;
+  return { user: { username, title, favicon, theme, superuser } };
 });
 
 export type DashboardData = Awaited<ReturnType<typeof loadDashboard>>;

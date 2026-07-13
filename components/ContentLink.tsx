@@ -1,4 +1,5 @@
 import type { ReactNode, Ref } from 'react';
+import { Link } from '@tanstack/react-router';
 import { contentUrl } from 'lib/url-factory';
 
 type ContentItem = {
@@ -24,15 +25,16 @@ export default function ContentLink(props: {
   const href = url || contentUrl(item);
   const forceRefresh = item.forceRefresh || currentContent?.forceRefresh;
 
+  if (!forceRefresh) {
+    return (
+      <Link ref={ref} to={href} title={item.title || undefined} className={className} rel={rel}>
+        {children}
+      </Link>
+    );
+  }
+
   return (
-    <a
-      ref={ref}
-      href={href}
-      title={item.title || undefined}
-      className={className}
-      target={forceRefresh ? '_self' : undefined}
-      rel={rel}
-    >
+    <a ref={ref} href={href} title={item.title || undefined} className={className} target="_self" rel={rel}>
       {children}
     </a>
   );

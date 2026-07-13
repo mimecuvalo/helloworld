@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { F } from 'i18n';
 import { useCollection } from 'lib/content-queries';
+import { contentUrl } from 'lib/url-factory';
+import { useEditor } from 'lib/editor-context';
+import { rpc } from 'lib/rpc';
 import ContentThumb from '../ContentThumb';
 import styles from '../content.module.css';
 
@@ -13,10 +17,20 @@ type AlbumContent = {
 };
 
 export default function Album({ content }: { content: AlbumContent }) {
+  const { isEditing } = useEditor();
+  const queryClient = useQueryClient();
   const { username, section, album, name } = content;
   const { data, isPending } = useCollection({ username, section, album, name });
   const [currentIndexOpen, setCurrentIndexOpen] = useState(-1);
   const collection = data || [];
+  const deleteMutation = useMutation({
+    mutationFn: (itemName: string) =>
+      rpc.api.content.delete.$post({ json: { name: itemName } }).then((response) => {
+        if (!response.ok) throw new Error('delete failed');
+        return response.json();
+      }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['collection'] }),
+  });
 
   const setItem = (index: number) => {
     const item = collection[index];
@@ -24,10 +38,13 @@ export default function Album({ content }: { content: AlbumContent }) {
     // Prefetch neighbor images for snappy swiping.
     collection[index + 1]?.prefetchImages?.forEach((img) => (new Image().src = img));
     collection[index - 1]?.prefetchImages?.forEach((img) => (new Image().src = img));
-    // NB: the legacy did a shallow router.replace to the photo URL here; in
-    // TanStack a history change navigates (unmounting the album), so we keep the
-    // lightbox purely client-side and don't touch the URL.
+    window.history.replaceState(window.history.state, '', contentUrl(item));
     setCurrentIndexOpen(index);
+  };
+
+  const closeItem = () => {
+    window.history.replaceState(window.history.state, '', contentUrl(content));
+    setCurrentIndexOpen(-1);
   };
 
   const handleNext = () => setItem(Math.min(collection.length - 1, currentIndexOpen + 1));
@@ -59,7 +76,7 @@ export default function Album({ content }: { content: AlbumContent }) {
             currentContent={content}
             isOpen={currentIndexOpen === index}
             onOpen={() => setItem(index)}
-            onClose={() => setCurrentIndexOpen(-1)}
+            onClose={closeItem}
             onPrev={handlePrev}
             onNext={handleNext}
           />
@@ -67,6 +84,16 @@ export default function Album({ content }: { content: AlbumContent }) {
             <span className={`notranslate ${styles.albumTitle} ${item.hidden ? styles.albumTitleHidden : ''}`}>
               {item.title}
             </span>
+          ) : null}
+          {isEditing ? (
+            <button
+              type="button"
+              className="btn"
+              disabled={deleteMutation.isPending}
+              onClick={() => deleteMutation.mutate(item.name)}
+            >
+              <F defaultMessage="Delete" />
+            </button>
           ) : null}
         </li>
       ))}

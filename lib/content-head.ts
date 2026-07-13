@@ -61,6 +61,17 @@ export function buildContentHead(opts: { content: ContentLike; contentOwner: Own
   ];
   if (canonical) links.push({ rel: 'canonical', href: canonical });
   if (contentOwner && resource) {
+    links.push({ rel: 'author', href: resource });
+    links.push({
+      rel: 'search',
+      type: 'application/opensearchdescription+xml',
+      title: `Search ${content?.username || title}`,
+      href: buildUrl({
+        host,
+        pathname: '/api/opensearch',
+        searchParams: { username: content?.username || '' },
+      }),
+    });
     links.push({
       rel: 'alternate',
       type: 'application/atom+xml',

@@ -52,15 +52,27 @@ export async function follow(
   host: string,
   contentOwner: User,
   userRemote: Pick<UserRemote, 'profileUrl'>,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isFollow: boolean
 ) {
-  const id = buildUrl({
+  const followId = buildUrl({
     host,
     pathname: '/api/social/activitypub/follow',
     searchParams: { id: nanoid(10), resource: userRemote.profileUrl },
   });
-  const message = createGenericMessage('Follow', host, id, contentOwner, userRemote.profileUrl);
+  const followMessage = createGenericMessage('Follow', host, followId, contentOwner, userRemote.profileUrl);
+  const message = isFollow
+    ? followMessage
+    : createGenericMessage(
+        'Undo',
+        host,
+        buildUrl({
+          host,
+          pathname: '/api/social/activitypub/undo',
+          searchParams: { id: nanoid(10), resource: userRemote.profileUrl },
+        }),
+        contentOwner,
+        followMessage
+      );
   send(host, userRemote as UserRemote, contentOwner, message);
 }
 
@@ -146,7 +158,7 @@ type GenericMessage = {
   actor: string;
   to: string[];
   cc?: string[];
-  object: Activity | string;
+  object: Activity | GenericMessage | string;
 };
 
 export function createGenericMessage(
@@ -154,7 +166,7 @@ export function createGenericMessage(
   host: string,
   id: string,
   localUser: User,
-  object: Activity | string,
+  object: Activity | GenericMessage | string,
   opt_follower?: UserRemote[]
 ): GenericMessage {
   const actor = buildUrl({

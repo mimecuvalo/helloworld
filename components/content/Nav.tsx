@@ -2,6 +2,7 @@ import { type ReactNode, type Ref, useEffect, useImperativeHandle, useRef } from
 import { F } from 'i18n';
 import ContentLink from 'components/ContentLink';
 import { contentUrl } from 'lib/url-factory';
+import { useEditor } from 'lib/editor-context';
 import styles from './content.module.css';
 
 type Neighbor = {
@@ -35,6 +36,7 @@ export default function Nav({
   neighbors: Neighbors;
   ref?: Ref<{ prev: () => void; next: () => void }>;
 }) {
+  const { isEditing } = useEditor();
   const next = useRef<HTMLAnchorElement>(null);
   const top = useRef<HTMLAnchorElement>(null);
   const prev = useRef<HTMLAnchorElement>(null);
@@ -46,6 +48,7 @@ export default function Nav({
 
   useEffect(() => {
     const handleKeyUp = (evt: KeyboardEvent) => {
+      if (isEditing) return;
       switch (evt.key) {
         case 'ArrowUp':
           top.current?.click();
@@ -60,7 +63,7 @@ export default function Nav({
     };
     window.addEventListener('keyup', handleKeyUp);
     return () => window.removeEventListener('keyup', handleKeyUp);
-  }, []);
+  }, [isEditing]);
 
   if (
     content.template === 'feed' ||

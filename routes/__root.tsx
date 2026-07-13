@@ -8,6 +8,7 @@ import '@fontsource/press-start-2p';
 import 'styles/globals.css';
 import AppProviders from 'components/providers/AppProviders';
 import DebugWrapper from 'components/internal/DebugWrapper';
+import Header from 'components/Header';
 import NotFound from 'components/pages/NotFound';
 import ErrorScreen from 'components/pages/ErrorScreen';
 import { getMessages } from 'lib/messages';
@@ -41,6 +42,7 @@ function RootComponent() {
   return (
     <RootDocument locale={locale}>
       <AppProviders locale={locale} messages={messages}>
+        <Header />
         <Outlet />
         <DebugWrapper />
       </AppProviders>

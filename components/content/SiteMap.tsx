@@ -90,7 +90,7 @@ export default function SiteMap({
         aria-expanded={isDrawerOpen}
         onClick={() => setIsDrawerOpen((open) => !open)}
       >
-        ☰
+        {isDrawerOpen ? '✕' : '☰'}
       </button>
       {isDrawerOpen ? (
         <div className={styles.sitemapBackdrop} onClick={() => setIsDrawerOpen(false)} aria-hidden="true" />
