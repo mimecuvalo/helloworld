@@ -10,6 +10,7 @@
         "@aws-sdk/s3-presigned-post": "3.864.0",
         "@base-ui/react": "1.6.0",
         "@fontsource-variable/oswald": "5.2.8",
+        "@fontsource/marck-script": "5.2.8",
         "@fontsource/press-start-2p": "5.2.7",
         "@hono/zod-validator": "0.8.0",
         "@prisma/adapter-pg": "7.8.0",
@@ -265,6 +266,8 @@
     "@floating-ui/utils": ["@floating-ui/utils@0.2.11", "", {}, "sha512-RiB/yIh78pcIxl6lLMG0CgBXAZ2Y0eVHqMPYugu+9U0AeT6YBeiJpf7lbdJNIugFP5SIjwNRgo4DhR1Qxi26Gg=="],
 
     "@fontsource-variable/oswald": ["@fontsource-variable/oswald@5.2.8", "", {}, "sha512-sIXwfKbyHOATgBWOlpR73VMQ8pA8XCToiyy6sL02ZfYEZPpW18TLtpxPBpYXId7xKbWCousOTzlJsa/9rTd8WQ=="],
+
+    "@fontsource/marck-script": ["@fontsource/marck-script@5.2.8", "", {}, "sha512-ZNHTZy/wkZYH4y/kUeAK4jvsWeZ5pWrbwv97qgit24Fv+GupQVaLig8uOwVSN1GgtYWPTMnLROEHRoqCzgvHXA=="],
 
     "@fontsource/press-start-2p": ["@fontsource/press-start-2p@5.2.7", "", {}, "sha512-ezSxYRchANoteja170ZHh2Tt4oejmVEvX42VFPOVVvERSZ68pcuZFjbhHfrK/sNjYmaGg656y7B3431ojO9PCQ=="],
 

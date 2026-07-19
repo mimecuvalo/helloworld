@@ -93,7 +93,9 @@ export default function Album({ content }: { content: AlbumContent }) {
             onNext={handleNext}
           />
           {item.title ? (
-            <span className={`notranslate ${styles.albumTitle} ${item.hidden ? styles.albumTitleHidden : ''}`}>
+            <span
+              className={`hw-album-title notranslate ${styles.albumTitle} ${item.hidden ? styles.albumTitleHidden : ''}`}
+            >
               {item.title}
             </span>
           ) : null}

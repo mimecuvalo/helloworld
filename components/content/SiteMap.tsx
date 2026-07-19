@@ -42,7 +42,7 @@ export default function SiteMap({
     const cls = [isSelected ? styles.selected : '', item.hidden ? styles.hidden : ''].filter(Boolean).join(' ');
     return (
       <li key={`${item.section}/${item.name}`} className={cls || undefined}>
-        <ContentLink item={item} currentContent={content} className="notranslate">
+        <ContentLink item={item} currentContent={content} className={`notranslate${isSelected ? ' hw-selected' : ''}`}>
           {item.title}
         </ContentLink>
         {albums}
@@ -84,6 +84,7 @@ export default function SiteMap({
   return (
     <>
       <button
+        id="hw-hamburger"
         type="button"
         className={`${styles.sitemapToggle} notranslate`}
         aria-label="menu"

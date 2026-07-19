@@ -43,6 +43,7 @@
     "@aws-sdk/s3-presigned-post": "3.864.0",
     "@base-ui/react": "1.6.0",
     "@fontsource-variable/oswald": "5.2.8",
+    "@fontsource/marck-script": "5.2.8",
     "@fontsource/press-start-2p": "5.2.7",
     "@hono/zod-validator": "0.8.0",
     "@prisma/adapter-pg": "7.8.0",

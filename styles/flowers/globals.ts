@@ -4,8 +4,10 @@ html > body {
 }
 
 .App > header > nav,
+body > header > nav,
 .App > footer,
 #hw-sitemap > form,
+#hw-sitemap > search,
 #hw-content > header,
 #hw-content > footer,
 #hw-powered-by,
@@ -29,6 +31,8 @@ html > body {
   padding: 8px 6px;
   box-shadow: none;
   overflow: visible;
+  transform: none;
+  visibility: visible;
   background: transparent url(/resource/cvijece/themes/sitemap.jpg) repeat-x scroll 0 0;
 }
 
@@ -50,7 +54,8 @@ html > body {
   transition: all 0.3s ease-out;
 }
 #hw-sitemap li a:hover,
-#hw-sitemap li a.hw-selected {
+#hw-sitemap li a.hw-selected,
+#hw-sitemap li a.active {
   box-shadow: 0 0 5px #eee;
   border-radius: 5px;
 }
@@ -64,7 +69,8 @@ html > body {
   height: 75px;
 }
 
-#hw-sitemap-logo .MuiAvatar-root {
+#hw-sitemap-logo .MuiAvatar-root,
+#hw-sitemap-logo img {
   width: auto;
   height: auto;
   border-radius: 0;
@@ -106,19 +112,19 @@ html > body {
   display: none;
 }
 
-#hw-content article > nav > .hw-first,
-#hw-content article > nav > .hw-top,
-#hw-content article > nav > .hw-last {
+#hw-content > nav > .hw-first,
+#hw-content > nav > .hw-top,
+#hw-content > nav > .hw-last {
   display: none;
 }
 
-#hw-content article > nav {
+#hw-content > nav {
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
 }
-#hw-content article > nav > a {
+#hw-content > nav > a {
   float: none !important;
   text-shadow: 0 0;
   position: absolute;
@@ -133,17 +139,18 @@ html > body {
   transition: all 0.3s ease-out;
   z-index: 1;
 }
-#hw-content article > nav > .hw-prev {
+#hw-content > nav > .hw-prev {
   top: 300px;
   left: auto;
   right: 10vw;
   background: transparent url(/resource/cvijece/themes/nav.png) repeat-x scroll -82px -167px;
 }
-#hw-content article > nav > a:hover {
+#hw-content > nav > a:hover {
   box-shadow: 0 0 5px #6a75b4;
   border-radius: 5px;
 }
-#hw-content article > nav > a:not([href]) {
+#hw-content > nav > a:not([href]),
+#hw-content > nav > a[href='#'] {
   display: none;
 }
 

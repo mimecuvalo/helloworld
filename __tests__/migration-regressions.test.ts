@@ -6,6 +6,7 @@ import type { AppEnv } from 'server/env';
 import { buildContentSecurityPolicy } from 'lib/security';
 import { miscRoutes } from 'server/routes/misc';
 import { unfurlRoutes } from 'server/routes/unfurl';
+import flowersGlobalCss from '../styles/flowers/globals';
 
 vi.mock('server/social/discover-user', () => ({
   discoverUserRemoteInfoSaveAndSubscribe: vi.fn(),
@@ -58,6 +59,14 @@ describe('migration regression coverage', () => {
 
     expect(policy).toContain("script-src 'self' 'nonce-request-nonce' 'strict-dynamic'");
     expect(policy).not.toContain("script-src 'self' 'unsafe-inline'");
+  });
+
+  it('keeps the Flowers skin aligned with migrated content markup', () => {
+    expect(flowersGlobalCss).toContain('#hw-content > nav > a');
+    expect(flowersGlobalCss).not.toContain('#hw-content article > nav');
+    expect(flowersGlobalCss).toContain('#hw-sitemap-logo img');
+    expect(flowersGlobalCss).toContain('transform: none');
+    expect(flowersGlobalCss).toContain('visibility: visible');
   });
 
   it('publishes an OpenSearch template matching the username search route', async () => {

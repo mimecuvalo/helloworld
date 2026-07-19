@@ -5,7 +5,7 @@
  * The `flowers` image-skin is injected separately (see styles/theme-css.ts).
  */
 .hw-content-theme {
-  /* palette (shared by nightlight + flowers) */
+  /* default/nightlight palette */
   --hw-primary: #3984ff;
   --hw-primary-light: #09f;
   --hw-primary-dark: #16147f;
@@ -29,6 +29,16 @@
   background-color: var(--hw-bg);
   color: var(--hw-text);
   font-family: var(--hw-font-body);
+}
+
+.hw-content-theme[data-theme='flowers'] {
+  --hw-error: #ff6600;
+  --hw-text-secondary: #666666;
+  --hw-font-body: 'Marck Script', cursive, var(--font-system);
+  --hw-font-header: 'Marck Script', cursive, var(--font-system);
+
+  /* Flowers paints its page background on <body> through its injected skin. */
+  background-color: transparent;
 }
 
 .hw-content-theme h1,

@@ -4,6 +4,7 @@ import 'sanitize.css/sanitize.css';
 import 'sanitize.css/forms.css';
 import 'sanitize.css/typography.css';
 import '@fontsource-variable/oswald';
+import '@fontsource/marck-script';
 import '@fontsource/press-start-2p';
 import 'styles/globals.css';
 import AppProviders from 'components/providers/AppProviders';
