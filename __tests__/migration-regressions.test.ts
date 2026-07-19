@@ -67,6 +67,10 @@ describe('migration regression coverage', () => {
     expect(flowersGlobalCss).toContain('#hw-sitemap-logo img');
     expect(flowersGlobalCss).toContain('transform: none');
     expect(flowersGlobalCss).toContain('visibility: visible');
+    expect(flowersGlobalCss).toContain('transform: translateX(-50%)');
+    expect(flowersGlobalCss).toContain('.hw-item > .hw-comments');
+    expect(flowersGlobalCss).toContain('.hw-item .hw-view');
+    expect(flowersGlobalCss).toContain('margin-left: -250px');
   });
 
   it('publishes an OpenSearch template matching the username search route', async () => {

@@ -84,7 +84,7 @@ body > header > nav,
   height: 555px;
   margin-top: 105px;
   left: 50%;
-  transform: translateX(-25%);
+  transform: translateX(-50%);
   text-align: center;
 }
 
@@ -108,8 +108,13 @@ body > header > nav,
 
 /* content */
 .hw-item > header,
-.hw-item > footer {
+.hw-item > footer,
+.hw-item > .hw-comments {
   display: none;
+}
+
+.hw-item .hw-view {
+  position: static;
 }
 
 #hw-content > nav > .hw-first,
@@ -159,7 +164,7 @@ body > header > nav,
   position: absolute;
   top: 0;
   left: 50%;
-  margin-left: -270px;
+  margin-left: -250px;
   border-radius: 10px;
   outline: 10px solid white;
   padding: 0;

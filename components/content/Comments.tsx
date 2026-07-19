@@ -38,7 +38,7 @@ export default function Comments({
   const isOwnerViewing = user?.username === content.username;
 
   return (
-    <div>
+    <div className="hw-comments">
       <h4 className={styles.commentsHeading}>
         <F defaultMessage="comments" />{' '}
         {!isLoggedIn ? (
