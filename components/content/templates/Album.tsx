@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useRouter } from '@tanstack/react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { F } from 'i18n';
 import { useCollection } from 'lib/content-queries';
@@ -18,6 +19,7 @@ type AlbumContent = {
 
 export default function Album({ content }: { content: AlbumContent }) {
   const { isEditing } = useEditor();
+  const router = useRouter();
   const queryClient = useQueryClient();
   const { username, section, album, name } = content;
   const { data, isPending } = useCollection({ username, section, album, name });
@@ -32,18 +34,28 @@ export default function Album({ content }: { content: AlbumContent }) {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['collection'] }),
   });
 
+  // Update the address bar without the router matching/loading the new route.
+  // TanStack's history patches window.history.replaceState and notifies the
+  // router unless `_ignoreSubscribers` is set — the same flag its own flush uses.
+  const silentReplace = (url: string) => {
+    const history = router.history as typeof router.history & { _ignoreSubscribers?: boolean };
+    history._ignoreSubscribers = true;
+    window.history.replaceState(window.history.state, '', url);
+    history._ignoreSubscribers = false;
+  };
+
   const setItem = (index: number) => {
     const item = collection[index];
     if (!item) return;
     // Prefetch neighbor images for snappy swiping.
     collection[index + 1]?.prefetchImages?.forEach((img) => (new Image().src = img));
     collection[index - 1]?.prefetchImages?.forEach((img) => (new Image().src = img));
-    window.history.replaceState(window.history.state, '', contentUrl(item));
+    silentReplace(contentUrl(item));
     setCurrentIndexOpen(index);
   };
 
   const closeItem = () => {
-    window.history.replaceState(window.history.state, '', contentUrl(content));
+    silentReplace(contentUrl(content));
     setCurrentIndexOpen(-1);
   };
 
