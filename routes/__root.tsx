@@ -5,6 +5,7 @@ import 'sanitize.css/forms.css';
 import 'sanitize.css/typography.css';
 import '@fontsource-variable/oswald';
 import '@fontsource/marck-script';
+import '@fontsource/noto-color-emoji';
 import '@fontsource/press-start-2p';
 import 'styles/globals.css';
 import AppProviders from 'components/providers/AppProviders';
@@ -12,6 +13,7 @@ import DebugWrapper from 'components/internal/DebugWrapper';
 import Header from 'components/Header';
 import NotFound from 'components/pages/NotFound';
 import ErrorScreen from 'components/pages/ErrorScreen';
+import { buildFaviconLinks } from 'lib/content-head';
 import { getMessages } from 'lib/messages';
 import { initRequest } from 'lib/request-init';
 
@@ -28,10 +30,7 @@ export const Route = createRootRoute({
       { title: 'hello, world.' },
       { name: 'description', content: 'a federated blog with feed reader.' },
     ],
-    links: [
-      { rel: 'icon', href: '/favicon.ico' },
-      { rel: 'manifest', href: '/manifest.json' },
-    ],
+    links: [...buildFaviconLinks(), { rel: 'manifest', href: '/manifest.json' }],
   }),
   component: RootComponent,
   notFoundComponent: NotFound,

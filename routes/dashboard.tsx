@@ -1,4 +1,5 @@
 import { createFileRoute, notFound, redirect } from '@tanstack/react-router';
+import { buildFaviconLinks } from 'lib/content-head';
 import { loadDashboard } from 'lib/page-data';
 import DashboardPage from 'components/pages/DashboardPage';
 
@@ -9,7 +10,10 @@ export const Route = createFileRoute('/dashboard')({
     if (!data.user.superuser) throw notFound();
     return data;
   },
-  head: () => ({ meta: [{ title: 'Dashboard' }] }),
+  head: ({ loaderData }) => ({
+    meta: [{ title: 'Dashboard' }],
+    links: buildFaviconLinks(loaderData?.user?.favicon),
+  }),
   component: RouteComponent,
 });
 

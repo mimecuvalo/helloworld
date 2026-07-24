@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { buildFaviconLinks } from 'lib/content-head';
 import { loadSearch } from 'lib/page-data';
 import SearchPage from 'components/pages/SearchPage';
 
@@ -6,7 +7,10 @@ import SearchPage from 'components/pages/SearchPage';
 // `search` segment outranks the splat). The SiteMap search form navigates here.
 export const Route = createFileRoute('/$username/search/$query')({
   loader: ({ params }) => loadSearch({ data: { username: params.username, query: decodeURIComponent(params.query) } }),
-  head: () => ({ meta: [{ title: 'search' }] }),
+  head: ({ loaderData }) => ({
+    meta: [{ title: 'search' }],
+    links: buildFaviconLinks(loaderData?.contentOwner?.favicon),
+  }),
   component: RouteComponent,
 });
 

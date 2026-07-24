@@ -11,6 +11,7 @@
         "@base-ui/react": "1.6.0",
         "@fontsource-variable/oswald": "5.2.8",
         "@fontsource/marck-script": "5.2.8",
+        "@fontsource/noto-color-emoji": "5.2.8",
         "@fontsource/press-start-2p": "5.2.7",
         "@hono/zod-validator": "0.8.0",
         "@prisma/adapter-pg": "7.8.0",
@@ -268,6 +269,8 @@
     "@fontsource-variable/oswald": ["@fontsource-variable/oswald@5.2.8", "", {}, "sha512-sIXwfKbyHOATgBWOlpR73VMQ8pA8XCToiyy6sL02ZfYEZPpW18TLtpxPBpYXId7xKbWCousOTzlJsa/9rTd8WQ=="],
 
     "@fontsource/marck-script": ["@fontsource/marck-script@5.2.8", "", {}, "sha512-ZNHTZy/wkZYH4y/kUeAK4jvsWeZ5pWrbwv97qgit24Fv+GupQVaLig8uOwVSN1GgtYWPTMnLROEHRoqCzgvHXA=="],
+
+    "@fontsource/noto-color-emoji": ["@fontsource/noto-color-emoji@5.2.8", "", {}, "sha512-wukaUPAX/ftoeCP8fcbLf1BhQF4dzUdZxUOroHiMhQg4F8CIONmfCs3p+sBq5Xqp84nCOtH0FgIdadLR3wu0EQ=="],
 
     "@fontsource/press-start-2p": ["@fontsource/press-start-2p@5.2.7", "", {}, "sha512-ezSxYRchANoteja170ZHh2Tt4oejmVEvX42VFPOVVvERSZ68pcuZFjbhHfrK/sNjYmaGg656y7B3431ojO9PCQ=="],
 

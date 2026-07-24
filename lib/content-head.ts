@@ -22,6 +22,15 @@ type OwnerLike = {
   googleAnalytics?: string | null;
 } | null;
 
+export function buildFaviconLinks(favicon?: string | null) {
+  const icon = favicon || '';
+  return [
+    { rel: 'icon', href: icon || '/favicon.jpg', sizes: '32x32' },
+    { rel: 'icon', href: icon || '/favicon.svg', type: 'image/svg+xml' },
+    { rel: 'apple-touch-icon', href: icon || '/favicon.jpg' },
+  ];
+}
+
 function buildThumb(contentOwner: OwnerLike, host: string, content: ContentLike): string {
   let thumb = content?.thumb || '';
   if (thumb && !/^https?:/.test(thumb)) {
@@ -54,11 +63,7 @@ export function buildContentHead(opts: { content: ContentLike; contentOwner: Own
   ];
   if (!content) meta.push({ name: 'robots', content: 'noindex' });
 
-  const links: Array<Record<string, unknown>> = [
-    { rel: 'icon', href: favicon || '/favicon.jpg', sizes: '32x32' },
-    { rel: 'icon', href: favicon || '/favicon.svg', type: 'image/svg+xml' },
-    { rel: 'apple-touch-icon', href: favicon || '/favicon.jpg' },
-  ];
+  const links: Array<Record<string, unknown>> = buildFaviconLinks(favicon);
   if (canonical) links.push({ rel: 'canonical', href: canonical });
   if (contentOwner && resource) {
     links.push({ rel: 'author', href: resource });
