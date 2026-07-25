@@ -46,7 +46,7 @@ export async function parseFeedAndInsertIntoDb(userRemote: UserRemote, feedRespo
   }
 }
 
-export async function mapFeedAndInsertIntoDb(userRemote: UserRemote, feedEntries: FeedParser.Node[]) {
+export async function mapFeedAndInsertIntoDb(userRemote: UserRemote, feedEntries: FeedParser.Item[]) {
   let newEntries: ContentRemote[] = [];
   let skippedCount = 0;
   try {
@@ -81,9 +81,9 @@ export async function retrieveFeed(feedUrl: string) {
 }
 
 export async function parseFeed(content: string) {
-  const { feedEntries, feedMeta }: { feedEntries: FeedParser.Node[]; feedMeta: FeedParser.Node } = await new Promise(
+  const { feedEntries, feedMeta }: { feedEntries: FeedParser.Item[]; feedMeta: FeedParser.Meta } = await new Promise(
     (resolve, reject) => {
-      const feedEntries: FeedParser.Node[] = [];
+      const feedEntries: FeedParser.Item[] = [];
       new TextStream({}, content)
         .pipe(new FeedParser({}))
         .on('error', function (error: unknown) {
@@ -109,7 +109,7 @@ export async function parseFeed(content: string) {
   return { feedEntries, feedMeta };
 }
 
-async function mapFeedEntriesToModelEntries(feedEntries: FeedParser.Node[], userRemote: UserRemote) {
+async function mapFeedEntriesToModelEntries(feedEntries: FeedParser.Item[], userRemote: UserRemote) {
   const entries = await Promise.all(feedEntries.map(async (feedEntry) => await handleEntry(feedEntry, userRemote)));
   const filteredEntries = entries.filter((entry) => entry);
   const skippedCount = entries.length - filteredEntries.length;
@@ -117,7 +117,7 @@ async function mapFeedEntriesToModelEntries(feedEntries: FeedParser.Node[], user
 }
 
 const FEED_MAX_DAYS_OLD = 30 * 24 * 60 * 60 * 1000; // 30 days
-async function handleEntry(feedEntry: FeedParser.Node, userRemote: UserRemote): Promise<Partial<ContentRemote> | null> {
+async function handleEntry(feedEntry: FeedParser.Item, userRemote: UserRemote): Promise<Partial<ContentRemote> | null> {
   const entryId = feedEntry.guid || feedEntry.link || feedEntry.permalink;
   const link = feedEntry.link || feedEntry.permalink;
 

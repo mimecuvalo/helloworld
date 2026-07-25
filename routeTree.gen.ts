@@ -9,18 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ResourceSplatRouteImport } from './routes/resource.$'
-import { Route as ApiSplatRouteImport } from './routes/api/$'
-import { Route as DotwellKnownWebfingerRouteImport } from './routes/[.]well-known/webfinger'
+import { Route as SplatRouteImport } from './routes/$'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DotwellKnownHostMetaRouteImport } from './routes/[.]well-known/host-meta'
+import { Route as DotwellKnownWebfingerRouteImport } from './routes/[.]well-known/webfinger'
+import { Route as ApiSplatRouteImport } from './routes/api/$'
+import { Route as ResourceSplatRouteImport } from './routes/resource.$'
 import { Route as UsernameSearchQueryRouteImport } from './routes/$username.search.$query'
 
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SplatRoute = SplatRouteImport.update({
@@ -28,19 +28,14 @@ const SplatRoute = SplatRouteImport.update({
   path: '/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ResourceSplatRoute = ResourceSplatRouteImport.update({
-  id: '/resource/$',
-  path: '/resource/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiSplatRoute = ApiSplatRouteImport.update({
-  id: '/api/$',
-  path: '/api/$',
+const DotwellKnownHostMetaRoute = DotwellKnownHostMetaRouteImport.update({
+  id: '/.well-known/host-meta',
+  path: '/.well-known/host-meta',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DotwellKnownWebfingerRoute = DotwellKnownWebfingerRouteImport.update({
@@ -48,9 +43,14 @@ const DotwellKnownWebfingerRoute = DotwellKnownWebfingerRouteImport.update({
   path: '/.well-known/webfinger',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DotwellKnownHostMetaRoute = DotwellKnownHostMetaRouteImport.update({
-  id: '/.well-known/host-meta',
-  path: '/.well-known/host-meta',
+const ApiSplatRoute = ApiSplatRouteImport.update({
+  id: '/api/$',
+  path: '/api/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResourceSplatRoute = ResourceSplatRouteImport.update({
+  id: '/resource/$',
+  path: '/resource/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UsernameSearchQueryRoute = UsernameSearchQueryRouteImport.update({
@@ -136,11 +136,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/$': {
@@ -150,25 +150,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/resource/$': {
-      id: '/resource/$'
-      path: '/resource/$'
-      fullPath: '/resource/$'
-      preLoaderRoute: typeof ResourceSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/$': {
-      id: '/api/$'
-      path: '/api/$'
-      fullPath: '/api/$'
-      preLoaderRoute: typeof ApiSplatRouteImport
+    '/.well-known/host-meta': {
+      id: '/.well-known/host-meta'
+      path: '/.well-known/host-meta'
+      fullPath: '/.well-known/host-meta'
+      preLoaderRoute: typeof DotwellKnownHostMetaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.well-known/webfinger': {
@@ -178,11 +171,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DotwellKnownWebfingerRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.well-known/host-meta': {
-      id: '/.well-known/host-meta'
-      path: '/.well-known/host-meta'
-      fullPath: '/.well-known/host-meta'
-      preLoaderRoute: typeof DotwellKnownHostMetaRouteImport
+    '/api/$': {
+      id: '/api/$'
+      path: '/api/$'
+      fullPath: '/api/$'
+      preLoaderRoute: typeof ApiSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resource/$': {
+      id: '/resource/$'
+      path: '/resource/$'
+      fullPath: '/resource/$'
+      preLoaderRoute: typeof ResourceSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/$username/search/$query': {
