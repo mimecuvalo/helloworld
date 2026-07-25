@@ -27,7 +27,7 @@
     "lint:fix": "oxlint --fix",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "i18n:extract": "formatjs extract 'routes/**/*.ts*' 'components/**/*.ts*' --out-file i18n/en.json --additional-component-names F --id-interpolation-pattern '[md5:contenthash:hex:10]' --format smartling",
+    "i18n:extract": "formatjs extract 'routes/**/*.ts*' 'components/**/*.ts*' --out-file i18n/en.json --additional-component-names F --id-interpolation-pattern '[md5:contenthash:hex:10]' --flatten --format smartling",
     "i18n:compile": "formatjs compile-folder i18n i18n/compiled --format smartling --ast",
     "alex": "alex .",
     "config": "node scripts/config.js",
@@ -87,8 +87,8 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@formatjs/cli": "6.7.2",
-    "@formatjs/unplugin": "1.2.0",
+    "@formatjs/cli": "6.16.14",
+    "@formatjs/unplugin": "1.2.3",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "16.3.0",

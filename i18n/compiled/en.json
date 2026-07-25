@@ -53,46 +53,6 @@
       "value": "following"
     }
   ],
-  "2a552760ef": [
-    {
-      "offset": 0,
-      "options": {
-        "=0": {
-          "value": [
-            {
-              "type": 0,
-              "value": "no robot views"
-            }
-          ]
-        },
-        "one": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " robot view"
-            }
-          ]
-        },
-        "other": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " robot views"
-            }
-          ]
-        }
-      },
-      "pluralType": "cardinal",
-      "type": 6,
-      "value": "count"
-    }
-  ],
   "2d000429fd": [
     {
       "type": 0,
@@ -135,14 +95,14 @@
       "value": "try going back to the "
     },
     {
+      "type": 8,
+      "value": "a",
       "children": [
         {
           "type": 0,
           "value": "beginning"
         }
-      ],
-      "type": 8,
-      "value": "a"
+      ]
     },
     {
       "type": 0,
@@ -477,18 +437,11 @@
       "value": "No content here yet."
     }
   ],
-  "e8d169f54a": [
+  "e98420e4ca": [
     {
-      "offset": 0,
+      "type": 6,
+      "value": "count",
       "options": {
-        "=0": {
-          "value": [
-            {
-              "type": 0,
-              "value": "no human views"
-            }
-          ]
-        },
         "one": {
           "value": [
             {
@@ -510,11 +463,58 @@
               "value": " human views"
             }
           ]
+        },
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "no human views"
+            }
+          ]
         }
       },
-      "pluralType": "cardinal",
+      "offset": 0,
+      "pluralType": "cardinal"
+    }
+  ],
+  "ea00a7cb85": [
+    {
       "type": 6,
-      "value": "count"
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " robot view"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " robot views"
+            }
+          ]
+        },
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "no robot views"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
     }
   ],
   "f2a6c498fb": [

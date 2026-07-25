@@ -1,14 +1,14 @@
 {
   "smartling": {
-    "string_format": "icu",
     "translate_paths": [
       {
-        "instruction": "*/description",
+        "path": "*/message",
         "key": "{*}/message",
-        "path": "*/message"
+        "instruction": "*/description"
       }
     ],
-    "variants_enabled": true
+    "variants_enabled": true,
+    "string_format": "icu"
   },
   "01165dcf77": {
     "message": "Favorite"
@@ -30,9 +30,6 @@
   },
   "2511fc6cb0": {
     "message": "following"
-  },
-  "2a552760ef": {
-    "message": "{count, plural, =0 {no robot views} one {# robot view} other {# robot views}}"
   },
   "2d000429fd": {
     "message": "Nothing to read right now!"
@@ -211,8 +208,11 @@
   "e24d4f227e": {
     "message": "No content here yet."
   },
-  "e8d169f54a": {
-    "message": "{count, plural, =0 {no human views} one {# human view} other {# human views}}"
+  "e98420e4ca": {
+    "message": "{count,plural,one{# human view} other{# human views} =0{no human views}}"
+  },
+  "ea00a7cb85": {
+    "message": "{count,plural,one{# robot view} other{# robot views} =0{no robot views}}"
   },
   "f2a6c498fb": {
     "message": "Delete"
