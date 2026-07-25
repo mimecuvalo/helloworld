@@ -1,12 +1,13 @@
 import { createFileRoute, notFound } from '@tanstack/react-router';
 import { loadContentPage } from 'lib/page-data';
 import { buildContentHead } from 'lib/content-head';
+import { contentCacheHeaders } from 'lib/cache-headers';
 import ContentPage from 'components/pages/ContentPage';
 
 // Multi-tenant catch-all content route.
 //   /:username, /:username/:name, /:username/:section/:name, /:username/:section/:album/:name
 export const Route = createFileRoute('/$')({
-  headers: () => ({ 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' }),
+  headers: ({ loaderData }) => contentCacheHeaders(loaderData),
   loader: async ({ params }) => {
     const slug = (params._splat || '').split('/').filter(Boolean);
     const username = slug[0] || '';

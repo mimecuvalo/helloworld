@@ -12,15 +12,13 @@ const DebugWrapper = memo(function DebugWrapper() {
     setIsLoaded(true);
   }, []);
 
-  if (!isLoaded) return null;
+  if (!isLoaded || !import.meta.env.DEV) return null;
 
   return (
     <div className={styles.wrapper}>
-      {import.meta.env.DEV && (
-        <Suspense fallback={<span />}>
-          <Debug />
-        </Suspense>
-      )}
+      <Suspense fallback={<span />}>
+        <Debug />
+      </Suspense>
       <Help />
     </div>
   );

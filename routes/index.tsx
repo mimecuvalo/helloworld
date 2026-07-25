@@ -1,11 +1,12 @@
 import { createFileRoute, notFound } from '@tanstack/react-router';
 import { loadContentPage } from 'lib/page-data';
 import { buildContentHead } from 'lib/content-head';
+import { contentCacheHeaders } from 'lib/cache-headers';
 import ContentPage from 'components/pages/ContentPage';
 
 // Homepage → the default user's main page (resolved server-side by hostname / id:1).
 export const Route = createFileRoute('/')({
-  headers: () => ({ 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' }),
+  headers: ({ loaderData }) => contentCacheHeaders(loaderData),
   loader: async () => {
     const data = await loadContentPage({ data: { username: '', name: '' } });
     if (!data.content) throw notFound();
