@@ -1,9 +1,11 @@
 import { Hono } from 'hono';
+import type { ErrorHandler } from 'hono';
 import type { AppEnv } from './env';
 import { authHandler } from './auth';
 import { createCsrfMiddleware } from './csrf';
 import { createContext } from './context';
 import { ForbiddenError, UnauthorizedError } from './authorization';
+import { HTTPError } from './exceptions';
 import { miscRoutes } from './routes/misc';
 import { userRoutes } from './routes/user';
 import { userRemoteRoutes } from './routes/user-remote';
@@ -29,12 +31,18 @@ app.use('*', async (c, next) => {
   await next();
 });
 
-app.onError((err, c) => {
+export const handleError: ErrorHandler<AppEnv> = (err, c) => {
   if (err instanceof UnauthorizedError) return c.json({ error: err.message }, 401);
   if (err instanceof ForbiddenError) return c.json({ error: err.message }, 403);
+  if (err instanceof HTTPError) {
+    console.error(err);
+    return c.json({ error: err.message }, err.status >= 500 ? 502 : 404);
+  }
   console.error(err);
   return c.json({ error: 'Internal Server Error' }, 500);
-});
+};
+
+app.onError(handleError);
 
 const routes = app
   .route('/', miscRoutes)
