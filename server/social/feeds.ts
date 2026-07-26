@@ -8,7 +8,7 @@ import * as cheerio from 'cheerio';
 
 export async function discoverAndParseFeedFromUrl(url: string) {
   const { content, feedUrl } = await discoverAndRetrieveFeedFromUrl(url);
-  const { feedEntries, feedMeta } = await parseFeed(content);
+  const { feedEntries, feedMeta } = await parseFeed(content, feedUrl);
   return { feedEntries, feedMeta, feedUrl };
 }
 
@@ -39,7 +39,7 @@ async function parseHtmlAndRetrieveFeed(websiteUrl: string, html: string) {
 
 export async function parseFeedAndInsertIntoDb(userRemote: UserRemote, feedResponseText: string) {
   try {
-    const { feedEntries } = await parseFeed(feedResponseText);
+    const { feedEntries } = await parseFeed(feedResponseText, userRemote.feedUrl);
     await mapFeedAndInsertIntoDb(userRemote, feedEntries);
   } catch (ex) {
     console.error(`${userRemote.localUsername} - ${userRemote.profileUrl}: parseFeed FAILED.\n${ex}`);
@@ -80,12 +80,12 @@ export async function retrieveFeed(feedUrl: string) {
   return await fetchText(feedUrl);
 }
 
-export async function parseFeed(content: string) {
+export async function parseFeed(content: string, feedUrl?: string) {
   const { feedEntries, feedMeta }: { feedEntries: FeedParser.Item[]; feedMeta: FeedParser.Meta } = await new Promise(
     (resolve, reject) => {
       const feedEntries: FeedParser.Item[] = [];
       new TextStream({}, content)
-        .pipe(new FeedParser({}))
+        .pipe(new FeedParser(feedUrl ? { feedurl: feedUrl } : {}))
         .on('error', function (error: unknown) {
           reject(`FeedParser failed to parse feed: ${error}`);
         })
