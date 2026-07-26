@@ -79,9 +79,10 @@ function verifyMessage(c: HonoContext<AppEnv>, userRemote: UserRemote): boolean 
 
 export const socialRoutes = new Hono<AppEnv>()
   // Cron: prune old remote content + pull fresh entries from every followed feed.
-  .post('/update-feeds', async (c) => {
+  // GET as well as POST: Vercel cron invokes the endpoint with a GET.
+  .on(['GET', 'POST'], '/update-feeds', async (c) => {
     const auth = c.req.header('authorization');
-    if (!import.meta.env.DEV && auth !== `Bearer ${CRON_SECRET}`) {
+    if (!import.meta.env.DEV && (!CRON_SECRET || auth !== `Bearer ${CRON_SECRET}`)) {
       return c.json({ msg: 'i call shenanigans.' }, 400);
     }
 
@@ -348,7 +349,7 @@ function webfingerJson(host: string, user: User) {
       { rel: 'webmention', href: url('/api/social/webmention') },
       { rel: 'magic-public-key', href: `data:application/magic-public-key,${user.magicKey}` },
       { rel: 'describedby', type: 'application/rdf+xml', href: url('/api/social/foaf') },
-      { rel: 'describedby', type: 'application/json', href: url('/api/social/webfinger') },
+      { rel: 'describedby', type: 'application/json', href: url('/api/social/.well-known/webfinger') },
       { rel: 'http://microformats.org/profile/hcard', type: 'text/html', href: resource },
       { rel: 'self', type: 'application/activity+json', href: url('/api/social/activitypub/actor') },
     ],
