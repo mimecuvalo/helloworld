@@ -1,9 +1,9 @@
 import { createRouter as createTanStackRouter } from '@tanstack/react-router';
 import { getGlobalStartContext } from '@tanstack/react-start';
-import * as Sentry from '@sentry/tanstackstart-react';
 import { routeTree } from './routeTree.gen';
 import ErrorScreen from 'components/pages/ErrorScreen';
 import NotFound from 'components/pages/NotFound';
+import { registerGlobalErrorHandlers } from 'lib/error';
 
 export function getRouter() {
   const nonce =
@@ -20,8 +20,8 @@ export function getRouter() {
     defaultNotFoundComponent: NotFound,
   });
 
-  if (!router.isServer && import.meta.env.VITE_SENTRY_DSN) {
-    Sentry.addIntegration(Sentry.tanstackRouterBrowserTracingIntegration(router));
+  if (!router.isServer) {
+    registerGlobalErrorHandlers();
   }
 
   return router;

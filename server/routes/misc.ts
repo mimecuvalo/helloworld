@@ -14,7 +14,7 @@ export const miscRoutes = new Hono<AppEnv>()
     } catch {
       data = undefined;
     }
-    // Hook up a backend error logging service here if desired (e.g. Sentry).
+    // Hook up a backend error logging service here if desired .
     console.debug('Error:', data);
     return c.body(null, 204);
   })

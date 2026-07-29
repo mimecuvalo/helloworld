@@ -22,7 +22,6 @@ export function buildContentSecurityPolicy(options: {
       ? ['*', 'ws:', 'wss:']
       : [
           "'self'",
-          'https://*.ingest.sentry.io',
           'https://vitals.vercel-insights.com',
           'https://www.google-analytics.com',
           'https://*.amazonaws.com',

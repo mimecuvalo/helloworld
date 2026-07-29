@@ -99,16 +99,16 @@ export function buildContentHead(opts: { content: ContentLike; contentOwner: Own
 
   // NB: scripts (JSON-LD + GA) are intentionally NOT part of the head() descriptor.
   // TanStack renders head scripts inside <head>, and since we hydrate the whole
-  // document, a position-sensitive <script> there collides with Sentry's injected
-  // <meta name="sentry-trace"> and causes a hydration mismatch. They're rendered
-  // in the page body instead (see buildContentScripts + ContentHeadScripts).
+  // document, anything else that injects into <head> shifts those position-
+  // sensitive <script> tags and causes a hydration mismatch. They're rendered in
+  // the page body instead (see buildContentScripts + ContentHeadScripts).
   return { meta, links };
 }
 
 export type HeadScript = { type?: string; src?: string; async?: boolean; children?: string };
 
 // JSON-LD + Google Analytics scripts for a content page, rendered in the body
-// (not head) to keep document hydration stable alongside Sentry's head injection.
+// (not head) to keep document hydration stable against <head> injection.
 export function buildContentScripts(opts: {
   content: ContentLike;
   contentOwner: OwnerLike;

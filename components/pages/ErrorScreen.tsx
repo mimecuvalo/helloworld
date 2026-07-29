@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import type { ErrorComponentProps } from '@tanstack/react-router';
-import * as Sentry from '@sentry/tanstackstart-react';
 import { F, IntlProvider } from 'i18n';
 import { logError } from 'lib/error';
 import styles from './error.module.css';
@@ -8,7 +7,6 @@ import styles from './error.module.css';
 function Content({ error }: { error: Error }) {
   useEffect(() => {
     logError({ message: error?.message, stack: error?.stack });
-    Sentry.captureException(error);
   }, [error]);
 
   return (

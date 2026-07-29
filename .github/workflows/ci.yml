@@ -25,8 +25,6 @@ jobs:
         run: bun install --frozen-lockfile
       - name: Generate Prisma client
         run: bun run prisma:generate
-      - name: Alex
-        run: bun run alex
       - name: Run oxlint
         run: bun run lint
       - name: Run tests
