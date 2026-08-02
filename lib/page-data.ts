@@ -1,6 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 import { createContext } from 'server/context';
+import { allowContentScripts } from 'server/content-csp';
 import * as content from 'server/services/content';
 import * as contentRemote from 'server/services/content-remote';
 import * as user from 'server/services/user';
@@ -28,6 +29,14 @@ export const loadContentPage = createServerFn({ method: 'GET' })
     // markup match.
     if (contentItem?.view) {
       contentItem.view = createLiteYouTubeVideos(contentItem.view.replaceAll('<p></p>', ''));
+    }
+
+    // Whitelist this page's own inline <script>s in the CSP. Must run after the
+    // view transform and after fetchContent merged in the album/section style+code,
+    // so we hash exactly what gets streamed. Only the Content row (owner-authored)
+    // is eligible — feed items render client-side, and comments are never included.
+    if (contentItem) {
+      allowContentScripts(contentItem.view, contentItem.code, contentItem.style, contentOwner?.sidebarHtml);
     }
 
     return {

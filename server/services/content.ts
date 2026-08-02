@@ -467,8 +467,12 @@ function decorateArrayWithRefreshFlag(list: DecoratedContent[]) {
   return list;
 }
 
+// Content carrying scripts has to arrive via a real page load: React renders
+// view/code through dangerouslySetInnerHTML, and <script> inserted that way is
+// never executed by the browser — only the parser runs it. `view` is absent from
+// ATTRIBUTES_NAVIGATION, so sitemap links can't see scripts that live there.
 function decorateWithRefreshFlag(item: DecoratedContent) {
-  if (item) item.forceRefresh = !!(item.style || item.code);
+  if (item) item.forceRefresh = !!(item.style || item.code || (item.view && /<script[\s>]/i.test(item.view)));
   return item;
 }
 

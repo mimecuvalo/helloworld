@@ -2,14 +2,18 @@ export function buildContentSecurityPolicy(options: {
   isDevelopment: boolean;
   nonce?: string;
   s3BucketName?: string;
+  scriptHashes?: string[];
 }): string {
-  const { isDevelopment, nonce, s3BucketName } = options;
+  const { isDevelopment, nonce, s3BucketName, scriptHashes } = options;
   const scripts = [
     "'self'",
     ...(isDevelopment
-      ? ["'unsafe-inline'", "'unsafe-eval'", 'https://unpkg.com']
+      ? // A hash (or nonce) makes browsers ignore 'unsafe-inline', so dev never
+        // gets scriptHashes — inline content scripts already run here.
+        ["'unsafe-inline'", "'unsafe-eval'", 'https://unpkg.com']
       : [
           ...(nonce ? [`'nonce-${nonce}'`, "'strict-dynamic'"] : []),
+          ...(nonce && scriptHashes?.length ? scriptHashes : []),
           'https://www.googletagmanager.com',
           'https://www.google-analytics.com',
           'https://cdn.vercel-insights.com',
