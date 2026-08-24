@@ -131,11 +131,15 @@ export const socialRoutes = new Hono<AppEnv>()
     const resource = c.req.query('resource') || '';
     const contentOwner = await getLocalUser(resource);
     const content = await getLocalContent(resource);
-    if (!contentOwner || !content) return c.body(null, 404);
+    // getLocalContent does not constrain on hidden, and federation is
+    // unauthenticated (no owner-viewing escape hatch), so guard it here.
+    if (!contentOwner || !content || content.hidden) return c.body(null, 404);
 
-    const thumb = buildUrl({ host, pathname: content.thumb || contentOwner.logo || contentOwner.favicon || '' });
+    // An empty pathname would make buildUrl return the bare origin, which is
+    // truthy and would be advertised as a THUMB_WIDTH x THUMB_HEIGHT image.
+    const thumbPath = content.thumb || contentOwner.logo || contentOwner.favicon || '';
+    const thumb = thumbPath ? buildUrl({ host, pathname: thumbPath }) : '';
     let htmlContent = thumb ? `<img src="${thumb}" alt="thumbnail" title="${content.title}" />` : content.title;
-    htmlContent = htmlContent.replace(/</g, '<').replace(/>/g, '>');
     const statsUrl = buildUrl({
       host,
       pathname: '/api/stats',
@@ -232,7 +236,7 @@ export const socialRoutes = new Hono<AppEnv>()
     const resource = c.req.query('resource') || '';
     const content = await getLocalContent(resource);
     const user = await getLocalUser(resource);
-    if (!content || !user) return c.body(null, 404);
+    if (!content || content.hidden || !user) return c.body(null, 404);
     const json = (await createArticle(host, content, user)).object;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return c.json(json as any);
