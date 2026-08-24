@@ -4,6 +4,8 @@ import type { UserRemote } from '../../generated/prisma/client';
 import * as cheerio from 'cheerio';
 import { discoverAndParseFeedFromUrl } from './feeds';
 import { ensureAbsoluteUrl } from '../../lib/url-factory';
+import { AtpAgent } from '@atproto/api';
+import { resolveAtprotoIdentity } from './atproto-identity';
 
 export async function getLRDD(url: string) {
   const parsedUrl = new URL(url);
@@ -82,6 +84,7 @@ export async function getWebfinger(lrddUrl: string, uri: string) {
           $('alias').first().text().startsWith('http:') ||
           $('alias').last().text(),
         activityPubInboxUrl: '',
+        sharedInboxUrl: '',
       };
     } catch {
       return null;
@@ -95,6 +98,9 @@ export async function getWebfinger(lrddUrl: string, uri: string) {
       // Prefer the PEM public key from the actor JSON over the magic key.
       webfingerInfo.magicKey = actorJSON['publicKey']['publicKeyPem'];
       webfingerInfo.activityPubInboxUrl = actorJSON['inbox'];
+      // Several followers on one instance collapse to a single delivery when
+      // the actor advertises a shared inbox.
+      webfingerInfo.sharedInboxUrl = actorJSON['endpoints']?.['sharedInbox'] || '';
     } catch {
       // Ignore if we can't get the actor info.
     }
@@ -131,7 +137,45 @@ export async function discoverUserRemoteInfoSaveAndSubscribe(url: string, localU
   return await getRemoteUser(userRemote.localUsername || '', userRemote.profileUrl || '');
 }
 
+// Following an AT Protocol account: there is no Atom feed or WebFinger to
+// discover, so identity resolution short-circuits the whole path below.
+async function getAtprotoUserRemoteInfo(input: string, localUsername: string): Promise<UserRemote | null> {
+  const identity = await resolveAtprotoIdentity(input);
+  if (!identity) return null;
+
+  const profileUrl = `https://bsky.app/profile/${identity.handle}`;
+  let displayName = identity.handle;
+  let avatar = '';
+  try {
+    const agent = new AtpAgent({ service: identity.pdsUrl });
+    const profile = await agent.app.bsky.actor.getProfile({ actor: identity.did });
+    displayName = profile.data.displayName || identity.handle;
+    avatar = profile.data.avatar || '';
+  } catch {
+    // A profile we can't read still gets followed; it just looks plainer.
+  }
+
+  return {
+    localUsername,
+    username: identity.handle,
+    name: displayName,
+    profileUrl,
+    // No feed URL: the cron branches on atprotoDid and polls XRPC instead.
+    feedUrl: '',
+    atprotoDid: identity.did,
+    atprotoHandle: identity.handle,
+    atprotoPdsUrl: identity.pdsUrl,
+    avatar,
+    favicon: avatar,
+    order: Math.pow(2, 31) - 1,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any as UserRemote;
+}
+
 export async function getUserRemoteInfo(websiteUrl: string, localUsername: string) {
+  const atproto = await getAtprotoUserRemoteInfo(websiteUrl, localUsername);
+  if (atproto) return atproto;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let userRemote: UserRemote = { localUsername } as any;
 
@@ -171,6 +215,7 @@ export async function getUserRemoteInfo(websiteUrl: string, localUsername: strin
   userRemote.salmonUrl = ensureAbsoluteUrl(websiteUrl, userRemote.salmonUrl || '');
   userRemote.activityPubActorUrl = ensureAbsoluteUrl(websiteUrl, userRemote.activityPubActorUrl || '');
   userRemote.activityPubInboxUrl = ensureAbsoluteUrl(websiteUrl, userRemote.activityPubInboxUrl || '');
+  userRemote.sharedInboxUrl = ensureAbsoluteUrl(websiteUrl, userRemote.sharedInboxUrl || '');
   userRemote.webmentionUrl = ensureAbsoluteUrl(websiteUrl, userRemote.webmentionUrl || '');
   userRemote.profileUrl = ensureAbsoluteUrl(websiteUrl, userRemote.profileUrl || '');
   userRemote.feedUrl = ensureAbsoluteUrl(websiteUrl, userRemote.feedUrl);

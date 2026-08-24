@@ -14,8 +14,15 @@ federated social web blog app. in short, i'm trying to build an open-source Tumb
 ## ⚡ Features
 
 - social features:
-  - RSS reader
+  - RSS reader — follows Atom, RSS, ActivityPub and AT Protocol accounts side by side
   - oStatus stack, WebSub/Salmon/Webfinger
+  - **ActivityPub**: two-way with Mastodon — signed delivery to followers, actor
+    collections (outbox/followers/following), NodeInfo, and inbound
+    Create/Update/Delete/Follow/Like/Announce/Undo
+  - **AT Protocol**: a `did:web` identity plus a read-only XRPC surface, and a
+    Bluesky bridge that mirrors your posts and pulls followed accounts into the
+    reader. (Not a PDS — see below.)
+  - feeds published as both Atom and RSS 2.0
   - commenting
   - api to follow/reblog content (pretty basic right now)
 - WYSIWYG editor
@@ -28,22 +35,39 @@ federated social web blog app. in short, i'm trying to build an open-source Tumb
   - foundation: [CRA-all-the-things](https://github.com/mimecuvalo/all-the-things)
   - Auth.js for logging
 
+### A note on the AT Protocol support
+
+The app serves a `did:web` identity (`/.well-known/did.json`, or
+`/<username>/did.json` on a shared host) and answers a handful of read-only XRPC
+methods at `/xrpc/*` — `com.atproto.repo.describeRepo`, `listRecords`,
+`getRecord`, `app.bsky.actor.getProfile` and `app.bsky.feed.getAuthorFeed` —
+projecting posts as `app.bsky.feed.post` records with real dag-cbor CIDs.
+
+It is **not** a Personal Data Server: there are no signed repo commits, no MST,
+and no `com.atproto.sync.*`, so relays won't index it and Bluesky clients won't
+resolve it as a repo host. Actual two-way interop runs through the bridge —
+link a Bluesky account in the dashboard (handle + app password) and posts mirror
+there, while following an `@handle.bsky.social` pulls that account's feed into
+your reader.
+
 ## 💾 Install
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) and [`all-the-things`](https://github.com/mimecuvalo/all-the-things).
+A [TanStack Start](https://tanstack.com/start) app (React 19 + Vite + Nitro) with
+a [Hono](https://hono.dev) backend and Prisma over Postgres, managed with
+[bun](https://bun.sh). (It began life as a Next.js app; that's long gone.)
 
 ```sh
-yarn
+bun install
 ```
 
-_Prerequisites: Node 18+ if you want proper internationalization (i18n) support (via full-icu)._
+_Prerequisites: Node 22+._
 
 ## Getting Started
 
 First, run the development server:
 
 ```bash
-yarn dev
+bun run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
@@ -63,7 +87,7 @@ In dev or prod you'll want to setup your environment as well. Check out the `.en
 To run tests:
 
 ```sh
-yarn test
+bun run test
 ```
 
 To setup your DB:

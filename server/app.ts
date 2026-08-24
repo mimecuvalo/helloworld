@@ -14,6 +14,7 @@ import { contentRemoteRoutes } from './routes/content-remote';
 import { uploadRoutes } from './routes/upload';
 import { unfurlRoutes } from './routes/unfurl';
 import { socialRoutes } from './routes/social';
+import { atprotoRoutes } from './routes/atproto';
 
 const app = new Hono<AppEnv>().basePath('/api');
 
@@ -24,7 +25,10 @@ app.all('/auth/*', (c) => authHandler(c.req.raw));
 // and especially WebMention are legitimate cross-origin POSTs (WebMention is
 // form-encoded, so csrf() would otherwise reject it); they authenticate via
 // HTTP signatures / secrets, not same-origin.
-app.use('*', createCsrfMiddleware({ skip: (path) => path.startsWith('/api/social') }));
+app.use(
+  '*',
+  createCsrfMiddleware({ skip: (path) => path.startsWith('/api/social') || path.startsWith('/api/atproto') })
+);
 
 app.use('*', async (c, next) => {
   c.set('ctx', await createContext(c.req.raw));
@@ -52,7 +56,8 @@ const routes = app
   .route('/content-remote', contentRemoteRoutes)
   .route('/', uploadRoutes)
   .route('/', unfurlRoutes)
-  .route('/social', socialRoutes);
+  .route('/social', socialRoutes)
+  .route('/atproto', atprotoRoutes);
 
 export type AppType = typeof routes;
 export default app;

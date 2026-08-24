@@ -3,13 +3,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const discover = vi.hoisted(() => ({ discoverUserRemoteInfoSaveAndSubscribe: vi.fn() }));
 const feeds = vi.hoisted(() => ({ retrieveFeed: vi.fn(), parseFeedAndInsertIntoDb: vi.fn() }));
 const streams = vi.hoisted(() => ({ follow: vi.fn(), like: vi.fn() }));
+const syndicateModule = vi.hoisted(() => ({ syndicateContent: vi.fn(), syndicateDelete: vi.fn() }));
 
 vi.mock('server/social/discover-user', () => discover);
 vi.mock('server/social/feeds', () => feeds);
 vi.mock('server/social/activitystreams', () => streams);
+vi.mock('server/social/syndicate', () => syndicateModule);
 
 import type { Context } from 'server/context';
-import { like, subscribeToFeed, syndicate, unsubscribeFromFeed } from 'server/social';
+import { like, subscribeToFeed, syndicate, unsubscribeFromFeed, unsyndicate } from 'server/social';
 import { HOST, content, contentRemote, user, userRemote } from './fixtures';
 
 const prismaStub = () => ({
@@ -38,8 +40,53 @@ beforeEach(() => {
 });
 
 describe('syndicate', () => {
-  it('is still a no-op and never throws', async () => {
-    await expect(syndicate(context(), content())).resolves.toBeUndefined();
+  it('delivers the post on behalf of its owner', async () => {
+    const post = content();
+
+    await syndicate(context(), user(), post);
+
+    expect(syndicateModule.syndicateContent).toHaveBeenCalledWith(
+      HOST,
+      expect.objectContaining({ username: 'alice' }),
+      post,
+      {}
+    );
+  });
+
+  it('sends an Update rather than a Create when asked', async () => {
+    await syndicate(context(), user(), content(), { isUpdate: true });
+
+    expect(syndicateModule.syndicateContent).toHaveBeenCalledWith(HOST, expect.anything(), expect.anything(), {
+      isUpdate: true,
+    });
+  });
+
+  it('signs as the post owner, who need not be the signed-in user', async () => {
+    // A comment is written by one user onto another user's post.
+    const owner = user({ username: 'bob', name: 'Bob B' });
+
+    await syndicate(context(), owner, content());
+
+    expect(syndicateModule.syndicateContent).toHaveBeenCalledWith(
+      HOST,
+      expect.objectContaining({ username: 'bob' }),
+      expect.anything(),
+      {}
+    );
+  });
+});
+
+describe('unsyndicate', () => {
+  it("tells the owner's followers the post is gone", async () => {
+    const post = content();
+
+    await unsyndicate(context(), user(), post);
+
+    expect(syndicateModule.syndicateDelete).toHaveBeenCalledWith(
+      HOST,
+      expect.objectContaining({ username: 'alice' }),
+      post
+    );
   });
 });
 

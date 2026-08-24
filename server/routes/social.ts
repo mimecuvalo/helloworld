@@ -5,6 +5,7 @@ import forge from 'node-forge';
 import magic from 'magic-signatures';
 import type { AppEnv } from '../env';
 import { CRON_SECRET } from '../config';
+import packageJson from '../../package.json';
 import { buildUrl, contentUrl, profileUrl } from '../../lib/url-factory';
 import { buildFeedContentSecurityPolicy } from '../../lib/security';
 import { THUMB_HEIGHT, THUMB_WIDTH } from '../../util/constants';
@@ -15,20 +16,25 @@ import {
   getRemoteAllUsers,
   getRemoteCommentsOnLocalContent,
   getRemoteFriends,
+  countLocalUsersAndContent,
   removeOldRemoteContent,
 } from '../social/db';
 import { parseFeedAndInsertIntoDb, retrieveFeed } from '../social/feeds';
 import { discoverUserRemoteInfoSaveAndSubscribe } from '../social/discover-user';
 import { renderComments, renderFeed } from '../social/feed-xml';
+import { renderRssFeed } from '../social/rss-xml';
 import { renderFoaf } from '../social/foaf-xml';
 import {
+  ACTIVITY_JSON,
   accept,
-  createArticle,
+  actorUrlFor,
+  createNoteObject,
   findUserRemote,
   follow as activityStreamsFollow,
   handle,
 } from '../social/activitystreams';
 import { handleMention } from '../social/webmention';
+import { isAtprotoUserRemote, pollAtprotoUser } from '../social/atproto';
 import type { UserRemote, User } from '../../generated/prisma/client';
 
 function hostOf(c: HonoContext<AppEnv>) {
@@ -41,7 +47,29 @@ function reqPath(c: HonoContext<AppEnv>) {
   return u.pathname + u.search;
 }
 
-function verifyMessage(c: HonoContext<AppEnv>, userRemote: UserRemote): boolean {
+// The Digest header is what ties the signature to the request *body*. A
+// signature over `(request-target) host date` alone says nothing about what was
+// posted, so an inbox that skips this check will happily accept a swapped
+// payload from anyone who can replay a signed request line.
+function verifyDigest(c: HonoContext<AppEnv>, rawBody: string): boolean {
+  const header = c.req.header('digest') || c.req.header('content-digest') || '';
+  if (!header) return false;
+
+  // `Digest: SHA-256=<base64>`, possibly with more algorithms comma-separated.
+  const sha256 = header
+    .split(',')
+    .map((part) => part.trim())
+    .find((part) => /^sha-256=/i.test(part));
+  if (!sha256) return false;
+
+  const expected = crypto.createHash('sha256').update(rawBody, 'utf8').digest('base64');
+  const actual = sha256.slice(sha256.indexOf('=') + 1).trim();
+  const expectedBuffer = Buffer.from(expected, 'base64');
+  const actualBuffer = Buffer.from(actual, 'base64');
+  return expectedBuffer.length === actualBuffer.length && crypto.timingSafeEqual(expectedBuffer, actualBuffer);
+}
+
+function verifyMessage(c: HonoContext<AppEnv>, userRemote: UserRemote, rawBody: string): boolean {
   try {
     const signatureMap: { [key: string]: string } = {};
     (c.req.header('signature') || '').split(',').forEach((keyValue) => {
@@ -54,10 +82,15 @@ function verifyMessage(c: HonoContext<AppEnv>, userRemote: UserRemote): boolean 
       return false; // clock skew > 5 minutes
     }
 
+    const signedHeaders = (signatureMap['headers'] || '').split(' ').filter(Boolean);
+    // Refuse a signature that doesn't cover the body, even if it verifies:
+    // otherwise the digest check above is trivially bypassed by omitting it.
+    if (!signedHeaders.includes('digest')) return false;
+    if (!verifyDigest(c, rawBody)) return false;
+
     const u = new URL(c.req.url);
     const requestTarget = u.pathname + u.search;
-    const data = signatureMap['headers']
-      .split(' ')
+    const data = signedHeaders
       .map((header) =>
         header === '(request-target)' ? `(request-target): post ${requestTarget}` : `${header}: ${c.req.header(header)}`
       )
@@ -90,6 +123,13 @@ export const socialRoutes = new Hono<AppEnv>()
     await removeOldRemoteContent();
     const usersRemote = await getRemoteAllUsers();
     for (const userRemote of usersRemote) {
+      // A peer followed over AT Protocol has no Atom feed to fetch; poll their
+      // author feed over XRPC instead.
+      if (isAtprotoUserRemote(userRemote)) {
+        await pollAtprotoUser(userRemote);
+        continue;
+      }
+
       let feedResponseText: string;
       try {
         feedResponseText = await retrieveFeed(userRemote.feedUrl);
@@ -124,6 +164,43 @@ export const socialRoutes = new Hono<AppEnv>()
       return c.body(webfingerXml(host, user), 200, { 'Content-Type': 'application/xrd+xml' });
     }
     return c.json(webfingerJson(host, user));
+  })
+
+  // NodeInfo discovery + document. This is how fediverse crawlers and instance
+  // directories identify what software a host runs; Mastodon fetches it when it
+  // first encounters a domain.
+  .get('/.well-known/nodeinfo', (c) => {
+    const host = hostOf(c);
+    return c.json({
+      links: [
+        {
+          rel: 'http://nodeinfo.diaspora.software/ns/schema/2.1',
+          href: buildUrl({ host, pathname: '/api/social/nodeinfo/2.1' }),
+        },
+      ],
+    });
+  })
+
+  .get('/nodeinfo/2.1', async (c) => {
+    const [users, posts] = await countLocalUsersAndContent();
+    return c.body(
+      JSON.stringify({
+        version: '2.1',
+        software: {
+          name: 'helloworld',
+          version: packageJson.version,
+          repository: 'https://github.com/mimecuvalo/helloworld',
+        },
+        protocols: ['activitypub'],
+        services: { inbound: ['atom1.0', 'rss2.0'], outbound: ['atom1.0', 'rss2.0'] },
+        // Single-tenant blogs: accounts are provisioned, not signed up for.
+        openRegistrations: false,
+        usage: { users: { total: users }, localPosts: posts },
+        metadata: {},
+      }),
+      200,
+      { 'Content-Type': 'application/json; profile="http://nodeinfo.diaspora.software/ns/schema/2.1#"' }
+    );
   })
 
   // oEmbed for a local content item.
@@ -191,6 +268,22 @@ export const socialRoutes = new Hono<AppEnv>()
     });
   })
 
+  // RSS 2.0 rendering of the same content as /feed, for plain-RSS readers.
+  // Served as application/xml (not application/rss+xml) so browsers still apply
+  // the /rss.xsl stylesheet; the discovery <link> carries the rss+xml type.
+  .get('/rss', async (c) => {
+    const host = hostOf(c);
+    const resource = c.req.query('resource') || '';
+    const contentOwner = await getLocalUser(resource);
+    if (!contentOwner) return c.body(null, 404);
+    const feed = await getLocalLatestContent(resource);
+    return c.body(renderRssFeed(host, reqPath(c), feed, contentOwner), 200, {
+      'Content-Type': 'application/xml',
+      'Cache-Control': `public, s-maxage=${60 * 60 * 24}`,
+      'Content-Security-Policy': buildFeedContentSecurityPolicy(),
+    });
+  })
+
   // Atom feed of remote comments on a local item.
   .get('/comments', async (c) => {
     const host = hostOf(c);
@@ -219,24 +312,80 @@ export const socialRoutes = new Hono<AppEnv>()
     const resource = c.req.query('resource') || '';
     const user = await getLocalUser(resource);
     if (!user) return c.body(null, 404);
-    const actorUrl = buildUrl({ host, pathname: '/api/social/activitypub/actor', searchParams: { resource } });
-    const inboxUrl = buildUrl({ host, pathname: '/api/social/activitypub/inbox', searchParams: { resource } });
+    const ap = (pathname: string) => buildUrl({ host, pathname, searchParams: { resource } });
+    const actorUrl = ap('/api/social/activitypub/actor');
     let publicKeyPem = '';
     try {
       publicKeyPem = forge.pki.publicKeyToPem(magic.magicToRSA(user.magicKey));
     } catch {
       // user has no magic key yet
     }
-    return c.json({
-      '@context': ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
-      id: actorUrl,
-      type: 'Person',
-      preferredUsername: user.username,
-      inbox: inboxUrl,
-      url: profileUrl(user.username, host),
-      publicKey: { id: `${actorUrl}#main-key`, owner: actorUrl, publicKeyPem },
-    });
+    const icon = user.logo || user.favicon;
+
+    return c.body(
+      JSON.stringify({
+        '@context': ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
+        id: actorUrl,
+        type: 'Person',
+        preferredUsername: user.username,
+        name: user.name,
+        summary: user.description || undefined,
+        published: user.createdAt ? new Date(user.createdAt).toISOString() : undefined,
+        // Mastodon reads these to decide whether to show a lock on the profile
+        // and whether the account may be surfaced in directories.
+        manuallyApprovesFollowers: false,
+        discoverable: true,
+        inbox: ap('/api/social/activitypub/inbox'),
+        outbox: ap('/api/social/activitypub/outbox'),
+        followers: ap('/api/social/activitypub/followers'),
+        following: ap('/api/social/activitypub/following'),
+        endpoints: { sharedInbox: ap('/api/social/activitypub/inbox') },
+        url: profileUrl(user.username, host),
+        icon: icon ? { type: 'Image', url: buildUrl({ host, pathname: icon }) } : undefined,
+        publicKey: { id: `${actorUrl}#main-key`, owner: actorUrl, publicKeyPem },
+      }),
+      200,
+      { 'Content-Type': ACTIVITY_JSON, 'Cache-Control': `public, s-maxage=${60 * 5}` }
+    );
   })
+
+  // The actor's collections. Each is an OrderedCollection that points at its
+  // first page; `?page=1` returns the page itself. Mastodon walks these to show
+  // follower counts and to backfill a newly-followed account's posts.
+  .get('/activitypub/outbox', async (c) => {
+    const host = hostOf(c);
+    const resource = c.req.query('resource') || '';
+    const user = await getLocalUser(resource);
+    if (!user) return c.body(null, 404);
+
+    // getLocalLatestContent already excludes hidden items — federation is
+    // unauthenticated, so nothing non-public may appear here.
+    const feed = await getLocalLatestContent(resource);
+    const collectionUrl = buildUrl({ host, pathname: '/api/social/activitypub/outbox', searchParams: { resource } });
+
+    if (!c.req.query('page')) {
+      return activityJson(c, collectionOf(collectionUrl, feed.length));
+    }
+
+    const items = await Promise.all(
+      feed.map(async (content) => {
+        const object = await createNoteObject(host, content, user);
+        return {
+          type: 'Create',
+          id: `${object.id}#create`,
+          actor: actorUrlFor(host, user),
+          published: object.published,
+          to: object.to,
+          cc: object.cc,
+          object,
+        };
+      })
+    );
+    return activityJson(c, pageOf(collectionUrl, items));
+  })
+
+  .get('/activitypub/followers', (c) => actorCollection(c, 'followers'))
+  .get('/activitypub/following', (c) => actorCollection(c, 'following'))
 
   // ActivityPub Article object for a local item.
   .get('/activitypub/message', async (c) => {
@@ -245,9 +394,10 @@ export const socialRoutes = new Hono<AppEnv>()
     const content = await getLocalContent(resource);
     const user = await getLocalUser(resource);
     if (!content || content.hidden || !user) return c.body(null, 404);
-    const json = (await createArticle(host, content, user)).object;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return c.json(json as any);
+    const json = await createNoteObject(host, content, user);
+    return c.body(JSON.stringify({ '@context': 'https://www.w3.org/ns/activitystreams', ...json }), 200, {
+      'Content-Type': ACTIVITY_JSON,
+    });
   })
 
   // ActivityPub inbox (verifies the HTTP signature, dispatches the activity).
@@ -258,17 +408,29 @@ export const socialRoutes = new Hono<AppEnv>()
     const user = await getLocalUser(resource);
     if (!user) return c.body(null, 404);
 
+    // Read the body as bytes first: the digest check needs exactly what was
+    // sent, and nothing may be parsed as an activity before it verifies.
+    const rawBody = await c.req.text();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const body = (await c.req.json()) as any;
+    let body: any;
+    try {
+      body = JSON.parse(rawBody);
+    } catch {
+      return c.body(null, 400);
+    }
+
     const userRemote = await findUserRemote(body, user);
     if (!userRemote) {
       console.error('activitypub fail: ', body);
       return c.body(null, 401);
     }
-    if (!verifyMessage(c, userRemote)) return c.body(null, 401);
+    if (!verifyMessage(c, userRemote, rawBody)) return c.body(null, 401);
 
     await handle(body.type, host, body, user, userRemote);
-    accept(host, user, userRemote, JSON.stringify(body));
+    // An Accept belongs to a Follow, and it has to echo back the Follow itself —
+    // this used to fire for every activity type, with the raw JSON string as the
+    // object, which no implementation could match against its pending request.
+    if (body.type === 'Follow') accept(host, user, userRemote, body);
     return c.body(null, 204);
   })
 
@@ -324,7 +486,9 @@ export const socialRoutes = new Hono<AppEnv>()
     const resource = c.req.query('resource') || '';
     try {
       const userRemote = await discoverUserRemoteInfoSaveAndSubscribe(resource, ctx.currentUser.username);
-      if (userRemote) {
+      if (userRemote && isAtprotoUserRemote(userRemote)) {
+        await pollAtprotoUser(userRemote);
+      } else if (userRemote) {
         const feedText = await retrieveFeed(userRemote.feedUrl);
         await parseFeedAndInsertIntoDb(userRemote, feedText);
         activityStreamsFollow(hostOf(c), ctx.currentUser, userRemote, true);
@@ -334,6 +498,51 @@ export const socialRoutes = new Hono<AppEnv>()
     }
     return c.redirect('/');
   });
+
+function activityJson(c: HonoContext<AppEnv>, body: unknown) {
+  return c.body(JSON.stringify(body), 200, { 'Content-Type': ACTIVITY_JSON });
+}
+
+function collectionOf(collectionUrl: string, totalItems: number) {
+  return {
+    '@context': 'https://www.w3.org/ns/activitystreams',
+    id: collectionUrl,
+    type: 'OrderedCollection',
+    totalItems,
+    first: `${collectionUrl}&page=1`,
+  };
+}
+
+function pageOf(collectionUrl: string, orderedItems: unknown[]) {
+  return {
+    '@context': 'https://www.w3.org/ns/activitystreams',
+    id: `${collectionUrl}&page=1`,
+    type: 'OrderedCollectionPage',
+    partOf: collectionUrl,
+    totalItems: orderedItems.length,
+    orderedItems,
+  };
+}
+
+// followers/following differ only in which half of getRemoteFriends they read.
+async function actorCollection(c: HonoContext<AppEnv>, which: 'followers' | 'following') {
+  const host = hostOf(c);
+  const resource = c.req.query('resource') || '';
+  const user = await getLocalUser(resource);
+  if (!user) return c.body(null, 404);
+
+  const [followers, following] = await getRemoteFriends(resource);
+  // Prefer the peer's actor id; profileUrl is the fallback discovery stores.
+  const actors = (which === 'followers' ? followers : following).map(
+    (peer) => peer.activityPubActorUrl || peer.profileUrl
+  );
+  const collectionUrl = buildUrl({ host, pathname: `/api/social/activitypub/${which}`, searchParams: { resource } });
+
+  return activityJson(
+    c,
+    c.req.query('page') ? pageOf(collectionUrl, actors) : collectionOf(collectionUrl, actors.length)
+  );
+}
 
 // WebFinger JSON document (Mastodon et al).
 function webfingerJson(host: string, user: User) {
@@ -352,6 +561,7 @@ function webfingerJson(host: string, user: User) {
         type: 'application/atom+xml',
         href: url('/api/social/feed'),
       },
+      { rel: 'alternate', type: 'application/rss+xml', href: url('/api/social/rss') },
       { rel: 'http://webfinger.net/rel/profile-page', type: 'text/html', href: resource },
       { rel: 'http://webfinger.net/rel/avatar', type: 'image/jpeg', href: logo },
       { rel: 'salmon', href: url('/api/social/salmon') },

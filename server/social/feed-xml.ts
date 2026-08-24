@@ -1,21 +1,7 @@
 import type { Content, ContentRemote, User } from '../../generated/prisma/client';
 import { buildUrl, contentUrl, profileUrl } from '../../lib/url-factory';
 import constants, { WEB_SUB_HUB } from '../../util/constants';
-
-function esc(s: unknown): string {
-  return String(s ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
-function attrs(o: Record<string, unknown>): string {
-  return Object.entries(o)
-    .filter(([, v]) => v !== undefined && v !== null && v !== '')
-    .map(([k, v]) => ` ${k}="${esc(v)}"`)
-    .join('');
-}
+import { attrs, entryContentHtml, esc } from './xml';
 
 function authorXml(host: string, contentOwner: User): string {
   const profile = profileUrl(contentOwner.username, host);
@@ -34,14 +20,7 @@ function authorXml(host: string, contentOwner: User): string {
 }
 
 function entryXml(host: string, content: Content): string {
-  const statsImgSrc = buildUrl({
-    host,
-    pathname: '/api/stats',
-    searchParams: { resource: contentUrl(content, undefined, host) },
-  });
-  const absoluteUrlReplacement = buildUrl({ host, pathname: '/resource' });
-  const html =
-    content.view.replace(/(['"])\/resource/gm, `$1${absoluteUrlReplacement}`) + `<img src="${statsImgSrc}" />`;
+  const html = entryContentHtml(host, content);
   const url = contentUrl(content, undefined, host);
   const repliesUrl = buildUrl({ host, pathname: '/api/social/comments', searchParams: { resource: url } });
 

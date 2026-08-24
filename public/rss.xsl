@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Inspired from https://darekkay.com/blog/rss-styling -->
-<xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:atom="http://www.w3.org/2005/Atom">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:atom="http://www.w3.org/2005/Atom">
   <xsl:output method="html" version="1.0" encoding="UTF-8" indent="yes"/>
+  <!-- Serves both feed shapes: the Atom feed from feed-xml.ts and the RSS 2.0
+       feed from rss-xml.ts. Everything that differs between them is resolved
+       into a variable up front so the markup below stays single-sourced.
+
+       Kept to XSLT 1.0 / XPath 1.0 despite the version above: browsers ship an
+       XSLT 1.0 processor only, so `if/then/else` would fail to compile and the
+       feed would render as raw XML. The union operator does the job here —
+       exactly one side of each union exists in a given document. -->
   <xsl:template match="/">
+    <xsl:variable name="title" select="/atom:feed/atom:title | /rss/channel/title"/>
+    <xsl:variable name="subtitle" select="/atom:feed/atom:subtitle | /rss/channel/description"/>
+    <xsl:variable name="website" select="/atom:feed/atom:link[@rel='alternate']/@href | /rss/channel/link"/>
+    <xsl:variable name="items" select="/atom:feed/atom:entry | /rss/channel/item"/>
     <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
       <head>
-        <title>RSS Feed | <xsl:value-of select="/atom:feed/atom:title"/></title>
+        <title>RSS Feed | <xsl:value-of select="$title"/></title>
         <meta charset="utf-8"/>
         <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -119,32 +131,41 @@
               </svg>
               RSS Feed Preview
             </h1>
-            <h2>nightlight.rocks</h2>
+            <h2><xsl:value-of select="$title"/></h2>
             <p>
-              <xsl:value-of select="/atom:feed/atom:subtitle"/>
+              <xsl:value-of select="$subtitle"/>
             </p>
             <a>
               <xsl:attribute name="href">
-                <xsl:value-of select="/atom:feed/atom:link[2]/@href"/>
+                <xsl:value-of select="$website"/>
               </xsl:attribute>
               Visit Website &#x2192;
             </a>
 
             <h2>Recent blog posts</h2>
-            <xsl:for-each select="/atom:feed/atom:entry">
+            <xsl:for-each select="$items">
               <div style="padding-bottom: 3rem">
                 <div style="font-size: 1.8rem; line-height: 1.5; font-weight: bold">
                   <a>
                     <xsl:attribute name="href">
-                      <xsl:value-of select="atom:link/@href"/>
+                      <xsl:value-of select="atom:link/@href | link"/>
                     </xsl:attribute>
-                    <xsl:value-of select="atom:title"/>
+                    <xsl:value-of select="atom:title | title"/>
                   </a>
                 </div>
 
                 <div style="font-size: 1.4rem; line-height: 1.6; color: #686c71">
                   Published on
-                  <xsl:value-of select="substring(atom:published, 0, 11)" />
+                  <!-- Atom publishes ISO-8601 (2026-08-24T...), RSS RFC-822
+                       (Sun, 24 Aug 2026 ...); trim each to its date portion. -->
+                  <xsl:choose>
+                    <xsl:when test="atom:published">
+                      <xsl:value-of select="substring(atom:published, 1, 10)"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <xsl:value-of select="substring(pubDate, 1, 16)"/>
+                    </xsl:otherwise>
+                  </xsl:choose>
                 </div>
               </div>
             </xsl:for-each>

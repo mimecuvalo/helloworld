@@ -1,16 +1,29 @@
 import type { Context } from '../context';
-import type { Content, ContentRemote, UserRemote } from '../../generated/prisma/client';
+import type { Content, ContentRemote, User, UserRemote } from '../../generated/prisma/client';
 import { discoverUserRemoteInfoSaveAndSubscribe } from './discover-user';
 import { follow as activityStreamsFollow, like as activityStreamsLike } from './activitystreams';
 import { parseFeedAndInsertIntoDb, retrieveFeed } from './feeds';
+import { syndicateContent, syndicateDelete } from './syndicate';
+import { followOnBluesky, isAtprotoUserRemote, pollAtprotoUser, unfollowOnBluesky } from './atproto';
 
+// Push a post out to its owner's followers (and anyone it mentions). `isUpdate`
+// picks between Create — a new post — and Update, which replaces one peers
+// already hold.
+//
+// The owner is passed in rather than taken from ctx: a comment is written by
+// one user onto another user's post, and it's the post owner's followers and
+// signing key that the delivery belongs to.
 export async function syndicate(
-  _ctx: Context,
-  _content: Content,
-  _remoteContent?: ContentRemote,
-  _isComment?: boolean
+  ctx: Context,
+  contentOwner: User,
+  content: Content,
+  options: { isUpdate?: boolean } = {}
 ): Promise<void> {
-  // TODO: syndicate to followers (needs mention parsing, TODO since the Next app).
+  await syndicateContent(ctx.hostname, contentOwner, content, options);
+}
+
+export async function unsyndicate(ctx: Context, contentOwner: User, content: Content): Promise<void> {
+  await syndicateDelete(ctx.hostname, contentOwner, content);
 }
 
 export async function like(
@@ -28,6 +41,14 @@ export async function subscribeToFeed(ctx: Context, profileUrl: string): Promise
 
   const userRemote = await discoverUserRemoteInfoSaveAndSubscribe(profileUrl, ctx.currentUsername);
   if (!userRemote) return null;
+
+  // An AT Protocol peer has no Atom feed and no inbox: seed the reader from
+  // their author feed, and mirror the follow onto Bluesky if we can.
+  if (isAtprotoUserRemote(userRemote)) {
+    await pollAtprotoUser(userRemote);
+    await followOnBluesky(ctx.currentUser, userRemote);
+    return userRemote;
+  }
 
   const feedResponseText = await retrieveFeed(userRemote.feedUrl);
   await parseFeedAndInsertIntoDb(userRemote, feedResponseText);
@@ -48,6 +69,11 @@ export async function unsubscribeFromFeed(ctx: Context, profileUrl: string): Pro
     await ctx.prisma.userRemote.update({ data: { following: false }, where: { id: userRemote.id } });
   } else {
     await ctx.prisma.userRemote.delete({ where: { id: userRemote.id } });
+  }
+
+  if (isAtprotoUserRemote(userRemote)) {
+    await unfollowOnBluesky(ctx.currentUser, userRemote);
+    return true;
   }
 
   await activityStreamsFollow(ctx.hostname, ctx.currentUser, userRemote, false);

@@ -25,17 +25,26 @@
   "106a6c241b": {
     "message": "home"
   },
+  "1116e9904e": {
+    "message": "app password"
+  },
   "24c29702dc": {
     "message": "Search:"
   },
   "2511fc6cb0": {
     "message": "following"
   },
+  "2a304a1348": {
+    "message": "link"
+  },
   "2d000429fd": {
     "message": "Nothing to read right now!"
   },
   "30b9f6c879": {
     "message": "reblog bookmarklet"
+  },
+  "32d95e7840": {
+    "message": "handle (e.g. you.bsky.social)"
   },
   "3d728e1b6e": {
     "message": "we've logged this error and we'll fix it soon."
@@ -93,6 +102,9 @@
   },
   "693e6f7bd6": {
     "message": "replying to"
+  },
+  "695630cfc5": {
+    "message": "unlink"
   },
   "7253d1f504": {
     "message": "read all"
@@ -174,6 +186,9 @@
   },
   "bd397bea18": {
     "message": "follow bookmarklet"
+  },
+  "c1a2311646": {
+    "message": "bluesky"
   },
   "c84d77792c": {
     "message": "i18n: Long"

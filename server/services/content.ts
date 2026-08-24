@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid';
 import type { Context } from '../context';
 import type { Content } from '../../generated/prisma/client';
 import { isRobotViewing } from '../crawler';
-import { syndicate } from '../social';
+import { syndicate, unsyndicate } from '../social';
 
 type DecoratedContent = Content & {
   forceRefresh?: boolean;
@@ -380,8 +380,8 @@ export async function saveContent(ctx: Context, args: { name: string; title: str
     where: { username_name: { username: currentUsername, name } },
   });
 
-  if (!hidden && updatedContent) {
-    await syndicate(ctx, updatedContent);
+  if (!hidden && updatedContent && ctx.currentUser) {
+    await syndicate(ctx, ctx.currentUser, updatedContent, { isUpdate: true });
   }
 
   return { username: currentUsername, name, title, view };
@@ -426,8 +426,8 @@ export async function postContent(
     },
   });
 
-  if (!args.hidden) {
-    await syndicate(ctx, createdContent);
+  if (!args.hidden && ctx.currentUser) {
+    await syndicate(ctx, ctx.currentUser, createdContent);
   }
 
   return {
@@ -445,9 +445,20 @@ export async function postContent(
 }
 
 export async function deleteContent(ctx: Context, args: { name: string }) {
-  await ctx.prisma.content.delete({
+  const deletedContent = await ctx.prisma.content.delete({
     where: { username_name: { username: ctx.currentUsername, name: args.name } },
   });
+
+  // Peers cached this post; tell them to drop it. Best-effort — the local
+  // delete already happened and must not be undone by a dead inbox.
+  if (deletedContent && !deletedContent.hidden && ctx.currentUser) {
+    try {
+      await unsyndicate(ctx, ctx.currentUser, deletedContent);
+    } catch (ex) {
+      console.error(ex);
+    }
+  }
+
   return true;
 }
 

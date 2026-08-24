@@ -35,6 +35,15 @@ export async function getLocalLatestContent(localContentUrl: string) {
   });
 }
 
+// NodeInfo usage stats. Counts only what's publicly visible, matching what the
+// feeds and the outbox expose.
+export async function countLocalUsersAndContent(): Promise<[number, number]> {
+  return await Promise.all([
+    prisma.user.count(),
+    prisma.content.count({ where: { hidden: false, section: { not: 'main' } } }),
+  ]);
+}
+
 export async function getRemoteUser(localUsername: string, profileUrl: string) {
   return await prisma.userRemote.findUnique({
     where: { localUsername_profileUrl: { localUsername, profileUrl } },
@@ -100,6 +109,12 @@ export async function removeOldRemoteContent() {
       createdAt: { lt: new Date(Date.now() - FEED_MAX_DAYS_OLD).toISOString() },
     },
   });
+}
+
+// A Delete activity names the object id but not which flavour of row it became
+// (post / comment / favorite), so this deletes by id alone.
+export async function removeRemoteContentByPostId(toUsername: string, postId: string) {
+  return await prisma.contentRemote.deleteMany({ where: { toUsername, postId } });
 }
 
 export async function removeRemoteContent(remoteContent: ContentRemote) {

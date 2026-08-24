@@ -13,6 +13,7 @@ const db = vi.hoisted(() => ({
   getRemoteFriends: vi.fn(),
   getRemoteUser: vi.fn(),
   getRemoteUserByActor: vi.fn(),
+  countLocalUsersAndContent: vi.fn(),
   removeOldRemoteContent: vi.fn(),
   removeRemoteContent: vi.fn(),
   removeRemoteUser: vi.fn(),
@@ -102,6 +103,7 @@ beforeEach(() => {
   db.getRemoteCommentsOnLocalContent.mockResolvedValue([contentRemote()]);
   db.getRemoteFriends.mockResolvedValue([[], []]);
   db.getRemoteAllUsers.mockResolvedValue([]);
+  db.countLocalUsersAndContent.mockResolvedValue([1, 1]);
 });
 
 afterEach(() => {
@@ -222,6 +224,10 @@ describe('GET /api/social/.well-known/webfinger', () => {
     expect(rel(links, 'http://schemas.google.com/g/2010#updates-from')).toMatchObject({
       type: 'application/atom+xml',
       href: `https://${HOST}/api/social/feed?resource=${encodeURIComponent(ALICE_PROFILE)}`,
+    });
+    expect(rel(links, 'alternate')).toMatchObject({
+      type: 'application/rss+xml',
+      href: `https://${HOST}/api/social/rss?resource=${encodeURIComponent(ALICE_PROFILE)}`,
     });
     expect(rel(links, 'salmon')?.href).toContain('/api/social/salmon');
     expect(rel(links, 'webmention')?.href).toContain('/api/social/webmention');
@@ -389,6 +395,56 @@ describe('GET /api/social/feed', () => {
   });
 });
 
+describe('GET /api/social/rss', () => {
+  it('404s for an unknown user', async () => {
+    db.getLocalUser.mockResolvedValue(null);
+
+    expect((await get(q('/api/social/rss'))).status).toBe(404);
+    expect(db.getLocalLatestContent).not.toHaveBeenCalled();
+  });
+
+  it('serves an RSS 2.0 feed of the same content as /feed', async () => {
+    const response = await get(q('/api/social/rss'));
+
+    expect(response.status).toBe(200);
+    const doc = parseXml(await response.text());
+    expect(doc.documentElement.tagName).toBe('rss');
+    expect(doc.querySelectorAll('item')).toHaveLength(1);
+    expect(db.getLocalLatestContent).toHaveBeenCalledWith(ALICE_PROFILE);
+  });
+
+  it('is served as application/xml so the browser still applies /rss.xsl', async () => {
+    // application/rss+xml suppresses XSLT rendering in some browsers; the
+    // rss+xml type is advertised on the discovery <link> instead.
+    const response = await get(q('/api/social/rss'));
+
+    expect(response.headers.get('content-type')).toContain('application/xml');
+    expect(response.headers.get('content-type')).not.toContain('rss+xml');
+  });
+
+  it('ships the same stylesheet-friendly policy and CDN caching as the Atom feed', async () => {
+    const response = await get(q('/api/social/rss'));
+
+    expect(response.headers.get('content-security-policy')).toContain("script-src 'self'");
+    expect(response.headers.get('cache-control')).toBe('public, s-maxage=86400');
+  });
+
+  it('sets the self link to the full request path including the query', async () => {
+    const doc = parseXml(await (await get(q('/api/social/rss'))).text());
+
+    expect(doc.querySelector('channel > link[rel="self"]')?.getAttribute('href')).toBe(
+      `https://${HOST}${q('/api/social/rss')}`
+    );
+  });
+
+  it('honors the x-hw-host header for multi-tenant hosting', async () => {
+    const response = await get(q('/api/social/rss'), { headers: { 'x-hw-host': 'tenant.example' } });
+    const doc = parseXml(await response.text());
+
+    expect(doc.querySelector('channel > link[rel="self"]')?.getAttribute('href')).toContain('https://tenant.example/');
+  });
+});
+
 describe('GET /api/social/comments', () => {
   it('404s for an unknown user', async () => {
     db.getLocalUser.mockResolvedValue(null);
@@ -457,6 +513,25 @@ describe('GET /api/social/activitypub/actor', () => {
     expect(body.publicKey).toMatchObject({ id: `${body.id}#main-key`, owner: body.id });
   });
 
+  it('advertises the collections and shared inbox Mastodon walks', async () => {
+    const response = await get(q('/api/social/activitypub/actor'));
+    const body = await response.json();
+    const url = (path: string) => `https://${HOST}${path}?resource=${encodeURIComponent(ALICE_PROFILE)}`;
+
+    expect(response.headers.get('content-type')).toContain('application/activity+json');
+    expect(body).toMatchObject({
+      name: 'Alice A',
+      summary: 'a site',
+      manuallyApprovesFollowers: false,
+      discoverable: true,
+      outbox: url('/api/social/activitypub/outbox'),
+      followers: url('/api/social/activitypub/followers'),
+      following: url('/api/social/activitypub/following'),
+      endpoints: { sharedInbox: url('/api/social/activitypub/inbox') },
+      icon: { type: 'Image', url: `https://${HOST}/favicon.jpg` },
+    });
+  });
+
   it('exports the magic key as a PEM peers can verify signatures with', async () => {
     db.getLocalUser.mockResolvedValue(user({ magicKey: magic.RSAToMagic(keys().publicKey) }));
 
@@ -485,18 +560,108 @@ describe('GET /api/social/activitypub/message', () => {
     expect((await get(q('/api/social/activitypub/message', CONTENT_URL))).status).toBe(404);
   });
 
-  it('returns the bare Article object, not the Create wrapper', async () => {
-    const body = await (await get(q('/api/social/activitypub/message', CONTENT_URL))).json();
+  it('returns the bare Note object, not the Create wrapper', async () => {
+    const response = await get(q('/api/social/activitypub/message', CONTENT_URL));
+    const body = await response.json();
 
+    expect(response.headers.get('content-type')).toContain('application/activity+json');
     expect(body).toMatchObject({
-      type: 'Article',
+      type: 'Note',
       url: CONTENT_URL,
       title: 'Hello',
       attributedTo: expect.stringContaining('/api/social/activitypub/actor'),
-      to: 'https://www.w3.org/ns/activitystreams#Public',
+      to: ['https://www.w3.org/ns/activitystreams#Public'],
     });
-    expect(body['@context']).toBeUndefined();
+    // A standalone object still needs its own context; only the Create wrapper is gone.
+    expect(body['@context']).toBe('https://www.w3.org/ns/activitystreams');
     expect(body.object).toBeUndefined();
+  });
+});
+
+describe('actor collections', () => {
+  const followerOne = () =>
+    userRemote({ id: 1, profileUrl: 'https://one.example/bob', activityPubActorUrl: 'https://one.example/users/bob' });
+  const followerTwo = () => userRemote({ id: 2, profileUrl: 'https://two.example/carol', activityPubActorUrl: null });
+
+  it('404s for an unknown user', async () => {
+    db.getLocalUser.mockResolvedValue(null);
+
+    expect((await get(q('/api/social/activitypub/outbox'))).status).toBe(404);
+    expect((await get(q('/api/social/activitypub/followers'))).status).toBe(404);
+    expect((await get(q('/api/social/activitypub/following'))).status).toBe(404);
+  });
+
+  it('returns an OrderedCollection pointing at its first page', async () => {
+    db.getRemoteFriends.mockResolvedValue([[followerOne(), followerTwo()], []]);
+    const body = await (await get(q('/api/social/activitypub/followers'))).json();
+
+    expect(body.type).toBe('OrderedCollection');
+    expect(body.totalItems).toBe(2);
+    expect(body.first).toBe(`${body.id}&page=1`);
+    expect(body.orderedItems).toBeUndefined();
+  });
+
+  it('returns the actors themselves on the page, preferring the actor id', async () => {
+    db.getRemoteFriends.mockResolvedValue([[followerOne(), followerTwo()], []]);
+    const body = await (await get(`${q('/api/social/activitypub/followers')}&page=1`)).json();
+
+    expect(body.type).toBe('OrderedCollectionPage');
+    expect(body.orderedItems).toEqual(['https://one.example/users/bob', 'https://two.example/carol']);
+  });
+
+  it('reads following from the other half of getRemoteFriends', async () => {
+    db.getRemoteFriends.mockResolvedValue([[followerOne()], [followerTwo()]]);
+    const body = await (await get(`${q('/api/social/activitypub/following')}&page=1`)).json();
+
+    expect(body.orderedItems).toEqual(['https://two.example/carol']);
+  });
+
+  it('wraps each outbox item in a Create carrying the Note', async () => {
+    const body = await (await get(`${q('/api/social/activitypub/outbox')}&page=1`)).json();
+
+    expect(body.type).toBe('OrderedCollectionPage');
+    expect(body.orderedItems).toHaveLength(1);
+    expect(body.orderedItems[0]).toMatchObject({
+      type: 'Create',
+      actor: expect.stringContaining('/api/social/activitypub/actor'),
+      object: { type: 'Note', title: 'Hello' },
+    });
+  });
+
+  it('serves collections as activity+json', async () => {
+    const response = await get(q('/api/social/activitypub/outbox'));
+
+    expect(response.headers.get('content-type')).toContain('application/activity+json');
+  });
+});
+
+describe('nodeinfo', () => {
+  it('points discovery at the 2.1 document', async () => {
+    const body = await (await get('/api/social/.well-known/nodeinfo')).json();
+
+    expect(body.links).toEqual([
+      {
+        rel: 'http://nodeinfo.diaspora.software/ns/schema/2.1',
+        href: `https://${HOST}/api/social/nodeinfo/2.1`,
+      },
+    ]);
+  });
+
+  it('describes the software, its protocols and its usage', async () => {
+    db.countLocalUsersAndContent.mockResolvedValue([3, 42]);
+
+    const response = await get('/api/social/nodeinfo/2.1');
+    const body = await response.json();
+
+    expect(response.headers.get('content-type')).toContain('nodeinfo.diaspora.software/ns/schema/2.1');
+    expect(body).toMatchObject({
+      version: '2.1',
+      software: { name: 'helloworld' },
+      protocols: ['activitypub'],
+      openRegistrations: false,
+      usage: { users: { total: 3 }, localPosts: 42 },
+    });
+    expect(body.software.version).toBeTruthy();
   });
 });
 
@@ -546,19 +711,31 @@ describe('POST /api/social/activitypub/inbox', () => {
     object: ALICE_PROFILE,
   };
 
+  // Signs the way Mastodon does: the digest is what binds the signature to the
+  // body, so it is part of both the header set and the signing string.
   function signedHeaders(date = new Date(), target = path, body: unknown = activity) {
-    const signable = `(request-target): post ${target}\n` + `host: ${HOST}\n` + `date: ${date.toUTCString()}`;
+    const serialized = JSON.stringify(body);
+    const digest = `SHA-256=${crypto.createHash('sha256').update(serialized, 'utf8').digest('base64')}`;
+    const contentType = 'application/activity+json';
+    const signable = [
+      `(request-target): post ${target}`,
+      `host: ${HOST}`,
+      `date: ${date.toUTCString()}`,
+      `digest: ${digest}`,
+      `content-type: ${contentType}`,
+    ].join('\n');
     const signer = crypto.createSign('sha256');
     signer.update(signable);
     signer.end();
     const signature = signer.sign(keys().privateKeyPkcs1).toString('base64');
     return {
       headers: {
-        'content-type': 'application/activity+json',
+        'content-type': contentType,
         date: date.toUTCString(),
-        signature: `keyId="k",headers="(request-target) host date",signature="${signature}"`,
+        digest,
+        signature: `keyId="k#main-key",headers="(request-target) host date digest content-type",signature="${signature}"`,
       },
-      body: JSON.stringify(body),
+      body: serialized,
     };
   }
 
@@ -619,6 +796,52 @@ describe('POST /api/social/activitypub/inbox', () => {
     expect((await post(signedHeaders(new Date(Date.now() - 60 * 1000)))).status).toBe(204);
   });
 
+  it('401s when the body does not match the signed digest', async () => {
+    // The whole point of the digest: a valid signature over a swapped body.
+    const signed = signedHeaders();
+    signed.body = JSON.stringify({ ...activity, actor: 'https://attacker.example/users/eve' });
+
+    expect((await post(signed)).status).toBe(401);
+    expect(db.saveRemoteUser).not.toHaveBeenCalled();
+  });
+
+  it('401s when the digest header is missing', async () => {
+    const signed = signedHeaders();
+    signed.headers.digest = '';
+
+    expect((await post(signed)).status).toBe(401);
+  });
+
+  it('401s when the signature does not cover the digest at all', async () => {
+    // A signature over only `(request-target) host date` says nothing about the
+    // body, so it must be refused even though it verifies on its own terms.
+    const date = new Date();
+    const signable = `(request-target): post ${path}\nhost: ${HOST}\ndate: ${date.toUTCString()}`;
+    const signer = crypto.createSign('sha256');
+    signer.update(signable);
+    signer.end();
+    const signature = signer.sign(keys().privateKeyPkcs1).toString('base64');
+    const body = JSON.stringify(activity);
+
+    const response = await post({
+      headers: {
+        'content-type': 'application/activity+json',
+        date: date.toUTCString(),
+        digest: `SHA-256=${crypto.createHash('sha256').update(body, 'utf8').digest('base64')}`,
+        signature: `keyId="k",headers="(request-target) host date",signature="${signature}"`,
+      },
+      body,
+    });
+
+    expect(response.status).toBe(401);
+  });
+
+  it('400s on a body that is not JSON at all', async () => {
+    const signed = signedHeaders();
+
+    expect((await post({ ...signed, body: 'not json' })).status).toBe(400);
+  });
+
   it('401s when the signature header is missing entirely', async () => {
     const signed = signedHeaders();
     signed.headers.signature = '';
@@ -634,7 +857,7 @@ describe('POST /api/social/activitypub/inbox', () => {
     expect(db.saveRemoteUser).toHaveBeenCalledWith(expect.objectContaining({ follower: true }));
   });
 
-  it('sends an Accept back to the follower inbox', async () => {
+  it('sends an Accept back to the follower inbox, echoing the Follow', async () => {
     db.getRemoteUserByActor.mockResolvedValue(
       userRemote({ magicKey: keys().publicKey, activityPubInboxUrl: 'https://remote.example/inbox' })
     );
@@ -644,7 +867,24 @@ describe('POST /api/social/activitypub/inbox', () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(fetchMock).toHaveBeenCalledWith('https://remote.example/inbox', expect.any(Object));
-    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toMatchObject({ type: 'Accept' });
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toMatchObject({ type: 'Accept', object: activity });
+  });
+
+  it('does not send an Accept for activities that are not a Follow', async () => {
+    db.getRemoteContent.mockResolvedValue(null);
+    db.getRemoteUserByActor.mockResolvedValue(
+      userRemote({ magicKey: keys().publicKey, activityPubInboxUrl: 'https://remote.example/inbox' })
+    );
+    const note = {
+      ...activity,
+      type: 'Create',
+      object: { id: 'https://remote.example/notes/1', type: 'Note', content: '<p>hi</p>' },
+    };
+
+    await post(signedHeaders(new Date(), path, note));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('stores an inbound Create as remote content', async () => {

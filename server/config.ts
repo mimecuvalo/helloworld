@@ -15,6 +15,9 @@ export const DATABASE_URL = readEnv('DATABASE_URL') ?? '';
 
 // Cron auth for /api/social/update-feeds (Vercel cron sends this bearer token).
 export const CRON_SECRET = readEnv('CRON_SECRET') ?? '';
+// 32-byte key encrypting the secrets on the User row (see server/secrets.ts).
+// Generate with: openssl rand -hex 32
+export const SECRETS_KEY = readEnv('SECRETS_KEY') ?? '';
 
 // S3 (uploads + resource URLs).
 export const S3_AWS_REGION = readEnv('S3_AWS_REGION') ?? '';

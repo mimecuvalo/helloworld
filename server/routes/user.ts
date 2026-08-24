@@ -18,6 +18,21 @@ export const userRoutes = new Hono<AppEnv>()
     await assertAdmin(ctx);
     return c.json(await userService.fetchAllUsers(ctx));
   })
+
+  // Bluesky account linking. The service asserts authorship on each of these.
+  .get('/atproto', async (c) => c.json(await userService.fetchAtprotoStatus(c.get('ctx'))))
+  .post(
+    '/atproto',
+    zValidator(
+      'json',
+      z.object({ handle: z.string().min(1), appPassword: z.string().min(1), pdsUrl: z.string().url().optional() })
+    ),
+    async (c) => c.json(await userService.linkAtprotoAccount(c.get('ctx'), c.req.valid('json')))
+  )
+  .delete('/atproto', async (c) => c.json(await userService.unlinkAtprotoAccount(c.get('ctx'))))
+
+  // Registered before /:id: that route coerces the param to a number, so it
+  // would reject "atproto" with a 400 rather than falling through.
   .get('/:id', zValidator('param', z.object({ id: z.coerce.number().int() })), async (c) => {
     const ctx = c.get('ctx');
     await assertAdmin(ctx);

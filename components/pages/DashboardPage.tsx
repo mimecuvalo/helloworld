@@ -5,6 +5,7 @@ import { UserProvider } from 'lib/user-context';
 import { EditorProvider } from 'lib/editor-context';
 import type { HandleSetFeed, RemoteUser } from 'lib/remote-queries';
 import Tools from 'components/dashboard/Tools';
+import BlueskyLink from 'components/dashboard/BlueskyLink';
 import Following from 'components/dashboard/Following';
 import Followers from 'components/dashboard/Followers';
 import DashboardEditor from 'components/dashboard/DashboardEditor';
@@ -64,6 +65,7 @@ export default function DashboardPage({ user }: { user: DashboardUser }) {
                 userFavicon={user.favicon}
               />
               <Followers handleSetFeed={handleSetFeed} />
+              <BlueskyLink />
             </nav>
 
             <div className={styles.content}>

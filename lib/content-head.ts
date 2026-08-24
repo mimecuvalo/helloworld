@@ -84,6 +84,12 @@ export function buildContentHead(opts: { content: ContentLike; contentOwner: Own
       href: buildUrl({ pathname: '/api/social/feed', searchParams: { resource } }),
     });
     links.push({
+      rel: 'alternate',
+      type: 'application/rss+xml',
+      title,
+      href: buildUrl({ pathname: '/api/social/rss', searchParams: { resource } }),
+    });
+    links.push({
       rel: 'webmention',
       href: buildUrl({ host, pathname: '/api/social/webmention', searchParams: { resource } }),
     });

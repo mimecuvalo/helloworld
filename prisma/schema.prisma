@@ -31,6 +31,17 @@ model User {
   magicKey        String
   privateKey      String
 
+  // AT Protocol. atprotoSigningKey is a P-256 key for the did:web document —
+  // the RSA key above can't serve as an atproto verification method. The
+  // Bluesky app password and refresh token are stored in the clear, following
+  // the same (poor) precedent as privateKey; worth encrypting at rest.
+  atprotoDid        String?
+  atprotoHandle     String?
+  atprotoPdsUrl     String?
+  atprotoAppPassword String?
+  atprotoRefreshJwt String?
+  atprotoSigningKey String?
+
   Content       Content[]
   ContentRemote ContentRemote[] @relation("toUser")
 }
@@ -48,6 +59,7 @@ model UserRemote {
   salmonUrl           String?
   activityPubActorUrl String?
   activityPubInboxUrl String?
+  sharedInboxUrl      String?
   webmentionUrl       String?
   hubUrl              String?
   follower            Boolean   @default(false)
@@ -57,8 +69,14 @@ model UserRemote {
   order               Int       @default(0)
   sortType            String?
 
+  // A peer followed over AT Protocol instead of Atom/ActivityPub.
+  atprotoDid          String?
+  atprotoHandle       String?
+  atprotoPdsUrl       String?
+
   @@index([localUsername])
   @@index([profileUrl])
+  @@index([atprotoDid])
   @@unique([localUsername, profileUrl])
   @@unique([localUsername, activityPubActorUrl])
 }
@@ -90,6 +108,11 @@ model Content {
   style           String
   code            String
   view            String
+
+  // Where this post was mirrored on the AT Protocol side, so edits and deletes
+  // can find the record again.
+  atprotoUri      String?
+  atprotoCid      String?
 
   // TODO(mime): add full-text search?
   //@@index([title, view])

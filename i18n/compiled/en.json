@@ -41,6 +41,12 @@
       "value": "home"
     }
   ],
+  "1116e9904e": [
+    {
+      "type": 0,
+      "value": "app password"
+    }
+  ],
   "24c29702dc": [
     {
       "type": 0,
@@ -53,6 +59,12 @@
       "value": "following"
     }
   ],
+  "2a304a1348": [
+    {
+      "type": 0,
+      "value": "link"
+    }
+  ],
   "2d000429fd": [
     {
       "type": 0,
@@ -63,6 +75,12 @@
     {
       "type": 0,
       "value": "reblog bookmarklet"
+    }
+  ],
+  "32d95e7840": [
+    {
+      "type": 0,
+      "value": "handle (e.g. you.bsky.social)"
     }
   ],
   "3d728e1b6e": [
@@ -191,6 +209,12 @@
     {
       "type": 0,
       "value": "replying to"
+    }
+  ],
+  "695630cfc5": [
+    {
+      "type": 0,
+      "value": "unlink"
     }
   ],
   "7253d1f504": [
@@ -365,6 +389,12 @@
     {
       "type": 0,
       "value": "follow bookmarklet"
+    }
+  ],
+  "c1a2311646": [
+    {
+      "type": 0,
+      "value": "bluesky"
     }
   ],
   "c84d77792c": [

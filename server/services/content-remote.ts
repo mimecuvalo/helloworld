@@ -155,7 +155,7 @@ export async function postComment(ctx: Context, args: { username: string; name: 
   const gravatar = `http://www.gravatar.com/avatar/${emailHash}`;
   const avatar = currentUserPicture || gravatar;
 
-  const createdRemoteContent = await prisma.contentRemote.create({
+  await prisma.contentRemote.create({
     data: {
       avatar,
       commentUser: currentUserEmail,
@@ -182,7 +182,9 @@ export async function postComment(ctx: Context, args: { username: string; name: 
   const contentOwner = await prisma.user.findUnique({ where: { username } });
 
   if (!commentedContent?.hidden && contentOwner && updatedCommentedContent) {
-    await syndicate(ctx, updatedCommentedContent, createdRemoteContent, true /* isComment */);
+    // A new comment changes the parent's comment count, so peers get an Update
+    // of the parent post — signed by its owner, who may not be the commenter.
+    await syndicate(ctx, contentOwner, updatedCommentedContent, { isUpdate: true });
   }
 
   return {

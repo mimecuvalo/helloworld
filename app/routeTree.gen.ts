@@ -12,10 +12,15 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as UsernameDidDotjsonRouteImport } from './routes/$username.did[.]json'
+import { Route as DotwellKnownAtprotoDidRouteImport } from './routes/[.]well-known/atproto-did'
+import { Route as DotwellKnownDidDotjsonRouteImport } from './routes/[.]well-known/did[.]json'
 import { Route as DotwellKnownHostMetaRouteImport } from './routes/[.]well-known/host-meta'
+import { Route as DotwellKnownNodeinfoRouteImport } from './routes/[.]well-known/nodeinfo'
 import { Route as DotwellKnownWebfingerRouteImport } from './routes/[.]well-known/webfinger'
 import { Route as ApiSplatRouteImport } from './routes/api/$'
 import { Route as ResourceSplatRouteImport } from './routes/resource.$'
+import { Route as XrpcSplatRouteImport } from './routes/xrpc/$'
 import { Route as UsernameSearchQueryRouteImport } from './routes/$username.search.$query'
 
 const IndexRoute = IndexRouteImport.update({
@@ -33,9 +38,29 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UsernameDidDotjsonRoute = UsernameDidDotjsonRouteImport.update({
+  id: '/$username/did.json',
+  path: '/$username/did.json',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DotwellKnownAtprotoDidRoute = DotwellKnownAtprotoDidRouteImport.update({
+  id: '/.well-known/atproto-did',
+  path: '/.well-known/atproto-did',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DotwellKnownDidDotjsonRoute = DotwellKnownDidDotjsonRouteImport.update({
+  id: '/.well-known/did.json',
+  path: '/.well-known/did.json',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DotwellKnownHostMetaRoute = DotwellKnownHostMetaRouteImport.update({
   id: '/.well-known/host-meta',
   path: '/.well-known/host-meta',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DotwellKnownNodeinfoRoute = DotwellKnownNodeinfoRouteImport.update({
+  id: '/.well-known/nodeinfo',
+  path: '/.well-known/nodeinfo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DotwellKnownWebfingerRoute = DotwellKnownWebfingerRouteImport.update({
@@ -53,6 +78,11 @@ const ResourceSplatRoute = ResourceSplatRouteImport.update({
   path: '/resource/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const XrpcSplatRoute = XrpcSplatRouteImport.update({
+  id: '/xrpc/$',
+  path: '/xrpc/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UsernameSearchQueryRoute = UsernameSearchQueryRouteImport.update({
   id: '/$username/search/$query',
   path: '/$username/search/$query',
@@ -63,20 +93,30 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/dashboard': typeof DashboardRoute
+  '/$username/did.json': typeof UsernameDidDotjsonRoute
+  '/.well-known/atproto-did': typeof DotwellKnownAtprotoDidRoute
+  '/.well-known/did.json': typeof DotwellKnownDidDotjsonRoute
   '/.well-known/host-meta': typeof DotwellKnownHostMetaRoute
+  '/.well-known/nodeinfo': typeof DotwellKnownNodeinfoRoute
   '/.well-known/webfinger': typeof DotwellKnownWebfingerRoute
   '/api/$': typeof ApiSplatRoute
   '/resource/$': typeof ResourceSplatRoute
+  '/xrpc/$': typeof XrpcSplatRoute
   '/$username/search/$query': typeof UsernameSearchQueryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/dashboard': typeof DashboardRoute
+  '/$username/did.json': typeof UsernameDidDotjsonRoute
+  '/.well-known/atproto-did': typeof DotwellKnownAtprotoDidRoute
+  '/.well-known/did.json': typeof DotwellKnownDidDotjsonRoute
   '/.well-known/host-meta': typeof DotwellKnownHostMetaRoute
+  '/.well-known/nodeinfo': typeof DotwellKnownNodeinfoRoute
   '/.well-known/webfinger': typeof DotwellKnownWebfingerRoute
   '/api/$': typeof ApiSplatRoute
   '/resource/$': typeof ResourceSplatRoute
+  '/xrpc/$': typeof XrpcSplatRoute
   '/$username/search/$query': typeof UsernameSearchQueryRoute
 }
 export interface FileRoutesById {
@@ -84,10 +124,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/dashboard': typeof DashboardRoute
+  '/$username/did.json': typeof UsernameDidDotjsonRoute
+  '/.well-known/atproto-did': typeof DotwellKnownAtprotoDidRoute
+  '/.well-known/did.json': typeof DotwellKnownDidDotjsonRoute
   '/.well-known/host-meta': typeof DotwellKnownHostMetaRoute
+  '/.well-known/nodeinfo': typeof DotwellKnownNodeinfoRoute
   '/.well-known/webfinger': typeof DotwellKnownWebfingerRoute
   '/api/$': typeof ApiSplatRoute
   '/resource/$': typeof ResourceSplatRoute
+  '/xrpc/$': typeof XrpcSplatRoute
   '/$username/search/$query': typeof UsernameSearchQueryRoute
 }
 export interface FileRouteTypes {
@@ -96,30 +141,45 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/dashboard'
+    | '/$username/did.json'
+    | '/.well-known/atproto-did'
+    | '/.well-known/did.json'
     | '/.well-known/host-meta'
+    | '/.well-known/nodeinfo'
     | '/.well-known/webfinger'
     | '/api/$'
     | '/resource/$'
+    | '/xrpc/$'
     | '/$username/search/$query'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/$'
     | '/dashboard'
+    | '/$username/did.json'
+    | '/.well-known/atproto-did'
+    | '/.well-known/did.json'
     | '/.well-known/host-meta'
+    | '/.well-known/nodeinfo'
     | '/.well-known/webfinger'
     | '/api/$'
     | '/resource/$'
+    | '/xrpc/$'
     | '/$username/search/$query'
   id:
     | '__root__'
     | '/'
     | '/$'
     | '/dashboard'
+    | '/$username/did.json'
+    | '/.well-known/atproto-did'
+    | '/.well-known/did.json'
     | '/.well-known/host-meta'
+    | '/.well-known/nodeinfo'
     | '/.well-known/webfinger'
     | '/api/$'
     | '/resource/$'
+    | '/xrpc/$'
     | '/$username/search/$query'
   fileRoutesById: FileRoutesById
 }
@@ -127,10 +187,15 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
   DashboardRoute: typeof DashboardRoute
+  UsernameDidDotjsonRoute: typeof UsernameDidDotjsonRoute
+  DotwellKnownAtprotoDidRoute: typeof DotwellKnownAtprotoDidRoute
+  DotwellKnownDidDotjsonRoute: typeof DotwellKnownDidDotjsonRoute
   DotwellKnownHostMetaRoute: typeof DotwellKnownHostMetaRoute
+  DotwellKnownNodeinfoRoute: typeof DotwellKnownNodeinfoRoute
   DotwellKnownWebfingerRoute: typeof DotwellKnownWebfingerRoute
   ApiSplatRoute: typeof ApiSplatRoute
   ResourceSplatRoute: typeof ResourceSplatRoute
+  XrpcSplatRoute: typeof XrpcSplatRoute
   UsernameSearchQueryRoute: typeof UsernameSearchQueryRoute
 }
 
@@ -157,11 +222,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/$username/did.json': {
+      id: '/$username/did.json'
+      path: '/$username/did.json'
+      fullPath: '/$username/did.json'
+      preLoaderRoute: typeof UsernameDidDotjsonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/atproto-did': {
+      id: '/.well-known/atproto-did'
+      path: '/.well-known/atproto-did'
+      fullPath: '/.well-known/atproto-did'
+      preLoaderRoute: typeof DotwellKnownAtprotoDidRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/did.json': {
+      id: '/.well-known/did.json'
+      path: '/.well-known/did.json'
+      fullPath: '/.well-known/did.json'
+      preLoaderRoute: typeof DotwellKnownDidDotjsonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/.well-known/host-meta': {
       id: '/.well-known/host-meta'
       path: '/.well-known/host-meta'
       fullPath: '/.well-known/host-meta'
       preLoaderRoute: typeof DotwellKnownHostMetaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/nodeinfo': {
+      id: '/.well-known/nodeinfo'
+      path: '/.well-known/nodeinfo'
+      fullPath: '/.well-known/nodeinfo'
+      preLoaderRoute: typeof DotwellKnownNodeinfoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.well-known/webfinger': {
@@ -185,6 +278,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResourceSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/xrpc/$': {
+      id: '/xrpc/$'
+      path: '/xrpc/$'
+      fullPath: '/xrpc/$'
+      preLoaderRoute: typeof XrpcSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/$username/search/$query': {
       id: '/$username/search/$query'
       path: '/$username/search/$query'
@@ -199,10 +299,15 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
   DashboardRoute: DashboardRoute,
+  UsernameDidDotjsonRoute: UsernameDidDotjsonRoute,
+  DotwellKnownAtprotoDidRoute: DotwellKnownAtprotoDidRoute,
+  DotwellKnownDidDotjsonRoute: DotwellKnownDidDotjsonRoute,
   DotwellKnownHostMetaRoute: DotwellKnownHostMetaRoute,
+  DotwellKnownNodeinfoRoute: DotwellKnownNodeinfoRoute,
   DotwellKnownWebfingerRoute: DotwellKnownWebfingerRoute,
   ApiSplatRoute: ApiSplatRoute,
   ResourceSplatRoute: ResourceSplatRoute,
+  XrpcSplatRoute: XrpcSplatRoute,
   UsernameSearchQueryRoute: UsernameSearchQueryRoute,
 }
 export const routeTree = rootRouteImport

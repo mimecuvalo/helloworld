@@ -7,6 +7,7 @@ const db = vi.hoisted(() => ({
   getRemoteUser: vi.fn(),
   getRemoteUserByActor: vi.fn(),
   removeRemoteContent: vi.fn(),
+  removeRemoteContentByPostId: vi.fn(),
   removeRemoteUser: vi.fn(),
   saveRemoteContent: vi.fn(),
   saveRemoteUser: vi.fn(),
@@ -21,7 +22,7 @@ vi.mock('server/social/discover-user', () => discover);
 
 import {
   accept,
-  createArticle,
+  createNote,
   createGenericMessage,
   findUserRemote,
   follow,
@@ -79,29 +80,63 @@ describe('createGenericMessage', () => {
   });
 });
 
-describe('createArticle', () => {
+describe('createNote', () => {
   const localContent = content();
 
-  it('wraps an Article object in a Create activity', async () => {
-    const message = await createArticle(HOST, localContent, user());
+  it('wraps a Note object in a Create activity', async () => {
+    const message = await createNote(HOST, localContent, user());
 
     expect(message.type).toBe('Create');
     expect(message.actor).toBe(ACTOR);
     expect(message.object).toMatchObject({
-      type: 'Article',
+      // Note, not Article: Mastodon renders Article inconsistently.
+      type: 'Note',
       id: `https://${HOST}/api/social/activitypub/message?resource=https%3A%2F%2F${HOST}%2Falice%2Fblog%2Fhello`,
       url: `https://${HOST}/alice/blog/hello`,
       attributedTo: ACTOR,
       title: 'Hello',
       published: '2026-02-01T00:00:00.000Z',
       updated: '2026-02-02T00:00:00.000Z',
-      to: PUBLIC,
+      to: [PUBLIC],
+      cc: [`https://${HOST}/api/social/activitypub/followers?resource=https%3A%2F%2F${HOST}%2Falice`],
     });
     expect(message.id).toBe((message.object as { id: string }).id);
   });
 
+  it('leads the content with the linked title, since a Note has no rendered name', () => {
+    return createNote(HOST, localContent, user()).then((message) => {
+      expect((message.object as { content: string }).content).toContain(
+        `<p><a href="https://${HOST}/alice/blog/hello"><strong>Hello</strong></a></p>`
+      );
+    });
+  });
+
+  it('never sets summary, which Mastodon would render as a content warning', async () => {
+    const message = await createNote(HOST, localContent, user());
+
+    expect(message.object).not.toHaveProperty('summary');
+  });
+
+  it('attaches the thumbnail when the post has one', async () => {
+    const withThumb = await createNote(HOST, content({ thumb: '/resource/thumb.jpg' }), user());
+    expect((withThumb.object as { attachment: unknown[] }).attachment).toEqual([
+      { type: 'Image', url: `https://${HOST}/resource/thumb.jpg`, name: 'Hello' },
+    ]);
+
+    const without = await createNote(HOST, localContent, user());
+    expect((without.object as { attachment?: unknown[] }).attachment).toBeUndefined();
+  });
+
+  it('omits the title heading on a comment, which has no title of its own', async () => {
+    const message = await createNote(HOST, content({ section: 'comments', view: '<p>nice</p>' }), user());
+
+    expect((message.object as { content: string }).content).toBe(
+      `<p>nice</p><img src="https://${HOST}/api/stats?resource=${encodeURIComponent(`https://${HOST}/alice/comments/hello`)}" />`
+    );
+  });
+
   it('absolutizes /resource urls and appends the stats pixel to the content', async () => {
-    const message = await createArticle(HOST, content({ view: '<img src="/resource/a.jpg" />' }), user());
+    const message = await createNote(HOST, content({ view: '<img src="/resource/a.jpg" />' }), user());
     const html = (message.object as { content: string }).content;
 
     expect(html).toContain(`src="https://${HOST}/resource/a.jpg"`);
@@ -109,7 +144,7 @@ describe('createArticle', () => {
   });
 
   it('leaves inReplyTo empty for a top-level post', async () => {
-    const message = await createArticle(HOST, localContent, user());
+    const message = await createNote(HOST, localContent, user());
 
     expect((message.object as { inReplyTo: string }).inReplyTo).toBe('');
     expect(fetchMock).not.toHaveBeenCalled();
@@ -123,7 +158,7 @@ describe('createArticle', () => {
       })
     );
 
-    const message = await createArticle(HOST, content({ thread: 'https://remote.example/@bob/99' }), user());
+    const message = await createNote(HOST, content({ thread: 'https://remote.example/@bob/99' }), user());
 
     expect((message.object as { inReplyTo: string }).inReplyTo).toBe('https://remote.example/notes/99');
   });
@@ -131,7 +166,7 @@ describe('createArticle', () => {
   it('falls back to the raw thread url when the remote object cannot be fetched', async () => {
     fetchMock.mockRejectedValue(new Error('offline'));
 
-    const message = await createArticle(HOST, content({ thread: 'https://remote.example/@bob/99' }), user());
+    const message = await createNote(HOST, content({ thread: 'https://remote.example/@bob/99' }), user());
 
     expect((message.object as { inReplyTo: string }).inReplyTo).toBe('https://remote.example/@bob/99');
   });
@@ -148,20 +183,45 @@ describe('delivery', () => {
     const [url, init] = fetchMock.mock.calls[0];
     expect(url).toBe(inbox);
     expect(init.method).toBe('POST');
-    expect(init.headers['Content-Type']).toBe('application/ld+json');
+    expect(init.headers['Content-Type']).toBe('application/activity+json');
     expect(init.headers.Host).toBe('remote.example');
     expect(init.headers.Date).toBeTruthy();
-    expect(init.headers.Signature).toContain(`keyId="${ACTOR}"`);
-    expect(init.headers.Signature).toContain('headers="(request-target) host date"');
+    // The fragment has to match the actor document's publicKey.id.
+    expect(init.headers.Signature).toContain(`keyId="${ACTOR}#main-key"`);
+    expect(init.headers.Signature).toContain('headers="(request-target) host date digest content-type"');
   });
 
-  it('produces a signature the receiver can verify over request-target, host and date', async () => {
+  it('sends a Digest header matching the body exactly', async () => {
+    await follow(HOST, owner(), userRemote({ activityPubInboxUrl: inbox }), true);
+    await flush();
+
+    const [, init] = fetchMock.mock.calls[0];
+    const expected = crypto.createHash('sha256').update(init.body, 'utf8').digest('base64');
+    expect(init.headers.Digest).toBe(`SHA-256=${expected}`);
+  });
+
+  it('delivers to the shared inbox when the peer advertises one', async () => {
+    // Several followers on one instance otherwise get N copies of the same post.
+    const shared = 'https://remote.example/inbox';
+    await follow(HOST, owner(), userRemote({ activityPubInboxUrl: inbox, sharedInboxUrl: shared }), true);
+    await flush();
+
+    expect(fetchMock.mock.calls[0][0]).toBe(shared);
+  });
+
+  it('produces a signature the receiver can verify, covering the body via the digest', async () => {
     await follow(HOST, owner(), userRemote({ activityPubInboxUrl: inbox }), true);
     await flush();
 
     const { headers } = fetchMock.mock.calls[0][1];
     const signature = headers.Signature.match(/signature="([^"]+)"/)![1];
-    const signed = `(request-target): post /users/bob/inbox\nhost: remote.example\ndate: ${headers.Date}`;
+    const signed = [
+      '(request-target): post /users/bob/inbox',
+      'host: remote.example',
+      `date: ${headers.Date}`,
+      `digest: ${headers.Digest}`,
+      'content-type: application/activity+json',
+    ].join('\n');
 
     const verifier = crypto.createVerify('sha256');
     verifier.update(signed);
@@ -248,18 +308,25 @@ describe('outbound activities', () => {
     });
   });
 
-  it('sends Accept echoing the original body', async () => {
-    await accept(HOST, owner(), remote(), '{"type":"Follow"}');
+  it('sends Accept echoing the Follow activity itself', async () => {
+    // The follower matches this object against its pending request; a
+    // stringified body (what this used to send) matches nothing.
+    const follow = {
+      type: 'Follow',
+      id: 'https://remote.example/follows/1',
+      actor: 'https://remote.example/users/bob',
+    };
+    await accept(HOST, owner(), remote(), follow as never);
     await flush();
 
-    expect(lastBody()).toMatchObject({ type: 'Accept', object: '{"type":"Follow"}' });
+    expect(lastBody()).toMatchObject({ type: 'Accept', object: follow });
   });
 
-  it('sends a reply as a Create carrying the article', async () => {
+  it('sends a reply as a Create carrying the note', async () => {
     await reply(HOST, owner(), content(), remote(), []);
     await flush();
 
-    expect(lastBody()).toMatchObject({ type: 'Create', object: { type: 'Article', title: 'Hello' } });
+    expect(lastBody()).toMatchObject({ type: 'Create', object: { type: 'Note', title: 'Hello' } });
   });
 });
 
@@ -300,12 +367,150 @@ describe('findUserRemote', () => {
 describe('handle', () => {
   const activity = (type: string, object: unknown = {}) => ({ type, object, id: 'x', actor: 'a', to: [] }) as never;
 
-  it.each(['Accept', 'Announce', 'Delete', 'Undo', ''])('ignores unhandled activity type %s', async (type) => {
+  it.each(['Add', 'Block', 'Flag', ''])('ignores unrecognized activity type %s', async (type) => {
     await handle(type, HOST, activity(type), user(), userRemote());
 
     expect(db.saveRemoteContent).not.toHaveBeenCalled();
     expect(db.saveRemoteUser).not.toHaveBeenCalled();
     expect(db.removeRemoteUser).not.toHaveBeenCalled();
+  });
+
+  it('marks us following on Accept of our Follow', async () => {
+    await handle('Accept', HOST, activity('Accept'), user(), userRemote({ following: false }));
+
+    expect(db.saveRemoteUser).toHaveBeenCalledWith(expect.objectContaining({ following: true }));
+  });
+
+  it('drops a peer that Rejects our Follow, unless they follow us back', async () => {
+    await handle('Reject', HOST, activity('Reject'), user(), userRemote({ follower: false }));
+    expect(db.removeRemoteUser).toHaveBeenCalled();
+
+    vi.clearAllMocks();
+    await handle('Reject', HOST, activity('Reject'), user(), userRemote({ follower: true }));
+    expect(db.removeRemoteUser).not.toHaveBeenCalled();
+    expect(db.saveRemoteUser).toHaveBeenCalledWith(expect.objectContaining({ following: false }));
+  });
+
+  it('unfollows on Undo of a Follow', async () => {
+    const remote = userRemote({ follower: true, following: false });
+    await handle('Undo', HOST, activity('Undo', { type: 'Follow' }), user(), remote);
+
+    // no reciprocal follow to preserve, so the row goes
+    expect(db.removeRemoteUser).toHaveBeenCalledWith(remote);
+  });
+
+  it('unlikes on Undo of a Like', async () => {
+    db.getLocalContent.mockResolvedValue(content());
+
+    await handle(
+      'Undo',
+      HOST,
+      activity('Undo', { type: 'Like', object: { inReplyTo: `https://${HOST}/alice/blog/hello` } }),
+      user(),
+      userRemote()
+    );
+
+    expect(db.removeRemoteContent).toHaveBeenCalledWith(expect.objectContaining({ type: 'favorite' }));
+  });
+
+  it('removes the peer when Delete names the actor itself', async () => {
+    const remote = userRemote({ activityPubActorUrl: 'https://remote.example/users/bob' });
+    await handle(
+      'Delete',
+      HOST,
+      {
+        type: 'Delete',
+        id: 'x',
+        actor: 'https://remote.example/users/bob',
+        object: 'https://remote.example/users/bob',
+        to: [],
+      } as never,
+      user(),
+      remote
+    );
+
+    expect(db.removeRemoteUser).toHaveBeenCalledWith(remote);
+  });
+
+  it('removes just the post when Delete names one', async () => {
+    await handle(
+      'Delete',
+      HOST,
+      {
+        type: 'Delete',
+        id: 'x',
+        actor: 'a',
+        object: { id: 'https://remote.example/notes/9', type: 'Tombstone' },
+        to: [],
+      } as never,
+      user(),
+      userRemote()
+    );
+
+    expect(db.removeRemoteContentByPostId).toHaveBeenCalledWith('alice', 'https://remote.example/notes/9');
+    expect(db.removeRemoteUser).not.toHaveBeenCalled();
+  });
+
+  it('stores a boost on Announce, fetching the original when it is a bare uri', async () => {
+    db.getRemoteContent.mockResolvedValue(null);
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify({ id: 'https://remote.example/notes/9', content: '<p>boosted</p>' }), {
+        status: 200,
+        headers: { 'content-type': 'application/activity+json' },
+      })
+    );
+
+    await handle(
+      'Announce',
+      HOST,
+      { type: 'Announce', id: 'x', actor: 'a', object: 'https://remote.example/notes/9', to: [] } as never,
+      user(),
+      userRemote()
+    );
+
+    expect(db.saveRemoteContent).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'post', postId: 'https://remote.example/notes/9,announce' })
+    );
+  });
+
+  it('does not store the same boost twice', async () => {
+    db.getRemoteContent.mockResolvedValue(contentRemote());
+
+    await handle(
+      'Announce',
+      HOST,
+      {
+        type: 'Announce',
+        id: 'x',
+        actor: 'a',
+        object: { id: 'https://remote.example/notes/9', content: 'hi' },
+        to: [],
+      } as never,
+      user(),
+      userRemote()
+    );
+
+    expect(db.saveRemoteContent).not.toHaveBeenCalled();
+  });
+
+  it('upserts on Update the same way it does on Create', async () => {
+    db.getRemoteContent.mockResolvedValue(null);
+
+    await handle(
+      'Update',
+      HOST,
+      {
+        type: 'Update',
+        id: 'x',
+        actor: 'a',
+        to: [],
+        object: { id: 'https://remote.example/notes/9', type: 'Note', content: '<p>edited</p>' },
+      } as never,
+      user(),
+      userRemote()
+    );
+
+    expect(db.saveRemoteContent).toHaveBeenCalledWith(expect.objectContaining({ view: '<p>edited</p>' }));
   });
 
   it('marks the remote user a follower on Follow', async () => {
