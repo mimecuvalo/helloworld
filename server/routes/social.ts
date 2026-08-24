@@ -6,6 +6,7 @@ import magic from 'magic-signatures';
 import type { AppEnv } from '../env';
 import { CRON_SECRET } from '../config';
 import { buildUrl, contentUrl, profileUrl } from '../../lib/url-factory';
+import { buildFeedContentSecurityPolicy } from '../../lib/security';
 import { THUMB_HEIGHT, THUMB_WIDTH } from '../../util/constants';
 import {
   getLocalContent,
@@ -180,7 +181,14 @@ export const socialRoutes = new Hono<AppEnv>()
     if (!contentOwner) return c.body(null, 404);
     const feed = await getLocalLatestContent(resource);
     const xml = renderFeed(host, reqPath(c), feed, contentOwner);
-    return c.body(xml, 200, { 'Content-Type': 'application/xml', 'Cache-Control': `public, s-maxage=${60 * 60 * 24}` });
+    // The feed is styled by /rss.xsl, which the app's strict CSP treats as script;
+    // this response carries its own policy instead (see the api/$ mount for how it
+    // survives the framework's header merge).
+    return c.body(xml, 200, {
+      'Content-Type': 'application/xml',
+      'Cache-Control': `public, s-maxage=${60 * 60 * 24}`,
+      'Content-Security-Policy': buildFeedContentSecurityPolicy(),
+    });
   })
 
   // Atom feed of remote comments on a local item.

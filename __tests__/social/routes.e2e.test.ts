@@ -355,6 +355,18 @@ describe('GET /api/social/feed', () => {
     expect(db.getLocalLatestContent).toHaveBeenCalledWith(ALICE_PROFILE);
   });
 
+  it('ships a policy that lets the browser load the /rss.xsl stylesheet', async () => {
+    // Chrome treats an XSLT stylesheet as script, and the app-wide policy's
+    // 'strict-dynamic' disables both host allowlisting and 'self' — so the feed
+    // carries its own nonce-free policy (a nonce can't ride on a processing
+    // instruction, and this response is CDN-cached anyway).
+    const csp = (await get(q('/api/social/feed'))).headers.get('content-security-policy');
+
+    expect(csp).toContain("script-src 'self'");
+    expect(csp).not.toContain('strict-dynamic');
+    expect(csp).not.toContain('nonce-');
+  });
+
   it('caches at the CDN for a day, which is safe because the feed is public-only', async () => {
     const response = await get(q('/api/social/feed'));
 

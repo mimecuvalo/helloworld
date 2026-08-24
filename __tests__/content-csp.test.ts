@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 import { describe, expect, it } from 'vitest';
-import { buildContentSecurityPolicy } from 'lib/security';
+import { buildContentSecurityPolicy, buildFeedContentSecurityPolicy } from 'lib/security';
 import { inlineScriptHashes } from 'server/content-csp';
 
 const sha256 = (body: string) => `'sha256-${crypto.createHash('sha256').update(body, 'utf8').digest('base64')}'`;
@@ -76,5 +76,29 @@ describe('buildContentSecurityPolicy with content script hashes', () => {
       .split('; ')
       .find((d) => d.startsWith('script-src'))!;
     expect(scriptSrc).not.toContain('amazonaws');
+  });
+});
+
+describe('buildFeedContentSecurityPolicy', () => {
+  const feed = buildFeedContentSecurityPolicy();
+  const directive = (name: string) => feed.split('; ').find((d) => d.startsWith(`${name} `));
+
+  it('allows the same-origin XSLT stylesheet browsers treat as script', () => {
+    expect(directive('script-src')).toBe("script-src 'self'");
+  });
+
+  it('drops strict-dynamic, which would disable that self allowance', () => {
+    expect(feed).not.toContain('strict-dynamic');
+  });
+
+  it('stays nonce-free so the CDN-cached copy keeps working', () => {
+    expect(feed).not.toContain('nonce-');
+  });
+
+  it('renders the stylesheet without granting anything else', () => {
+    // The stylesheet styles with an inline <style> and style attributes; the feed
+    // document itself loads nothing.
+    expect(directive('default-src')).toBe("default-src 'none'");
+    expect(directive('style-src')).toBe("style-src 'unsafe-inline'");
   });
 });

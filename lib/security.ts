@@ -46,3 +46,22 @@ export function buildContentSecurityPolicy(options: {
     .map(([directive, values]) => `${directive} ${values.join(' ')}`.trim())
     .join('; ');
 }
+
+// The Atom feed is styled with /rss.xsl, and browsers treat an XSLT stylesheet as
+// script — so the app policy above blocks it: 'strict-dynamic' turns off both the
+// host allowlist and 'self', and the request nonce can't be put on an
+// <?xml-stylesheet?> processing instruction. The feed document runs nothing of its
+// own, so it gets this tiny nonce-free policy instead: same-origin XSLT plus the
+// inline <style>/style attributes the stylesheet renders with. Nonce-free also
+// means it stays correct in the CDN-cached copy of the feed.
+export function buildFeedContentSecurityPolicy(): string {
+  return [
+    "default-src 'none'",
+    "script-src 'self'",
+    "style-src 'unsafe-inline'",
+    "img-src 'self' data:",
+    "base-uri 'none'",
+    "form-action 'none'",
+    "frame-ancestors 'none'",
+  ].join('; ');
+}
