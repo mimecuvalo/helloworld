@@ -2,5 +2,5 @@ export function contentCacheHeaders(loaderData?: { currentUsername?: string }): 
   if (loaderData?.currentUsername) {
     return { 'Cache-Control': 'private, no-store' };
   }
-  return { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' };
+  return { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=60' };
 }
