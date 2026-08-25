@@ -17,8 +17,8 @@ export function useSession() {
   return { session: data ?? null, isLoading };
 }
 
-export function signIn(): void {
-  window.location.href = '/api/auth/signin';
+export function signIn(callbackUrl = '/dashboard'): void {
+  window.location.href = `/api/auth/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`;
 }
 
 export function signOut(): void {
