@@ -16,7 +16,6 @@ type AtprotoStatus = {
   pdsUrl: string | null;
   linked: boolean;
   webDid: string | null;
-  hasEnvPassword: boolean;
 };
 
 // Links a Bluesky account so published posts mirror there.
@@ -60,7 +59,7 @@ export default function BlueskyLink() {
   });
 
   if (status.isPending || !status.data) return null;
-  const { linked, handle, webDid, hasEnvPassword } = status.data;
+  const { linked, handle, webDid } = status.data;
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
@@ -68,8 +67,6 @@ export default function BlueskyLink() {
     const appPassword = String(form.get('appPassword') || '');
     link.mutate({
       handle: String(form.get('handle') || ''),
-      // Blank means "use BLUESKY_APP_PASSWORD from the environment"; the server
-      // rejects the request if there isn't one.
       ...(appPassword ? { appPassword } : {}),
     });
   };
@@ -97,10 +94,15 @@ export default function BlueskyLink() {
                 />
               </Dialog.Description>
               <div className={styles.dialogActions}>
-                <button type="button" onClick={() => unlink.mutate()} disabled={unlink.isPending}>
+                <button
+                  type="button"
+                  className={styles.dialogButton}
+                  onClick={() => unlink.mutate()}
+                  disabled={unlink.isPending}
+                >
                   <F defaultMessage="unlink" />
                 </button>
-                <Dialog.Close type="button">
+                <Dialog.Close type="button" className={styles.dialogButton}>
                   <F defaultMessage="done" />
                 </Dialog.Close>
               </div>
@@ -126,11 +128,6 @@ export default function BlueskyLink() {
                 placeholder={intl.formatMessage(messages.appPassword)}
                 autoComplete="off"
               />
-              {hasEnvPassword ? (
-                <p className={styles.dialogHint}>
-                  <F defaultMessage="Leave the password blank to use BLUESKY_APP_PASSWORD from the server environment." />
-                </p>
-              ) : null}
               {error ? (
                 <p className={styles.dialogError} role="alert">
                   {error}
@@ -138,10 +135,10 @@ export default function BlueskyLink() {
               ) : null}
 
               <div className={styles.dialogActions}>
-                <Dialog.Close type="button">
+                <Dialog.Close type="button" className={styles.dialogButton}>
                   <F defaultMessage="cancel" />
                 </Dialog.Close>
-                <button type="submit" disabled={link.isPending}>
+                <button type="submit" disabled={link.isPending} className={styles.dialogButton}>
                   {link.isPending ? <F defaultMessage="linking…" /> : <F defaultMessage="link" />}
                 </button>
               </div>

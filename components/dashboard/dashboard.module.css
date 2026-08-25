@@ -434,7 +434,6 @@
   background: var(--hw-bg, var(--background));
   color: inherit;
   border: 1px solid var(--hw-primary-light, var(--color-grey-500));
-  border-radius: var(--radius, 4px);
   box-shadow: 0 6px 24px rgb(0 0 0 / 30%);
   z-index: 1401;
 }
@@ -459,7 +458,6 @@
   color: inherit;
   background: var(--hw-bg, var(--background));
   border: 1px solid var(--hw-primary-light, var(--color-grey-500));
-  border-radius: var(--radius, 4px);
 }
 
 .dialogHint {
@@ -492,4 +490,8 @@
   background: var(--hw-menu-hover);
   border-radius: var(--radius, 4px);
   overflow-wrap: anywhere;
+}
+
+.dialogButton {
+  padding: 3px 8px;
 }

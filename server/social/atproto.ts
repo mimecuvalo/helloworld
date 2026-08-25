@@ -19,7 +19,6 @@ import {
 } from './atproto-records';
 import { getRemoteContent, getRemoteUser, saveRemoteContent, saveRemoteUser } from './db';
 import { decryptSecret, encryptSecret } from '../secrets';
-import { BLUESKY_APP_PASSWORD } from '../config';
 
 // The Bluesky bridge: the half of AT Protocol support that actually moves data.
 //
@@ -35,7 +34,7 @@ const FEED_MAX_DAYS_OLD = 30 * 24 * 60 * 60 * 1000; // matches feeds.ts
 
 // The password may live on the row or in the environment; either counts.
 function appPasswordFor(user: Pick<User, 'atprotoAppPassword'>): string {
-  return decryptSecret(user.atprotoAppPassword) || BLUESKY_APP_PASSWORD;
+  return decryptSecret(user.atprotoAppPassword);
 }
 
 export function hasBlueskyCredentials(user: Pick<User, 'atprotoHandle' | 'atprotoAppPassword'>): boolean {

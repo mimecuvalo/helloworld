@@ -6,7 +6,6 @@ import { AtpAgent } from '@atproto/api';
 import { assertAuthor, ForbiddenError } from '../authorization';
 import { HTTPError } from '../exceptions';
 import { encryptSecret } from '../secrets';
-import { BLUESKY_APP_PASSWORD } from '../config';
 import { PUBLIC_BSKY_PDS, didForUser, generateSigningKey } from '../social/atproto-identity';
 import { profileUrl } from '../../lib/url-factory';
 
@@ -146,9 +145,9 @@ export async function linkAtprotoAccount(
   // it came from, leave the column null so the secret stays out of the database
   // entirely — getAgent falls back to the env var the same way.
   const fromEnvironment = !input.appPassword;
-  const appPassword = input.appPassword || BLUESKY_APP_PASSWORD;
+  const appPassword = input.appPassword;
   if (!appPassword) {
-    throw new HTTPError(400, pdsUrl, 'No app password given, and BLUESKY_APP_PASSWORD is not set on the server.');
+    throw new HTTPError(400, pdsUrl, 'No app password given.');
   }
 
   const agent = new AtpAgent({ service: pdsUrl });
@@ -250,8 +249,7 @@ export async function fetchAtprotoStatus(ctx: Context) {
     pdsUrl: user?.atprotoPdsUrl || null,
     // Linked either way: the password may live in the environment rather than
     // the row, in which case atprotoAppPassword is deliberately null.
-    linked: !!(user?.atprotoHandle && (user?.atprotoAppPassword || BLUESKY_APP_PASSWORD)),
+    linked: !!(user?.atprotoHandle && user?.atprotoAppPassword),
     webDid: user ? didForUser(ctx.hostname, user) : null,
-    hasEnvPassword: !!BLUESKY_APP_PASSWORD,
   };
 }

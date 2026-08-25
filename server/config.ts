@@ -18,10 +18,6 @@ export const CRON_SECRET = readEnv('CRON_SECRET') ?? '';
 // 32-byte key encrypting the secrets on the User row (see server/secrets.ts).
 // Generate with: openssl rand -hex 32
 export const SECRETS_KEY = readEnv('SECRETS_KEY') ?? '';
-// Optional: a Bluesky app password supplied by the environment instead of the
-// dashboard. For a single-tenant blog this is the better home for it — the
-// credential never reaches the database at all.
-export const BLUESKY_APP_PASSWORD = readEnv('BLUESKY_APP_PASSWORD') ?? '';
 
 // S3 (uploads + resource URLs).
 export const S3_AWS_REGION = readEnv('S3_AWS_REGION') ?? '';
