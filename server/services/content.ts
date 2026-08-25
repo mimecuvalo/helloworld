@@ -187,7 +187,7 @@ export async function fetchCollection(
   });
   const orderBy = [{ order: 'asc' }, getSQLSortType(sectionContent?.sortType || '')] as any;
 
-  const constraints: { [key: string]: boolean | number } = { redirect: 0 };
+  const constraints: { [key: string]: any } = { redirect: 0, template: { not: 'blank' } };
   if (!isOwnerViewing) constraints['hidden'] = false;
 
   const select =
@@ -269,7 +269,7 @@ export async function fetchCollectionPaginated(
   if (cachedData) return cachedData;
   const take = 20;
 
-  const constraints: { [key: string]: boolean | number } = { redirect: 0 };
+  const constraints: { [key: string]: any } = { redirect: 0, template: { not: 'blank' } };
   if (!isOwnerViewing) constraints['hidden'] = false;
 
   const notEqualToMain = { not: 'main' };
