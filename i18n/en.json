@@ -19,9 +19,6 @@
   "06a943c59f": {
     "message": "search"
   },
-  "07302eddb6": {
-    "message": "Leave the password blank to use BLUESKY_APP_PASSWORD from the server environment."
-  },
   "0e002f7647": {
     "message": "powered by {br} {link}"
   },

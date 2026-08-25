@@ -141,10 +141,6 @@ export async function linkAtprotoAccount(
   const handle = input.handle.trim().replace(/^@/, '');
   const pdsUrl = input.pdsUrl?.trim() || PUBLIC_BSKY_PDS;
 
-  // A blank password means "use the one in the environment". When that's where
-  // it came from, leave the column null so the secret stays out of the database
-  // entirely — getAgent falls back to the env var the same way.
-  const fromEnvironment = !input.appPassword;
   const appPassword = input.appPassword;
   if (!appPassword) {
     throw new HTTPError(400, pdsUrl, 'No app password given.');
@@ -166,7 +162,7 @@ export async function linkAtprotoAccount(
       atprotoDid: session.did,
       atprotoHandle: session.handle,
       atprotoPdsUrl: pdsUrl,
-      atprotoAppPassword: fromEnvironment ? null : encryptSecret(appPassword),
+      atprotoAppPassword: encryptSecret(appPassword),
       atprotoRefreshJwt: encryptSecret(session.refreshJwt),
     },
   });

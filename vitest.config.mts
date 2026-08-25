@@ -32,5 +32,8 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./vitest.setup.ts'],
     include: ['__tests__/**/*.{test,spec}.{ts,tsx}', '**/*.{test,spec}.{ts,tsx}'],
+    // The broad include above otherwise sweeps up whole duplicate copies of the
+    // suite from agent worktrees under .claude/, inflating every run.
+    exclude: ['**/node_modules/**', '**/dist/**', '**/.output/**', '**/.claude/**'],
   },
 });

@@ -41,3 +41,7 @@ dist/
 .output/
 .vercel/
 generated/
+
+# Claude Code tooling state (agent worktrees). Not ignoring it lets vitest's
+# **/*.test.ts include pick up duplicate copies of the whole suite.
+.claude/
