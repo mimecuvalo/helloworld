@@ -19,14 +19,26 @@
   "06a943c59f": {
     "message": "search"
   },
+  "07302eddb6": {
+    "message": "Leave the password blank to use BLUESKY_APP_PASSWORD from the server environment."
+  },
   "0e002f7647": {
     "message": "powered by {br} {link}"
+  },
+  "0f6969d705": {
+    "message": "remove"
   },
   "106a6c241b": {
     "message": "home"
   },
+  "10aec35353": {
+    "message": "cancel"
+  },
   "1116e9904e": {
     "message": "app password"
+  },
+  "1a16279991": {
+    "message": "This site is its own fediverse server, so there is no account to connect — people follow it directly at:"
   },
   "24c29702dc": {
     "message": "Search:"
@@ -36,6 +48,9 @@
   },
   "2a304a1348": {
     "message": "link"
+  },
+  "2bf23ac94b": {
+    "message": "linking…"
   },
   "2d000429fd": {
     "message": "Nothing to read right now!"
@@ -58,11 +73,17 @@
   "42b90196b4": {
     "message": "post"
   },
+  "43781db5c4": {
+    "message": "save"
+  },
   "44f00c21a1": {
     "message": "try going back to the <a>beginning</a>."
   },
   "4937452da0": {
     "message": "sort by newest"
+  },
+  "4fa3cb5e32": {
+    "message": "not linked"
   },
   "529723465a": {
     "message": "view thread"
@@ -85,11 +106,17 @@
   "5f02f05c74": {
     "message": "Loading…"
   },
+  "6080d71c0c": {
+    "message": "mastodon"
+  },
   "60f3b1ff9b": {
     "message": "(hidden)"
   },
   "61bfee279f": {
     "message": "untitled"
+  },
+  "62b395c8d2": {
+    "message": "Optionally, verify it on your Mastodon profile. Add your site to a profile metadata field there, then paste your profile URL here so this site links back."
   },
   "64af1b1f5f": {
     "message": "upside down face"
@@ -105,6 +132,9 @@
   },
   "695630cfc5": {
     "message": "unlink"
+  },
+  "6b2ded51d8": {
+    "message": "done"
   },
   "7253d1f504": {
     "message": "read all"
@@ -126,6 +156,12 @@
   },
   "803fbc4585": {
     "message": "view all items"
+  },
+  "807b754692": {
+    "message": "https://mastodon.social/@you"
+  },
+  "8217537122": {
+    "message": "Create an app password in Bluesky under Settings → Privacy and Security → App Passwords. Never your account password."
   },
   "835ca8f9cf": {
     "message": "it's not you, it's us. our server is monkeying around."
@@ -168,6 +204,9 @@
   },
   "a99500c918": {
     "message": "by {creator}"
+  },
+  "aa9c959941": {
+    "message": "Posts you publish are mirrored to {handle}."
   },
   "aaca0f5eb4": {
     "message": "avatar"

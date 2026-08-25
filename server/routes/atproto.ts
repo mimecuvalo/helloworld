@@ -3,10 +3,10 @@ import type { Context as HonoContext } from 'hono';
 import type { AppEnv } from '../env';
 import type { Content, User } from '../../generated/prisma/client';
 import { buildUrl, profileUrl } from '../../lib/url-factory';
-import { getLocalContent, getLocalLatestContent } from '../social/db';
+import { getLocalLatestContent } from '../social/db';
 import prisma from '../prisma';
 import { buildDidDocument, canHaveDid, didForUser } from '../social/atproto-identity';
-import { POST_COLLECTION, recordFor } from '../social/atproto-records';
+import { POST_COLLECTION, recordFor, rkeyFor } from '../social/atproto-records';
 
 // The AT Protocol read surface, mounted at /xrpc/* (see app/routes/xrpc/$.ts —
 // atproto clients address `<pds>/xrpc/<nsid>`, so it has to sit at the root).
@@ -152,8 +152,11 @@ export const atprotoRoutes = new Hono<AppEnv>()
       return xrpcError(c, 400, 'InvalidRequest', 'Unknown collection');
     }
 
+    // Record keys are TIDs, not post slugs, so this resolves by matching the
+    // key each post derives rather than by looking the name up directly.
     const rkey = c.req.query('rkey') || '';
-    const content = await getLocalContent(buildUrl({ host, pathname: `/${user.username}/${rkey}` }));
+    const feed = await getLocalLatestContent(profileUrl(user.username, host));
+    const content = feed.find((item) => rkeyFor(item) === rkey);
     // The federation surface is unauthenticated: hidden means invisible.
     if (!content || content.hidden || content.username !== user.username) {
       return xrpcError(c, 404, 'RecordNotFound', 'Could not locate record');

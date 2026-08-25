@@ -6,7 +6,9 @@ import { AtpAgent } from '@atproto/api';
 import { assertAuthor, ForbiddenError } from '../authorization';
 import { HTTPError } from '../exceptions';
 import { encryptSecret } from '../secrets';
+import { BLUESKY_APP_PASSWORD } from '../config';
 import { PUBLIC_BSKY_PDS, didForUser, generateSigningKey } from '../social/atproto-identity';
+import { profileUrl } from '../../lib/url-factory';
 
 // RSA keypair for signing federation (Salmon / magic-envelope / ActivityPub HTTP
 // signature) messages. Ported from the old pages/api/setup.ts — a user created
@@ -68,6 +70,7 @@ const PUBLIC_USER_SELECT = {
   theme: true,
   viewport: true,
   sidebarHtml: true,
+  mastodonUrl: true,
 } as const;
 
 export async function fetchPublicUserData(ctx: Context, usernameArg?: string | null) {
@@ -132,17 +135,26 @@ export async function ensureAtprotoSigningKey(ctx: Context, username: string): P
 // — a typo should fail here, not silently at the next publish.
 export async function linkAtprotoAccount(
   ctx: Context,
-  input: { handle: string; appPassword: string; pdsUrl?: string }
+  input: { handle: string; appPassword?: string; pdsUrl?: string }
 ): Promise<{ did: string; handle: string; pdsUrl: string }> {
   await assertAuthor(ctx);
 
   const handle = input.handle.trim().replace(/^@/, '');
   const pdsUrl = input.pdsUrl?.trim() || PUBLIC_BSKY_PDS;
 
+  // A blank password means "use the one in the environment". When that's where
+  // it came from, leave the column null so the secret stays out of the database
+  // entirely — getAgent falls back to the env var the same way.
+  const fromEnvironment = !input.appPassword;
+  const appPassword = input.appPassword || BLUESKY_APP_PASSWORD;
+  if (!appPassword) {
+    throw new HTTPError(400, pdsUrl, 'No app password given, and BLUESKY_APP_PASSWORD is not set on the server.');
+  }
+
   const agent = new AtpAgent({ service: pdsUrl });
   let session;
   try {
-    const response = await agent.login({ identifier: handle, password: input.appPassword });
+    const response = await agent.login({ identifier: handle, password: appPassword });
     session = response.data;
   } catch {
     throw new HTTPError(400, pdsUrl, 'Could not sign in to Bluesky with that handle and app password.');
@@ -155,12 +167,53 @@ export async function linkAtprotoAccount(
       atprotoDid: session.did,
       atprotoHandle: session.handle,
       atprotoPdsUrl: pdsUrl,
-      atprotoAppPassword: encryptSecret(input.appPassword),
+      atprotoAppPassword: fromEnvironment ? null : encryptSecret(appPassword),
       atprotoRefreshJwt: encryptSecret(session.refreshJwt),
     },
   });
 
   return { did: session.did, handle: session.handle, pdsUrl };
+}
+
+// Mastodon "linking" is not a credential handshake — this site is already an
+// ActivityPub server, so a Mastodon user follows it directly. What a link
+// buys you is rel="me" verification: Mastodon fetches the URL in your profile
+// metadata and, if it links back here, marks that field verified.
+export async function fetchMastodonStatus(ctx: Context) {
+  await assertAuthor(ctx);
+
+  const user = await ctx.prisma.user.findUnique({ where: { username: ctx.currentUsername } });
+  return {
+    mastodonUrl: user?.mastodonUrl || null,
+    // What to paste into the Mastodon profile field, and the handle peers use.
+    profileUrl: user ? profileUrl(user.username, ctx.hostname) : null,
+    fediverseHandle: user ? `@${user.username}@${ctx.hostname}` : null,
+  };
+}
+
+export async function linkMastodonAccount(ctx: Context, input: { mastodonUrl: string }) {
+  await assertAuthor(ctx);
+
+  const raw = input.mastodonUrl.trim();
+  let parsed: URL;
+  try {
+    parsed = new URL(raw);
+  } catch {
+    throw new HTTPError(400, raw, 'That does not look like a profile URL (try https://mastodon.social/@you).');
+  }
+  if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+    throw new HTTPError(400, raw, 'A profile URL has to be http(s).');
+  }
+
+  await ctx.prisma.user.update({ where: { username: ctx.currentUsername }, data: { mastodonUrl: parsed.toString() } });
+  return await fetchMastodonStatus(ctx);
+}
+
+export async function unlinkMastodonAccount(ctx: Context): Promise<boolean> {
+  await assertAuthor(ctx);
+
+  await ctx.prisma.user.update({ where: { username: ctx.currentUsername }, data: { mastodonUrl: null } });
+  return true;
 }
 
 export async function unlinkAtprotoAccount(ctx: Context): Promise<boolean> {
@@ -185,12 +238,20 @@ export async function unlinkAtprotoAccount(ctx: Context): Promise<boolean> {
 export async function fetchAtprotoStatus(ctx: Context) {
   await assertAuthor(ctx);
 
+  // Provision the signing key here rather than only on link: the dashboard
+  // shows the did:web id, and without a key the DID document 404s — advertising
+  // an identity that doesn't resolve.
+  await ensureAtprotoSigningKey(ctx, ctx.currentUsername);
+
   const user = await ctx.prisma.user.findUnique({ where: { username: ctx.currentUsername } });
   return {
     did: user?.atprotoDid || null,
     handle: user?.atprotoHandle || null,
     pdsUrl: user?.atprotoPdsUrl || null,
-    linked: !!(user?.atprotoHandle && user?.atprotoAppPassword),
+    // Linked either way: the password may live in the environment rather than
+    // the row, in which case atprotoAppPassword is deliberately null.
+    linked: !!(user?.atprotoHandle && (user?.atprotoAppPassword || BLUESKY_APP_PASSWORD)),
     webDid: user ? didForUser(ctx.hostname, user) : null,
+    hasEnvPassword: !!BLUESKY_APP_PASSWORD,
   };
 }

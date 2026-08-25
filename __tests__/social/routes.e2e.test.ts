@@ -14,6 +14,7 @@ const db = vi.hoisted(() => ({
   getRemoteUser: vi.fn(),
   getRemoteUserByActor: vi.fn(),
   countLocalUsersAndContent: vi.fn(),
+  getLocalUsersWithBluesky: vi.fn(),
   removeOldRemoteContent: vi.fn(),
   removeRemoteContent: vi.fn(),
   removeRemoteUser: vi.fn(),
@@ -104,6 +105,7 @@ beforeEach(() => {
   db.getRemoteFriends.mockResolvedValue([[], []]);
   db.getRemoteAllUsers.mockResolvedValue([]);
   db.countLocalUsersAndContent.mockResolvedValue([1, 1]);
+  db.getLocalUsersWithBluesky.mockResolvedValue([]);
 });
 
 afterEach(() => {

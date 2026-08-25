@@ -4,7 +4,17 @@ import { discoverUserRemoteInfoSaveAndSubscribe } from './discover-user';
 import { follow as activityStreamsFollow, like as activityStreamsLike } from './activitystreams';
 import { parseFeedAndInsertIntoDb, retrieveFeed } from './feeds';
 import { syndicateContent, syndicateDelete } from './syndicate';
-import { followOnBluesky, isAtprotoUserRemote, pollAtprotoUser, unfollowOnBluesky } from './atproto';
+import {
+  followOnBluesky,
+  isAtprotoUserRemote,
+  likeOnBluesky,
+  pollAtprotoUser,
+  replyOnBluesky,
+  repostOnBluesky,
+  syncFollowersFromBluesky,
+  syncProfileToBluesky,
+  unfollowOnBluesky,
+} from './atproto';
 
 // Push a post out to its owner's followers (and anyone it mentions). `isUpdate`
 // picks between Create — a new post — and Update, which replaces one peers
@@ -33,7 +43,42 @@ export async function like(
   favorited: boolean
 ): Promise<void> {
   if (!ctx.currentUser) return;
+
+  // An atproto peer has no inbox to deliver a Like activity to; the like has to
+  // be a real app.bsky.feed.like on the post itself.
+  if (isAtprotoUserRemote(userRemote)) {
+    await likeOnBluesky(ctx.currentUser, contentRemote.postId, favorited);
+    return;
+  }
+
   await activityStreamsLike(ctx.hostname, ctx.currentUser, contentRemote, userRemote, favorited);
+}
+
+// Reblogging a Bluesky post reposts it there; elsewhere reblogs stay local.
+export async function reblog(
+  ctx: Context,
+  contentRemote: ContentRemote,
+  userRemote: UserRemote,
+  isRepost: boolean
+): Promise<void> {
+  if (!ctx.currentUser || !isAtprotoUserRemote(userRemote)) return;
+  await repostOnBluesky(ctx.currentUser, contentRemote.postId, isRepost);
+}
+
+// Commenting on a remote item: replies to a Bluesky post go back as replies.
+export async function replyToRemote(ctx: Context, contentRemote: ContentRemote, text: string): Promise<void> {
+  if (!ctx.currentUser || !contentRemote.postId?.startsWith('at://')) return;
+  await replyOnBluesky(ctx.currentUser, contentRemote.postId, text);
+}
+
+export async function syncBlueskyProfile(ctx: Context): Promise<void> {
+  if (!ctx.currentUser) return;
+  await syncProfileToBluesky(ctx.hostname, ctx.currentUser);
+}
+
+export async function syncBlueskyFollowers(ctx: Context): Promise<number> {
+  if (!ctx.currentUser) return 0;
+  return await syncFollowersFromBluesky(ctx.currentUser);
 }
 
 export async function subscribeToFeed(ctx: Context, profileUrl: string): Promise<UserRemote | null> {

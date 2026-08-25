@@ -1,7 +1,7 @@
 import type { Content, User, UserRemote } from '../../generated/prisma/client';
 import * as cheerio from 'cheerio';
 import { nanoid } from 'nanoid';
-import { buildUrl, contentUrl } from '../../lib/url-factory';
+import { buildUrl, contentUrl, profileUrl } from '../../lib/url-factory';
 import { createGenericMessage, createNoteObject, deliver, followersUrlFor, PUBLIC_AUDIENCE } from './activitystreams';
 import { getUserRemoteInfo } from './discover-user';
 import { getRemoteFriends, getRemoteUser, saveRemoteUser } from './db';
@@ -84,7 +84,7 @@ export async function syndicateContent(
   // runs even when there is no fediverse audience at all.
   await publishToBluesky(host, contentOwner, content);
 
-  const [followers] = await getRemoteFriends(contentOwner.username);
+  const [followers] = await getRemoteFriends(profileUrl(contentOwner.username, host));
   const mentioned = await resolveMentions(contentOwner.username, findMentions(content.view));
   const recipients = dedupeByInbox([...followers, ...mentioned]);
   if (!recipients.length) return;
@@ -119,7 +119,7 @@ export async function syndicateContent(
 export async function syndicateDelete(host: string, contentOwner: User, content: Content): Promise<void> {
   await deleteFromBluesky(contentOwner, content);
 
-  const [followers] = await getRemoteFriends(contentOwner.username);
+  const [followers] = await getRemoteFriends(profileUrl(contentOwner.username, host));
   const recipients = dedupeByInbox(followers);
   if (!recipients.length) return;
 

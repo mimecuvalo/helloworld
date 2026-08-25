@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import type { Context } from '../context';
 import type { Prisma } from '../../generated/prisma/client';
 import { syndicate } from '../social';
-import { like } from '../social';
+import { like, reblog } from '../social';
 
 export function allContentRemote(ctx: Context) {
   return ctx.prisma.contentRemote.findMany();
@@ -230,6 +230,30 @@ export async function favoriteContentRemote(
   }
 
   return { fromUsername, postId, type, favorited };
+}
+
+// Natively repost a Bluesky item, rather than only quoting it into the editor.
+export async function repostContentRemote(
+  ctx: Context,
+  args: { fromUsername: string; postId: string; isRepost: boolean }
+) {
+  const { currentUsername, prisma } = ctx;
+  const { fromUsername, postId, isRepost } = args;
+
+  const contentRemote = await prisma.contentRemote.findUnique({
+    where: { toUsername_fromUsername_postId: { toUsername: currentUsername, fromUsername, postId } },
+  });
+  if (!contentRemote) return { reposted: false };
+
+  const userRemote = await prisma.userRemote.findUnique({
+    where: {
+      localUsername_profileUrl: { localUsername: currentUsername, profileUrl: contentRemote.fromUsername || '' },
+    },
+  });
+  if (!userRemote) return { reposted: false };
+
+  await reblog(ctx, contentRemote, userRemote, isRepost);
+  return { reposted: isRepost };
 }
 
 export async function deleteContentRemote(

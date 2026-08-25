@@ -42,6 +42,10 @@ model User {
   atprotoRefreshJwt String?
   atprotoSigningKey String?
 
+  // A Mastodon (or any fediverse) profile to cross-verify with, via rel="me".
+  // There is no credential here: Mastodon federates with this site directly.
+  mastodonUrl       String?
+
   Content       Content[]
   ContentRemote ContentRemote[] @relation("toUser")
 }

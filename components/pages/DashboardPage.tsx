@@ -6,6 +6,7 @@ import { EditorProvider } from 'lib/editor-context';
 import type { HandleSetFeed, RemoteUser } from 'lib/remote-queries';
 import Tools from 'components/dashboard/Tools';
 import BlueskyLink from 'components/dashboard/BlueskyLink';
+import MastodonLink from 'components/dashboard/MastodonLink';
 import Following from 'components/dashboard/Following';
 import Followers from 'components/dashboard/Followers';
 import DashboardEditor from 'components/dashboard/DashboardEditor';
@@ -66,6 +67,7 @@ export default function DashboardPage({ user }: { user: DashboardUser }) {
               />
               <Followers handleSetFeed={handleSetFeed} />
               <BlueskyLink />
+              <MastodonLink />
             </nav>
 
             <div className={styles.content}>

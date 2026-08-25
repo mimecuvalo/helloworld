@@ -379,3 +379,117 @@
 .menuItem:hover {
   background: var(--hw-menu-hover);
 }
+
+/* Bluesky / Mastodon link dialogs. The trigger sits in the sidebar nav next to
+   Tools and Following, so it borrows their box treatment. */
+.blueskyTrigger,
+.mastodonTrigger {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  width: calc(100% - 16px);
+  margin: 0 16px 28px 0;
+  padding: 8px;
+  border: 1px solid var(--hw-primary-light, var(--color-grey-500));
+  border-radius: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.blueskyTrigger:hover,
+.mastodonTrigger:hover {
+  background: var(--hw-menu-hover);
+}
+
+.blueskyState,
+.mastodonState {
+  font-size: 0.875rem;
+  opacity: 0.7;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dialogBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgb(0 0 0 / 50%);
+  backdrop-filter: blur(3px);
+  z-index: 1400;
+}
+
+.dialogPopup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(420px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  padding: 20px;
+  background: var(--hw-bg, var(--background));
+  color: inherit;
+  border: 1px solid var(--hw-primary-light, var(--color-grey-500));
+  border-radius: var(--radius, 4px);
+  box-shadow: 0 6px 24px rgb(0 0 0 / 30%);
+  z-index: 1401;
+}
+
+.dialogTitle {
+  margin: 0 0 12px;
+  font-size: 1.25rem;
+}
+
+.dialogDescription {
+  margin: 0 0 16px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.dialogInput {
+  display: block;
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 8px;
+  font: inherit;
+  color: inherit;
+  background: var(--hw-bg, var(--background));
+  border: 1px solid var(--hw-primary-light, var(--color-grey-500));
+  border-radius: var(--radius, 4px);
+}
+
+.dialogHint {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  opacity: 0.7;
+  overflow-wrap: anywhere;
+}
+
+.dialogError {
+  margin: 8px 0 0;
+  font-size: 0.875rem;
+  color: var(--hw-error, #c00);
+}
+
+.dialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.dialogCode {
+  display: block;
+  margin: 8px 0;
+  padding: 8px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.75rem;
+  background: var(--hw-menu-hover);
+  border-radius: var(--radius, 4px);
+  overflow-wrap: anywhere;
+}

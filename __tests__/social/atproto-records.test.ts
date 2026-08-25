@@ -1,12 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import {
   atUriFor,
+  atUriFromBskyUrl,
+  imageUrlsIn,
+  renderEmbed,
   bskyPermalink,
   buildPostRecord,
   cidForRecord,
   postTextFor,
   recordFor,
   renderPostText,
+  rkeyFor,
   rkeyOfUri,
   truncateToGraphemes,
 } from 'server/social/atproto-records';
@@ -67,8 +71,8 @@ describe('buildPostRecord', () => {
 });
 
 describe('record identity', () => {
-  it('derives a stable at:// uri from the content name', () => {
-    expect(atUriFor(DID, content())).toBe(`at://${DID}/app.bsky.feed.post/hello`);
+  it('derives a stable at:// uri keyed by the post TID', () => {
+    expect(atUriFor(DID, content())).toBe(`at://${DID}/app.bsky.feed.post/${rkeyFor(content())}`);
   });
 
   it('computes a real dag-cbor CIDv1, not a placeholder', async () => {
@@ -91,7 +95,7 @@ describe('record identity', () => {
   it('bundles uri, cid and value together', async () => {
     const record = await recordFor(HOST, DID, content(), user());
 
-    expect(record.uri).toBe(`at://${DID}/app.bsky.feed.post/hello`);
+    expect(record.uri).toBe(`at://${DID}/app.bsky.feed.post/${rkeyFor(content())}`);
     expect(record.cid).toBe(await cidForRecord(record.value));
   });
 
@@ -160,5 +164,164 @@ describe('renderPostText', () => {
 
   it('handles a post with no facets at all', () => {
     expect(renderPostText('plain', [])).toBe('<p>plain</p>');
+  });
+});
+
+describe('renderEmbed', () => {
+  it('renders images, linking the thumb to the full size', () => {
+    const html = renderEmbed({
+      $type: 'app.bsky.embed.images#view',
+      images: [{ thumb: 'https://cdn/t.jpg', fullsize: 'https://cdn/f.jpg', alt: 'a cat' }],
+    });
+
+    expect(html).toContain('<img src="https://cdn/t.jpg" alt="a cat" />');
+    expect(html).toContain('href="https://cdn/f.jpg"');
+  });
+
+  it('renders a link card with its thumbnail', () => {
+    const html = renderEmbed({
+      $type: 'app.bsky.embed.external#view',
+      external: {
+        uri: 'https://example.com',
+        title: 'A post',
+        description: 'about things',
+        thumb: 'https://cdn/c.jpg',
+      },
+    });
+
+    expect(html).toContain('href="https://example.com"');
+    expect(html).toContain('<strong>A post</strong>');
+    expect(html).toContain('src="https://cdn/c.jpg"');
+    expect(html).toContain('about things');
+  });
+
+  it('renders a quote post as a blockquote attributed to its author', () => {
+    const html = renderEmbed({
+      $type: 'app.bsky.embed.record#view',
+      record: {
+        uri: 'at://did:plc:bob/app.bsky.feed.post/xyz',
+        value: { text: 'the original' },
+        author: { handle: 'bob.bsky.social', displayName: 'Bob' },
+      },
+    });
+
+    expect(html).toContain('<blockquote>');
+    expect(html).toContain('the original');
+    expect(html).toContain('bsky.app/profile/bob.bsky.social/post/xyz');
+  });
+
+  it('renders video with its poster', () => {
+    const html = renderEmbed({
+      $type: 'app.bsky.embed.video#view',
+      playlist: 'https://cdn/v.m3u8',
+      thumbnail: 'https://cdn/p.jpg',
+    });
+
+    expect(html).toContain('<video controls poster="https://cdn/p.jpg"');
+  });
+
+  it('escapes attacker-controlled text', () => {
+    const html = renderEmbed({
+      $type: 'app.bsky.embed.external#view',
+      external: { uri: 'https://x.example', title: '<script>alert(1)</script>' },
+    });
+
+    expect(html).not.toContain('<script>');
+    expect(html).toContain('&lt;script&gt;');
+  });
+
+  it('returns nothing for an absent or unrecognized embed', () => {
+    expect(renderEmbed(null)).toBe('');
+    expect(renderEmbed(undefined)).toBe('');
+    expect(renderEmbed({ $type: 'app.bsky.embed.somethingNew' })).toBe('');
+  });
+});
+
+describe('imageUrlsIn', () => {
+  it('finds absolute image urls in the post body', () => {
+    const urls = imageUrlsIn(
+      HOST,
+      content({ view: '<p><img src="https://cdn/a.jpg" /><img src="https://cdn/b.jpg" /></p>' })
+    );
+
+    expect(urls).toEqual(['https://cdn/a.jpg', 'https://cdn/b.jpg']);
+  });
+
+  it('skips the analytics pixel that rides along with every post', () => {
+    expect(imageUrlsIn(HOST, content({ view: '<p>hi</p>' }))).toEqual([]);
+  });
+
+  it('deduplicates a repeated image', () => {
+    const urls = imageUrlsIn(HOST, content({ view: '<img src="https://cdn/a.jpg" /><img src="https://cdn/a.jpg" />' }));
+
+    expect(urls).toEqual(['https://cdn/a.jpg']);
+  });
+});
+
+describe('atUriFromBskyUrl', () => {
+  const resolve = async (handle: string) => (handle === 'bob.bsky.social' ? 'did:plc:bob' : null);
+
+  it('converts a bsky.app permalink back to an at:// uri', async () => {
+    await expect(atUriFromBskyUrl('https://bsky.app/profile/bob.bsky.social/post/abc', resolve)).resolves.toBe(
+      'at://did:plc:bob/app.bsky.feed.post/abc'
+    );
+  });
+
+  it('passes an at:// uri straight through without resolving', async () => {
+    await expect(atUriFromBskyUrl('at://did:plc:bob/app.bsky.feed.post/abc', resolve)).resolves.toBe(
+      'at://did:plc:bob/app.bsky.feed.post/abc'
+    );
+  });
+
+  it('handles a permalink that already carries a did', async () => {
+    await expect(atUriFromBskyUrl('https://bsky.app/profile/did:plc:carol/post/xyz', resolve)).resolves.toBe(
+      'at://did:plc:carol/app.bsky.feed.post/xyz'
+    );
+  });
+
+  it('returns null for a url that is not a bluesky post', async () => {
+    await expect(atUriFromBskyUrl('https://mastodon.social/@bob/1', resolve)).resolves.toBeNull();
+  });
+
+  it('returns null when the handle cannot be resolved', async () => {
+    await expect(atUriFromBskyUrl('https://bsky.app/profile/ghost.example/post/abc', resolve)).resolves.toBeNull();
+  });
+});
+
+describe('record keys are TIDs', () => {
+  // The PDS rejects anything that is not a TID with "Invalid TID string", so
+  // this is not cosmetic — a non-TID rkey fails every publish.
+  const TID = /^[234567abcdefghijklmnopqrstuvwxyz]{13}$/;
+
+  it('produces a 13-character base32-sortable key', () => {
+    expect(rkeyFor(content())).toMatch(TID);
+  });
+
+  it('never leaks the post slug into the key', () => {
+    expect(rkeyFor(content({ name: 'bridge-test-cdp6S999im' }))).not.toContain('bridge');
+  });
+
+  it('is stable for the same post, so an edit replaces rather than duplicates', () => {
+    expect(rkeyFor(content())).toBe(rkeyFor(content()));
+  });
+
+  it('differs for posts created at different times', () => {
+    const a = rkeyFor(content({ id: 1, createdAt: new Date('2026-02-01T00:00:00Z') }));
+    const b = rkeyFor(content({ id: 1, createdAt: new Date('2026-02-02T00:00:00Z') }));
+
+    expect(a).not.toBe(b);
+  });
+
+  it('differs for distinct posts created in the same millisecond', () => {
+    const at = new Date('2026-02-01T00:00:00Z');
+
+    expect(rkeyFor(content({ id: 1, createdAt: at }))).not.toBe(rkeyFor(content({ id: 2, createdAt: at })));
+  });
+
+  it('sorts lexicographically in timestamp order, which is the point of a TID', () => {
+    const older = rkeyFor(content({ id: 1, createdAt: new Date('2026-01-01T00:00:00Z') }));
+    const newer = rkeyFor(content({ id: 1, createdAt: new Date('2026-06-01T00:00:00Z') }));
+
+    expect(older < newer).toBe(true);
   });
 });

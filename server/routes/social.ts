@@ -17,6 +17,7 @@ import {
   getRemoteCommentsOnLocalContent,
   getRemoteFriends,
   countLocalUsersAndContent,
+  getLocalUsersWithBluesky,
   removeOldRemoteContent,
 } from '../social/db';
 import { parseFeedAndInsertIntoDb, retrieveFeed } from '../social/feeds';
@@ -34,7 +35,12 @@ import {
   handle,
 } from '../social/activitystreams';
 import { handleMention } from '../social/webmention';
-import { isAtprotoUserRemote, pollAtprotoUser } from '../social/atproto';
+import {
+  isAtprotoUserRemote,
+  pollAtprotoUser,
+  syncFollowersFromBluesky,
+  syncProfileToBluesky,
+} from '../social/atproto';
 import type { UserRemote, User } from '../../generated/prisma/client';
 
 function hostOf(c: HonoContext<AppEnv>) {
@@ -138,6 +144,14 @@ export const socialRoutes = new Hono<AppEnv>()
       }
       await parseFeedAndInsertIntoDb(userRemote, feedResponseText);
     }
+
+    // Keep the linked Bluesky account in step: push profile changes out, pull
+    // followers back in so they appear alongside fediverse followers.
+    for (const localUser of await getLocalUsersWithBluesky()) {
+      await syncProfileToBluesky(hostOf(c), localUser);
+      await syncFollowersFromBluesky(localUser);
+    }
+
     return c.json({ success: true });
   })
 

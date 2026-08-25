@@ -206,3 +206,19 @@ describe('syndicateDelete', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
+
+describe('follower lookup', () => {
+  it('asks for followers by profile url, not by bare username', async () => {
+    // getRemoteFriends parses its argument as a content URL; a bare username
+    // made new URL() throw and killed syndication outright.
+    await syndicateContent(HOST, owner(), content());
+
+    expect(db.getRemoteFriends).toHaveBeenCalledWith(`https://${HOST}/alice`);
+  });
+
+  it('asks the same way when announcing a delete', async () => {
+    await syndicateDelete(HOST, owner(), content());
+
+    expect(db.getRemoteFriends).toHaveBeenCalledWith(`https://${HOST}/alice`);
+  });
+});

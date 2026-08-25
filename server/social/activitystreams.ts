@@ -100,8 +100,14 @@ async function send(host: string, userRemote: UserRemote, contentOwner: User, me
     } else if (userRemote?.salmonUrl) {
       await salmonSend(userRemote, contentOwner, message);
     }
-  } catch {
-    // Not a big deal if this fails.
+  } catch (ex) {
+    // A peer being unreachable is routine. Being unable to *sign* is not — it
+    // means the key is unreadable (usually a wrong or missing SECRETS_KEY), and
+    // every delivery will fail the same way. Swallowing that silently is what
+    // makes it take an afternoon to notice, so say so.
+    console.error(
+      `${contentOwner.username}: ${message.type} to ${userRemote?.profileUrl} failed.\n${(ex as Error)?.message || ex}`
+    );
   }
 }
 
@@ -163,6 +169,18 @@ export function sha256Digest(body: string): string {
 // `(request-target) host date`, as this used to, authenticates the request line
 // and nothing else, and Mastodon rejects a delivery whose body isn't covered.
 export function signRequest(host: string, contentOwner: User, targetUrl: string, body: string) {
+  // Surfaces a misconfigured SECRETS_KEY as itself rather than as an opaque
+  // cipher error from deep inside the signing call.
+  let privateKey: string;
+  try {
+    privateKey = decryptSecret(contentOwner.privateKey);
+  } catch {
+    throw new Error(
+      `Cannot read ${contentOwner.username}'s private key — SECRETS_KEY is wrong or missing, so nothing can be signed.`
+    );
+  }
+  if (!privateKey) throw new Error(`${contentOwner.username} has no private key; federation cannot be signed.`);
+
   const currentDate = new Date();
   const target = new URL(targetUrl);
   const digest = sha256Digest(body);
@@ -176,12 +194,7 @@ export function signRequest(host: string, contentOwner: User, targetUrl: string,
     `content-type: ${ACTIVITY_JSON}`,
   ].join('\n');
 
-  const signature = crypto
-    .createSign('sha256')
-    .update(signingString)
-    .end()
-    .sign(decryptSecret(contentOwner.privateKey))
-    .toString('base64');
+  const signature = crypto.createSign('sha256').update(signingString).end().sign(privateKey).toString('base64');
   // The fragment matters: the actor document publishes its key as
   // `<actor>#main-key`, and a keyId that doesn't match what it advertises makes
   // some implementations refuse to resolve the key at all.

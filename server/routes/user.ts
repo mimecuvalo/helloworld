@@ -25,11 +25,18 @@ export const userRoutes = new Hono<AppEnv>()
     '/atproto',
     zValidator(
       'json',
-      z.object({ handle: z.string().min(1), appPassword: z.string().min(1), pdsUrl: z.string().url().optional() })
+      z.object({ handle: z.string().min(1), appPassword: z.string().optional(), pdsUrl: z.string().url().optional() })
     ),
     async (c) => c.json(await userService.linkAtprotoAccount(c.get('ctx'), c.req.valid('json')))
   )
   .delete('/atproto', async (c) => c.json(await userService.unlinkAtprotoAccount(c.get('ctx'))))
+
+  // Mastodon rel="me" verification — no credential, just a URL to link back to.
+  .get('/mastodon', async (c) => c.json(await userService.fetchMastodonStatus(c.get('ctx'))))
+  .post('/mastodon', zValidator('json', z.object({ mastodonUrl: z.string().min(1) })), async (c) =>
+    c.json(await userService.linkMastodonAccount(c.get('ctx'), c.req.valid('json')))
+  )
+  .delete('/mastodon', async (c) => c.json(await userService.unlinkMastodonAccount(c.get('ctx'))))
 
   // Registered before /:id: that route coerces the param to a number, so it
   // would reject "atproto" with a 400 rather than falling through.

@@ -1,15 +1,27 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const db = vi.hoisted(() => ({ getRemoteContent: vi.fn(), saveRemoteContent: vi.fn() }));
-const prismaMock = vi.hoisted(() => ({ default: { user: { update: vi.fn() }, content: { update: vi.fn() } } }));
+const prismaMock = vi.hoisted(() => ({
+  default: { user: { update: vi.fn() }, content: { update: vi.fn(), findFirst: vi.fn() } },
+}));
 const agentMock = vi.hoisted(() => ({
   login: vi.fn(),
   resumeSession: vi.fn(),
   follow: vi.fn(),
   deleteFollow: vi.fn(),
   session: undefined as { did: string } | undefined,
-  com: { atproto: { repo: { putRecord: vi.fn(), deleteRecord: vi.fn() } } },
-  app: { bsky: { feed: { getAuthorFeed: vi.fn() }, actor: { getProfile: vi.fn() } } },
+  like: vi.fn(),
+  deleteLike: vi.fn(),
+  repost: vi.fn(),
+  deleteRepost: vi.fn(),
+  com: { atproto: { repo: { putRecord: vi.fn(), deleteRecord: vi.fn(), uploadBlob: vi.fn() } } },
+  app: {
+    bsky: {
+      feed: { getAuthorFeed: vi.fn(), getPosts: vi.fn() },
+      actor: { getProfile: vi.fn() },
+      graph: { getFollowers: vi.fn() },
+    },
+  },
 }));
 
 vi.mock('server/social/db', () => db);
@@ -31,9 +43,12 @@ import {
   getAgent,
   hasBlueskyCredentials,
   isAtprotoUserRemote,
+  likeOnBluesky,
   mapAtprotoFeedIntoDb,
   publishToBluesky,
+  repostOnBluesky,
 } from 'server/social/atproto';
+import { rkeyFor } from 'server/social/atproto-records';
 import { HOST, content, user, userRemote } from './fixtures';
 
 const linked = (overrides = {}) =>
@@ -62,6 +77,7 @@ beforeEach(() => {
   });
   db.getRemoteContent.mockResolvedValue(null);
   db.saveRemoteContent.mockResolvedValue(undefined);
+  prismaMock.default.content.findFirst.mockResolvedValue(null);
 });
 
 describe('credential gating', () => {
@@ -117,7 +133,7 @@ describe('publishToBluesky', () => {
     await publishToBluesky(HOST, linked(), content());
 
     expect(agentMock.com.atproto.repo.putRecord).toHaveBeenCalledWith(
-      expect.objectContaining({ collection: 'app.bsky.feed.post', rkey: 'hello' })
+      expect.objectContaining({ collection: 'app.bsky.feed.post', rkey: rkeyFor(content()) })
     );
     expect(prismaMock.default.content.update).toHaveBeenCalledWith({
       where: { id: 10 },
@@ -132,7 +148,8 @@ describe('publishToBluesky', () => {
     await publishToBluesky(HOST, linked(), content());
 
     const rkeys = agentMock.com.atproto.repo.putRecord.mock.calls.map(([args]) => args.rkey);
-    expect(rkeys).toEqual(['hello', 'hello']);
+    // Same post, same TID: an edit replaces the record instead of duplicating.
+    expect(rkeys).toEqual([rkeyFor(content()), rkeyFor(content())]);
   });
 
   it('never mirrors hidden content', async () => {
@@ -265,5 +282,113 @@ describe('mapAtprotoFeedIntoDb', () => {
       mapAtprotoFeedIntoDb(atprotoPeer(), [feedPost(), feedPost({ uri: 'at://did:plc:bob/app.bsky.feed.post/def' })])
     ).resolves.toBeUndefined();
     expect(db.saveRemoteContent).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('inbound reader quality', () => {
+  it('renders a post embed alongside its text', async () => {
+    await mapAtprotoFeedIntoDb(atprotoPeer(), [
+      feedPost({
+        record: { text: 'look', createdAt: '2026-08-20T00:00:00.000Z' },
+        embed: { $type: 'app.bsky.embed.images#view', images: [{ thumb: 'https://cdn/t.jpg', alt: 'cat' }] },
+      }),
+    ]);
+
+    const saved = db.saveRemoteContent.mock.calls[0][0];
+    expect(saved.view).toContain('<p>look</p>');
+    expect(saved.view).toContain('https://cdn/t.jpg');
+  });
+
+  it('attributes a repost to whoever wrote it, and notes who boosted', async () => {
+    await mapAtprotoFeedIntoDb(atprotoPeer(), [
+      {
+        post: {
+          uri: 'at://did:plc:carol/app.bsky.feed.post/xyz',
+          author: { handle: 'carol.bsky.social', displayName: 'Carol C' },
+          record: { text: 'carol wrote this', createdAt: '2026-08-20T00:00:00.000Z' },
+        },
+        reason: { $type: 'app.bsky.feed.defs#reasonRepost', by: { handle: 'bob.bsky.social', displayName: 'Bob B' } },
+      },
+    ]);
+
+    const saved = db.saveRemoteContent.mock.calls[0][0];
+    // The post belongs to Carol even though Bob is the one we follow.
+    expect(saved.username).toBe('carol.bsky.social');
+    expect(saved.creator).toBe('Carol C');
+    expect(saved.title).toBe('Bob B reposted');
+  });
+
+  it('files a reply to one of our own posts as a comment on it', async () => {
+    prismaMock.default.content.findFirst.mockResolvedValue({ name: 'hello' });
+
+    await mapAtprotoFeedIntoDb(atprotoPeer(), [
+      feedPost({
+        record: {
+          text: 'nice post',
+          createdAt: '2026-08-20T00:00:00.000Z',
+          reply: { parent: { uri: 'at://did:plc:alice/app.bsky.feed.post/hello' } },
+        },
+      }),
+    ]);
+
+    const saved = db.saveRemoteContent.mock.calls[0][0];
+    expect(saved.type).toBe('comment');
+    expect(saved.localContentName).toBe('hello');
+  });
+
+  it('keeps a reply to someone else as a plain post', async () => {
+    prismaMock.default.content.findFirst.mockResolvedValue(null);
+
+    await mapAtprotoFeedIntoDb(atprotoPeer(), [
+      feedPost({
+        record: {
+          text: 'unrelated',
+          createdAt: '2026-08-20T00:00:00.000Z',
+          reply: { parent: { uri: 'at://did:plc:dave/app.bsky.feed.post/zzz' } },
+        },
+      }),
+    ]);
+
+    const saved = db.saveRemoteContent.mock.calls[0][0];
+    expect(saved.type).toBe('post');
+    expect(saved.localContentName).toBeNull();
+  });
+});
+
+describe('likes and reposts', () => {
+  beforeEach(() => {
+    agentMock.app.bsky.feed.getPosts.mockResolvedValue({
+      data: { posts: [{ uri: 'at://did:plc:bob/app.bsky.feed.post/abc', cid: 'bafy', viewer: {} }] },
+    });
+  });
+
+  it('likes a post by its uri and cid', async () => {
+    await likeOnBluesky(linked(), 'at://did:plc:bob/app.bsky.feed.post/abc', true);
+
+    expect(agentMock.like).toHaveBeenCalledWith('at://did:plc:bob/app.bsky.feed.post/abc', 'bafy');
+  });
+
+  it('unlikes via the like record on the viewer state', async () => {
+    agentMock.app.bsky.feed.getPosts.mockResolvedValue({
+      data: { posts: [{ uri: 'at://x', cid: 'bafy', viewer: { like: 'at://did:plc:alice/app.bsky.feed.like/1' } }] },
+    });
+
+    await likeOnBluesky(linked(), 'at://did:plc:bob/app.bsky.feed.post/abc', false);
+
+    expect(agentMock.deleteLike).toHaveBeenCalledWith('at://did:plc:alice/app.bsky.feed.like/1');
+  });
+
+  it('reposts a post', async () => {
+    await repostOnBluesky(linked(), 'at://did:plc:bob/app.bsky.feed.post/abc', true);
+
+    expect(agentMock.repost).toHaveBeenCalledWith('at://did:plc:bob/app.bsky.feed.post/abc', 'bafy');
+  });
+
+  it('ignores a non-atproto uri, which belongs to the ActivityPub path', async () => {
+    await likeOnBluesky(linked(), 'https://mastodon.social/@bob/1', true);
+    await repostOnBluesky(linked(), 'https://mastodon.social/@bob/1', true);
+
+    expect(agentMock.like).not.toHaveBeenCalled();
+    expect(agentMock.repost).not.toHaveBeenCalled();
   });
 });

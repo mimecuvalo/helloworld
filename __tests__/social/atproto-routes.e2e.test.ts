@@ -27,6 +27,7 @@ vi.mock('server/config', () => ({
 import type { AppEnv } from 'server/env';
 import { atprotoRoutes } from 'server/routes/atproto';
 import { generateSigningKey } from 'server/social/atproto-identity';
+import { rkeyFor } from 'server/social/atproto-records';
 import { HOST, content, user } from './fixtures';
 
 const DID = `did:web:${HOST}:alice`;
@@ -120,7 +121,7 @@ describe('com.atproto.repo.listRecords', () => {
     ).json();
 
     expect(body.records).toHaveLength(1);
-    expect(body.records[0].uri).toBe(`at://${DID}/app.bsky.feed.post/hello`);
+    expect(body.records[0].uri).toBe(`at://${DID}/app.bsky.feed.post/${rkeyFor(content())}`);
     expect(body.records[0].cid.startsWith('bafyrei')).toBe(true);
     expect(body.records[0].value).toMatchObject({ $type: 'app.bsky.feed.post' });
   });
@@ -148,19 +149,21 @@ describe('com.atproto.repo.listRecords', () => {
 describe('com.atproto.repo.getRecord', () => {
   it('returns one record', async () => {
     const body = await (
-      await get(`/api/atproto/com.atproto.repo.getRecord?repo=${DID}&collection=app.bsky.feed.post&rkey=hello`)
+      await get(
+        `/api/atproto/com.atproto.repo.getRecord?repo=${DID}&collection=app.bsky.feed.post&rkey=${rkeyFor(content())}`
+      )
     ).json();
 
-    expect(body.uri).toBe(`at://${DID}/app.bsky.feed.post/hello`);
+    expect(body.uri).toBe(`at://${DID}/app.bsky.feed.post/${rkeyFor(content())}`);
     expect(body.value.$type).toBe('app.bsky.feed.post');
   });
 
   it('never returns a hidden post', async () => {
     // The whole XRPC surface is unauthenticated, same as the feeds.
-    db.getLocalContent.mockResolvedValue(content({ hidden: true }));
+    db.getLocalLatestContent.mockResolvedValue([content({ hidden: true })]);
 
     const response = await get(
-      `/api/atproto/com.atproto.repo.getRecord?repo=${DID}&collection=app.bsky.feed.post&rkey=hello`
+      `/api/atproto/com.atproto.repo.getRecord?repo=${DID}&collection=app.bsky.feed.post&rkey=${rkeyFor(content())}`
     );
 
     expect(response.status).toBe(404);
@@ -168,10 +171,14 @@ describe('com.atproto.repo.getRecord', () => {
   });
 
   it("never returns another user's post", async () => {
-    db.getLocalContent.mockResolvedValue(content({ username: 'bob' }));
+    db.getLocalLatestContent.mockResolvedValue([content({ username: 'bob' })]);
 
     expect(
-      (await get(`/api/atproto/com.atproto.repo.getRecord?repo=${DID}&collection=app.bsky.feed.post&rkey=hello`)).status
+      (
+        await get(
+          `/api/atproto/com.atproto.repo.getRecord?repo=${DID}&collection=app.bsky.feed.post&rkey=${rkeyFor(content())}`
+        )
+      ).status
     ).toBe(404);
   });
 });
@@ -188,7 +195,7 @@ describe('app.bsky views', () => {
 
     expect(body.feed).toHaveLength(1);
     expect(body.feed[0].post).toMatchObject({
-      uri: `at://${DID}/app.bsky.feed.post/hello`,
+      uri: `at://${DID}/app.bsky.feed.post/${rkeyFor(content())}`,
       author: { did: DID, handle: `alice.${HOST}` },
     });
   });

@@ -3,7 +3,7 @@ import { CID } from 'multiformats/cid';
 import { sha256 } from 'multiformats/hashes/sha2';
 import type { Content, User } from '../../generated/prisma/client';
 import { contentUrl } from '../../lib/url-factory';
-import { plainTextExcerpt } from './xml';
+import { entryContentHtml, plainTextExcerpt } from './xml';
 
 // Mapping local Content onto AT Protocol records.
 //
@@ -39,33 +39,87 @@ export function postTextFor(content: Content): string {
   return truncateToGraphemes(text.trim());
 }
 
-// The record key. Content.name is already unique per user and URL-safe, and
-// reusing it means a post maps to the same rkey every time.
+// Record keys for app.bsky.feed.post must be TIDs — 13 characters of
+// base32-sortable encoding a timestamp — not arbitrary slugs. The PDS rejects
+// anything else outright ("Invalid TID string"), so a post's `name` cannot be
+// used directly however convenient that would be.
+const TID_ALPHABET = '234567abcdefghijklmnopqrstuvwxyz';
+
+export function encodeTid(microseconds: bigint, clockId: number): string {
+  // 64 bits: a leading 0, 53 bits of timestamp, 10 bits of clock id.
+  const value = ((microseconds & 0x1fffffffffffffn) << 10n) | BigInt(clockId & 0x3ff);
+  let out = '';
+  for (let i = 12; i >= 0; i--) {
+    out += TID_ALPHABET[Number((value >> BigInt(i * 5)) & 0x1fn)];
+  }
+  return out;
+}
+
+// Derived from the post's own id and creation time, so it is stable: the same
+// post always maps to the same record, which is what makes putRecord replace an
+// edit instead of duplicating it.
 export function rkeyFor(content: Content): string {
-  return content.name;
+  const createdAt = new Date(content.createdAt || 0).getTime();
+  return encodeTid(BigInt(createdAt) * 1000n, content.id % 1024);
 }
 
 export function atUriFor(did: string, content: Content): string {
   return `at://${did}/${POST_COLLECTION}/${rkeyFor(content)}`;
 }
 
-export function buildPostRecord(host: string, content: Content, contentOwner: User): Record<string, unknown> {
+// A blob ref returned by com.atproto.repo.uploadBlob.
+export type BlobRef = unknown;
+
+export function buildPostRecord(
+  host: string,
+  content: Content,
+  contentOwner: User,
+  options: { thumbBlob?: BlobRef; imageBlobs?: { blob: BlobRef; alt: string }[]; reply?: unknown } = {}
+): Record<string, unknown> {
   const permalink = contentUrl(content, undefined, host);
+  const { thumbBlob, imageBlobs, reply } = options;
+
+  // Images the post actually carries beat a link card: they render inline on
+  // Bluesky instead of collapsing to a one-line preview.
+  const embed = imageBlobs?.length
+    ? {
+        $type: 'app.bsky.embed.images',
+        images: imageBlobs.slice(0, 4).map(({ blob, alt }) => ({ image: blob, alt })),
+      }
+    : {
+        $type: 'app.bsky.embed.external',
+        external: {
+          uri: permalink,
+          title: content.title || contentOwner.title,
+          description: plainTextExcerpt(content.view, 300),
+          // Without a thumb blob the link card renders as bare text.
+          ...(thumbBlob ? { thumb: thumbBlob } : {}),
+        },
+      };
 
   return {
     $type: POST_COLLECTION,
     text: postTextFor(content),
     createdAt: new Date(content.createdAt || Date.now()).toISOString(),
     langs: ['en'],
-    embed: {
-      $type: 'app.bsky.embed.external',
-      external: {
-        uri: permalink,
-        title: content.title || contentOwner.title,
-        description: plainTextExcerpt(content.view, 300),
-      },
-    },
+    embed,
+    ...(reply ? { reply } : {}),
   };
+}
+
+// Every <img> in a post body, absolute-ised, so they can be uploaded as blobs.
+export function imageUrlsIn(host: string, content: Content): string[] {
+  const urls = new Set<string>();
+  const html = entryContentHtml(host, content);
+
+  for (const match of html.matchAll(/<img[^>]+src=["']([^"']+)["'][^>]*>/gi)) {
+    const src = match[1];
+    // Skip the analytics pixel entryContentHtml appends.
+    if (!src || src.includes('/api/stats')) continue;
+    if (/^https?:\/\//i.test(src)) urls.add(src);
+  }
+
+  return [...urls];
 }
 
 // A real CIDv1 over the dag-cbor encoding of the record, which is what atproto
@@ -98,8 +152,100 @@ export function rkeyOfUri(uri: string): string {
   return uri.split('/').pop() || '';
 }
 
+// The inverse of bskyPermalink: a bsky.app URL back to the at:// uri, given a
+// way to resolve the handle to a DID. Returns null for anything else.
+export async function atUriFromBskyUrl(
+  url: string,
+  resolveHandle: (handle: string) => Promise<string | null>
+): Promise<string | null> {
+  if (url.startsWith('at://')) return url;
+
+  const match = url.match(/^https?:\/\/(?:www\.)?bsky\.app\/profile\/([^/]+)\/post\/([^/?#]+)/i);
+  if (!match) return null;
+
+  const [, actor, rkey] = match;
+  const did = actor.startsWith('did:') ? actor : await resolveHandle(decodeURIComponent(actor));
+  return did ? `at://${did}/${POST_COLLECTION}/${rkey}` : null;
+}
+
 export function bskyPermalink(handle: string, uri: string): string {
   return `https://bsky.app/profile/${handle}/post/${rkeyOfUri(uri)}`;
+}
+
+// --- embeds ------------------------------------------------------------------
+
+// The view shapes a feed response actually returns. Images and video carry
+// pre-generated thumbnails, so nothing here has to fetch a blob.
+type EmbedView = {
+  $type?: string;
+  images?: { thumb?: string; fullsize?: string; alt?: string }[];
+  external?: { uri?: string; title?: string; description?: string; thumb?: string };
+  playlist?: string;
+  thumbnail?: string;
+  alt?: string;
+  // Quote posts nest the quoted record, and recordWithMedia nests both.
+  record?: {
+    uri?: string;
+    value?: { text?: string };
+    author?: { handle?: string; displayName?: string };
+    record?: { uri?: string; value?: { text?: string }; author?: { handle?: string; displayName?: string } };
+  };
+  media?: EmbedView;
+};
+
+// Renders a post's embed to HTML for the reader. Without this an image post
+// from someone you follow arrives as bare text with the picture missing.
+export function renderEmbed(embed: EmbedView | undefined | null): string {
+  if (!embed) return '';
+  const type = embed.$type || '';
+
+  if (embed.images?.length) {
+    return embed.images
+      .map((image) => {
+        const src = image.thumb || image.fullsize || '';
+        if (!src) return '';
+        const img = `<img src="${escapeHtml(src)}" alt="${escapeHtml(image.alt || '')}" />`;
+        return image.fullsize
+          ? `<p><a href="${escapeHtml(image.fullsize)}" rel="noopener noreferrer">${img}</a></p>`
+          : `<p>${img}</p>`;
+      })
+      .join('');
+  }
+
+  if (embed.external?.uri) {
+    const { uri, title, description, thumb } = embed.external;
+    const image = thumb ? `<img src="${escapeHtml(thumb)}" alt="" />` : '';
+    return (
+      `<p><a href="${escapeHtml(uri)}" rel="noopener noreferrer">${image}` +
+      `<strong>${escapeHtml(title || uri)}</strong></a>` +
+      (description ? `<br />${escapeHtml(description)}` : '') +
+      `</p>`
+    );
+  }
+
+  if (type.startsWith('app.bsky.embed.video')) {
+    const poster = embed.thumbnail ? ` poster="${escapeHtml(embed.thumbnail)}"` : '';
+    return embed.playlist
+      ? `<p><video controls${poster} src="${escapeHtml(embed.playlist)}"></video></p>`
+      : embed.thumbnail
+        ? `<p><img src="${escapeHtml(embed.thumbnail)}" alt="${escapeHtml(embed.alt || '')}" /></p>`
+        : '';
+  }
+
+  // recordWithMedia carries both halves; render the media then the quote.
+  if (embed.media) return renderEmbed(embed.media) + renderEmbed({ ...embed, media: undefined });
+
+  const quoted = embed.record?.record || embed.record;
+  if (quoted?.value?.text) {
+    const who = quoted.author?.displayName || quoted.author?.handle || '';
+    const link = quoted.uri ? bskyPermalink(quoted.author?.handle || '', quoted.uri) : '';
+    const attribution = link
+      ? `<a href="${escapeHtml(link)}" rel="noopener noreferrer">${escapeHtml(who)}</a>`
+      : escapeHtml(who);
+    return `<blockquote>${attribution ? `<cite>${attribution}</cite> ` : ''}${escapeHtml(quoted.value.text)}</blockquote>`;
+  }
+
+  return '';
 }
 
 type Facet = {

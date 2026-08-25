@@ -17,6 +17,12 @@
       "value": "search"
     }
   ],
+  "07302eddb6": [
+    {
+      "type": 0,
+      "value": "Leave the password blank to use BLUESKY_APP_PASSWORD from the server environment."
+    }
+  ],
   "0e002f7647": [
     {
       "type": 0,
@@ -35,16 +41,34 @@
       "value": "link"
     }
   ],
+  "0f6969d705": [
+    {
+      "type": 0,
+      "value": "remove"
+    }
+  ],
   "106a6c241b": [
     {
       "type": 0,
       "value": "home"
     }
   ],
+  "10aec35353": [
+    {
+      "type": 0,
+      "value": "cancel"
+    }
+  ],
   "1116e9904e": [
     {
       "type": 0,
       "value": "app password"
+    }
+  ],
+  "1a16279991": [
+    {
+      "type": 0,
+      "value": "This site is its own fediverse server, so there is no account to connect — people follow it directly at:"
     }
   ],
   "24c29702dc": [
@@ -63,6 +87,12 @@
     {
       "type": 0,
       "value": "link"
+    }
+  ],
+  "2bf23ac94b": [
+    {
+      "type": 0,
+      "value": "linking…"
     }
   ],
   "2d000429fd": [
@@ -107,6 +137,12 @@
       "value": "post"
     }
   ],
+  "43781db5c4": [
+    {
+      "type": 0,
+      "value": "save"
+    }
+  ],
   "44f00c21a1": [
     {
       "type": 0,
@@ -131,6 +167,12 @@
     {
       "type": 0,
       "value": "sort by newest"
+    }
+  ],
+  "4fa3cb5e32": [
+    {
+      "type": 0,
+      "value": "not linked"
     }
   ],
   "529723465a": [
@@ -175,6 +217,12 @@
       "value": "Loading…"
     }
   ],
+  "6080d71c0c": [
+    {
+      "type": 0,
+      "value": "mastodon"
+    }
+  ],
   "60f3b1ff9b": [
     {
       "type": 0,
@@ -185,6 +233,12 @@
     {
       "type": 0,
       "value": "untitled"
+    }
+  ],
+  "62b395c8d2": [
+    {
+      "type": 0,
+      "value": "Optionally, verify it on your Mastodon profile. Add your site to a profile metadata field there, then paste your profile URL here so this site links back."
     }
   ],
   "64af1b1f5f": [
@@ -215,6 +269,12 @@
     {
       "type": 0,
       "value": "unlink"
+    }
+  ],
+  "6b2ded51d8": [
+    {
+      "type": 0,
+      "value": "done"
     }
   ],
   "7253d1f504": [
@@ -265,6 +325,18 @@
     {
       "type": 0,
       "value": "view all items"
+    }
+  ],
+  "807b754692": [
+    {
+      "type": 0,
+      "value": "https://mastodon.social/@you"
+    }
+  ],
+  "8217537122": [
+    {
+      "type": 0,
+      "value": "Create an app password in Bluesky under Settings → Privacy and Security → App Passwords. Never your account password."
     }
   ],
   "835ca8f9cf": [
@@ -353,6 +425,20 @@
     {
       "type": 1,
       "value": "creator"
+    }
+  ],
+  "aa9c959941": [
+    {
+      "type": 0,
+      "value": "Posts you publish are mirrored to "
+    },
+    {
+      "type": 1,
+      "value": "handle"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "aaca0f5eb4": [

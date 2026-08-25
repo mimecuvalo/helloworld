@@ -20,6 +20,7 @@ type OwnerLike = {
   logo?: string | null;
   viewport?: string | null;
   googleAnalytics?: string | null;
+  mastodonUrl?: string | null;
 } | null;
 
 export function buildFaviconLinks(favicon?: string | null) {
@@ -67,6 +68,10 @@ export function buildContentHead(opts: { content: ContentLike; contentOwner: Own
   if (canonical) links.push({ rel: 'canonical', href: canonical });
   if (contentOwner && resource) {
     links.push({ rel: 'author', href: resource });
+    // Half of the rel="me" handshake: Mastodon fetches this page from the link
+    // in the owner's profile metadata and looks for a link back. Finding one
+    // turns that profile field green.
+    if (contentOwner.mastodonUrl) links.push({ rel: 'me', href: contentOwner.mastodonUrl });
     links.push({
       rel: 'search',
       type: 'application/opensearchdescription+xml',

@@ -44,6 +44,11 @@ export async function countLocalUsersAndContent(): Promise<[number, number]> {
   ]);
 }
 
+// Local users with a Bluesky account linked, for the cron's sync pass.
+export async function getLocalUsersWithBluesky() {
+  return await prisma.user.findMany({ where: { atprotoHandle: { not: null } } });
+}
+
 export async function getRemoteUser(localUsername: string, profileUrl: string) {
   return await prisma.userRemote.findUnique({
     where: { localUsername_profileUrl: { localUsername, profileUrl } },

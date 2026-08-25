@@ -48,6 +48,15 @@ export const contentRemoteRoutes = new Hono<AppEnv>()
   .get('/favorites', zValidator('query', usernameName), async (c) =>
     c.json(await cr.fetchFavoritesRemote(c.get('ctx'), c.req.valid('query')))
   )
+  .post(
+    '/repost',
+    zValidator('json', z.object({ fromUsername: z.string(), postId: z.string(), isRepost: z.boolean() })),
+    async (c) => {
+      const ctx = c.get('ctx');
+      await assertAuthor(ctx);
+      return c.json(await cr.repostContentRemote(ctx, c.req.valid('json')));
+    }
+  )
   .get('/:id', zValidator('param', z.object({ id: z.coerce.number().int() })), async (c) => {
     const ctx = c.get('ctx');
     await assertAdmin(ctx);

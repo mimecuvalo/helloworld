@@ -39,6 +39,11 @@ export function parseContentUrl(url: string): { username: string; name: string }
     url = '/' + url.split('@')[0];
   }
 
+  // A bare username (no scheme, no slash) is a valid thing to be handed here —
+  // new URL() would throw on it, taking down whatever called us.
+  if (!url.startsWith('/') && !/^[a-z][a-z0-9+.-]*:/i.test(url)) {
+    return { username: url, name: 'home' };
+  }
   url = url.startsWith('/') ? url : new URL(url).pathname;
   const splitUrl = url.split('/');
   const username = splitUrl[1];

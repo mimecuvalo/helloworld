@@ -44,7 +44,13 @@ const alias = [
 ];
 
 export default defineConfig({
-  server: { port: 3000 },
+  // allowedHosts is opt-in via env so a tunnel (ngrok/cloudflared) can reach the
+  // dev server for federation testing — Vite otherwise rejects unknown Host
+  // headers. Comma-separated hostnames, e.g. DEV_ALLOWED_HOSTS=abc.ngrok-free.app
+  server: {
+    port: 3000,
+    ...(process.env.DEV_ALLOWED_HOSTS ? { allowedHosts: process.env.DEV_ALLOWED_HOSTS.split(',') } : {}),
+  },
   resolve: { alias },
   // Server-only DB stack (reached via createServerFn → Prisma adapter). The
   // TanStack server-fn transform strips these from the client graph at build,

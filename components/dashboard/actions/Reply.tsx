@@ -18,7 +18,12 @@ export default function Reply({ contentRemote }: { contentRemote: { type: string
       window.open(link, link, 'noopener,noreferrer');
       return;
     }
-    editor?.commands.insertContent(`${intl.formatMessage(messages.reply)} > ${link}`);
+    // A real u-in-reply-to anchor, not plain text: that microformat is what
+    // discoverThreadInHTML reads to set content.thread, which in turn lets the
+    // post thread natively on Bluesky and carry inReplyTo on ActivityPub.
+    editor?.commands.insertContent(
+      `<p>${intl.formatMessage(messages.reply)} <a class="u-in-reply-to" href="${link}">${link}</a></p>`
+    );
   };
 
   return (
