@@ -21,8 +21,8 @@
 
   /* typography */
   --hw-font-body:
-    Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace, var(--font-noto-color-emoji),
-    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol';
   --hw-font-header: 'Press Start 2P', var(--font-system);
 
   min-height: 100vh;

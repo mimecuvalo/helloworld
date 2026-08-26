@@ -5,7 +5,7 @@
 
 .editor :global(.tiptap) {
   width: 100%;
-  padding: 0 8px;
+  padding: 8px;
   background-color: var(--hw-bg, inherit);
   color: inherit;
   outline: none;

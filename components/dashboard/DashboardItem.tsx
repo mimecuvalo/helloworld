@@ -69,6 +69,7 @@ export default function DashboardItem({ contentRemote }: { contentRemote: Remote
     <article ref={itemRef} className={styles.item}>
       {contentRemote.title ? (
         <header className={styles.itemHeader}>
+          {contentRemote.avatar ? <img className={styles.itemAvatar} src={contentRemote.avatar} alt="" /> : null}
           <h1 className={`${styles.itemTitle} ${faded} notranslate`} title={contentRemote.title}>
             <a href={contentRemote.link} target="_blank" rel="noreferrer noopener">
               {contentRemote.title}
@@ -81,7 +82,6 @@ export default function DashboardItem({ contentRemote }: { contentRemote: Remote
           <F defaultMessage="by {creator}" values={{ creator: contentRemote.creator }} />
         </div>
       ) : null}
-      {contentRemote.avatar ? <img className={styles.itemAvatar} src={contentRemote.avatar} alt="" /> : null}
 
       <div className={`${styles.itemView} notranslate`} dangerouslySetInnerHTML={{ __html: html }} />
 

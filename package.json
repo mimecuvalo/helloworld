@@ -48,7 +48,6 @@
     "@base-ui/react": "1.6.0",
     "@fontsource-variable/oswald": "5.3.0",
     "@fontsource/marck-script": "5.3.0",
-    "@fontsource/noto-color-emoji": "5.3.0",
     "@fontsource/press-start-2p": "5.3.0",
     "@hono/zod-validator": "0.9.0",
     "@ipld/dag-cbor": "10.0.2",

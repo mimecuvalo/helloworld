@@ -708,6 +708,12 @@
 }
 
 @media (max-width: 960px) {
+  .feedItem .itemHeader {
+    top: 8px;
+    margin-top: -1px;
+    border-top: 1px solid var(--hw-primary-light);
+  }
+
   .feedItem > article {
     max-height: none;
     overflow-y: visible;
