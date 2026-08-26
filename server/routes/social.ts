@@ -10,11 +10,13 @@ import { buildUrl, contentUrl, profileUrl } from '../../lib/url-factory';
 import { buildFeedContentSecurityPolicy } from '../../lib/security';
 import { THUMB_HEIGHT, THUMB_WIDTH } from '../../util/constants';
 import {
+  getDefaultLocalUser,
   getLocalContent,
   getLocalLatestContent,
   getLocalUser,
   getRemoteAllUsers,
   getRemoteCommentsOnLocalContent,
+  getRemoteFollowing,
   getRemoteFriends,
   countLocalUsersAndContent,
   getLocalUsersWithBluesky,
@@ -25,6 +27,7 @@ import { discoverUserRemoteInfoSaveAndSubscribe } from '../social/discover-user'
 import { renderComments, renderFeed } from '../social/feed-xml';
 import { renderRssFeed } from '../social/rss-xml';
 import { renderFoaf } from '../social/foaf-xml';
+import { renderOpml } from '../social/opml-xml';
 import {
   ACTIVITY_JSON,
   accept,
@@ -295,6 +298,21 @@ export const socialRoutes = new Hono<AppEnv>()
       'Content-Type': 'application/xml',
       'Cache-Control': `public, s-maxage=${60 * 60 * 24}`,
       'Content-Security-Policy': buildFeedContentSecurityPolicy(),
+    });
+  })
+
+  // The blogroll as OPML — everyone this user follows, for import into a feed
+  // reader. Unlike its siblings, `resource` is optional: reached without one
+  // (the pretty /blogs.opml.xml route) it answers for the site's default user.
+  .get('/opml', async (c) => {
+    const host = hostOf(c);
+    const resource = c.req.query('resource') || '';
+    const user = resource ? await getLocalUser(resource) : await getDefaultLocalUser(host);
+    if (!user) return c.body(null, 404);
+    const following = await getRemoteFollowing(user.username);
+    return c.body(renderOpml(host, user, following), 200, {
+      'Content-Type': 'text/xml; charset=utf-8',
+      'Cache-Control': `public, s-maxage=${60 * 60}`,
     });
   })
 

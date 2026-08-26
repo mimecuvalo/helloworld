@@ -23,6 +23,7 @@ federated social web blog app. in short, i'm trying to build an open-source Tumb
     Bluesky bridge that mirrors your posts and pulls followed accounts into the
     reader. (Not a PDS — see below.)
   - feeds published as both Atom and RSS 2.0
+  - blogroll published as OPML at `/blogs.opml.xml` (and `/:username/blogs.opml.xml`)
   - commenting
   - api to follow/reblog content (pretty basic right now)
 - WYSIWYG editor

@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SplatRouteImport } from './routes/$'
+import { Route as BlogsDotopmlDotxmlRouteImport } from './routes/blogs[.]opml[.]xml'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as UsernameBlogsDotopmlDotxmlRouteImport } from './routes/$username.blogs[.]opml[.]xml'
 import { Route as UsernameDidDotjsonRouteImport } from './routes/$username.did[.]json'
 import { Route as DotwellKnownAtprotoDidRouteImport } from './routes/[.]well-known/atproto-did'
 import { Route as DotwellKnownDidDotjsonRouteImport } from './routes/[.]well-known/did[.]json'
@@ -33,11 +35,22 @@ const SplatRoute = SplatRouteImport.update({
   path: '/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogsDotopmlDotxmlRoute = BlogsDotopmlDotxmlRouteImport.update({
+  id: '/blogs.opml.xml',
+  path: '/blogs.opml.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UsernameBlogsDotopmlDotxmlRoute =
+  UsernameBlogsDotopmlDotxmlRouteImport.update({
+    id: '/$username/blogs.opml.xml',
+    path: '/$username/blogs.opml.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const UsernameDidDotjsonRoute = UsernameDidDotjsonRouteImport.update({
   id: '/$username/did.json',
   path: '/$username/did.json',
@@ -92,7 +105,9 @@ const UsernameSearchQueryRoute = UsernameSearchQueryRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
+  '/blogs.opml.xml': typeof BlogsDotopmlDotxmlRoute
   '/dashboard': typeof DashboardRoute
+  '/$username/blogs.opml.xml': typeof UsernameBlogsDotopmlDotxmlRoute
   '/$username/did.json': typeof UsernameDidDotjsonRoute
   '/.well-known/atproto-did': typeof DotwellKnownAtprotoDidRoute
   '/.well-known/did.json': typeof DotwellKnownDidDotjsonRoute
@@ -107,7 +122,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
+  '/blogs.opml.xml': typeof BlogsDotopmlDotxmlRoute
   '/dashboard': typeof DashboardRoute
+  '/$username/blogs.opml.xml': typeof UsernameBlogsDotopmlDotxmlRoute
   '/$username/did.json': typeof UsernameDidDotjsonRoute
   '/.well-known/atproto-did': typeof DotwellKnownAtprotoDidRoute
   '/.well-known/did.json': typeof DotwellKnownDidDotjsonRoute
@@ -123,7 +140,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
+  '/blogs.opml.xml': typeof BlogsDotopmlDotxmlRoute
   '/dashboard': typeof DashboardRoute
+  '/$username/blogs.opml.xml': typeof UsernameBlogsDotopmlDotxmlRoute
   '/$username/did.json': typeof UsernameDidDotjsonRoute
   '/.well-known/atproto-did': typeof DotwellKnownAtprotoDidRoute
   '/.well-known/did.json': typeof DotwellKnownDidDotjsonRoute
@@ -140,7 +159,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/$'
+    | '/blogs.opml.xml'
     | '/dashboard'
+    | '/$username/blogs.opml.xml'
     | '/$username/did.json'
     | '/.well-known/atproto-did'
     | '/.well-known/did.json'
@@ -155,7 +176,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/$'
+    | '/blogs.opml.xml'
     | '/dashboard'
+    | '/$username/blogs.opml.xml'
     | '/$username/did.json'
     | '/.well-known/atproto-did'
     | '/.well-known/did.json'
@@ -170,7 +193,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/$'
+    | '/blogs.opml.xml'
     | '/dashboard'
+    | '/$username/blogs.opml.xml'
     | '/$username/did.json'
     | '/.well-known/atproto-did'
     | '/.well-known/did.json'
@@ -186,7 +211,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
+  BlogsDotopmlDotxmlRoute: typeof BlogsDotopmlDotxmlRoute
   DashboardRoute: typeof DashboardRoute
+  UsernameBlogsDotopmlDotxmlRoute: typeof UsernameBlogsDotopmlDotxmlRoute
   UsernameDidDotjsonRoute: typeof UsernameDidDotjsonRoute
   DotwellKnownAtprotoDidRoute: typeof DotwellKnownAtprotoDidRoute
   DotwellKnownDidDotjsonRoute: typeof DotwellKnownDidDotjsonRoute
@@ -215,11 +242,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blogs.opml.xml': {
+      id: '/blogs.opml.xml'
+      path: '/blogs.opml.xml'
+      fullPath: '/blogs.opml.xml'
+      preLoaderRoute: typeof BlogsDotopmlDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$username/blogs.opml.xml': {
+      id: '/$username/blogs.opml.xml'
+      path: '/$username/blogs.opml.xml'
+      fullPath: '/$username/blogs.opml.xml'
+      preLoaderRoute: typeof UsernameBlogsDotopmlDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/$username/did.json': {
@@ -298,7 +339,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
+  BlogsDotopmlDotxmlRoute: BlogsDotopmlDotxmlRoute,
   DashboardRoute: DashboardRoute,
+  UsernameBlogsDotopmlDotxmlRoute: UsernameBlogsDotopmlDotxmlRoute,
   UsernameDidDotjsonRoute: UsernameDidDotjsonRoute,
   DotwellKnownAtprotoDidRoute: DotwellKnownAtprotoDidRoute,
   DotwellKnownDidDotjsonRoute: DotwellKnownDidDotjsonRoute,

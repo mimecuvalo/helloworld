@@ -94,6 +94,14 @@ export function buildContentHead(opts: { content: ContentLike; contentOwner: Own
       title,
       href: buildUrl({ pathname: '/api/social/rss', searchParams: { resource } }),
     });
+    // Blogroll discovery: the emerging rel="blogroll" convention points feed
+    // readers and blogroll crawlers at the OPML list of who this user follows.
+    links.push({
+      rel: 'blogroll',
+      type: 'text/xml',
+      title: `${content?.username || title} blogroll`,
+      href: buildUrl({ host, pathname: `/${content?.username}/blogs.opml.xml` }),
+    });
     links.push({
       rel: 'webmention',
       href: buildUrl({ host, pathname: '/api/social/webmention', searchParams: { resource } }),

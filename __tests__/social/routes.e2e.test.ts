@@ -4,12 +4,14 @@ import { Hono } from 'hono';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const db = vi.hoisted(() => ({
+  getDefaultLocalUser: vi.fn(),
   getLocalContent: vi.fn(),
   getLocalLatestContent: vi.fn(),
   getLocalUser: vi.fn(),
   getRemoteAllUsers: vi.fn(),
   getRemoteCommentsOnLocalContent: vi.fn(),
   getRemoteContent: vi.fn(),
+  getRemoteFollowing: vi.fn(),
   getRemoteFriends: vi.fn(),
   getRemoteUser: vi.fn(),
   getRemoteUserByActor: vi.fn(),
@@ -103,6 +105,8 @@ beforeEach(() => {
   db.getLocalLatestContent.mockResolvedValue([content()]);
   db.getRemoteCommentsOnLocalContent.mockResolvedValue([contentRemote()]);
   db.getRemoteFriends.mockResolvedValue([[], []]);
+  db.getRemoteFollowing.mockResolvedValue([]);
+  db.getDefaultLocalUser.mockResolvedValue(user());
   db.getRemoteAllUsers.mockResolvedValue([]);
   db.countLocalUsersAndContent.mockResolvedValue([1, 1]);
   db.getLocalUsersWithBluesky.mockResolvedValue([]);
@@ -470,6 +474,57 @@ describe('GET /api/social/comments', () => {
     const response = await get(q('/api/social/comments', CONTENT_URL));
 
     expect(response.headers.get('cache-control')).toBeNull();
+  });
+});
+
+describe('GET /api/social/opml', () => {
+  it('serves the blogroll as OPML', async () => {
+    db.getRemoteFollowing.mockResolvedValue([userRemote()]);
+
+    const response = await get(q('/api/social/opml'));
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('content-type')).toContain('text/xml');
+    expect(db.getLocalUser).toHaveBeenCalledWith(ALICE_PROFILE);
+    expect(db.getRemoteFollowing).toHaveBeenCalledWith('alice');
+
+    const doc = parseXml(await response.text());
+    expect(doc.documentElement.tagName).toBe('opml');
+    expect(doc.querySelector('body outline outline')?.getAttribute('xmlUrl')).toBe('https://remote.example/bob/feed');
+  });
+
+  it('404s for an unknown user', async () => {
+    db.getLocalUser.mockResolvedValue(null);
+
+    expect((await get(q('/api/social/opml'))).status).toBe(404);
+    expect(db.getRemoteFollowing).not.toHaveBeenCalled();
+  });
+
+  it('answers for the default user when no resource is given', async () => {
+    const response = await get('/api/social/opml');
+
+    expect(response.status).toBe(200);
+    expect(db.getDefaultLocalUser).toHaveBeenCalledWith(HOST);
+    expect(db.getLocalUser).not.toHaveBeenCalled();
+    expect(db.getRemoteFollowing).toHaveBeenCalledWith('alice');
+  });
+
+  it('404s when the site has no default user', async () => {
+    db.getDefaultLocalUser.mockResolvedValue(null);
+
+    expect((await get('/api/social/opml')).status).toBe(404);
+  });
+
+  it('is CDN-cached, since a blogroll changes only when a follow does', async () => {
+    expect((await get(q('/api/social/opml'))).headers.get('cache-control')).toBe('public, s-maxage=3600');
+  });
+
+  it('honors the x-hw-host header for multi-tenant hosting', async () => {
+    const response = await get('/api/social/opml', { headers: { 'x-hw-host': 'tenant.example' } });
+    const doc = parseXml(await response.text());
+
+    expect(db.getDefaultLocalUser).toHaveBeenCalledWith('tenant.example');
+    expect(doc.querySelector('ownerId')?.textContent).toBe('https://tenant.example/alice');
   });
 });
 

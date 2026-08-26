@@ -13,6 +13,14 @@ export async function getLocalUser(localUserUrl: string) {
   return await prisma.user.findUnique({ where: { username } });
 }
 
+// The site's default user, for endpoints reached without a ?resource= — whoever
+// owns this hostname, else the first account. Mirrors what the homepage resolves
+// (fetchPublicUserData in server/services/user.ts).
+export async function getDefaultLocalUser(hostname: string) {
+  const byHostname = hostname ? await prisma.user.findFirst({ where: { hostname } }) : null;
+  return byHostname || (await prisma.user.findUnique({ where: { id: 1 } }));
+}
+
 export async function getLocalContent(localContentUrl: string) {
   const { username, name } = parseContentUrl(localContentUrl);
   return await prisma.content.findUnique({ where: { username_name: { username, name } } });
@@ -86,6 +94,15 @@ export async function getRemoteFriends(usernameOrUrl: string) {
   const followers = await prisma.userRemote.findMany({ where: { localUsername, follower: true } });
   const following = await prisma.userRemote.findMany({ where: { localUsername, following: true } });
   return [followers, following];
+}
+
+// The blogroll: everyone this user follows, in the order the reader shows them.
+export async function getRemoteFollowing(usernameOrUrl: string) {
+  const localUsername = parseContentUrl(usernameOrUrl).username;
+  return await prisma.userRemote.findMany({
+    where: { localUsername, following: true },
+    orderBy: [{ order: 'asc' }, { username: 'asc' }],
+  });
 }
 
 export async function getRemoteContent(localUsername: string, link: string) {
