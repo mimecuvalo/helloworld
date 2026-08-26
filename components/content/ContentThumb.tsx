@@ -1,6 +1,7 @@
 import { type MouseEvent, useEffect, useRef, useState } from 'react';
 import { defineMessages, useIntl } from 'i18n';
 import { contentUrl, thumbUrl } from 'lib/url-factory';
+import { useGestures } from 'lib/use-gestures';
 import Lightbox from './Lightbox';
 import styles from './content.module.css';
 
@@ -41,6 +42,7 @@ export default function ContentThumb({
   const [isLoaded, setIsLoaded] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
+  const linkRef = useRef<HTMLAnchorElement>(null);
   useEffect(() => setIsDialogOpen(isOpen), [isOpen]);
   // Cached images can finish loading before onLoad attaches — catch that so the
   // thumb doesn't stay stuck at opacity 0.
@@ -52,11 +54,16 @@ export default function ContentThumb({
   const thumbAlt = intl.formatMessage(messages.thumbnail);
   const isPhotosSectionAndHasPhotos = item.section === 'photos' && !!item.prefetchImages?.length;
 
+  const handleOpen = () => {
+    if (!isPhotosSectionAndHasPhotos) return;
+    setIsDialogOpen(true);
+    onOpen();
+  };
+
   const handleClick = (evt: MouseEvent) => {
     if (!isPhotosSectionAndHasPhotos) return;
     evt.preventDefault();
-    setIsDialogOpen(true);
-    onOpen();
+    handleOpen();
   };
 
   const handleClose = () => {
@@ -64,9 +71,14 @@ export default function ContentThumb({
     onClose();
   };
 
+  // Pinching out on a thumb blows it up into the lightbox; the lightbox closes
+  // on the reverse pinch.
+  useGestures(linkRef, { onPinchOut: handleOpen });
+
   return (
     <>
       <a
+        ref={linkRef}
         href={contentUrl(item)}
         className={styles.thumbLink}
         title={item.title || undefined}

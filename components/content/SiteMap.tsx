@@ -96,7 +96,16 @@ export default function SiteMap({
       {isDrawerOpen ? (
         <div className={styles.sitemapBackdrop} onClick={() => setIsDrawerOpen(false)} aria-hidden="true" />
       ) : null}
-      <nav id="hw-sitemap" className={`${styles.sitemap} ${isDrawerOpen ? styles.sitemapOpen : ''}`} title="sitemap">
+      <nav
+        id="hw-sitemap"
+        className={`${styles.sitemap} ${isDrawerOpen ? styles.sitemapOpen : ''}`}
+        title="sitemap"
+        // Following a link out of the mobile drawer should dismiss it — client-side
+        // navigation leaves the drawer sitting on top of the page otherwise.
+        onClick={(evt) => {
+          if (isDrawerOpen && (evt.target as HTMLElement).closest('a')) setIsDrawerOpen(false);
+        }}
+      >
         <ul>
           {contentOwner.logo ? (
             <li id="hw-sitemap-logo" className={`${styles.logoWrapper} h-card`}>
