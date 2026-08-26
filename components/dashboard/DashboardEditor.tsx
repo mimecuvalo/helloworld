@@ -129,26 +129,28 @@ export default function DashboardEditor({ username }: { username: string }) {
     document.cookie = `sectionAndAlbum=${encodeURIComponent(value)};path=/;max-age=31536000`;
   };
 
-  if (siteMap.isPending || !siteMap.data) return null;
+  const isSitemapLoading = siteMap.isPending || !siteMap.data;
 
-  const options = buildSectionOptions(siteMap.data);
+  const options = isSitemapLoading ? [] : buildSectionOptions(siteMap.data);
   const parsed = sectionAndAlbum ? JSON.parse(sectionAndAlbum) : { section: 'main', album: '' };
 
   return (
     <div className={styles.composer}>
-      <div className={styles.composerToolbar}>
-        <select
-          className="notranslate"
-          value={sectionAndAlbum}
-          onChange={(e) => handleSectionChange(e.target.value)}
-          aria-label="section & album"
-        >
-          {options}
-        </select>
-        <button type="button" className="btn" onClick={handlePost}>
-          <F defaultMessage="post" />
-        </button>
-      </div>
+      {!!options.length && (
+        <div className={styles.composerToolbar}>
+          <select
+            className="notranslate"
+            value={sectionAndAlbum}
+            onChange={(e) => handleSectionChange(e.target.value)}
+            aria-label="section & album"
+          >
+            {options}
+          </select>
+          <button type="button" className="btn" onClick={handlePost}>
+            <F defaultMessage="post" />
+          </button>
+        </div>
+      )}
       <Editor
         key={`dashboard-editor-${editorKey}`}
         name="dashboard-editor"

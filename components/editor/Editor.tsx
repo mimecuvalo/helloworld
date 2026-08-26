@@ -3,10 +3,12 @@ import { useEditor as useTipTapEditor, EditorContent, type Editor as TipTapEdito
 import { StarterKit } from '@tiptap/starter-kit';
 import { Image } from '@tiptap/extension-image';
 import { Placeholder } from '@tiptap/extensions';
+import { Emoji } from '@tiptap/extension-emoji';
 import type { EditorView } from '@tiptap/pm/view';
 import uploadFileToS3 from 'lib/s3-upload';
 import { useEditor } from 'lib/editor-context';
 import Iframe from './IframeExtension';
+import { emojiSuggestion, unicodeEmojis } from './EmojiSuggestion';
 import EditorToolbar from './Toolbar';
 import styles from './editor.module.css';
 
@@ -65,9 +67,14 @@ export default function Editor({
   const editor = useTipTapEditor(
     {
       extensions: [
-        StarterKit,
+        // Clicking a link should put the caret in it so the toolbar can edit it,
+        // not navigate away from the page being edited.
+        StarterKit.configure({ link: { openOnClick: false, defaultProtocol: 'https' } }),
         Image.configure({ HTMLAttributes: { class: 'editor-image' } }),
         Placeholder.configure({ placeholder }),
+        // `:` opens the picker. The emoji set is ~500kb of JSON, which only
+        // lands in this chunk because ContentEditor is lazy-loaded.
+        Emoji.configure({ emojis: unicodeEmojis, suggestion: emojiSuggestion }),
         Iframe,
       ],
       content: defaultValue || '',
@@ -130,7 +137,7 @@ export default function Editor({
   }, [editor, defaultValue]);
 
   if (!editor) {
-    return <div style={{ width: '100%', minHeight: 64 }} aria-busy="true" />;
+    return <div style={{ width: '100%', minHeight: '33vh' }} aria-busy="true" />;
   }
 
   return (
