@@ -111,6 +111,27 @@ a {
   transform: translate(3px, 3px);
 }
 
+.btn:before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  cursor: default;
+}
+
+.btn:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -3px;
+  right: 0;
+  width: 3px;
+  cursor: default;
+}
+
 .btn:disabled {
   color: var(--color-text-disabled);
   cursor: default;

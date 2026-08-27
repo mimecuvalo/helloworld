@@ -186,6 +186,7 @@
 
 .nav a {
   display: inline-block;
+  position: relative;
   background-color: var(--hw-bg);
   margin-right: 8px;
   margin-bottom: 16px;
@@ -196,6 +197,33 @@
     2px 2px var(--hw-primary),
     3px 3px var(--hw-primary);
   transition: all 0.2s ease-out;
+}
+
+.nav a:before,
+.lightboxClose:before,
+.lightboxPrev:before,
+.lightboxNext:before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  cursor: default;
+}
+
+.nav a:after,
+.lightboxClose:after,
+.lightboxPrev:after,
+.lightboxNext:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -3px;
+  right: 0;
+  width: 3px;
+  cursor: default;
 }
 
 .nav a:hover {
@@ -649,11 +677,15 @@
     3px 3px var(--hw-primary);
 }
 
-.lightboxClose:active,
+.lightboxClose:active {
+  box-shadow: none;
+  transform: translate(3px, 3px);
+}
+
 .lightboxPrev:active,
 .lightboxNext:active {
   box-shadow: none;
-  transform: translate(3px, 3px);
+  transform: translate(3px, calc(3px - 50%));
 }
 
 .lightboxClose {

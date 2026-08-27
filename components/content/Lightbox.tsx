@@ -54,7 +54,13 @@ function LightboxDialog({ onClose, onPrev, onNext, item }: Omit<LightboxProps, '
   };
 
   return (
-    <div ref={dialogRef} className={styles.lightbox} role="dialog" aria-modal="true" onClick={handleEmptySpaceClick}>
+    <div
+      ref={dialogRef}
+      className={styles.lightbox}
+      role="dialog"
+      aria-modal="true"
+      onMouseDown={handleEmptySpaceClick}
+    >
       <button type="button" className={`${styles.lightboxClose} notranslate`} onClick={onClose} aria-label="close">
         ✕
       </button>
@@ -81,7 +87,7 @@ function LightboxDialog({ onClose, onPrev, onNext, item }: Omit<LightboxProps, '
         ›
       </button>
 
-      <div className={styles.lightboxContent} onClick={handleEmptySpaceClick}>
+      <div className={styles.lightboxContent} onMouseDown={handleEmptySpaceClick}>
         <Header content={item} />
         {item.prefetchImages?.length ? (
           item.prefetchImages.map((image) => (
