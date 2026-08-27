@@ -17,14 +17,21 @@ export const contentRemoteRoutes = new Hono<AppEnv>()
     '/paginated',
     zValidator(
       'query',
-      z.object({
-        profileUrlOrSpecialFeed: z.string(),
-        offset: z.coerce.number().int().default(0),
-        shouldShowAllItems: z
-          .string()
-          .optional()
-          .transform((v) => v === 'true'),
-      })
+      z
+        .object({
+          profileUrlOrSpecialFeed: z.string(),
+          cursorCreatedAt: z.iso.datetime().optional(),
+          cursorId: z.coerce.number().int().optional(),
+          shouldShowAllItems: z
+            .string()
+            .optional()
+            .transform((v) => v === 'true'),
+        })
+        // Half a cursor would silently paginate from the top again; reject it
+        // at the boundary rather than quietly serving page 1.
+        .refine((v) => (v.cursorCreatedAt === undefined) === (v.cursorId === undefined), {
+          message: 'cursorCreatedAt and cursorId must be sent together',
+        })
     ),
     async (c) => {
       const ctx = c.get('ctx');
