@@ -1,6 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "bun run build",
+  "bunVersion": "1.4.x",
   "crons": [
     {
       "path": "/api/social/update-feeds",
