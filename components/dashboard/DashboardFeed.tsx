@@ -37,7 +37,9 @@ export default function DashboardFeed({
 
   if (isPending || !data) return null;
 
-  const feed = data.pages.flat();
+  // Belt and braces: keyset pagination shouldn't hand back an item twice, but a
+  // duplicate postId would collide on the React key below and corrupt the list.
+  const feed = Array.from(new Map(data.pages.flat().map((item) => [item.postId, item])).values());
   const breakpointColumnsObj = { default: 3, 960: 1 };
 
   return (

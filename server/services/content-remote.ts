@@ -13,15 +13,21 @@ export function fetchContentRemote(ctx: Context, id: number) {
   return ctx.prisma.contentRemote.findUnique({ where: { id } });
 }
 
+export const FEED_PAGE_SIZE = 20;
+
 export async function fetchContentRemotePaginated(
   ctx: Context,
-  args: { profileUrlOrSpecialFeed: string; offset: number; shouldShowAllItems?: boolean }
+  args: {
+    profileUrlOrSpecialFeed: string;
+    cursorCreatedAt?: string;
+    cursorId?: number;
+    shouldShowAllItems?: boolean;
+  }
 ) {
   const { currentUsername, prisma } = ctx;
-  const { profileUrlOrSpecialFeed, offset, shouldShowAllItems } = args;
-  const take = 20;
+  const { profileUrlOrSpecialFeed, cursorCreatedAt, cursorId, shouldShowAllItems } = args;
 
-  const constraints: { [key: string]: string | boolean } = {
+  const constraints: Prisma.ContentRemoteWhereInput = {
     toUsername: currentUsername,
     deleted: false,
     isSpam: false,
@@ -51,23 +57,33 @@ export async function fetchContentRemotePaginated(
       break;
   }
 
-  let results = await prisma.contentRemote.findMany({
-    where: constraints,
-    orderBy: [{ createdAt: order }],
-    take,
-    skip: offset * take,
-  });
+  // Keyset seek: strictly past the cursor in the sort direction, id breaking ties.
+  //
+  // Offset pagination is undefined here because the unread feed shrinks behind
+  // you as items are marked read while you scroll — skip/take then either
+  // repeats or skips rows depending on which requests land first. A keyset
+  // cursor is a sort position rather than a row index, so rows leaving the set
+  // behind it shift nothing.
+  //
+  // Prisma's own `cursor:` option can't be used: it looks the cursor row up and
+  // requires it to still satisfy `where`, but that row is precisely the one we
+  // just marked read, so it's been filtered out.
+  const op = order === 'desc' ? 'lt' : 'gt';
+  const seek =
+    cursorCreatedAt && cursorId !== undefined
+      ? {
+          OR: [
+            { createdAt: { [op]: new Date(cursorCreatedAt) } },
+            { createdAt: new Date(cursorCreatedAt), id: { [op]: cursorId } },
+          ],
+        }
+      : undefined;
 
-  // Infinite-feed quirk: reset offset to 0 if nothing found beyond the start.
-  if (!results.length && offset !== 0) {
-    results = await prisma.contentRemote.findMany({
-      where: constraints,
-      orderBy: [{ createdAt: order }],
-      take,
-      skip: 0,
-    });
-  }
-  return results;
+  return prisma.contentRemote.findMany({
+    where: seek ? { AND: [constraints, seek] } : constraints,
+    orderBy: [{ createdAt: order }, { id: order }],
+    take: FEED_PAGE_SIZE,
+  });
 }
 
 export async function fetchUserTotalCounts(ctx: Context) {

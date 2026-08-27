@@ -18,23 +18,34 @@ export type HandleSetFeed = (feed: RemoteUser | string, query?: string, allItems
 
 const FEED_PAGE_SIZE = 20;
 
+// A sort position, not a row index — the unread feed shrinks behind you as
+// items are marked read, and only a keyset cursor survives that.
+type FeedCursor = { createdAt: string; id: number };
+
 export function useFeedPaginated(profileUrlOrSpecialFeed: string, query: string, shouldShowAllItems: boolean) {
   return useInfiniteQuery({
     queryKey: ['feed-paginated', profileUrlOrSpecialFeed, query, shouldShowAllItems],
-    initialPageParam: 0,
+    initialPageParam: null as FeedCursor | null,
     queryFn: async ({ pageParam }) => {
       const res = await rpc.api['content-remote'].paginated.$get({
+        // One object literal, not a conditional spread: excess-property checking
+        // doesn't see through a spread, so a mistyped param name would compile.
+        // hono's buildSearchParams drops undefined values from the query string.
         query: {
           profileUrlOrSpecialFeed,
-          offset: String(pageParam),
           shouldShowAllItems: String(shouldShowAllItems),
+          cursorCreatedAt: pageParam?.createdAt,
+          cursorId: pageParam ? String(pageParam.id) : undefined,
         },
       });
       if (!res.ok) throw new Error('Failed to load feed');
       return (await res.json()) as RemotePost[];
     },
-    getNextPageParam: (lastPage, allPages) =>
-      lastPage.length < FEED_PAGE_SIZE ? undefined : allPages.reduce((n, p) => n + p.length, 0),
+    getNextPageParam: (lastPage): FeedCursor | undefined => {
+      if (lastPage.length < FEED_PAGE_SIZE) return undefined;
+      const last = lastPage[lastPage.length - 1];
+      return { createdAt: last.createdAt, id: last.id };
+    },
   });
 }
 

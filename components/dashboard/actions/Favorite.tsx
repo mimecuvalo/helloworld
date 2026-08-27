@@ -43,7 +43,9 @@ export default function Favorite({
           return r.json();
         }),
     onSuccess: () => {
-      if (isDashboard) queryClient.invalidateQueries({ queryKey: ['feed-counts'] });
+      // favoritesCount lives in total-counts; feed-counts is unread posts per
+      // feed, which favoriting cannot change.
+      if (isDashboard) queryClient.invalidateQueries({ queryKey: ['total-counts'] });
     },
   });
 

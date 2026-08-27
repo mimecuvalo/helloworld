@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { F, FormattedDate } from 'i18n';
 import { rpc } from 'lib/rpc';
+import { invalidateCountsSoon } from 'lib/invalidate-counts';
 import type { RemotePost } from 'lib/remote-queries';
 import { createLiteYouTubeVideos } from 'util/media';
 import Favorite from './actions/Favorite';
@@ -24,10 +25,7 @@ export default function DashboardItem({ contentRemote }: { contentRemote: Remote
           if (!r.ok) throw new Error('read failed');
           return r.json();
         }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['feed-counts'] });
-      queryClient.invalidateQueries({ queryKey: ['total-counts'] });
-    },
+    onSuccess: () => invalidateCountsSoon(queryClient),
   });
 
   useEffect(() => {
@@ -39,7 +37,9 @@ export default function DashboardItem({ contentRemote }: { contentRemote: Remote
       const bottomOfFeed = doc.scrollTop + window.innerHeight >= doc.scrollHeight - 50;
       if (el.getBoundingClientRect().top < -50 || bottomOfFeed) {
         setRead(true);
-        readMutation.mutate(true);
+        // Without the rollback a failed POST leaves the item faded here but
+        // unread in the db, and the listener is already gone so it never retries.
+        readMutation.mutate(true, { onError: () => setRead(false) });
       }
     };
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -54,7 +54,7 @@ export default function DashboardItem({ contentRemote }: { contentRemote: Remote
   const keepUnreadCb = (keep: boolean) => {
     if (keep && read) {
       setRead(false);
-      readMutation.mutate(false);
+      readMutation.mutate(false, { onError: () => setRead(true) });
     }
     setKeepUnread(keep);
   };

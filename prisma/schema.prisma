@@ -129,7 +129,9 @@ model Content {
 
 model ContentRemote {
   id               Int       @id @default(autoincrement())
-  createdAt        DateTime? @default(now())
+  // Non-null: the feed keyset-paginates on (createdAt, id), and NULL comparisons
+  // are always false, so a null createdAt would be unreachable past the first page.
+  createdAt        DateTime  @default(now())
   updatedAt        DateTime? @default(now()) @updatedAt
   toUser           User      @relation(name: "toUser", fields: [toUsername], references: [username])
   toUsername       String
@@ -161,6 +163,10 @@ model ContentRemote {
   @@index([toUsername, fromUsername])
   @@index([toUsername, commentUser])
   @@index([toUsername, postId])
+  // Cover the feed's keyset sort. Postgres scans either direction, so one index
+  // per shape serves both the newest-first and oldest-first sort types.
+  @@index([toUsername, type, read, createdAt, id])
+  @@index([toUsername, fromUsername, read, createdAt, id])
   @@unique([toUsername, fromUsername, postId])
   @@unique([commentUser, postId])
   @@index([thread])
