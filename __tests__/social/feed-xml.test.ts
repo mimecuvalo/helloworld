@@ -14,7 +14,8 @@ function parse(xml: string) {
 }
 
 describe('renderFeed', () => {
-  const render = (feed = [content()], owner = user()) => renderFeed(HOST, REQ, feed, owner);
+  const render = (feed = [content()], owner = user(), replyStats = {}) =>
+    renderFeed(HOST, REQ, feed, owner, replyStats);
 
   it('is well-formed XML with the stylesheet declaration first', () => {
     const xml = render();
@@ -113,11 +114,15 @@ describe('renderFeed', () => {
   });
 
   it('omits the replies link when an item has no comments', () => {
-    expect(parse(render([content({ commentsCount: 0 })])).querySelector('entry link[rel="replies"]')).toBeNull();
+    expect(parse(render([content()], user(), {})).querySelector('entry link[rel="replies"]')).toBeNull();
   });
 
+  // The count comes from the caller, not from content.commentsCount: nothing
+  // has ever written to that column, so reading it emitted no link at all.
   it('links to the comments feed with thr:count when an item has comments', () => {
-    const doc = parse(render([content({ commentsCount: 3, commentsUpdated: new Date('2026-02-03T00:00:00.000Z') })]));
+    const doc = parse(
+      render([content()], user(), { hello: { count: 3, updated: new Date('2026-02-03T00:00:00.000Z') } })
+    );
     const replies = doc.querySelector('entry link[rel="replies"]')!;
 
     expect(replies.getAttribute('type')).toBe('application/atom+xml');

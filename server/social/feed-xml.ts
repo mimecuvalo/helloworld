@@ -1,4 +1,5 @@
 import type { Content, ContentRemote, User } from '../../generated/prisma/client';
+import type { ReplyStats } from './db';
 import { buildUrl, contentUrl, profileUrl } from '../../lib/url-factory';
 import constants, { WEB_SUB_HUB } from '../../util/constants';
 import { attrs, entryContentHtml, esc } from './xml';
@@ -19,7 +20,7 @@ function authorXml(host: string, contentOwner: User): string {
   );
 }
 
-function entryXml(host: string, content: Content): string {
+function entryXml(host: string, content: Content, replyStats?: ReplyStats): string {
   const html = entryContentHtml(host, content);
   const url = contentUrl(content, undefined, host);
   const repliesUrl = buildUrl({ host, pathname: '/api/social/comments', searchParams: { resource: url } });
@@ -46,10 +47,12 @@ function entryXml(host: string, content: Content): string {
     `<updated>${new Date(content.updatedAt || '').toISOString()}</updated>` +
     `<activity:verb>http://activitystrea.ms/schema/1.0/post</activity:verb>` +
     objectType +
-    (content.commentsCount
+    // Counted per render rather than read off content.commentsCount: nothing has
+    // ever written to that column, so this link never appeared at all.
+    (replyStats?.count
       ? `<link rel="replies" type="application/atom+xml" href="${esc(repliesUrl)}"${attrs({
-          'thr:count': content.commentsCount,
-          'thr:updated': content.commentsUpdated ? new Date(content.commentsUpdated).toISOString() : undefined,
+          'thr:count': replyStats.count,
+          'thr:updated': replyStats.updated ? new Date(replyStats.updated).toISOString() : undefined,
         })}/>`
       : '') +
     `</entry>`
@@ -129,9 +132,15 @@ function feedShell(
   );
 }
 
-export function renderFeed(host: string, reqUrl: string, feed: Content[], contentOwner: User): string {
+export function renderFeed(
+  host: string,
+  reqUrl: string,
+  feed: Content[],
+  contentOwner: User,
+  replyStats: Record<string, ReplyStats> = {}
+): string {
   const updatedAt = feed.length ? feed[0].updatedAt : new Date();
-  const entries = feed.map((content) => entryXml(host, content)).join('');
+  const entries = feed.map((content) => entryXml(host, content, replyStats[content.name])).join('');
   return (
     `<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet href="/rss.xsl" type="text/xsl"?>\n` +
     feedShell(host, reqUrl, contentOwner, updatedAt, entries)

@@ -31,6 +31,13 @@ model User {
   magicKey        String
   privateKey      String
 
+  // FEP-8b32 object integrity proofs, which sign the activity itself so it
+  // survives being forwarded by a relay or another instance. Ed25519, because
+  // the eddsa-jcs-2022 cryptosuite names the curve — the RSA key above signs
+  // HTTP requests, and an HTTP signature dies at the first hop. Nullable:
+  // accounts created before this get one provisioned on demand.
+  ed25519PrivateKey String?
+
   // AT Protocol. atprotoSigningKey is a P-256 key for the did:web document —
   // the RSA key above can't serve as an atproto verification method. The
   // Bluesky app password and refresh token are stored in the clear, following
@@ -60,6 +67,9 @@ model UserRemote {
   profileUrl          String
   feedUrl             String
   magicKey            String?
+  // The peer's Ed25519 Multikey from their actor's assertionMethod, for
+  // verifying FEP-8b32 proofs on activities that reach us second-hand.
+  ed25519PublicKey    String?
   salmonUrl           String?
   activityPubActorUrl String?
   activityPubInboxUrl String?

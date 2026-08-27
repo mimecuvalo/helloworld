@@ -1,6 +1,7 @@
 import forge from 'node-forge';
 import magic from 'magic-signatures';
 import { generateMagicKey } from '../server/services/user';
+import { generateEd25519Key } from '../server/social/integrity-proof';
 import { encryptSecret } from '../server/secrets';
 
 // Opt-in rotation of a user's federation keypair.
@@ -14,9 +15,15 @@ import { encryptSecret } from '../server/secrets';
 // refetch on a verification failure, but some will simply drop your messages
 // until they do. Rotate deliberately, not on a schedule.
 //
+// Separately, --ensure-ed25519 mints the Ed25519 key that FEP-8b32 object
+// integrity proofs are signed with, for accounts created before that existed.
+// That one is safe to run any time: it only fills in a missing key, never
+// replaces one, and nothing has cached it yet if it wasn't there.
+//
 //   bun run rotate-keys -- --list
 //   bun run rotate-keys -- <username>
 //   bun run rotate-keys -- --all-weak
+//   bun run rotate-keys -- --ensure-ed25519
 
 // Env files are loaded by vite.config.mts, so a script run straight through bun
 // gets nothing. Without this guard the pg adapter falls back to libpq defaults
@@ -69,15 +76,38 @@ function bitsOf(magicKey: string): number | null {
 const args = process.argv.slice(2);
 console.log(`database: ${describeDatabase(process.env.DATABASE_URL)}\n`);
 
-const users = await prisma.user.findMany({ select: { id: true, username: true, magicKey: true } });
+const users = await prisma.user.findMany({
+  select: { id: true, username: true, magicKey: true, ed25519PrivateKey: true },
+});
 const described = users.map((user) => ({ ...user, bits: bitsOf(user.magicKey) }));
 
 if (!args.length || args.includes('--list')) {
-  for (const { username, bits } of described) {
+  for (const { username, bits, ed25519PrivateKey } of described) {
     const state = bits === null ? 'unreadable' : bits < 2048 ? `${bits} bits — WEAK` : `${bits} bits`;
-    console.log(`${username.padEnd(24)} ${state}`);
+    const proofs = ed25519PrivateKey ? 'ed25519 ok' : 'no ed25519 key';
+    console.log(`${username.padEnd(24)} ${state.padEnd(20)} ${proofs}`);
   }
   if (!args.length) console.log('\nPass a username, or --all-weak, to rotate. Nothing was changed.');
+  process.exit(0);
+}
+
+// Not a rotation: an Ed25519 key nobody has yet can be created without
+// invalidating anything, so this fills gaps and leaves existing keys alone.
+if (args.includes('--ensure-ed25519')) {
+  const missing = described.filter((user) => !user.ed25519PrivateKey);
+  if (!missing.length) {
+    console.log('Every user already has an Ed25519 key for integrity proofs. Nothing to do.');
+    process.exit(0);
+  }
+
+  for (const target of missing) {
+    const { privateKeyPem } = generateEd25519Key();
+    await prisma.user.update({
+      where: { id: target.id },
+      data: { ed25519PrivateKey: encryptSecret(privateKeyPem) },
+    });
+    console.log(`provisioned an Ed25519 key for ${target.username}`);
+  }
   process.exit(0);
 }
 

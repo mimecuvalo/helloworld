@@ -16,9 +16,11 @@ federated social web blog app. in short, i'm trying to build an open-source Tumb
 - social features:
   - RSS reader — follows Atom, RSS, ActivityPub and AT Protocol accounts side by side
   - oStatus stack, WebSub/Salmon/Webfinger
-  - **ActivityPub**: two-way with Mastodon — signed delivery to followers, actor
-    collections (outbox/followers/following), NodeInfo, and inbound
-    Create/Update/Delete/Follow/Like/Announce/Undo
+  - **ActivityPub**: two-way with Mastodon — signed delivery to followers,
+    mentions and whoever you replied to, actor collections
+    (outbox/followers/following/replies), NodeInfo, and inbound
+    Create/Update/Delete/Follow/Like/Announce/Undo. Activities carry a FEP-8b32
+    object integrity proof, so a forwarded or relayed one still verifies.
   - **AT Protocol**: a `did:web` identity plus a read-only XRPC surface, and a
     Bluesky bridge that mirrors your posts and pulls followed accounts into the
     reader. (Not a PDS — see below.)
@@ -184,15 +186,8 @@ yarn config
     - should verify source
     - https://webmention.rocks/ to test suite
   - activitypub
-    - verifyMessage - Digest header of body
-    - undo (unfollow/unfavorite)
-    - outbox
-    - followers
-    - ostatus:attention/mentioned (a la salmon)
-    - thr:replies (a la salmon)
     - add salmon 'comment' type back for content.section === 'comment'
     - needs more work for gnusocial/friendica/pleroma/hubzilla interoperability
-    - Linked Data Signatures for forwarded payloads.
     - if payload contains an attribution verify both actors
     - check out https://docs.joinmastodon.org/development/activitypub/
       - object IDs must use the https:// schema.

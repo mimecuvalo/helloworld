@@ -24,14 +24,15 @@ import {
   accept,
   createNote,
   createGenericMessage,
+  deliver,
   findUserRemote,
   follow,
   handle,
   like,
-  reply,
   salmonSend,
 } from 'server/social/activitystreams';
-import { HOST, content, contentRemote, keys, user, userRemote } from './fixtures';
+import { verifyIntegrityProof } from 'server/social/integrity-proof';
+import { HOST, content, contentRemote, keys, proofKeys, user, userRemote } from './fixtures';
 
 const ACTOR = `https://${HOST}/api/social/activitypub/actor?resource=https%3A%2F%2F${HOST}%2Falice`;
 const PUBLIC = 'https://www.w3.org/ns/activitystreams#Public';
@@ -101,6 +102,31 @@ describe('createNote', () => {
       cc: [`https://${HOST}/api/social/activitypub/followers?resource=https%3A%2F%2F${HOST}%2Falice`],
     });
     expect(message.id).toBe((message.object as { id: string }).id);
+  });
+
+  it('points the Note at its replies collection, keyed by the post permalink', async () => {
+    const message = await createNote(HOST, localContent, user());
+
+    const repliesUrl = `https://${HOST}/api/social/activitypub/replies?resource=https%3A%2F%2F${HOST}%2Falice%2Fblog%2Fhello`;
+    expect((message.object as { replies: unknown }).replies).toEqual({
+      id: repliesUrl,
+      type: 'OrderedCollection',
+      totalItems: 0,
+      updated: undefined,
+      first: `${repliesUrl}&page=1`,
+    });
+  });
+
+  it('inlines the reply count it was handed, so peers render a thread without a fetch', async () => {
+    const message = await createNote(HOST, localContent, user(), undefined, {
+      count: 4,
+      updated: new Date('2026-03-01T00:00:00.000Z'),
+    });
+
+    expect((message.object as { replies: { totalItems: number; updated: string } }).replies).toMatchObject({
+      totalItems: 4,
+      updated: '2026-03-01T00:00:00.000Z',
+    });
   });
 
   it('leads the content with the linked title, since a Note has no rendered name', () => {
@@ -229,6 +255,103 @@ describe('delivery', () => {
     expect(verifier.verify(keys().publicKey, signature, 'base64')).toBe(true);
   });
 
+  describe('object integrity proofs', () => {
+    // The signed owner: RSA for the request, Ed25519 for the activity itself.
+    const proofOwner = () => user({ privateKey: keys().privateKeyPkcs1, ed25519PrivateKey: proofKeys().privateKeyPem });
+
+    it('attaches a FEP-8b32 proof to what it delivers', async () => {
+      await follow(HOST, proofOwner(), userRemote({ activityPubInboxUrl: inbox }), true);
+      await flush();
+
+      expect(lastBody().proof).toMatchObject({
+        type: 'DataIntegrityProof',
+        cryptosuite: 'eddsa-jcs-2022',
+        proofPurpose: 'assertionMethod',
+        verificationMethod: `${ACTOR}#ed25519-key`,
+      });
+    });
+
+    it('produces a proof the receiver can verify off the wire', async () => {
+      await follow(HOST, proofOwner(), userRemote({ activityPubInboxUrl: inbox }), true);
+      await flush();
+
+      expect(verifyIntegrityProof(lastBody(), proofKeys().publicKeyMultibase)).toBe(true);
+    });
+
+    it('declares the data integrity terms in @context so the proof is not dropped', async () => {
+      await follow(HOST, proofOwner(), userRemote({ activityPubInboxUrl: inbox }), true);
+      await flush();
+
+      expect(lastBody()['@context']).toEqual([
+        'https://www.w3.org/ns/activitystreams',
+        'https://w3id.org/security/data-integrity/v1',
+        'https://w3id.org/security/multikey/v1',
+      ]);
+    });
+
+    it('keeps the digest covering the proofed body, not the body before signing', async () => {
+      await follow(HOST, proofOwner(), userRemote({ activityPubInboxUrl: inbox }), true);
+      await flush();
+
+      const [, init] = fetchMock.mock.calls.at(-1)!;
+      const expected = crypto.createHash('sha256').update(init.body, 'utf8').digest('base64');
+      expect(init.headers.Digest).toBe(`SHA-256=${expected}`);
+      expect(JSON.parse(init.body).proof).toBeTruthy();
+    });
+
+    it('signs the whole fan-out once, so every inbox gets identical bytes', async () => {
+      const recipients = [
+        userRemote({ id: 1, profileUrl: 'https://one.example/bob', activityPubInboxUrl: 'https://one.example/inbox' }),
+        userRemote({
+          id: 2,
+          profileUrl: 'https://two.example/carol',
+          activityPubInboxUrl: 'https://two.example/inbox',
+        }),
+      ];
+      const message = createGenericMessage('Delete', HOST, 'https://example.com/d/1', proofOwner(), 'https://x/1');
+
+      await deliver(HOST, proofOwner(), recipients, message);
+      await flush();
+
+      const [first, second] = fetchMock.mock.calls.map((call) => JSON.parse(call[1].body));
+      expect(first.proof.proofValue).toBe(second.proof.proofValue);
+      expect(verifyIntegrityProof(first, proofKeys().publicKeyMultibase)).toBe(true);
+    });
+
+    it('delivers unsigned for a user provisioned before proofs existed', async () => {
+      // The HTTP signature still authenticates the hop; only forwarding is lost.
+      await follow(HOST, owner(), userRemote({ activityPubInboxUrl: inbox }), true);
+      await flush();
+
+      expect(lastBody().proof).toBeUndefined();
+      expect(fetchMock.mock.calls.at(-1)![1].headers.Signature).toContain('keyId=');
+    });
+
+    it('does not proof a salmon envelope, which predates all of this', async () => {
+      await follow(HOST, proofOwner(), userRemote({ salmonUrl: 'https://remote.example/salmon' }), true);
+      await flush();
+
+      const envelope = lastBody();
+      expect(envelope.sigs).toBeTruthy();
+      expect(JSON.parse(Buffer.from(envelope.data, 'base64url').toString()).proof).toBeUndefined();
+    });
+
+    it('still delivers when the key cannot be decrypted', async () => {
+      vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      await follow(
+        HOST,
+        user({ privateKey: keys().privateKeyPkcs1, ed25519PrivateKey: 'not-a-pem' }),
+        userRemote({ activityPubInboxUrl: inbox }),
+        true
+      );
+      await flush();
+
+      expect(fetchMock).toHaveBeenCalledWith(inbox, expect.any(Object));
+      expect(lastBody().proof).toBeUndefined();
+    });
+  });
+
   it('falls back to salmon when there is no inbox', async () => {
     await follow(
       HOST,
@@ -320,13 +443,6 @@ describe('outbound activities', () => {
     await flush();
 
     expect(lastBody()).toMatchObject({ type: 'Accept', object: follow });
-  });
-
-  it('sends a reply as a Create carrying the note', async () => {
-    await reply(HOST, owner(), content(), remote(), []);
-    await flush();
-
-    expect(lastBody()).toMatchObject({ type: 'Create', object: { type: 'Note', title: 'Hello' } });
   });
 });
 
@@ -569,6 +685,41 @@ describe('handle', () => {
 
       expect(db.getRemoteContent).toHaveBeenCalledWith('alice', object.id);
       expect(db.saveRemoteContent.mock.calls[0][0].id).toBe(77);
+    });
+
+    it('reads the reply count out of the peers AS2 replies collection', async () => {
+      db.getRemoteContent.mockResolvedValue(null);
+      const replies = { type: 'Collection', totalItems: 7, updated: '2026-03-04T00:00:00.000Z' };
+
+      await handle('Create', HOST, activity('Create', { ...object, replies }), user(), userRemote());
+
+      const saved = db.saveRemoteContent.mock.calls[0][0];
+      expect(saved.commentsCount).toBe(7);
+      expect(saved.commentsUpdated).toEqual(new Date('2026-03-04T00:00:00.000Z'));
+    });
+
+    it('prefers the AS2 collection over the flat Atom-shaped count', async () => {
+      db.getRemoteContent.mockResolvedValue(null);
+      const replies = { type: 'Collection', totalItems: 7 };
+
+      await handle('Create', HOST, activity('Create', { ...object, replies, repliesCount: '2' }), user(), userRemote());
+
+      expect(db.saveRemoteContent.mock.calls[0][0].commentsCount).toBe(7);
+    });
+
+    it('falls back when replies is a bare url, which we will not go and fetch', async () => {
+      db.getRemoteContent.mockResolvedValue(null);
+
+      await handle(
+        'Create',
+        HOST,
+        activity('Create', { ...object, replies: 'https://remote.example/notes/1/replies' }),
+        user(),
+        userRemote()
+      );
+
+      // The fixture's flat repliesCount, since there is no inlined totalItems.
+      expect(db.saveRemoteContent.mock.calls[0][0].commentsCount).toBe(4);
     });
 
     it('defaults a missing replies count to zero', async () => {

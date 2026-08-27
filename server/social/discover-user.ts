@@ -5,6 +5,7 @@ import * as cheerio from 'cheerio';
 import { discoverAndParseFeedFromUrl } from './feeds';
 import { ensureAbsoluteUrl } from '../../lib/url-factory';
 import { AtpAgent } from '@atproto/api';
+import { assertionKeyOf } from './integrity-proof';
 import { resolveAtprotoIdentity } from './atproto-identity';
 
 export async function getLRDD(url: string) {
@@ -64,6 +65,9 @@ export async function getWebfinger(lrddUrl: string, uri: string) {
       webmentionUrl: linkMap['webmention']?.href,
       magicKey: (linkMap['magic-public-key']?.href || '').replace('data:application/magic-public-key,', ''),
       profileUrl: json.aliases.find((alias: string) => alias.startsWith('https:') || alias.startsWith('http:')),
+      activityPubInboxUrl: '',
+      sharedInboxUrl: '',
+      ed25519PublicKey: '',
     };
     success = true;
   } catch {
@@ -85,6 +89,7 @@ export async function getWebfinger(lrddUrl: string, uri: string) {
           $('alias').last().text(),
         activityPubInboxUrl: '',
         sharedInboxUrl: '',
+        ed25519PublicKey: '',
       };
     } catch {
       return null;
@@ -101,6 +106,10 @@ export async function getWebfinger(lrddUrl: string, uri: string) {
       // Several followers on one instance collapse to a single delivery when
       // the actor advertises a shared inbox.
       webfingerInfo.sharedInboxUrl = actorJSON['endpoints']?.['sharedInbox'] || '';
+      // The Ed25519 key backing their FEP-8b32 proofs, if they publish one. The
+      // RSA key above only ever authenticates a direct delivery; this is what
+      // lets an activity of theirs reach us second-hand and still be trusted.
+      webfingerInfo.ed25519PublicKey = assertionKeyOf(actorJSON)?.publicKeyMultibase || '';
     } catch {
       // Ignore if we can't get the actor info.
     }
