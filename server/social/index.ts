@@ -3,7 +3,7 @@ import type { Content, ContentRemote, User, UserRemote } from '../../generated/p
 import { discoverUserRemoteInfoSaveAndSubscribe } from './discover-user';
 import { follow as activityStreamsFollow, like as activityStreamsLike } from './activitystreams';
 import { parseFeedAndInsertIntoDb, retrieveFeed } from './feeds';
-import { syndicateContent, syndicateDelete } from './syndicate';
+import { resolveThreadUser, syndicateContent, syndicateDelete } from './syndicate';
 import {
   followOnBluesky,
   isAtprotoUserRemote,
@@ -34,6 +34,14 @@ export async function syndicate(
 
 export async function unsyndicate(ctx: Context, contentOwner: User, content: Content): Promise<void> {
   await syndicateDelete(ctx.hostname, contentOwner, content);
+}
+
+// Who wrote the post a reply answers, resolved when the reply is saved. Stored
+// on the row as content.threadUser: it decides who the reply is delivered and
+// addressed to, and it's what the Atom rendering needs for ostatus:attention.
+export async function threadUserFor(ctx: Context, threadUrl: string | null | undefined): Promise<string | null> {
+  if (!threadUrl) return null;
+  return await resolveThreadUser(ctx.currentUsername, threadUrl);
 }
 
 export async function like(

@@ -118,6 +118,10 @@ describe('getWebfinger', () => {
       activityPubActorUrl: 'https://remote.example/users/bob',
       magicKey: 'RSA.abc.AQAB',
       profileUrl: 'https://remote.example/bob',
+      // Filled in from the actor document, which this fixture doesn't serve.
+      activityPubInboxUrl: '',
+      sharedInboxUrl: '',
+      ed25519PublicKey: '',
     });
   });
 

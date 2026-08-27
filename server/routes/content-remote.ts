@@ -119,11 +119,20 @@ export const contentRemoteRoutes = new Hono<AppEnv>()
     return c.json(await cr.markAllFeedsAsRead(ctx));
   })
   .post(
-    '/read',
-    zValidator('json', z.object({ fromUsername: z.string(), postId: z.string(), read: z.boolean() })),
+    '/read-batch',
+    zValidator(
+      'json',
+      z.object({
+        read: z.boolean(),
+        items: z
+          .array(z.object({ fromUsername: z.string(), postId: z.string() }))
+          .min(1)
+          .max(cr.READ_BATCH_MAX),
+      })
+    ),
     async (c) => {
       const ctx = c.get('ctx');
       await assertAuthor(ctx);
-      return c.json(await cr.readContentRemote(ctx, c.req.valid('json')));
+      return c.json(await cr.readContentRemoteBatch(ctx, c.req.valid('json')));
     }
   );

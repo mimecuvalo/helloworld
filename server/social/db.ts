@@ -1,5 +1,7 @@
-import type { ContentRemote, UserRemote } from '../../generated/prisma/client';
+import type { ContentRemote, User, UserRemote } from '../../generated/prisma/client';
 import { parseContentUrl } from '../../lib/url-factory';
+import { encryptSecret } from '../secrets';
+import { generateEd25519Key } from './integrity-proof';
 import prisma from '../prisma';
 
 const FEED_MAX_DAYS_OLD = 30 * 24 * 60 * 60 * 1000; // 30 days
@@ -19,6 +21,22 @@ export async function getLocalUser(localUserUrl: string) {
 export async function getDefaultLocalUser(hostname: string) {
   const byHostname = hostname ? await prisma.user.findFirst({ where: { hostname } }) : null;
   return byHostname || (await prisma.user.findUnique({ where: { id: 1 } }));
+}
+
+// The Ed25519 key that backs this user's object integrity proofs, minted on
+// first use. Follows the same on-demand shape as ensureAtprotoSigningKey: users
+// created before FEP-8b32 support shouldn't need a migration to federate, and
+// the actor endpoint is where the key first has to be true in public.
+//
+// Mutates the passed row so the caller can publish the key it just created.
+export async function ensureEd25519Key(user: User): Promise<string> {
+  if (user.ed25519PrivateKey) return user.ed25519PrivateKey;
+
+  const { privateKeyPem } = generateEd25519Key();
+  const stored = encryptSecret(privateKeyPem);
+  await prisma.user.update({ where: { id: user.id }, data: { ed25519PrivateKey: stored } });
+  user.ed25519PrivateKey = stored;
+  return stored;
 }
 
 export async function getLocalContent(localContentUrl: string) {
@@ -143,6 +161,48 @@ export async function removeRemoteContent(remoteContent: ContentRemote) {
   return await prisma.contentRemote.deleteMany({
     where: { toUsername: remoteContent.toUsername, postId: remoteContent.postId, type: remoteContent.type },
   });
+}
+
+export type ReplyStats = { count: number; updated: Date | null };
+
+// How many replies each of these local items has, and when the newest arrived —
+// the thr:count / thr:updated pair in Atom, totalItems in an ActivityPub replies
+// collection.
+//
+// Batched on purpose: a feed or an outbox page renders 50 items, and asking
+// per-item is 50 round trips to answer one question. (Content.commentsCount
+// exists on the row but nothing has ever written to it, so counting is also the
+// only way to get a number that isn't zero.)
+export async function getReplyStatsForLocalContents(
+  username: string,
+  names: string[]
+): Promise<Record<string, ReplyStats>> {
+  if (!names.length) return {};
+
+  const rows = await prisma.contentRemote.groupBy({
+    by: ['localContentName'],
+    where: {
+      toUsername: username,
+      localContentName: { in: names },
+      type: 'comment',
+      deleted: false,
+      isSpam: false,
+    },
+    _count: { _all: true },
+    _max: { createdAt: true },
+  });
+
+  const stats: Record<string, ReplyStats> = {};
+  for (const row of rows) {
+    if (row.localContentName) stats[row.localContentName] = { count: row._count._all, updated: row._max.createdAt };
+  }
+  return stats;
+}
+
+export async function getReplyStatsForLocalContent(localContentUrl: string): Promise<ReplyStats> {
+  const { username, name } = parseContentUrl(localContentUrl);
+  const stats = await getReplyStatsForLocalContents(username, [name]);
+  return stats[name] || { count: 0, updated: null };
 }
 
 export async function getRemoteCommentsOnLocalContent(localContentUrl: string) {

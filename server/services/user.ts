@@ -7,6 +7,7 @@ import { assertAuthor, ForbiddenError } from '../authorization';
 import { HTTPError } from '../exceptions';
 import { encryptSecret } from '../secrets';
 import { PUBLIC_BSKY_PDS, didForUser, generateSigningKey } from '../social/atproto-identity';
+import { generateEd25519Key } from '../social/integrity-proof';
 import { profileUrl } from '../../lib/url-factory';
 
 // RSA keypair for signing federation (Salmon / magic-envelope / ActivityPub HTTP
@@ -29,7 +30,13 @@ export function generateMagicKey(): { magicKey: string; privateKey: string } {
 // Fields that must never reach a browser. ctx.currentUser is the whole row
 // because the server signs with it; anything returned to a client goes through
 // stripSecrets first.
-const SECRET_USER_FIELDS = ['privateKey', 'atprotoSigningKey', 'atprotoAppPassword', 'atprotoRefreshJwt'] as const;
+const SECRET_USER_FIELDS = [
+  'privateKey',
+  'ed25519PrivateKey',
+  'atprotoSigningKey',
+  'atprotoAppPassword',
+  'atprotoRefreshJwt',
+] as const;
 
 export type SafeUser = Omit<User, (typeof SECRET_USER_FIELDS)[number]>;
 
@@ -100,6 +107,7 @@ export function fetchPublicUserDataSearch(ctx: Context, username?: string | null
 export async function createUser(ctx: Context, input: { username: string; email: string }) {
   const { magicKey, privateKey } = generateMagicKey();
   const { privateKeyHex } = await generateSigningKey();
+  const { privateKeyPem } = generateEd25519Key();
   return ctx.prisma.user.create({
     data: {
       username: input.username,
@@ -110,6 +118,7 @@ export async function createUser(ctx: Context, input: { username: string; email:
       magicKey,
       privateKey: encryptSecret(privateKey),
       atprotoSigningKey: encryptSecret(privateKeyHex),
+      ed25519PrivateKey: encryptSecret(privateKeyPem),
     },
   });
 }

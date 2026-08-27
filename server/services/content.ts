@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid';
 import type { Context } from '../context';
 import type { Content } from '../../generated/prisma/client';
 import { isRobotViewing } from '../crawler';
-import { syndicate, unsyndicate } from '../social';
+import { syndicate, threadUserFor, unsyndicate } from '../social';
 
 type DecoratedContent = Content & {
   forceRefresh?: boolean;
@@ -374,9 +374,10 @@ export async function saveContent(ctx: Context, args: { name: string; title: str
   const { currentUsername, prisma } = ctx;
   const { name, hidden, title, view } = args;
   const thread = discoverThreadInHTML(view);
+  const threadUser = await threadUserFor(ctx, thread);
 
   const updatedContent = await prisma.content.update({
-    data: { title, hidden, thread, view },
+    data: { title, hidden, thread, threadUser, view },
     where: { username_name: { username: currentUsername, name } },
   });
 
@@ -406,6 +407,7 @@ export async function postContent(
   name = name.replace(/[^A-Za-z0-9-]/, '-');
 
   const thread = discoverThreadInHTML(args.view);
+  const threadUser = await threadUserFor(ctx, thread);
 
   const createdContent = await prisma.content.create({
     data: {
@@ -416,6 +418,7 @@ export async function postContent(
       title: args.title,
       thumb: args.thumb,
       thread,
+      threadUser,
       hidden: args.hidden,
       redirect: 0,
       template: '',

@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { F, FormattedDate } from 'i18n';
-import { rpc } from 'lib/rpc';
 import { invalidateCountsSoon } from 'lib/invalidate-counts';
+import { queueRead } from 'lib/read-queue';
 import type { RemotePost } from 'lib/remote-queries';
 import { createLiteYouTubeVideos } from 'util/media';
 import Favorite from './actions/Favorite';
@@ -18,13 +18,7 @@ export default function DashboardItem({ contentRemote }: { contentRemote: Remote
   const itemRef = useRef<HTMLElement>(null);
 
   const readMutation = useMutation({
-    mutationFn: (nextRead: boolean) =>
-      rpc.api['content-remote'].read
-        .$post({ json: { fromUsername: contentRemote.fromUsername, postId: contentRemote.postId, read: nextRead } })
-        .then((r) => {
-          if (!r.ok) throw new Error('read failed');
-          return r.json();
-        }),
+    mutationFn: (nextRead: boolean) => queueRead(contentRemote.fromUsername, contentRemote.postId, nextRead),
     onSuccess: () => invalidateCountsSoon(queryClient),
   });
 

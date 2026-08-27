@@ -317,16 +317,26 @@ export async function markAllFeedsAsRead(ctx: Context) {
   return { count: 0 };
 }
 
-export async function readContentRemote(ctx: Context, args: { fromUsername: string; postId: string; read: boolean }) {
-  await ctx.prisma.contentRemote.update({
-    data: { read: args.read },
+// Reaching the bottom of the feed marks every remaining item read at once, so
+// reads arrive as a burst rather than one at a time. One updateMany keeps that
+// to a single connection instead of one per item.
+export const READ_BATCH_MAX = 200;
+
+export async function readContentRemoteBatch(
+  ctx: Context,
+  args: { read: boolean; items: { fromUsername: string; postId: string }[] }
+) {
+  const { read, items } = args;
+  if (!items.length) return { count: 0, read };
+
+  // Match on the (toUsername, fromUsername, postId) unique key rather than
+  // postId alone — two feeds can in principle publish the same guid.
+  const { count } = await ctx.prisma.contentRemote.updateMany({
+    data: { read },
     where: {
-      toUsername_fromUsername_postId: {
-        toUsername: ctx.currentUsername,
-        fromUsername: args.fromUsername,
-        postId: args.postId,
-      },
+      toUsername: ctx.currentUsername,
+      OR: items.map(({ fromUsername, postId }) => ({ fromUsername, postId })),
     },
   });
-  return { fromUsername: args.fromUsername, postId: args.postId, read: args.read };
+  return { count, read };
 }

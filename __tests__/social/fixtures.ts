@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import { generateEd25519Key } from 'server/social/integrity-proof';
 import type { Content, ContentRemote, User, UserRemote } from '../../generated/prisma/client';
 
 export const HOST = 'example.com';
@@ -22,6 +23,14 @@ export function keys() {
   return cachedKeys;
 }
 
+// The Ed25519 half, for FEP-8b32 object integrity proofs. Same lazy-and-shared
+// reasoning as keys() above, though this one is cheap to make.
+let cachedProofKeys: ReturnType<typeof generateEd25519Key> | undefined;
+export function proofKeys() {
+  if (!cachedProofKeys) cachedProofKeys = generateEd25519Key();
+  return cachedProofKeys;
+}
+
 export function user(overrides: Partial<User> = {}): User {
   return {
     id: 1,
@@ -43,6 +52,7 @@ export function user(overrides: Partial<User> = {}): User {
     theme: 'flowers',
     magicKey: '',
     privateKey: '',
+    ed25519PrivateKey: null,
     ...overrides,
   } as User;
 }
@@ -89,6 +99,7 @@ export function userRemote(overrides: Partial<UserRemote> = {}): UserRemote {
     profileUrl: 'https://remote.example/bob',
     feedUrl: 'https://remote.example/bob/feed',
     magicKey: null,
+    ed25519PublicKey: null,
     salmonUrl: null,
     activityPubActorUrl: 'https://remote.example/users/bob',
     activityPubInboxUrl: null,

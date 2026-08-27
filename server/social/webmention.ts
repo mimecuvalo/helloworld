@@ -1,29 +1,8 @@
-import type { Content, ContentRemote, User, UserRemote } from '../../generated/prisma/client';
+import type { ContentRemote, User } from '../../generated/prisma/client';
 import { fetchText, sanitizeHTML } from '../crawler';
 import { getLocalContent, getRemoteContent, getRemoteUser, saveRemoteContent, saveRemoteUser } from './db';
 import * as cheerio from 'cheerio';
-import { contentUrl } from '../../lib/url-factory';
 import { getUserRemoteInfo } from './discover-user';
-
-export async function reply(
-  host: string,
-  content: Content,
-  userRemote: UserRemote,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mentionedRemoteUsers: UserRemote[]
-) {
-  try {
-    await fetch(userRemote.webmentionUrl || '', {
-      method: 'POST',
-      body: new URLSearchParams({
-        source: contentUrl(content, undefined, host),
-        target: content.thread || userRemote.profileUrl,
-      }),
-    });
-  } catch {
-    // Not a big deal if this fails.
-  }
-}
 
 export async function handleMention(user: User, sourceUrl: string, targetUrl: string) {
   const html = await fetchText(sourceUrl);

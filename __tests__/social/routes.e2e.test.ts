@@ -13,6 +13,9 @@ const db = vi.hoisted(() => ({
   getRemoteContent: vi.fn(),
   getRemoteFollowing: vi.fn(),
   getRemoteFriends: vi.fn(),
+  getReplyStatsForLocalContent: vi.fn(),
+  getReplyStatsForLocalContents: vi.fn(),
+  ensureEd25519Key: vi.fn(),
   getRemoteUser: vi.fn(),
   getRemoteUserByActor: vi.fn(),
   countLocalUsersAndContent: vi.fn(),
@@ -54,10 +57,13 @@ vi.mock('server/config', () => ({
 import type { Context } from 'server/context';
 import type { AppEnv } from 'server/env';
 import { socialRoutes } from 'server/routes/social';
-import { HOST, content, contentRemote, keys, user, userRemote } from './fixtures';
+import { addIntegrityProof, generateEd25519Key, withProofContext } from 'server/social/integrity-proof';
+import { HOST, content, contentRemote, keys, proofKeys, user, userRemote } from './fixtures';
 
 const ALICE_PROFILE = `https://${HOST}/alice`;
 const CONTENT_URL = `https://${HOST}/alice/blog/hello`;
+const repliesUrl = (resource: string) =>
+  `https://${HOST}/api/social/activitypub/replies?resource=${encodeURIComponent(resource)}`;
 
 let currentUser: ReturnType<typeof user> | null;
 let fetchMock: ReturnType<typeof vi.fn>;
@@ -110,6 +116,9 @@ beforeEach(() => {
   db.getRemoteAllUsers.mockResolvedValue([]);
   db.countLocalUsersAndContent.mockResolvedValue([1, 1]);
   db.getLocalUsersWithBluesky.mockResolvedValue([]);
+  db.getReplyStatsForLocalContent.mockResolvedValue({ count: 0, updated: null });
+  db.getReplyStatsForLocalContents.mockResolvedValue({});
+  db.ensureEd25519Key.mockImplementation(async (u: ReturnType<typeof user>) => u.ed25519PrivateKey || '');
 });
 
 afterEach(() => {
@@ -559,7 +568,14 @@ describe('GET /api/social/activitypub/actor', () => {
   it('serves a Person actor with the activitystreams and security contexts', async () => {
     const body = await (await get(q('/api/social/activitypub/actor'))).json();
 
-    expect(body['@context']).toEqual(['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1']);
+    expect(body['@context']).toEqual([
+      'https://www.w3.org/ns/activitystreams',
+      'https://w3id.org/security/v1',
+      // Data Integrity terms, so a peer that resolves contexts doesn't drop the
+      // Multikey in assertionMethod or the proof on an activity.
+      'https://w3id.org/security/data-integrity/v1',
+      'https://w3id.org/security/multikey/v1',
+    ]);
     expect(body).toMatchObject({
       type: 'Person',
       preferredUsername: 'alice',
@@ -597,6 +613,42 @@ describe('GET /api/social/activitypub/actor', () => {
     expect(body.publicKey.publicKeyPem.replace(/\r/g, '').trim()).toBe(keys().publicKey.trim());
   });
 
+  it('publishes an Ed25519 Multikey in assertionMethod for FEP-8b32 proofs', async () => {
+    db.getLocalUser.mockResolvedValue(user({ ed25519PrivateKey: proofKeys().privateKeyPem }));
+
+    const body = await (await get(q('/api/social/activitypub/actor'))).json();
+
+    expect(body.assertionMethod).toEqual([
+      {
+        id: `${body.id}#ed25519-key`,
+        type: 'Multikey',
+        controller: body.id,
+        publicKeyMultibase: proofKeys().publicKeyMultibase,
+      },
+    ]);
+    // Distinct from the RSA key: that one signs HTTP requests, this one objects.
+    expect(body.publicKey.id).toBe(`${body.id}#main-key`);
+  });
+
+  it('mints the Ed25519 key on first publication for a user created before proofs existed', async () => {
+    db.getLocalUser.mockResolvedValue(user({ ed25519PrivateKey: null }));
+    db.ensureEd25519Key.mockResolvedValue(proofKeys().privateKeyPem);
+
+    const body = await (await get(q('/api/social/activitypub/actor'))).json();
+
+    expect(db.ensureEd25519Key).toHaveBeenCalled();
+    expect(body.assertionMethod[0].publicKeyMultibase).toBe(proofKeys().publicKeyMultibase);
+  });
+
+  it('still serves the RSA half of the actor when the Ed25519 key cannot be read', async () => {
+    db.ensureEd25519Key.mockResolvedValue('not-a-pem');
+
+    const response = await get(q('/api/social/activitypub/actor'));
+
+    expect(response.status).toBe(200);
+    expect((await response.json()).assertionMethod).toBeUndefined();
+  });
+
   it('still serves an actor with an empty key when the user has no magic key yet', async () => {
     db.getLocalUser.mockResolvedValue(user({ magicKey: '' }));
 
@@ -632,6 +684,84 @@ describe('GET /api/social/activitypub/message', () => {
     // A standalone object still needs its own context; only the Create wrapper is gone.
     expect(body['@context']).toBe('https://www.w3.org/ns/activitystreams');
     expect(body.object).toBeUndefined();
+  });
+
+  it('inlines a replies collection so a client sees the count without another fetch', async () => {
+    db.getReplyStatsForLocalContent.mockResolvedValue({
+      count: 3,
+      updated: new Date('2026-03-01T00:00:00.000Z'),
+    });
+
+    const body = await (await get(q('/api/social/activitypub/message', CONTENT_URL))).json();
+
+    expect(body.replies).toEqual({
+      id: repliesUrl(CONTENT_URL),
+      type: 'OrderedCollection',
+      totalItems: 3,
+      updated: '2026-03-01T00:00:00.000Z',
+      first: `${repliesUrl(CONTENT_URL)}&page=1`,
+    });
+  });
+
+  it('says zero rather than omitting the collection when nothing has replied', async () => {
+    const body = await (await get(q('/api/social/activitypub/message', CONTENT_URL))).json();
+
+    expect(body.replies).toMatchObject({ totalItems: 0, type: 'OrderedCollection' });
+  });
+});
+
+describe('GET /api/social/activitypub/replies', () => {
+  const path = q('/api/social/activitypub/replies', CONTENT_URL);
+
+  it('404s when the item or its owner is unknown', async () => {
+    db.getLocalContent.mockResolvedValue(null);
+    expect((await get(path)).status).toBe(404);
+
+    db.getLocalContent.mockResolvedValue(content());
+    db.getLocalUser.mockResolvedValue(null);
+    expect((await get(path)).status).toBe(404);
+  });
+
+  it('404s for a hidden item, which must not confirm it exists', async () => {
+    db.getLocalContent.mockResolvedValue(content({ hidden: true }));
+
+    expect((await get(path)).status).toBe(404);
+    expect(db.getRemoteCommentsOnLocalContent).not.toHaveBeenCalled();
+  });
+
+  it('returns an OrderedCollection pointing at its first page', async () => {
+    db.getReplyStatsForLocalContent.mockResolvedValue({ count: 2, updated: null });
+
+    const response = await get(path);
+    const body = await response.json();
+
+    expect(response.headers.get('content-type')).toContain('application/activity+json');
+    expect(body.type).toBe('OrderedCollection');
+    expect(body.totalItems).toBe(2);
+    expect(body.first).toBe(`${body.id}&page=1`);
+    // The count comes from one grouped query, not from loading every comment.
+    expect(db.getRemoteCommentsOnLocalContent).not.toHaveBeenCalled();
+  });
+
+  it('lists the repliers own object ids, so clients resolve each at its home instance', async () => {
+    db.getRemoteCommentsOnLocalContent.mockResolvedValue([
+      contentRemote({ postId: 'https://remote.example/bob/1' }),
+      contentRemote({ postId: 'https://two.example/carol/9' }),
+    ]);
+
+    const body = await (await get(`${path}&page=1`)).json();
+
+    expect(body.type).toBe('OrderedCollectionPage');
+    expect(body.partOf).toBe(repliesUrl(CONTENT_URL));
+    expect(body.orderedItems).toEqual(['https://remote.example/bob/1', 'https://two.example/carol/9']);
+  });
+
+  it('falls back to the link when a stored reply has no post id', async () => {
+    db.getRemoteCommentsOnLocalContent.mockResolvedValue([
+      contentRemote({ postId: '', link: 'https://remote.example/bob/1' }),
+    ]);
+
+    expect((await (await get(`${path}&page=1`)).json()).orderedItems).toEqual(['https://remote.example/bob/1']);
   });
 });
 
@@ -904,6 +1034,104 @@ describe('POST /api/social/activitypub/inbox', () => {
     signed.headers.signature = '';
 
     expect((await post(signed)).status).toBe(401);
+  });
+
+  // Everything below is the FEP-8b32 half: an activity that reaches us
+  // second-hand, over an HTTP signature belonging to whoever forwarded it.
+  describe('forwarded payloads', () => {
+    const { privateKeyPem, publicKeyMultibase } = proofKeys();
+
+    const digestOf = (body: string) => `SHA-256=${crypto.createHash('sha256').update(body, 'utf8').digest('base64')}`;
+
+    // A signature from the forwarding instance, which we cannot verify against
+    // the actor — exactly the case that used to 401 unconditionally.
+    const relayHeaders = (body: string) => ({
+      'content-type': 'application/activity+json',
+      date: new Date().toUTCString(),
+      digest: digestOf(body),
+      signature:
+        'keyId="https://relay.example/actor#main-key",headers="(request-target) host date digest content-type",signature="cmVsYXk="',
+    });
+
+    function proofed(options: { key?: string; verificationMethod?: string; created?: string } = {}) {
+      const document = addIntegrityProof(
+        { ...activity, '@context': withProofContext(activity['@context']) },
+        {
+          verificationMethod: options.verificationMethod || 'https://remote.example/users/bob#ed25519-key',
+          privateKeyPem: options.key || privateKeyPem,
+          created: options.created,
+        }
+      );
+      const body = JSON.stringify(document);
+      return { headers: relayHeaders(body), body };
+    }
+
+    beforeEach(() => {
+      db.getRemoteUserByActor.mockResolvedValue(
+        userRemote({ magicKey: keys().publicKey, ed25519PublicKey: publicKeyMultibase })
+      );
+    });
+
+    it('accepts a forwarded activity carrying the actors own proof', async () => {
+      const response = await post(proofed());
+
+      expect(response.status).toBe(204);
+      expect(db.saveRemoteUser).toHaveBeenCalledWith(expect.objectContaining({ follower: true }));
+    });
+
+    it('401s when the forwarder edited the activity in flight', async () => {
+      const tampered = proofed();
+      const document = JSON.parse(tampered.body);
+      document.actor = 'https://attacker.example/users/eve';
+      tampered.body = JSON.stringify(document);
+      tampered.headers.digest = digestOf(tampered.body);
+
+      expect((await post(tampered)).status).toBe(401);
+    });
+
+    it('401s when the proof was made by a key the actor does not publish', async () => {
+      expect((await post(proofed({ key: generateEd25519Key().privateKeyPem }))).status).toBe(401);
+    });
+
+    it('401s when the verification method belongs to another origin', async () => {
+      // The proof verifies on its own terms; the key just is not one this actor
+      // is entitled to speak with.
+      const response = await post(proofed({ verificationMethod: 'https://attacker.example/actor#ed25519-key' }));
+
+      expect(response.status).toBe(401);
+    });
+
+    it('401s on a stale proof, since nothing else bounds a replay of one', async () => {
+      const created = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+      expect((await post(proofed({ created }))).status).toBe(401);
+    });
+
+    it('401s on an unproofed activity forwarded by someone else', async () => {
+      const body = JSON.stringify(activity);
+
+      expect((await post({ headers: relayHeaders(body), body })).status).toBe(401);
+    });
+
+    it('fetches the actor document for a peer discovered before we stored their key', async () => {
+      db.getRemoteUserByActor.mockResolvedValue(userRemote({ magicKey: keys().publicKey, ed25519PublicKey: null }));
+      discover.getActivityPubActor.mockResolvedValue({
+        assertionMethod: [{ type: 'Multikey', id: 'k', publicKeyMultibase }],
+      });
+
+      expect((await post(proofed())).status).toBe(204);
+      expect(discover.getActivityPubActor).toHaveBeenCalledWith('https://remote.example/users/bob');
+      expect(db.saveRemoteUser).toHaveBeenCalledWith(expect.objectContaining({ ed25519PublicKey: publicKeyMultibase }));
+    });
+
+    it('does not go fetch an actor document when there is no proof to check', async () => {
+      db.getRemoteUserByActor.mockResolvedValue(userRemote({ magicKey: keys().publicKey, ed25519PublicKey: null }));
+      const signed = signedHeaders();
+      signed.headers.signature = signed.headers.signature.replace(/signature="[^"]+"/, 'signature="bogus"');
+
+      expect((await post(signed)).status).toBe(401);
+      expect(discover.getActivityPubActor).not.toHaveBeenCalled();
+    });
   });
 
   it('accepts a signed Follow, records the follower and returns 204', async () => {

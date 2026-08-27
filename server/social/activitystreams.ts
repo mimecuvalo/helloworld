@@ -11,11 +11,13 @@ import {
   removeRemoteUser,
   saveRemoteContent,
   saveRemoteUser,
+  type ReplyStats,
 } from './db';
 import crypto from 'crypto';
 import { fetchJSON, sanitizeHTML } from '../crawler';
 import { entryContentHtml } from './xml';
 import { decryptSecret } from '../secrets';
+import { addIntegrityProof, assertionKeyOf, withProofContext, type IntegrityProof } from './integrity-proof';
 import magic from 'magic-signatures';
 import { nanoid } from 'nanoid';
 
@@ -82,22 +84,13 @@ export async function follow(
   send(host, userRemote as UserRemote, contentOwner, message);
 }
 
-export async function reply(
-  host: string,
-  contentOwner: User,
-  content: Content,
-  userRemote: UserRemote,
-  mentionedRemoteUsers: UserRemote[]
-) {
-  const message = await createNote(host, content, contentOwner, mentionedRemoteUsers);
-  send(host, userRemote, contentOwner, message);
-}
-
 async function send(host: string, userRemote: UserRemote, contentOwner: User, message: GenericMessage) {
   try {
     if (userRemote?.activityPubInboxUrl || userRemote?.sharedInboxUrl) {
-      await activityPubSend(host, userRemote, contentOwner, message);
+      await activityPubSend(host, userRemote, contentOwner, signActivity(host, contentOwner, message));
     } else if (userRemote?.salmonUrl) {
+      // Salmon has its own envelope signature and predates all of this; a
+      // magic-envelope peer has no idea what a `proof` is.
       await salmonSend(userRemote, contentOwner, message);
     }
   } catch (ex) {
@@ -122,8 +115,12 @@ export async function deliver(
   recipients: UserRemote[],
   message: GenericMessage
 ): Promise<void> {
+  // Signed once for the whole fan-out rather than per recipient: the proof
+  // covers the document, so every inbox gets identical bytes — and signActivity
+  // leaves an already-proofed message alone when send() sees it again.
+  const signed = signActivity(host, contentOwner, message);
   const results = await Promise.allSettled(
-    recipients.map((userRemote) => send(host, userRemote, contentOwner, message))
+    recipients.map((userRemote) => send(host, userRemote, contentOwner, signed))
   );
   const failed = results.filter((result) => result.status === 'rejected').length;
   if (failed) {
@@ -156,6 +153,37 @@ export function actorUrlFor(host: string, localUser: Pick<User, 'username'>): st
     pathname: '/api/social/activitypub/actor',
     searchParams: { resource: profileUrl(localUser.username, host) },
   });
+}
+
+// Where the actor document publishes the Ed25519 key, and what a proof points
+// back at. Distinct from `#main-key`, which is the RSA key for HTTP signatures.
+export function assertionMethodIdFor(host: string, localUser: Pick<User, 'username'>): string {
+  return `${actorUrlFor(host, localUser)}#ed25519-key`;
+}
+
+// Attaches a FEP-8b32 object integrity proof, if this user has an Ed25519 key.
+//
+// Best-effort on purpose. An account provisioned before object integrity proofs
+// existed federates exactly as it did before — every direct delivery is still
+// authenticated by its HTTP signature, and the proof only buys survival across
+// a relay or an inbox forward. Failing to sign here must not cost the delivery.
+export function signActivity(host: string, contentOwner: User, message: GenericMessage): GenericMessage {
+  if (message.proof || !contentOwner.ed25519PrivateKey) return message;
+
+  try {
+    return addIntegrityProof(
+      { ...message, '@context': withProofContext(message['@context']) },
+      {
+        verificationMethod: assertionMethodIdFor(host, contentOwner),
+        privateKeyPem: decryptSecret(contentOwner.ed25519PrivateKey),
+      }
+    ) as GenericMessage;
+  } catch (ex) {
+    // Same reasoning as send()'s catch: an unreadable key fails identically
+    // forever, so it has to be audible rather than silently unsigned.
+    console.error(`${contentOwner.username}: could not attach an integrity proof.\n${(ex as Error)?.message || ex}`);
+    return message;
+  }
 }
 
 export function sha256Digest(body: string): string {
@@ -223,14 +251,17 @@ async function activityPubSend(host: string, userRemote: UserRemote, contentOwne
   }
 }
 
-type GenericMessage = {
-  '@context': string;
+export type GenericMessage = {
+  // A string until a proof is attached, at which point the Data Integrity terms
+  // are appended and it becomes an array.
+  '@context': string | unknown[];
   type: string;
   id: string;
   actor: string;
   to: string[];
   cc?: string[];
   object: Activity | GenericMessage | string;
+  proof?: IntegrityProof;
 };
 
 export function createGenericMessage(
@@ -264,6 +295,31 @@ export function followersUrlFor(host: string, localUser: Pick<User, 'username'>)
   });
 }
 
+// The Atom rendering has advertised its replies as `<link rel="replies">` with
+// thr:count/thr:updated since the OStatus days; this is the same thing for
+// ActivityPub, keyed by the post's own permalink so both point at one thread.
+export function repliesUrlFor(host: string, localContent: Content): string {
+  return buildUrl({
+    host,
+    pathname: '/api/social/activitypub/replies',
+    searchParams: { resource: contentUrl(localContent, undefined, host) },
+  });
+}
+
+// Inlined rather than served as a bare URL: totalItems is what a client renders
+// as the reply count, and inlining spares every peer a fetch per post just to
+// discover a thread is empty. `first` is what they follow to read it.
+function repliesCollectionFor(host: string, localContent: Content, stats: ReplyStats) {
+  const repliesUrl = repliesUrlFor(host, localContent);
+  return {
+    id: repliesUrl,
+    type: 'OrderedCollection',
+    totalItems: stats.count,
+    updated: stats.updated ? new Date(stats.updated).toISOString() : undefined,
+    first: `${repliesUrl}&page=1`,
+  };
+}
+
 // The AS2 object for a local piece of content.
 //
 // It's a Note, not an Article: Mastodon and most of its forks render Note
@@ -273,7 +329,12 @@ export function followersUrlFor(host: string, localUser: Pick<User, 'username'>)
 //
 // Deliberately no `summary`: Mastodon reads summary as a content warning and
 // would collapse every post behind one.
-export async function createNoteObject(host: string, localContent: Content, localUser: User): Promise<Activity> {
+export async function createNoteObject(
+  host: string,
+  localContent: Content,
+  localUser: User,
+  replyStats: ReplyStats = { count: 0, updated: null }
+): Promise<Activity> {
   const messageUrl = buildUrl({
     host,
     pathname: '/api/social/activitypub/message',
@@ -312,13 +373,20 @@ export async function createNoteObject(host: string, localContent: Content, loca
     attachment: localContent.thumb
       ? [{ type: 'Image', url: buildUrl({ host, pathname: localContent.thumb }), name: localContent.title }]
       : undefined,
+    replies: repliesCollectionFor(host, localContent, replyStats),
     to: [PUBLIC_AUDIENCE],
     cc: [followersUrlFor(host, localUser)],
   };
 }
 
-export async function createNote(host: string, localContent: Content, localUser: User, opt_follower?: UserRemote[]) {
-  const activityObject = await createNoteObject(host, localContent, localUser);
+export async function createNote(
+  host: string,
+  localContent: Content,
+  localUser: User,
+  opt_follower?: UserRemote[],
+  replyStats?: ReplyStats
+) {
+  const activityObject = await createNoteObject(host, localContent, localUser, replyStats);
   return createGenericMessage('Create', host, activityObject.id, localUser, activityObject, opt_follower);
 }
 
@@ -335,6 +403,10 @@ export type Activity = {
   cc?: string[];
   attachment?: { type: string; mediaType?: string; url: string; name?: string }[];
   tag?: { type: string; href: string; name: string }[];
+  replies?: { id?: string; type?: string; totalItems?: number; updated?: string; first?: unknown };
+  // Not AS2 — a leftover from the Atom mapping, where thr:count and thr:updated
+  // are attributes on the replies link. Read on the way in for the feed path;
+  // real ActivityPub peers send `replies` above.
   repliesCount?: string;
   repliesUpdated?: string;
   attributedTo?: string;
@@ -454,6 +526,31 @@ async function handleAnnounce(activity: GenericMessage, user: User, userRemote: 
   } as unknown as ContentRemote);
 }
 
+// The peer's Ed25519 Multikey, fetched from their actor document on demand.
+//
+// Anyone discovered before we started recording this has no key stored, and
+// waiting for them to be re-discovered would leave proofs unverifiable for the
+// entire existing follower list. Only worth reaching out when there's actually
+// a proof to check — callers gate on that, so a peer without one never costs a
+// fetch.
+export async function ensureAssertionKey(userRemote: UserRemote): Promise<string> {
+  if (userRemote.ed25519PublicKey) return userRemote.ed25519PublicKey;
+
+  const actorUrl = userRemote.activityPubActorUrl || userRemote.profileUrl;
+  if (!actorUrl) return '';
+
+  try {
+    const key = assertionKeyOf(await getActivityPubActor(actorUrl));
+    if (!key) return '';
+    await saveRemoteUser(Object.assign({}, userRemote, { ed25519PublicKey: key.publicKeyMultibase }));
+    return key.publicKeyMultibase;
+  } catch {
+    // No actor document, no assertionMethod, or a key on a curve this
+    // cryptosuite can't use — all of it means "can't verify a proof from them".
+    return '';
+  }
+}
+
 export async function findUserRemote(json: { [key: string]: string }, user: User): Promise<UserRemote | null> {
   const actorUrl = json.actor;
   let userRemote = await getRemoteUserByActor(user.username, actorUrl);
@@ -517,6 +614,15 @@ async function handleLike(activity: GenericMessage, userRemote: UserRemote, isLi
   );
 }
 
+// How many replies the peer says their post has. AS2 puts it in `replies`,
+// which may be an inlined collection or a bare URL we won't chase; the flat
+// repliesCount is the Atom shape, kept as a fallback for the feed path.
+function replyCountOf(activityObject: Activity): number {
+  const inlined = activityObject.replies?.totalItems;
+  if (typeof inlined === 'number' && Number.isFinite(inlined)) return inlined;
+  return parseInt(activityObject.repliesCount || '') || 0;
+}
+
 async function handleCreate(host: string, activity: GenericMessage, user: User, userRemote: UserRemote) {
   const activityObject = activity.object as Activity;
   const atomContent = sanitizeHTML(activityObject.content || '');
@@ -526,8 +632,8 @@ async function handleCreate(host: string, activity: GenericMessage, user: User, 
   const contentRemote = {
     id: existingContentRemote?.id || -1,
     avatar: userRemote.avatar,
-    commentsCount: parseInt(activityObject.repliesCount || '') || 0,
-    commentsUpdated: new Date(activityObject.repliesUpdated || new Date()),
+    commentsCount: replyCountOf(activityObject),
+    commentsUpdated: new Date(activityObject.replies?.updated || activityObject.repliesUpdated || new Date()),
     createdAt: new Date(activityObject.published || new Date()),
     fromUsername: userRemote.profileUrl,
     fromUserRemoteId: userRemote.id.toString(),

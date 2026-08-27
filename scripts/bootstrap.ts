@@ -1,6 +1,7 @@
 import prisma from '../server/prisma';
 import { generateMagicKey } from '../server/services/user';
 import { generateSigningKey } from '../server/social/atproto-identity';
+import { generateEd25519Key } from '../server/social/integrity-proof';
 import { encryptSecret } from '../server/secrets';
 
 const username = process.env.BOOTSTRAP_USERNAME?.trim();
@@ -17,6 +18,8 @@ if (await prisma.user.findFirst({ select: { id: true } })) {
 const { magicKey, privateKey } = generateMagicKey();
 // AT Protocol identity key, backing the did:web document.
 const { privateKeyHex: atprotoSigningKey } = await generateSigningKey();
+// Ed25519 key for FEP-8b32 object integrity proofs.
+const { privateKeyPem: ed25519PrivateKey } = generateEd25519Key();
 const content = [
   { section: 'main', name: 'home', title: 'Hello, world.', template: 'feed' },
   { section: 'main', name: 'photos', title: 'photos', template: 'album' },
@@ -42,6 +45,7 @@ await prisma.$transaction(async (tx) => {
       magicKey,
       privateKey: encryptSecret(privateKey),
       atprotoSigningKey: encryptSecret(atprotoSigningKey),
+      ed25519PrivateKey: encryptSecret(ed25519PrivateKey),
     },
   });
   await tx.content.createMany({

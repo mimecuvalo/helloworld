@@ -10,6 +10,7 @@ import { buildUrl, contentUrl, profileUrl } from '../../lib/url-factory';
 import { buildFeedContentSecurityPolicy } from '../../lib/security';
 import { THUMB_HEIGHT, THUMB_WIDTH } from '../../util/constants';
 import {
+  ensureEd25519Key,
   getDefaultLocalUser,
   getLocalContent,
   getLocalLatestContent,
@@ -18,6 +19,8 @@ import {
   getRemoteCommentsOnLocalContent,
   getRemoteFollowing,
   getRemoteFriends,
+  getReplyStatsForLocalContent,
+  getReplyStatsForLocalContents,
   countLocalUsersAndContent,
   getLocalUsersWithBluesky,
   removeOldRemoteContent,
@@ -33,10 +36,19 @@ import {
   accept,
   actorUrlFor,
   createNoteObject,
+  ensureAssertionKey,
   findUserRemote,
   follow as activityStreamsFollow,
   handle,
 } from '../social/activitystreams';
+import {
+  DATA_INTEGRITY_CONTEXT,
+  MULTIKEY_CONTEXT,
+  proofOf,
+  publicKeyMultibaseOf,
+  verifyIntegrityProof,
+} from '../social/integrity-proof';
+import { decryptSecret } from '../secrets';
 import { handleMention } from '../social/webmention';
 import {
   isAtprotoUserRemote,
@@ -118,6 +130,41 @@ function verifyMessage(c: HonoContext<AppEnv>, userRemote: UserRemote, rawBody: 
   } catch {
     return false;
   }
+}
+
+// How stale a proof may be and still be acted on.
+//
+// An HTTP signature has the Date header and a five-minute skew window to stop a
+// replay. An object proof has neither — it's designed to stay valid while the
+// activity is passed around — so a captured payload could otherwise be replayed
+// at us forever. Generous, because a forward through a backed-up relay is
+// legitimately slow, but not unbounded.
+const PROOF_MAX_AGE_MS = 12 * 60 * 60 * 1000;
+
+// A forwarded activity arrives over somebody else's HTTP signature: a relay's,
+// or the instance passing it along. That signature is honestly theirs and says
+// nothing about the author, which is why we reject these today. FEP-8b32 is the
+// thing that makes them verifiable — the proof is over the activity itself and
+// was made by the actor's own key.
+async function verifyForwardedMessage(userRemote: UserRemote, body: unknown): Promise<boolean> {
+  const proof = proofOf(body);
+  if (!proof) return false;
+
+  const created = new Date(proof.created).getTime();
+  if (!Number.isFinite(created) || Date.now() - created > PROOF_MAX_AGE_MS) return false;
+
+  // A key only speaks for this actor if the actor is the one publishing it. We
+  // read it out of their actor document, so what's left to check is that the
+  // method id didn't wander off to some other origin between then and now.
+  const actorUrl = userRemote.activityPubActorUrl || userRemote.profileUrl;
+  try {
+    if (new URL(proof.verificationMethod).origin !== new URL(actorUrl).origin) return false;
+  } catch {
+    return false;
+  }
+
+  const publicKeyMultibase = await ensureAssertionKey(userRemote);
+  return !!publicKeyMultibase && verifyIntegrityProof(body, publicKeyMultibase);
 }
 
 export const socialRoutes = new Hono<AppEnv>()
@@ -274,7 +321,11 @@ export const socialRoutes = new Hono<AppEnv>()
     const contentOwner = await getLocalUser(resource);
     if (!contentOwner) return c.body(null, 404);
     const feed = await getLocalLatestContent(resource);
-    const xml = renderFeed(host, reqPath(c), feed, contentOwner);
+    const replyStats = await getReplyStatsForLocalContents(
+      contentOwner.username,
+      feed.map((content) => content.name)
+    );
+    const xml = renderFeed(host, reqPath(c), feed, contentOwner, replyStats);
     // The feed is styled by /rss.xsl, which the app's strict CSP treats as script;
     // this response carries its own policy instead (see the api/$ mount for how it
     // survives the framework's header merge).
@@ -354,9 +405,32 @@ export const socialRoutes = new Hono<AppEnv>()
     }
     const icon = user.logo || user.favicon;
 
+    // The Ed25519 key for FEP-8b32 proofs, minted on first publication. Separate
+    // from publicKey above, which is RSA and signs HTTP requests: `assertionMethod`
+    // is what a verifier resolves a proof's verificationMethod against.
+    let assertionMethod: object[] | undefined;
+    try {
+      assertionMethod = [
+        {
+          id: `${actorUrl}#ed25519-key`,
+          type: 'Multikey',
+          controller: actorUrl,
+          publicKeyMultibase: publicKeyMultibaseOf(decryptSecret(await ensureEd25519Key(user))),
+        },
+      ];
+    } catch {
+      // Unreadable SECRETS_KEY. The RSA half of the document still works, so
+      // publish what we can rather than 500ing the whole actor.
+    }
+
     return c.body(
       JSON.stringify({
-        '@context': ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
+        '@context': [
+          'https://www.w3.org/ns/activitystreams',
+          'https://w3id.org/security/v1',
+          DATA_INTEGRITY_CONTEXT,
+          MULTIKEY_CONTEXT,
+        ],
         id: actorUrl,
         type: 'Person',
         preferredUsername: user.username,
@@ -375,6 +449,7 @@ export const socialRoutes = new Hono<AppEnv>()
         url: profileUrl(user.username, host),
         icon: icon ? { type: 'Image', url: buildUrl({ host, pathname: icon }) } : undefined,
         publicKey: { id: `${actorUrl}#main-key`, owner: actorUrl, publicKeyPem },
+        assertionMethod,
       }),
       200,
       { 'Content-Type': ACTIVITY_JSON, 'Cache-Control': `public, s-maxage=${60 * 5}` }
@@ -399,9 +474,15 @@ export const socialRoutes = new Hono<AppEnv>()
       return activityJson(c, collectionOf(collectionUrl, feed.length));
     }
 
+    // One grouped query for the whole page: every Note inlines its reply count,
+    // and asking per item would be 50 round trips to build one response.
+    const replyStats = await getReplyStatsForLocalContents(
+      user.username,
+      feed.map((content) => content.name)
+    );
     const items = await Promise.all(
       feed.map(async (content) => {
-        const object = await createNoteObject(host, content, user);
+        const object = await createNoteObject(host, content, user, replyStats[content.name]);
         return {
           type: 'Create',
           id: `${object.id}#create`,
@@ -419,6 +500,38 @@ export const socialRoutes = new Hono<AppEnv>()
   .get('/activitypub/followers', (c) => actorCollection(c, 'followers'))
   .get('/activitypub/following', (c) => actorCollection(c, 'following'))
 
+  // The replies on a local item — the ActivityPub half of the `<link
+  // rel="replies">` the Atom feed has advertised since the OStatus days, and
+  // what a Mastodon client walks to show a thread under a post it's been sent.
+  //
+  // Same source as the /comments Atom feed: the remote replies we've been
+  // delivered. Items are the peers' own object ids, so clients resolve each
+  // reply at its home instance rather than through our copy of it.
+  .get('/activitypub/replies', async (c) => {
+    const host = hostOf(c);
+    const resource = c.req.query('resource') || '';
+    const content = await getLocalContent(resource);
+    const user = await getLocalUser(resource);
+    // Hidden items are 404 everywhere else in this file; a replies collection
+    // would otherwise confirm the post exists and how much traffic it got.
+    if (!content || content.hidden || !user) return c.body(null, 404);
+
+    const collectionUrl = buildUrl({
+      host,
+      pathname: '/api/social/activitypub/replies',
+      searchParams: { resource },
+    });
+
+    if (!c.req.query('page')) {
+      const { count } = await getReplyStatsForLocalContent(resource);
+      return activityJson(c, collectionOf(collectionUrl, count));
+    }
+
+    const comments = await getRemoteCommentsOnLocalContent(resource);
+    const items = comments.map((comment) => comment.postId || comment.link).filter(Boolean);
+    return activityJson(c, pageOf(collectionUrl, items));
+  })
+
   // ActivityPub Article object for a local item.
   .get('/activitypub/message', async (c) => {
     const host = hostOf(c);
@@ -426,7 +539,7 @@ export const socialRoutes = new Hono<AppEnv>()
     const content = await getLocalContent(resource);
     const user = await getLocalUser(resource);
     if (!content || content.hidden || !user) return c.body(null, 404);
-    const json = await createNoteObject(host, content, user);
+    const json = await createNoteObject(host, content, user, await getReplyStatsForLocalContent(resource));
     return c.body(JSON.stringify({ '@context': 'https://www.w3.org/ns/activitystreams', ...json }), 200, {
       'Content-Type': ACTIVITY_JSON,
     });
@@ -456,7 +569,12 @@ export const socialRoutes = new Hono<AppEnv>()
       console.error('activitypub fail: ', body);
       return c.body(null, 401);
     }
-    if (!verifyMessage(c, userRemote, rawBody)) return c.body(null, 401);
+    // Either the request was signed by the actor (direct delivery), or the
+    // activity carries the actor's own proof (forwarded). Both are the actor
+    // vouching for these exact bytes.
+    if (!verifyMessage(c, userRemote, rawBody) && !(await verifyForwardedMessage(userRemote, body))) {
+      return c.body(null, 401);
+    }
 
     await handle(body.type, host, body, user, userRemote);
     // An Accept belongs to a Follow, and it has to echo back the Follow itself —

@@ -1,16 +1,18 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const db = vi.hoisted(() => ({
+  getRemoteContent: vi.fn(),
   getRemoteFriends: vi.fn(),
   getRemoteUser: vi.fn(),
+  getReplyStatsForLocalContent: vi.fn(async () => ({ count: 0, updated: null })),
   saveRemoteUser: vi.fn(),
 }));
-const discover = vi.hoisted(() => ({ getUserRemoteInfo: vi.fn() }));
+const discover = vi.hoisted(() => ({ getActivityPubActor: vi.fn(), getUserRemoteInfo: vi.fn() }));
 
 vi.mock('server/social/db', () => db);
 vi.mock('server/social/discover-user', () => discover);
 
-import { findMentions, syndicateContent, syndicateDelete } from 'server/social/syndicate';
+import { findMentions, resolveThreadUser, syndicateContent, syndicateDelete } from 'server/social/syndicate';
 import { HOST, content, keys, user, userRemote } from './fixtures';
 
 const owner = () => user({ privateKey: keys().privateKeyPkcs1 });
@@ -24,6 +26,7 @@ beforeEach(() => {
   vi.stubGlobal('fetch', fetchMock);
   db.getRemoteFriends.mockResolvedValue([[], []]);
   db.getRemoteUser.mockResolvedValue(null);
+  db.getRemoteContent.mockResolvedValue(null);
 });
 
 const inboxesHit = () => fetchMock.mock.calls.map(([url]) => url);
@@ -125,7 +128,11 @@ describe('syndicateContent', () => {
 
     expect(inboxesHit()).toEqual([inboxOf('remote.example')]);
     expect(bodyOf().object.tag).toEqual([{ type: 'Mention', href: 'https://remote.example/users/bob', name: '@bob' }]);
-    expect(bodyOf().object.cc).toContain('https://remote.example/bob');
+    // The actor id, not the profile page: Mastodon registers a mention by
+    // finding the actor URI in to/cc, and cc'ing the profile url delivered the
+    // activity without it ever counting as a mention.
+    expect(bodyOf().object.cc).toContain('https://remote.example/users/bob');
+    expect(bodyOf().object.cc).not.toContain('https://remote.example/bob');
   });
 
   it('discovers a mentioned actor it has never seen before', async () => {
@@ -173,6 +180,88 @@ describe('syndicateContent', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  // The Reply button writes an `a.u-in-reply-to` anchor, which findMentions does
+  // not look at, so before this the person being replied to heard nothing.
+  describe('replies', () => {
+    // A reply also GETs its own thread url, to turn it into an inReplyTo id —
+    // so unlike everywhere else here, deliveries have to be picked out of the
+    // call list rather than being all of it.
+    const delivered = () => fetchMock.mock.calls.filter(([, init]) => init?.method === 'POST').map(([url]) => url);
+    const deliveredBody = () =>
+      JSON.parse(fetchMock.mock.calls.filter(([, init]) => init?.method === 'POST')[0][1].body);
+
+    const parentAuthor = () =>
+      userRemote({
+        profileUrl: 'https://remote.example/bob',
+        activityPubActorUrl: 'https://remote.example/users/bob',
+        activityPubInboxUrl: inboxOf('remote.example'),
+      });
+    const aReply = () =>
+      content({
+        section: 'comments',
+        thread: 'https://remote.example/bob/1',
+        threadUser: 'https://remote.example/bob',
+        view: '<p>replying to <a class="u-in-reply-to" href="https://remote.example/bob/1">that</a></p>',
+      });
+
+    it('delivers a reply to the author of the post it answers', async () => {
+      db.getRemoteUser.mockResolvedValue(parentAuthor());
+
+      await syndicateContent(HOST, owner(), aReply());
+
+      expect(db.getRemoteUser).toHaveBeenCalledWith('alice', 'https://remote.example/bob');
+      expect(delivered()).toEqual([inboxOf('remote.example')]);
+    });
+
+    it('addresses and tags them, so it lands as a reply rather than a stray post', async () => {
+      db.getRemoteUser.mockResolvedValue(parentAuthor());
+
+      await syndicateContent(HOST, owner(), aReply());
+
+      expect(deliveredBody().object.cc).toContain('https://remote.example/users/bob');
+      expect(deliveredBody().object.tag).toEqual([
+        { type: 'Mention', href: 'https://remote.example/users/bob', name: '@bob' },
+      ]);
+    });
+
+    it('does not tag them twice when the body also mentions them', async () => {
+      db.getRemoteUser.mockResolvedValue(parentAuthor());
+
+      await syndicateContent(HOST, owner(), content({ ...aReply(), view: '<p>yes @bob@remote.example</p>' }));
+
+      expect(deliveredBody().object.tag).toHaveLength(1);
+      expect(delivered()).toEqual([inboxOf('remote.example')]);
+    });
+
+    it('reaches the author on top of the followers, not instead of them', async () => {
+      db.getRemoteFriends.mockResolvedValue([[userRemote({ activityPubInboxUrl: inboxOf('one.example') })], []]);
+      db.getRemoteUser.mockResolvedValue(parentAuthor());
+
+      await syndicateContent(HOST, owner(), aReply());
+
+      expect(delivered()).toEqual([inboxOf('one.example'), inboxOf('remote.example')]);
+    });
+
+    it('still posts when the thread author cannot be resolved', async () => {
+      db.getRemoteFriends.mockResolvedValue([[userRemote({ activityPubInboxUrl: inboxOf('one.example') })], []]);
+      db.getRemoteUser.mockResolvedValue(null);
+      discover.getUserRemoteInfo.mockRejectedValue(new Error('nxdomain'));
+
+      await syndicateContent(HOST, owner(), aReply());
+
+      expect(delivered()).toEqual([inboxOf('one.example')]);
+    });
+
+    it('leaves a top-level post addressed exactly as before', async () => {
+      db.getRemoteFriends.mockResolvedValue([[userRemote({ activityPubInboxUrl: inboxOf('one.example') })], []]);
+
+      await syndicateContent(HOST, owner(), content({ threadUser: null }));
+
+      expect(deliveredBody().object.tag).toEqual([]);
+      expect(delivered()).toEqual([inboxOf('one.example')]);
+    });
+  });
+
   it('addresses the activity publicly and cc:s the followers collection', async () => {
     db.getRemoteFriends.mockResolvedValue([[userRemote({ activityPubInboxUrl: inboxOf('one.example') })], []]);
 
@@ -182,6 +271,76 @@ describe('syndicateContent', () => {
     expect(bodyOf().object.cc).toContain(
       `https://${HOST}/api/social/activitypub/followers?resource=${encodeURIComponent(`https://${HOST}/alice`)}`
     );
+  });
+});
+
+describe('resolveThreadUser', () => {
+  it('reads the author off the copy of the parent already in the reader', async () => {
+    db.getRemoteContent.mockResolvedValue({ fromUsername: 'https://remote.example/bob' });
+
+    await expect(resolveThreadUser('alice', 'https://remote.example/bob/1')).resolves.toBe(
+      'https://remote.example/bob'
+    );
+    // The ordinary case must not cost a network call.
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('falls back to asking the post who wrote it', async () => {
+    db.getRemoteContent.mockResolvedValue(null);
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify({ attributedTo: 'https://remote.example/users/bob' }), {
+        headers: { 'content-type': 'application/activity+json' },
+      })
+    );
+    discover.getActivityPubActor.mockResolvedValue({ url: 'https://remote.example/bob' });
+
+    await expect(resolveThreadUser('alice', 'https://remote.example/bob/1')).resolves.toBe(
+      'https://remote.example/bob'
+    );
+    expect(discover.getActivityPubActor).toHaveBeenCalledWith('https://remote.example/users/bob');
+  });
+
+  it('reads attributedTo when it is an object or an array', async () => {
+    db.getRemoteContent.mockResolvedValue(null);
+    discover.getActivityPubActor.mockResolvedValue({ url: 'https://remote.example/bob' });
+
+    for (const attributedTo of [{ id: 'https://remote.example/users/bob' }, ['https://remote.example/users/bob']]) {
+      fetchMock.mockResolvedValue(
+        new Response(JSON.stringify({ attributedTo }), {
+          headers: { 'content-type': 'application/activity+json' },
+        })
+      );
+
+      await expect(resolveThreadUser('alice', 'https://remote.example/bob/1')).resolves.toBe(
+        'https://remote.example/bob'
+      );
+    }
+  });
+
+  it('falls back to the actor id when the actor advertises no profile page', async () => {
+    db.getRemoteContent.mockResolvedValue(null);
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify({ attributedTo: 'https://remote.example/users/bob' }), {
+        headers: { 'content-type': 'application/activity+json' },
+      })
+    );
+    discover.getActivityPubActor.mockResolvedValue({});
+
+    await expect(resolveThreadUser('alice', 'https://remote.example/bob/1')).resolves.toBe(
+      'https://remote.example/users/bob'
+    );
+  });
+
+  it('is null for a post that is not a reply', async () => {
+    await expect(resolveThreadUser('alice', '')).resolves.toBeNull();
+    expect(db.getRemoteContent).not.toHaveBeenCalled();
+  });
+
+  it('is null rather than throwing when the parent cannot be fetched', async () => {
+    db.getRemoteContent.mockResolvedValue(null);
+    fetchMock.mockRejectedValue(new Error('offline'));
+
+    await expect(resolveThreadUser('alice', 'https://remote.example/bob/1')).resolves.toBeNull();
   });
 });
 

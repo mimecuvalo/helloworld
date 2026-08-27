@@ -12,7 +12,7 @@ const discover = vi.hoisted(() => ({ getUserRemoteInfo: vi.fn() }));
 vi.mock('server/social/db', () => db);
 vi.mock('server/social/discover-user', () => discover);
 
-import { handleMention, reply } from 'server/social/webmention';
+import { handleMention } from 'server/social/webmention';
 import { HOST, content, contentRemote, user, userRemote } from './fixtures';
 
 const SOURCE = 'https://remote.example/bob/note-1';
@@ -43,40 +43,6 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.unstubAllGlobals();
-});
-
-describe('reply', () => {
-  it('pings the remote endpoint with form-encoded source and target', async () => {
-    fetchMock.mockResolvedValue(new Response('', { status: 202 }));
-    const remote = userRemote({ webmentionUrl: 'https://remote.example/webmention' });
-
-    await reply(HOST, content({ thread: SOURCE }), remote, []);
-
-    const [url, init] = fetchMock.mock.calls[0];
-    expect(url).toBe('https://remote.example/webmention');
-    expect(init.method).toBe('POST');
-    expect(Object.fromEntries(init.body as URLSearchParams)).toEqual({
-      source: `https://${HOST}/alice/blog/hello`,
-      target: SOURCE,
-    });
-  });
-
-  it('targets the remote profile when the reply has no thread', async () => {
-    fetchMock.mockResolvedValue(new Response('', { status: 202 }));
-    const remote = userRemote({ webmentionUrl: 'https://remote.example/webmention' });
-
-    await reply(HOST, content({ thread: null }), remote, []);
-
-    expect(Object.fromEntries(fetchMock.mock.calls[0][1].body as URLSearchParams).target).toBe(
-      'https://remote.example/bob'
-    );
-  });
-
-  it('swallows a failed ping so publishing never breaks on a dead peer', async () => {
-    fetchMock.mockRejectedValue(new Error('offline'));
-
-    await expect(reply(HOST, content(), userRemote({ webmentionUrl: null }), [])).resolves.toBeUndefined();
-  });
 });
 
 describe('handleMention', () => {
