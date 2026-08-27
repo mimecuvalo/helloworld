@@ -137,7 +137,6 @@ export default function Album({ content }: { content: AlbumContent }) {
     const onKey = (evt: KeyboardEvent) => {
       if (evt.key === 'ArrowLeft') handlePrev();
       else if (evt.key === 'ArrowRight') handleNext();
-      else if (evt.key === 'Escape') closeItem();
     };
     window.addEventListener('keyup', onKey);
     return () => window.removeEventListener('keyup', onKey);
@@ -147,7 +146,7 @@ export default function Album({ content }: { content: AlbumContent }) {
 
   return (
     <>
-      <ul ref={listRef} className={styles.album}>
+      <ul ref={listRef} className={`${styles.album} ${styles.albumGrid}`}>
         {!collection.length ? (
           <li>
             <F defaultMessage="No content here yet." />

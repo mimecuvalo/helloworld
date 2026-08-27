@@ -1,12 +1,15 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useEditor as useTipTapEditor, EditorContent, type Editor as TipTapEditor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
 import { Image } from '@tiptap/extension-image';
 import { Placeholder } from '@tiptap/extensions';
+import { Emoji } from '@tiptap/extension-emoji';
 import type { EditorView } from '@tiptap/pm/view';
 import uploadFileToS3 from 'lib/s3-upload';
 import { useEditor } from 'lib/editor-context';
 import Iframe from './IframeExtension';
+import { insertUnfurlInfo, isUnfurlable, unfurl } from './unfurl';
+import { emojiSuggestion, unicodeEmojis } from './EmojiSuggestion';
 import EditorToolbar from './Toolbar';
 import styles from './editor.module.css';
 
@@ -18,7 +21,6 @@ type EditorProps = {
   onBlur?: () => void;
   onChange: (name: string, value: string) => void;
   onMediaAdd?: (url: string) => void;
-  onPaste?: (text: string) => void;
   placeholder?: string;
 };
 
@@ -29,12 +31,14 @@ export default function Editor({
   onBlur,
   onChange,
   onMediaAdd,
-  onPaste,
   placeholder,
   defaultValue,
 }: EditorProps) {
   const { setEditor } = useEditor();
-  const [hasFocused, setHasFocused] = useState(false);
+  // Paste handlers are built into the editor's config, so they can't close over
+  // the editor itself; this ref hands it back to them.
+  const editorRef = useRef<TipTapEditor | null>(null);
+  const hasFocused = useRef(false);
   const [toastMsg, setToastMsg] = useState('');
 
   const handleUploadImage = useCallback(
@@ -50,6 +54,23 @@ export default function Editor({
     [section, album, onMediaAdd]
   );
 
+  // Pasting a url (or embed code) on its own unfurls it into an embed; pasting
+  // one over a selection is left to the Link extension, which turns the
+  // selection into a link instead.
+  const handleUnfurl = useCallback(
+    async (text: string) => {
+      const info = await unfurl(text);
+      // Tiptap rebuilds the editor whenever its config changes, so the live one
+      // has to be read back here rather than captured when the paste happened.
+      const editor = editorRef.current;
+      if (!editor || editor.isDestroyed) return;
+      insertUnfurlInfo(editor, info, text);
+      if (info.isError) setToastMsg('Failed to unfurl that link.');
+      else if (info.image) onMediaAdd?.(info.image);
+    },
+    [onMediaAdd]
+  );
+
   const handleChange = useCallback(
     (editor: TipTapEditor) => {
       onChange(name, editor.getHTML());
@@ -57,17 +78,24 @@ export default function Editor({
     [name, onChange]
   );
 
-  const handleFocus = useCallback(() => setHasFocused(true), []);
+  const handleFocus = useCallback(() => {
+    hasFocused.current = true;
+  }, []);
   const handleBlur = useCallback(() => {
-    if (hasFocused) onBlur?.();
-  }, [hasFocused, onBlur]);
+    if (hasFocused.current) onBlur?.();
+  }, [onBlur]);
 
   const editor = useTipTapEditor(
     {
       extensions: [
-        StarterKit,
+        // Clicking a link should put the caret in it so the toolbar can edit it,
+        // not navigate away from the page being edited.
+        StarterKit.configure({ link: { openOnClick: false, defaultProtocol: 'https' } }),
         Image.configure({ HTMLAttributes: { class: 'editor-image' } }),
         Placeholder.configure({ placeholder }),
+        // `:` opens the picker. The emoji set is ~500kb of JSON, which only
+        // lands in this chunk because ContentEditor is lazy-loaded.
+        Emoji.configure({ emojis: unicodeEmojis, suggestion: emojiSuggestion }),
         Iframe,
       ],
       content: defaultValue || '',
@@ -92,7 +120,10 @@ export default function Editor({
             }
           }
           const text = event.clipboardData?.getData('text/plain');
-          if (text) onPaste?.(text);
+          if (text && view.state.selection.empty && isUnfurlable(text)) {
+            handleUnfurl(text);
+            return true;
+          }
           return false;
         },
         handleDrop: (view: EditorView, event: DragEvent) => {
@@ -114,8 +145,10 @@ export default function Editor({
       },
       immediatelyRender: false,
     },
-    [placeholder, handleChange, handleFocus, handleBlur, handleUploadImage, onPaste]
+    [placeholder, handleChange, handleFocus, handleBlur, handleUploadImage, handleUnfurl]
   );
+
+  editorRef.current = editor;
 
   useEffect(() => {
     setEditor(editor);
@@ -130,7 +163,7 @@ export default function Editor({
   }, [editor, defaultValue]);
 
   if (!editor) {
-    return <div style={{ width: '100%', minHeight: 64 }} aria-busy="true" />;
+    return <div style={{ width: '100%', minHeight: '33vh' }} aria-busy="true" />;
   }
 
   return (

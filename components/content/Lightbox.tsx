@@ -1,4 +1,6 @@
+import { type MouseEvent as ReactMouseEvent, useEffect, useRef } from 'react';
 import { F } from 'i18n';
+import { useGestures } from 'lib/use-gestures';
 import Header from './Header';
 import styles from './content.module.css';
 
@@ -27,8 +29,36 @@ export default function Lightbox({
   onNext: () => void;
   item: LightboxContent;
 }) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onKeyDown = (evt: KeyboardEvent) => {
+      if (evt.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [onClose]);
+
+  // Swiping drags the strip of photos along with your finger — leftward brings
+  // the next one in. Pinching in dismisses, mirroring the pinch-out that opened
+  // the lightbox from a thumb.
+  useGestures(dialogRef, { onSwipeLeft: onNext, onSwipeRight: onPrev, onPinchIn: onClose });
+
+  // Only genuine empty space dismisses: the backdrop itself, or the gutter
+  // around the photo. Clicks that land on the photo, its header, or a control
+  // have a different target and are left alone.
+  const handleEmptySpaceClick = (evt: ReactMouseEvent<HTMLDivElement>) => {
+    if (evt.target === evt.currentTarget) onClose();
+  };
+
   return (
-    <div className={styles.lightbox} role="dialog" aria-modal="true">
+    <div
+      ref={dialogRef}
+      className={styles.lightbox}
+      role="dialog"
+      aria-modal="true"
+      onMouseDown={handleEmptySpaceClick}
+    >
       <button type="button" className={`${styles.lightboxClose} notranslate`} onClick={onClose} aria-label="close">
         ✕
       </button>
@@ -55,7 +85,7 @@ export default function Lightbox({
         ›
       </button>
 
-      <div className={styles.lightboxContent} onClick={onClose}>
+      <div className={styles.lightboxContent} onMouseDown={handleEmptySpaceClick}>
         <Header content={item} />
         {item.prefetchImages?.length ? (
           item.prefetchImages.map((image, index) => (

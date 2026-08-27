@@ -83,16 +83,25 @@ describe('migration regression coverage', () => {
   });
 
   it('uses YouTube oEmbed data when unfurling a video', async () => {
-    const fetchMock = vi.fn().mockResolvedValue(
-      new Response(
-        JSON.stringify({
-          title: 'A video',
-          thumbnail_url: 'https://img.example/video.jpg',
-          html: '<iframe src="https://www.youtube.com/embed/abc" width="480" height="270"></iframe>',
-        }),
-        { status: 200, headers: { 'Content-Type': 'application/json' } }
-      )
-    );
+    // The watch page is fetched first; its advertised oEmbed link is what
+    // supplies the title and thumbnail.
+    const fetchMock = vi.fn(async (input: unknown) => {
+      if (String(input).includes('oembed')) {
+        return new Response(
+          JSON.stringify({
+            title: 'A video',
+            thumbnail_url: 'https://img.example/video.jpg',
+            html: '<iframe src="https://www.youtube.com/embed/abc" width="480" height="270"></iframe>',
+          }),
+          { status: 200, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+      return new Response(
+        '<html><head><link rel="alternate" type="application/json+oembed" ' +
+          'href="https://www.youtube.com/oembed?format=json&url=x" /></head></html>',
+        { status: 200, headers: { 'Content-Type': 'text/html' } }
+      );
+    });
     vi.stubGlobal('fetch', fetchMock);
 
     const app = new Hono<AppEnv>();

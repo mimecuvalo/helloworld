@@ -23,6 +23,5 @@ export async function uploadFileUsingS3Info(data: any, file: Blob, filename: str
 
   await fetch(data.url, { method: 'POST', body: formData });
 
-  // TODO(mime): There's probably a better way than constructing this manually.
   return `https://${import.meta.env.DEV ? 's3.amazonaws.com/' : ''}${bucket}/${key}`;
 }
