@@ -25,7 +25,8 @@
 }
 
 .editor :global(iframe) {
-  width: 50%;
+  width: fit-content;
+  max-height: 33vh;
   aspect-ratio: 16 / 9;
 }
 

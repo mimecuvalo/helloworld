@@ -23,9 +23,12 @@ export function createLiteYouTubeVideos(view: string) {
     //  https://www.youtube.com/watch?v=SfsCniN7Nsc
     //  https://youtu.be/SfsCniN7Nsc
     const videoid = url.searchParams.get('v') || url.pathname.split('/').pop();
-    const title = $(iframe).attr('title');
+    // The title is only ever the a11y play label, and iframes reach us without
+    // one often enough that interpolating it raw wrote playlabel="undefined".
+    const title = $(iframe).attr('title')?.replaceAll('"', '&quot;');
     if (videoid) {
-      $(iframe).replaceWith(`<lite-youtube videoid="${videoid}" playlabel="${title}"></lite-youtube>`);
+      const playlabel = title ? `Play: ${title}` : 'Play';
+      $(iframe).replaceWith(`<lite-youtube videoid="${videoid}" playlabel="${playlabel}"></lite-youtube>`);
     }
   });
   return $.html();

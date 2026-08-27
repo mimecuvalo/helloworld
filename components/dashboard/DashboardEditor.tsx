@@ -4,7 +4,7 @@ import { F, defineMessages, useIntl } from 'i18n';
 import { rpc } from 'lib/rpc';
 import { useEditor } from 'lib/editor-context';
 import Editor from 'components/editor/Editor';
-import { reblog, unfurl } from './util';
+import { reblog } from './util';
 import editorStyles from 'components/editor/editor.module.css';
 import styles from './dashboard.module.css';
 
@@ -107,21 +107,6 @@ export default function DashboardEditor({ username }: { username: string }) {
     setToast({ msg: intl.formatMessage(messages.posted), ok: true });
   };
 
-  const handlePaste = useCallback(
-    async (text: string) => {
-      if (!(text.match(/^https?:\/\//) || text.match(/^<iframe /))) return;
-      const info = await unfurl(text);
-      if (!info.wasMediaFound) return;
-      if (info.isError) {
-        setToast({ msg: intl.formatMessage(messages.error), ok: false });
-        return;
-      }
-      if (info.image) setContentThumb(info.image);
-      setEditorValue(`<h1>${info.title}</h1><br><br>${info.result}<br><br><a href="${text}">${text}</a>`);
-    },
-    [intl]
-  );
-
   const handleChange = useCallback((_name: string, value: string) => setEditorValue(value), []);
   const handleMediaAdd = useCallback((url: string) => setContentThumb(url), []);
   const handleSectionChange = (value: string) => {
@@ -160,7 +145,6 @@ export default function DashboardEditor({ username }: { username: string }) {
         placeholder="Once upon a time, in cafe, far, far away."
         onChange={handleChange}
         onMediaAdd={handleMediaAdd}
-        onPaste={handlePaste}
       />
       {toast ? (
         <div

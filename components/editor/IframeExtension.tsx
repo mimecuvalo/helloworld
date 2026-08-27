@@ -42,6 +42,20 @@ export default Node.create<IframeOptions>({
       frameborder: {
         default: 0,
       },
+      // Embeds arrive from oEmbed/og:video with their own dimensions; dropping
+      // them collapses the iframe to the browser's 300x150 default.
+      width: {
+        default: null,
+      },
+      height: {
+        default: null,
+      },
+      allow: {
+        default: null,
+      },
+      title: {
+        default: null,
+      },
       allowfullscreen: {
         default: this.options.allowFullscreen,
         parseHTML: () => this.options.allowFullscreen,
