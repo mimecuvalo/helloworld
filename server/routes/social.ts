@@ -6,20 +6,24 @@ import magic from 'magic-signatures';
 import type { AppEnv } from '../env';
 import { CRON_SECRET } from '../config';
 import packageJson from '../../package.json';
-import { buildUrl, contentUrl, profileUrl } from '../../lib/url-factory';
+import { apUrl, buildUrl, contentUrl, profileUrl } from '../../lib/url-factory';
 import { buildFeedContentSecurityPolicy } from '../../lib/security';
 import { THUMB_HEIGHT, THUMB_WIDTH } from '../../util/constants';
 import {
-  ensureEd25519Key,
   getDefaultLocalUser,
   getLocalContent,
+  getLocalContentByName,
   getLocalLatestContent,
+  getLocalLatestContentByUsername,
   getLocalUser,
+  getLocalUserByUsername,
   getRemoteAllUsers,
   getRemoteCommentsOnLocalContent,
+  getRemoteCommentsOnLocalContentByName,
   getRemoteFollowing,
   getRemoteFriends,
-  getReplyStatsForLocalContent,
+  getRemoteUser,
+  getReplyStatsForLocalContentName,
   getReplyStatsForLocalContents,
   countLocalUsersAndContent,
   getLocalUsersWithBluesky,
@@ -35,20 +39,21 @@ import {
   ACTIVITY_JSON,
   accept,
   actorUrlFor,
+  createActorObject,
   createNoteObject,
   ensureAssertionKey,
   findUserRemote,
   follow as activityStreamsFollow,
+  followersUrlFor,
+  followingUrlFor,
   handle,
+  outboxUrlFor,
+  refreshRemoteKey,
+  repliesUrlFor,
+  runDeliveryQueue,
 } from '../social/activitystreams';
-import {
-  DATA_INTEGRITY_CONTEXT,
-  MULTIKEY_CONTEXT,
-  proofOf,
-  publicKeyMultibaseOf,
-  verifyIntegrityProof,
-} from '../social/integrity-proof';
-import { decryptSecret } from '../secrets';
+import { findMentions } from '../social/syndicate';
+import { proofOf, verifyIntegrityProof } from '../social/integrity-proof';
 import { handleMention } from '../social/webmention';
 import {
   isAtprotoUserRemote,
@@ -167,6 +172,136 @@ async function verifyForwardedMessage(userRemote: UserRemote, body: unknown): Pr
   return !!publicKeyMultibase && verifyIntegrityProof(body, publicKeyMultibase);
 }
 
+// Reads the request body once, as bytes, and parses it.
+//
+// The digest check needs exactly what was sent, so nothing may be parsed as an
+// activity before the raw text has been captured.
+async function readActivity(
+  c: HonoContext<AppEnv>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): Promise<{ rawBody: string; body: any } | { error: 400 }> {
+  const rawBody = await c.req.text();
+  try {
+    return { rawBody, body: JSON.parse(rawBody) };
+  } catch {
+    return { error: 400 };
+  }
+}
+
+// Authenticates one activity for one local recipient and dispatches it.
+//
+// Either the request was signed by the actor (direct delivery), or the activity
+// carries the actor's own FEP-8b32 proof (forwarded through a relay or another
+// instance). Both are the actor vouching for these exact bytes.
+async function acceptActivity(
+  c: HonoContext<AppEnv>,
+  host: string,
+  user: User,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  body: any,
+  rawBody: string
+): Promise<204 | 401> {
+  let userRemote = await findUserRemote(body, user);
+  if (!userRemote) {
+    console.error('activitypub fail: ', body);
+    return 401;
+  }
+
+  let verified = verifyMessage(c, userRemote, rawBody);
+
+  // A signature that doesn't verify is also what a key rotation looks like from
+  // this side. Re-read the peer's actor document once and try again, rather
+  // than rejecting everything they ever send from here on.
+  if (!verified && looksSignedBy(c, userRemote)) {
+    const refreshed = await refreshRemoteKey(userRemote);
+    if (refreshed) {
+      userRemote = refreshed;
+      verified = verifyMessage(c, userRemote, rawBody);
+    }
+  }
+
+  if (!verified && !(await verifyForwardedMessage(userRemote, body))) return 401;
+
+  await handle(body.type, host, body, user, userRemote);
+  // An Accept belongs to a Follow, and it has to echo back the Follow itself —
+  // this used to fire for every activity type, with the raw JSON string as the
+  // object, which no implementation could match against its pending request.
+  if (body.type === 'Follow') accept(host, user, userRemote, body);
+  return 204;
+}
+
+// Whether the request carries a signature that at least *claims* to be this
+// peer's. Gates the key refetch above so that POSTing junk at an inbox can't be
+// used to make us fetch arbitrary actor documents on demand.
+function looksSignedBy(c: HonoContext<AppEnv>, userRemote: UserRemote): boolean {
+  const keyId = signatureParams(c)['keyId'];
+  if (!keyId) return false;
+  const actorUrl = userRemote.activityPubActorUrl || userRemote.profileUrl;
+  try {
+    return new URL(keyId).origin === new URL(actorUrl).origin;
+  } catch {
+    return false;
+  }
+}
+
+// Which of our users an activity delivered to the shared inbox is for.
+//
+// Everything the activity addresses, matched against our own actor and
+// followers URLs. A shared inbox has no user in its path, so this is the only
+// thing that says who the delivery was meant for.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function addressedLocalUsers(host: string, body: any): Promise<User[]> {
+  const addressed = [body?.to, body?.cc, body?.bto, body?.bcc, body?.audience]
+    .flat()
+    .filter((value): value is string => typeof value === 'string');
+
+  const origin = new URL(apUrl(host, 'x')).origin;
+  const usernames = new Set<string>();
+  for (const uri of addressed) {
+    let url: URL;
+    try {
+      url = new URL(uri);
+    } catch {
+      continue;
+    }
+    if (url.origin !== origin) continue;
+    // /ap/<username> and /ap/<username>/followers both name the same person.
+    const segments = url.pathname.split('/').filter(Boolean);
+    if (segments[0] !== 'ap' || !segments[1]) continue;
+    if (segments.length > 2 && segments[2] !== 'followers') continue;
+    usernames.add(decodeURIComponent(segments[1]));
+  }
+
+  const users = await Promise.all([...usernames].map((username) => getLocalUserByUsername(username)));
+  return users.filter((user): user is User => !!user);
+}
+
+function signatureParams(c: HonoContext<AppEnv>): { [key: string]: string } {
+  const params: { [key: string]: string } = {};
+  (c.req.header('signature') || '').split(',').forEach((keyValue) => {
+    const pair = keyValue.split('=');
+    params[pair[0].trim()] = pair.slice(1).join('=').replace(/^"/, '').replace(/"$/, '');
+  });
+  return params;
+}
+
+// The peers a post mentions, resolved from what we already have on file.
+//
+// Deliberately DB-only. Delivery discovers unknown actors because it has to
+// address them; serving an object must not turn a fetch of one post into a
+// burst of outbound WebFinger lookups.
+async function knownMentionsFor(localUsername: string, view: string, threadUser: string | null): Promise<UserRemote[]> {
+  const urls = [...(threadUser ? [threadUser] : []), ...findMentions(view)];
+  const resolved = await Promise.all(urls.map((url) => getRemoteUser(localUsername, url).catch(() => null)));
+
+  const seen = new Set<string>();
+  return resolved.filter((userRemote): userRemote is UserRemote => {
+    if (!userRemote || seen.has(userRemote.profileUrl)) return false;
+    seen.add(userRemote.profileUrl);
+    return true;
+  });
+}
+
 export const socialRoutes = new Hono<AppEnv>()
   // Cron: prune old remote content + pull fresh entries from every followed feed.
   // GET as well as POST: Vercel cron invokes the endpoint with a GET.
@@ -203,6 +338,21 @@ export const socialRoutes = new Hono<AppEnv>()
     }
 
     return c.json({ success: true });
+  })
+
+  // Cron: work through deliveries that couldn't be handed over first time.
+  //
+  // Separate from update-feeds because the useful cadence is completely
+  // different — feeds are worth a daily pull, a queued delivery wants to go out
+  // as soon as the far end is back. On a Vercel plan capped at one cron a day
+  // this still beats the old behaviour, which was to lose the activity outright.
+  .on(['GET', 'POST'], '/deliver-queue', async (c) => {
+    const auth = c.req.header('authorization');
+    if (!import.meta.env.DEV && (!CRON_SECRET || auth !== `Bearer ${CRON_SECRET}`)) {
+      return c.json({ msg: 'i call shenanigans.' }, 400);
+    }
+
+    return c.json(await runDeliveryQueue(hostOf(c)));
   })
 
   // host-meta: points to the WebFinger LRDD endpoint.
@@ -389,86 +539,66 @@ export const socialRoutes = new Hono<AppEnv>()
     return c.body(renderFoaf(host, user, followers, following), 200, { 'Content-Type': 'application/xrd+xml' });
   })
 
-  // ActivityPub actor document.
-  .get('/activitypub/actor', async (c) => {
+  // The ActivityPub surface, at /ap/* rather than under /api — see apUrl in
+  // lib/url-factory for why, and app/routes/ap/$.ts for the rewrite that gets
+  // requests here.
+  //
+  // The shared inbox is registered before /ap/:username so that a site with a
+  // user called "inbox" doesn't shadow it.
+  .post('/ap/inbox', async (c) => {
     const host = hostOf(c);
-    const resource = c.req.query('resource') || '';
-    const user = await getLocalUser(resource);
+    const raw = await readActivity(c);
+    if ('error' in raw) return c.body(null, raw.error);
+
+    // Nobody is named in the URL, so the recipients are whoever the activity
+    // itself addresses. An activity that turns out to address none of our users
+    // is accepted and dropped: it isn't an error on the sender's part, and
+    // saying so would leak which accounts exist here.
+    const recipients = await addressedLocalUsers(host, raw.body);
+    for (const user of recipients) {
+      await acceptActivity(c, host, user, raw.body, raw.rawBody);
+    }
+    return c.body(null, 202);
+  })
+
+  // The actor document.
+  .get('/ap/:username', async (c) => {
+    const host = hostOf(c);
+    const user = await getLocalUserByUsername(c.req.param('username'));
     if (!user) return c.body(null, 404);
-    const ap = (pathname: string) => buildUrl({ host, pathname, searchParams: { resource } });
-    const actorUrl = ap('/api/social/activitypub/actor');
-    let publicKeyPem = '';
-    try {
-      publicKeyPem = forge.pki.publicKeyToPem(magic.magicToRSA(user.magicKey));
-    } catch {
-      // user has no magic key yet
-    }
-    const icon = user.logo || user.favicon;
 
-    // The Ed25519 key for FEP-8b32 proofs, minted on first publication. Separate
-    // from publicKey above, which is RSA and signs HTTP requests: `assertionMethod`
-    // is what a verifier resolves a proof's verificationMethod against.
-    let assertionMethod: object[] | undefined;
-    try {
-      assertionMethod = [
-        {
-          id: `${actorUrl}#ed25519-key`,
-          type: 'Multikey',
-          controller: actorUrl,
-          publicKeyMultibase: publicKeyMultibaseOf(decryptSecret(await ensureEd25519Key(user))),
-        },
-      ];
-    } catch {
-      // Unreadable SECRETS_KEY. The RSA half of the document still works, so
-      // publish what we can rather than 500ing the whole actor.
-    }
+    return c.body(JSON.stringify(await createActorObject(host, user)), 200, {
+      'Content-Type': ACTIVITY_JSON,
+      'Cache-Control': `public, s-maxage=${60 * 5}`,
+    });
+  })
 
-    return c.body(
-      JSON.stringify({
-        '@context': [
-          'https://www.w3.org/ns/activitystreams',
-          'https://w3id.org/security/v1',
-          DATA_INTEGRITY_CONTEXT,
-          MULTIKEY_CONTEXT,
-        ],
-        id: actorUrl,
-        type: 'Person',
-        preferredUsername: user.username,
-        name: user.name,
-        summary: user.description || undefined,
-        published: user.createdAt ? new Date(user.createdAt).toISOString() : undefined,
-        // Mastodon reads these to decide whether to show a lock on the profile
-        // and whether the account may be surfaced in directories.
-        manuallyApprovesFollowers: false,
-        discoverable: true,
-        inbox: ap('/api/social/activitypub/inbox'),
-        outbox: ap('/api/social/activitypub/outbox'),
-        followers: ap('/api/social/activitypub/followers'),
-        following: ap('/api/social/activitypub/following'),
-        endpoints: { sharedInbox: ap('/api/social/activitypub/inbox') },
-        url: profileUrl(user.username, host),
-        icon: icon ? { type: 'Image', url: buildUrl({ host, pathname: icon }) } : undefined,
-        publicKey: { id: `${actorUrl}#main-key`, owner: actorUrl, publicKeyPem },
-        assertionMethod,
-      }),
-      200,
-      { 'Content-Type': ACTIVITY_JSON, 'Cache-Control': `public, s-maxage=${60 * 5}` }
-    );
+  // A user's own inbox. Same handling as the shared one, minus the guesswork
+  // about who it is for.
+  .post('/ap/:username/inbox', async (c) => {
+    const host = hostOf(c);
+    const user = await getLocalUserByUsername(c.req.param('username'));
+    if (!user) return c.body(null, 404);
+
+    const raw = await readActivity(c);
+    if ('error' in raw) return c.body(null, raw.error);
+
+    const status = await acceptActivity(c, host, user, raw.body, raw.rawBody);
+    return c.body(null, status);
   })
 
   // The actor's collections. Each is an OrderedCollection that points at its
   // first page; `?page=1` returns the page itself. Mastodon walks these to show
   // follower counts and to backfill a newly-followed account's posts.
-  .get('/activitypub/outbox', async (c) => {
+  .get('/ap/:username/outbox', async (c) => {
     const host = hostOf(c);
-    const resource = c.req.query('resource') || '';
-    const user = await getLocalUser(resource);
+    const user = await getLocalUserByUsername(c.req.param('username'));
     if (!user) return c.body(null, 404);
 
-    // getLocalLatestContent already excludes hidden items — federation is
-    // unauthenticated, so nothing non-public may appear here.
-    const feed = await getLocalLatestContent(resource);
-    const collectionUrl = buildUrl({ host, pathname: '/api/social/activitypub/outbox', searchParams: { resource } });
+    // getLocalLatestContentByUsername already excludes hidden items —
+    // federation is unauthenticated, so nothing non-public may appear here.
+    const feed = await getLocalLatestContentByUsername(user.username);
+    const collectionUrl = outboxUrlFor(host, user);
 
     if (!c.req.query('page')) {
       return activityJson(c, collectionOf(collectionUrl, feed.length));
@@ -497,93 +627,50 @@ export const socialRoutes = new Hono<AppEnv>()
     return activityJson(c, pageOf(collectionUrl, items));
   })
 
-  .get('/activitypub/followers', (c) => actorCollection(c, 'followers'))
-  .get('/activitypub/following', (c) => actorCollection(c, 'following'))
+  .get('/ap/:username/followers', (c) => actorCollection(c, 'followers'))
+  .get('/ap/:username/following', (c) => actorCollection(c, 'following'))
 
-  // The replies on a local item — the ActivityPub half of the `<link
-  // rel="replies">` the Atom feed has advertised since the OStatus days, and
-  // what a Mastodon client walks to show a thread under a post it's been sent.
-  //
-  // Same source as the /comments Atom feed: the remote replies we've been
-  // delivered. Items are the peers' own object ids, so clients resolve each
-  // reply at its home instance rather than through our copy of it.
-  .get('/activitypub/replies', async (c) => {
+  // The AS2 document for one local post.
+  .get('/ap/:username/o/:name', async (c) => {
     const host = hostOf(c);
-    const resource = c.req.query('resource') || '';
-    const content = await getLocalContent(resource);
-    const user = await getLocalUser(resource);
-    // Hidden items are 404 everywhere else in this file; a replies collection
-    // would otherwise confirm the post exists and how much traffic it got.
-    if (!content || content.hidden || !user) return c.body(null, 404);
+    const username = c.req.param('username');
+    const name = c.req.param('name');
+    const [user, content] = await Promise.all([
+      getLocalUserByUsername(username),
+      getLocalContentByName(username, name),
+    ]);
+    if (!user || !content || content.hidden) return c.body(null, 404);
 
-    const collectionUrl = buildUrl({
+    const json = await createNoteObject(
       host,
-      pathname: '/api/social/activitypub/replies',
-      searchParams: { resource },
-    });
+      content,
+      user,
+      await getReplyStatsForLocalContentName(username, name),
+      await knownMentionsFor(username, content.view, content.threadUser)
+    );
+    return activityJson(c, { '@context': 'https://www.w3.org/ns/activitystreams', ...json });
+  })
+
+  // The replies to one local post — the ActivityPub half of what Atom has
+  // advertised as <link rel="replies"> since the OStatus days.
+  .get('/ap/:username/o/:name/replies', async (c) => {
+    const host = hostOf(c);
+    const username = c.req.param('username');
+    const name = c.req.param('name');
+    const content = await getLocalContentByName(username, name);
+    if (!content || content.hidden) return c.body(null, 404);
+
+    const collectionUrl = repliesUrlFor(host, content);
 
     if (!c.req.query('page')) {
-      const { count } = await getReplyStatsForLocalContent(resource);
+      const { count } = await getReplyStatsForLocalContentName(username, name);
       return activityJson(c, collectionOf(collectionUrl, count));
     }
 
-    const comments = await getRemoteCommentsOnLocalContent(resource);
+    const comments = await getRemoteCommentsOnLocalContentByName(username, name);
     const items = comments.map((comment) => comment.postId || comment.link).filter(Boolean);
     return activityJson(c, pageOf(collectionUrl, items));
   })
-
-  // ActivityPub Article object for a local item.
-  .get('/activitypub/message', async (c) => {
-    const host = hostOf(c);
-    const resource = c.req.query('resource') || '';
-    const content = await getLocalContent(resource);
-    const user = await getLocalUser(resource);
-    if (!content || content.hidden || !user) return c.body(null, 404);
-    const json = await createNoteObject(host, content, user, await getReplyStatsForLocalContent(resource));
-    return c.body(JSON.stringify({ '@context': 'https://www.w3.org/ns/activitystreams', ...json }), 200, {
-      'Content-Type': ACTIVITY_JSON,
-    });
-  })
-
-  // ActivityPub inbox (verifies the HTTP signature, dispatches the activity).
-  .post('/activitypub/inbox', async (c) => {
-    const host = hostOf(c);
-    const resource = c.req.query('resource') || '';
-    if (!resource) return c.body(null, 400);
-    const user = await getLocalUser(resource);
-    if (!user) return c.body(null, 404);
-
-    // Read the body as bytes first: the digest check needs exactly what was
-    // sent, and nothing may be parsed as an activity before it verifies.
-    const rawBody = await c.req.text();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let body: any;
-    try {
-      body = JSON.parse(rawBody);
-    } catch {
-      return c.body(null, 400);
-    }
-
-    const userRemote = await findUserRemote(body, user);
-    if (!userRemote) {
-      console.error('activitypub fail: ', body);
-      return c.body(null, 401);
-    }
-    // Either the request was signed by the actor (direct delivery), or the
-    // activity carries the actor's own proof (forwarded). Both are the actor
-    // vouching for these exact bytes.
-    if (!verifyMessage(c, userRemote, rawBody) && !(await verifyForwardedMessage(userRemote, body))) {
-      return c.body(null, 401);
-    }
-
-    await handle(body.type, host, body, user, userRemote);
-    // An Accept belongs to a Follow, and it has to echo back the Follow itself —
-    // this used to fire for every activity type, with the raw JSON string as the
-    // object, which no implementation could match against its pending request.
-    if (body.type === 'Follow') accept(host, user, userRemote, body);
-    return c.body(null, 204);
-  })
-
   // Salmon endpoint (OStatus; verifies the magic-envelope signature).
   .post('/salmon', async (c) => {
     const host = hostOf(c);
@@ -659,14 +746,14 @@ function collectionOf(collectionUrl: string, totalItems: number) {
     id: collectionUrl,
     type: 'OrderedCollection',
     totalItems,
-    first: `${collectionUrl}&page=1`,
+    first: `${collectionUrl}?page=1`,
   };
 }
 
 function pageOf(collectionUrl: string, orderedItems: unknown[]) {
   return {
     '@context': 'https://www.w3.org/ns/activitystreams',
-    id: `${collectionUrl}&page=1`,
+    id: `${collectionUrl}?page=1`,
     type: 'OrderedCollectionPage',
     partOf: collectionUrl,
     totalItems: orderedItems.length,
@@ -677,16 +764,15 @@ function pageOf(collectionUrl: string, orderedItems: unknown[]) {
 // followers/following differ only in which half of getRemoteFriends they read.
 async function actorCollection(c: HonoContext<AppEnv>, which: 'followers' | 'following') {
   const host = hostOf(c);
-  const resource = c.req.query('resource') || '';
-  const user = await getLocalUser(resource);
+  const user = await getLocalUserByUsername(c.req.param('username') || '');
   if (!user) return c.body(null, 404);
 
-  const [followers, following] = await getRemoteFriends(resource);
+  const [followers, following] = await getRemoteFriends(user.username);
   // Prefer the peer's actor id; profileUrl is the fallback discovery stores.
   const actors = (which === 'followers' ? followers : following).map(
     (peer) => peer.activityPubActorUrl || peer.profileUrl
   );
-  const collectionUrl = buildUrl({ host, pathname: `/api/social/activitypub/${which}`, searchParams: { resource } });
+  const collectionUrl = which === 'followers' ? followersUrlFor(host, user) : followingUrlFor(host, user);
 
   return activityJson(
     c,
@@ -723,7 +809,7 @@ function webfingerJson(host: string, user: User) {
       { rel: 'describedby', type: 'application/rdf+xml', href: url('/api/social/foaf') },
       { rel: 'describedby', type: 'application/json', href: url('/api/social/.well-known/webfinger') },
       { rel: 'http://microformats.org/profile/hcard', type: 'text/html', href: resource },
-      { rel: 'self', type: 'application/activity+json', href: url('/api/social/activitypub/actor') },
+      { rel: 'self', type: 'application/activity+json', href: actorUrlFor(host, user) },
     ],
   };
 }

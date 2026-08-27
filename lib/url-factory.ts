@@ -56,6 +56,10 @@ export function profileUrl(username: string, host?: string): string {
   return buildUrl({ host, pathname: `/${username}` });
 }
 
+export function apUrl(host: string | undefined, ...segments: string[]): string {
+  return buildUrl({ host, pathname: `/ap/${segments.map(encodeURIComponent).join('/')}` });
+}
+
 export function buildUrl({
   host,
   isAbsolute,

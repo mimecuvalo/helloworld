@@ -5,6 +5,10 @@
     {
       "path": "/api/social/update-feeds",
       "schedule": "0 1 * * *"
+    },
+    {
+      "path": "/api/social/deliver-queue",
+      "schedule": "0 * * * *"
     }
   ]
 }

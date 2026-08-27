@@ -20,6 +20,7 @@ import { Route as DotwellKnownDidDotjsonRouteImport } from './routes/[.]well-kno
 import { Route as DotwellKnownHostMetaRouteImport } from './routes/[.]well-known/host-meta'
 import { Route as DotwellKnownNodeinfoRouteImport } from './routes/[.]well-known/nodeinfo'
 import { Route as DotwellKnownWebfingerRouteImport } from './routes/[.]well-known/webfinger'
+import { Route as ApSplatRouteImport } from './routes/ap/$'
 import { Route as ApiSplatRouteImport } from './routes/api/$'
 import { Route as ResourceSplatRouteImport } from './routes/resource.$'
 import { Route as XrpcSplatRouteImport } from './routes/xrpc/$'
@@ -81,6 +82,11 @@ const DotwellKnownWebfingerRoute = DotwellKnownWebfingerRouteImport.update({
   path: '/.well-known/webfinger',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApSplatRoute = ApSplatRouteImport.update({
+  id: '/ap/$',
+  path: '/ap/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSplatRoute = ApiSplatRouteImport.update({
   id: '/api/$',
   path: '/api/$',
@@ -114,6 +120,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/host-meta': typeof DotwellKnownHostMetaRoute
   '/.well-known/nodeinfo': typeof DotwellKnownNodeinfoRoute
   '/.well-known/webfinger': typeof DotwellKnownWebfingerRoute
+  '/ap/$': typeof ApSplatRoute
   '/api/$': typeof ApiSplatRoute
   '/resource/$': typeof ResourceSplatRoute
   '/xrpc/$': typeof XrpcSplatRoute
@@ -131,6 +138,7 @@ export interface FileRoutesByTo {
   '/.well-known/host-meta': typeof DotwellKnownHostMetaRoute
   '/.well-known/nodeinfo': typeof DotwellKnownNodeinfoRoute
   '/.well-known/webfinger': typeof DotwellKnownWebfingerRoute
+  '/ap/$': typeof ApSplatRoute
   '/api/$': typeof ApiSplatRoute
   '/resource/$': typeof ResourceSplatRoute
   '/xrpc/$': typeof XrpcSplatRoute
@@ -149,6 +157,7 @@ export interface FileRoutesById {
   '/.well-known/host-meta': typeof DotwellKnownHostMetaRoute
   '/.well-known/nodeinfo': typeof DotwellKnownNodeinfoRoute
   '/.well-known/webfinger': typeof DotwellKnownWebfingerRoute
+  '/ap/$': typeof ApSplatRoute
   '/api/$': typeof ApiSplatRoute
   '/resource/$': typeof ResourceSplatRoute
   '/xrpc/$': typeof XrpcSplatRoute
@@ -168,6 +177,7 @@ export interface FileRouteTypes {
     | '/.well-known/host-meta'
     | '/.well-known/nodeinfo'
     | '/.well-known/webfinger'
+    | '/ap/$'
     | '/api/$'
     | '/resource/$'
     | '/xrpc/$'
@@ -185,6 +195,7 @@ export interface FileRouteTypes {
     | '/.well-known/host-meta'
     | '/.well-known/nodeinfo'
     | '/.well-known/webfinger'
+    | '/ap/$'
     | '/api/$'
     | '/resource/$'
     | '/xrpc/$'
@@ -202,6 +213,7 @@ export interface FileRouteTypes {
     | '/.well-known/host-meta'
     | '/.well-known/nodeinfo'
     | '/.well-known/webfinger'
+    | '/ap/$'
     | '/api/$'
     | '/resource/$'
     | '/xrpc/$'
@@ -220,6 +232,7 @@ export interface RootRouteChildren {
   DotwellKnownHostMetaRoute: typeof DotwellKnownHostMetaRoute
   DotwellKnownNodeinfoRoute: typeof DotwellKnownNodeinfoRoute
   DotwellKnownWebfingerRoute: typeof DotwellKnownWebfingerRoute
+  ApSplatRoute: typeof ApSplatRoute
   ApiSplatRoute: typeof ApiSplatRoute
   ResourceSplatRoute: typeof ResourceSplatRoute
   XrpcSplatRoute: typeof XrpcSplatRoute
@@ -305,6 +318,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DotwellKnownWebfingerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ap/$': {
+      id: '/ap/$'
+      path: '/ap/$'
+      fullPath: '/ap/$'
+      preLoaderRoute: typeof ApSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/$': {
       id: '/api/$'
       path: '/api/$'
@@ -348,6 +368,7 @@ const rootRouteChildren: RootRouteChildren = {
   DotwellKnownHostMetaRoute: DotwellKnownHostMetaRoute,
   DotwellKnownNodeinfoRoute: DotwellKnownNodeinfoRoute,
   DotwellKnownWebfingerRoute: DotwellKnownWebfingerRoute,
+  ApSplatRoute: ApSplatRoute,
   ApiSplatRoute: ApiSplatRoute,
   ResourceSplatRoute: ResourceSplatRoute,
   XrpcSplatRoute: XrpcSplatRoute,

@@ -53,6 +53,7 @@ export function user(overrides: Partial<User> = {}): User {
     magicKey: '',
     privateKey: '',
     ed25519PrivateKey: null,
+    mastodonUrl: null,
     ...overrides,
   } as User;
 }
@@ -84,6 +85,8 @@ export function content(overrides: Partial<Content> = {}): Content {
     code: '',
     view: '<p>hi</p>',
     favoritesCount: 0,
+    sensitive: false,
+    contentWarning: null,
     ...overrides,
   } as Content;
 }
@@ -140,6 +143,8 @@ export function contentRemote(overrides: Partial<ContentRemote> = {}): ContentRe
     isSpam: false,
     deleted: false,
     view: '<p>nice</p>',
+    sensitive: false,
+    contentWarning: null,
     ...overrides,
   } as ContentRemote;
 }

@@ -39,14 +39,28 @@ export async function ensureEd25519Key(user: User): Promise<string> {
   return stored;
 }
 
+export async function getLocalUserByUsername(username: string) {
+  if (!username) return null;
+  return await prisma.user.findUnique({ where: { username } });
+}
+
+// The ActivityPub routes address content by (username, name) straight out of
+// the path, rather than by round-tripping a permalink through parseContentUrl.
+export async function getLocalContentByName(username: string, name: string) {
+  if (!username || !name) return null;
+  return await prisma.content.findUnique({ where: { username_name: { username, name } } });
+}
+
 export async function getLocalContent(localContentUrl: string) {
   const { username, name } = parseContentUrl(localContentUrl);
   return await prisma.content.findUnique({ where: { username_name: { username, name } } });
 }
 
 export async function getLocalLatestContent(localContentUrl: string) {
-  const { username } = parseContentUrl(localContentUrl);
+  return await getLocalLatestContentByUsername(parseContentUrl(localContentUrl).username);
+}
 
+export async function getLocalLatestContentByUsername(username: string) {
   const contentConstraints = {
     username,
     section: { not: 'main' },
@@ -205,8 +219,17 @@ export async function getReplyStatsForLocalContent(localContentUrl: string): Pro
   return stats[name] || { count: 0, updated: null };
 }
 
+export async function getReplyStatsForLocalContentName(username: string, name: string): Promise<ReplyStats> {
+  const stats = await getReplyStatsForLocalContents(username, [name]);
+  return stats[name] || { count: 0, updated: null };
+}
+
 export async function getRemoteCommentsOnLocalContent(localContentUrl: string) {
   const { username, name } = parseContentUrl(localContentUrl);
+  return await getRemoteCommentsOnLocalContentByName(username, name);
+}
+
+export async function getRemoteCommentsOnLocalContentByName(username: string, name: string) {
   return await prisma.contentRemote.findMany({
     where: {
       toUsername: username,
