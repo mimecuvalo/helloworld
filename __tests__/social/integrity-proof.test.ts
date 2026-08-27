@@ -17,7 +17,7 @@ const activity = () => ({
   '@context': withProofContext('https://www.w3.org/ns/activitystreams'),
   type: 'Create',
   id: 'https://example.com/activities/1',
-  actor: 'https://example.com/api/social/activitypub/actor',
+  actor: 'https://example.com/ap/alice',
   to: ['https://www.w3.org/ns/activitystreams#Public'],
   object: { id: 'https://example.com/notes/1', type: 'Note', content: 'héllo · ünicode' },
 });

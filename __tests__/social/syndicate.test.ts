@@ -268,9 +268,7 @@ describe('syndicateContent', () => {
     await syndicateContent(HOST, owner(), content());
 
     expect(bodyOf().to).toEqual(['https://www.w3.org/ns/activitystreams#Public']);
-    expect(bodyOf().object.cc).toContain(
-      `https://${HOST}/api/social/activitypub/followers?resource=${encodeURIComponent(`https://${HOST}/alice`)}`
-    );
+    expect(bodyOf().object.cc).toContain(`https://${HOST}/ap/alice/followers`);
   });
 });
 
@@ -354,7 +352,7 @@ describe('syndicateDelete', () => {
       type: 'Delete',
       object: {
         type: 'Tombstone',
-        id: `https://${HOST}/api/social/activitypub/message?resource=${encodeURIComponent(`https://${HOST}/alice/blog/hello`)}`,
+        id: `https://${HOST}/ap/alice/o/hello`,
       },
     });
   });

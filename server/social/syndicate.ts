@@ -1,18 +1,17 @@
 import type { Content, User, UserRemote } from '../../generated/prisma/client';
 import * as cheerio from 'cheerio';
-import { nanoid } from 'nanoid';
-import { buildUrl, contentUrl, profileUrl } from '../../lib/url-factory';
+import { contentUrl, profileUrl } from '../../lib/url-factory';
 import {
-  ACTIVITY_JSON,
+  activityUrlFor,
   createGenericMessage,
   createNoteObject,
   deliver,
-  followersUrlFor,
+  objectUrlFor,
   PUBLIC_AUDIENCE,
 } from './activitystreams';
+import { fetchActivityJson } from './signed-fetch';
 import { getActivityPubActor, getUserRemoteInfo } from './discover-user';
 import { getRemoteContent, getRemoteFriends, getRemoteUser, getReplyStatsForLocalContent, saveRemoteUser } from './db';
-import { fetchJSON } from '../crawler';
 import { deleteFromBluesky, publishToBluesky } from './atproto';
 
 // Delivery of a local post to the fediverse.
@@ -106,7 +105,7 @@ export async function resolveThreadUser(localUsername: string, threadUrl: string
 
   // Otherwise ask the post itself. Two hops, once, at save time.
   try {
-    const parent = await fetchJSON(threadUrl, { Accept: ACTIVITY_JSON });
+    const parent = await fetchActivityJson(threadUrl);
     const attributedTo = attributedToOf(parent);
     if (!attributedTo) return null;
 
@@ -161,29 +160,16 @@ export async function syndicateContent(
   // A Create is always a fresh post with no replies, but an Update replaces a
   // post peers already hold — and by then it may well have a thread under it.
   const replyStats = isUpdate ? await getReplyStatsForLocalContent(contentUrl(content, undefined, host)) : undefined;
-  const object = await createNoteObject(host, content, contentOwner, replyStats);
-  // Addressed by actor id, not profile page: Mastodon matches a mention by
-  // finding the actor URI in to/cc, so cc'ing the human-readable profile url
-  // meant the mention was delivered but never registered as one. tag.href has
-  // always used the actor id; these two have to agree.
-  const actorIdOf = (userRemote: UserRemote) => userRemote.activityPubActorUrl || userRemote.profileUrl;
-  object.cc = [followersUrlFor(host, contentOwner), ...mentioned.map(actorIdOf)];
-  object.tag = mentioned.map((userRemote) => ({
-    type: 'Mention',
-    href: actorIdOf(userRemote),
-    name: `@${userRemote.username}`,
-  }));
+  // The mentions go *into* the object rather than being pasted over it
+  // afterwards, so that the copy served from /ap/:user/o/:name carries the same
+  // tags and cc as the copy that was delivered.
+  const object = await createNoteObject(host, content, contentOwner, replyStats, mentioned);
 
   // Create announces a new post; Update replaces one the peer already has.
-  const activityUrl = buildUrl({
-    host,
-    pathname: `/api/social/activitypub/${isUpdate ? 'update' : 'create'}`,
-    searchParams: { id: nanoid(10), resource: contentUrl(content, undefined, host) },
-  });
   const message = createGenericMessage(
     isUpdate ? 'Update' : 'Create',
     host,
-    activityUrl,
+    activityUrlFor(host, contentOwner),
     contentOwner,
     object,
     recipients
@@ -200,21 +186,15 @@ export async function syndicateDelete(host: string, contentOwner: User, content:
   const recipients = dedupeByInbox(followers);
   if (!recipients.length) return;
 
-  const objectUrl = buildUrl({
-    host,
-    pathname: '/api/social/activitypub/message',
-    searchParams: { resource: contentUrl(content, undefined, host) },
-  });
+  // The Tombstone has to carry the id peers already hold for the post, which is
+  // the object's AS2 id — not its permalink, and not a fresh URL.
+  const objectUrl = objectUrlFor(host, content);
   const message = createGenericMessage(
     'Delete',
     host,
-    buildUrl({
-      host,
-      pathname: '/api/social/activitypub/delete',
-      searchParams: { id: nanoid(10), resource: objectUrl },
-    }),
+    activityUrlFor(host, contentOwner),
     contentOwner,
-    { id: objectUrl, url: objectUrl, type: 'Tombstone' },
+    { id: objectUrl, url: contentUrl(content, undefined, host), type: 'Tombstone' },
     recipients
   );
   message.to = [PUBLIC_AUDIENCE];

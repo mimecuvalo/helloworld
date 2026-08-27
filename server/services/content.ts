@@ -370,14 +370,32 @@ export async function fetchSiteMap(ctx: Context, args: { username: string }) {
   return decoratedSiteMap;
 }
 
-export async function saveContent(ctx: Context, args: { name: string; title: string; hidden: boolean; view: string }) {
+export async function saveContent(
+  ctx: Context,
+  args: {
+    name: string;
+    title: string;
+    hidden: boolean;
+    view: string;
+    sensitive?: boolean;
+    contentWarning?: string | null;
+  }
+) {
   const { currentUsername, prisma } = ctx;
   const { name, hidden, title, view } = args;
   const thread = discoverThreadInHTML(view);
   const threadUser = await threadUserFor(ctx, thread);
 
   const updatedContent = await prisma.content.update({
-    data: { title, hidden, thread, threadUser, view },
+    data: {
+      title,
+      hidden,
+      thread,
+      threadUser,
+      view,
+      ...(args.sensitive === undefined ? {} : { sensitive: args.sensitive }),
+      ...(args.contentWarning === undefined ? {} : { contentWarning: args.contentWarning || null }),
+    },
     where: { username_name: { username: currentUsername, name } },
   });
 
@@ -400,6 +418,8 @@ export async function postContent(
     style: string;
     code: string;
     view: string;
+    sensitive?: boolean;
+    contentWarning?: string | null;
   }
 ) {
   const { currentUsername, prisma } = ctx;
@@ -426,6 +446,8 @@ export async function postContent(
       style: args.style,
       code: args.code,
       view: args.view,
+      sensitive: args.sensitive ?? false,
+      contentWarning: args.contentWarning || null,
     },
   });
 

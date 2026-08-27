@@ -123,6 +123,9 @@ model Content {
   code            String
   view            String
 
+  sensitive       Boolean   @default(false)
+  contentWarning  String?
+
   // Where this post was mirrored on the AT Protocol side, so edits and deletes
   // can find the record again.
   atprotoUri      String?
@@ -165,6 +168,9 @@ model ContentRemote {
   deleted          Boolean   @default(false)
   view             String
 
+  sensitive        Boolean   @default(false)
+  contentWarning   String?
+
   // TODO(mime): add full-text search?
   //@@index([title, view])
   @@index([toUsername])
@@ -180,4 +186,21 @@ model ContentRemote {
   @@unique([toUsername, fromUsername, postId])
   @@unique([commentUser, postId])
   @@index([thread])
+}
+
+model Delivery {
+  id           Int      @id @default(autoincrement())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
+  // Whose key signs it, and whose followers it belongs to.
+  username     String
+  inboxUrl     String
+  activityId   String
+  message      String
+  attempts     Int      @default(0)
+  nextAttemptAt DateTime @default(now())
+  lastError    String?
+
+  @@unique([inboxUrl, activityId])
+  @@index([nextAttemptAt])
 }

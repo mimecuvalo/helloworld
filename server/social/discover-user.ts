@@ -1,4 +1,5 @@
-import { createAbsoluteUrl, fetchJSON, fetchText } from '../crawler';
+import { createAbsoluteUrl, fetchText } from '../crawler';
+import { fetchActivityJson } from './signed-fetch';
 import { getRemoteUser, saveRemoteUser } from './db';
 import type { UserRemote } from '../../generated/prisma/client';
 import * as cheerio from 'cheerio';
@@ -118,8 +119,11 @@ export async function getWebfinger(lrddUrl: string, uri: string) {
   return webfingerInfo;
 }
 
+// Signed, because an instance in Mastodon's secure mode returns 401 to an
+// unauthenticated actor lookup — and this is the lookup everything else on the
+// ActivityPub side is built on.
 export async function getActivityPubActor(url: string) {
-  return await fetchJSON(url, { Accept: 'application/activity+json' });
+  return await fetchActivityJson(url);
 }
 
 export async function getHTML(url: string) {

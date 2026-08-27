@@ -2,7 +2,9 @@ import crypto from 'node:crypto';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const db = vi.hoisted(() => ({
+  ensureEd25519Key: vi.fn(),
   getLocalContent: vi.fn(),
+  getLocalUserByUsername: vi.fn(),
   getRemoteContent: vi.fn(),
   getRemoteUser: vi.fn(),
   getRemoteUserByActor: vi.fn(),
@@ -16,25 +18,42 @@ const discover = vi.hoisted(() => ({
   getActivityPubActor: vi.fn(),
   getUserRemoteInfo: vi.fn(),
 }));
+const queue = vi.hoisted(() => ({
+  MAX_ATTEMPTS: 10,
+  backoffMs: vi.fn(() => 1000),
+  dropDelivery: vi.fn(),
+  dueDeliveries: vi.fn(async () => []),
+  enqueueDelivery: vi.fn(),
+  isGone: (status: number) => status === 410,
+  isPermanentFailure: (status: number) => status !== 408 && status !== 429 && status >= 400 && status < 500,
+  pruneExhaustedDeliveries: vi.fn(async () => 0),
+  rescheduleDelivery: vi.fn(),
+  retireInbox: vi.fn(),
+}));
 
 vi.mock('server/social/db', () => db);
 vi.mock('server/social/discover-user', () => discover);
+vi.mock('server/social/delivery-queue', () => queue);
 
 import {
   accept,
   createNote,
   createGenericMessage,
   deliver,
+  findHashtags,
   findUserRemote,
   follow,
   handle,
+  isSameOrigin,
   like,
+  refreshRemoteKey,
+  runDeliveryQueue,
   salmonSend,
 } from 'server/social/activitystreams';
 import { verifyIntegrityProof } from 'server/social/integrity-proof';
 import { HOST, content, contentRemote, keys, proofKeys, user, userRemote } from './fixtures';
 
-const ACTOR = `https://${HOST}/api/social/activitypub/actor?resource=https%3A%2F%2F${HOST}%2Falice`;
+const ACTOR = `https://${HOST}/ap/alice`;
 const PUBLIC = 'https://www.w3.org/ns/activitystreams#Public';
 
 let fetchMock: ReturnType<typeof vi.fn>;
@@ -92,28 +111,28 @@ describe('createNote', () => {
     expect(message.object).toMatchObject({
       // Note, not Article: Mastodon renders Article inconsistently.
       type: 'Note',
-      id: `https://${HOST}/api/social/activitypub/message?resource=https%3A%2F%2F${HOST}%2Falice%2Fblog%2Fhello`,
+      id: `https://${HOST}/ap/alice/o/hello`,
       url: `https://${HOST}/alice/blog/hello`,
       attributedTo: ACTOR,
       title: 'Hello',
       published: '2026-02-01T00:00:00.000Z',
       updated: '2026-02-02T00:00:00.000Z',
       to: [PUBLIC],
-      cc: [`https://${HOST}/api/social/activitypub/followers?resource=https%3A%2F%2F${HOST}%2Falice`],
+      cc: [`https://${HOST}/ap/alice/followers`],
     });
     expect(message.id).toBe((message.object as { id: string }).id);
   });
 
-  it('points the Note at its replies collection, keyed by the post permalink', async () => {
+  it('points the Note at its replies collection, hung off the objects own url', async () => {
     const message = await createNote(HOST, localContent, user());
 
-    const repliesUrl = `https://${HOST}/api/social/activitypub/replies?resource=https%3A%2F%2F${HOST}%2Falice%2Fblog%2Fhello`;
+    const repliesUrl = `https://${HOST}/ap/alice/o/hello/replies`;
     expect((message.object as { replies: unknown }).replies).toEqual({
       id: repliesUrl,
       type: 'OrderedCollection',
       totalItems: 0,
       updated: undefined,
-      first: `${repliesUrl}&page=1`,
+      first: `${repliesUrl}?page=1`,
     });
   });
 
@@ -137,17 +156,43 @@ describe('createNote', () => {
     });
   });
 
-  it('never sets summary, which Mastodon would render as a content warning', async () => {
+  // Mastodon renders any summary as a content warning, so an unconditional one
+  // would collapse every post on the site behind a "show more".
+  it('sets no summary on a post that carries no content warning', async () => {
     const message = await createNote(HOST, localContent, user());
 
-    expect(message.object).not.toHaveProperty('summary');
+    expect((message.object as { summary?: string }).summary).toBeUndefined();
+    expect((message.object as { sensitive?: boolean }).sensitive).toBeUndefined();
   });
 
-  it('attaches the thumbnail when the post has one', async () => {
+  it('emits the content warning as summary, and marks the post sensitive', async () => {
+    const message = await createNote(HOST, content({ contentWarning: 'spoilers' }), user());
+
+    expect(message.object).toMatchObject({ summary: 'spoilers', sensitive: true });
+  });
+
+  it('marks a post sensitive without a summary when the flag is set on its own', async () => {
+    const message = await createNote(HOST, content({ sensitive: true }), user());
+
+    expect((message.object as { sensitive?: boolean }).sensitive).toBe(true);
+    expect((message.object as { summary?: string }).summary).toBeUndefined();
+  });
+
+  it('attaches the thumbnail with the metadata clients need to render it', async () => {
     const withThumb = await createNote(HOST, content({ thumb: '/resource/thumb.jpg' }), user());
     expect((withThumb.object as { attachment: unknown[] }).attachment).toEqual([
-      { type: 'Image', url: `https://${HOST}/resource/thumb.jpg`, name: 'Hello' },
+      {
+        type: 'Image',
+        mediaType: 'image/jpeg',
+        url: `https://${HOST}/resource/thumb.jpg`,
+        name: 'Hello',
+        width: 154,
+        height: 154,
+      },
     ]);
+
+    const png = await createNote(HOST, content({ thumb: '/resource/thumb.PNG' }), user());
+    expect((png.object as { attachment: { mediaType: string }[] }).attachment[0].mediaType).toBe('image/png');
 
     const without = await createNote(HOST, localContent, user());
     expect((without.object as { attachment?: unknown[] }).attachment).toBeUndefined();
@@ -413,7 +458,7 @@ describe('outbound activities', () => {
     const body = lastBody();
     expect(body.type).toBe('Undo');
     expect(body.object).toMatchObject({ type: 'Follow', object: 'https://remote.example/bob' });
-    expect(body.id).toContain('/api/social/activitypub/undo');
+    expect(body.id).toContain(`https://${HOST}/ap/alice/a/`);
   });
 
   it('sends Like with the remote post as object', async () => {
@@ -481,7 +526,11 @@ describe('findUserRemote', () => {
 });
 
 describe('handle', () => {
-  const activity = (type: string, object: unknown = {}) => ({ type, object, id: 'x', actor: 'a', to: [] }) as never;
+  // The actor is a real URI because the handlers now check that an activity's
+  // object lives on the same origin as the actor sending it (FEP-fe34).
+  const BOB = 'https://remote.example/users/bob';
+  const activity = (type: string, object: unknown = {}, actor = BOB) =>
+    ({ type, object, id: `${actor}#1`, actor, to: [] }) as never;
 
   it.each(['Add', 'Block', 'Flag', ''])('ignores unrecognized activity type %s', async (type) => {
     await handle(type, HOST, activity(type), user(), userRemote());
@@ -552,19 +601,89 @@ describe('handle', () => {
     await handle(
       'Delete',
       HOST,
-      {
-        type: 'Delete',
-        id: 'x',
-        actor: 'a',
-        object: { id: 'https://remote.example/notes/9', type: 'Tombstone' },
-        to: [],
-      } as never,
+      activity('Delete', { id: 'https://remote.example/notes/9', type: 'Tombstone' }),
       user(),
       userRemote()
     );
 
     expect(db.removeRemoteContentByPostId).toHaveBeenCalledWith('alice', 'https://remote.example/notes/9');
     expect(db.removeRemoteUser).not.toHaveBeenCalled();
+  });
+
+  // FEP-fe34. Verifying the signature says who sent the activity, not what they
+  // may say with it — and every actor we have ever stored can reach this code.
+  describe('origin checks', () => {
+    it('refuses to delete a post that lives on another origin', async () => {
+      await handle(
+        'Delete',
+        HOST,
+        activity('Delete', { id: 'https://elsewhere.example/notes/9', type: 'Tombstone' }),
+        user(),
+        userRemote()
+      );
+
+      expect(db.removeRemoteContentByPostId).not.toHaveBeenCalled();
+    });
+
+    it('refuses to store a post keyed to a url the sender does not control', async () => {
+      db.getRemoteContent.mockResolvedValue(null);
+
+      await handle(
+        'Create',
+        HOST,
+        activity('Create', { id: 'https://elsewhere.example/notes/1', type: 'Note', content: '<p>hi</p>' }),
+        user(),
+        userRemote()
+      );
+
+      expect(db.saveRemoteContent).not.toHaveBeenCalled();
+    });
+
+    it('refuses an Update naming somebody elses post, which would overwrite it', async () => {
+      db.getRemoteContent.mockResolvedValue(null);
+
+      await handle(
+        'Update',
+        HOST,
+        activity('Update', { id: 'https://elsewhere.example/notes/1', type: 'Note', content: '<p>hi</p>' }),
+        user(),
+        userRemote()
+      );
+
+      expect(db.saveRemoteContent).not.toHaveBeenCalled();
+    });
+
+    it('compares origins, so a different path on the same host is fine', async () => {
+      db.getRemoteContent.mockResolvedValue(null);
+
+      await handle(
+        'Create',
+        HOST,
+        activity('Create', { id: 'https://remote.example/some/other/path/1', type: 'Note', content: '<p>hi</p>' }),
+        user(),
+        userRemote()
+      );
+
+      expect(db.saveRemoteContent).toHaveBeenCalled();
+    });
+
+    it('falls back to the stored actor url when the activity names no actor', async () => {
+      await handle(
+        'Delete',
+        HOST,
+        { type: 'Delete', id: 'x', object: { id: 'https://remote.example/notes/9' }, to: [] } as never,
+        user(),
+        userRemote()
+      );
+
+      expect(db.removeRemoteContentByPostId).toHaveBeenCalledWith('alice', 'https://remote.example/notes/9');
+    });
+
+    it('drops a Create with no object id at all rather than throwing', async () => {
+      await handle('Create', HOST, activity('Create', { type: 'Note', content: '<p>hi</p>' }), user(), userRemote());
+
+      expect(db.saveRemoteContent).not.toHaveBeenCalled();
+    });
   });
 
   it('stores a boost on Announce, fetching the original when it is a bare uri', async () => {
@@ -615,13 +734,7 @@ describe('handle', () => {
     await handle(
       'Update',
       HOST,
-      {
-        type: 'Update',
-        id: 'x',
-        actor: 'a',
-        to: [],
-        object: { id: 'https://remote.example/notes/9', type: 'Note', content: '<p>edited</p>' },
-      } as never,
+      activity('Update', { id: 'https://remote.example/notes/9', type: 'Note', content: '<p>edited</p>' }),
       user(),
       userRemote()
     );
@@ -730,6 +843,36 @@ describe('handle', () => {
       expect(db.saveRemoteContent.mock.calls[0][0].commentsCount).toBe(0);
     });
 
+    it('carries a peers content warning through, so the reader can collapse it', async () => {
+      db.getRemoteContent.mockResolvedValue(null);
+
+      await handle(
+        'Create',
+        HOST,
+        activity('Create', { ...object, sensitive: true, summary: 'spoilers' }),
+        user(),
+        userRemote()
+      );
+
+      expect(db.saveRemoteContent.mock.calls[0][0]).toMatchObject({ sensitive: true, contentWarning: 'spoilers' });
+    });
+
+    it('treats a summary as a warning even when the flag is absent', async () => {
+      db.getRemoteContent.mockResolvedValue(null);
+
+      await handle('Create', HOST, activity('Create', { ...object, summary: 'cw' }), user(), userRemote());
+
+      expect(db.saveRemoteContent.mock.calls[0][0]).toMatchObject({ sensitive: true, contentWarning: 'cw' });
+    });
+
+    it('leaves an ordinary post unmarked', async () => {
+      db.getRemoteContent.mockResolvedValue(null);
+
+      await handle('Create', HOST, activity('Create', object), user(), userRemote());
+
+      expect(db.saveRemoteContent.mock.calls[0][0]).toMatchObject({ sensitive: false, contentWarning: null });
+    });
+
     it('files a reply as a comment on the local item it answers', async () => {
       db.getRemoteContent.mockResolvedValue(null);
       db.getLocalContent.mockResolvedValue(content({ name: 'hello' }));
@@ -789,5 +932,340 @@ describe('handle', () => {
       expect(db.saveRemoteContent).not.toHaveBeenCalled();
       expect(db.getRemoteContent).not.toHaveBeenCalled();
     });
+  });
+});
+
+// Hashtags — Mastodon indexes a post into a tag timeline from the `tag` array,
+// not by re-reading the body, so a #word that never reaches the array is a word
+// nobody can search for.
+describe('findHashtags', () => {
+  it('finds a bare hashtag in the text', () => {
+    expect(findHashtags('<p>about #fediverse today</p>')).toEqual(['fediverse']);
+  });
+
+  it('finds several, in the order they were written', () => {
+    expect(findHashtags('<p>#one and #two</p>')).toEqual(['one', 'two']);
+  });
+
+  it('takes the authors own spelling when the same tag appears twice', () => {
+    expect(findHashtags('<p>#Fediverse and #fediverse</p>')).toEqual(['Fediverse']);
+  });
+
+  it('reads tags out of anchors the editor marked up', () => {
+    expect(findHashtags('<p><a class="p-category" href="/t/art">#art</a></p>')).toEqual(['art']);
+  });
+
+  // A `#` inside an href or a colour literal is not a tag, which is why only
+  // text nodes are scanned.
+  it('ignores a fragment in a link and a colour in an attribute', () => {
+    expect(findHashtags('<p><a href="https://x.example/p#section">x</a></p>')).toEqual([]);
+    expect(findHashtags('<p style="color:#ff0000">red</p>')).toEqual([]);
+  });
+
+  it('ignores a bare # and a hash glued to the end of a word', () => {
+    expect(findHashtags('<p># alone and c#</p>')).toEqual([]);
+  });
+
+  it('accepts non-ascii tags, which are ordinary on the fediverse', () => {
+    expect(findHashtags('<p>#café #日本語</p>')).toEqual(['café', '日本語']);
+  });
+
+  it('returns nothing rather than throwing on malformed html', () => {
+    expect(findHashtags('<p><<<')).toEqual([]);
+  });
+});
+
+describe('Note hashtags', () => {
+  it('tags the Note, pointing each at a page that lists the tag', async () => {
+    const message = await createNote(HOST, content({ view: '<p>on #art and #css</p>' }), user());
+
+    expect((message.object as { tag: unknown[] }).tag).toEqual([
+      { type: 'Hashtag', href: `https://${HOST}/alice/search/art`, name: '#art' },
+      { type: 'Hashtag', href: `https://${HOST}/alice/search/css`, name: '#css' },
+    ]);
+  });
+
+  it('url-encodes a tag that needs it', async () => {
+    const message = await createNote(HOST, content({ view: '<p>#café</p>' }), user());
+
+    expect((message.object as { tag: { href: string }[] }).tag[0].href).toBe(`https://${HOST}/alice/search/caf%C3%A9`);
+  });
+
+  it('carries mentions alongside hashtags rather than replacing them', async () => {
+    const message = await createNote(HOST, content({ view: '<p>#art</p>' }), user(), undefined, undefined, [
+      userRemote(),
+    ]);
+    const tag = (message.object as { tag: { type: string }[] }).tag;
+
+    expect(tag.map((t) => t.type)).toEqual(['Hashtag', 'Mention']);
+    expect((message.object as { cc: string[] }).cc).toContain('https://remote.example/users/bob');
+  });
+
+  it('emits an empty tag array for a post with neither', async () => {
+    const message = await createNote(HOST, content(), user());
+
+    expect((message.object as { tag: unknown[] }).tag).toEqual([]);
+  });
+});
+
+describe('isSameOrigin', () => {
+  it('is true for the same scheme, host and port', () => {
+    expect(isSameOrigin('https://a.example/notes/1', 'https://a.example/users/bob')).toBe(true);
+  });
+
+  it('is false across hosts, schemes and ports', () => {
+    expect(isSameOrigin('https://b.example/notes/1', 'https://a.example/users/bob')).toBe(false);
+    expect(isSameOrigin('http://a.example/notes/1', 'https://a.example/users/bob')).toBe(false);
+    expect(isSameOrigin('https://a.example:8443/n/1', 'https://a.example/users/bob')).toBe(false);
+  });
+
+  it('is false rather than throwing on something that is not a url', () => {
+    expect(isSameOrigin('not-a-url', 'https://a.example/users/bob')).toBe(false);
+    expect(isSameOrigin('https://a.example/notes/1', '')).toBe(false);
+  });
+});
+
+// A peer that rotates its signing key used to become permanently unverifiable:
+// the key we had was the one from discovery day, and nothing ever re-read it.
+describe('refreshRemoteKey', () => {
+  it('re-reads the actor document and stores the new key', async () => {
+    discover.getActivityPubActor.mockResolvedValue({ publicKey: { publicKeyPem: 'NEW-PEM' } });
+
+    const refreshed = await refreshRemoteKey(userRemote({ magicKey: 'OLD-PEM' }));
+
+    expect(refreshed?.magicKey).toBe('NEW-PEM');
+    expect(db.saveRemoteUser).toHaveBeenCalledWith(expect.objectContaining({ magicKey: 'NEW-PEM' }));
+  });
+
+  it('picks up a rotated Ed25519 key at the same time', async () => {
+    const multibase = proofKeys().publicKeyMultibase;
+    discover.getActivityPubActor.mockResolvedValue({
+      publicKey: { publicKeyPem: 'NEW-PEM' },
+      assertionMethod: [{ type: 'Multikey', publicKeyMultibase: multibase }],
+    });
+
+    const refreshed = await refreshRemoteKey(userRemote({ magicKey: 'OLD-PEM' }));
+
+    expect(refreshed?.ed25519PublicKey).toBe(multibase);
+  });
+
+  it('keeps the Ed25519 key we had when the rotated document publishes none', async () => {
+    discover.getActivityPubActor.mockResolvedValue({ publicKey: { publicKeyPem: 'NEW-PEM' } });
+
+    const refreshed = await refreshRemoteKey(userRemote({ magicKey: 'OLD', ed25519PublicKey: 'kept' }));
+
+    expect(refreshed?.ed25519PublicKey).toBe('kept');
+  });
+
+  // If the key is the same, the signature failed for some other reason, and
+  // rewriting the row would only hide that.
+  it('does nothing when the published key is the one we already had', async () => {
+    discover.getActivityPubActor.mockResolvedValue({ publicKey: { publicKeyPem: 'SAME' } });
+
+    await expect(refreshRemoteKey(userRemote({ magicKey: 'SAME' }))).resolves.toBeNull();
+    expect(db.saveRemoteUser).not.toHaveBeenCalled();
+  });
+
+  it('is null when the actor cannot be fetched', async () => {
+    discover.getActivityPubActor.mockRejectedValue(new Error('offline'));
+
+    await expect(refreshRemoteKey(userRemote())).resolves.toBeNull();
+  });
+
+  it('is null when the document publishes no key', async () => {
+    discover.getActivityPubActor.mockResolvedValue({});
+
+    await expect(refreshRemoteKey(userRemote())).resolves.toBeNull();
+  });
+
+  it('is null when we have no actor url to ask', async () => {
+    await expect(refreshRemoteKey(userRemote({ activityPubActorUrl: null, profileUrl: '' }))).resolves.toBeNull();
+    expect(discover.getActivityPubActor).not.toHaveBeenCalled();
+  });
+});
+
+// Delivery used to end at `catch { /* Not a big deal if this fails */ }`, which
+// is how a post silently failed to reach an inbox that happened to be
+// restarting.
+describe('queued delivery', () => {
+  const inbox = 'https://remote.example/users/bob/inbox';
+  const owner = () => user({ privateKey: keys().privateKeyPkcs1 });
+  const peer = () => userRemote({ activityPubInboxUrl: inbox });
+
+  it('queues an activity the inbox refused with a 503', async () => {
+    fetchMock.mockResolvedValue(new Response('', { status: 503 }));
+
+    await deliver(HOST, owner(), [peer()], createGenericMessage('Create', HOST, 'id-1', owner(), 'x'));
+
+    expect(queue.enqueueDelivery).toHaveBeenCalledWith(
+      expect.objectContaining({ username: 'alice', inboxUrl: inbox, activityId: 'id-1' })
+    );
+  });
+
+  it('queues one the request never reached at all', async () => {
+    fetchMock.mockRejectedValue(new Error('ECONNREFUSED'));
+
+    await deliver(HOST, owner(), [peer()], createGenericMessage('Create', HOST, 'id-1', owner(), 'x'));
+
+    expect(queue.enqueueDelivery).toHaveBeenCalled();
+  });
+
+  // The stored payload is re-signed at each attempt, so it must go in unsigned:
+  // an HTTP signature is good for five minutes and a proof carries a `created`.
+  it('stores the activity unsigned, because both signatures expire', async () => {
+    fetchMock.mockResolvedValue(new Response('', { status: 503 }));
+    const proofOwner = user({ privateKey: keys().privateKeyPkcs1, ed25519PrivateKey: proofKeys().privateKeyPem });
+
+    await deliver(HOST, proofOwner, [peer()], createGenericMessage('Create', HOST, 'id-1', proofOwner, 'x'));
+
+    const stored = JSON.parse(queue.enqueueDelivery.mock.calls[0][0].message);
+    expect(stored.proof).toBeUndefined();
+    expect(stored.id).toBe('id-1');
+  });
+
+  it('does not queue a delivery that succeeded', async () => {
+    await deliver(HOST, owner(), [peer()], createGenericMessage('Create', HOST, 'id-1', owner(), 'x'));
+
+    expect(queue.enqueueDelivery).not.toHaveBeenCalled();
+  });
+
+  it('does not queue one the peer understood and refused', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    fetchMock.mockResolvedValue(new Response('', { status: 422 }));
+
+    await deliver(HOST, owner(), [peer()], createGenericMessage('Create', HOST, 'id-1', owner(), 'x'));
+
+    expect(queue.enqueueDelivery).not.toHaveBeenCalled();
+  });
+
+  it('retires an inbox that answers 410 Gone, rather than queueing for it', async () => {
+    fetchMock.mockResolvedValue(new Response('', { status: 410 }));
+
+    await deliver(HOST, owner(), [peer()], createGenericMessage('Create', HOST, 'id-1', owner(), 'x'));
+
+    expect(queue.retireInbox).toHaveBeenCalledWith(inbox);
+    expect(queue.enqueueDelivery).not.toHaveBeenCalled();
+  });
+
+  it('queues per inbox, so one dead peer does not cost the others', async () => {
+    fetchMock.mockImplementation((url: string) =>
+      url.includes('two') ? Promise.resolve(new Response('', { status: 503 })) : Promise.resolve(new Response('{}'))
+    );
+
+    await deliver(
+      HOST,
+      owner(),
+      [peer(), userRemote({ id: 2, profileUrl: 'p2', activityPubInboxUrl: 'https://two.example/inbox' })],
+      createGenericMessage('Create', HOST, 'id-1', owner(), 'x')
+    );
+
+    expect(queue.enqueueDelivery).toHaveBeenCalledTimes(1);
+    expect(queue.enqueueDelivery.mock.calls[0][0].inboxUrl).toBe('https://two.example/inbox');
+  });
+});
+
+describe('runDeliveryQueue', () => {
+  const inbox = 'https://remote.example/users/bob/inbox';
+  const owner = () => user({ privateKey: keys().privateKeyPkcs1 });
+  const pending = (overrides = {}) => ({
+    id: 1,
+    username: 'alice',
+    inboxUrl: inbox,
+    activityId: 'id-1',
+    message: JSON.stringify({ '@context': 'x', type: 'Create', id: 'id-1', actor: 'a', to: [], object: 'o' }),
+    attempts: 1,
+    ...overrides,
+  });
+
+  beforeEach(() => {
+    db.getLocalUserByUsername.mockResolvedValue(owner());
+  });
+
+  it('re-signs and re-sends, then drops the row', async () => {
+    queue.dueDeliveries.mockResolvedValue([pending()] as never);
+
+    await expect(runDeliveryQueue(HOST)).resolves.toMatchObject({ sent: 1 });
+
+    expect(fetchMock.mock.calls[0][0]).toBe(inbox);
+    expect(fetchMock.mock.calls[0][1].headers.Signature).toContain('keyId=');
+    expect(queue.dropDelivery).toHaveBeenCalledWith(1);
+  });
+
+  // The signature it was queued with expired long ago; a retry that reused it
+  // would be rejected for a stale Date rather than delivered.
+  it('signs afresh, not with whatever the first attempt used', async () => {
+    queue.dueDeliveries.mockResolvedValue([pending()] as never);
+
+    await runDeliveryQueue(HOST);
+
+    const date = new Date(fetchMock.mock.calls[0][1].headers.Date).getTime();
+    expect(Math.abs(Date.now() - date)).toBeLessThan(60 * 1000);
+  });
+
+  it('keeps the activity id stable, so a retry is not a second post', async () => {
+    queue.dueDeliveries.mockResolvedValue([pending()] as never);
+
+    await runDeliveryQueue(HOST);
+
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).id).toBe('id-1');
+  });
+
+  it('reschedules one that failed again', async () => {
+    fetchMock.mockResolvedValue(new Response('', { status: 502 }));
+    queue.dueDeliveries.mockResolvedValue([pending()] as never);
+
+    await expect(runDeliveryQueue(HOST)).resolves.toMatchObject({ retrying: 1 });
+    expect(queue.rescheduleDelivery).toHaveBeenCalledWith(expect.objectContaining({ id: 1 }), expect.any(String));
+  });
+
+  it('retires an inbox that has since gone', async () => {
+    fetchMock.mockResolvedValue(new Response('', { status: 410 }));
+    queue.dueDeliveries.mockResolvedValue([pending()] as never);
+
+    await expect(runDeliveryQueue(HOST)).resolves.toMatchObject({ dropped: 1 });
+    expect(queue.retireInbox).toHaveBeenCalledWith(inbox);
+  });
+
+  it('drops one for a user who no longer exists', async () => {
+    db.getLocalUserByUsername.mockResolvedValue(null);
+    queue.dueDeliveries.mockResolvedValue([pending()] as never);
+
+    await runDeliveryQueue(HOST);
+
+    expect(queue.dropDelivery).toHaveBeenCalledWith(1);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('drops one whose payload no longer parses', async () => {
+    queue.dueDeliveries.mockResolvedValue([pending({ message: 'not json' })] as never);
+
+    await runDeliveryQueue(HOST);
+
+    expect(queue.dropDelivery).toHaveBeenCalledWith(1);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('reads each user once, however many deliveries they have queued', async () => {
+    queue.dueDeliveries.mockResolvedValue([pending(), pending({ id: 2, activityId: 'id-2' })] as never);
+
+    await runDeliveryQueue(HOST);
+
+    expect(db.getLocalUserByUsername).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('signs under the users own hostname when they have one', async () => {
+    db.getLocalUserByUsername.mockResolvedValue(user({ privateKey: keys().privateKeyPkcs1, hostname: 'own.example' }));
+    queue.dueDeliveries.mockResolvedValue([pending()] as never);
+
+    await runDeliveryQueue(HOST);
+
+    expect(fetchMock.mock.calls[0][1].headers.Signature).toContain('https://own.example/ap/alice#main-key');
+  });
+
+  it('clears out rows that have run out of attempts', async () => {
+    queue.pruneExhaustedDeliveries.mockResolvedValue(2 as never);
+
+    await expect(runDeliveryQueue(HOST)).resolves.toMatchObject({ dropped: 2 });
   });
 });
