@@ -129,6 +129,65 @@ a {
   }
 }
 
+/* Lightbox. The album thumb and the lightbox's first image take turns holding
+   the `lightbox-hero` name, so the browser morphs one into the other on open
+   and close, and slides between them on next/prev. `data-view-transition` says
+   which of those is running — see lib/view-transition.ts. */
+html[data-view-transition='open']::view-transition-old(lightbox-hero),
+html[data-view-transition='open']::view-transition-new(lightbox-hero),
+html[data-view-transition='close']::view-transition-old(lightbox-hero),
+html[data-view-transition='close']::view-transition-new(lightbox-hero) {
+  /* The thumb is a square crop and the full image isn't. Left alone the two
+     snapshots letterbox inside the morphing box and the zoom looks squashed. */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+html[data-view-transition='next']::view-transition-old(lightbox-hero) {
+  animation: lightbox-exit-left 240ms ease both;
+}
+
+html[data-view-transition='next']::view-transition-new(lightbox-hero) {
+  animation: lightbox-enter-right 240ms ease both;
+}
+
+html[data-view-transition='prev']::view-transition-old(lightbox-hero) {
+  animation: lightbox-exit-right 240ms ease both;
+}
+
+html[data-view-transition='prev']::view-transition-new(lightbox-hero) {
+  animation: lightbox-enter-left 240ms ease both;
+}
+
+@keyframes lightbox-exit-left {
+  to {
+    opacity: 0;
+    transform: translateX(-30%);
+  }
+}
+
+@keyframes lightbox-enter-right {
+  from {
+    opacity: 0;
+    transform: translateX(30%);
+  }
+}
+
+@keyframes lightbox-exit-right {
+  to {
+    opacity: 0;
+    transform: translateX(30%);
+  }
+}
+
+@keyframes lightbox-enter-left {
+  from {
+    opacity: 0;
+    transform: translateX(-30%);
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;

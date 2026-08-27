@@ -2,6 +2,9 @@ import { F } from 'i18n';
 import Header from './Header';
 import styles from './content.module.css';
 
+// Shared with the album thumbs so the two can morph into each other.
+export const HERO_NAME = 'lightbox-hero';
+
 type LightboxContent = {
   title?: string | null;
   forceRefresh?: boolean | null;
@@ -14,20 +17,16 @@ type LightboxContent = {
 };
 
 export default function Lightbox({
-  isOpen,
   onClose,
   onPrev,
   onNext,
   item,
 }: {
-  isOpen: boolean;
   onClose: () => void;
   onPrev: () => void;
   onNext: () => void;
   item: LightboxContent;
 }) {
-  if (!isOpen) return null;
-
   return (
     <div className={styles.lightbox} role="dialog" aria-modal="true">
       <button type="button" className={`${styles.lightboxClose} notranslate`} onClick={onClose} aria-label="close">
@@ -59,8 +58,16 @@ export default function Lightbox({
       <div className={styles.lightboxContent} onClick={onClose}>
         <Header content={item} />
         {item.prefetchImages?.length ? (
-          item.prefetchImages.map((image) => (
-            <img key={image} className={styles.lightboxImage} src={image} alt={item.title || ''} />
+          item.prefetchImages.map((image, index) => (
+            <img
+              key={image}
+              className={styles.lightboxImage}
+              src={image}
+              alt={item.title || ''}
+              // The first image is what morphs out of the thumb and slides
+              // between items; the rest ride along in the root snapshot.
+              style={index === 0 ? { viewTransitionName: HERO_NAME } : undefined}
+            />
           ))
         ) : (
           <F defaultMessage="Loading…" />
