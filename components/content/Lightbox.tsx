@@ -39,6 +39,31 @@ export default function Lightbox({
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [onClose]);
 
+  // Freeze the album behind the overlay: a wheel or trackpad gesture over the
+  // lightbox would otherwise scroll the page underneath it. The lock goes on
+  // <html>, not <body> — globals.css gives <html> `overflow-x: clip`, which
+  // makes it the scroll container and stops <body>'s overflow from propagating
+  // to the viewport. Only the y axis is touched so the `overflow-x: clip` hack
+  // keeping the sticky sidebar alive stays in place. Padding stands in for the
+  // scrollbar the lock removes, so the album doesn't shift sideways behind the
+  // backdrop.
+  useEffect(() => {
+    const root = document.documentElement;
+    const scrollbarWidth = window.innerWidth - root.clientWidth;
+    const previousOverflowY = root.style.overflowY;
+    const previousPaddingRight = root.style.paddingRight;
+
+    root.style.overflowY = 'hidden';
+    if (scrollbarWidth > 0) {
+      root.style.paddingRight = `${scrollbarWidth}px`;
+    }
+
+    return () => {
+      root.style.overflowY = previousOverflowY;
+      root.style.paddingRight = previousPaddingRight;
+    };
+  }, []);
+
   // Swiping drags the strip of photos along with your finger — leftward brings
   // the next one in. Pinching in dismisses, mirroring the pinch-out that opened
   // the lightbox from a thumb.
