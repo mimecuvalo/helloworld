@@ -37,7 +37,7 @@ export default function Item({
 
   return (
     <article className={`hw-item h-entry ${styles.item}`}>
-      <Header content={content} />
+      <Header content={content} disallowEdit={isFeed} />
       {TemplateComponent ? body : <div className={styles.innerView}>{body}</div>}
       <Footer content={content} contentOwner={contentOwner} />
       {!isFeed ? <Comments comments={comments} content={content} /> : null}

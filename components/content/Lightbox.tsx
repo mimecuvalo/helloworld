@@ -111,7 +111,7 @@ export default function Lightbox({
       </button>
 
       <div className={styles.lightboxContent} onMouseDown={handleEmptySpaceClick}>
-        <Header content={item} />
+        <Header content={item} disallowEdit />
         {item.prefetchImages?.length ? (
           item.prefetchImages.map((image, index) => (
             <img

@@ -14,7 +14,7 @@ type HeaderContent = {
   name: string;
 };
 
-export default function Header({ content }: { content: HeaderContent }) {
+export default function Header({ content, disallowEdit }: { content: HeaderContent; disallowEdit?: boolean }) {
   const user = useUser();
   const { isEditing, setIsEditing } = useEditor();
   const isOwnerViewing = user?.username === content.username;
@@ -36,7 +36,7 @@ export default function Header({ content }: { content: HeaderContent }) {
           ) : null}
         </ContentLink>
 
-        {isOwnerViewing ? (
+        {isOwnerViewing && !disallowEdit ? (
           <button
             type="button"
             className={`${styles.editButton} ${isEditing ? styles.editButtonActive : ''}`}
