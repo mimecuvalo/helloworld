@@ -75,7 +75,7 @@ export default function Album({ content }: { content: AlbumContent }) {
   if (isPending) return <div className={styles.loadingBox} />;
 
   return (
-    <ul className={styles.album}>
+    <ul className={`${styles.album} ${styles.albumGrid}`}>
       {!collection.length ? (
         <li>
           <F defaultMessage="No content here yet." />

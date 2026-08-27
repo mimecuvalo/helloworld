@@ -471,6 +471,18 @@
   margin: 0;
 }
 
+/* Pinching a thumb opens the lightbox, and pinching the lightbox closes it — so
+ * the browser must not treat those as page zoom. Without this the zoom starts
+ * first and our touchmove arrives already non-cancelable, leaving nothing to
+ * prevent. It has to sit on the container rather than the thumb: a pinch's
+ * effective touch-action is the intersection across every element being
+ * touched, and the second finger usually lands in the gutter between thumbs.
+ * pan-x/pan-y keep ordinary scrolling intact. */
+.albumGrid,
+.lightbox {
+  touch-action: pan-x pan-y;
+}
+
 .albumItem {
   position: relative;
   display: inline-block;

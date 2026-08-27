@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { type MouseEvent as ReactMouseEvent, useEffect, useRef } from 'react';
 import { F } from 'i18n';
 import { useGestures } from 'lib/use-gestures';
 import Header from './Header';
@@ -41,12 +41,20 @@ function LightboxDialog({ onClose, onPrev, onNext, item }: Omit<LightboxProps, '
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [onClose]);
 
-  // Swipe direction matches the single-photo view (see ContentPage); pinching in
-  // dismisses, mirroring the pinch-out that opened the lightbox from a thumb.
-  useGestures(dialogRef, { onSwipeLeft: onPrev, onSwipeRight: onNext, onPinchIn: onClose });
+  // Swiping drags the strip of photos along with your finger — leftward brings
+  // the next one in. Pinching in dismisses, mirroring the pinch-out that opened
+  // the lightbox from a thumb.
+  useGestures(dialogRef, { onSwipeLeft: onNext, onSwipeRight: onPrev, onPinchIn: onClose });
+
+  // Only genuine empty space dismisses: the backdrop itself, or the gutter
+  // around the photo. Clicks that land on the photo, its header, or a control
+  // have a different target and are left alone.
+  const handleEmptySpaceClick = (evt: ReactMouseEvent<HTMLDivElement>) => {
+    if (evt.target === evt.currentTarget) onClose();
+  };
 
   return (
-    <div ref={dialogRef} className={styles.lightbox} role="dialog" aria-modal="true" onClick={onClose}>
+    <div ref={dialogRef} className={styles.lightbox} role="dialog" aria-modal="true" onClick={handleEmptySpaceClick}>
       <button type="button" className={`${styles.lightboxClose} notranslate`} onClick={onClose} aria-label="close">
         ✕
       </button>
@@ -73,7 +81,7 @@ function LightboxDialog({ onClose, onPrev, onNext, item }: Omit<LightboxProps, '
         ›
       </button>
 
-      <div className={styles.lightboxContent}>
+      <div className={styles.lightboxContent} onClick={handleEmptySpaceClick}>
         <Header content={item} />
         {item.prefetchImages?.length ? (
           item.prefetchImages.map((image) => (

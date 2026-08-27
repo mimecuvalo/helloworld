@@ -2,10 +2,10 @@ import 'styles/content-theme.css';
 import 'lite-youtube-embed/src/lite-yt-embed.css';
 import { useEffect, useRef } from 'react';
 import { useRouter } from '@tanstack/react-router';
-import SwipeListener from 'swipe-listener';
 import { themeGlobalCss } from 'styles/theme-css';
 import type { ContentPageData } from 'lib/page-data';
 import { contentUrl } from 'lib/url-factory';
+import { useGestures } from 'lib/use-gestures';
 import { UserProvider } from 'lib/user-context';
 import { EditorProvider } from 'lib/editor-context';
 import SiteMap from 'components/content/SiteMap';
@@ -44,22 +44,17 @@ export default function ContentPage({ data }: { data: ContentPageData }) {
     }
   }, [content, router]);
 
-  useEffect(() => {
-    if (content?.section !== 'photos' || content.album === 'main' || !itemRef.current) return;
-
-    const element = itemRef.current;
-    const listener = SwipeListener(element);
-    const handleSwipe = (event: Event) => {
-      const directions = (event as CustomEvent<{ directions: { left?: boolean; right?: boolean } }>).detail.directions;
-      if (directions.left) navRef.current?.prev();
-      else if (directions.right) navRef.current?.next();
-    };
-    element.addEventListener('swipe', handleSwipe);
-    return () => {
-      element.removeEventListener('swipe', handleSwipe);
-      listener.off();
-    };
-  }, [content]);
+  // Same gesture handling as the album lightbox, so a swipe means the same thing
+  // in both views. Only single photos inside an album are navigable this way.
+  const isSwipeablePhoto = content?.section === 'photos' && content.album !== 'main';
+  useGestures(
+    itemRef,
+    {
+      onSwipeLeft: () => isSwipeablePhoto && navRef.current?.next(),
+      onSwipeRight: () => isSwipeablePhoto && navRef.current?.prev(),
+    },
+    [content]
+  );
 
   const title = (content?.title ? content.title + ' – ' : '') + (contentOwner?.title ?? '') || 'hello, world.';
 
