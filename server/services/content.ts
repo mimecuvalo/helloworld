@@ -381,6 +381,16 @@ export async function searchContent(ctx: Context, args: { username: string; quer
   return decorateArrayWithRefreshFlag(collection);
 }
 
+// The sitemap is drawn from two kinds of group, and they are the only two that
+// can be reordered: the top-level rows (a section is one of these), and the
+// albums filed inside one section. fetchSiteMap and orderContent both select on
+// this, so a reorder renumbers exactly the rows the sidebar drew.
+function siteMapGroupWhere(username: string, section: string) {
+  return section === 'main'
+    ? { username, section: 'main', name: { notIn: STRUCTURAL_NAMES }, redirect: 0 }
+    : { username, section, album: 'main' };
+}
+
 export async function fetchSiteMap(ctx: Context, args: { username: string }) {
   const { currentUsername, prisma } = ctx;
   const { username } = args;
@@ -394,12 +404,7 @@ export async function fetchSiteMap(ctx: Context, args: { username: string }) {
 
   const sections = (await prisma.content.findMany({
     select: ATTRIBUTES_NAVIGATION,
-    where: Object.assign({}, constraints, {
-      username,
-      section: 'main',
-      name: { notIn: ['main', 'home', 'comments'] },
-      redirect: 0,
-    }),
+    where: Object.assign({}, constraints, siteMapGroupWhere(username, 'main')),
     orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
   })) as unknown as DecoratedContent[];
 
@@ -427,6 +432,44 @@ export async function fetchSiteMap(ctx: Context, args: { username: string }) {
   const decoratedSiteMap = decorateArrayWithRefreshFlag(siteMap);
   if (!isOwnerViewing) customCache[cacheKey] = decoratedSiteMap;
   return decoratedSiteMap;
+}
+
+// Sidebar order. The client sends a whole group's names in the order it wants
+// them rather than a (dragged, position) pair: replaying it lands the same rows
+// in the same places, so a dropped response or a double-submit can't shuffle
+// anything. `section` names the group — 'main' is the top-level list, anything
+// else is that section's albums.
+export async function orderContent(ctx: Context, args: { section: string; names: string[] }) {
+  const { currentUsername, prisma } = ctx;
+  const { section, names } = args;
+
+  const group = await prisma.content.findMany({
+    select: { name: true },
+    where: siteMapGroupWhere(currentUsername, section),
+  });
+  const groupNames = new Set(group.map((item) => item.name));
+
+  // The list has to be the group exactly. A sitemap gone stale — something
+  // renamed, deleted or moved in another tab — would otherwise renumber rows
+  // that left the group, or leave the ones that joined it sharing an order with
+  // whatever happens to sit at that index. Refusing sends the client back for a
+  // fresh sitemap, which is the only way it can ask for something meaningful.
+  if (names.length !== groupNames.size || names.some((name) => !groupNames.has(name))) {
+    return { error: 'stale-order' as const };
+  }
+
+  await prisma.$transaction(
+    names.map((name, order) =>
+      prisma.content.update({
+        data: { order },
+        where: { username_name: { username: currentUsername, name } },
+      })
+    )
+  );
+
+  clearContentCache(currentUsername);
+
+  return { ordered: names };
 }
 
 // A page's own row, straight out of the database — no album/section style and

@@ -578,3 +578,77 @@ a.menuItem {
 .dialogButton {
   padding: 3px 8px;
 }
+
+/* Organize sidebar. A page of its own, so it gets the reading width the rest of
+   the dashboard's two-column layout doesn't leave room for. */
+.organizePage {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.organizeBack {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 0.875rem;
+}
+
+.organize h2 {
+  margin: 0 0 4px;
+}
+
+.organizeHint {
+  margin: 0 0 16px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  opacity: 0.7;
+}
+
+.organizeList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Albums are indented under the section they belong to, the same shape the
+   sitemap itself draws, so what a drag is going to do is legible before it. */
+.organizeList .organizeList {
+  padding-left: 24px;
+}
+
+.organizeRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius, 4px);
+  background: var(--hw-bg, var(--background));
+  cursor: grab;
+}
+
+.organizeRow:hover {
+  background: var(--hw-menu-hover);
+}
+
+.organizeRowDragging {
+  opacity: 0.4;
+}
+
+/* The row being hovered is the slot the dragged one is about to take. */
+.organizeRowOver {
+  border-color: var(--hw-primary, var(--color-primary));
+  background: var(--hw-menu-hover);
+}
+
+.organizeGrip {
+  font-size: 0.75rem;
+  line-height: 1;
+  opacity: 0.5;
+}
+
+.organizeTag {
+  font-size: 0.75rem;
+  opacity: 0.6;
+}

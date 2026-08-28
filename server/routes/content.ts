@@ -117,6 +117,15 @@ export const contentRoutes = new Hono<AppEnv>()
       return 'error' in result ? c.json(result, 409) : c.json(result);
     }
   )
+  .post('/order', zValidator('json', z.object({ section: z.string(), names: z.array(z.string()) })), async (c) => {
+    const ctx = c.get('ctx');
+    assertAuthor(ctx);
+    const result = await content.orderContent(ctx, c.req.valid('json'));
+    // The names sent no longer describe the group they were dragged in: the
+    // sitemap the author was looking at is out of date, so say so rather than
+    // renumbering rows they never saw.
+    return 'error' in result ? c.json(result, 409) : c.json(result);
+  })
   .post('/delete', zValidator('json', z.object({ name: z.string() })), async (c) => {
     const ctx = c.get('ctx');
     assertAuthor(ctx);

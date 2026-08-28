@@ -1,5 +1,6 @@
 import { type AnchorHTMLAttributes, type PropsWithChildren, useEffect, useRef, useState } from 'react';
 import { Menu } from '@base-ui/react/menu';
+import { useNavigate } from '@tanstack/react-router';
 import { F, defineMessages, useIntl } from 'i18n';
 import { profileUrl } from 'lib/url-factory';
 import DataLiberation from './actions/DataLiberation';
@@ -14,6 +15,7 @@ type ToolsUser = { username: string; name?: string | null; favicon?: string | nu
 
 export default function Tools({ user }: { user: ToolsUser }) {
   const intl = useIntl();
+  const navigate = useNavigate();
   const [origin, setOrigin] = useState('');
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   useEffect(() => setOrigin(window.location.origin), []);
@@ -52,6 +54,10 @@ export default function Tools({ user }: { user: ToolsUser }) {
                 onClick={() => window.open(profileUrl(user.username), '_blank', 'noreferrer')}
               >
                 <F defaultMessage="view site" />
+              </Menu.Item>
+
+              <Menu.Item className={styles.menuItem} onClick={() => navigate({ to: '/dashboard/organize' })}>
+                <F defaultMessage="organize sidebar" />
               </Menu.Item>
 
               <Menu.SubmenuRoot>

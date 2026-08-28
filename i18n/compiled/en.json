@@ -101,6 +101,12 @@
       "value": "That name has no letters or numbers in it."
     }
   ],
+  "18015f5970": [
+    {
+      "type": 0,
+      "value": "The sidebar changed somewhere else, so it has been reloaded. Try that drag again."
+    }
+  ],
   "1a16279991": [
     {
       "type": 0,
@@ -129,6 +135,12 @@
     {
       "type": 0,
       "value": "following"
+    }
+  ],
+  "25a3aa225e": [
+    {
+      "type": 0,
+      "value": "Drag a section to reorder the sidebar, or an album to reorder it within its section. To move a page somewhere else entirely, use the section and album selects while editing it."
     }
   ],
   "2a304a1348": [
@@ -313,6 +325,12 @@
       "value": "internal server error"
     }
   ],
+  "5ba6fae718": [
+    {
+      "type": 0,
+      "value": "There is nothing in the sidebar yet."
+    }
+  ],
   "5bc06f5800": [
     {
       "type": 0,
@@ -365,6 +383,12 @@
     {
       "type": 0,
       "value": "Optionally, verify it on your Mastodon profile. Add your site to a profile metadata field there, then paste your profile URL here so this site links back."
+    }
+  ],
+  "63a8e21769": [
+    {
+      "type": 0,
+      "value": "drag to reorder"
     }
   ],
   "64af1b1f5f": [
@@ -517,6 +541,12 @@
     {
       "type": 0,
       "value": "it's not you, it's us. our server is monkeying around."
+    }
+  ],
+  "845e1f319f": [
+    {
+      "type": 0,
+      "value": "← dashboard"
     }
   ],
   "87ff166137": [
@@ -693,6 +723,12 @@
       "value": "+ new album…"
     }
   ],
+  "bafd494791": [
+    {
+      "type": 0,
+      "value": "organize sidebar"
+    }
+  ],
   "bd397bea18": [
     {
       "type": 0,
@@ -773,6 +809,12 @@
     {
       "type": 0,
       "value": "title"
+    }
+  ],
+  "d83506a0b3": [
+    {
+      "type": 0,
+      "value": "Couldn't save that order."
     }
   ],
   "d8cdcdfafc": [

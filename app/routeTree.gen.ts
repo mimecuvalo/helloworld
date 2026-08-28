@@ -22,6 +22,7 @@ import { Route as DotwellKnownNodeinfoRouteImport } from './routes/[.]well-known
 import { Route as DotwellKnownWebfingerRouteImport } from './routes/[.]well-known/webfinger'
 import { Route as ApSplatRouteImport } from './routes/ap/$'
 import { Route as ApiSplatRouteImport } from './routes/api/$'
+import { Route as DashboardOrganizeRouteImport } from './routes/dashboard_.organize'
 import { Route as ResourceSplatRouteImport } from './routes/resource.$'
 import { Route as XrpcSplatRouteImport } from './routes/xrpc/$'
 import { Route as UsernameSearchQueryRouteImport } from './routes/$username.search.$query'
@@ -92,6 +93,11 @@ const ApiSplatRoute = ApiSplatRouteImport.update({
   path: '/api/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardOrganizeRoute = DashboardOrganizeRouteImport.update({
+  id: '/dashboard_/organize',
+  path: '/dashboard/organize',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResourceSplatRoute = ResourceSplatRouteImport.update({
   id: '/resource/$',
   path: '/resource/$',
@@ -122,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/webfinger': typeof DotwellKnownWebfingerRoute
   '/ap/$': typeof ApSplatRoute
   '/api/$': typeof ApiSplatRoute
+  '/dashboard/organize': typeof DashboardOrganizeRoute
   '/resource/$': typeof ResourceSplatRoute
   '/xrpc/$': typeof XrpcSplatRoute
   '/$username/search/$query': typeof UsernameSearchQueryRoute
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/.well-known/webfinger': typeof DotwellKnownWebfingerRoute
   '/ap/$': typeof ApSplatRoute
   '/api/$': typeof ApiSplatRoute
+  '/dashboard/organize': typeof DashboardOrganizeRoute
   '/resource/$': typeof ResourceSplatRoute
   '/xrpc/$': typeof XrpcSplatRoute
   '/$username/search/$query': typeof UsernameSearchQueryRoute
@@ -159,6 +167,7 @@ export interface FileRoutesById {
   '/.well-known/webfinger': typeof DotwellKnownWebfingerRoute
   '/ap/$': typeof ApSplatRoute
   '/api/$': typeof ApiSplatRoute
+  '/dashboard_/organize': typeof DashboardOrganizeRoute
   '/resource/$': typeof ResourceSplatRoute
   '/xrpc/$': typeof XrpcSplatRoute
   '/$username/search/$query': typeof UsernameSearchQueryRoute
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
     | '/.well-known/webfinger'
     | '/ap/$'
     | '/api/$'
+    | '/dashboard/organize'
     | '/resource/$'
     | '/xrpc/$'
     | '/$username/search/$query'
@@ -197,6 +207,7 @@ export interface FileRouteTypes {
     | '/.well-known/webfinger'
     | '/ap/$'
     | '/api/$'
+    | '/dashboard/organize'
     | '/resource/$'
     | '/xrpc/$'
     | '/$username/search/$query'
@@ -215,6 +226,7 @@ export interface FileRouteTypes {
     | '/.well-known/webfinger'
     | '/ap/$'
     | '/api/$'
+    | '/dashboard_/organize'
     | '/resource/$'
     | '/xrpc/$'
     | '/$username/search/$query'
@@ -234,6 +246,7 @@ export interface RootRouteChildren {
   DotwellKnownWebfingerRoute: typeof DotwellKnownWebfingerRoute
   ApSplatRoute: typeof ApSplatRoute
   ApiSplatRoute: typeof ApiSplatRoute
+  DashboardOrganizeRoute: typeof DashboardOrganizeRoute
   ResourceSplatRoute: typeof ResourceSplatRoute
   XrpcSplatRoute: typeof XrpcSplatRoute
   UsernameSearchQueryRoute: typeof UsernameSearchQueryRoute
@@ -332,6 +345,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard_/organize': {
+      id: '/dashboard_/organize'
+      path: '/dashboard/organize'
+      fullPath: '/dashboard/organize'
+      preLoaderRoute: typeof DashboardOrganizeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/resource/$': {
       id: '/resource/$'
       path: '/resource/$'
@@ -370,6 +390,7 @@ const rootRouteChildren: RootRouteChildren = {
   DotwellKnownWebfingerRoute: DotwellKnownWebfingerRoute,
   ApSplatRoute: ApSplatRoute,
   ApiSplatRoute: ApiSplatRoute,
+  DashboardOrganizeRoute: DashboardOrganizeRoute,
   ResourceSplatRoute: ResourceSplatRoute,
   XrpcSplatRoute: XrpcSplatRoute,
   UsernameSearchQueryRoute: UsernameSearchQueryRoute,

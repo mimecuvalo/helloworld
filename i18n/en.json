@@ -55,6 +55,9 @@
   "14d2213acc": {
     "message": "That name has no letters or numbers in it."
   },
+  "18015f5970": {
+    "message": "The sidebar changed somewhere else, so it has been reloaded. Try that drag again."
+  },
   "1a16279991": {
     "message": "This site is its own fediverse server, so there is no account to connect — people follow it directly at:"
   },
@@ -69,6 +72,9 @@
   },
   "2511fc6cb0": {
     "message": "following"
+  },
+  "25a3aa225e": {
+    "message": "Drag a section to reorder the sidebar, or an album to reorder it within its section. To move a page somewhere else entirely, use the section and album selects while editing it."
   },
   "2a304a1348": {
     "message": "link"
@@ -154,6 +160,9 @@
   "5a2351b91b": {
     "message": "internal server error"
   },
+  "5ba6fae718": {
+    "message": "There is nothing in the sidebar yet."
+  },
   "5bc06f5800": {
     "message": "JS"
   },
@@ -180,6 +189,9 @@
   },
   "62b395c8d2": {
     "message": "Optionally, verify it on your Mastodon profile. Add your site to a profile metadata field there, then paste your profile URL here so this site links back."
+  },
+  "63a8e21769": {
+    "message": "drag to reorder"
   },
   "64af1b1f5f": {
     "message": "upside down face"
@@ -252,6 +264,9 @@
   },
   "835ca8f9cf": {
     "message": "it's not you, it's us. our server is monkeying around."
+  },
+  "845e1f319f": {
+    "message": "← dashboard"
   },
   "87ff166137": {
     "message": "your feed"
@@ -334,6 +349,9 @@
   "ba71127028": {
     "message": "+ new album…"
   },
+  "bafd494791": {
+    "message": "organize sidebar"
+  },
   "bd397bea18": {
     "message": "follow bookmarklet"
   },
@@ -372,6 +390,9 @@
   },
   "d5d3db1765": {
     "message": "title"
+  },
+  "d83506a0b3": {
+    "message": "Couldn't save that order."
   },
   "d8cdcdfafc": {
     "message": "That section is gone; pick another one."
