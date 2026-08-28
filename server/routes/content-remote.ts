@@ -42,12 +42,7 @@ export const contentRemoteRoutes = new Hono<AppEnv>()
   .get('/counts', async (c) => {
     const ctx = c.get('ctx');
     assertAuthor(ctx);
-    return c.json(await cr.fetchUserTotalCounts(ctx));
-  })
-  .get('/feed-counts', async (c) => {
-    const ctx = c.get('ctx');
-    assertAuthor(ctx);
-    return c.json(await cr.fetchFeedCounts(ctx));
+    return c.json(await cr.fetchCounts(ctx));
   })
   .get('/comments', zValidator('query', usernameName), async (c) =>
     c.json(await cr.fetchCommentsRemote(c.get('ctx'), c.req.valid('query')))

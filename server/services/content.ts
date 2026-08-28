@@ -1,4 +1,5 @@
 import * as cheerio from 'cheerio';
+import groupBy from 'lodash/groupBy';
 import { nanoid } from 'nanoid';
 import type { Context } from '../context';
 import type { Content } from '../../generated/prisma/client';
@@ -402,16 +403,25 @@ export async function fetchSiteMap(ctx: Context, args: { username: string }) {
     orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
   })) as unknown as DecoratedContent[];
 
-  let siteMap: DecoratedContent[] = [];
-  for (const section of sections) {
-    const albums = (await prisma.content.findMany({
-      select: ATTRIBUTES_NAVIGATION,
-      where: Object.assign({}, constraints, { username, section: section.name, album: 'main' }),
-      orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
-    })) as unknown as DecoratedContent[];
+  // Every section's albums in one query rather than one query per section: the
+  // rows come back in the same order the per-section queries produced them, so
+  // grouping them here rebuilds the identical list.
+  const albums = (await prisma.content.findMany({
+    select: ATTRIBUTES_NAVIGATION,
+    where: Object.assign({}, constraints, {
+      username,
+      section: { in: sections.map((section) => section.name) },
+      album: 'main',
+    }),
+    orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
+  })) as unknown as DecoratedContent[];
 
+  const albumsBySection = groupBy(albums, 'section');
+
+  const siteMap: DecoratedContent[] = [];
+  for (const section of sections) {
     siteMap.push(section);
-    if (albums.length) siteMap = siteMap.concat(albums);
+    siteMap.push(...(albumsBySection[section.name] || []));
   }
 
   const decoratedSiteMap = decorateArrayWithRefreshFlag(siteMap);
@@ -580,8 +590,11 @@ export async function saveContent(
 
   clearContentCache(currentUsername);
 
-  if (!hidden && ctx.currentUser) {
-    await syndicate(ctx, ctx.currentUser, result.updated, { isUpdate: true });
+  // The signing keys come off the row only when there is actually something to
+  // federate, which is why this asks for the full user here rather than up top.
+  const author = hidden ? null : await ctx.fullUser();
+  if (author) {
+    await syndicate(ctx, author, result.updated, { isUpdate: true });
   }
 
   return result.saved;
@@ -729,8 +742,9 @@ export async function postContent(
 
   clearContentCache(currentUsername);
 
-  if (!args.hidden && ctx.currentUser) {
-    await syndicate(ctx, ctx.currentUser, createdContent);
+  const author = args.hidden ? null : await ctx.fullUser();
+  if (author) {
+    await syndicate(ctx, author, createdContent);
   }
 
   return {
@@ -763,9 +777,10 @@ export async function deleteContent(ctx: Context, args: { name: string }) {
 
   // Peers cached this post; tell them to drop it. Best-effort — the local
   // delete already happened and must not be undone by a dead inbox.
-  if (deletedContent && !deletedContent.hidden && ctx.currentUser) {
+  const author = deletedContent && !deletedContent.hidden ? await ctx.fullUser() : null;
+  if (author) {
     try {
-      await unsyndicate(ctx, ctx.currentUser, deletedContent);
+      await unsyndicate(ctx, author, deletedContent);
     } catch (ex) {
       console.error(ex);
     }

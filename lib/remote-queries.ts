@@ -8,6 +8,7 @@ export type RemoteUser = {
   avatar?: string | null;
   favicon?: string | null;
   sortType?: string | null;
+  follower?: boolean | null;
   following?: boolean | null;
 };
 
@@ -49,48 +50,42 @@ export function useFeedPaginated(profileUrlOrSpecialFeed: string, query: string,
   });
 }
 
+type Relations = { following: RemoteUser[]; followers: RemoteUser[] };
+
+// One request behind both nav lists. The two hooks below select their half of
+// it, so they share a single fetch and a single cache entry to invalidate.
+const relationsQuery = {
+  queryKey: ['relations'],
+  queryFn: async (): Promise<Relations> => {
+    const res = await rpc.api['users-remote'].relations.$get();
+    if (!res.ok) throw new Error('Failed to load follows');
+    return (await res.json()) as Relations;
+  },
+};
+
 export function useFollowing() {
-  return useQuery({
-    queryKey: ['following'],
-    queryFn: async () => {
-      const res = await rpc.api['users-remote'].following.$get();
-      if (!res.ok) throw new Error('Failed to load following');
-      return (await res.json()) as RemoteUser[];
-    },
-  });
+  return useQuery({ ...relationsQuery, select: (data: Relations) => data.following });
 }
 
 export function useFollowers() {
-  return useQuery({
-    queryKey: ['followers'],
-    queryFn: async () => {
-      const res = await rpc.api['users-remote'].followers.$get();
-      if (!res.ok) throw new Error('Failed to load followers');
-      return (await res.json()) as RemoteUser[];
-    },
-  });
+  return useQuery({ ...relationsQuery, select: (data: Relations) => data.followers });
 }
 
-export function useFeedCounts() {
-  return useQuery({
-    queryKey: ['feed-counts'],
-    refetchInterval: 60_000,
-    queryFn: async () => {
-      const res = await rpc.api['content-remote']['feed-counts'].$get();
-      if (!res.ok) throw new Error('Failed to load feed counts');
-      return (await res.json()) as { fromUsername: string; count: number }[];
-    },
-  });
-}
+export type Counts = {
+  totalCount: number;
+  favoritesCount: number;
+  commentsCount: number;
+  feeds: { fromUsername: string; count: number }[];
+};
 
-export function useTotalCounts() {
+export function useCounts() {
   return useQuery({
-    queryKey: ['total-counts'],
+    queryKey: ['counts'],
     refetchInterval: 60_000,
     queryFn: async () => {
       const res = await rpc.api['content-remote'].counts.$get();
       if (!res.ok) throw new Error('Failed to load counts');
-      return (await res.json()) as { totalCount: number; favoritesCount: number; commentsCount: number };
+      return (await res.json()) as Counts;
     },
   });
 }

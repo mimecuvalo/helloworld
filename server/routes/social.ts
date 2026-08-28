@@ -728,7 +728,7 @@ export const socialRoutes = new Hono<AppEnv>()
       } else if (userRemote) {
         const feedText = await retrieveFeed(userRemote.feedUrl);
         await parseFeedAndInsertIntoDb(userRemote, feedText);
-        activityStreamsFollow(hostOf(c), ctx.currentUser, userRemote, true);
+        activityStreamsFollow(hostOf(c), (await ctx.fullUser())!, userRemote, true);
       }
     } catch (ex) {
       console.error(ex);

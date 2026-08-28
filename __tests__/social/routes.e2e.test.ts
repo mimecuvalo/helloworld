@@ -98,6 +98,7 @@ function api() {
     c.set('ctx', {
       currentUsername: currentUser?.username || '',
       currentUser,
+      fullUser: async () => currentUser,
       hostname: HOST,
       prisma: {},
       loaders: {},

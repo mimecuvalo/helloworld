@@ -9,8 +9,7 @@ export default function MarkAllFeedsAsRead() {
   const mutation = useMutation({
     mutationFn: () => rpc.api['content-remote']['mark-all-read'].$post().then((r) => r.json()),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['feed-counts'] });
-      queryClient.invalidateQueries({ queryKey: ['total-counts'] });
+      queryClient.invalidateQueries({ queryKey: ['counts'] });
       queryClient.invalidateQueries({ queryKey: ['feed-paginated'] });
     },
   });

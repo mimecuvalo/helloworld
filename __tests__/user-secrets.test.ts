@@ -86,3 +86,28 @@ describe('endpoints that return a user', () => {
     expect(await fetchUser(context(), 1)).toMatchObject({ username: 'alice' });
   });
 });
+
+describe('createContext', () => {
+  it('loads the row without the secret columns, and re-reads it only on demand', async () => {
+    const findUnique = vi.fn(async () => loaded());
+    vi.doMock('server/prisma', () => ({ default: { user: { findUnique } } }));
+    vi.doMock('server/auth', () => ({ getSession: async () => ({ user: { email: 'alice@example.com' } }) }));
+
+    const { createContext } = await import('server/context');
+    const ctx = await createContext(new Request('https://example.com'));
+
+    // The whole point: the keys and Bluesky credentials don't come along on
+    // every request just because something asked who the user is.
+    const [{ omit }] = findUnique.mock.calls[0] as unknown as [{ omit: Record<string, boolean> }];
+    for (const field of SECRETS) expect(omit).toHaveProperty(field, true);
+
+    // ...but they're one call away for the paths that sign with them, and that
+    // call is made once however many times it's asked for.
+    expect(await ctx.fullUser()).toHaveProperty('privateKey');
+    await ctx.fullUser();
+    expect(findUnique).toHaveBeenCalledTimes(2);
+
+    vi.doUnmock('server/prisma');
+    vi.doUnmock('server/auth');
+  });
+});

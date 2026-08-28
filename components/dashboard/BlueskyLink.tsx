@@ -23,7 +23,7 @@ type AtprotoStatus = {
 // An app password, not the account password: Bluesky issues these under
 // Settings → App Passwords precisely so a third-party site never holds the
 // real one.
-export default function BlueskyLink() {
+export default function BlueskyLink({ linkedHandle }: { linkedHandle?: string | null }) {
   const intl = useIntl();
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
@@ -32,6 +32,10 @@ export default function BlueskyLink() {
   const status = useQuery({
     queryKey: ['atproto-status'],
     queryFn: () => rpc.api.users.atproto.$get().then((r) => r.json() as Promise<AtprotoStatus>),
+    // The closed trigger renders from the route loader instead. Fetching here on
+    // mount cost every dashboard load a request, and this endpoint provisions
+    // the did:web signing key as a side effect of being read.
+    enabled: isOpen,
   });
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['atproto-status'] });
@@ -58,8 +62,11 @@ export default function BlueskyLink() {
     },
   });
 
-  if (status.isPending || !status.data) return null;
-  const { linked, handle, webDid } = status.data;
+  // Once the dialog has been opened the fetched status is authoritative — it
+  // stays cached after closing, so an unlink is reflected in the trigger too.
+  const linked = status.data ? status.data.linked : !!linkedHandle;
+  const handle = status.data ? status.data.handle : linkedHandle;
+  const webDid = status.data?.webDid;
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();

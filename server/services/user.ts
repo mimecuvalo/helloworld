@@ -6,6 +6,7 @@ import { AtpAgent } from '@atproto/api';
 import { assertAuthor } from '../authorization';
 import { HTTPError } from '../exceptions';
 import { encryptSecret } from '../secrets';
+import { OMIT_USER_SECRETS, stripSecrets } from '../user-secrets';
 import { PUBLIC_BSKY_PDS, didForUser, generateSigningKey } from '../social/atproto-identity';
 import { generateEd25519Key } from '../social/integrity-proof';
 import { profileUrl } from '../../lib/url-factory';
@@ -28,28 +29,9 @@ export function generateMagicKey(): { magicKey: string; privateKey: string } {
   return { magicKey: magic.RSAToMagic(key.publicKey), privateKey: key.privateKey };
 }
 
-// Fields that must never reach a browser. ctx.currentUser is the whole row
-// because the server signs with it; anything returned to a client goes through
-// stripSecrets first.
-const SECRET_USER_FIELDS = [
-  'privateKey',
-  'ed25519PrivateKey',
-  'atprotoSigningKey',
-  'atprotoAppPassword',
-  'atprotoRefreshJwt',
-] as const;
-
-export type SafeUser = Omit<User, (typeof SECRET_USER_FIELDS)[number]>;
-
-export function stripSecrets(user: User): SafeUser;
-export function stripSecrets(user: User | null): SafeUser | null;
-export function stripSecrets(user: User | null): SafeUser | null {
-  if (!user) return null;
-
-  const safe = { ...user } as User & Partial<Record<(typeof SECRET_USER_FIELDS)[number], unknown>>;
-  for (const field of SECRET_USER_FIELDS) delete safe[field];
-  return safe as SafeUser;
-}
+// ctx.currentUser is already selected without the secret columns; this is the
+// belt-and-braces pass for rows loaded any other way.
+export { stripSecrets, type SafeUser } from '../user-secrets';
 
 export function currentUser(ctx: Context) {
   return stripSecrets(ctx.currentUser);
@@ -180,6 +162,7 @@ export async function updateProfile(ctx: Context, input: ProfileInput) {
 
   ctx.currentUser = await ctx.prisma.user.update({
     where: { username: ctx.currentUsername },
+    omit: OMIT_USER_SECRETS,
     data: {
       name,
       title: input.title.trim(),
@@ -236,7 +219,7 @@ export async function linkAtprotoAccount(
     throw new HTTPError(400, pdsUrl, 'Could not sign in to Bluesky with that handle and app password.');
   }
 
-  await ensureAtprotoSigningKey(ctx, ctx.currentUser!);
+  await ensureAtprotoSigningKey(ctx, (await ctx.fullUser())!);
   await ctx.prisma.user.update({
     where: { username: ctx.currentUsername },
     data: {
@@ -316,7 +299,9 @@ export async function unlinkAtprotoAccount(ctx: Context): Promise<boolean> {
 export async function fetchAtprotoStatus(ctx: Context) {
   assertAuthor(ctx);
 
-  const user = ctx.currentUser!;
+  // One of the few reads that wants the whole row: it provisions the signing key
+  // and reports on the app password. Only runs when the dialog is opened.
+  const user = (await ctx.fullUser())!;
 
   // Provision the signing key here rather than only on link: the dashboard
   // shows the did:web id, and without a key the DID document 404s — advertising

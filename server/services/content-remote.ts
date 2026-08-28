@@ -86,26 +86,24 @@ export async function fetchContentRemotePaginated(
   });
 }
 
-export async function fetchUserTotalCounts(ctx: Context) {
+export async function fetchCounts(ctx: Context) {
   const { currentUsername, prisma } = ctx;
-  const common: { [key: string]: string | boolean } = { toUsername: currentUsername, deleted: false, isSpam: false };
+  const common = { toUsername: currentUsername, deleted: false, isSpam: false };
 
-  const commentsCount = await prisma.contentRemote.count({ where: Object.assign({}, common, { type: 'comment' }) });
-  const favoritesCount = await prisma.contentRemote.count({ where: Object.assign({}, common, { favorited: true }) });
-  const totalCount = await prisma.contentRemote.count({
-    where: Object.assign({}, common, { type: 'post', read: false }),
-  });
-
-  return { commentsCount, favoritesCount, totalCount };
-}
-
-export async function fetchFeedCounts(ctx: Context) {
-  const result = await ctx.prisma.contentRemote.groupBy({
+  const commentsCount = await prisma.contentRemote.count({ where: { ...common, type: 'comment' } });
+  const favoritesCount = await prisma.contentRemote.count({ where: { ...common, favorited: true } });
+  const unreadByFeed = await prisma.contentRemote.groupBy({
     by: ['fromUsername'],
     _count: true,
-    where: { toUsername: ctx.currentUsername, deleted: false, isSpam: false, read: false, type: 'post' },
+    where: { ...common, type: 'post', read: false },
   });
-  return result.map((c) => ({ count: c._count, ...c }));
+
+  const feeds = unreadByFeed.map((c) => ({ fromUsername: c.fromUsername, count: c._count }));
+  // The "read all" total is the same predicate as the per-feed grouping, so sum
+  // it here rather than paying for a second count query.
+  const totalCount = feeds.reduce((sum, f) => sum + f.count, 0);
+
+  return { commentsCount, favoritesCount, totalCount, feeds };
 }
 
 export function fetchCommentsRemote(ctx: Context, args: { username?: string | null; name?: string | null }) {

@@ -14,8 +14,7 @@ export default function MarkAllAsRead({ userRemote }: { userRemote: RemoteUser }
         return r.json();
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['feed-counts'] });
-      queryClient.invalidateQueries({ queryKey: ['total-counts'] });
+      queryClient.invalidateQueries({ queryKey: ['counts'] });
       queryClient.invalidateQueries({ queryKey: ['feed-paginated'] });
     },
   });

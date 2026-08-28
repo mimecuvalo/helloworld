@@ -20,9 +20,8 @@ export default function UnfollowFeed({
         return r.json();
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['following'] });
-      queryClient.invalidateQueries({ queryKey: ['total-counts'] });
-      queryClient.invalidateQueries({ queryKey: ['feed-counts'] });
+      queryClient.invalidateQueries({ queryKey: ['relations'] });
+      queryClient.invalidateQueries({ queryKey: ['counts'] });
     },
   });
 

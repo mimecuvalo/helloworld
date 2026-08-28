@@ -19,7 +19,7 @@ type MastodonStatus = {
 // speaks ActivityPub itself, so a Mastodon user follows it directly by its
 // handle. What this panel does is the rel="me" handshake, which is what makes
 // the link on your Mastodon profile turn green.
-export default function MastodonLink() {
+export default function MastodonLink({ linkedUrl }: { linkedUrl?: string | null }) {
   const intl = useIntl();
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
@@ -28,6 +28,9 @@ export default function MastodonLink() {
   const status = useQuery({
     queryKey: ['mastodon-status'],
     queryFn: () => rpc.api.users.mastodon.$get().then((r) => r.json() as Promise<MastodonStatus>),
+    // Only the dialog needs the handle and profile URL; the closed trigger
+    // renders from the route loader, which already had the row in hand.
+    enabled: isOpen,
   });
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['mastodon-status'] });
@@ -50,8 +53,11 @@ export default function MastodonLink() {
     onSuccess: invalidate,
   });
 
-  if (status.isPending || !status.data) return null;
-  const { mastodonUrl, profileUrl, fediverseHandle } = status.data;
+  // Authoritative once the dialog has been opened; it stays cached after
+  // closing, so saving or removing a URL is reflected in the trigger too.
+  const mastodonUrl = status.data ? status.data.mastodonUrl : linkedUrl;
+  const profileUrl = status.data?.profileUrl;
+  const fediverseHandle = status.data?.fediverseHandle;
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();

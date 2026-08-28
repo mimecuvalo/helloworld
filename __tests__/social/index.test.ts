@@ -19,7 +19,7 @@ const prismaStub = () => ({
 });
 
 function context(overrides: Partial<Context> = {}, prisma = prismaStub()) {
-  return {
+  const ctx = {
     currentUsername: 'alice',
     currentUserEmail: 'alice@example.com',
     currentUserPicture: '',
@@ -31,6 +31,10 @@ function context(overrides: Partial<Context> = {}, prisma = prismaStub()) {
     request: new Request(`https://${HOST}`),
     ...overrides,
   } as unknown as Context;
+  // The real one re-reads the row for its secret columns; the fixture row
+  // already carries them.
+  ctx.fullUser = async () => ctx.currentUser as never;
+  return ctx;
 }
 
 const anonymous = () => context({ currentUser: null, currentUsername: '', user: undefined });

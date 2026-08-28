@@ -25,9 +25,8 @@ export default function NewFeed({
     mutationFn: (url: string) =>
       rpc.api['users-remote'].follow.$post({ json: { profileUrl: url } }).then((r) => r.json() as Promise<RemoteUser>),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['following'] });
-      queryClient.invalidateQueries({ queryKey: ['feed-counts'] });
-      queryClient.invalidateQueries({ queryKey: ['total-counts'] });
+      queryClient.invalidateQueries({ queryKey: ['relations'] });
+      queryClient.invalidateQueries({ queryKey: ['counts'] });
     },
   });
 

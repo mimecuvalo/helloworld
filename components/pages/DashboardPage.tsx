@@ -21,6 +21,8 @@ type DashboardUser = {
   favicon?: string | null;
   logo?: string | null;
   theme?: string | null;
+  blueskyHandle?: string | null;
+  mastodonUrl?: string | null;
 };
 
 const messages = defineMessages({
@@ -73,8 +75,8 @@ export default function DashboardPage({ user }: { user: DashboardUser }) {
                 userFavicon={user.favicon}
               />
               <Followers handleSetFeed={handleSetFeed} />
-              <BlueskyLink />
-              <MastodonLink />
+              <BlueskyLink linkedHandle={user.blueskyHandle} />
+              <MastodonLink linkedUrl={user.mastodonUrl} />
             </nav>
 
             <div className={styles.content}>

@@ -80,8 +80,26 @@ export type SearchPageData = Awaited<ReturnType<typeof loadSearch>>;
 export const loadDashboard = createServerFn({ method: 'GET' }).handler(async () => {
   const ctx = await createContext(getRequest());
   if (!ctx.currentUser) return { user: null };
-  const { username, name, title, favicon, logo, theme, superuser } = ctx.currentUser;
-  return { user: { username, name, title, favicon, logo, theme, superuser } };
+  const { username, name, title, favicon, logo, theme, superuser, atprotoDid, atprotoHandle, mastodonUrl } =
+    ctx.currentUser;
+  return {
+    user: {
+      username,
+      name,
+      title,
+      favicon,
+      logo,
+      theme,
+      superuser,
+      // Enough to label the two link panels in the nav. Neither one fetches its
+      // full status until its dialog is opened: those endpoints exist to fill in
+      // a dialog, and the atproto one provisions a signing key as a side effect,
+      // which has no business running on every dashboard load. A did is written
+      // and cleared alongside the handle, so it stands in for "linked" here.
+      blueskyHandle: atprotoDid ? atprotoHandle : null,
+      mastodonUrl,
+    },
+  };
 });
 
 export type DashboardData = Awaited<ReturnType<typeof loadDashboard>>;

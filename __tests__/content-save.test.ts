@@ -88,7 +88,13 @@ function context(): Context {
     },
   };
 
-  return { currentUsername: 'alice', currentUser: null, hostname: 'example.com', prisma: client } as unknown as Context;
+  return {
+    currentUsername: 'alice',
+    currentUser: null,
+    fullUser: async () => null,
+    hostname: 'example.com',
+    prisma: client,
+  } as unknown as Context;
 }
 
 function row(fields: Partial<Row> & { name: string; section: string; album: string }): Row {

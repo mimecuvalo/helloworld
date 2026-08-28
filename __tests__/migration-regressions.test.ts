@@ -26,7 +26,7 @@ import { parseFeedAndInsertIntoDb, retrieveFeed } from 'server/social/feeds';
 import { subscribeToFeed, unsubscribeFromFeed } from 'server/social';
 
 function context(overrides: Partial<Context> = {}): Context {
-  return {
+  const ctx = {
     currentUsername: 'alice',
     currentUserEmail: 'alice@example.com',
     currentUserPicture: '',
@@ -38,6 +38,8 @@ function context(overrides: Partial<Context> = {}): Context {
     request: new Request('https://example.com'),
     ...overrides,
   } as unknown as Context;
+  ctx.fullUser = async () => ctx.currentUser as never;
+  return ctx;
 }
 
 afterEach(() => {

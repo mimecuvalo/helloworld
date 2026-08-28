@@ -6,15 +6,10 @@ import { assertAdmin, assertAuthor } from '../authorization';
 import * as svc from '../services/user-remote';
 
 export const userRemoteRoutes = new Hono<AppEnv>()
-  .get('/followers', async (c) => {
+  .get('/relations', async (c) => {
     const ctx = c.get('ctx');
     assertAuthor(ctx);
-    return c.json(await svc.fetchFollowers(ctx));
-  })
-  .get('/following', async (c) => {
-    const ctx = c.get('ctx');
-    assertAuthor(ctx);
-    return c.json(await svc.fetchFollowing(ctx));
+    return c.json(await svc.fetchRelations(ctx));
   })
   .get('/all', async (c) => {
     const ctx = c.get('ctx');

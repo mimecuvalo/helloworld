@@ -24,6 +24,7 @@ function context(): Context {
   return {
     currentUsername: 'alice',
     currentUser: null,
+    fullUser: async () => null,
     hostname: 'example.com',
     prisma: {
       $transaction: <T>(fn: (tx: unknown) => Promise<T>) => fn(context().prisma),

@@ -17,8 +17,11 @@ export function fetchUserRemote(ctx: Context, id: number) {
   return ctx.prisma.userRemote.findUnique({ where: { id } });
 }
 
-export function fetchFollowers(ctx: Context) {
-  return ctx.prisma.userRemote.findMany({
+// Both sides of the dashboard's nav in one round trip. They're the same table
+// filtered on two booleans, and a mutual follow used to be serialized down
+// twice — one query and a split is both fewer requests and less payload.
+export async function fetchRelations(ctx: Context) {
+  const rows = await ctx.prisma.userRemote.findMany({
     select: {
       username: true,
       name: true,
@@ -26,19 +29,18 @@ export function fetchFollowers(ctx: Context) {
       avatar: true,
       favicon: true,
       sortType: true,
+      follower: true,
       following: true,
     },
-    where: { localUsername: ctx.currentUsername, follower: true },
-    orderBy: { username: 'asc' },
-  });
-}
-
-export function fetchFollowing(ctx: Context) {
-  return ctx.prisma.userRemote.findMany({
-    select: { username: true, name: true, profileUrl: true, avatar: true, favicon: true, sortType: true },
-    where: { localUsername: ctx.currentUsername, following: true },
+    where: { localUsername: ctx.currentUsername, OR: [{ following: true }, { follower: true }] },
     orderBy: [{ order: 'asc' }, { username: 'asc' }],
   });
+
+  // Following keeps the hand-ordered sequence above; followers were only ever
+  // sorted by name, and `order` is meaningless for a feed you don't follow.
+  const followers = rows.filter((row) => row.follower).sort((a, b) => a.username.localeCompare(b.username));
+
+  return { following: rows.filter((row) => row.following), followers };
 }
 
 export async function toggleSortFeed(ctx: Context, input: { profileUrl: string; currentSortType: string }) {

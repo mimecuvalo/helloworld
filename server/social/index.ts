@@ -50,16 +50,17 @@ export async function like(
   userRemote: UserRemote,
   favorited: boolean
 ): Promise<void> {
-  if (!ctx.currentUser) return;
+  const currentUser = await ctx.fullUser();
+  if (!currentUser) return;
 
   // An atproto peer has no inbox to deliver a Like activity to; the like has to
   // be a real app.bsky.feed.like on the post itself.
   if (isAtprotoUserRemote(userRemote)) {
-    await likeOnBluesky(ctx.currentUser, contentRemote.postId, favorited);
+    await likeOnBluesky(currentUser, contentRemote.postId, favorited);
     return;
   }
 
-  await activityStreamsLike(ctx.hostname, ctx.currentUser, contentRemote, userRemote, favorited);
+  await activityStreamsLike(ctx.hostname, currentUser, contentRemote, userRemote, favorited);
 }
 
 // Reblogging a Bluesky post reposts it there; elsewhere reblogs stay local.
@@ -70,27 +71,30 @@ export async function reblog(
   isRepost: boolean
 ): Promise<void> {
   if (!ctx.currentUser || !isAtprotoUserRemote(userRemote)) return;
-  await repostOnBluesky(ctx.currentUser, contentRemote.postId, isRepost);
+  await repostOnBluesky((await ctx.fullUser())!, contentRemote.postId, isRepost);
 }
 
 // Commenting on a remote item: replies to a Bluesky post go back as replies.
 export async function replyToRemote(ctx: Context, contentRemote: ContentRemote, text: string): Promise<void> {
   if (!ctx.currentUser || !contentRemote.postId?.startsWith('at://')) return;
-  await replyOnBluesky(ctx.currentUser, contentRemote.postId, text);
+  await replyOnBluesky((await ctx.fullUser())!, contentRemote.postId, text);
 }
 
 export async function syncBlueskyProfile(ctx: Context): Promise<void> {
-  if (!ctx.currentUser) return;
-  await syncProfileToBluesky(ctx.hostname, ctx.currentUser);
+  const currentUser = await ctx.fullUser();
+  if (!currentUser) return;
+  await syncProfileToBluesky(ctx.hostname, currentUser);
 }
 
 export async function syncBlueskyFollowers(ctx: Context): Promise<number> {
-  if (!ctx.currentUser) return 0;
-  return await syncFollowersFromBluesky(ctx.currentUser);
+  const currentUser = await ctx.fullUser();
+  if (!currentUser) return 0;
+  return await syncFollowersFromBluesky(currentUser);
 }
 
 export async function subscribeToFeed(ctx: Context, profileUrl: string): Promise<UserRemote | null> {
-  if (!ctx.currentUser) return null;
+  const currentUser = await ctx.fullUser();
+  if (!currentUser) return null;
 
   const userRemote = await discoverUserRemoteInfoSaveAndSubscribe(profileUrl, ctx.currentUsername);
   if (!userRemote) return null;
@@ -99,19 +103,20 @@ export async function subscribeToFeed(ctx: Context, profileUrl: string): Promise
   // their author feed, and mirror the follow onto Bluesky if we can.
   if (isAtprotoUserRemote(userRemote)) {
     await pollAtprotoUser(userRemote);
-    await followOnBluesky(ctx.currentUser, userRemote);
+    await followOnBluesky(currentUser, userRemote);
     return userRemote;
   }
 
   const feedResponseText = await retrieveFeed(userRemote.feedUrl);
   await parseFeedAndInsertIntoDb(userRemote, feedResponseText);
-  await activityStreamsFollow(ctx.hostname, ctx.currentUser, userRemote, true);
+  await activityStreamsFollow(ctx.hostname, currentUser, userRemote, true);
 
   return userRemote;
 }
 
 export async function unsubscribeFromFeed(ctx: Context, profileUrl: string): Promise<boolean> {
-  if (!ctx.currentUser) return false;
+  const currentUser = await ctx.fullUser();
+  if (!currentUser) return false;
 
   const userRemote = await ctx.prisma.userRemote.findUnique({
     where: { localUsername_profileUrl: { localUsername: ctx.currentUsername, profileUrl } },
@@ -125,10 +130,10 @@ export async function unsubscribeFromFeed(ctx: Context, profileUrl: string): Pro
   }
 
   if (isAtprotoUserRemote(userRemote)) {
-    await unfollowOnBluesky(ctx.currentUser, userRemote);
+    await unfollowOnBluesky(currentUser, userRemote);
     return true;
   }
 
-  await activityStreamsFollow(ctx.hostname, ctx.currentUser, userRemote, false);
+  await activityStreamsFollow(ctx.hostname, currentUser, userRemote, false);
   return true;
 }

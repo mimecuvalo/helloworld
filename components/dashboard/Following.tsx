@@ -1,6 +1,6 @@
 import { type KeyboardEvent, useRef } from 'react';
 import { F, FormattedNumber, defineMessages, useIntl } from 'i18n';
-import { useFeedCounts, useFollowing, useTotalCounts, type HandleSetFeed, type RemoteUser } from 'lib/remote-queries';
+import { useCounts, useFollowing, type HandleSetFeed, type RemoteUser } from 'lib/remote-queries';
 import FollowingMenu from './FollowingMenu';
 import FollowingAllMenu from './FollowingAllMenu';
 import NewFeed from './actions/NewFeed';
@@ -23,13 +23,12 @@ export default function Following({
   const intl = useIntl();
   const searchInput = useRef<HTMLInputElement>(null);
   const following = useFollowing();
-  const feedCounts = useFeedCounts();
-  const totalCounts = useTotalCounts();
+  const allCounts = useCounts();
 
   if (following.isPending || !following.data) return null;
 
-  const counts = totalCounts.data || { totalCount: 0, favoritesCount: 0, commentsCount: 0 };
-  const countByUrl = new Map((feedCounts.data || []).map((f) => [f.fromUsername, f.count]));
+  const counts = allCounts.data || { totalCount: 0, favoritesCount: 0, commentsCount: 0, feeds: [] };
+  const countByUrl = new Map(counts.feeds.map((f) => [f.fromUsername, f.count]));
   const avatar = <img className={styles.feedIcon} src={userFavicon || '/favicon.jpg'} alt="" />;
 
   const handleSearchKeyUp = (evt: KeyboardEvent<HTMLInputElement>) => {
