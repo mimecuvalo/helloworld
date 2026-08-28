@@ -36,6 +36,54 @@ export function useCollection(args: CollectionArgs) {
   });
 }
 
+export type EditableContent = {
+  section: string;
+  album: string;
+  name: string;
+  title: string;
+  template: string | null;
+  thumb: string;
+  hidden: boolean;
+  style: string;
+  code: string;
+  view: string;
+};
+
+export type SiteMapItem = {
+  username: string;
+  section: string;
+  album: string;
+  name: string;
+  title?: string | null;
+  hidden?: boolean | null;
+};
+
+// The author's own row, unmerged: fetchContent folds the section's and album's
+// css/js into what it serves, and the editor must not write that back down.
+export function useEditableContent(name: string, enabled: boolean) {
+  return useQuery({
+    enabled,
+    queryKey: ['editable', name],
+    queryFn: async () => {
+      const res = await rpc.api.content.editable.$get({ query: { name } });
+      if (!res.ok) throw new Error('Failed to load content for editing');
+      return (await res.json()) as EditableContent | null;
+    },
+  });
+}
+
+export function useSiteMap(username: string, enabled = true) {
+  return useQuery({
+    enabled: enabled && !!username,
+    queryKey: ['sitemap', username],
+    queryFn: async () => {
+      const res = await rpc.api.content.sitemap.$get({ query: { username } });
+      if (!res.ok) throw new Error('Failed to load sitemap');
+      return (await res.json()) as SiteMapItem[];
+    },
+  });
+}
+
 export function useCollectionLatest(args: LatestArgs) {
   return useQuery({
     queryKey: ['collection-latest', args],

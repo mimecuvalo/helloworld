@@ -19,11 +19,17 @@
   "06a943c59f": {
     "message": "search"
   },
+  "099af53f60": {
+    "message": "delete"
+  },
   "0e002f7647": {
     "message": "powered by {br} {link}"
   },
   "0f6969d705": {
     "message": "remove"
+  },
+  "103cc6da65": {
+    "message": "Styling and code added here apply to everything inside this section or album too."
   },
   "106a6c241b": {
     "message": "home"
@@ -34,8 +40,23 @@
   "1116e9904e": {
     "message": "app password"
   },
+  "123c42f9be": {
+    "message": "section name"
+  },
+  "14ae475404": {
+    "message": "Error deleting content."
+  },
+  "14d2213acc": {
+    "message": "That name has no letters or numbers in it."
+  },
   "1a16279991": {
     "message": "This site is its own fediverse server, so there is no account to connect — people follow it directly at:"
+  },
+  "1f9e2df1c0": {
+    "message": "New album"
+  },
+  "207197a368": {
+    "message": "-none-"
   },
   "24c29702dc": {
     "message": "Search:"
@@ -46,8 +67,14 @@
   "2a304a1348": {
     "message": "link"
   },
+  "2be8c52a32": {
+    "message": "uploading…"
+  },
   "2bf23ac94b": {
     "message": "linking…"
+  },
+  "2c56c36058": {
+    "message": "CSS"
   },
   "2d000429fd": {
     "message": "Nothing to read right now!"
@@ -58,11 +85,17 @@
   "32d95e7840": {
     "message": "handle (e.g. you.bsky.social)"
   },
+  "33e47965fd": {
+    "message": "select image"
+  },
   "3d728e1b6e": {
     "message": "we've logged this error and we'll fix it soon."
   },
   "402e7a0877": {
     "message": "Success!"
+  },
+  "4180cad2bd": {
+    "message": "ya sure there, buddy?"
   },
   "4236a440a6": {
     "message": "logout"
@@ -79,20 +112,35 @@
   "4937452da0": {
     "message": "sort by newest"
   },
+  "4c4ad5fca2": {
+    "message": "HTML"
+  },
   "4fa3cb5e32": {
     "message": "not linked"
   },
   "529723465a": {
     "message": "view thread"
   },
+  "52ef7162ff": {
+    "message": "+ new section…"
+  },
+  "54653f6d49": {
+    "message": "New section"
+  },
   "5519c56f47": {
     "message": "Keep unread"
+  },
+  "573a9af5c0": {
+    "message": "A top-level section has nowhere to move to."
   },
   "5754749583": {
     "message": "mark all feeds as read"
   },
   "5a2351b91b": {
     "message": "internal server error"
+  },
+  "5bc06f5800": {
+    "message": "JS"
   },
   "5c342ee9ce": {
     "message": "followers"
@@ -112,6 +160,9 @@
   "61bfee279f": {
     "message": "untitled"
   },
+  "624c621a42": {
+    "message": "Everything inside this album moves with it, wherever the section picker up top sends it. Sending it to main turns it into a section of its own."
+  },
   "62b395c8d2": {
     "message": "Optionally, verify it on your Mastodon profile. Add your site to a profile metadata field there, then paste your profile URL here so this site links back."
   },
@@ -120,6 +171,12 @@
   },
   "654b0a0a07": {
     "message": "i18n: English"
+  },
+  "662f707d54": {
+    "message": "hidden"
+  },
+  "66f6181bcb": {
+    "message": "template"
   },
   "690d8ebdfb": {
     "message": "i'm sorry, dave. i'm afraid i can't do that."
@@ -135,6 +192,12 @@
   },
   "7253d1f504": {
     "message": "read all"
+  },
+  "73d5342eba": {
+    "message": "section"
+  },
+  "76ea0bebb3": {
+    "message": "create"
   },
   "794bd545aa": {
     "message": "React Scan"
@@ -157,6 +220,9 @@
   "807b754692": {
     "message": "https://mastodon.social/@you"
   },
+  "808e9f6fe7": {
+    "message": "thumbnail url"
+  },
   "8217537122": {
     "message": "Create an app password in Bluesky under Settings → Privacy and Security → App Passwords. Never your account password."
   },
@@ -172,11 +238,17 @@
   "8b04d5e377": {
     "message": "first"
   },
+  "8eea0fd334": {
+    "message": "album name"
+  },
   "911af7aa20": {
     "message": "Untitled"
   },
   "951d4dff3c": {
     "message": "thumbnail"
+  },
+  "96c322088e": {
+    "message": "This is a top-level section, so it stays where it is. Renaming it moves everything inside it along with it."
   },
   "98088e4b13": {
     "message": "Something went wrong. 😦"
@@ -192,6 +264,12 @@
   },
   "a4a78c3a33": {
     "message": "i18n: French"
+  },
+  "a4b2d20f45": {
+    "message": "album"
+  },
+  "a564a01a30": {
+    "message": "That page's name is what the site navigates by, so it can't be renamed."
   },
   "a5b16c1e27": {
     "message": "Error saving content."
@@ -211,6 +289,9 @@
   "b004d4b8c6": {
     "message": "Error posting content."
   },
+  "b068931cc4": {
+    "message": "name"
+  },
   "b21522fa2f": {
     "message": "favorites"
   },
@@ -220,8 +301,14 @@
   "b689884ca9": {
     "message": "follower options"
   },
+  "ba71127028": {
+    "message": "+ new album…"
+  },
   "bd397bea18": {
     "message": "follow bookmarklet"
+  },
+  "becc7bd793": {
+    "message": "Something else already has that name."
   },
   "c1a2311646": {
     "message": "bluesky"
@@ -231,6 +318,9 @@
   },
   "cdcfbe51f7": {
     "message": "follow back"
+  },
+  "cf414653e9": {
+    "message": "Could not create that."
   },
   "d095c31656": {
     "message": "sort by oldest"
@@ -244,8 +334,17 @@
   "d46327daae": {
     "message": "{user}: favorited this post."
   },
+  "d5d3db1765": {
+    "message": "title"
+  },
+  "d8cdcdfafc": {
+    "message": "That section is gone; pick another one."
+  },
   "d8f4a19935": {
     "message": "not found"
+  },
+  "dae8ace18b": {
+    "message": "Options"
   },
   "dbbd2a35bb": {
     "message": "Reply to"
@@ -265,11 +364,29 @@
   "ea00a7cb85": {
     "message": "{count,plural,one{# robot view} other{# robot views} =0{no robot views}}"
   },
+  "eb035b35d9": {
+    "message": "Hiding this hides everything inside it too."
+  },
+  "f121051461": {
+    "message": "thumb"
+  },
+  "f15c1cae78": {
+    "message": "Content"
+  },
   "f2a6c498fb": {
     "message": "Delete"
   },
   "f31e88af11": {
     "message": "user options"
+  },
+  "f75698a9a6": {
+    "message": "That name is reserved; it can't be used."
+  },
+  "fa02ea38c6": {
+    "message": "Deleting this leaves whatever is inside it stranded."
+  },
+  "fad58de736": {
+    "message": "main"
   },
   "fcb08b164a": {
     "message": "prev"

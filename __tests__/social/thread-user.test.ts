@@ -26,7 +26,24 @@ function context(): Context {
     currentUser: null,
     hostname: 'example.com',
     prisma: {
+      $transaction: <T>(fn: (tx: unknown) => Promise<T>) => fn(context().prisma),
       content: {
+        // saveContent reads the row first: renames and moves are decided against
+        // where it currently sits. postContent asks the same question about the
+        // slug it was handed, and has to hear that nothing holds it.
+        findUnique: vi.fn(async ({ where }: { where: { username_name?: { name: string } } }) =>
+          where.username_name?.name === 'reply'
+            ? {
+                id: 1,
+                username: 'alice',
+                section: 'comments',
+                album: 'main',
+                name: 'reply',
+                hidden: false,
+                createdAt: new Date(0),
+              }
+            : null
+        ),
         create: vi.fn(async (args) => {
           created = args;
           return { ...args.data, id: 1 };
@@ -35,6 +52,7 @@ function context(): Context {
           updated = args;
           return { ...args.data, id: 1 };
         }),
+        updateMany: vi.fn(async () => ({ count: 0 })),
       },
     },
   } as unknown as Context;
@@ -44,7 +62,7 @@ const post = (view: string) =>
   postContent(context(), {
     section: 'comments',
     album: 'main',
-    name: 'reply',
+    name: 'new-reply',
     title: '',
     hidden: false,
     thumb: '',

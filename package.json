@@ -9,9 +9,6 @@
     "url": "https://github.com/mimecuvalo/helloworld.git"
   },
   "license": "MIT",
-  "engines": {
-    "node": ">=22.22.1"
-  },
   "bugs": {
     "url": "https://github.com/mimecuvalo/helloworld/issues"
   },
@@ -46,6 +43,13 @@
     "@aws-sdk/client-s3": "3.1093.0",
     "@aws-sdk/s3-presigned-post": "3.1093.0",
     "@base-ui/react": "1.6.0",
+    "@codemirror/commands": "6.11.0",
+    "@codemirror/lang-css": "6.3.1",
+    "@codemirror/lang-html": "6.4.12",
+    "@codemirror/lang-javascript": "6.2.5",
+    "@codemirror/language": "6.12.4",
+    "@codemirror/state": "6.7.1",
+    "@codemirror/view": "6.43.9",
     "@fontsource-variable/oswald": "5.3.0",
     "@fontsource/marck-script": "5.3.0",
     "@fontsource/press-start-2p": "5.3.0",

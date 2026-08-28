@@ -143,3 +143,184 @@
 .toastSuccess {
   background: var(--color-success, #2e7d32);
 }
+
+/* Tabbed editing panel: wysiwyg, the three source views, and the options form. */
+.panel {
+  width: 100%;
+  margin-bottom: 8px;
+  border: 1px solid var(--hw-primary-light, var(--color-grey-500));
+  background-color: var(--hw-bg, var(--background));
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--hw-primary-light, var(--color-grey-500));
+}
+
+.tab {
+  padding: 6px 12px;
+  border: 0;
+  border-right: 1px solid var(--hw-primary-light, var(--color-grey-500));
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.tab:hover {
+  background-color: var(--hw-menu-hover, rgb(0 0 0 / 6%));
+}
+
+.tabActive {
+  background-color: var(--hw-primary-light, var(--color-primary-light));
+}
+
+.panelBody {
+  padding: 8px;
+}
+
+.panelLoading {
+  min-height: 33vh;
+}
+
+/* CodeMirror fills the panel and scrolls internally rather than growing the
+   page — the toolbar and tabs have to stay reachable while editing. */
+.codeEditor :global(.cm-editor) {
+  max-height: 60vh;
+  min-height: 33vh;
+  border: 1px solid var(--hw-primary-light, var(--color-grey-500));
+}
+
+.codeEditor :global(.cm-scroller) {
+  overflow: auto;
+}
+
+/* Options form. */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.optionRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.optionLabel {
+  flex: 0 0 auto;
+  width: 12ch;
+  font-size: 0.875rem;
+}
+
+.optionInput {
+  min-width: 0;
+  flex: 1 1 auto;
+  padding: 4px 8px;
+  border: 1px solid var(--hw-primary-light, var(--color-grey-500));
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.875rem;
+}
+
+.optionHint {
+  margin: 0;
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.optionThumb {
+  max-width: 154px;
+  height: auto;
+  border: 1px solid var(--hw-primary-light, var(--color-grey-500));
+}
+
+.optionActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--hw-primary-light, var(--color-grey-500));
+}
+
+.deleteButton {
+  color: var(--color-error, #d32f2f);
+}
+
+/* Right-hand end of the tab strip, for the things that have to stay reachable
+   whichever tab is showing — where a page is filed, and the post button. */
+.tabAside {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  padding: 4px 8px;
+}
+
+.placement {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.placementSelect {
+  max-width: 18ch;
+  padding: 2px 4px;
+  border: 1px solid var(--hw-primary-light, var(--color-grey-500));
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.75rem;
+}
+
+.placementSelect:disabled {
+  opacity: 0.5;
+}
+
+/* Naming a new section or album. Not <dialog>: showModal() promotes the node to
+   the top layer, which sits outside the themed page the editor is rendered in. */
+.dialogBackdrop {
+  position: fixed;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  inset: 0;
+  background-color: rgb(0 0 0 / 40%);
+}
+
+.dialog {
+  display: flex;
+  width: 100%;
+  max-width: 380px;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--hw-primary-light, var(--color-grey-500));
+  background-color: var(--hw-bg, var(--background));
+}
+
+.dialogHeading {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.dialogError {
+  margin: 0;
+  color: var(--color-error, #d32f2f);
+  font-size: 0.75rem;
+}
+
+.dialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

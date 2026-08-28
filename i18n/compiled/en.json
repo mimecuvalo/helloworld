@@ -17,6 +17,12 @@
       "value": "search"
     }
   ],
+  "099af53f60": [
+    {
+      "type": 0,
+      "value": "delete"
+    }
+  ],
   "0e002f7647": [
     {
       "type": 0,
@@ -41,6 +47,12 @@
       "value": "remove"
     }
   ],
+  "103cc6da65": [
+    {
+      "type": 0,
+      "value": "Styling and code added here apply to everything inside this section or album too."
+    }
+  ],
   "106a6c241b": [
     {
       "type": 0,
@@ -59,10 +71,40 @@
       "value": "app password"
     }
   ],
+  "123c42f9be": [
+    {
+      "type": 0,
+      "value": "section name"
+    }
+  ],
+  "14ae475404": [
+    {
+      "type": 0,
+      "value": "Error deleting content."
+    }
+  ],
+  "14d2213acc": [
+    {
+      "type": 0,
+      "value": "That name has no letters or numbers in it."
+    }
+  ],
   "1a16279991": [
     {
       "type": 0,
       "value": "This site is its own fediverse server, so there is no account to connect — people follow it directly at:"
+    }
+  ],
+  "1f9e2df1c0": [
+    {
+      "type": 0,
+      "value": "New album"
+    }
+  ],
+  "207197a368": [
+    {
+      "type": 0,
+      "value": "-none-"
     }
   ],
   "24c29702dc": [
@@ -83,10 +125,22 @@
       "value": "link"
     }
   ],
+  "2be8c52a32": [
+    {
+      "type": 0,
+      "value": "uploading…"
+    }
+  ],
   "2bf23ac94b": [
     {
       "type": 0,
       "value": "linking…"
+    }
+  ],
+  "2c56c36058": [
+    {
+      "type": 0,
+      "value": "CSS"
     }
   ],
   "2d000429fd": [
@@ -107,6 +161,12 @@
       "value": "handle (e.g. you.bsky.social)"
     }
   ],
+  "33e47965fd": [
+    {
+      "type": 0,
+      "value": "select image"
+    }
+  ],
   "3d728e1b6e": [
     {
       "type": 0,
@@ -117,6 +177,12 @@
     {
       "type": 0,
       "value": "Success!"
+    }
+  ],
+  "4180cad2bd": [
+    {
+      "type": 0,
+      "value": "ya sure there, buddy?"
     }
   ],
   "4236a440a6": [
@@ -163,6 +229,12 @@
       "value": "sort by newest"
     }
   ],
+  "4c4ad5fca2": [
+    {
+      "type": 0,
+      "value": "HTML"
+    }
+  ],
   "4fa3cb5e32": [
     {
       "type": 0,
@@ -175,10 +247,28 @@
       "value": "view thread"
     }
   ],
+  "52ef7162ff": [
+    {
+      "type": 0,
+      "value": "+ new section…"
+    }
+  ],
+  "54653f6d49": [
+    {
+      "type": 0,
+      "value": "New section"
+    }
+  ],
   "5519c56f47": [
     {
       "type": 0,
       "value": "Keep unread"
+    }
+  ],
+  "573a9af5c0": [
+    {
+      "type": 0,
+      "value": "A top-level section has nowhere to move to."
     }
   ],
   "5754749583": [
@@ -191,6 +281,12 @@
     {
       "type": 0,
       "value": "internal server error"
+    }
+  ],
+  "5bc06f5800": [
+    {
+      "type": 0,
+      "value": "JS"
     }
   ],
   "5c342ee9ce": [
@@ -229,6 +325,12 @@
       "value": "untitled"
     }
   ],
+  "624c621a42": [
+    {
+      "type": 0,
+      "value": "Everything inside this album moves with it, wherever the section picker up top sends it. Sending it to main turns it into a section of its own."
+    }
+  ],
   "62b395c8d2": [
     {
       "type": 0,
@@ -245,6 +347,18 @@
     {
       "type": 0,
       "value": "i18n: English"
+    }
+  ],
+  "662f707d54": [
+    {
+      "type": 0,
+      "value": "hidden"
+    }
+  ],
+  "66f6181bcb": [
+    {
+      "type": 0,
+      "value": "template"
     }
   ],
   "690d8ebdfb": [
@@ -275,6 +389,18 @@
     {
       "type": 0,
       "value": "read all"
+    }
+  ],
+  "73d5342eba": [
+    {
+      "type": 0,
+      "value": "section"
+    }
+  ],
+  "76ea0bebb3": [
+    {
+      "type": 0,
+      "value": "create"
     }
   ],
   "794bd545aa": [
@@ -327,6 +453,12 @@
       "value": "https://mastodon.social/@you"
     }
   ],
+  "808e9f6fe7": [
+    {
+      "type": 0,
+      "value": "thumbnail url"
+    }
+  ],
   "8217537122": [
     {
       "type": 0,
@@ -357,6 +489,12 @@
       "value": "first"
     }
   ],
+  "8eea0fd334": [
+    {
+      "type": 0,
+      "value": "album name"
+    }
+  ],
   "911af7aa20": [
     {
       "type": 0,
@@ -367,6 +505,12 @@
     {
       "type": 0,
       "value": "thumbnail"
+    }
+  ],
+  "96c322088e": [
+    {
+      "type": 0,
+      "value": "This is a top-level section, so it stays where it is. Renaming it moves everything inside it along with it."
     }
   ],
   "98088e4b13": [
@@ -397,6 +541,18 @@
     {
       "type": 0,
       "value": "i18n: French"
+    }
+  ],
+  "a4b2d20f45": [
+    {
+      "type": 0,
+      "value": "album"
+    }
+  ],
+  "a564a01a30": [
+    {
+      "type": 0,
+      "value": "That page's name is what the site navigates by, so it can't be renamed."
     }
   ],
   "a5b16c1e27": [
@@ -447,6 +603,12 @@
       "value": "Error posting content."
     }
   ],
+  "b068931cc4": [
+    {
+      "type": 0,
+      "value": "name"
+    }
+  ],
   "b21522fa2f": [
     {
       "type": 0,
@@ -465,10 +627,22 @@
       "value": "follower options"
     }
   ],
+  "ba71127028": [
+    {
+      "type": 0,
+      "value": "+ new album…"
+    }
+  ],
   "bd397bea18": [
     {
       "type": 0,
       "value": "follow bookmarklet"
+    }
+  ],
+  "becc7bd793": [
+    {
+      "type": 0,
+      "value": "Something else already has that name."
     }
   ],
   "c1a2311646": [
@@ -487,6 +661,12 @@
     {
       "type": 0,
       "value": "follow back"
+    }
+  ],
+  "cf414653e9": [
+    {
+      "type": 0,
+      "value": "Could not create that."
     }
   ],
   "d095c31656": [
@@ -517,10 +697,28 @@
       "value": ": favorited this post."
     }
   ],
+  "d5d3db1765": [
+    {
+      "type": 0,
+      "value": "title"
+    }
+  ],
+  "d8cdcdfafc": [
+    {
+      "type": 0,
+      "value": "That section is gone; pick another one."
+    }
+  ],
   "d8f4a19935": [
     {
       "type": 0,
       "value": "not found"
+    }
+  ],
+  "dae8ace18b": [
+    {
+      "type": 0,
+      "value": "Options"
     }
   ],
   "dbbd2a35bb": [
@@ -627,6 +825,24 @@
       "pluralType": "cardinal"
     }
   ],
+  "eb035b35d9": [
+    {
+      "type": 0,
+      "value": "Hiding this hides everything inside it too."
+    }
+  ],
+  "f121051461": [
+    {
+      "type": 0,
+      "value": "thumb"
+    }
+  ],
+  "f15c1cae78": [
+    {
+      "type": 0,
+      "value": "Content"
+    }
+  ],
   "f2a6c498fb": [
     {
       "type": 0,
@@ -637,6 +853,24 @@
     {
       "type": 0,
       "value": "user options"
+    }
+  ],
+  "f75698a9a6": [
+    {
+      "type": 0,
+      "value": "That name is reserved; it can't be used."
+    }
+  ],
+  "fa02ea38c6": [
+    {
+      "type": 0,
+      "value": "Deleting this leaves whatever is inside it stranded."
+    }
+  ],
+  "fad58de736": [
+    {
+      "type": 0,
+      "value": "main"
     }
   ],
   "fcb08b164a": [

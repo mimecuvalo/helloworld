@@ -45,5 +45,9 @@ export default constants;
 export const WEB_SUB_HUB = 'https://pubsubhubbub.appspot.com/';
 export const MAX_FILE_SIZE = 1024 * 1024 * 10; // up to 10 MB
 
+// The templates Item/ContentPage know how to dispatch on. '' is the plain
+// article body; 'blank' is the same body with no site chrome around it.
+export const CONTENT_TEMPLATES = ['', 'album', 'archive', 'blank', 'feed', 'latest', 'links'];
+
 export const THUMB_WIDTH = 154;
 export const THUMB_HEIGHT = 154;

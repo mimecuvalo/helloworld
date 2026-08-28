@@ -1,6 +1,6 @@
 import 'styles/content-theme.css';
 import 'lite-youtube-embed/src/lite-yt-embed.css';
-import { useEffect, useRef } from 'react';
+import { lazy, Suspense, useEffect, useRef } from 'react';
 import { useRouter } from '@tanstack/react-router';
 import { themeGlobalCss } from 'styles/theme-css';
 import type { ContentPageData } from 'lib/page-data';
@@ -10,11 +10,13 @@ import { UserProvider } from 'lib/user-context';
 import { EditorProvider } from 'lib/editor-context';
 import SiteMap from 'components/content/SiteMap';
 import Nav from 'components/content/Nav';
-import Item from 'components/content/Item';
+import Item, { contentEditorProps } from 'components/content/Item';
 import Feed from 'components/content/Feed';
 import Simple from 'components/content/templates/Simple';
 import ContentHeadScripts from 'components/content/ContentHeadScripts';
 import styles from 'components/content/content.module.css';
+
+const ContentEditor = lazy(() => import('components/content/ContentEditor'));
 
 // Themed content viewer — per-user theme + template dispatch:
 //   blank → bare Simple body (no chrome)
@@ -78,10 +80,16 @@ export default function ContentPage({ data }: { data: ContentPageData }) {
     );
   }
 
-  // Blank template: standalone body, no sidebar/nav/chrome.
+  // Blank template: standalone body, no sidebar/nav/chrome. Item isn't in the
+  // way here, so the editor has to be hung on directly.
   if (template === 'blank') {
     return wrap(
       <main id="hw-content">
+        {currentUsername === content.username ? (
+          <Suspense fallback={<div />}>
+            <ContentEditor content={contentEditorProps(content)} />
+          </Suspense>
+        ) : null}
         <Simple content={content} />
       </main>
     );

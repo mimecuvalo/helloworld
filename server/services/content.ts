@@ -2,7 +2,9 @@ import * as cheerio from 'cheerio';
 import { nanoid } from 'nanoid';
 import type { Context } from '../context';
 import type { Content } from '../../generated/prisma/client';
+import constants from '../../util/constants';
 import { isRobotViewing } from '../crawler';
+import { HTTPError } from '../exceptions';
 import { syndicate, threadUserFor, unsyndicate } from '../social';
 
 type DecoratedContent = Content & {
@@ -24,8 +26,31 @@ const ATTRIBUTES_NAVIGATION = {
   code: true,
 };
 
+// Names the site itself navigates by: 'home' is what an unknown name falls back
+// to, 'main' is the top-level page, and 'comments' backs the comment threads.
+// Renaming one, or renaming something else on top of one, breaks that wiring.
+const STRUCTURAL_NAMES = ['main', 'home', 'comments'];
+
+// Slugs live in urls, so they get the same treatment a new post's name gets.
+export function cleanName(name: string) {
+  return (name || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, '-')
+    .replace(/-{2,}/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
 // KV cache for neighbors and collection (Vercel egress limits).
 const customCache: { [key: string]: any } = {};
+
+// Every cache key carries the username it belongs to, so a write by that user
+// can drop their slice of it wholesale. Renames move rows between sections, and
+// a stale sitemap or collection would keep linking at the old url.
+function clearContentCache(username: string) {
+  for (const key of Object.keys(customCache)) {
+    if (key.includes(username)) delete customCache[key];
+  }
+}
 
 export function allContent(ctx: Context) {
   return ctx.prisma.content.findMany();
@@ -60,6 +85,19 @@ export async function fetchContent(ctx: Context, args: { username?: string | nul
     content = (await prisma.content.findUnique({
       where: { username_name: { username: username || '', name: name || '' } },
     })) as DecoratedContent | null;
+  }
+
+  // A rename leaves a stub behind at the old name pointing at the row that moved.
+  // Hand back the target: the page canonicalizes its own url from what it renders,
+  // so the address bar catches up on its own.
+  if (content?.redirect) {
+    const target = (await prisma.content.findUnique({ where: { id: content.redirect } })) as DecoratedContent | null;
+    // The row the stub pointed at is gone. The old url has nowhere left to send
+    // anyone, so it is a 404 — rendering the stub itself would serve a page with
+    // no title and no body.
+    if (!target) return null;
+    content = target;
+    name = target.name;
   }
 
   // Inherit style/code from the album.
@@ -102,7 +140,18 @@ export async function fetchContent(ctx: Context, args: { username?: string | nul
 
   if (!content) return null;
 
+  // The css and js tabs hold bare source, and it is rendered into the page as
+  // markup — so give it the tags that make a browser treat it as code. Content
+  // that already brought its own <style>/<script>/<link> is left alone. Wrapping
+  // here, after the inheritance merges above, means one tag around the lot.
+  content.style = wrapSource(content.style, 'style', /<link|<style/i);
+  content.code = wrapSource(content.code, 'script', /<script/i);
+
   return decorateWithRefreshFlag(content);
+}
+
+function wrapSource(source: string, tag: 'style' | 'script', alreadyWrapped: RegExp) {
+  return !source || alreadyWrapped.test(source) ? source : `<${tag}>\n${source}\n</${tag}>`;
 }
 
 export async function fetchContentNeighbors(ctx: Context, args: { username?: string | null; name?: string | null }) {
@@ -370,6 +419,28 @@ export async function fetchSiteMap(ctx: Context, args: { username: string }) {
   return decoratedSiteMap;
 }
 
+// A page's own row, straight out of the database — no album/section style and
+// code folded in the way fetchContent does it, because the editor writes these
+// fields back and inherited css would end up duplicated into the child.
+export async function fetchEditableContent(ctx: Context, args: { name: string }) {
+  const { currentUsername, prisma } = ctx;
+  return prisma.content.findUnique({
+    select: {
+      section: true,
+      album: true,
+      name: true,
+      title: true,
+      template: true,
+      thumb: true,
+      hidden: true,
+      style: true,
+      code: true,
+      view: true,
+    },
+    where: { username_name: { username: currentUsername, name: args.name } },
+  });
+}
+
 export async function saveContent(
   ctx: Context,
   args: {
@@ -377,33 +448,222 @@ export async function saveContent(
     title: string;
     hidden: boolean;
     view: string;
+    newName?: string;
+    section?: string;
+    album?: string;
+    template?: string;
+    thumb?: string;
+    style?: string;
+    code?: string;
     sensitive?: boolean;
     contentWarning?: string | null;
   }
 ) {
   const { currentUsername, prisma } = ctx;
-  const { name, hidden, title, view } = args;
+  const { hidden, title, view } = args;
+
+  // Resolving the author of whatever this replies to talks to a remote server,
+  // so it happens before the transaction opens rather than holding one over a
+  // network round trip.
   const thread = discoverThreadInHTML(view);
   const threadUser = await threadUserFor(ctx, thread);
 
-  const updatedContent = await prisma.content.update({
-    data: {
-      title,
-      hidden,
-      thread,
-      threadUser,
-      view,
-      ...(args.sensitive === undefined ? {} : { sensitive: args.sensitive }),
-      ...(args.contentWarning === undefined ? {} : { contentWarning: args.contentWarning || null }),
-    },
-    where: { username_name: { username: currentUsername, name } },
+  // One transaction: a rename rewrites the row, everything filed under it, and
+  // the stub left at the old url. Landing half of that would strand the children
+  // under a name nothing points at any more, where no collection query finds them.
+  const result = await prisma.$transaction(async (tx) => {
+    const existing = await tx.content.findUnique({
+      where: { username_name: { username: currentUsername, name: args.name } },
+    });
+    if (!existing) throw new HTTPError(404, args.name, 'no such content');
+
+    const { section: oldSection, album: oldAlbum, name: oldName, hidden: oldHidden } = existing;
+    // Two kinds of container: a section lives at section 'main', an album at
+    // album 'main'. Everything filed under one follows it around.
+    const isSection = oldSection === 'main';
+    const isAlbum = oldAlbum === 'main';
+
+    const name = args.newName === undefined ? oldName : cleanName(args.newName) || oldName;
+    if (name !== oldName) {
+      if (STRUCTURAL_NAMES.includes(oldName)) return { error: 'structural-name' as const };
+      if (constants.reservedNames.includes(name) || STRUCTURAL_NAMES.includes(name)) {
+        return { error: 'reserved-name' as const };
+      }
+      const clash = await tx.content.findUnique({
+        select: { id: true, redirect: true },
+        where: { username_name: { username: currentUsername, name } },
+      });
+      // A stub from an earlier rename is not a real occupant of the name —
+      // otherwise changing your mind and renaming back would be refused forever.
+      // Taking the name costs that old url its signpost, which is the right
+      // trade: a rename asked for now beats one asked for before.
+      if (clash && !clash.redirect) return { error: 'duplicate-name' as const };
+      if (clash) await tx.content.delete({ where: { id: clash.id } });
+    }
+
+    // A container's placement is a single choice — which section it sits in — and
+    // the marker column follows from it: 'main' means it is a section itself.
+    const section = args.section === undefined ? oldSection : args.section;
+    let album = args.album === undefined ? oldAlbum : args.album;
+    if (isSection || isAlbum) {
+      album = section === 'main' ? '' : 'main';
+    }
+    // Sections are top level by definition; there is nowhere to nest one.
+    if (isSection && section !== 'main') return { error: 'cannot-nest-section' as const };
+
+    const childWhere = isSection
+      ? { username: currentUsername, section: oldName }
+      : { username: currentUsername, section: oldSection, album: oldName };
+
+    // Hiding a container hides what's inside it, same as unhiding.
+    if ((isSection || isAlbum) && hidden !== oldHidden) {
+      await tx.content.updateMany({ where: childWhere, data: { hidden } });
+    }
+
+    // Renaming or moving a container rewrites the section/album its children point
+    // at. An album promoted to the top level becomes their section outright.
+    if (isSection && name !== oldName) {
+      await tx.content.updateMany({ where: childWhere, data: { section: name } });
+    } else if (isAlbum && (name !== oldName || section !== oldSection)) {
+      await tx.content.updateMany({
+        where: childWhere,
+        data: section === 'main' ? { section: name, album: '' } : { section, album: name },
+      });
+    }
+
+    const updated = await tx.content.update({
+      data: {
+        name,
+        section,
+        album,
+        title,
+        hidden,
+        thread,
+        threadUser,
+        view,
+        ...(args.template === undefined ? {} : { template: args.template }),
+        ...(args.thumb === undefined ? {} : { thumb: args.thumb }),
+        ...(args.style === undefined ? {} : { style: args.style }),
+        ...(args.code === undefined ? {} : { code: args.code }),
+        ...(args.sensitive === undefined ? {} : { sensitive: args.sensitive }),
+        ...(args.contentWarning === undefined ? {} : { contentWarning: args.contentWarning || null }),
+      },
+      where: { username_name: { username: currentUsername, name: oldName } },
+    });
+
+    // Leave a signpost at the old url. Hidden content was never linked anywhere
+    // public, so it doesn't need one.
+    if (name !== oldName && !hidden) {
+      await tx.content.create({
+        data: {
+          username: currentUsername,
+          section: oldSection,
+          album: oldAlbum,
+          name: oldName,
+          redirect: updated.id,
+          title: '',
+          thumb: '',
+          template: '',
+          sortType: '',
+          style: '',
+          code: '',
+          view: '',
+          createdAt: existing.createdAt,
+        },
+      });
+    }
+
+    return { updated, saved: { username: currentUsername, section, album, name, title, view } };
   });
 
-  if (!hidden && updatedContent && ctx.currentUser) {
-    await syndicate(ctx, ctx.currentUser, updatedContent, { isUpdate: true });
+  if ('error' in result) return result;
+
+  clearContentCache(currentUsername);
+
+  if (!hidden && ctx.currentUser) {
+    await syndicate(ctx, ctx.currentUser, result.updated, { isUpdate: true });
   }
 
-  return { username: currentUsername, name, title, view };
+  return result.saved;
+}
+
+// Sections and albums are the two containers the site navigates by, and both are
+// just rows with a reserved marker: a section is `main`/'' and an album is
+// `<section>`/`main`. Creating one is deliberately not postContent — a container
+// is structure rather than something written, so it is never syndicated, and an
+// empty page must not land in anyone's feed.
+export async function createContainer(
+  ctx: Context,
+  args: { kind: 'section' | 'album'; title: string; section?: string }
+) {
+  const { currentUsername, prisma } = ctx;
+  const title = args.title.trim();
+  const name = cleanName(title);
+  if (!name) return { error: 'invalid-name' as const };
+  if (constants.reservedNames.includes(name) || STRUCTURAL_NAMES.includes(name)) {
+    return { error: 'reserved-name' as const };
+  }
+
+  const clash = await prisma.content.findUnique({
+    select: { id: true },
+    where: { username_name: { username: currentUsername, name } },
+  });
+  if (clash) return { error: 'duplicate-name' as const };
+
+  // An album hangs off a section, so that section has to be one — and a hidden
+  // section's albums start hidden too, matching how posts filed into one behave.
+  let parent = null;
+  if (args.kind === 'album') {
+    parent = await prisma.content.findUnique({
+      select: { name: true, section: true, hidden: true },
+      where: { username_name: { username: currentUsername, name: args.section || '' } },
+    });
+    if (!parent || parent.section !== 'main') return { error: 'no-such-section' as const };
+  }
+
+  // The nav sorts on `order`, and every existing sibling has one, so leaving a
+  // new container at the default 0 would put it ahead of everything already
+  // there. It belongs at the end.
+  const siblings = await prisma.content.findMany({
+    select: { order: true },
+    where:
+      args.kind === 'section'
+        ? { username: currentUsername, section: 'main', album: '' }
+        : { username: currentUsername, section: parent!.name, album: 'main' },
+  });
+  const order = siblings.reduce((max, sibling) => Math.max(max, sibling.order), 0) + 1;
+
+  // A container whose template is blank renders as a page of its own body and
+  // never lists what is inside it, which is not what anyone means by making one.
+  const created = await prisma.content.create({
+    data: {
+      username: currentUsername,
+      section: args.kind === 'section' ? 'main' : parent!.name,
+      album: args.kind === 'section' ? '' : 'main',
+      name,
+      title,
+      order,
+      template: args.kind === 'section' ? 'latest' : 'album',
+      thumb: '',
+      sortType: '',
+      redirect: 0,
+      hidden: !!parent?.hidden,
+      style: '',
+      code: '',
+      view: '',
+    },
+  });
+
+  clearContentCache(currentUsername);
+
+  return {
+    username: currentUsername,
+    section: created.section,
+    album: created.album,
+    name: created.name,
+    title: created.title,
+    hidden: created.hidden,
+  };
 }
 
 export async function postContent(
@@ -418,13 +678,29 @@ export async function postContent(
     style: string;
     code: string;
     view: string;
+    template?: string;
     sensitive?: boolean;
     contentWarning?: string | null;
   }
 ) {
   const { currentUsername, prisma } = ctx;
-  let name = (args.name || 'untitled') + '-' + nanoid(10);
-  name = name.replace(/[^A-Za-z0-9-]/, '-');
+
+  // A slug the author typed is used exactly as typed, and has to be free.
+  // Anything else gets one made from the title, with a suffix so posting twice
+  // under the same heading doesn't collide.
+  let name = cleanName(args.name || '');
+  if (name) {
+    if (constants.reservedNames.includes(name) || STRUCTURAL_NAMES.includes(name)) {
+      return { error: 'reserved-name' as const };
+    }
+    const clash = await prisma.content.findUnique({
+      select: { id: true },
+      where: { username_name: { username: currentUsername, name } },
+    });
+    if (clash) return { error: 'duplicate-name' as const };
+  } else {
+    name = `${cleanName(args.title) || 'untitled'}-${nanoid(10).replace(/[^A-Za-z0-9]/g, '-')}`;
+  }
 
   const thread = discoverThreadInHTML(args.view);
   const threadUser = await threadUserFor(ctx, thread);
@@ -441,7 +717,7 @@ export async function postContent(
       threadUser,
       hidden: args.hidden,
       redirect: 0,
-      template: '',
+      template: args.template || '',
       sortType: '',
       style: args.style,
       code: args.code,
@@ -450,6 +726,8 @@ export async function postContent(
       contentWarning: args.contentWarning || null,
     },
   });
+
+  clearContentCache(currentUsername);
 
   if (!args.hidden && ctx.currentUser) {
     await syndicate(ctx, ctx.currentUser, createdContent);
@@ -473,6 +751,15 @@ export async function deleteContent(ctx: Context, args: { name: string }) {
   const deletedContent = await ctx.prisma.content.delete({
     where: { username_name: { username: ctx.currentUsername, name: args.name } },
   });
+
+  // Signposts to a page that no longer exists. Clearing them here is what keeps
+  // a dangling stub exceptional rather than routine, and it hands their names
+  // back for reuse.
+  await ctx.prisma.content.deleteMany({
+    where: { username: ctx.currentUsername, redirect: deletedContent.id },
+  });
+
+  clearContentCache(ctx.currentUsername);
 
   // Peers cached this post; tell them to drop it. Best-effort — the local
   // delete already happened and must not be undone by a dead inbox.
