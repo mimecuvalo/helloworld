@@ -14,7 +14,14 @@ import DashboardFeed from 'components/dashboard/DashboardFeed';
 import Feed from 'components/content/Feed';
 import styles from 'components/dashboard/dashboard.module.css';
 
-type DashboardUser = { username: string; title?: string | null; favicon?: string | null; theme?: string | null };
+type DashboardUser = {
+  username: string;
+  name?: string | null;
+  title?: string | null;
+  favicon?: string | null;
+  logo?: string | null;
+  theme?: string | null;
+};
 
 const messages = defineMessages({
   menu: { defaultMessage: 'Menu' },
@@ -58,7 +65,7 @@ export default function DashboardPage({ user }: { user: DashboardUser }) {
             </button>
 
             <nav className={`${styles.nav} ${isMenuOpen ? styles.navOpen : ''}`}>
-              <Tools username={user.username} />
+              <Tools user={user} />
               <Following
                 handleSetFeed={handleSetFeed}
                 specialFeed={specialFeed}

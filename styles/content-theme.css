@@ -4,6 +4,14 @@
  * headers + monospace body. Applied via `.hw-content-theme[data-theme=...]`.
  * The `flowers` image-skin is injected separately (see styles/theme-css.ts).
  */
+/*
+ * The palette also sits on :root, not only on .hw-content-theme, because menus
+ * and dialogs render through a portal at the end of <body> — outside the themed
+ * wrapper. Scoped only to the wrapper, `var(--hw-bg)` resolved to nothing there
+ * and popups came out transparent. nightlight is the default theme, so these
+ * are the right values to fall back to.
+ */
+:root,
 .hw-content-theme {
   /* default/nightlight palette */
   --hw-primary: #3984ff;
@@ -24,7 +32,11 @@
     Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace, 'Apple Color Emoji', 'Segoe UI Emoji',
     'Segoe UI Symbol';
   --hw-font-header: 'Press Start 2P', var(--font-system);
+}
 
+/* Painting stays on the wrapper — :root above only carries the variables, so
+   that the page outside a themed subtree keeps its own background and type. */
+.hw-content-theme {
   min-height: 100vh;
   background-color: var(--hw-bg);
   color: var(--hw-text);

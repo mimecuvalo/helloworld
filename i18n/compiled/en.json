@@ -23,6 +23,12 @@
       "value": "delete"
     }
   ],
+  "0d93d9d73b": [
+    {
+      "type": 0,
+      "value": "the name of this site"
+    }
+  ],
   "0e002f7647": [
     {
       "type": 0,
@@ -69,6 +75,12 @@
     {
       "type": 0,
       "value": "app password"
+    }
+  ],
+  "122b298d33": [
+    {
+      "type": 0,
+      "value": "a sentence about the site"
     }
   ],
   "123c42f9be": [
@@ -125,6 +137,12 @@
       "value": "link"
     }
   ],
+  "2bc27a5604": [
+    {
+      "type": 0,
+      "value": "e.g. CC BY-SA 4.0"
+    }
+  ],
   "2be8c52a32": [
     {
       "type": 0,
@@ -165,6 +183,12 @@
     {
       "type": 0,
       "value": "select image"
+    }
+  ],
+  "3bba56ae8a": [
+    {
+      "type": 0,
+      "value": "account menu"
     }
   ],
   "3d728e1b6e": [
@@ -227,6 +251,12 @@
     {
       "type": 0,
       "value": "sort by newest"
+    }
+  ],
+  "4a931512ce": [
+    {
+      "type": 0,
+      "value": "tools"
     }
   ],
   "4c4ad5fca2": [
@@ -361,6 +391,12 @@
       "value": "template"
     }
   ],
+  "67daf92c83": [
+    {
+      "type": 0,
+      "value": "description"
+    }
+  ],
   "690d8ebdfb": [
     {
       "type": 0,
@@ -383,6 +419,18 @@
     {
       "type": 0,
       "value": "done"
+    }
+  ],
+  "6b829701cd": [
+    {
+      "type": 0,
+      "value": "avatar / favicon"
+    }
+  ],
+  "718779752b": [
+    {
+      "type": 0,
+      "value": "license"
     }
   ],
   "7253d1f504": [
@@ -513,6 +561,12 @@
       "value": "This is a top-level section, so it stays where it is. Renaming it moves everything inside it along with it."
     }
   ],
+  "96d6f2e7e1": [
+    {
+      "type": 0,
+      "value": "logo"
+    }
+  ],
   "98088e4b13": [
     {
       "type": 0,
@@ -597,6 +651,12 @@
       "value": "avatar"
     }
   ],
+  "afeb8d9d88": [
+    {
+      "type": 0,
+      "value": "edit profile"
+    }
+  ],
   "b004d4b8c6": [
     {
       "type": 0,
@@ -657,6 +717,12 @@
       "value": "i18n: Long"
     }
   ],
+  "caa34bd688": [
+    {
+      "type": 0,
+      "value": "data liberation — packing…"
+    }
+  ],
   "cdcfbe51f7": [
     {
       "type": 0,
@@ -697,6 +763,12 @@
       "value": ": favorited this post."
     }
   ],
+  "d50e0b89ed": [
+    {
+      "type": 0,
+      "value": "https://…/logo.png"
+    }
+  ],
   "d5d3db1765": [
     {
       "type": 0,
@@ -707,6 +779,18 @@
     {
       "type": 0,
       "value": "That section is gone; pick another one."
+    }
+  ],
+  "d8dc06ce84": [
+    {
+      "type": 0,
+      "value": "https://…/favicon.png"
+    }
+  ],
+  "d8e058e700": [
+    {
+      "type": 0,
+      "value": "loading…"
     }
   ],
   "d8f4a19935": [
@@ -831,6 +915,18 @@
       "value": "Hiding this hides everything inside it too."
     }
   ],
+  "ebeda660a8": [
+    {
+      "type": 0,
+      "value": "site title"
+    }
+  ],
+  "f09ac04a28": [
+    {
+      "type": 0,
+      "value": "data liberation"
+    }
+  ],
   "f121051461": [
     {
       "type": 0,
@@ -855,6 +951,12 @@
       "value": "user options"
     }
   ],
+  "f484570d7c": [
+    {
+      "type": 0,
+      "value": "theme"
+    }
+  ],
   "f75698a9a6": [
     {
       "type": 0,
@@ -877,6 +979,12 @@
     {
       "type": 0,
       "value": "prev"
+    }
+  ],
+  "fded4289ab": [
+    {
+      "type": 0,
+      "value": "your name"
     }
   ]
 }

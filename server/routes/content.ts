@@ -10,7 +10,7 @@ const usernameName = z.object({ username: z.string().optional(), name: z.string(
 export const contentRoutes = new Hono<AppEnv>()
   .get('/all', async (c) => {
     const ctx = c.get('ctx');
-    await assertAdmin(ctx);
+    assertAdmin(ctx);
     return c.json(await content.allContent(ctx));
   })
   .get('/neighbors', zValidator('query', usernameName), async (c) =>
@@ -50,7 +50,7 @@ export const contentRoutes = new Hono<AppEnv>()
   )
   .get('/editable', zValidator('query', z.object({ name: z.string() })), async (c) => {
     const ctx = c.get('ctx');
-    await assertAuthor(ctx);
+    assertAuthor(ctx);
     return c.json(await content.fetchEditableContent(ctx, c.req.valid('query')));
   })
   .post(
@@ -73,7 +73,7 @@ export const contentRoutes = new Hono<AppEnv>()
     ),
     async (c) => {
       const ctx = c.get('ctx');
-      await assertAuthor(ctx);
+      assertAuthor(ctx);
       const result = await content.saveContent(ctx, c.req.valid('json'));
       // A rejected rename or move is the author's problem to fix, not a bug:
       // hand back which rule it tripped so the editor can say so.
@@ -99,7 +99,7 @@ export const contentRoutes = new Hono<AppEnv>()
     ),
     async (c) => {
       const ctx = c.get('ctx');
-      await assertAuthor(ctx);
+      assertAuthor(ctx);
       const result = await content.postContent(ctx, c.req.valid('json'));
       return 'error' in result ? c.json(result, 409) : c.json(result);
     }
@@ -112,13 +112,13 @@ export const contentRoutes = new Hono<AppEnv>()
     ),
     async (c) => {
       const ctx = c.get('ctx');
-      await assertAuthor(ctx);
+      assertAuthor(ctx);
       const result = await content.createContainer(ctx, c.req.valid('json'));
       return 'error' in result ? c.json(result, 409) : c.json(result);
     }
   )
   .post('/delete', zValidator('json', z.object({ name: z.string() })), async (c) => {
     const ctx = c.get('ctx');
-    await assertAuthor(ctx);
+    assertAuthor(ctx);
     return c.json(await content.deleteContent(ctx, c.req.valid('json')));
   });

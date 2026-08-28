@@ -22,6 +22,9 @@
   "099af53f60": {
     "message": "delete"
   },
+  "0d93d9d73b": {
+    "message": "the name of this site"
+  },
   "0e002f7647": {
     "message": "powered by {br} {link}"
   },
@@ -39,6 +42,9 @@
   },
   "1116e9904e": {
     "message": "app password"
+  },
+  "122b298d33": {
+    "message": "a sentence about the site"
   },
   "123c42f9be": {
     "message": "section name"
@@ -67,6 +73,9 @@
   "2a304a1348": {
     "message": "link"
   },
+  "2bc27a5604": {
+    "message": "e.g. CC BY-SA 4.0"
+  },
   "2be8c52a32": {
     "message": "uploading…"
   },
@@ -87,6 +96,9 @@
   },
   "33e47965fd": {
     "message": "select image"
+  },
+  "3bba56ae8a": {
+    "message": "account menu"
   },
   "3d728e1b6e": {
     "message": "we've logged this error and we'll fix it soon."
@@ -111,6 +123,9 @@
   },
   "4937452da0": {
     "message": "sort by newest"
+  },
+  "4a931512ce": {
+    "message": "tools"
   },
   "4c4ad5fca2": {
     "message": "HTML"
@@ -178,6 +193,9 @@
   "66f6181bcb": {
     "message": "template"
   },
+  "67daf92c83": {
+    "message": "description"
+  },
   "690d8ebdfb": {
     "message": "i'm sorry, dave. i'm afraid i can't do that."
   },
@@ -189,6 +207,12 @@
   },
   "6b2ded51d8": {
     "message": "done"
+  },
+  "6b829701cd": {
+    "message": "avatar / favicon"
+  },
+  "718779752b": {
+    "message": "license"
   },
   "7253d1f504": {
     "message": "read all"
@@ -250,6 +274,9 @@
   "96c322088e": {
     "message": "This is a top-level section, so it stays where it is. Renaming it moves everything inside it along with it."
   },
+  "96d6f2e7e1": {
+    "message": "logo"
+  },
   "98088e4b13": {
     "message": "Something went wrong. 😦"
   },
@@ -286,6 +313,9 @@
   "aaca0f5eb4": {
     "message": "avatar"
   },
+  "afeb8d9d88": {
+    "message": "edit profile"
+  },
   "b004d4b8c6": {
     "message": "Error posting content."
   },
@@ -316,6 +346,9 @@
   "c84d77792c": {
     "message": "i18n: Long"
   },
+  "caa34bd688": {
+    "message": "data liberation — packing…"
+  },
   "cdcfbe51f7": {
     "message": "follow back"
   },
@@ -334,11 +367,20 @@
   "d46327daae": {
     "message": "{user}: favorited this post."
   },
+  "d50e0b89ed": {
+    "message": "https://…/logo.png"
+  },
   "d5d3db1765": {
     "message": "title"
   },
   "d8cdcdfafc": {
     "message": "That section is gone; pick another one."
+  },
+  "d8dc06ce84": {
+    "message": "https://…/favicon.png"
+  },
+  "d8e058e700": {
+    "message": "loading…"
   },
   "d8f4a19935": {
     "message": "not found"
@@ -367,6 +409,12 @@
   "eb035b35d9": {
     "message": "Hiding this hides everything inside it too."
   },
+  "ebeda660a8": {
+    "message": "site title"
+  },
+  "f09ac04a28": {
+    "message": "data liberation"
+  },
   "f121051461": {
     "message": "thumb"
   },
@@ -379,6 +427,9 @@
   "f31e88af11": {
     "message": "user options"
   },
+  "f484570d7c": {
+    "message": "theme"
+  },
   "f75698a9a6": {
     "message": "That name is reserved; it can't be used."
   },
@@ -390,5 +441,8 @@
   },
   "fcb08b164a": {
     "message": "prev"
+  },
+  "fded4289ab": {
+    "message": "your name"
   }
 }

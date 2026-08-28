@@ -9,7 +9,7 @@ import { S3_AWS_ACCESS_KEY, S3_AWS_REGION, S3_AWS_S3_BUCKET_NAME, S3_AWS_SECRET_
 
 export const uploadRoutes = new Hono<AppEnv>().get('/upload-file', async (c) => {
   const ctx = c.get('ctx');
-  await assertAuthor(ctx);
+  assertAuthor(ctx);
 
   const file = c.req.query('file') || '';
   const s3Client = new S3Client({

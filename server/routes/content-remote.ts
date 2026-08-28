@@ -10,7 +10,7 @@ const usernameName = z.object({ username: z.string().optional(), name: z.string(
 export const contentRemoteRoutes = new Hono<AppEnv>()
   .get('/all', async (c) => {
     const ctx = c.get('ctx');
-    await assertAdmin(ctx);
+    assertAdmin(ctx);
     return c.json(await cr.allContentRemote(ctx));
   })
   .get(
@@ -35,18 +35,18 @@ export const contentRemoteRoutes = new Hono<AppEnv>()
     ),
     async (c) => {
       const ctx = c.get('ctx');
-      await assertAuthor(ctx);
+      assertAuthor(ctx);
       return c.json(await cr.fetchContentRemotePaginated(ctx, c.req.valid('query')));
     }
   )
   .get('/counts', async (c) => {
     const ctx = c.get('ctx');
-    await assertAuthor(ctx);
+    assertAuthor(ctx);
     return c.json(await cr.fetchUserTotalCounts(ctx));
   })
   .get('/feed-counts', async (c) => {
     const ctx = c.get('ctx');
-    await assertAuthor(ctx);
+    assertAuthor(ctx);
     return c.json(await cr.fetchFeedCounts(ctx));
   })
   .get('/comments', zValidator('query', usernameName), async (c) =>
@@ -60,13 +60,13 @@ export const contentRemoteRoutes = new Hono<AppEnv>()
     zValidator('json', z.object({ fromUsername: z.string(), postId: z.string(), isRepost: z.boolean() })),
     async (c) => {
       const ctx = c.get('ctx');
-      await assertAuthor(ctx);
+      assertAuthor(ctx);
       return c.json(await cr.repostContentRemote(ctx, c.req.valid('json')));
     }
   )
   .get('/:id', zValidator('param', z.object({ id: z.coerce.number().int() })), async (c) => {
     const ctx = c.get('ctx');
-    await assertAdmin(ctx);
+    assertAdmin(ctx);
     return c.json(await cr.fetchContentRemote(ctx, c.req.valid('param').id));
   })
   .post(
@@ -86,7 +86,7 @@ export const contentRemoteRoutes = new Hono<AppEnv>()
     ),
     async (c) => {
       const ctx = c.get('ctx');
-      await assertAuthor(ctx);
+      assertAuthor(ctx);
       return c.json(await cr.favoriteContentRemote(ctx, c.req.valid('json')));
     }
   )
@@ -104,18 +104,18 @@ export const contentRemoteRoutes = new Hono<AppEnv>()
     ),
     async (c) => {
       const ctx = c.get('ctx');
-      await assertAuthor(ctx);
+      assertAuthor(ctx);
       return c.json(await cr.deleteContentRemote(ctx, c.req.valid('json')));
     }
   )
   .post('/mark-feed-read', zValidator('json', z.object({ fromUsername: z.string() })), async (c) => {
     const ctx = c.get('ctx');
-    await assertAuthor(ctx);
+    assertAuthor(ctx);
     return c.json(await cr.markAllContentInFeedAsRead(ctx, c.req.valid('json')));
   })
   .post('/mark-all-read', async (c) => {
     const ctx = c.get('ctx');
-    await assertAuthor(ctx);
+    assertAuthor(ctx);
     return c.json(await cr.markAllFeedsAsRead(ctx));
   })
   .post(
@@ -132,7 +132,7 @@ export const contentRemoteRoutes = new Hono<AppEnv>()
     ),
     async (c) => {
       const ctx = c.get('ctx');
-      await assertAuthor(ctx);
+      assertAuthor(ctx);
       return c.json(await cr.readContentRemoteBatch(ctx, c.req.valid('json')));
     }
   );

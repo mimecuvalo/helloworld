@@ -4,6 +4,7 @@ import { z } from 'zod';
 import type { AppEnv } from '../env';
 import { assertAdmin } from '../authorization';
 import * as userService from '../services/user';
+import { exportUserData } from '../services/export';
 
 export const userRoutes = new Hono<AppEnv>()
   .get('/current', (c) => c.json(userService.currentUser(c.get('ctx'))))
@@ -15,8 +16,37 @@ export const userRoutes = new Hono<AppEnv>()
   )
   .get('/all', async (c) => {
     const ctx = c.get('ctx');
-    await assertAdmin(ctx);
+    assertAdmin(ctx);
     return c.json(await userService.fetchAllUsers(ctx));
+  })
+
+  // Profile editing and data liberation. The service asserts authorship.
+  .get('/profile', (c) => c.json(userService.fetchProfile(c.get('ctx'))))
+  .post(
+    '/profile',
+    zValidator(
+      'json',
+      z.object({
+        name: z.string().min(1).max(200),
+        title: z.string().max(200),
+        description: z.string().max(2000).nullable().optional(),
+        favicon: z.string().max(2000).nullable().optional(),
+        logo: z.string().max(2000).nullable().optional(),
+        license: z.string().max(200).nullable().optional(),
+        theme: z.string().max(50),
+      })
+    ),
+    async (c) => c.json(await userService.updateProfile(c.get('ctx'), c.req.valid('json')))
+  )
+  .get('/export', async (c) => {
+    const { filename, bytes } = await exportUserData(c.get('ctx'));
+    const body = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
+    return c.body(body, 200, {
+      'Content-Type': 'application/zip',
+      'Content-Disposition': `attachment; filename="${filename}"`,
+      // Your own data, assembled per request: never anything a cache should keep.
+      'Cache-Control': 'no-store, private',
+    });
   })
 
   // Bluesky account linking. The service asserts authorship on each of these.
@@ -42,11 +72,11 @@ export const userRoutes = new Hono<AppEnv>()
   // would reject "atproto" with a 400 rather than falling through.
   .get('/:id', zValidator('param', z.object({ id: z.coerce.number().int() })), async (c) => {
     const ctx = c.get('ctx');
-    await assertAdmin(ctx);
+    assertAdmin(ctx);
     return c.json(await userService.fetchUser(ctx, c.req.valid('param').id));
   })
   .post('/', zValidator('json', z.object({ username: z.string(), email: z.string().email() })), async (c) => {
     const ctx = c.get('ctx');
-    await assertAdmin(ctx);
+    assertAdmin(ctx);
     return c.json(await userService.createUser(ctx, c.req.valid('json')));
   });
