@@ -2,7 +2,11 @@ import { Extension } from '@tiptap/core';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { Decoration, DecorationSet } from '@tiptap/pm/view';
 import type { Editor } from '@tiptap/react';
-import uploadFileToS3 from 'lib/s3-upload';
+import { uploadImageToS3, type UploadedImage } from 'lib/s3-upload';
+
+// What a post takes from an image added to it, when it hasn't got a thumbnail
+// of its own yet: the small size, and the placeholder that stands in for it.
+export type AddedMedia = { thumb: string; lqip: number | null };
 import styles from './editor.module.css';
 
 type PlaceholderAction = { add?: { id: number; pos: number; dataUrl: string }; remove?: number };
@@ -65,13 +69,15 @@ function placeholderPos(editor: Editor, id: number) {
 }
 
 // Uploads a file and drops the image it becomes into the editor, showing the
-// local copy in its place until the url comes back. Returns the url, or null if
-// the upload failed or the editor went away while it was running.
+// local copy in its place until the urls come back. What lands in the post is
+// the medium size, linked to the untouched original and carrying the
+// placeholder that stands in for it while it loads. Returns the three sizes, or
+// null if the upload failed or the editor went away while it was running.
 export async function uploadImageIntoEditor(
   editor: Editor,
   file: File,
   { section, album, pos }: { section: string; album: string; pos?: number }
-): Promise<string | null> {
+): Promise<UploadedImage | null> {
   const id = ++nextPlaceholderId;
   const dataUrl = await readDataUrl(file).catch(() => '');
   if (editor.isDestroyed) return null;
@@ -82,17 +88,30 @@ export async function uploadImageIntoEditor(
     editor.view.dispatch(editor.state.tr.setMeta(placeholderKey, { add: { id, pos: droppedAt, dataUrl } }));
   }
 
-  let url: string | null = null;
+  let image: UploadedImage | null = null;
   try {
-    url = await uploadFileToS3(file, file.name, section, album);
+    image = await uploadImageToS3(file, file.name, section, album);
   } catch {
-    url = null;
+    image = null;
   }
   if (editor.isDestroyed) return null;
 
   const tr = editor.state.tr.setMeta(placeholderKey, { remove: id });
-  if (url) tr.insert(clamp(placeholderPos(editor, id) ?? droppedAt), editor.schema.nodes.image.create({ src: url }));
+  if (image) {
+    tr.insert(
+      clamp(placeholderPos(editor, id) ?? droppedAt),
+      // Width and height only when they're known — an <img width="0"> is a
+      // hidden image, which is worse than one that reserves no space.
+      editor.schema.nodes.image.create({
+        src: image.medium,
+        original: image.original !== image.medium ? image.original : null,
+        lqip: image.lqip,
+        width: image.width || null,
+        height: image.height || null,
+      })
+    );
+  }
   editor.view.dispatch(tr);
 
-  return url;
+  return image;
 }

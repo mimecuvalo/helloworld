@@ -64,6 +64,7 @@ function toDraft(editable: EditableContent): Draft {
     album: editable.album,
     template: editable.template || '',
     thumb: editable.thumb || '',
+    lqip: editable.lqip ?? null,
     hidden: !!editable.hidden,
     view: editable.view || '',
     style: editable.style || '',
@@ -96,6 +97,7 @@ export default function ContentEditor({ content }: { content: EditableContentPro
       album: string;
       template: string;
       thumb: string;
+      lqip: number | null;
       style: string;
       code: string;
       view: string;
@@ -141,6 +143,7 @@ export default function ContentEditor({ content }: { content: EditableContentPro
           album: values.album,
           template: values.template,
           thumb: values.thumb,
+          lqip: values.lqip,
           style: values.style,
           code: values.code,
           view: values.view,

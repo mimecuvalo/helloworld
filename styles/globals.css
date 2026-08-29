@@ -1,4 +1,5 @@
 @import './theme.css';
+@import './lqip.css';
 
 :root {
   --hw-menu-hover: color-mix(in srgb, currentColor 14%, transparent);

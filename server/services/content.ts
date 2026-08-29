@@ -21,6 +21,7 @@ const ATTRIBUTES_NAVIGATION = {
   name: true,
   title: true,
   thumb: true,
+  lqip: true,
   hidden: true,
   template: true,
   style: true,
@@ -266,11 +267,14 @@ export async function fetchCollection(
     for (const content of collection) {
       albumConstraints['album'] = content.name;
       const albumFirstContent = await prisma.content.findFirst({
-        select: { thumb: true },
+        select: { thumb: true, lqip: true },
         where: albumConstraints,
         orderBy,
       });
-      if (albumFirstContent) content.thumb = albumFirstContent.thumb;
+      if (albumFirstContent) {
+        content.thumb = albumFirstContent.thumb;
+        content.lqip = albumFirstContent.lqip;
+      }
     }
 
     const topLevelItems = (await prisma.content.findMany({
@@ -485,6 +489,7 @@ export async function fetchEditableContent(ctx: Context, args: { name: string })
       title: true,
       template: true,
       thumb: true,
+      lqip: true,
       hidden: true,
       style: true,
       code: true,
@@ -506,6 +511,7 @@ export async function saveContent(
     album?: string;
     template?: string;
     thumb?: string;
+    lqip?: number | null;
     style?: string;
     code?: string;
     sensitive?: boolean;
@@ -596,6 +602,7 @@ export async function saveContent(
         view,
         ...(args.template === undefined ? {} : { template: args.template }),
         ...(args.thumb === undefined ? {} : { thumb: args.thumb }),
+        ...(args.lqip === undefined ? {} : { lqip: args.lqip }),
         ...(args.style === undefined ? {} : { style: args.style }),
         ...(args.code === undefined ? {} : { code: args.code }),
         ...(args.sensitive === undefined ? {} : { sensitive: args.sensitive }),
@@ -731,6 +738,7 @@ export async function postContent(
     title: string;
     hidden: boolean;
     thumb: string;
+    lqip?: number | null;
     style: string;
     code: string;
     view: string;
@@ -769,6 +777,7 @@ export async function postContent(
       name,
       title: args.title,
       thumb: args.thumb,
+      lqip: args.lqip ?? null,
       thread,
       threadUser,
       hidden: args.hidden,
@@ -798,6 +807,7 @@ export async function postContent(
     title: args.title,
     hidden: args.hidden,
     thumb: args.thumb,
+    lqip: args.lqip ?? null,
     style: args.style,
     code: args.code,
     view: args.view,

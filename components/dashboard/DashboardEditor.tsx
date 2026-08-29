@@ -5,6 +5,7 @@ import { rpc } from 'lib/rpc';
 import { useSiteMap } from 'lib/content-queries';
 import { useEditor } from 'lib/editor-context';
 import Editor from 'components/editor/Editor';
+import type { AddedMedia } from 'components/editor/image-upload';
 import usePageImageDrop from 'components/editor/usePageImageDrop';
 import TabbedEditor, { type Tab } from 'components/editor/TabbedEditor';
 import PlacementSelects from 'components/editor/PlacementSelects';
@@ -36,6 +37,7 @@ const EMPTY: Draft = {
   album: '',
   template: '',
   thumb: '',
+  lqip: null,
   hidden: false,
   view: '',
   style: '',
@@ -71,6 +73,7 @@ export default function DashboardEditor({ username }: { username: string }) {
       title: string;
       hidden: boolean;
       thumb: string;
+      lqip: number | null;
       template: string;
       style: string;
       code: string;
@@ -120,9 +123,11 @@ export default function DashboardEditor({ username }: { username: string }) {
   const handleViewChange = useCallback((value: string) => patch({ view: value }), [patch]);
   const handleStyleChange = useCallback((value: string) => patch({ style: value }), [patch]);
   const handleCodeChange = useCallback((value: string) => patch({ code: value }), [patch]);
-  // The first image dropped into a post becomes its thumbnail, unless one is set.
+  // The first image dropped into a post becomes its thumbnail, unless one is
+  // set — its placeholder along with it, so the two never drift apart.
   const handleMediaAdd = useCallback(
-    (url: string) => setDraft((current) => (current.thumb ? current : { ...current, thumb: url })),
+    (media: AddedMedia) =>
+      setDraft((current) => (current.thumb ? current : { ...current, thumb: media.thumb, lqip: media.lqip })),
     []
   );
   const handleImageError = useCallback(
@@ -152,6 +157,7 @@ export default function DashboardEditor({ username }: { username: string }) {
         title,
         hidden: draft.hidden,
         thumb: draft.thumb,
+        lqip: draft.lqip,
         template: draft.template,
         style: draft.style,
         code: draft.code,

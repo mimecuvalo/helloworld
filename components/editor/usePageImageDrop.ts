@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Editor } from '@tiptap/react';
-import { uploadImageIntoEditor } from './image-upload';
+import { uploadImageIntoEditor, type AddedMedia } from './image-upload';
 
 type DropOptions = {
   editor: Editor | null;
   section: string;
   album: string;
-  onMediaAdd?: (url: string) => void;
+  onMediaAdd?: (media: AddedMedia) => void;
   onError?: () => void;
 };
 
@@ -63,12 +63,12 @@ export default function usePageImageDrop({ editor, section, album, onMediaAdd, o
         if (editor.isDestroyed) return;
         // Dropped away from the editor there's no position to speak of, so the
         // image lands after everything written so far.
-        const url = await uploadImageIntoEditor(editor, file, {
+        const image = await uploadImageIntoEditor(editor, file, {
           section,
           album,
           pos: editor.state.doc.content.size,
         });
-        if (url) onMediaAdd?.(url);
+        if (image) onMediaAdd?.({ thumb: image.thumb, lqip: image.lqip });
         else onError?.();
       }
       if (images.length && !editor.isDestroyed) editor.commands.focus('end');

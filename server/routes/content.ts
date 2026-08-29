@@ -4,8 +4,13 @@ import { z } from 'zod';
 import type { AppEnv } from '../env';
 import { assertAdmin, assertAuthor } from '../authorization';
 import * as content from '../services/content';
+import { LQIP_MAX, LQIP_MIN } from '../../lib/lqip';
 
 const usernameName = z.object({ username: z.string().optional(), name: z.string().optional() });
+
+// The thumbnail's CSS-only placeholder — a 20-bit integer, offset so it stays
+// inside the range browsers keep exact. See lib/lqip.ts.
+const lqipSchema = z.number().int().min(LQIP_MIN).max(LQIP_MAX).nullable();
 
 export const contentRoutes = new Hono<AppEnv>()
   .get('/all', async (c) => {
@@ -67,6 +72,7 @@ export const contentRoutes = new Hono<AppEnv>()
         album: z.string().optional(),
         template: z.string().optional(),
         thumb: z.string().optional(),
+        lqip: lqipSchema.optional(),
         style: z.string().optional(),
         code: z.string().optional(),
       })
@@ -91,6 +97,7 @@ export const contentRoutes = new Hono<AppEnv>()
         title: z.string(),
         hidden: z.boolean(),
         thumb: z.string(),
+        lqip: lqipSchema.optional(),
         style: z.string(),
         code: z.string(),
         view: z.string(),

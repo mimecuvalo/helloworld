@@ -13,8 +13,8 @@
     "url": "https://github.com/mimecuvalo/helloworld/issues"
   },
   "scripts": {
-    "dev": "vite dev",
-    "dev:local": "DATABASE_URL=postgresql://mime@localhost:5432/helloworld_dev DEV_LOGIN_EMAIL=mimecuvalo@gmail.com vite dev",
+    "dev": "bun --bun vite dev",
+    "dev:local": "DATABASE_URL=postgresql://mime@localhost:5432/helloworld_dev DEV_LOGIN_EMAIL=mimecuvalo@gmail.com bun --bun vite dev",
     "db:local:push": "DATABASE_URL=postgresql://mime@localhost:5432/helloworld_dev prisma db push --url postgresql://mime@localhost:5432/helloworld_dev",
     "db:bootstrap": "prisma generate && bun scripts/bootstrap.ts",
     "build": "prisma generate && vite build",
@@ -30,6 +30,7 @@
     "encrypt-secrets": "bun scripts/encrypt-secrets.ts",
     "rotate-keys": "bun scripts/rotate-keys.ts",
     "rotate-keys:local": "DATABASE_URL=postgresql://mime@localhost:5432/helloworld_dev bun scripts/rotate-keys.ts",
+    "backfill-images": "bun --env-file=.env.production.local scripts/backfill-images.ts",
     "prepare": "husky",
     "prisma:generate": "prisma generate",
     "test": "vitest",

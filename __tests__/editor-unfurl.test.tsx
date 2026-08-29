@@ -4,6 +4,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Hono } from 'hono';
 import Editor from 'components/editor/Editor';
+import type { AddedMedia } from 'components/editor/image-upload';
 import { unfurlRoutes } from 'server/routes/unfurl';
 import { createLiteYouTubeVideos } from 'util/media';
 import type { AppEnv } from 'server/env';
@@ -36,8 +37,8 @@ const thumbs: string[] = [];
 function Harness({ content = '' }: { content?: string }) {
   const [value, setValue] = useState(content);
   const handleChange = useCallback((_name: string, next: string) => setValue(next), []);
-  const handleMediaAdd = useCallback((url: string) => {
-    thumbs.push(url);
+  const handleMediaAdd = useCallback((media: AddedMedia) => {
+    thumbs.push(media.thumb);
   }, []);
 
   return (

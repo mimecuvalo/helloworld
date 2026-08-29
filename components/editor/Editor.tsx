@@ -7,7 +7,7 @@ import type { EditorView } from '@tiptap/pm/view';
 import { useEditor } from 'lib/editor-context';
 import Iframe from './IframeExtension';
 import Image from './ImageExtension';
-import { ImageUploadPlaceholder, uploadImageIntoEditor } from './image-upload';
+import { ImageUploadPlaceholder, uploadImageIntoEditor, type AddedMedia } from './image-upload';
 import { insertUnfurlInfo, isUnfurlable, unfurl } from './unfurl';
 import { emojiSuggestion, unicodeEmojis } from './EmojiSuggestion';
 import EditorToolbar from './Toolbar';
@@ -20,7 +20,7 @@ type EditorProps = {
   album: string;
   onBlur?: () => void;
   onChange: (name: string, value: string) => void;
-  onMediaAdd?: (url: string) => void;
+  onMediaAdd?: (media: AddedMedia) => void;
   placeholder?: string;
 };
 
@@ -51,8 +51,8 @@ export default function Editor({
     const editor = editorRef.current;
     if (!editor || editor.isDestroyed) return;
     const { section, album, onMediaAdd } = uploadOptions.current;
-    uploadImageIntoEditor(editor, file, { section, album, pos }).then((url) => {
-      if (url) onMediaAdd?.(url);
+    uploadImageIntoEditor(editor, file, { section, album, pos }).then((image) => {
+      if (image) onMediaAdd?.({ thumb: image.thumb, lqip: image.lqip });
       else setToastMsg('Failed to upload image.');
     });
   }, []);
@@ -69,7 +69,8 @@ export default function Editor({
       if (!editor || editor.isDestroyed) return;
       insertUnfurlInfo(editor, info, text);
       if (info.isError) setToastMsg('Failed to unfurl that link.');
-      else if (info.image) onMediaAdd?.(info.image);
+      // An unfurled image is somebody else's url: no sizes of ours, so no placeholder.
+      else if (info.image) onMediaAdd?.({ thumb: info.image, lqip: null });
     },
     [onMediaAdd]
   );

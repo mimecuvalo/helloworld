@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { useEditor as useTipTapEditor, EditorContent } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
 import Editor from 'components/editor/Editor';
+import type { AddedMedia } from 'components/editor/image-upload';
 import EditorToolbar from 'components/editor/Toolbar';
 import Image from 'components/editor/ImageExtension';
 import usePageImageDrop from 'components/editor/usePageImageDrop';
@@ -38,6 +39,16 @@ function imageFile() {
   return new File(['not-really-a-png'], 'photo.png', { type: 'image/png' });
 }
 
+// The three sizes the server derives from an upload, as the editor sees them.
+const DERIVED = {
+  original: 'https://s3.amazonaws.com/b/main/original/photo.png',
+  medium: 'https://s3.amazonaws.com/b/main/photo.png',
+  thumb: 'https://s3.amazonaws.com/b/main/thumbs/photo.png',
+  lqip: -123456,
+  width: 800,
+  height: 600,
+};
+
 // Holds the upload open until the test lets it finish, so the placeholder can be
 // looked at while it's still standing in for the image.
 function stubUpload({ fails = false } = {}) {
@@ -46,18 +57,16 @@ function stubUpload({ fails = false } = {}) {
     finish = resolve;
   });
 
+  const json = (body: unknown) =>
+    new Response(JSON.stringify(body), { status: 200, headers: { 'Content-Type': 'application/json' } });
+
   vi.stubGlobal(
     'fetch',
     vi.fn(async (input: RequestInfo | URL) => {
       if (String(input).startsWith('/api/upload-file')) {
-        return new Response(
-          JSON.stringify({ url: 'https://s3.example/upload', fields: { bucket: 'b', key: 'photo.png' } }),
-          {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' },
-          }
-        );
+        return json({ url: 'https://s3.example/upload', fields: { bucket: 'b', key: 'main/original/photo.png' } });
       }
+      if (String(input).startsWith('/api/derive-image')) return json(DERIVED);
       await uploaded;
       if (fails) throw new Error('upload failed');
       return new Response('', { status: 200 });
@@ -92,8 +101,8 @@ function Harness({ content = '' }: { content?: string }) {
     changes.push(next);
     setValue(next);
   }, []);
-  const handleMediaAdd = useCallback((url: string) => {
-    thumbs.push(url);
+  const handleMediaAdd = useCallback((media: AddedMedia) => {
+    thumbs.push(media.thumb);
   }, []);
 
   return (
@@ -126,9 +135,15 @@ describe('uploading an image into the editor', () => {
     finish();
 
     await waitFor(() => expect(savedHtml()).toContain('<img'));
-    expect(savedHtml()).toContain('src="https://s3.amazonaws.com/b/photo.png"');
+    // The medium size is what the post shows, linked to the untouched original
+    // and carrying the placeholder that stands in for it while it loads.
+    expect(savedHtml()).toContain(`<a href="${DERIVED.original}">`);
+    expect(savedHtml()).toContain(`src="${DERIVED.medium}"`);
+    expect(savedHtml()).toContain('--lqip: -123456');
+    expect(savedHtml()).toContain('width="800" height="600"');
     expect(placeholder()).toBeNull();
-    expect(thumbs).toContain('https://s3.amazonaws.com/b/photo.png');
+    // The post takes its thumbnail from the small size, not the one on show.
+    expect(thumbs).toContain(DERIVED.thumb);
     // The placeholder lives in a decoration, not in the document: a post made
     // mid-upload can't carry the whole file with it.
     expect(changes.some((value) => value.includes('data:'))).toBe(false);
@@ -191,7 +206,7 @@ describe('the image toolbar', () => {
     await user.click(screen.getByRole('button', { name: 'apply caption' }));
 
     await waitFor(() => expect(savedHtml()).toContain('<figcaption>a cat, mid-nap</figcaption>'));
-    expect(savedHtml()).toContain('<figure><img src="https://img.example/cat.png">');
+    expect(savedHtml()).toContain('<figure><img src="https://img.example/cat.png" loading="lazy">');
   });
 
   it('reads a caption back off a figure, and drops it again when emptied', async () => {
@@ -212,6 +227,31 @@ describe('the image toolbar', () => {
 
     await waitFor(() => expect(savedHtml()).not.toContain('<figure>'));
     expect(savedHtml()).toContain('src="https://img.example/cat.png"');
+  });
+
+  it('round-trips an image that knows its original and its placeholder', async () => {
+    const html =
+      '<figure><a href="https://img.example/original/cat.png">' +
+      '<img src="https://img.example/cat.png" width="800" height="600" loading="lazy" style="--lqip:-123456">' +
+      '</a><figcaption>a cat</figcaption></figure>';
+    render(<ToolbarHarness content={html} />);
+
+    await waitFor(() => expect(savedHtml()).toContain('<figcaption>a cat</figcaption>'));
+    expect(savedHtml()).toContain('<a href="https://img.example/original/cat.png">');
+    expect(savedHtml()).toContain('src="https://img.example/cat.png"');
+    expect(savedHtml()).toContain('width="800" height="600"');
+    expect(savedHtml()).toContain('--lqip: -123456');
+  });
+
+  it('leaves a link alone when the image is not all it holds', async () => {
+    render(
+      <ToolbarHarness content='<p><a href="https://elsewhere/"><img src="https://img.example/icon.png">home</a></p>' />
+    );
+
+    await waitFor(() => expect(savedHtml()).toContain('<img'));
+    // The label survives, and the image stays inside the link rather than
+    // becoming a block of its own that swallowed it.
+    expect(savedHtml()).toContain('home</a>');
   });
 
   it('deletes the selected image', async () => {

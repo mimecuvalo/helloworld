@@ -34,10 +34,6 @@ const constants = {
     },
   },
   reservedNames: ['admin', 'api', 'dashboard', 'graphql', 'public', 'search'],
-  thumbWidth: 480,
-  thumbHeight: 360,
-  normalWidth: 1280,
-  normalHeight: 960,
 };
 
 export default constants;
@@ -51,3 +47,20 @@ export const CONTENT_TEMPLATES = ['', 'album', 'archive', 'blank', 'feed', 'late
 
 export const THUMB_WIDTH = 154;
 export const THUMB_HEIGHT = 154;
+
+// An uploaded image is kept three ways, in the layout the bucket has always
+// used: the untouched file under `original/`, a grid thumbnail under `thumbs/`,
+// and the one the post itself points at — the "medium" — sitting at the album
+// root between them.
+export const ORIGINAL_DIR = 'original';
+export const THUMBS_DIR = 'thumbs';
+
+// Both bound a box the image is fitted inside, so aspect ratio is kept.
+// The thumbnail is displayed at THUMB_WIDTH, with room to spare for the
+// densest screens. The medium is what a post shows: the old one topped out at
+// 1280 and looked soft on anything retina, so it's ~2x that now.
+export const THUMB_SIZE = 512;
+export const MEDIUM_SIZE = 2560;
+
+// Re-encoding quality for both derivatives. Originals are never touched.
+export const IMAGE_QUALITY = 82;

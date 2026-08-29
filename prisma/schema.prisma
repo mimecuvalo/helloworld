@@ -110,6 +110,10 @@ model Content {
   hidden          Boolean   @default(false)
   title           String
   thumb           String
+  // The thumbnail's CSS-only placeholder: one 20-bit integer the stylesheet
+  // unpacks into a blurred stand-in while the real thumb loads. Null for rows
+  // whose thumb predates this, or points somewhere we can't read.
+  lqip            Int?
   order           Int       @default(0)
   count           Int       @default(0)
   countRobot      Int       @default(0)

@@ -1,12 +1,15 @@
-import { type MouseEvent, useEffect, useRef, useState } from 'react';
+import { type MouseEvent, useRef } from 'react';
 import { defineMessages, useIntl } from 'i18n';
+import { lqipStyle } from 'lib/lqip';
 import { contentUrl, thumbUrl } from 'lib/url-factory';
 import { useGestures } from 'lib/use-gestures';
+import { THUMB_HEIGHT, THUMB_WIDTH } from 'util/constants';
 import styles from './content.module.css';
 
 type ThumbItem = {
   title?: string | null;
   thumb: string;
+  lqip?: number | null;
   forceRefresh?: boolean | null;
   hidden?: boolean | null;
   username: string;
@@ -30,14 +33,7 @@ export default function ContentThumb({
   onOpen: () => void;
 }) {
   const intl = useIntl();
-  const [isLoaded, setIsLoaded] = useState(false);
-  const imgRef = useRef<HTMLImageElement>(null);
   const linkRef = useRef<HTMLAnchorElement>(null);
-  // Cached images can finish loading before onLoad attaches — catch that so the
-  // thumb doesn't stay stuck at opacity 0.
-  useEffect(() => {
-    if (imgRef.current?.complete) setIsLoaded(true);
-  }, []);
 
   const forceRefresh = item.forceRefresh || currentContent?.forceRefresh;
   const thumbAlt = intl.formatMessage(messages.thumbnail);
@@ -67,14 +63,17 @@ export default function ContentThumb({
       target={forceRefresh ? '_self' : undefined}
       onClick={handleClick}
     >
+      {/* No fade-in: the placeholder underneath is what the thumb fades up
+          from, and fading the <img> would take its own background with it.
+          The dimensions are the box that placeholder is painted in. */}
       <img
-        ref={imgRef}
         className={styles.thumb}
         loading="lazy"
         src={thumbUrl(item.thumb)}
         alt={thumbAlt}
-        onLoad={() => setIsLoaded(true)}
-        style={{ opacity: isLoaded ? 1 : 0 }}
+        width={THUMB_WIDTH}
+        height={THUMB_HEIGHT}
+        style={lqipStyle(item.lqip)}
       />
     </a>
   );

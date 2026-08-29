@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { F, defineMessages, useIntl } from 'i18n';
-import uploadFileToS3 from 'lib/s3-upload';
+import { lqipStyle } from 'lib/lqip';
+import { uploadImageToS3 } from 'lib/s3-upload';
 import { thumbUrl } from 'lib/url-factory';
 import { CONTENT_TEMPLATES } from 'util/constants';
 import styles from '../editor/editor.module.css';
@@ -12,6 +13,7 @@ export type ContentOptions = {
   album: string;
   template: string;
   thumb: string;
+  lqip: number | null;
   hidden: boolean;
 };
 
@@ -43,11 +45,14 @@ export default function EditorOptions({
   // Deleting a page is one click away from unrecoverable, so make it two.
   const [confirmDelete, setConfirmDelete] = useState(false);
 
+  // A thumbnail picked here goes through the same three-sizes-and-a-placeholder
+  // path an image dropped into a post does; the small one is what gets kept.
   const handleThumbUpload = async (file: File | undefined) => {
     if (!file) return;
     setIsUploading(true);
     try {
-      onChange({ thumb: await uploadFileToS3(file, file.name, values.section, values.album) });
+      const image = await uploadImageToS3(file, file.name, values.section, values.album);
+      onChange({ thumb: image.thumb, lqip: image.lqip });
     } finally {
       setIsUploading(false);
     }
@@ -118,7 +123,7 @@ export default function EditorOptions({
           className={`${styles.optionInput} notranslate`}
           placeholder={intl.formatMessage(messages.thumb)}
           value={values.thumb}
-          onChange={(evt) => onChange({ thumb: evt.target.value })}
+          onChange={(evt) => onChange({ thumb: evt.target.value, lqip: null })}
         />
         <button type="button" className="btn" disabled={isUploading} onClick={() => fileRef.current?.click()}>
           {isUploading ? <F defaultMessage="uploading…" /> : <F defaultMessage="select image" />}
@@ -131,7 +136,9 @@ export default function EditorOptions({
           onChange={(evt) => handleThumbUpload(evt.target.files?.[0])}
         />
       </div>
-      {values.thumb ? <img className={styles.optionThumb} src={thumbUrl(values.thumb)} alt="" /> : null}
+      {values.thumb ? (
+        <img className={styles.optionThumb} src={thumbUrl(values.thumb)} alt="" style={lqipStyle(values.lqip)} />
+      ) : null}
 
       <label className={styles.optionRow}>
         <span className={styles.optionLabel}>

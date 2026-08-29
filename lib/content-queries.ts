@@ -12,6 +12,7 @@ export type CollectionItem = {
   name: string;
   title?: string | null;
   thumb: string;
+  lqip?: number | null;
   hidden?: boolean | null;
   forceRefresh?: boolean | null;
   prefetchImages?: string[] | null;
@@ -43,6 +44,7 @@ export type EditableContent = {
   title: string;
   template: string | null;
   thumb: string;
+  lqip: number | null;
   hidden: boolean;
   style: string;
   code: string;
