@@ -765,6 +765,12 @@
       "value": "follow back"
     }
   ],
+  "cef2bb5290": [
+    {
+      "type": 0,
+      "value": "Drop an image to add it to your post."
+    }
+  ],
   "cf414653e9": [
     {
       "type": 0,
@@ -787,6 +793,12 @@
     {
       "type": 0,
       "value": "see no evil, hear no evil, speak no evil monkeys"
+    }
+  ],
+  "d416c937ce": [
+    {
+      "type": 0,
+      "value": "Failed to upload image."
     }
   ],
   "d46327daae": [

@@ -11,6 +11,7 @@ import {
   Link1Icon,
   ListBulletIcon,
   StrikethroughIcon,
+  TextIcon,
   TrashIcon,
 } from '@radix-ui/react-icons';
 import styles from './editor.module.css';
@@ -40,7 +41,10 @@ export default function EditorToolbar({
 }) {
   const [isEditingLink, setIsEditingLink] = useState(false);
   const [linkUrl, setLinkUrl] = useState('');
+  const [isEditingCaption, setIsEditingCaption] = useState(false);
+  const [caption, setCaption] = useState('');
   const linkInputRef = useRef<HTMLInputElement>(null);
+  const captionInputRef = useRef<HTMLInputElement>(null);
   // Named so the blur handler below can tell the menu to hide itself.
   const [bubbleMenuKey] = useState(() => new PluginKey('editorToolbar'));
 
@@ -62,6 +66,8 @@ export default function EditorToolbar({
         href: (editor.getAttributes('link').href as string | undefined) || '',
         hasSelection: !editor.state.selection.empty,
         supportsLinks: !!editor.schema.marks.link,
+        isImage: !!editor.schema.nodes.image && editor.isActive('image'),
+        hasCaption: !!(editor.getAttributes('image').caption as string | undefined),
       };
     },
   });
@@ -69,10 +75,13 @@ export default function EditorToolbar({
   // Moving the caret means the link under it (if any) changed: start over.
   useEffect(() => {
     if (!editor) return;
-    const closeLinkEditor = () => setIsEditingLink(false);
-    editor.on('selectionUpdate', closeLinkEditor);
+    const closeEditors = () => {
+      setIsEditingLink(false);
+      setIsEditingCaption(false);
+    };
+    editor.on('selectionUpdate', closeEditors);
     return () => {
-      editor.off('selectionUpdate', closeLinkEditor);
+      editor.off('selectionUpdate', closeEditors);
     };
   }, [editor]);
 
@@ -83,6 +92,12 @@ export default function EditorToolbar({
     linkInputRef.current?.focus();
     linkInputRef.current?.select();
   }, [isEditingLink]);
+
+  useLayoutEffect(() => {
+    if (!isEditingCaption) return;
+    captionInputRef.current?.focus();
+    captionInputRef.current?.select();
+  }, [isEditingCaption]);
 
   if (!editor || !state) return null;
 
@@ -122,6 +137,36 @@ export default function EditorToolbar({
     }
   };
 
+  const openCaptionEditor = () => {
+    setCaption((editor.getAttributes('image').caption as string | undefined) || '');
+    setIsEditingCaption(true);
+  };
+
+  const applyCaption = () => {
+    editor
+      .chain()
+      .focus()
+      .updateAttributes('image', { caption: caption.trim() || null })
+      .run();
+    setIsEditingCaption(false);
+  };
+
+  const deleteImage = () => {
+    editor.chain().focus().deleteSelection().run();
+    setIsEditingCaption(false);
+  };
+
+  const handleCaptionKeyDown = (evt: KeyboardEvent<HTMLInputElement>) => {
+    if (evt.key === 'Enter') {
+      evt.preventDefault();
+      applyCaption();
+    } else if (evt.key === 'Escape') {
+      evt.preventDefault();
+      setIsEditingCaption(false);
+      editor.commands.focus();
+    }
+  };
+
   const handleMenuBlur = (evt: FocusEvent<HTMLDivElement>) => {
     const menu = evt.currentTarget;
     // Swapping the toolbar out for the link editor unmounts the button that was
@@ -130,6 +175,7 @@ export default function EditorToolbar({
     setTimeout(() => {
       if (editor.isDestroyed || menu.contains(document.activeElement)) return;
       setIsEditingLink(false);
+      setIsEditingCaption(false);
       // The editor's own blur was swallowed when focus first moved into the
       // menu, so nothing else is going to dismiss it. Ask it directly: a bare
       // transaction won't do, since the plugin skips updates that change
@@ -161,14 +207,41 @@ export default function EditorToolbar({
         return !!state.doc.textBetween(from, to).length || !(selection instanceof TextSelection);
       }}
     >
-      {isEditingLink ? (
+      {state.isImage ? (
+        isEditingCaption ? (
+          <>
+            <input
+              ref={captionInputRef}
+              type="text"
+              aria-label="image caption"
+              placeholder="caption"
+              className={styles.menuInput}
+              value={caption}
+              onChange={(evt) => setCaption(evt.target.value)}
+              onKeyDown={handleCaptionKeyDown}
+            />
+            <button type="button" aria-label="apply caption" onClick={applyCaption}>
+              <CheckIcon width={18} height={18} aria-hidden="true" />
+            </button>
+          </>
+        ) : (
+          <>
+            <button type="button" aria-label="caption" onClick={openCaptionEditor} className={btn(state.hasCaption)}>
+              <TextIcon width={18} height={18} aria-hidden="true" />
+            </button>
+            <button type="button" aria-label="delete image" onClick={deleteImage}>
+              <TrashIcon width={18} height={18} aria-hidden="true" />
+            </button>
+          </>
+        )
+      ) : isEditingLink ? (
         <>
           <input
             ref={linkInputRef}
             type="url"
             aria-label="link url"
             placeholder="example.com"
-            className={styles.linkInput}
+            className={styles.menuInput}
             value={linkUrl}
             onChange={(evt) => setLinkUrl(evt.target.value)}
             onKeyDown={handleLinkKeyDown}

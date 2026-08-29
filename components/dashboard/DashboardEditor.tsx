@@ -5,6 +5,7 @@ import { rpc } from 'lib/rpc';
 import { useSiteMap } from 'lib/content-queries';
 import { useEditor } from 'lib/editor-context';
 import Editor from 'components/editor/Editor';
+import usePageImageDrop from 'components/editor/usePageImageDrop';
 import TabbedEditor, { type Tab } from 'components/editor/TabbedEditor';
 import PlacementSelects from 'components/editor/PlacementSelects';
 import EditorOptions, { type ContentOptions } from 'components/content/EditorOptions';
@@ -16,6 +17,8 @@ const messages = defineMessages({
   posted: { defaultMessage: 'Success!' },
   error: { defaultMessage: 'Error posting content.' },
   duplicateName: { defaultMessage: 'Something else already has that name.' },
+  imageError: { defaultMessage: 'Failed to upload image.' },
+  dropHint: { defaultMessage: 'Drop an image to add it to your post.' },
   reservedName: { defaultMessage: "That name is reserved; it can't be used." },
 });
 
@@ -122,6 +125,20 @@ export default function DashboardEditor({ username }: { username: string }) {
     (url: string) => setDraft((current) => (current.thumb ? current : { ...current, thumb: url })),
     []
   );
+  const handleImageError = useCallback(
+    () => setToast({ msg: intl.formatMessage(messages.imageError), ok: false }),
+    [intl]
+  );
+
+  // An image dropped anywhere on the dashboard belongs to the post being
+  // written, not to the browser's idea of opening the file.
+  const isDraggingImage = usePageImageDrop({
+    editor,
+    section: draft.section,
+    album: draft.album,
+    onMediaAdd: handleMediaAdd,
+    onError: handleImageError,
+  });
 
   const handlePost = async () => {
     const title = draft.titleTouched ? draft.title : deriveTitle(draft.view);
@@ -198,6 +215,11 @@ export default function DashboardEditor({ username }: { username: string }) {
         }
         options={<EditorOptions isSection={false} isAlbum={false} values={draft} onChange={handleOptionsChange} />}
       />
+      {isDraggingImage ? (
+        <div className={styles.dropOverlay} aria-hidden="true">
+          <div className={styles.dropHint}>{intl.formatMessage(messages.dropHint)}</div>
+        </div>
+      ) : null}
       {toast ? (
         <div
           className={`${editorStyles.toast} ${toast.ok ? editorStyles.toastSuccess : editorStyles.toastError} notranslate`}

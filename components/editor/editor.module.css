@@ -24,6 +24,22 @@
   height: auto;
 }
 
+/* Captions ride along with the image as a <figure>; the editor shouldn't add
+   margins the published page doesn't have. How a caption looks — laid over the
+   foot of the image — is defined once, in content-theme.css, so what's being
+   written matches what gets published. */
+.editor :global(figure) {
+  margin: 0;
+}
+
+/* An image mid-upload: the local file, dimmed, standing where the real one will
+   land once S3 hands back a url. */
+.uploadingImage {
+  max-width: 100%;
+  height: auto;
+  opacity: 0.5;
+}
+
 .editor :global(iframe) {
   width: fit-content;
   max-height: 33vh;
@@ -62,8 +78,9 @@
   background-color: var(--hw-primary-light, var(--color-primary-light));
 }
 
-/* Link editor row. */
-.linkInput {
+/* The text row the menu swaps in for its buttons: a link's url, an image's
+   caption. */
+.menuInput {
   min-width: 0;
   width: 20ch;
   padding: 4px 8px;

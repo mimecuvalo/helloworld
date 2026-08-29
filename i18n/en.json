@@ -370,6 +370,9 @@
   "cdcfbe51f7": {
     "message": "follow back"
   },
+  "cef2bb5290": {
+    "message": "Drop an image to add it to your post."
+  },
   "cf414653e9": {
     "message": "Could not create that."
   },
@@ -381,6 +384,9 @@
   },
   "d40cbcb573": {
     "message": "see no evil, hear no evil, speak no evil monkeys"
+  },
+  "d416c937ce": {
+    "message": "Failed to upload image."
   },
   "d46327daae": {
     "message": "{user}: favorited this post."

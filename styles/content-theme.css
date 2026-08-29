@@ -76,3 +76,26 @@
 .hw-content-theme figure img:hover {
   outline: 3px solid var(--hw-primary);
 }
+
+/* A caption sits over the foot of the picture it belongs to, so the figure has
+   to shrink-wrap the image — otherwise the backdrop runs past where the picture
+   stops. Only captioned figures are touched; the rest keep whatever layout the
+   theme or the feed markup gave them. */
+.hw-content-theme figure:has(figcaption) {
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.hw-content-theme figure figcaption {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 4px 8px;
+  background-color: rgb(0 0 0 / 55%);
+  color: #fff;
+  font-size: 0.875rem;
+  text-align: center;
+  text-wrap-style: balance;
+}

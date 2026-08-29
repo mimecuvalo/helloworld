@@ -333,6 +333,28 @@
   margin-right: 8px;
 }
 
+/* Shown while a file is dragged over the page, since the editor it will land in
+   may be scrolled out of view. */
+.dropOverlay {
+  position: fixed;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inset: 0;
+  padding: 16px;
+  background-color: rgb(0 0 0 / 40%);
+  pointer-events: none;
+}
+
+.dropHint {
+  padding: 16px 24px;
+  border: 2px dashed var(--hw-primary, var(--color-primary));
+  background-color: var(--hw-bg, var(--background));
+  color: inherit;
+  text-align: center;
+}
+
 .itemView {
   flex: 1;
   padding: 8px;

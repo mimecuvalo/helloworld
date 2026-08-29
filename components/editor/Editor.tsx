@@ -1,13 +1,13 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useEditor as useTipTapEditor, EditorContent, type Editor as TipTapEditor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
-import { Image } from '@tiptap/extension-image';
 import { Placeholder } from '@tiptap/extensions';
 import { Emoji } from '@tiptap/extension-emoji';
 import type { EditorView } from '@tiptap/pm/view';
-import uploadFileToS3 from 'lib/s3-upload';
 import { useEditor } from 'lib/editor-context';
 import Iframe from './IframeExtension';
+import Image from './ImageExtension';
+import { ImageUploadPlaceholder, uploadImageIntoEditor } from './image-upload';
 import { insertUnfurlInfo, isUnfurlable, unfurl } from './unfurl';
 import { emojiSuggestion, unicodeEmojis } from './EmojiSuggestion';
 import EditorToolbar from './Toolbar';
@@ -41,18 +41,21 @@ export default function Editor({
   const hasFocused = useRef(false);
   const [toastMsg, setToastMsg] = useState('');
 
-  const handleUploadImage = useCallback(
-    async (file: File) => {
-      try {
-        const url = await uploadFileToS3(file, file.name, section, album);
-        onMediaAdd?.(url);
-        return url;
-      } catch {
-        setToastMsg('Failed to upload image.');
-      }
-    },
-    [section, album, onMediaAdd]
-  );
+  // Read back through a ref rather than closed over: the editor is rebuilt
+  // whenever its config changes, and an upload in flight when that happens would
+  // land its image in an editor that no longer exists.
+  const uploadOptions = useRef({ section, album, onMediaAdd });
+  uploadOptions.current = { section, album, onMediaAdd };
+
+  const handleImageFile = useCallback((file: File, pos?: number) => {
+    const editor = editorRef.current;
+    if (!editor || editor.isDestroyed) return;
+    const { section, album, onMediaAdd } = uploadOptions.current;
+    uploadImageIntoEditor(editor, file, { section, album, pos }).then((url) => {
+      if (url) onMediaAdd?.(url);
+      else setToastMsg('Failed to upload image.');
+    });
+  }, []);
 
   // Pasting a url (or embed code) on its own unfurls it into an embed; pasting
   // one over a selection is left to the Link extension, which turns the
@@ -92,6 +95,7 @@ export default function Editor({
         // not navigate away from the page being edited.
         StarterKit.configure({ link: { openOnClick: false, defaultProtocol: 'https' } }),
         Image.configure({ HTMLAttributes: { class: 'editor-image' } }),
+        ImageUploadPlaceholder,
         Placeholder.configure({ placeholder }),
         // `:` opens the picker. The emoji set is ~500kb of JSON, which only
         // lands in this chunk because ContentEditor is lazy-loaded.
@@ -110,12 +114,7 @@ export default function Editor({
           if (imageItem) {
             const file = imageItem.getAsFile();
             if (file instanceof File) {
-              handleUploadImage(file).then((url) => {
-                const { schema } = view.state;
-                const node = schema.nodes.image.create({ src: url });
-                const transaction = view.state.tr.insert(view.state.selection.anchor, node);
-                return view.dispatch(transaction);
-              });
+              handleImageFile(file, view.state.selection.anchor);
               return true;
             }
           }
@@ -130,14 +129,8 @@ export default function Editor({
           const files = Array.from(event.dataTransfer?.files || []);
           const imageFile = files.find((file) => file.type.indexOf('image') === 0);
           if (imageFile instanceof File) {
-            handleUploadImage(imageFile).then((url) => {
-              const { schema } = view.state;
-              const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY });
-              if (!coordinates) return;
-              const node = schema.nodes.image.create({ src: url });
-              const transaction = view.state.tr.insert(coordinates.pos, node);
-              return view.dispatch(transaction);
-            });
+            const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY });
+            handleImageFile(imageFile, coordinates?.pos);
             return true;
           }
           return false;
@@ -145,7 +138,7 @@ export default function Editor({
       },
       immediatelyRender: false,
     },
-    [placeholder, handleChange, handleFocus, handleBlur, handleUploadImage, handleUnfurl]
+    [placeholder, handleChange, handleFocus, handleBlur, handleImageFile, handleUnfurl]
   );
 
   editorRef.current = editor;
