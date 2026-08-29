@@ -39,7 +39,10 @@ export async function exportUserData(ctx: Context): Promise<ExportArchive> {
   assertAuthor(ctx);
 
   const { prisma } = ctx;
-  const user = ctx.currentUser!;
+  // The whole row, not the trimmed copy on the context: an export that quietly
+  // dropped half your profile because the request path didn't happen to need it
+  // wouldn't be data liberation.
+  const user = stripSecrets((await ctx.fullUser())!);
   const username = user.username;
   const exportedAt = new Date();
 
@@ -69,7 +72,7 @@ export async function exportUserData(ctx: Context): Promise<ExportArchive> {
   const entries: ZipEntry[] = [
     { name: 'README.md', data: readme(username, exportedAt) },
     { name: 'manifest.json', data: `${JSON.stringify(manifest, null, 2)}\n` },
-    { name: 'user.json', data: `${JSON.stringify(stripSecrets(user), null, 2)}\n` },
+    { name: 'user.json', data: `${JSON.stringify(user, null, 2)}\n` },
     { name: 'content.json', data: content },
     { name: 'user-remote.json', data: userRemote },
     { name: 'content-remote.json', data: contentRemote },

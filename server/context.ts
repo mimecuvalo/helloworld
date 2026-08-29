@@ -4,17 +4,19 @@ import { getSession } from './auth';
 import prisma from './prisma';
 import createLoaders, { type Loaders } from './loaders';
 import { DEV_LOGIN_EMAIL } from './config';
-import { OMIT_USER_SECRETS, type SafeUser } from './user-secrets';
+import { CURRENT_USER_SELECT, type CurrentUser } from './user-secrets';
 
 // Request-scoped context shared by services. Ported from data/context.ts.
 export type Context = {
   currentUsername: string;
   currentUserEmail: string;
   currentUserPicture: string;
-  // Without the signing keys and Bluesky credentials — see user-secrets.ts.
-  currentUser: SafeUser | null;
-  // The whole row, keys included, for the few paths that sign with them. Reads
-  // once per request, and again only if currentUser is replaced by a write.
+  // Identity plus the few chrome columns a request actually reads — see
+  // CURRENT_USER_SELECT in user-secrets.ts.
+  currentUser: CurrentUser | null;
+  // The whole row, keys included, for the few paths that sign with them or want
+  // a column the select above leaves out. Reads once per request, and again
+  // only if currentUser is replaced by a write.
   fullUser: () => Promise<User | null>;
   user?: Session['user'];
   prisma: PrismaClient;
@@ -32,10 +34,10 @@ export async function createContext(request: Request): Promise<Context> {
   }
 
   let currentUsername = '';
-  let currentUser: SafeUser | null = null;
+  let currentUser: CurrentUser | null = null;
   let sessionUser: Session['user'] | undefined = session?.user;
   if (session?.user?.email) {
-    currentUser = await prisma.user.findUnique({ where: { email: session.user.email }, omit: OMIT_USER_SECRETS });
+    currentUser = await prisma.user.findUnique({ where: { email: session.user.email }, select: CURRENT_USER_SELECT });
     currentUsername = currentUser?.username || '';
   }
 
@@ -43,7 +45,7 @@ export async function createContext(request: Request): Promise<Context> {
   // Synthesizes a session user so authorization checks (which read ctx.user)
   // treat the request as authenticated.
   if (!currentUser && import.meta.env.DEV && DEV_LOGIN_EMAIL) {
-    currentUser = await prisma.user.findUnique({ where: { email: DEV_LOGIN_EMAIL }, omit: OMIT_USER_SECRETS });
+    currentUser = await prisma.user.findUnique({ where: { email: DEV_LOGIN_EMAIL }, select: CURRENT_USER_SELECT });
     currentUsername = currentUser?.username || '';
     if (currentUser) {
       sessionUser = { email: currentUser.email, name: currentUser.name, image: currentUser.favicon || '' };
@@ -56,7 +58,7 @@ export async function createContext(request: Request): Promise<Context> {
   // Keyed on the currentUser object rather than a plain flag: a write that
   // replaces the row (updateProfile) has to invalidate this, or a later signing
   // call in the same request would use the pre-write copy.
-  let cached: { of: SafeUser; row: Promise<User | null> } | undefined;
+  let cached: { of: CurrentUser; row: Promise<User | null> } | undefined;
 
   const ctx: Context = {
     currentUsername,

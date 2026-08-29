@@ -88,7 +88,7 @@ describe('endpoints that return a user', () => {
 });
 
 describe('createContext', () => {
-  it('loads the row without the secret columns, and re-reads it only on demand', async () => {
+  it('loads only the columns a request reads, and re-reads the row only on demand', async () => {
     const findUnique = vi.fn(async () => loaded());
     vi.doMock('server/prisma', () => ({ default: { user: { findUnique } } }));
     vi.doMock('server/auth', () => ({ getSession: async () => ({ user: { email: 'alice@example.com' } }) }));
@@ -96,10 +96,15 @@ describe('createContext', () => {
     const { createContext } = await import('server/context');
     const ctx = await createContext(new Request('https://example.com'));
 
-    // The whole point: the keys and Bluesky credentials don't come along on
-    // every request just because something asked who the user is.
-    const [{ omit }] = findUnique.mock.calls[0] as unknown as [{ omit: Record<string, boolean> }];
-    for (const field of SECRETS) expect(omit).toHaveProperty(field, true);
+    // The whole point: nothing comes along on every request just because
+    // something asked who the user is — not the keys and Bluesky credentials,
+    // and not the long text columns nobody on this path reads either.
+    const [{ select }] = findUnique.mock.calls[0] as unknown as [{ select: Record<string, boolean> }];
+    for (const field of [...SECRETS, 'ed25519PrivateKey']) expect(select).not.toHaveProperty(field);
+    for (const field of ['sidebarHtml', 'magicKey', 'googleAnalytics', 'viewport', 'createdAt']) {
+      expect(select).not.toHaveProperty(field);
+    }
+    expect(select).toMatchObject({ id: true, username: true, superuser: true, theme: true });
 
     // ...but they're one call away for the paths that sign with them, and that
     // call is made once however many times it's asked for.

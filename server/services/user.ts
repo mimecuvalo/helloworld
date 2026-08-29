@@ -6,7 +6,7 @@ import { AtpAgent } from '@atproto/api';
 import { assertAuthor } from '../authorization';
 import { HTTPError } from '../exceptions';
 import { encryptSecret } from '../secrets';
-import { OMIT_USER_SECRETS, stripSecrets } from '../user-secrets';
+import { CURRENT_USER_SELECT, stripSecrets } from '../user-secrets';
 import { PUBLIC_BSKY_PDS, didForUser, generateSigningKey } from '../social/atproto-identity';
 import { generateEd25519Key } from '../social/integrity-proof';
 import { profileUrl } from '../../lib/url-factory';
@@ -31,7 +31,7 @@ export function generateMagicKey(): { magicKey: string; privateKey: string } {
 
 // ctx.currentUser is already selected without the secret columns; this is the
 // belt-and-braces pass for rows loaded any other way.
-export { stripSecrets, type SafeUser } from '../user-secrets';
+export { stripSecrets, type CurrentUser, type SafeUser } from '../user-secrets';
 
 export function currentUser(ctx: Context) {
   return stripSecrets(ctx.currentUser);
@@ -162,7 +162,7 @@ export async function updateProfile(ctx: Context, input: ProfileInput) {
 
   ctx.currentUser = await ctx.prisma.user.update({
     where: { username: ctx.currentUsername },
-    omit: OMIT_USER_SECRETS,
+    select: CURRENT_USER_SELECT,
     data: {
       name,
       title: input.title.trim(),
