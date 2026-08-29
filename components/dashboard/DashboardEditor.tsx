@@ -4,6 +4,7 @@ import { F, defineMessages, useIntl } from 'i18n';
 import { rpc } from 'lib/rpc';
 import { useSiteMap } from 'lib/content-queries';
 import { useEditor } from 'lib/editor-context';
+import { formatHTML } from 'util/format-html';
 import Editor from 'components/editor/Editor';
 import type { AddedMedia } from 'components/editor/image-upload';
 import usePageImageDrop from 'components/editor/usePageImageDrop';
@@ -146,7 +147,11 @@ export default function DashboardEditor({ username }: { username: string }) {
   });
 
   const handlePost = async () => {
+    // Off the wysiwyg's own output, not the formatted copy: the fallback in
+    // deriveTitle reads the first line, and formatting is what puts lines in.
     const title = draft.titleTouched ? draft.title : deriveTitle(draft.view);
+    // Stored pretty-printed so the HTML tab is readable next time it's opened.
+    const view = formatHTML(draft.view);
 
     let result;
     try {
@@ -161,7 +166,7 @@ export default function DashboardEditor({ username }: { username: string }) {
         template: draft.template,
         style: draft.style,
         code: draft.code,
-        view: draft.view,
+        view,
       });
     } catch {
       result = null;

@@ -1,14 +1,9 @@
 import { useEffect, useRef } from 'react';
-import { EditorState } from '@codemirror/state';
+import { EditorState, Prec } from '@codemirror/state';
 import { EditorView, drawSelection, highlightActiveLine, keymap, lineNumbers } from '@codemirror/view';
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
-import {
-  bracketMatching,
-  defaultHighlightStyle,
-  indentOnInput,
-  syntaxHighlighting,
-  type LanguageSupport,
-} from '@codemirror/language';
+import { bracketMatching, indentOnInput, type LanguageSupport } from '@codemirror/language';
+import { oneDark } from '@codemirror/theme-one-dark';
 import { html } from '@codemirror/lang-html';
 import { css } from '@codemirror/lang-css';
 import { javascript } from '@codemirror/lang-javascript';
@@ -22,18 +17,24 @@ const LANGUAGES: Record<CodeLanguage, () => LanguageSupport> = {
   javascript: () => javascript(),
 };
 
-// CodeMirror paints its own colors, and the content themes swap the ground out
-// from under it — so let everything but the syntax highlighting inherit.
-const inheritTheme = EditorView.theme({
-  '&': { backgroundColor: 'transparent', color: 'inherit', fontSize: '0.875rem' },
-  '&.cm-focused': { outline: 'none' },
-  '.cm-content': { fontFamily: 'var(--font-mono, ui-monospace, monospace)', padding: '8px 0' },
-  '.cm-gutters': { backgroundColor: 'transparent', color: 'inherit', border: 0, opacity: 0.4 },
-  '.cm-activeLine': { backgroundColor: 'var(--hw-menu-hover, rgb(0 0 0 / 6%))' },
-  '.cm-selectionBackground, &.cm-focused .cm-selectionBackground, ::selection': {
-    backgroundColor: 'var(--hw-primary-light, rgb(0 0 0 / 20%))',
-  },
-});
+// One Dark for the syntax colors and its editing chrome — cursor, selection,
+// matching brackets, panels — all of which are tuned for a dark ground. What it
+// doesn't get to pick is the ground itself: #282c34 is a grey slab next to the
+// page, so the editor and its gutter keep the content theme's own background.
+//
+// The colors it replaced were `defaultHighlightStyle`, a light-mode palette
+// (#708, #219, #164) that had been sitting on nightlight's near-black #161313.
+//
+// Prec.high because this and One Dark set `&` and `.cm-gutters` at equal
+// specificity: whichever mounts last wins, and precedence is what decides that.
+const localTheme = Prec.high(
+  EditorView.theme({
+    '&': { backgroundColor: 'var(--hw-bg)', fontSize: '0.875rem' },
+    '&.cm-focused': { outline: 'none' },
+    '.cm-gutters': { backgroundColor: 'var(--hw-bg)' },
+    '.cm-content': { fontFamily: 'var(--font-mono, ui-monospace, monospace)', padding: '8px 0' },
+  })
+);
 
 // Uncontrolled on purpose: rewriting the document from a prop on every keystroke
 // fights the cursor. The editor's tabs unmount this when you leave them, so the
@@ -70,12 +71,12 @@ export default function CodeEditor({
           highlightActiveLine(),
           indentOnInput(),
           bracketMatching(),
-          syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
           // `indentWithTab` last: it has to win over the browser's own tab.
           keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab]),
           EditorView.lineWrapping,
           EditorView.contentAttributes.of({ 'aria-label': ariaLabel }),
-          inheritTheme,
+          oneDark,
+          localTheme,
           LANGUAGES[language](),
           EditorView.updateListener.of((update) => {
             if (update.docChanged) onChangeRef.current(update.state.doc.toString());

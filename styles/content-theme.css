@@ -73,6 +73,21 @@
   text-decoration: underline;
 }
 
+/* A blank line typed into the wysiwyg serializes as an empty <p> — the <br> seen
+   in the editor's DOM is ProseMirror's own trailing-break hack, which is never
+   written out. With nothing inside it and no margin to stand on (globals.css
+   zeroes those for everything), the paragraph measured zero and the gap the
+   author saw while writing was missing once published.
+
+   Given height here rather than by writing a <br> into what gets stored: tiptap
+   parses <p><br></p> back into a paragraph holding a real hardBreak, and renders
+   that *plus* its own trailing break, so the blank line would come back two lines
+   tall in the editor while the page still showed one. */
+.hw-content-theme p:empty {
+  min-height: 1em;
+  min-height: 1lh;
+}
+
 .hw-content-theme figure img:hover {
   outline: 3px solid var(--hw-primary);
 }

@@ -24,11 +24,16 @@ export const loadContentPage = createServerFn({ method: 'GET' })
       content.fetchContentNeighbors(ctx, { username, name }),
     ]);
 
-    // Transform the view server-side (youtube iframes → <lite-youtube>, drop
-    // empty <p></p>) so cheerio stays out of the client bundle and SSR/hydration
-    // markup match.
+    // Transform the view server-side (youtube iframes → <lite-youtube>) so cheerio
+    // stays out of the client bundle and SSR/hydration markup match.
+    //
+    // Empty <p></p> used to be stripped here. That is how the wysiwyg writes a
+    // blank line — the <br> visible in the editor is ProseMirror's own trailing
+    // break and is never serialized — so dropping them deleted every deliberate
+    // blank line on the way to the page. They are given height by the `p:empty`
+    // rule in content-theme.css instead.
     if (contentItem?.view) {
-      contentItem.view = createLiteYouTubeVideos(contentItem.view.replaceAll('<p></p>', ''));
+      contentItem.view = createLiteYouTubeVideos(contentItem.view);
     }
 
     // Whitelist this page's own inline <script>s in the CSP. Must run after the

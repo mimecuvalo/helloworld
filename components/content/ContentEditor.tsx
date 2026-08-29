@@ -6,6 +6,7 @@ import { rpc } from 'lib/rpc';
 import { useEditableContent, type EditableContent } from 'lib/content-queries';
 import { contentUrl } from 'lib/url-factory';
 import { useEditor } from 'lib/editor-context';
+import { formatHTML } from 'util/format-html';
 import Editor from '../editor/Editor';
 import TabbedEditor, { type Tab } from '../editor/TabbedEditor';
 import PlacementSelects from '../editor/PlacementSelects';
@@ -48,12 +49,16 @@ const SAVE_ERRORS: Record<string, keyof typeof messages> = {
 };
 
 // The body's own <h1> doubles as the title when nobody has set one by hand —
-// that's how posts written straight into the wysiwyg get named.
+// that's how posts written straight into the wysiwyg get named. Scraping the
+// first paragraph is a last resort for untitled content only: it used to run
+// ahead of `fallback`, so editing the body of an already-named page that had no
+// <h1> would quietly rename it to its opening line.
 function deriveTitle(view: string, fallback: string) {
-  return (view.match(/<h1>(.*?)<\/h1>/)?.[1] || view.split('</p>')[0].split('\n')[0].trim() || fallback || '').replace(
-    /<[^>]*>?/g,
-    ''
-  );
+  const strip = (s: string) => s.replace(/<[^>]*>?/g, '');
+  const heading = view.match(/<h1>(.*?)<\/h1>/)?.[1];
+  if (heading) return strip(heading);
+  if (fallback) return fallback;
+  return strip(view.split('</p>')[0].split('\n')[0].trim());
 }
 
 function toDraft(editable: EditableContent): Draft {
@@ -130,7 +135,11 @@ export default function ContentEditor({ content }: { content: EditableContentPro
 
   useEffect(() => {
     const save = async (values: Draft) => {
+      // Derived from the wysiwyg's own output rather than the formatted copy: the
+      // fallback below reads the first line, and formatting is what puts lines in.
       const title = values.titleTouched ? values.title : deriveTitle(values.view, values.title || content.title);
+      // Stored pretty-printed so the HTML tab is readable next time it's opened.
+      const view = formatHTML(values.view);
 
       let result;
       try {
@@ -146,7 +155,7 @@ export default function ContentEditor({ content }: { content: EditableContentPro
           lqip: values.lqip,
           style: values.style,
           code: values.code,
-          view: values.view,
+          view,
         });
       } catch {
         result = null;
