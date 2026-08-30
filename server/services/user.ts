@@ -10,7 +10,7 @@ import { CURRENT_USER_SELECT, stripSecrets } from '../user-secrets';
 import { PUBLIC_BSKY_PDS, didForUser, generateSigningKey } from '../social/atproto-identity';
 import { generateEd25519Key } from '../social/integrity-proof';
 import { profileUrl } from '../../lib/url-factory';
-import { DEFAULT_THEME, themeGlobalCss } from '../../styles/theme-css';
+import { DEFAULT_THEME, THEMES } from '../../styles/theme-css';
 
 // RSA keypair for signing federation (Salmon / magic-envelope / ActivityPub HTTP
 // signature) messages. Ported from the old pages/api/setup.ts — a user created
@@ -132,7 +132,7 @@ export function fetchProfile(ctx: Context) {
     logo: user.logo,
     license: user.license,
     theme: user.theme || DEFAULT_THEME,
-    themes: Object.keys(themeGlobalCss),
+    themes: [...THEMES],
   };
 }
 
@@ -151,7 +151,7 @@ export async function updateProfile(ctx: Context, input: ProfileInput) {
   assertAuthor(ctx);
 
   const theme = input.theme || DEFAULT_THEME;
-  if (!(theme in themeGlobalCss)) {
+  if (!(THEMES as readonly string[]).includes(theme)) {
     throw new HTTPError(400, theme, 'That theme does not exist.');
   }
 

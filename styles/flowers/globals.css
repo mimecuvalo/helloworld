@@ -1,4 +1,12 @@
-const globalCss = `
+/*
+ * The `flowers` image-skin: a global override, not a palette, so it lives
+ * outside content-theme.css and its `.hw-content-theme[data-theme=...]`
+ * scoping — these selectors reach html/body and the page chrome.
+ *
+ * A real stylesheet rather than a string in a JS module: theme-css.ts imports
+ * it with `?url` and the page links it only when the theme is active, so
+ * nobody downloads a skin they are not looking at.
+ */
 html > body {
   background: url(/resource/cvijece/themes/bluebackground.jpg) repeat-y fixed center -10px #6a75b4;
 }
@@ -178,6 +186,3 @@ body > header > nav,
   max-width: 500px;
   max-height: 375px;
 }
-`;
-
-export default globalCss;

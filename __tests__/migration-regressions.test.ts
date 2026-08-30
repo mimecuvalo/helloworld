@@ -6,7 +6,8 @@ import type { AppEnv } from 'server/env';
 import { buildContentSecurityPolicy } from 'lib/security';
 import { miscRoutes } from 'server/routes/misc';
 import { unfurlRoutes } from 'server/routes/unfurl';
-import flowersGlobalCss from '../styles/flowers/globals';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 
 vi.mock('server/social/discover-user', () => ({
   discoverUserRemoteInfoSaveAndSubscribe: vi.fn(),
@@ -64,6 +65,9 @@ describe('migration regression coverage', () => {
   });
 
   it('keeps the Flowers skin aligned with migrated content markup', () => {
+    // Read off disk rather than importing: vitest hands back '' for a css
+    // import, and this is asserting on the stylesheet's actual text.
+    const flowersGlobalCss = readFileSync(path.join(process.cwd(), 'styles/flowers/globals.css'), 'utf8');
     expect(flowersGlobalCss).toContain('#hw-content > nav > a');
     expect(flowersGlobalCss).not.toContain('#hw-content article > nav');
     expect(flowersGlobalCss).toContain('#hw-sitemap-logo img');

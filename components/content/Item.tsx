@@ -10,7 +10,14 @@ import Comments from './Comments';
 import Favorites from './Favorites';
 import styles from './content.module.css';
 
-const ContentEditor = lazy(() => import('./ContentEditor'));
+// Client-only on purpose. `import.meta.env.SSR` folds to a constant per build,
+// so the server build drops the import() branch outright and tiptap/codemirror
+// never enter the server function — they were 2.4MB of it. The stub renders the
+// same empty <div /> as the Suspense fallback below, so the client hydrates onto
+// matching markup before the real chunk arrives.
+const ContentEditor = lazy(() =>
+  import.meta.env.SSR ? Promise.resolve({ default: () => <div /> }) : import('./ContentEditor')
+);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyContent = any;
