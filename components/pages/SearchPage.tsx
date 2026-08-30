@@ -1,5 +1,5 @@
 import 'styles/content-theme.css';
-import { themeGlobalCss } from 'styles/theme-css';
+import { themeStylesheet } from 'styles/theme-css';
 import type { SearchPageData } from 'lib/page-data';
 import { UserProvider } from 'lib/user-context';
 import { defineMessages, useIntl } from 'i18n';
@@ -30,14 +30,14 @@ export default function SearchPage({ data }: { data: SearchPageData }) {
   const intl = useIntl();
   const { results, contentOwner, siteMap, query, currentUsername } = data;
   const theme = (contentOwner?.theme as string) || 'nightlight';
-  const skin = themeGlobalCss[theme] ?? '';
+  const skin = themeStylesheet[theme];
   const username = (contentOwner as { username?: string } | null)?.username || '';
   const untitled = intl.formatMessage(messages.untitled);
 
   return (
     <UserProvider user={currentUsername ? { username: currentUsername } : null}>
       <div className="hw-content-theme" data-theme={theme}>
-        {skin ? <style dangerouslySetInnerHTML={{ __html: skin }} /> : null}
+        {skin ? <link rel="stylesheet" href={skin} precedence="theme" /> : null}
 
         <div className={styles.layout}>
           <SiteMap siteMap={siteMap} contentOwner={contentOwner} content={null} username={username} />

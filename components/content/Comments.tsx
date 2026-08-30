@@ -1,11 +1,19 @@
 import { lazy, Suspense } from 'react';
 import { F, defineMessages, useIntl } from 'i18n';
 import { useUser } from 'lib/user-context';
-import Favorite from 'components/dashboard/actions/Favorite';
-import Delete from 'components/dashboard/actions/Delete';
 import styles from './content.module.css';
 
-const CommentsEditor = lazy(() => import('./CommentsEditor'));
+// Owner-only, and their shared dashboard.module.css pulled ~30kB of dashboard
+// styling onto every content page a logged-out reader loaded. Lazy keeps it in
+// its own chunk, fetched only once the branch below actually renders.
+const Favorite = lazy(() => import('components/dashboard/actions/Favorite'));
+const Delete = lazy(() => import('components/dashboard/actions/Delete'));
+
+// Client-only — see the note in components/content/Item.tsx. The stub matches
+// the Suspense fallback so hydration has nothing to reconcile.
+const CommentsEditor = lazy(() =>
+  import.meta.env.SSR ? Promise.resolve({ default: () => <div /> }) : import('./CommentsEditor')
+);
 
 type Comment = {
   postId: string;
@@ -69,10 +77,10 @@ export default function Comments({
                 )}
                 <div dangerouslySetInnerHTML={{ __html: comment.view }} />
                 {isOwnerViewing ? (
-                  <>
+                  <Suspense fallback={null}>
                     <Favorite contentRemote={comment} />
                     <Delete contentRemote={comment} />
-                  </>
+                  </Suspense>
                 ) : null}
               </div>
             </li>

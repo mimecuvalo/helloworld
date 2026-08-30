@@ -2,7 +2,7 @@ import 'styles/content-theme.css';
 import 'lite-youtube-embed/src/lite-yt-embed.css';
 import { lazy, Suspense, useEffect, useRef } from 'react';
 import { useRouter } from '@tanstack/react-router';
-import { themeGlobalCss } from 'styles/theme-css';
+import { themeStylesheet } from 'styles/theme-css';
 import type { ContentPageData } from 'lib/page-data';
 import { contentUrl } from 'lib/url-factory';
 import { useGestures } from 'lib/use-gestures';
@@ -16,7 +16,11 @@ import Simple from 'components/content/templates/Simple';
 import ContentHeadScripts from 'components/content/ContentHeadScripts';
 import styles from 'components/content/content.module.css';
 
-const ContentEditor = lazy(() => import('components/content/ContentEditor'));
+// Client-only — see the note in components/content/Item.tsx. The stub matches
+// the Suspense fallback so hydration has nothing to reconcile.
+const ContentEditor = lazy(() =>
+  import.meta.env.SSR ? Promise.resolve({ default: () => <div /> }) : import('components/content/ContentEditor')
+);
 
 // Themed content viewer — per-user theme + template dispatch:
 //   blank → bare Simple body (no chrome)
@@ -28,7 +32,7 @@ export default function ContentPage({ data }: { data: ContentPageData }) {
   const navRef = useRef<{ prev: () => void; next: () => void }>(null);
   const { content, contentOwner, comments, favorites, siteMap, neighbors, currentUsername } = data;
   const theme = (contentOwner?.theme as string) || 'nightlight';
-  const skin = themeGlobalCss[theme] ?? '';
+  const skin = themeStylesheet[theme];
   const username = content?.username || (contentOwner as { username?: string } | null)?.username || '';
   const template = (content as { template?: string } | null)?.template;
 
@@ -64,7 +68,7 @@ export default function ContentPage({ data }: { data: ContentPageData }) {
     <UserProvider user={currentUsername ? { username: currentUsername } : null}>
       <EditorProvider>
         <div className="hw-content-theme" data-theme={theme}>
-          {skin ? <style dangerouslySetInnerHTML={{ __html: skin }} /> : null}
+          {skin ? <link rel="stylesheet" href={skin} precedence="theme" /> : null}
           <ContentHeadScripts content={content} contentOwner={contentOwner} host={data.host} title={title} />
           {children}
         </div>

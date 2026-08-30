@@ -1,5 +1,5 @@
 import 'styles/content-theme.css';
-import { useState } from 'react';
+import { Suspense, lazy, useState } from 'react';
 import { defineMessages, useIntl } from 'i18n';
 import { UserProvider } from 'lib/user-context';
 import { EditorProvider } from 'lib/editor-context';
@@ -9,7 +9,6 @@ import BlueskyLink from 'components/dashboard/BlueskyLink';
 import MastodonLink from 'components/dashboard/MastodonLink';
 import Following from 'components/dashboard/Following';
 import Followers from 'components/dashboard/Followers';
-import DashboardEditor from 'components/dashboard/DashboardEditor';
 import DashboardFeed from 'components/dashboard/DashboardFeed';
 import Feed from 'components/content/Feed';
 import styles from 'components/dashboard/dashboard.module.css';
@@ -24,6 +23,12 @@ type DashboardUser = {
   blueskyHandle?: string | null;
   mastodonUrl?: string | null;
 };
+
+// Client-only — see the note in components/content/Item.tsx. The stub matches
+// the Suspense fallback so hydration has nothing to reconcile.
+const DashboardEditor = lazy(() =>
+  import.meta.env.SSR ? Promise.resolve({ default: () => <div /> }) : import('components/dashboard/DashboardEditor')
+);
 
 const messages = defineMessages({
   menu: { defaultMessage: 'Menu' },
@@ -80,7 +85,9 @@ export default function DashboardPage({ user }: { user: DashboardUser }) {
             </nav>
 
             <div className={styles.content}>
-              <DashboardEditor username={user.username} />
+              <Suspense fallback={<div />}>
+                <DashboardEditor username={user.username} />
+              </Suspense>
               {specialFeed === 'me' ? (
                 <Feed content={{ username: user.username, section: 'main', name: 'home' }} contentOwner={user} />
               ) : (
