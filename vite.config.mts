@@ -41,6 +41,16 @@ const alias = [
   { find: /^social-butterfly\/(.*)$/, replacement: abs('./social-butterfly/$1') },
   { find: /^prisma\/(.*)$/, replacement: abs('./prisma/$1') },
   { find: /^@\/(.*)$/, replacement: abs('./$1') },
+  // react-intl without the ICU parser (~40% smaller):
+  // https://formatjs.io/docs/guides/advanced-usage#react-intl-without-parser-40-smaller
+  ...(isProd
+    ? [
+        {
+          find: /^@formatjs\/icu-messageformat-parser$/,
+          replacement: '@formatjs/icu-messageformat-parser/no-parser.js',
+        },
+      ]
+    : []),
 ];
 
 export default defineConfig({

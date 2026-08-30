@@ -1,5 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 import { getRequestHeader } from '@tanstack/react-start/server';
+import { getMessages } from 'lib/messages';
 
 export const SUPPORTED_LOCALES = ['en', 'fr', 'xx-LS'] as const;
 export const DEFAULT_LOCALE = 'en';
@@ -18,6 +19,11 @@ function detectLocale(): string {
   return DEFAULT_LOCALE;
 }
 
+// The compiled message catalog is resolved inside the server-fn handler (rather than in the
+// root loader) so `lib/messages` never enters the client graph — otherwise Vite inlines all of
+// i18n/compiled/*.json into the client entry chunk on top of the copy already dehydrated into
+// the SSR payload, shipping the whole catalog to every visitor twice.
 export const initRequest = createServerFn({ method: 'GET' }).handler(() => {
-  return { locale: detectLocale() };
+  const locale = detectLocale();
+  return { locale, messages: getMessages(locale) };
 });

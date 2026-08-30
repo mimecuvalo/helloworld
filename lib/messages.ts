@@ -1,8 +1,13 @@
+import type { IntlConfig } from 'react-intl';
 import en from 'i18n/compiled/en.json';
 import fr from 'i18n/compiled/fr.json';
 
-const all: Record<string, Record<string, unknown>> = { en, fr };
+// The concrete AST type (rather than Record<string, unknown>) matters: `getMessages` is called
+// from inside a server fn, and TanStack validates that a handler's return type is serializable.
+type Messages = NonNullable<IntlConfig['messages']>;
 
-export function getMessages(locale = 'en'): Record<string, unknown> {
+const all: Record<string, Messages> = { en: en as Messages, fr: fr as Messages };
+
+export function getMessages(locale = 'en'): Messages {
   return all[locale] ?? all.en;
 }

@@ -13,15 +13,11 @@ import Header from 'components/Header';
 import NotFound from 'components/pages/NotFound';
 import ErrorScreen from 'components/pages/ErrorScreen';
 import { buildFaviconLinks } from 'lib/content-head';
-import { getMessages } from 'lib/messages';
 import { initRequest } from 'lib/request-init';
 
 export const Route = createRootRoute({
-  // Runs server-side on initial load: sets security headers + resolves locale.
-  loader: async () => {
-    const { locale } = await initRequest();
-    return { locale, messages: getMessages(locale) };
-  },
+  // Runs server-side on initial load: resolves the locale and its compiled message catalog.
+  loader: async () => await initRequest(),
   head: () => ({
     meta: [
       { charSet: 'utf-8' },
