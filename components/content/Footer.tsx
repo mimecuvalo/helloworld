@@ -35,7 +35,7 @@ export default function Footer({ content, contentOwner }: { content: FooterConte
       </span>
       <span className="notranslate">&nbsp;•&nbsp;</span>
       <a href={contentUrl(content)}>
-        <time className="t-published" dateTime={String(createdAt)}>
+        <time className="t-published" dateTime={new Date(createdAt).toISOString()}>
           <FormattedDate value={createdAt} year="2-digit" month="2-digit" day="2-digit" />
         </time>
       </a>
