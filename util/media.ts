@@ -5,7 +5,7 @@ export function createLiteYouTubeVideos(view: string) {
   // e.g. <iframe width="480" height="270" src="https://www.youtube.com/embed/SfsCniN7Nsc?feature=oembed" title="The Suburbs Are Bleeding America Dry | Climate Town (feat. Not Just Bikes)"></iframe>
   // -> <lite-youtube videoid="SfsCniN7Nsc" playlabel="Play: The Suburbs Are Bleeding America Dry | Climate Town (feat. Not Just Bikes)"></lite-youtube>
 
-  const $ = load(view);
+  const $ = load(view, null, false);
   $('iframe').each((_, iframe) => {
     const src = $(iframe).attr('src');
     // Check that it's a youtube domain and extract the video id.

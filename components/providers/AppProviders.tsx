@@ -7,7 +7,7 @@ import { makeQueryClient } from 'lib/query';
 interface AppProvidersProps {
   locale?: string;
   defaultLocale?: string;
-  messages: Record<string, unknown>;
+  messages?: Record<string, unknown>;
   children: ReactNode;
 }
 
@@ -19,9 +19,6 @@ export default function AppProviders({ locale = 'en', defaultLocale = 'en', mess
   setupCreateIntl({ defaultLocale, locale, messages: intlMessages });
 
   return (
-    // `timeZone` is pinned so dates format identically on the server (which runs in UTC) and in
-    // the browser, whatever zone the visitor is in. Without it, a post published late in the UTC
-    // day renders a different date on each side and React bails out of hydration.
     <IntlProvider defaultLocale={defaultLocale} locale={locale} messages={intlMessages} timeZone="UTC">
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </IntlProvider>

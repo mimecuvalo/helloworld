@@ -88,7 +88,6 @@ export default defineConfig({
       additionalComponentNames: ['F'],
       ast: true,
       flatten: true,
-      removeDefaultMessage: isProd,
     }),
     viteReact(),
   ],

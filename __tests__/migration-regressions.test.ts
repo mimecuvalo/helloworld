@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import messages from 'i18n/compiled/en.json';
+import { getMessages } from 'lib/messages';
 import type { Context } from 'server/context';
 import type { AppEnv } from 'server/env';
 import { buildContentSecurityPolicy } from 'lib/security';
@@ -51,6 +52,15 @@ afterEach(() => {
 describe('migration regression coverage', () => {
   it('ships a populated English message catalog', () => {
     expect(Object.keys(messages).length).toBeGreaterThan(20);
+  });
+
+  it('does not dehydrate a catalog for the default locale', () => {
+    // en renders off the inline `defaultMessage` ASTs instead; handing react-intl the
+    // catalog as well put the whole thing (editor/admin strings included) into the SSR
+    // payload of every page, signed out or not.
+    expect(getMessages('en')).toBeUndefined();
+    expect(getMessages('xx-LS')).toBeUndefined();
+    expect(getMessages('fr')).toBeDefined();
   });
 
   it('uses a nonce instead of unsafe-inline scripts in production CSP', () => {

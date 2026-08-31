@@ -269,4 +269,14 @@ describe('rendering a stored youtube embed', () => {
     expect(without).toContain('playlabel="Play"');
     expect(without).not.toContain('undefined');
   });
+
+  it('returns the view as a fragment, without a document wrapper', () => {
+    // cheerio's default document mode wrapped every stored view in
+    // <html><head></head><body>…</body></html>, and that shipped in the SSR markup.
+    const view = '<img class="editor-image" src="https://media.example.com/a.jpg"><p></p>';
+    expect(createLiteYouTubeVideos(view)).toBe(view);
+    expect(createLiteYouTubeVideos('<iframe src="https://www.youtube.com/embed/abc123"></iframe>')).not.toContain(
+      '<body>'
+    );
+  });
 });
