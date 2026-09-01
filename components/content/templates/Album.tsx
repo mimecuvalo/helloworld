@@ -3,6 +3,7 @@ import { useRouter } from '@tanstack/react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { F } from 'i18n';
 import { useCollection } from 'lib/content-queries';
+import { useGestures } from 'lib/use-gestures';
 import { contentUrl } from 'lib/url-factory';
 import { useEditor } from 'lib/editor-context';
 import { rpc } from 'lib/rpc';
@@ -22,6 +23,7 @@ type AlbumContent = {
 // How long we'll wait for the next image to decode before animating anyway —
 // past this the slide is better than the stall.
 const DECODE_BUDGET_MS = 300;
+const ignorePinch = () => {};
 
 export default function Album({ content }: { content: AlbumContent }) {
   const { isEditing } = useEditor();
@@ -31,6 +33,11 @@ export default function Album({ content }: { content: AlbumContent }) {
   const { data, isPending } = useCollection({ username, section, album, name });
   const [currentIndexOpen, setCurrentIndexOpen] = useState(-1);
   const listRef = useRef<HTMLUListElement>(null);
+  // The individual thumbs open on a pinch-out, but their gutters are part of
+  // the album grid too. Consume a pinch there so it cannot fall through to the
+  // browser's page zoom. The list only exists once the collection has loaded,
+  // so the listeners have to wait for that render rather than binding on mount.
+  useGestures(listRef, { onPinchIn: ignorePinch, onPinchOut: ignorePinch }, [isPending]);
   // Mirrors `currentIndexOpen` for callbacks that run after a transition, past
   // the point where their closure's copy is still trustworthy.
   const openIndexRef = useRef(-1);

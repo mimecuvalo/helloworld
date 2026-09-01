@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { cleanup, render } from '@testing-library/react';
 import { useGestures } from 'lib/use-gestures';
 
@@ -334,7 +334,7 @@ describe('useGestures', () => {
     beforeEach(useTrackpadTimers);
     afterEach(endTrackpadGesture);
 
-    const fireWheel = (element: HTMLElement, deltaY: number, ctrlKey = true) => {
+    const fireWheel = (element: EventTarget, deltaY: number, ctrlKey = true) => {
       const evt = new WheelEvent('wheel', { deltaY, ctrlKey, bubbles: true, cancelable: true });
       element.dispatchEvent(evt);
       return evt;
@@ -361,6 +361,37 @@ describe('useGestures', () => {
 
       for (let i = 0; i < 20; i++) fireWheel(element, -30);
       expect(onPinchOut).toHaveBeenCalledTimes(1);
+    });
+
+    it('keeps blocking zoom while the pinch handler unmounts its element', () => {
+      const element = setup({ onPinchOut: cleanup });
+
+      fireWheel(element, -30); // opens, then unmounts
+      const trailingEvent = fireWheel(document, -2);
+      expect(trailingEvent.defaultPrevented).toBe(true);
+
+      lapseTrackpadGesture();
+      const afterBurst = fireWheel(document, -2);
+      expect(afterBurst.defaultPrevented).toBe(false);
+    });
+
+    // The album grid renders a loading box until its collection arrives, so the
+    // container the pinch has to be blocked on isn't in the DOM on first render.
+    it('binds to an element that only mounts on a later render', () => {
+      const onPinchOut = vi.fn();
+
+      function Deferred() {
+        const ref = useRef<HTMLDivElement>(null);
+        const [isPending, setIsPending] = useState(true);
+        useGestures(ref, { onPinchOut }, [isPending]);
+        useEffect(() => setIsPending(false), []);
+        return isPending ? <div /> : <div ref={ref} data-testid="target" />;
+      }
+      const { getByTestId } = render(<Deferred />);
+
+      const evt = fireWheel(getByTestId('target'), -30);
+      expect(onPinchOut).toHaveBeenCalledTimes(1);
+      expect(evt.defaultPrevented).toBe(true);
     });
 
     it('ignores an ordinary scroll and leaves it to the page', () => {

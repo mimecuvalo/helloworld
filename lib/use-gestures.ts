@@ -21,6 +21,32 @@ const WHEEL_BURST_MS = 150; // how long one flick keeps owning its direction
 // neighbour would anchor a competing gesture and open its own lightbox too.
 let gestureOwner: HTMLElement | null = null;
 
+// Opening or closing a lightbox unmounts the element that received the first
+// event in a trackpad pinch. Keep preventing ctrl+wheel at the document while
+// that burst trails on, so the browser cannot zoom during the new element's
+// effect-mount gap.
+let pinchWheelGuardTimer: ReturnType<typeof setTimeout> | undefined;
+
+function keepPinchWheelBlocked(evt: WheelEvent) {
+  if (!evt.ctrlKey) return;
+  if (evt.cancelable) evt.preventDefault();
+
+  armPinchWheelGuard();
+}
+
+function armPinchWheelGuard() {
+  clearTimeout(pinchWheelGuardTimer);
+  pinchWheelGuardTimer = setTimeout(() => {
+    document.removeEventListener('wheel', keepPinchWheelBlocked);
+    pinchWheelGuardTimer = undefined;
+  }, WHEEL_BURST_MS);
+}
+
+function keepPinchWheelBlockedForBurst() {
+  if (!pinchWheelGuardTimer) document.addEventListener('wheel', keepPinchWheelBlocked, { passive: false });
+  armPinchWheelGuard();
+}
+
 // A trackpad flick arrives as a burst: a handful of real pushes, then a long
 // decaying momentum tail the OS keeps emitting after your fingers have already
 // left the trackpad. We act on the first push of a burst and ignore the rest.
@@ -201,7 +227,10 @@ export function useGestures(ref: RefObject<HTMLElement | null>, handlers: Gestur
         if (Math.abs(evt.deltaY) < PINCH_WHEEL_PUSH) return; // coasting, not pushing
         const isSpreading = evt.deltaY < 0;
         if (!startsWheelBurst(isSpreading ? 'spread' : 'squeeze')) return;
-        (isSpreading ? onPinchOut : onPinchIn)?.();
+        const handler = isSpreading ? onPinchOut : onPinchIn;
+        if (!handler) return;
+        keepPinchWheelBlockedForBurst();
+        handler();
         return;
       }
 
