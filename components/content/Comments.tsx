@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { F, defineMessages, useIntl } from 'i18n';
+import { ClientOnly } from 'lib/client-only';
 import { useUser } from 'lib/user-context';
 import styles from './content.module.css';
 
@@ -9,8 +10,8 @@ import styles from './content.module.css';
 const Favorite = lazy(() => import('components/dashboard/actions/Favorite'));
 const Delete = lazy(() => import('components/dashboard/actions/Delete'));
 
-// Client-only — see the note in components/content/Item.tsx. The stub matches
-// the Suspense fallback so hydration has nothing to reconcile.
+// Client-only — see the note in components/content/Item.tsx. The stub keeps the
+// editor out of the server bundle; <ClientOnly> keeps it out of hydration.
 const CommentsEditor = lazy(() =>
   import.meta.env.SSR ? Promise.resolve({ default: () => <div /> }) : import('./CommentsEditor')
 );
@@ -57,9 +58,9 @@ export default function Comments({
       </h4>
 
       {isLoggedIn ? (
-        <Suspense fallback={<div />}>
+        <ClientOnly fallback={<div />}>
           <CommentsEditor content={content} />
-        </Suspense>
+        </ClientOnly>
       ) : null}
 
       {comments?.length ? (

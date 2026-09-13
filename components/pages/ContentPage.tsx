@@ -1,11 +1,12 @@
 import 'styles/content-theme.css';
 import 'lite-youtube-embed/src/lite-yt-embed.css';
-import { lazy, Suspense, useEffect, useRef } from 'react';
+import { lazy, useEffect, useRef } from 'react';
 import { useRouter } from '@tanstack/react-router';
 import { themeStylesheet } from 'styles/theme-css';
 import type { ContentPageData } from 'lib/page-data';
 import { contentUrl } from 'lib/url-factory';
 import { useGestures } from 'lib/use-gestures';
+import { ClientOnly } from 'lib/client-only';
 import { UserProvider } from 'lib/user-context';
 import { EditorProvider } from 'lib/editor-context';
 import SiteMap from 'components/content/SiteMap';
@@ -16,8 +17,8 @@ import Simple from 'components/content/templates/Simple';
 import ContentHeadScripts from 'components/content/ContentHeadScripts';
 import styles from 'components/content/content.module.css';
 
-// Client-only — see the note in components/content/Item.tsx. The stub matches
-// the Suspense fallback so hydration has nothing to reconcile.
+// Client-only — see the note in components/content/Item.tsx. The stub keeps the
+// editor out of the server bundle; <ClientOnly> keeps it out of hydration.
 const ContentEditor = lazy(() =>
   import.meta.env.SSR ? Promise.resolve({ default: () => <div /> }) : import('components/content/ContentEditor')
 );
@@ -90,9 +91,9 @@ export default function ContentPage({ data }: { data: ContentPageData }) {
     return wrap(
       <main id="hw-content">
         {currentUsername === content.username ? (
-          <Suspense fallback={<div />}>
+          <ClientOnly fallback={<div />}>
             <ContentEditor content={contentEditorProps(content)} />
-          </Suspense>
+          </ClientOnly>
         ) : null}
         <Simple content={content} />
       </main>

@@ -1,6 +1,7 @@
 import 'styles/content-theme.css';
-import { Suspense, lazy, useState } from 'react';
+import { lazy, useState } from 'react';
 import { defineMessages, useIntl } from 'i18n';
+import { ClientOnly } from 'lib/client-only';
 import { UserProvider } from 'lib/user-context';
 import { EditorProvider } from 'lib/editor-context';
 import type { HandleSetFeed, RemoteUser } from 'lib/remote-queries';
@@ -24,8 +25,8 @@ type DashboardUser = {
   mastodonUrl?: string | null;
 };
 
-// Client-only — see the note in components/content/Item.tsx. The stub matches
-// the Suspense fallback so hydration has nothing to reconcile.
+// Client-only — see the note in components/content/Item.tsx. The stub keeps the
+// editor out of the server bundle; <ClientOnly> keeps it out of hydration.
 const DashboardEditor = lazy(() =>
   import.meta.env.SSR ? Promise.resolve({ default: () => <div /> }) : import('components/dashboard/DashboardEditor')
 );
@@ -85,9 +86,9 @@ export default function DashboardPage({ user }: { user: DashboardUser }) {
             </nav>
 
             <div className={styles.content}>
-              <Suspense fallback={<div />}>
+              <ClientOnly fallback={<div />}>
                 <DashboardEditor username={user.username} />
-              </Suspense>
+              </ClientOnly>
               {specialFeed === 'me' ? (
                 <Feed content={{ username: user.username, section: 'main', name: 'home' }} contentOwner={user} />
               ) : (

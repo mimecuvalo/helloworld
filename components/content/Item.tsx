@@ -1,4 +1,5 @@
-import { lazy, Suspense } from 'react';
+import { lazy } from 'react';
+import { ClientOnly } from 'lib/client-only';
 import { useUser } from 'lib/user-context';
 import Album from './templates/Album';
 import Archive from './templates/Archive';
@@ -12,9 +13,9 @@ import styles from './content.module.css';
 
 // Client-only on purpose. `import.meta.env.SSR` folds to a constant per build,
 // so the server build drops the import() branch outright and tiptap/codemirror
-// never enter the server function — they were 2.4MB of it. The stub renders the
-// same empty <div /> as the Suspense fallback below, so the client hydrates onto
-// matching markup before the real chunk arrives.
+// never enter the server function — they were 2.4MB of it. The server renders
+// the stub's empty <div />, and <ClientOnly> makes the client render that same
+// <div /> while hydrating, swapping in the real editor only afterwards.
 const ContentEditor = lazy(() =>
   import.meta.env.SSR ? Promise.resolve({ default: () => <div /> }) : import('./ContentEditor')
 );
@@ -54,9 +55,9 @@ export default function Item({
     <article className={`hw-item h-entry ${styles.item}`}>
       <Header content={content} disallowEdit={isFeed} />
       {isOwnerViewing ? (
-        <Suspense fallback={<div />}>
+        <ClientOnly fallback={<div />}>
           <ContentEditor content={contentEditorProps(content)} />
-        </Suspense>
+        </ClientOnly>
       ) : null}
       {TemplateComponent ? body : <div className={styles.innerView}>{body}</div>}
       <Footer content={content} contentOwner={contentOwner} />

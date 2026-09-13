@@ -52,7 +52,7 @@ export function buildContentHead(opts: { content: ContentLike; contentOwner: Own
 
   const meta: Array<Record<string, unknown>> = [
     { title },
-    { name: 'viewport', content: contentOwner?.viewport || 'width=device-width, initial-scale=1' },
+    { name: 'viewport', content: contentOwner?.viewport || 'width=device-width' },
     { name: 'theme-color', content: '#161313' },
     { name: 'description', content: contentOwner?.description || 'Hello, world.' },
     { property: 'og:title', content: content?.title || title },

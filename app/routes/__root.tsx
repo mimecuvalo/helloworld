@@ -21,7 +21,7 @@ export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: 'utf-8' },
-      { name: 'viewport', content: 'minimum-scale=1, initial-scale=1, width=device-width' },
+      { name: 'viewport', content: 'minimum-scale=1, width=device-width' },
       { title: 'hello, world.' },
       { name: 'description', content: 'a federated blog with feed reader.' },
     ],
