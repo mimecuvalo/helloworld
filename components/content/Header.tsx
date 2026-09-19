@@ -1,7 +1,7 @@
 import { F } from 'i18n';
 import ContentLink from 'components/ContentLink';
 import { useUser } from 'lib/user-context';
-import { useEditor } from 'lib/editor-context';
+import { useEditor, usePendingContent } from 'lib/editor-context';
 import styles from './content.module.css';
 
 type HeaderContent = {
@@ -17,17 +17,19 @@ type HeaderContent = {
 export default function Header({ content, disallowEdit }: { content: HeaderContent; disallowEdit?: boolean }) {
   const user = useUser();
   const { isEditing, setIsEditing } = useEditor();
+  const pending = usePendingContent(content);
   const isOwnerViewing = user?.username === content.username;
+  const title = pending ? pending.title : content.title;
 
-  if (!content.title && !isOwnerViewing) {
+  if (!title && !isOwnerViewing) {
     return null;
   }
 
   return (
-    <header className={styles.itemHeader} title={content.title || undefined}>
+    <header className={styles.itemHeader} title={title || undefined}>
       <h1 className={styles.itemTitle}>
         <ContentLink item={content} currentContent={content}>
-          <span className="p-name notranslate">{content.title || <F defaultMessage="Untitled" />}</span>
+          <span className="p-name notranslate">{title || <F defaultMessage="Untitled" />}</span>
           {isOwnerViewing && content.hidden ? (
             <>
               &nbsp;
@@ -43,7 +45,7 @@ export default function Header({ content, disallowEdit }: { content: HeaderConte
             onClick={() => setIsEditing(!isEditing)}
             aria-pressed={isEditing}
           >
-            <F defaultMessage="edit" />
+            {isEditing ? <F defaultMessage="save" /> : <F defaultMessage="edit" />}
           </button>
         ) : null}
       </h1>

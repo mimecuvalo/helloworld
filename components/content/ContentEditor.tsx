@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from '@tanstack/react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { F, defineMessages, useIntl } from 'i18n';
@@ -80,7 +80,7 @@ function toDraft(editable: EditableContent): Draft {
 
 export default function ContentEditor({ content }: { content: EditableContentProps }) {
   const [wasEditing, setWasEditing] = useState(false);
-  const { isEditing, setIsEditing } = useEditor();
+  const { isEditing, setIsEditing, setPending } = useEditor();
   const [tab, setTab] = useState<Tab>('content');
   // Seeded from the row as it is stored, not as it is served: fetchContent folds
   // the section's and album's css/js into what the page renders.
@@ -91,6 +91,13 @@ export default function ContentEditor({ content }: { content: EditableContentPro
   const router = useRouter();
   const queryClient = useQueryClient();
   const editable = useEditableContent(content.name, isEditing);
+  // A save finishes long after it was started, and the editor may have been
+  // reopened — or closed again, starting another save — in the meantime. Read
+  // through refs so the finishing save sees where things stand now rather than
+  // where they stood when it was kicked off.
+  const isEditingRef = useRef(isEditing);
+  isEditingRef.current = isEditing;
+  const saveSeq = useRef(0);
 
   const saveMutation = useMutation({
     mutationFn: (json: {
@@ -141,6 +148,16 @@ export default function ContentEditor({ content }: { content: EditableContentPro
       // Stored pretty-printed so the HTML tab is readable next time it's opened.
       const view = formatHTML(values.view);
 
+      // Closing the editor twice in quick succession leaves two of these in
+      // flight; only the last one still speaks for the page when it lands.
+      const seq = ++saveSeq.current;
+      const superseded = () => seq !== saveSeq.current;
+
+      // The editor is already gone by now and the page below it is showing the
+      // row as it was loaded, so hand the page what was just typed to render
+      // until the server's copy comes back.
+      setPending({ username: content.username, name: content.name, title, view });
+
       let result;
       try {
         result = await saveMutation.mutateAsync({
@@ -165,15 +182,25 @@ export default function ContentEditor({ content }: { content: EditableContentPro
         ? messages[SAVE_ERRORS[(result?.body as { error?: string } | undefined)?.error || ''] || 'error']
         : null;
       if (failure) {
+        if (!superseded()) setPending(null);
         setToast({ msg: intl.formatMessage(failure), ok: false });
         setIsEditing(true);
         return;
       }
 
       setToast({ msg: intl.formatMessage(messages.posted), ok: true });
-      setHasUnsavedChanges(false);
-      setDraft(null);
-      queryClient.removeQueries({ queryKey: ['editable', content.name] });
+      // The draft is the editor's copy, and by now it can be ahead of what was
+      // just saved: reopened while the request was out and typed into again, or
+      // closed again into a second save that is still carrying it. Dropping it
+      // here would take those edits with it — the save that ends with the
+      // editor shut is the one that clears up.
+      if (!isEditingRef.current && !superseded()) {
+        setHasUnsavedChanges(false);
+        setDraft(null);
+        // Left in place otherwise: the next open re-seeds from it, and it is
+        // this save that made it stale.
+        queryClient.removeQueries({ queryKey: ['editable', content.name] });
+      }
       queryClient.invalidateQueries({ queryKey: ['sitemap'] });
       queryClient.invalidateQueries({ queryKey: ['collection'] });
 
@@ -184,10 +211,14 @@ export default function ContentEditor({ content }: { content: EditableContentPro
         saved &&
         (saved.name !== content.name || saved.section !== content.section || saved.album !== content.album)
       ) {
-        router.navigate({ to: contentUrl(saved), replace: true });
+        await router.navigate({ to: contentUrl(saved), replace: true });
       } else {
-        router.invalidate();
+        await router.invalidate();
       }
+      // Only now is the page rendering the saved row itself; dropping the
+      // optimistic copy any earlier flashes the old content back — as would
+      // dropping it at all when a later save has put its own there.
+      if (!superseded()) setPending(null);
     };
 
     if (wasEditing && !isEditing) {
@@ -227,6 +258,7 @@ export default function ContentEditor({ content }: { content: EditableContentPro
     setDraft(null);
     setWasEditing(false);
     setIsEditing(false);
+    setPending(null);
     queryClient.invalidateQueries({ queryKey: ['sitemap'] });
     queryClient.invalidateQueries({ queryKey: ['collection'] });
     router.navigate({ to: `/${content.username}`, replace: true });
