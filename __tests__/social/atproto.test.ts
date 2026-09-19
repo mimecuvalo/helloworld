@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const db = vi.hoisted(() => ({ getRemoteContent: vi.fn(), saveRemoteContent: vi.fn() }));
 const prismaMock = vi.hoisted(() => ({
@@ -57,12 +57,19 @@ const linked = (overrides = {}) =>
 const atprotoPeer = (overrides = {}) =>
   userRemote({ atprotoDid: 'did:plc:bob', atprotoHandle: 'bob.bsky.social', ...overrides });
 
+// The reader drops anything past a 30-day window, so a fixed createdAt would
+// age out of it and take the suite down on a date nobody chose — as it did.
+// Freeze the clock a few days after POSTED instead, the way feeds.test.ts
+// pins the Atom reader that shares the cutoff.
+const POSTED = '2026-08-20T00:00:00.000Z';
+const NOW = new Date('2026-08-25T12:00:00.000Z');
+
 const feedPost = (overrides = {}) => ({
   post: {
     uri: 'at://did:plc:bob/app.bsky.feed.post/abc',
     cid: 'bafy',
     author: { handle: 'bob.bsky.social', displayName: 'Bob B', avatar: 'https://cdn/av.jpg', did: 'did:plc:bob' },
-    record: { text: 'hello world', createdAt: '2026-08-20T00:00:00.000Z' },
+    record: { text: 'hello world', createdAt: POSTED },
     replyCount: 2,
     ...overrides,
   },
@@ -70,6 +77,8 @@ const feedPost = (overrides = {}) => ({
 
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.useFakeTimers();
+  vi.setSystemTime(NOW);
   agentMock.session = undefined;
   agentMock.login.mockImplementation(async () => {
     agentMock.session = { did: 'did:plc:alice' };
@@ -78,6 +87,10 @@ beforeEach(() => {
   db.getRemoteContent.mockResolvedValue(null);
   db.saveRemoteContent.mockResolvedValue(undefined);
   prismaMock.default.content.findFirst.mockResolvedValue(null);
+});
+
+afterEach(() => {
+  vi.useRealTimers();
 });
 
 describe('credential gating', () => {
@@ -229,7 +242,7 @@ describe('mapAtprotoFeedIntoDb', () => {
   });
 
   it('skips a post it already has at the same timestamp', async () => {
-    db.getRemoteContent.mockResolvedValue({ id: 7, updatedAt: new Date('2026-08-20T00:00:00.000Z') });
+    db.getRemoteContent.mockResolvedValue({ id: 7, updatedAt: new Date(POSTED) });
 
     await mapAtprotoFeedIntoDb(atprotoPeer(), [feedPost()]);
 
@@ -237,7 +250,8 @@ describe('mapAtprotoFeedIntoDb', () => {
   });
 
   it('updates a post whose timestamp moved, reusing the existing row', async () => {
-    db.getRemoteContent.mockResolvedValue({ id: 7, updatedAt: new Date('2026-08-19T00:00:00.000Z') });
+    // A day off POSTED: what matters is that it differs from the incoming post.
+    db.getRemoteContent.mockResolvedValue({ id: 7, updatedAt: new Date(Date.parse(POSTED) - 86_400_000) });
 
     await mapAtprotoFeedIntoDb(atprotoPeer(), [feedPost()]);
 
@@ -257,7 +271,7 @@ describe('mapAtprotoFeedIntoDb', () => {
       feedPost({
         record: {
           text: 'agreed',
-          createdAt: '2026-08-20T00:00:00.000Z',
+          createdAt: POSTED,
           reply: { parent: { uri: 'at://did:plc:carol/app.bsky.feed.post/xyz' } },
         },
       }),
@@ -289,7 +303,7 @@ describe('inbound reader quality', () => {
   it('renders a post embed alongside its text', async () => {
     await mapAtprotoFeedIntoDb(atprotoPeer(), [
       feedPost({
-        record: { text: 'look', createdAt: '2026-08-20T00:00:00.000Z' },
+        record: { text: 'look', createdAt: POSTED },
         embed: { $type: 'app.bsky.embed.images#view', images: [{ thumb: 'https://cdn/t.jpg', alt: 'cat' }] },
       }),
     ]);
@@ -305,7 +319,7 @@ describe('inbound reader quality', () => {
         post: {
           uri: 'at://did:plc:carol/app.bsky.feed.post/xyz',
           author: { handle: 'carol.bsky.social', displayName: 'Carol C' },
-          record: { text: 'carol wrote this', createdAt: '2026-08-20T00:00:00.000Z' },
+          record: { text: 'carol wrote this', createdAt: POSTED },
         },
         reason: { $type: 'app.bsky.feed.defs#reasonRepost', by: { handle: 'bob.bsky.social', displayName: 'Bob B' } },
       },
@@ -325,7 +339,7 @@ describe('inbound reader quality', () => {
       feedPost({
         record: {
           text: 'nice post',
-          createdAt: '2026-08-20T00:00:00.000Z',
+          createdAt: POSTED,
           reply: { parent: { uri: 'at://did:plc:alice/app.bsky.feed.post/hello' } },
         },
       }),
@@ -343,7 +357,7 @@ describe('inbound reader quality', () => {
       feedPost({
         record: {
           text: 'unrelated',
-          createdAt: '2026-08-20T00:00:00.000Z',
+          createdAt: POSTED,
           reply: { parent: { uri: 'at://did:plc:dave/app.bsky.feed.post/zzz' } },
         },
       }),
