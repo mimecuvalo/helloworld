@@ -5,6 +5,7 @@ import { invalidateCountsSoon } from 'lib/invalidate-counts';
 import { queueRead } from 'lib/read-queue';
 import type { RemotePost } from 'lib/remote-queries';
 import { createLiteYouTubeVideos } from 'util/media';
+import { useImageLightbox } from '../content/use-image-lightbox';
 import Favorite from './actions/Favorite';
 import Reblog from './actions/Reblog';
 import Reply from './actions/Reply';
@@ -16,6 +17,10 @@ export default function DashboardItem({ contentRemote }: { contentRemote: Remote
   const [keepUnread, setKeepUnread] = useState(false);
   const [read, setRead] = useState<boolean>(!!contentRemote.read);
   const itemRef = useRef<HTMLElement>(null);
+  const viewRef = useRef<HTMLDivElement>(null);
+  // Photos in the feed get the same lightbox as an album's: click or pinch out
+  // to open, swipe through the rest of the post's images.
+  const lightbox = useImageLightbox(viewRef);
 
   const readMutation = useMutation({
     mutationFn: (nextRead: boolean) => queueRead(contentRemote.fromUsername, contentRemote.postId, nextRead),
@@ -77,7 +82,8 @@ export default function DashboardItem({ contentRemote }: { contentRemote: Remote
         </div>
       ) : null}
 
-      <div className={`${styles.itemView} notranslate`} dangerouslySetInnerHTML={{ __html: html }} />
+      <div ref={viewRef} className={`${styles.itemView} notranslate`} dangerouslySetInnerHTML={{ __html: html }} />
+      {lightbox}
 
       <footer className={styles.itemFooter}>
         <span>

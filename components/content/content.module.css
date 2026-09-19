@@ -511,6 +511,53 @@
   touch-action: pan-x pan-y;
 }
 
+/* A feed item or post body holding at least one image the lightbox has claimed.
+ * Same reasoning as .albumGrid above, including why it has to be the container
+ * and not the images: a pinch's effective touch-action is the intersection
+ * across everything being touched, and the second finger routinely lands in the
+ * prose beside the photo. Pinching to read these pages goes away as a result —
+ * a deliberate trade. Both flags are set by use-image-lightbox. */
+:global([data-lightbox-container]) {
+  touch-action: pan-x pan-y;
+}
+
+:global([data-lightbox-image]) {
+  cursor: zoom-in;
+}
+
+/* The way out of an image whose link the lightbox took over: the link itself,
+ * in the image's top corner while the pointer is on it. Fixed rather than
+ * absolute because there's nothing to anchor to — the image lives in markup we
+ * didn't render — so use-image-lightbox drives top/left off its box. */
+.imageLink {
+  position: fixed;
+  z-index: 1200;
+  transform: translate(calc(-100% - 6px), 6px);
+  padding: 2px 7px;
+  font-size: 1rem;
+  line-height: 1.4;
+  text-decoration: none;
+  color: #fff;
+  background-color: black;
+  border: 1px solid var(--hw-primary-light);
+  box-shadow:
+    1px 1px var(--hw-primary-light),
+    2px 2px var(--hw-primary-light);
+  transition: all 0.2s ease-out;
+}
+
+.imageLink:hover {
+  border-color: var(--hw-primary);
+  box-shadow:
+    1px 1px var(--hw-primary),
+    2px 2px var(--hw-primary);
+}
+
+.imageLink:active {
+  box-shadow: none;
+  transform: translate(calc(-100% - 4px), 8px);
+}
+
 .albumItem {
   position: relative;
   display: inline-block;

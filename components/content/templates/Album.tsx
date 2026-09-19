@@ -3,12 +3,14 @@ import { useRouter } from '@tanstack/react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { F } from 'i18n';
 import { useCollection } from 'lib/content-queries';
+import { decodeSoon } from 'lib/decode-image';
 import { useGestures } from 'lib/use-gestures';
 import { contentUrl } from 'lib/url-factory';
 import { useEditor } from 'lib/editor-context';
 import { rpc } from 'lib/rpc';
 import { withViewTransition } from 'lib/view-transition';
 import ContentThumb from '../ContentThumb';
+import Header from '../Header';
 import Lightbox, { HERO_NAME } from '../Lightbox';
 import styles from '../content.module.css';
 
@@ -20,9 +22,6 @@ type AlbumContent = {
   forceRefresh?: boolean | null;
 };
 
-// How long we'll wait for the next image to decode before animating anyway —
-// past this the slide is better than the stall.
-const DECODE_BUDGET_MS = 300;
 const ignorePinch = () => {};
 
 export default function Album({ content }: { content: AlbumContent }) {
@@ -81,18 +80,7 @@ export default function Album({ content }: { content: AlbumContent }) {
     if (next) next.style.viewTransitionName = HERO_NAME;
   };
 
-  // An undecoded image snapshots blank, so the animation would morph into an
-  // empty box and then pop. Wait for it, but not for long.
-  const decodeHero = (index: number) => {
-    const src = collection[index]?.prefetchImages?.[0];
-    if (!src) return Promise.resolve();
-    const image = new Image();
-    image.src = src;
-    return Promise.race([
-      image.decode().catch(() => {}),
-      new Promise((resolve) => setTimeout(resolve, DECODE_BUDGET_MS)),
-    ]);
-  };
+  const decodeHero = (index: number) => decodeSoon(collection[index]?.prefetchImages?.[0]);
 
   const showItem = (index: number) => {
     const item = collection[index];
@@ -183,7 +171,16 @@ export default function Album({ content }: { content: AlbumContent }) {
         ))}
       </ul>
 
-      {currentItem ? <Lightbox onClose={closeItem} onPrev={handlePrev} onNext={handleNext} item={currentItem} /> : null}
+      {currentItem ? (
+        <Lightbox
+          onClose={closeItem}
+          onPrev={currentIndexOpen > 0 ? handlePrev : undefined}
+          onNext={currentIndexOpen < collection.length - 1 ? handleNext : undefined}
+          images={currentItem.prefetchImages || []}
+          alt={currentItem.title || undefined}
+          header={<Header content={currentItem} disallowEdit />}
+        />
+      ) : null}
     </>
   );
 }
