@@ -60,6 +60,10 @@ export default function Tools({ user }: { user: ToolsUser }) {
                 <F defaultMessage="organize sidebar" />
               </Menu.Item>
 
+              <Menu.Item className={styles.menuItem} onClick={() => navigate({ to: '/dashboard/media' })}>
+                <F defaultMessage="media manager" />
+              </Menu.Item>
+
               <Menu.SubmenuRoot>
                 <Menu.SubmenuTrigger className={`${styles.menuItem} ${styles.submenuTrigger}`}>
                   <F defaultMessage="tools" />

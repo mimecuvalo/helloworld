@@ -12,6 +12,7 @@ import { userRemoteRoutes } from './routes/user-remote';
 import { contentRoutes } from './routes/content';
 import { contentRemoteRoutes } from './routes/content-remote';
 import { uploadRoutes } from './routes/upload';
+import { mediaRoutes } from './routes/media';
 import { unfurlRoutes } from './routes/unfurl';
 import { socialRoutes } from './routes/social';
 import { atprotoRoutes } from './routes/atproto';
@@ -55,6 +56,7 @@ const routes = app
   .route('/content', contentRoutes)
   .route('/content-remote', contentRemoteRoutes)
   .route('/', uploadRoutes)
+  .route('/media', mediaRoutes)
   .route('/', unfurlRoutes)
   .route('/social', socialRoutes)
   .route('/atproto', atprotoRoutes);

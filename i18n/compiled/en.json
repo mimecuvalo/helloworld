@@ -5,6 +5,12 @@
       "value": "Favorite"
     }
   ],
+  "01bc6f8efa": [
+    {
+      "type": 0,
+      "value": "clear"
+    }
+  ],
   "050a298166": [
     {
       "type": 0,
@@ -45,6 +51,12 @@
     {
       "type": 1,
       "value": "link"
+    }
+  ],
+  "0ede392af6": [
+    {
+      "type": 0,
+      "value": "deleting…"
     }
   ],
   "0f6969d705": [
@@ -119,6 +131,52 @@
       "value": "New album"
     }
   ],
+  "200d98de45": [
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " file selected · "
+            },
+            {
+              "type": 1,
+              "value": "size"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " files selected · "
+            },
+            {
+              "type": 1,
+              "value": "size"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    }
+  ],
+  "2028434d2f": [
+    {
+      "type": 0,
+      "value": "media manager"
+    }
+  ],
   "207197a368": [
     {
       "type": 0,
@@ -167,6 +225,12 @@
       "value": "linking…"
     }
   ],
+  "2c21a69607": [
+    {
+      "type": 0,
+      "value": "open the full size in a new tab"
+    }
+  ],
   "2c56c36058": [
     {
       "type": 0,
@@ -185,6 +249,46 @@
       "value": "reblog bookmarklet"
     }
   ],
+  "326fb4ead1": [
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 0,
+              "value": "⚠ "
+            },
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " of these is still used by posts. Deleting will leave a hole in them."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 0,
+              "value": "⚠ "
+            },
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " of these are still used by posts. Deleting will leave a hole in them."
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    }
+  ],
   "32d95e7840": [
     {
       "type": 0,
@@ -201,6 +305,12 @@
     {
       "type": 0,
       "value": "account menu"
+    }
+  ],
+  "3cd91cf736": [
+    {
+      "type": 0,
+      "value": "Checking whether anything still uses them…"
     }
   ],
   "3d728e1b6e": [
@@ -263,6 +373,18 @@
     {
       "type": 0,
       "value": "sort by newest"
+    }
+  ],
+  "49549552db": [
+    {
+      "type": 0,
+      "value": "No post points at any of these."
+    }
+  ],
+  "497b42603b": [
+    {
+      "type": 0,
+      "value": "copy url"
     }
   ],
   "4a931512ce": [
@@ -469,6 +591,18 @@
       "value": "section"
     }
   ],
+  "74c78fc991": [
+    {
+      "type": 0,
+      "value": "no original"
+    }
+  ],
+  "76b5c2e412": [
+    {
+      "type": 0,
+      "value": "This folder holds more files than can be shown at once. Only the first of them are listed."
+    }
+  ],
   "76ea0bebb3": [
     {
       "type": 0,
@@ -523,6 +657,12 @@
     {
       "type": 0,
       "value": "https://mastodon.social/@you"
+    }
+  ],
+  "808e719dac": [
+    {
+      "type": 0,
+      "value": "There is nothing here."
     }
   ],
   "808e9f6fe7": [
@@ -615,6 +755,12 @@
       "value": "Login"
     }
   ],
+  "9b01335ad7": [
+    {
+      "type": 0,
+      "value": "delete these files?"
+    }
+  ],
   "9de70f6546": [
     {
       "type": 0,
@@ -681,10 +827,172 @@
       "value": "avatar"
     }
   ],
+  "ac9f7584d3": [
+    {
+      "type": 0,
+      "value": "copied"
+    }
+  ],
+  "af25b28e22": [
+    {
+      "type": 6,
+      "value": "assets",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 6,
+              "value": "keys",
+              "options": {
+                "one": {
+                  "value": [
+                    {
+                      "type": 2,
+                      "value": "assets",
+                      "style": null
+                    },
+                    {
+                      "type": 0,
+                      "value": " file — "
+                    },
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " object in the bucket, "
+                    },
+                    {
+                      "type": 1,
+                      "value": "size"
+                    },
+                    {
+                      "type": 0,
+                      "value": ". This cannot be undone."
+                    }
+                  ]
+                },
+                "other": {
+                  "value": [
+                    {
+                      "type": 2,
+                      "value": "assets",
+                      "style": null
+                    },
+                    {
+                      "type": 0,
+                      "value": " file — "
+                    },
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " objects in the bucket, "
+                    },
+                    {
+                      "type": 1,
+                      "value": "size"
+                    },
+                    {
+                      "type": 0,
+                      "value": ". This cannot be undone."
+                    }
+                  ]
+                }
+              },
+              "offset": 0,
+              "pluralType": "cardinal"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 6,
+              "value": "keys",
+              "options": {
+                "one": {
+                  "value": [
+                    {
+                      "type": 2,
+                      "value": "assets",
+                      "style": null
+                    },
+                    {
+                      "type": 0,
+                      "value": " files — "
+                    },
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " object in the bucket, "
+                    },
+                    {
+                      "type": 1,
+                      "value": "size"
+                    },
+                    {
+                      "type": 0,
+                      "value": ". This cannot be undone."
+                    }
+                  ]
+                },
+                "other": {
+                  "value": [
+                    {
+                      "type": 2,
+                      "value": "assets",
+                      "style": null
+                    },
+                    {
+                      "type": 0,
+                      "value": " files — "
+                    },
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " objects in the bucket, "
+                    },
+                    {
+                      "type": 1,
+                      "value": "size"
+                    },
+                    {
+                      "type": 0,
+                      "value": ". This cannot be undone."
+                    }
+                  ]
+                }
+              },
+              "offset": 0,
+              "pluralType": "cardinal"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    }
+  ],
   "afeb8d9d88": [
     {
       "type": 0,
       "value": "edit profile"
+    }
+  ],
+  "afece99f32": [
+    {
+      "type": 0,
+      "value": "select "
+    },
+    {
+      "type": 1,
+      "value": "name"
     }
   ],
   "b004d4b8c6": [
@@ -747,6 +1055,12 @@
       "value": "bluesky"
     }
   ],
+  "c2b5b123e3": [
+    {
+      "type": 0,
+      "value": "Could not read the bucket. If this is new, the credentials may not be allowed to list it yet."
+    }
+  ],
   "c84d77792c": [
     {
       "type": 0,
@@ -757,6 +1071,12 @@
     {
       "type": 0,
       "value": "data liberation — packing…"
+    }
+  ],
+  "ccb235296c": [
+    {
+      "type": 0,
+      "value": "Reading the bucket…"
     }
   ],
   "cdcfbe51f7": [
@@ -869,6 +1189,12 @@
     {
       "type": 0,
       "value": "dashboard"
+    }
+  ],
+  "dd41630fa0": [
+    {
+      "type": 0,
+      "value": "Everything you have uploaded, grouped by file — the full-size original, the copy your posts show, and the thumbnail all count as one thing here, and are deleted together."
     }
   ],
   "de95b43bce": [

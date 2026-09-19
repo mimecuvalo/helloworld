@@ -13,6 +13,9 @@
   "01165dcf77": {
     "message": "Favorite"
   },
+  "01bc6f8efa": {
+    "message": "clear"
+  },
   "050a298166": {
     "message": "paste url to follow"
   },
@@ -27,6 +30,9 @@
   },
   "0e002f7647": {
     "message": "powered by {br} {link}"
+  },
+  "0ede392af6": {
+    "message": "deleting…"
   },
   "0f6969d705": {
     "message": "remove"
@@ -64,6 +70,12 @@
   "1f9e2df1c0": {
     "message": "New album"
   },
+  "200d98de45": {
+    "message": "{count,plural,one{# file selected · {size}} other{# files selected · {size}}}"
+  },
+  "2028434d2f": {
+    "message": "media manager"
+  },
   "207197a368": {
     "message": "-none-"
   },
@@ -88,6 +100,9 @@
   "2bf23ac94b": {
     "message": "linking…"
   },
+  "2c21a69607": {
+    "message": "open the full size in a new tab"
+  },
   "2c56c36058": {
     "message": "CSS"
   },
@@ -97,6 +112,9 @@
   "30b9f6c879": {
     "message": "reblog bookmarklet"
   },
+  "326fb4ead1": {
+    "message": "{count,plural,one{⚠ # of these is still used by posts. Deleting will leave a hole in them.} other{⚠ # of these are still used by posts. Deleting will leave a hole in them.}}"
+  },
   "32d95e7840": {
     "message": "handle (e.g. you.bsky.social)"
   },
@@ -105,6 +123,9 @@
   },
   "3bba56ae8a": {
     "message": "account menu"
+  },
+  "3cd91cf736": {
+    "message": "Checking whether anything still uses them…"
   },
   "3d728e1b6e": {
     "message": "we've logged this error and we'll fix it soon."
@@ -129,6 +150,12 @@
   },
   "4937452da0": {
     "message": "sort by newest"
+  },
+  "49549552db": {
+    "message": "No post points at any of these."
+  },
+  "497b42603b": {
+    "message": "copy url"
   },
   "4a931512ce": {
     "message": "tools"
@@ -232,6 +259,12 @@
   "73d5342eba": {
     "message": "section"
   },
+  "74c78fc991": {
+    "message": "no original"
+  },
+  "76b5c2e412": {
+    "message": "This folder holds more files than can be shown at once. Only the first of them are listed."
+  },
   "76ea0bebb3": {
     "message": "create"
   },
@@ -255,6 +288,9 @@
   },
   "807b754692": {
     "message": "https://mastodon.social/@you"
+  },
+  "808e719dac": {
+    "message": "There is nothing here."
   },
   "808e9f6fe7": {
     "message": "thumbnail url"
@@ -301,6 +337,9 @@
   "99dea78007": {
     "message": "Login"
   },
+  "9b01335ad7": {
+    "message": "delete these files?"
+  },
   "9de70f6546": {
     "message": "visit"
   },
@@ -328,8 +367,17 @@
   "aaca0f5eb4": {
     "message": "avatar"
   },
+  "ac9f7584d3": {
+    "message": "copied"
+  },
+  "af25b28e22": {
+    "message": "{assets,plural,one{{keys,plural,one{{assets, number} file — # object in the bucket, {size}. This cannot be undone.} other{{assets, number} file — # objects in the bucket, {size}. This cannot be undone.}}} other{{keys,plural,one{{assets, number} files — # object in the bucket, {size}. This cannot be undone.} other{{assets, number} files — # objects in the bucket, {size}. This cannot be undone.}}}}"
+  },
   "afeb8d9d88": {
     "message": "edit profile"
+  },
+  "afece99f32": {
+    "message": "select {name}"
   },
   "b004d4b8c6": {
     "message": "Error posting content."
@@ -361,11 +409,17 @@
   "c1a2311646": {
     "message": "bluesky"
   },
+  "c2b5b123e3": {
+    "message": "Could not read the bucket. If this is new, the credentials may not be allowed to list it yet."
+  },
   "c84d77792c": {
     "message": "i18n: Long"
   },
   "caa34bd688": {
     "message": "data liberation — packing…"
+  },
+  "ccb235296c": {
+    "message": "Reading the bucket…"
   },
   "cdcfbe51f7": {
     "message": "follow back"
@@ -420,6 +474,9 @@
   },
   "dc7161be3d": {
     "message": "dashboard"
+  },
+  "dd41630fa0": {
+    "message": "Everything you have uploaded, grouped by file — the full-size original, the copy your posts show, and the thumbnail all count as one thing here, and are deleted together."
   },
   "de95b43bce": {
     "message": "edit"

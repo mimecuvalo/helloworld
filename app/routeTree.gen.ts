@@ -22,6 +22,7 @@ import { Route as DotwellKnownNodeinfoRouteImport } from './routes/[.]well-known
 import { Route as DotwellKnownWebfingerRouteImport } from './routes/[.]well-known/webfinger'
 import { Route as ApSplatRouteImport } from './routes/ap/$'
 import { Route as ApiSplatRouteImport } from './routes/api/$'
+import { Route as DashboardMediaRouteImport } from './routes/dashboard_.media'
 import { Route as DashboardOrganizeRouteImport } from './routes/dashboard_.organize'
 import { Route as ResourceSplatRouteImport } from './routes/resource.$'
 import { Route as XrpcSplatRouteImport } from './routes/xrpc/$'
@@ -93,6 +94,11 @@ const ApiSplatRoute = ApiSplatRouteImport.update({
   path: '/api/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardMediaRoute = DashboardMediaRouteImport.update({
+  id: '/dashboard_/media',
+  path: '/dashboard/media',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardOrganizeRoute = DashboardOrganizeRouteImport.update({
   id: '/dashboard_/organize',
   path: '/dashboard/organize',
@@ -128,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/webfinger': typeof DotwellKnownWebfingerRoute
   '/ap/$': typeof ApSplatRoute
   '/api/$': typeof ApiSplatRoute
+  '/dashboard/media': typeof DashboardMediaRoute
   '/dashboard/organize': typeof DashboardOrganizeRoute
   '/resource/$': typeof ResourceSplatRoute
   '/xrpc/$': typeof XrpcSplatRoute
@@ -147,6 +154,7 @@ export interface FileRoutesByTo {
   '/.well-known/webfinger': typeof DotwellKnownWebfingerRoute
   '/ap/$': typeof ApSplatRoute
   '/api/$': typeof ApiSplatRoute
+  '/dashboard/media': typeof DashboardMediaRoute
   '/dashboard/organize': typeof DashboardOrganizeRoute
   '/resource/$': typeof ResourceSplatRoute
   '/xrpc/$': typeof XrpcSplatRoute
@@ -167,6 +175,7 @@ export interface FileRoutesById {
   '/.well-known/webfinger': typeof DotwellKnownWebfingerRoute
   '/ap/$': typeof ApSplatRoute
   '/api/$': typeof ApiSplatRoute
+  '/dashboard_/media': typeof DashboardMediaRoute
   '/dashboard_/organize': typeof DashboardOrganizeRoute
   '/resource/$': typeof ResourceSplatRoute
   '/xrpc/$': typeof XrpcSplatRoute
@@ -188,6 +197,7 @@ export interface FileRouteTypes {
     | '/.well-known/webfinger'
     | '/ap/$'
     | '/api/$'
+    | '/dashboard/media'
     | '/dashboard/organize'
     | '/resource/$'
     | '/xrpc/$'
@@ -207,6 +217,7 @@ export interface FileRouteTypes {
     | '/.well-known/webfinger'
     | '/ap/$'
     | '/api/$'
+    | '/dashboard/media'
     | '/dashboard/organize'
     | '/resource/$'
     | '/xrpc/$'
@@ -226,6 +237,7 @@ export interface FileRouteTypes {
     | '/.well-known/webfinger'
     | '/ap/$'
     | '/api/$'
+    | '/dashboard_/media'
     | '/dashboard_/organize'
     | '/resource/$'
     | '/xrpc/$'
@@ -246,6 +258,7 @@ export interface RootRouteChildren {
   DotwellKnownWebfingerRoute: typeof DotwellKnownWebfingerRoute
   ApSplatRoute: typeof ApSplatRoute
   ApiSplatRoute: typeof ApiSplatRoute
+  DashboardMediaRoute: typeof DashboardMediaRoute
   DashboardOrganizeRoute: typeof DashboardOrganizeRoute
   ResourceSplatRoute: typeof ResourceSplatRoute
   XrpcSplatRoute: typeof XrpcSplatRoute
@@ -345,6 +358,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard_/media': {
+      id: '/dashboard_/media'
+      path: '/dashboard/media'
+      fullPath: '/dashboard/media'
+      preLoaderRoute: typeof DashboardMediaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard_/organize': {
       id: '/dashboard_/organize'
       path: '/dashboard/organize'
@@ -390,6 +410,7 @@ const rootRouteChildren: RootRouteChildren = {
   DotwellKnownWebfingerRoute: DotwellKnownWebfingerRoute,
   ApSplatRoute: ApSplatRoute,
   ApiSplatRoute: ApiSplatRoute,
+  DashboardMediaRoute: DashboardMediaRoute,
   DashboardOrganizeRoute: DashboardOrganizeRoute,
   ResourceSplatRoute: ResourceSplatRoute,
   XrpcSplatRoute: XrpcSplatRoute,

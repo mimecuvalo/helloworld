@@ -674,3 +674,200 @@ a.menuItem {
   font-size: 0.75rem;
   opacity: 0.6;
 }
+
+/* Media manager. Wider than the sitemap page: this one is a grid of pictures,
+   and the point of it is being able to recognise them. */
+.mediaPage {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.media h2 {
+  margin: 0 0 4px;
+}
+
+.mediaCrumbs {
+  margin-bottom: 12px;
+  font-size: 0.875rem;
+}
+
+.mediaCrumb,
+.mediaCrumbCurrent {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+}
+
+.mediaCrumb {
+  color: var(--hw-primary, var(--color-primary));
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.mediaCrumbCurrent {
+  opacity: 0.7;
+}
+
+.mediaNotice {
+  margin: 0 0 12px;
+  font-size: 0.875rem;
+  color: var(--hw-warning, #a60);
+}
+
+.mediaFolders {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.mediaFolder {
+  padding: 6px 10px;
+  border: 1px solid;
+  border-color: var(--hw-secondary, #f0f);
+  border-radius: var(--radius, 4px);
+  background: var(--hw-bg, var(--background));
+  font: inherit;
+  cursor: pointer;
+}
+
+.mediaFolder:hover {
+  background: var(--hw-menu-hover);
+}
+
+.mediaGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mediaTile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--hw-border, #8884);
+  border-radius: var(--radius, 4px);
+  overflow: hidden;
+}
+
+.mediaTileSelected {
+  border-color: var(--hw-primary, var(--color-primary));
+  box-shadow: 0 0 0 1px var(--hw-primary, var(--color-primary));
+}
+
+.mediaTileSelect {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 1;
+  padding: 2px;
+  border-radius: var(--radius, 4px);
+  /* The checkbox sits on top of the photograph, which could be any colour. */
+  background: var(--hw-bg, var(--background));
+}
+
+.mediaPreview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 140px;
+  background: var(--hw-menu-hover, #8881);
+}
+
+.mediaPreview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.mediaFileType {
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  opacity: 0.6;
+}
+
+.mediaMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 8px;
+  font-size: 0.75rem;
+}
+
+/* A long filename must not stretch its grid column. */
+.mediaName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mediaSize {
+  opacity: 0.6;
+}
+
+.mediaCopy {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--hw-primary, var(--color-primary));
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Sticks to the bottom of the viewport: the selection is made by scrolling
+   through a long grid, and the actions have to stay reachable from anywhere. */
+.mediaSelection {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 10px 12px;
+  border: 1px solid var(--hw-secondary, #f0f);
+  background: var(--hw-bg, var(--background));
+  font-size: 0.875rem;
+}
+
+.mediaClear {
+  padding: 3px 8px;
+  margin-left: auto;
+}
+
+.mediaDelete {
+  padding: 3px 8px;
+  border-color: var(--hw-error, #c00);
+  color: var(--hw-error, #c00);
+}
+
+.mediaWarning {
+  margin: 0 0 12px;
+  padding: 8px 10px;
+  border: 1px solid var(--hw-error, #c00);
+  border-radius: var(--radius, 4px);
+  font-size: 0.875rem;
+}
+
+.mediaWarning p {
+  margin: 0 0 6px;
+}
+
+.mediaWarning ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.mediaSafe {
+  margin: 0 0 12px;
+  font-size: 0.875rem;
+  color: var(--hw-success, #0c0);
+}
