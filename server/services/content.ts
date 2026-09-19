@@ -238,7 +238,7 @@ export async function fetchCollection(
   });
   const orderBy = [{ order: 'asc' }, getSQLSortType(sectionContent?.sortType || '')] as any;
 
-  const constraints: { [key: string]: any } = { redirect: 0, template: { not: 'blank' } };
+  const constraints: { [key: string]: boolean | number } = { redirect: 0 };
   if (!isOwnerViewing) constraints['hidden'] = false;
 
   const select =
