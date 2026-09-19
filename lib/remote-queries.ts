@@ -15,7 +15,7 @@ export type RemoteUser = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type RemotePost = any;
 
-export type HandleSetFeed = (feed: RemoteUser | string, query?: string, allItems?: boolean) => void;
+export type HandleSetFeed = (feed: RemoteUser | string, searchQuery?: string, allItems?: boolean) => void;
 
 const FEED_PAGE_SIZE = 20;
 
@@ -23,9 +23,18 @@ const FEED_PAGE_SIZE = 20;
 // items are marked read, and only a keyset cursor survives that.
 type FeedCursor = { createdAt: string; id: number };
 
-export function useFeedPaginated(profileUrlOrSpecialFeed: string, query: string, shouldShowAllItems: boolean) {
+// `sortType` isn't sent — the server reads it off the UserRemote row — but it
+// belongs in the key: toggling the sort changes nothing else about the request,
+// so without it the flipped feed would be served from the cache, and the pages
+// already held would carry cursors from the old direction.
+export function useFeedPaginated(
+  profileUrlOrSpecialFeed: string,
+  query: string,
+  shouldShowAllItems: boolean,
+  sortType?: string | null
+) {
   return useInfiniteQuery({
-    queryKey: ['feed-paginated', profileUrlOrSpecialFeed, query, shouldShowAllItems],
+    queryKey: ['feed-paginated', profileUrlOrSpecialFeed, query, shouldShowAllItems, sortType || ''],
     initialPageParam: null as FeedCursor | null,
     queryFn: async ({ pageParam }) => {
       const res = await rpc.api['content-remote'].paginated.$get({
@@ -34,6 +43,7 @@ export function useFeedPaginated(profileUrlOrSpecialFeed: string, query: string,
         // hono's buildSearchParams drops undefined values from the query string.
         query: {
           profileUrlOrSpecialFeed,
+          query: query || undefined,
           shouldShowAllItems: String(shouldShowAllItems),
           cursorCreatedAt: pageParam?.createdAt,
           cursorId: pageParam ? String(pageParam.id) : undefined,

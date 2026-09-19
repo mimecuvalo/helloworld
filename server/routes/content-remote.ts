@@ -20,6 +20,7 @@ export const contentRemoteRoutes = new Hono<AppEnv>()
       z
         .object({
           profileUrlOrSpecialFeed: z.string(),
+          query: z.string().optional(),
           cursorCreatedAt: z.iso.datetime().optional(),
           cursorId: z.coerce.number().int().optional(),
           shouldShowAllItems: z

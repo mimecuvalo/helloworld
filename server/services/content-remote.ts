@@ -22,10 +22,11 @@ export async function fetchContentRemotePaginated(
     cursorCreatedAt?: string;
     cursorId?: number;
     shouldShowAllItems?: boolean;
+    query?: string;
   }
 ) {
   const { currentUsername, prisma } = ctx;
-  const { profileUrlOrSpecialFeed, cursorCreatedAt, cursorId, shouldShowAllItems } = args;
+  const { profileUrlOrSpecialFeed, cursorCreatedAt, cursorId, shouldShowAllItems, query } = args;
 
   const constraints: Prisma.ContentRemoteWhereInput = {
     toUsername: currentUsername,
@@ -53,8 +54,21 @@ export async function fetchContentRemotePaginated(
         if (userRemote?.sortType === 'oldest') order = 'asc';
       }
       constraints.type = 'post';
-      if (!shouldShowAllItems) constraints.read = false;
+      // A search spans read items too: by the time you go looking for something
+      // you've almost certainly already read it, so an unread-only search is
+      // empty in exactly the case you'd use it.
+      if (!shouldShowAllItems && !query) constraints.read = false;
       break;
+  }
+
+  // Same shape as searchContent() over local content — substring, case-
+  // insensitive, title or body. Postgres has no index for this, but the
+  // toUsername predicates above keep the scan to one user's rows.
+  if (query) {
+    constraints.OR = [
+      { title: { contains: query, mode: 'insensitive' } },
+      { view: { contains: query, mode: 'insensitive' } },
+    ];
   }
 
   // Keyset seek: strictly past the cursor in the sort direction, id breaking ties.

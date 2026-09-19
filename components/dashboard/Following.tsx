@@ -1,4 +1,4 @@
-import { type KeyboardEvent, useRef } from 'react';
+import { type ChangeEvent, type KeyboardEvent, useRef } from 'react';
 import { F, FormattedNumber, defineMessages, useIntl } from 'i18n';
 import { useCounts, useFollowing, type HandleSetFeed, type RemoteUser } from 'lib/remote-queries';
 import FollowingMenu from './FollowingMenu';
@@ -32,7 +32,13 @@ export default function Following({
   const avatar = <img className={styles.feedIcon} src={userFavicon || '/favicon.jpg'} alt="" />;
 
   const handleSearchKeyUp = (evt: KeyboardEvent<HTMLInputElement>) => {
-    if (evt.key === 'Enter') handleSetFeed('', searchInput.current?.value || '');
+    if (evt.key === 'Enter') handleSetFeed('', searchInput.current?.value.trim() || '');
+  };
+
+  // The (x) that type=search draws doesn't fire keyup, so clearing the box has
+  // to drop the search here or the results would outlive the term.
+  const handleSearchChange = (evt: ChangeEvent<HTMLInputElement>) => {
+    if (!evt.target.value) handleSetFeed('');
   };
 
   return (
@@ -119,6 +125,7 @@ export default function Following({
           type="search"
           className={`${styles.searchInput} notranslate`}
           onKeyUp={handleSearchKeyUp}
+          onChange={handleSearchChange}
           placeholder={intl.formatMessage(messages.search)}
         />
       </search>

@@ -15,7 +15,7 @@ export default function Sort({ handleSetFeed, userRemote }: { handleSetFeed: Han
 
   const handleClick = async () => {
     const result = await mutation.mutateAsync();
-    handleSetFeed({ ...userRemote, sortType: result.sortType }, `?sort=${userRemote.sortType}`);
+    handleSetFeed({ ...userRemote, sortType: result.sortType });
   };
 
   return (

@@ -21,7 +21,8 @@ export default function DashboardFeed({
   const { data, isPending, hasNextPage, isFetchingNextPage, fetchNextPage } = useFeedPaginated(
     profileUrlOrSpecialFeed,
     query,
-    shouldShowAllItems
+    shouldShowAllItems,
+    userRemote?.sortType
   );
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 

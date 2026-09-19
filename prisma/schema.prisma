@@ -175,7 +175,8 @@ model ContentRemote {
   sensitive        Boolean   @default(false)
   contentWarning   String?
 
-  // TODO(mime): add full-text search?
+  // Dashboard search is ILIKE over title/view, unindexed — fine while it's
+  // always narrowed by toUsername. TODO(mime): a tsvector index if it isn't.
   //@@index([title, view])
   @@index([toUsername])
   @@index([fromUsername])

@@ -15,6 +15,8 @@ const PAGE = 20;
 type Row = {
   id: number;
   postId: string;
+  title: string;
+  view: string;
   read: boolean;
   favorited: boolean;
   createdAt: Date;
@@ -33,6 +35,11 @@ function makeRows() {
   rows = Array.from({ length: TOTAL }, (_, i) => ({
     id: i + 1,
     postId: `p${i}`,
+    // Only every fourth row is findable, and each half of the OR is exercised:
+    // the term is in the title on some rows and in the body on others. Under a
+    // page's worth of matches, so one fetch sees all of them.
+    title: i % 8 === 0 ? `Needle ${i}` : `post ${i}`,
+    view: i % 8 === 4 ? `<p>a needle in the body ${i}</p>` : `<p>body ${i}</p>`,
     read: false,
     favorited: true,
     createdAt: new Date(Date.UTC(2026, 0, 1, 0, Math.floor(i / 2))),
@@ -58,6 +65,11 @@ function matches(row: Row, where: any): boolean {
         const b = operand instanceof Date ? operand.getTime() : operand;
         if (op === 'lt') return a < (b as number);
         if (op === 'gt') return a > (b as number);
+        if (op === 'contains')
+          return (value as { mode?: string }).mode === 'insensitive'
+            ? String(actual).toLowerCase().includes(String(operand).toLowerCase())
+            : String(actual).includes(String(operand));
+        if (op === 'mode') return true; // handled alongside `contains`
         throw new Error(`unhandled operator ${op}`);
       });
     }
@@ -98,6 +110,7 @@ vi.mock('lib/rpc', () => ({
               { currentUsername: 'me', prisma: fakePrisma } as any,
               {
                 profileUrlOrSpecialFeed: query.profileUrlOrSpecialFeed,
+                query: query.query,
                 cursorCreatedAt: query.cursorCreatedAt,
                 cursorId: query.cursorId === undefined ? undefined : Number(query.cursorId),
                 shouldShowAllItems: query.shouldShowAllItems === 'true',
@@ -130,8 +143,8 @@ function markRead(postIds: string[]) {
 }
 
 /** Pages through the feed, marking `readFraction` of each page read before fetching the next. */
-async function pageThrough(feed: string, showAll: boolean, readFraction: number, pages = 3) {
-  const { result } = renderHook(() => useFeedPaginated(feed, '', showAll), { wrapper });
+async function pageThrough(feed: string, showAll: boolean, readFraction: number, pages = 3, query = '') {
+  const { result } = renderHook(() => useFeedPaginated(feed, query, showAll), { wrapper });
   await waitFor(() => expect(result.current.isPending).toBe(false), { timeout: 3000 });
   expect(result.current.error).toBeNull();
 
@@ -204,5 +217,57 @@ describe('feed pagination', () => {
     const { result } = renderHook(() => useFeedPaginated('', '', false), { wrapper });
     await waitFor(() => expect(result.current.isPending).toBe(false), { timeout: 3000 });
     expect(result.current.hasNextPage).toBe(false);
+  });
+});
+
+// The search box threads its term through the same hook. It used to end at the
+// query key — the term never reached the request — so every search re-served
+// the unfiltered feed.
+describe('feed search', () => {
+  beforeEach(() => {
+    makeRows();
+    sortType = null;
+  });
+
+  async function search(term: string) {
+    const { result } = renderHook(() => useFeedPaginated('', term, false), { wrapper });
+    await waitFor(() => expect(result.current.isPending).toBe(false), { timeout: 3000 });
+    expect(result.current.error).toBeNull();
+    return ids(result);
+  }
+
+  it('filters the feed to matching rows', async () => {
+    const seen = await search('needle');
+    expect(seen.length).toBeGreaterThan(0);
+    expect(seen.length).toBeLessThan(TOTAL);
+    expect(seen.every((postId) => Number(postId.slice(1)) % 4 === 0)).toBe(true);
+  });
+
+  it('matches the title and the body, case-insensitively', async () => {
+    expect(await search('NEEDLE')).toEqual(await search('needle'));
+    // p0's term is in the title, p4's is in the body.
+    const seen = await search('needle');
+    expect(seen).toContain('p0');
+    expect(seen).toContain('p4');
+  });
+
+  it('searches read items too', async () => {
+    markRead(rows.map((r) => r.postId));
+    expect(await search('needle')).not.toHaveLength(0);
+    // ...while an unsearched feed still hides them.
+    const { result } = renderHook(() => useFeedPaginated('', '', false), { wrapper });
+    await waitFor(() => expect(result.current.isPending).toBe(false), { timeout: 3000 });
+    expect(ids(result)).toHaveLength(0);
+  });
+
+  it('paginates a search past the first page', async () => {
+    // 'body' is in every row, so the keyset cursor has to carry the filter too.
+    const all = await pageThrough('', false, 1, 3, 'body');
+    expect(all).toHaveLength(TOTAL);
+    expect(new Set(all).size).toBe(all.length);
+  });
+
+  it('an empty term is not a filter', async () => {
+    expect(await search('')).toHaveLength(PAGE);
   });
 });
