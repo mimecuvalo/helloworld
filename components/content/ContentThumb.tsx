@@ -38,19 +38,24 @@ export default function ContentThumb({
 
   const forceRefresh = item.forceRefresh || currentContent?.forceRefresh;
   const thumbAlt = intl.formatMessage(messages.thumbnail);
-  // A blank-template item is a page of its own body and nothing else — the
-  // markup is the whole point of it, so the click belongs to the link rather
-  // than to a lightbox that would show only the images inside.
-  const isPhotosSectionAndHasPhotos =
-    item.section === 'photos' && item.template !== 'blank' && !!item.prefetchImages?.length;
+  // The lightbox is only ever right for an item that is nothing but its photos,
+  // because all it shows is the images — everything that made the page is left
+  // behind. Two kinds of item are more than that: a blank template, which is a
+  // page of its own body and nothing else, and one whose rendering leans on
+  // custom style, code or a <script>, which is what `forceRefresh` already
+  // marks. For those the click belongs to the link. `item.forceRefresh` and
+  // not the value above: that one folds in the album's own flag, which says
+  // nothing about the item inside it.
+  const opensInLightbox =
+    item.section === 'photos' && item.template !== 'blank' && !item.forceRefresh && !!item.prefetchImages?.length;
 
   const handleOpen = () => {
-    if (!isPhotosSectionAndHasPhotos) return;
+    if (!opensInLightbox) return;
     onOpen();
   };
 
   const handleClick = (evt: MouseEvent) => {
-    if (!isPhotosSectionAndHasPhotos) return;
+    if (!opensInLightbox) return;
     evt.preventDefault();
     handleOpen();
   };

@@ -18,11 +18,14 @@ const base = {
   thumb: '/resource/alice/photos/etc/thumb.jpg',
 };
 
-function clickThumb(item: Partial<typeof base> & Record<string, unknown> = {}) {
+function clickThumb(
+  item: Partial<typeof base> & Record<string, unknown> = {},
+  currentContent?: { forceRefresh?: boolean | null }
+) {
   const onOpen = vi.fn();
   const { getByRole } = render(
     <IntlProvider defaultLocale="en" locale="en" messages={{}}>
-      <ContentThumb item={{ ...base, ...item } as never} onOpen={onOpen} />
+      <ContentThumb item={{ ...base, ...item } as never} currentContent={currentContent} onOpen={onOpen} />
     </IntlProvider>
   );
   const link = getByRole('link');
@@ -46,6 +49,28 @@ describe('clicking an album thumb', () => {
 
     expect(onOpen).not.toHaveBeenCalled();
     expect(followedLink).toBe(true);
+  });
+
+  it('goes to the page for an item whose rendering needs its own style or code', () => {
+    // `forceRefresh` is the server's mark for exactly that — the lightbox would
+    // show the photo with none of what the page does to it.
+    const { onOpen, followedLink } = clickThumb({
+      forceRefresh: true,
+      prefetchImages: ['/resource/alice/photos/etc/a-photo.jpg'],
+    });
+
+    expect(onOpen).not.toHaveBeenCalled();
+    expect(followedLink).toBe(true);
+  });
+
+  it('still opens the lightbox when it is the album, not the photo, that has custom code', () => {
+    const { onOpen, followedLink } = clickThumb(
+      { prefetchImages: ['/resource/alice/photos/etc/a-photo.jpg'] },
+      { forceRefresh: true }
+    );
+
+    expect(onOpen).toHaveBeenCalled();
+    expect(followedLink).toBe(false);
   });
 
   it('goes to the page for an item with no photos in it', () => {
