@@ -10,7 +10,7 @@ vi.mock('server/social', () => social);
 
 import type { Context } from 'server/context';
 import type { Content } from 'generated/prisma/client';
-import { createContainer, deleteContent, fetchContent, saveContent } from 'server/services/content';
+import { createContainer, deleteContent, fetchCollection, fetchContent, saveContent } from 'server/services/content';
 
 // Sections and albums are rows like any other — a section is one filed at
 // section 'main', an album one at album 'main' — and everything underneath finds
@@ -401,5 +401,41 @@ describe('making a section or an album', () => {
     await create({ kind: 'section', title: 'Travel' });
 
     expect(social.syndicate).not.toHaveBeenCalled();
+  });
+});
+
+type Prefetched = { name: string; prefetchImages?: string[] | null };
+
+// The album hands these straight to its lightbox as images, so anything that
+// is not one has to stay out: an embed's page url rendered as an <img> is a
+// broken photo where the item's own page should have been.
+describe('the images an album collects for its thumbs to prefetch', () => {
+  const inEtc = (name: string, view: string) => row({ section: 'photos', album: 'etc', name, view, redirect: 0 });
+  const prefetched = async (name: string) => {
+    const collection = await fetchCollection(context(), {
+      username: 'alice',
+      section: 'photos',
+      album: 'main',
+      name: 'etc',
+    });
+    return collection.find((item: Prefetched) => item.name === name)?.prefetchImages;
+  };
+
+  it('collects every photo in the body', async () => {
+    rows = [inEtc('two-shots', '<img src="/a.jpg"><p>hi</p><img src=\'/b.jpg\' alt="b">')];
+
+    expect(await prefetched('two-shots')).toEqual(['/a.jpg', '/b.jpg']);
+  });
+
+  it('leaves an iframe embed out of it', async () => {
+    rows = [inEtc('fireworks', '<div class="iframe-wrapper"><iframe src="https://iskra.example" /></div>')];
+
+    expect(await prefetched('fireworks')).toEqual([]);
+  });
+
+  it('leaves a script and a video out of it too', async () => {
+    rows = [inEtc('clock', '<script src="/clock.js"></script><video src="/v.mp4"></video><canvas></canvas>')];
+
+    expect(await prefetched('clock')).toEqual([]);
   });
 });

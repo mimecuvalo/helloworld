@@ -12,6 +12,7 @@ type ThumbItem = {
   lqip?: number | null;
   forceRefresh?: boolean | null;
   hidden?: boolean | null;
+  template?: string | null;
   username: string;
   section: string;
   album: string;
@@ -37,7 +38,11 @@ export default function ContentThumb({
 
   const forceRefresh = item.forceRefresh || currentContent?.forceRefresh;
   const thumbAlt = intl.formatMessage(messages.thumbnail);
-  const isPhotosSectionAndHasPhotos = item.section === 'photos' && !!item.prefetchImages?.length;
+  // A blank-template item is a page of its own body and nothing else — the
+  // markup is the whole point of it, so the click belongs to the link rather
+  // than to a lightbox that would show only the images inside.
+  const isPhotosSectionAndHasPhotos =
+    item.section === 'photos' && item.template !== 'blank' && !!item.prefetchImages?.length;
 
   const handleOpen = () => {
     if (!isPhotosSectionAndHasPhotos) return;

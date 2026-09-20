@@ -872,7 +872,15 @@ function decorateArrayWithPrefetchImages(list: DecoratedContent[]) {
   return list;
 }
 
+// Only <img> counts. A bare `src=` match also swallows the src of an iframe,
+// a <video> or a <script>, and those went on to be handed to the lightbox as
+// images — an embed's page url rendered as an <img> that can never load.
 function decoratePrefetchImages(item: DecoratedContent) {
-  if (item) item.prefetchImages = (item.view?.match(/src=['"][^'"]+['"]/g) || []).map((i) => i.slice(5, -1));
+  if (!item) return item;
+  const $ = cheerio.load(item.view || '', null, false);
+  item.prefetchImages = $('img')
+    .map((_, img) => $(img).attr('src'))
+    .get()
+    .filter(Boolean);
   return item;
 }
