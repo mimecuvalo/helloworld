@@ -1,3 +1,4 @@
+import { startTransition, useState } from 'react';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -85,6 +86,54 @@ function renderPage(content = CONTENT) {
 }
 
 const toggle = () => screen.getByRole('button', { name: /^(edit|save)$/ });
+
+// The same page, but with the row it renders coming from state, and a router
+// that commits the reloaded row the way the real one does: inside a React
+// transition, which is a lower priority than the `setPending(null)` that runs
+// as the save's last line. Everything the save's tail does is ordinary state,
+// so this is what decides whether the two land in the same render.
+function renderReloadingPage(reloaded: typeof CONTENT) {
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  function Page() {
+    const [content, setContent] = useState(CONTENT);
+    router.invalidate.mockImplementation(async () => {
+      startTransition(() => setContent(reloaded));
+    });
+    return (
+      <>
+        <Header content={content} />
+        <ContentEditor content={content} />
+        <Simple content={content} />
+      </>
+    );
+  }
+  return render(
+    <IntlProvider defaultLocale="en" locale="en" messages={{}}>
+      <QueryClientProvider client={client}>
+        <UserProvider user={{ username: 'alice' }}>
+          <EditorProvider>
+            <Page />
+          </EditorProvider>
+        </UserProvider>
+      </QueryClientProvider>
+    </IntlProvider>
+  );
+}
+
+// Every version of the body the browser actually painted, in order — a frame
+// that was rendered and thrown away never reaches the DOM, and a flash is
+// precisely one that did.
+function recordBody() {
+  const seen: string[] = [];
+  const push = () => {
+    const text = body()?.textContent;
+    if (text != null && text !== seen.at(-1)) seen.push(text);
+  };
+  const observer = new MutationObserver(push);
+  observer.observe(document.body, { subtree: true, childList: true, characterData: true });
+  push();
+  return { seen, stop: () => observer.disconnect() };
+}
 
 async function startEditing(user: ReturnType<typeof userEvent.setup>) {
   await user.click(toggle());
@@ -176,6 +225,31 @@ describe('the page while a save is in flight', () => {
 
     finishSave({ ...CONTENT, title: 'Renamed By Its Heading' });
     await waitFor(() => expect(router.invalidate).toHaveBeenCalled());
+  });
+
+  it('hands straight over to the reloaded row, without the old copy in between', async () => {
+    const finishSave = heldSave();
+    const saved = { ...CONTENT, view: '<p>hello</p>\n<p>a second thought</p>' };
+
+    const user = userEvent.setup();
+    renderReloadingPage(saved);
+    await startEditing(user);
+    await typeIntoHtml(user, '<p>a second thought</p>');
+
+    await user.click(toggle());
+    await waitFor(() => expect(body()).toHaveTextContent('a second thought'));
+
+    const painted = recordBody();
+    finishSave(saved);
+    await waitFor(() => expect(router.invalidate).toHaveBeenCalled());
+    await waitFor(() => expect(body()?.innerHTML).toContain('a second thought'));
+    painted.stop();
+
+    // The optimistic copy and the reloaded row read the same, so there is
+    // nothing to paint in between. Clearing the copy as an ordinary update put
+    // one frame of the row the page was loaded with on screen first.
+    expect(painted.seen).not.toContain('hello');
+    expect(painted.seen.every((text) => text.includes('a second thought'))).toBe(true);
   });
 
   it('drops back to the page as it was when the save fails', async () => {

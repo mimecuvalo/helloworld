@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { startTransition, useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from '@tanstack/react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { F, defineMessages, useIntl } from 'i18n';
@@ -218,7 +218,16 @@ export default function ContentEditor({ content }: { content: EditableContentPro
       // Only now is the page rendering the saved row itself; dropping the
       // optimistic copy any earlier flashes the old content back — as would
       // dropping it at all when a later save has put its own there.
-      if (!superseded()) setPending(null);
+      //
+      // Queued as a transition because that is how the router commits the
+      // reloaded row: `Transitioner` wraps every one of its store writes in
+      // `startTransition`, so the new row is waiting at transition priority
+      // while this line runs. A plain `setPending(null)` is an ordinary update
+      // and React flushes it first — one render with the optimistic copy gone
+      // and the reloaded row not in yet, which paints the content the page was
+      // loaded with. That is the flash. At the same priority it can only land
+      // with the reload or after it, never in front of it.
+      if (!superseded()) startTransition(() => setPending(null));
     };
 
     if (wasEditing && !isEditing) {
