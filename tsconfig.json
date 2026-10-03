@@ -32,7 +32,11 @@
       "util/*": ["./util/*"],
       "vendor/*": ["./vendor/*"],
       "server/*": ["./server/*"],
-      "lib/*": ["./lib/*"]
+      "lib/*": ["./lib/*"],
+      // Some deps' typings import these without declaring them; under bun's
+      // global store they then resolve from outside this project and miss.
+      "react": ["./node_modules/@types/react"],
+      "vitest": ["./node_modules/vitest"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.d.ts"],
