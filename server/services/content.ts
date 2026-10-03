@@ -63,19 +63,17 @@ export async function fetchContent(ctx: Context, args: { username?: string | nul
   let username = args.username || undefined;
   let name = args.name || undefined;
 
+  // The site root is 'main' whether the domain is matched by hostname or falls
+  // through to user 1; a user without a 'main' lands on 'home' just below.
   if (!username) {
     if (hostname) {
-      const hostnameUserData = await prisma.user.findUnique({ select: { username: true }, where: { hostname } });
-      if (hostnameUserData) {
-        username = hostnameUserData.username;
-        name = name || 'home';
-      }
+      username = (await prisma.user.findUnique({ select: { username: true }, where: { hostname } }))?.username;
     }
 
     if (!username) {
       username = (await prisma.user.findUnique({ select: { username: true }, where: { id: 1 } }))?.username;
-      name = name || 'main';
     }
+    name = name || 'main';
   }
 
   let content = (await prisma.content.findUnique({

@@ -86,6 +86,11 @@ function context(): Context {
         return { count };
       }),
     },
+    user: {
+      findUnique: vi.fn(async ({ where }: { where: { hostname?: string } }) =>
+        where.hostname === 'example.com' ? { username: 'alice' } : null
+      ),
+    },
   };
 
   return {
@@ -333,6 +338,23 @@ describe('the stub a rename leaves behind', () => {
     rows = rows.filter((r) => r.name !== 'a-better-name');
 
     expect(await fetchContent(context(), { username: 'alice', name: 'a-post' })).toBeNull();
+  });
+});
+
+describe('the site root', () => {
+  it("serves the hostname owner's main page", async () => {
+    rows = [
+      row({ section: 'main', album: '', name: 'home', template: 'feed' }),
+      row({ section: 'main', album: '', name: 'main', template: 'blank' }),
+    ];
+
+    expect(await fetchContent(context(), { username: '', name: '' })).toMatchObject({ name: 'main' });
+  });
+
+  it('falls back to home when there is no main page', async () => {
+    rows = [row({ section: 'main', album: '', name: 'home', template: 'feed' })];
+
+    expect(await fetchContent(context(), { username: '', name: '' })).toMatchObject({ name: 'home' });
   });
 });
 
