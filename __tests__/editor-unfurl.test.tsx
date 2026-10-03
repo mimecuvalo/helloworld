@@ -207,6 +207,42 @@ describe('the unfurl endpoint', () => {
     });
   });
 
+  it('fills in what an oEmbed answer leaves out from the page', async () => {
+    serve(
+      WATCH_PAGE,
+      new Response(
+        JSON.stringify({
+          html: '<iframe src="https://www.youtube.com/embed/abc123" width="480" height="270"></iframe>',
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } }
+      )
+    );
+
+    expect(await post('https://www.youtube.com/watch?v=abc123')).toMatchObject({
+      wasMediaFound: true,
+      title: 'A video',
+      image: 'https://i.ytimg.com/vi/abc123/maxresdefault.jpg',
+      iframe: { src: 'https://www.youtube.com/embed/abc123', title: 'A video' },
+    });
+  });
+
+  it("falls back to the page's <title> when oEmbed is blocked and there's no og:title", async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    serve(
+      `<html><head>
+         <title>A video - YouTube</title>
+         <link rel="alternate" type="application/json+oembed" href="https://www.youtube.com/oembed?url=x" />
+       </head></html>`,
+      new Response('blocked', { status: 403 })
+    );
+
+    expect(await post('https://www.youtube.com/watch?v=abc123')).toMatchObject({
+      wasMediaFound: true,
+      title: 'A video',
+      iframe: { src: 'https://www.youtube.com/embed/abc123', title: 'A video' },
+    });
+  });
+
   // Shorts serve neither oEmbed nor og: tags, so the video id in the pasted url
   // is all there is to build an embed from.
   it.each([

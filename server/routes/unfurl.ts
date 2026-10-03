@@ -68,23 +68,16 @@ export const unfurlRoutes = new Hono<AppEnv>().post(
       const html = await res.text();
       const $ = cheerio.load(html);
 
-      const oEmbedHref = $('link[rel="alternate"][type="application/json+oembed"]').first().attr('href');
-      if (oEmbedHref) {
-        // Best-effort: we already hold the page, so a dead oEmbed endpoint just
-        // means falling through to its og: tags.
-        const embed = await retrieveOEmbed(new URL(oEmbedHref, parsedUrl).toString()).catch((err) => {
-          console.error(`oEmbed failed for ${oEmbedHref}:`, err);
-          return undefined;
-        });
-        if (embed && (embed.image || embed.iframe)) return c.json({ wasMediaFound: true, ...embed });
-      }
-
       const meta = (name: string) =>
         $(`meta[property="${name}"]`).attr('content') || $(`meta[name="${name}"]`).attr('content') || '';
 
       const pageTitle = $('title').first().text().trim();
-      // Youtube's js-only shells (shorts) leave the tag as a bare ' - YouTube'.
-      const title = meta('og:title') || (videoId && /^-?\s*YouTube$/.test(pageTitle) ? '' : pageTitle);
+      // Youtube suffixes its <title> with ' - YouTube', and its js-only shells
+      // (shorts) leave nothing but that suffix.
+      const title =
+        meta('og:title') ||
+        meta('twitter:title') ||
+        (videoId ? pageTitle.replace(/(^-?\s*|\s+-\s+)YouTube$/, '') : pageTitle);
       const image =
         meta('og:image:secure_url') ||
         meta('og:image') ||
@@ -97,6 +90,25 @@ export const unfurlRoutes = new Hono<AppEnv>().post(
         meta('og:video:url') ||
         meta('og:video') ||
         (videoId ? `https://www.youtube.com/embed/${videoId}` : '');
+
+      const oEmbedHref = $('link[rel="alternate"][type="application/json+oembed"]').first().attr('href');
+      if (oEmbedHref) {
+        // Best-effort: we already hold the page, so a dead or bot-blocked oEmbed
+        // endpoint means falling through to its og: tags, and one that answers
+        // with gaps (no title, say) gets them filled from the same tags.
+        const embed = await retrieveOEmbed(new URL(oEmbedHref, parsedUrl).toString()).catch((err) => {
+          console.error(`oEmbed failed for ${oEmbedHref}:`, err);
+          return undefined;
+        });
+        if (embed && (embed.image || embed.iframe)) {
+          return c.json({
+            wasMediaFound: true,
+            iframe: embed.iframe && { ...embed.iframe, title: embed.iframe.title || embed.title || title },
+            image: embed.image || image,
+            title: embed.title || title,
+          });
+        }
+      }
 
       if (videoUrl) {
         return c.json({
