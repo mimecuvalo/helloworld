@@ -1,12 +1,13 @@
 import { createFileRoute, notFound, redirect } from '@tanstack/react-router';
 import { buildFaviconLinks } from 'lib/content-head';
+import { signInHref } from 'lib/auth-client';
 import { loadDashboard } from 'lib/page-data';
 import DashboardPage from 'components/pages/DashboardPage';
 
 export const Route = createFileRoute('/dashboard')({
-  loader: async () => {
+  loader: async ({ location }) => {
     const data = await loadDashboard();
-    if (!data.user) throw redirect({ href: '/api/auth/signin' });
+    if (!data.user) throw redirect({ href: signInHref(location.href) });
     if (!data.user.superuser) throw notFound();
     return data;
   },

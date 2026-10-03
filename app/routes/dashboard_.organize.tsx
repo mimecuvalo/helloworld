@@ -1,14 +1,15 @@
 import { createFileRoute, notFound, redirect } from '@tanstack/react-router';
 import { buildFaviconLinks } from 'lib/content-head';
+import { signInHref } from 'lib/auth-client';
 import { loadDashboard } from 'lib/page-data';
 import OrganizePage from 'components/pages/OrganizePage';
 
 // `dashboard_` keeps the /dashboard/organize url without nesting inside the
 // dashboard route — the reader's nav and feed have no business rendering here.
 export const Route = createFileRoute('/dashboard_/organize')({
-  loader: async () => {
+  loader: async ({ location }) => {
     const data = await loadDashboard();
-    if (!data.user) throw redirect({ href: '/api/auth/signin' });
+    if (!data.user) throw redirect({ href: signInHref(location.href) });
     if (!data.user.superuser) throw notFound();
     return data;
   },

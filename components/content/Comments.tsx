@@ -1,5 +1,7 @@
 import { lazy, Suspense } from 'react';
+import { useLocation } from '@tanstack/react-router';
 import { F, defineMessages, useIntl } from 'i18n';
+import { signInHref } from 'lib/auth-client';
 import { ClientOnly } from 'lib/client-only';
 import { useUser } from 'lib/user-context';
 import styles from './content.module.css';
@@ -42,6 +44,7 @@ export default function Comments({
 }) {
   const intl = useIntl();
   const user = useUser();
+  const { href } = useLocation();
   const ariaImgMsg = intl.formatMessage(messages.avatar);
   const isLoggedIn = !!user;
   const isOwnerViewing = user?.username === content.username;
@@ -51,7 +54,7 @@ export default function Comments({
       <h4 className={styles.commentsHeading}>
         <F defaultMessage="comments" />{' '}
         {!isLoggedIn ? (
-          <a href="/api/auth/signin">
+          <a href={signInHref(href)}>
             <F defaultMessage="Login" />
           </a>
         ) : null}
