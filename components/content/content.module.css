@@ -314,7 +314,7 @@
   line-height: 1;
 }
 
-.itemTitle .p-name {
+.itemTitle :global(.p-name) {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
