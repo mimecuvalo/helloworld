@@ -1,5 +1,6 @@
 import sanitizer from 'sanitize-html';
 import { HTTPError } from './exceptions';
+import { safeFetch } from './safe-fetch';
 
 export function isRobotViewing(request: Request): boolean {
   const userAgent = request.headers.get('x-user-agent') || request.headers.get('user-agent') || '';
@@ -8,7 +9,7 @@ export function isRobotViewing(request: Request): boolean {
 
 export async function fetchUrl(url: string, opt_headers?: { [key: string]: string }) {
   const headers = Object.assign({ 'user-agent': 'hello, world bot.' }, opt_headers || {});
-  const response = await fetch(url, { headers });
+  const response = await safeFetch(url, { headers });
   if (response.status >= 400) {
     throw new HTTPError(response.status, url);
   }

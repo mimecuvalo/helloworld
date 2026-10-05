@@ -138,20 +138,21 @@ describe('pasting into the editor', () => {
 });
 
 describe('the unfurl endpoint', () => {
-  const post = async (url: string) => {
+  const AUTHOR = { currentUsername: 'alice', user: { email: 'alice@example.com' }, currentUser: { id: 1 } };
+  const request = (url: string, ctx: object = AUTHOR) => {
     const app = new Hono<AppEnv>();
     app.use('*', async (c, next) => {
-      c.set('ctx', { currentUsername: 'alice', user: { email: 'alice@example.com' } } as never);
+      c.set('ctx', ctx as never);
       await next();
     });
     app.route('/', unfurlRoutes);
-    const response = await app.request('/unfurl', {
+    return app.request('/unfurl', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url }),
     });
-    return response.json() as Promise<any>;
   };
+  const post = async (url: string) => (await request(url)).json() as Promise<any>;
 
   // What youtube actually serves a plain user agent: watch pages carry the full
   // set of tags, shorts pages come back as an empty js shell.
@@ -173,6 +174,16 @@ describe('the unfurl endpoint', () => {
         return new Response(page, { status: 200, headers: { 'Content-Type': 'text/html' } });
       })
     );
+
+  it('refuses a signed-in user who is not an author on this site', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+
+    const response = await request('https://example.com/', { user: { email: 'mallory@example.com' } });
+
+    expect(response.ok).toBe(false);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
 
   it('prefers oEmbed data for a youtube video', async () => {
     serve(

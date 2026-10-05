@@ -3,7 +3,8 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import * as cheerio from 'cheerio';
 import type { AppEnv } from '../env';
-import { assertAuthenticated } from '../authorization';
+import { assertAuthor } from '../authorization';
+import { safeFetch } from '../safe-fetch';
 
 const IFRAME_ALLOW = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
 
@@ -37,7 +38,7 @@ function youTubeVideoId(parsedUrl: URL) {
 }
 
 async function retrieveOEmbed(oEmbedUrl: string) {
-  const response = await fetch(oEmbedUrl, { headers: { 'User-Agent': 'hello-world-unfurl/1.0' } });
+  const response = await safeFetch(oEmbedUrl, { headers: { 'User-Agent': 'hello-world-unfurl/1.0' } });
   if (!response.ok) throw new Error(`oEmbed request failed: ${response.status}`);
 
   const json = (await response.json()) as {
@@ -56,14 +57,14 @@ export const unfurlRoutes = new Hono<AppEnv>().post(
   '/unfurl',
   zValidator('json', z.object({ url: z.string().url() })),
   async (c) => {
-    assertAuthenticated(c.get('ctx'));
+    assertAuthor(c.get('ctx'));
     const { url } = c.req.valid('json');
 
     try {
       const parsedUrl = new URL(url);
       const videoId = youTubeVideoId(parsedUrl);
 
-      const res = await fetch(url, { headers: { 'User-Agent': 'hello-world-unfurl/1.0' } });
+      const res = await safeFetch(url, { headers: { 'User-Agent': 'hello-world-unfurl/1.0' } });
       if (!res.ok) throw new Error(`Unfurl request failed: ${res.status}`);
       const html = await res.text();
       const $ = cheerio.load(html);

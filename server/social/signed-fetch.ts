@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import type { User } from '../../generated/prisma/client';
 import { apUrl } from '../../lib/url-factory';
 import { decryptSecret } from '../secrets';
+import { safeFetch } from '../safe-fetch';
 import { getDefaultLocalUser } from './db';
 
 // Outbound authorized fetch.
@@ -99,7 +100,7 @@ export async function signedFetch(
 
   if (signer) Object.assign(headers, signGetHeaders(url, signer, options.host) || {});
 
-  return await fetch(url, { headers, redirect: 'follow' });
+  return await safeFetch(url, { headers });
 }
 
 // The signed counterpart of crawler.fetchJSON, for everything on the

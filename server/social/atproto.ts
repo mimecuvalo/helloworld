@@ -2,6 +2,7 @@ import { AtpAgent, RichText } from '@atproto/api';
 import type { AtpSessionData, AtpSessionEvent } from '@atproto/api';
 import type { Content, ContentRemote, User, UserRemote } from '../../generated/prisma/client';
 import prisma from '../prisma';
+import { safeFetch } from '../safe-fetch';
 import { PUBLIC_BSKY_PDS, resolveHandleToDid } from './atproto-identity';
 import { buildUrl } from '../../lib/url-factory';
 import {
@@ -104,7 +105,7 @@ const MAX_BLOB_BYTES = 1_000_000;
 
 async function uploadImage(agent: AtpAgent, url: string): Promise<BlobRef | null> {
   try {
-    const response = await fetch(url);
+    const response = await safeFetch(url);
     if (!response.ok) return null;
 
     const bytes = new Uint8Array(await response.arrayBuffer());

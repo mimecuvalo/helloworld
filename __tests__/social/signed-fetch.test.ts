@@ -125,9 +125,14 @@ describe('signedFetch', () => {
   });
 
   it('follows redirects, which is how instances point at their canonical actor', async () => {
-    await signedFetch(TARGET);
+    fetchMock.mockResolvedValueOnce(
+      new Response(null, { status: 301, headers: { location: 'https://canonical.example/users/bob' } })
+    );
 
-    expect(fetchMock.mock.calls[0][1].redirect).toBe('follow');
+    const response = await signedFetch(TARGET);
+
+    expect(await response.json()).toEqual({ id: 'x' });
+    expect(fetchMock.mock.calls[1][0]).toBe('https://canonical.example/users/bob');
   });
 });
 
