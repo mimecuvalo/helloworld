@@ -22,6 +22,7 @@ import { sanitizeHTML } from '../crawler';
 import { ACTIVITY_JSON, USER_AGENT, fetchActivityJson } from './signed-fetch';
 import { entryContentHtml } from './xml';
 import { decryptSecret } from '../secrets';
+import { safeFetch } from '../safe-fetch';
 import {
   addIntegrityProof,
   assertionKeyOf,
@@ -257,7 +258,7 @@ export async function salmonSend(userRemote: UserRemote, contentOwner: User, msg
   const body = magic.sign({ data, data_type: 'application/ld+json' }, decryptSecret(contentOwner.privateKey));
   body.sigs[0].value = magic.btob64u(body.sigs[0].value);
 
-  await fetch(userRemote.salmonUrl || '', {
+  await safeFetch(userRemote.salmonUrl || '', {
     method: 'POST',
     body: JSON.stringify(body),
     headers: { 'Content-Type': 'application/magic-envelope+json' },
@@ -484,7 +485,7 @@ export async function activityPubSend(
   const body = JSON.stringify(message);
 
   try {
-    const response = await fetch(inbox, {
+    const response = await safeFetch(inbox, {
       method: 'POST',
       body,
       headers: signRequest(host, contentOwner, inbox, body),
