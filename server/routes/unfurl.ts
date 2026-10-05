@@ -4,6 +4,7 @@ import { z } from 'zod';
 import * as cheerio from 'cheerio';
 import type { AppEnv } from '../env';
 import { assertAuthenticated } from '../authorization';
+import { assertPublicUrl } from '../util/safe-fetch';
 
 const IFRAME_ALLOW = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
 
@@ -37,6 +38,7 @@ function youTubeVideoId(parsedUrl: URL) {
 }
 
 async function retrieveOEmbed(oEmbedUrl: string) {
+  await assertPublicUrl(oEmbedUrl);
   const response = await fetch(oEmbedUrl, { headers: { 'User-Agent': 'hello-world-unfurl/1.0' } });
   if (!response.ok) throw new Error(`oEmbed request failed: ${response.status}`);
 
@@ -62,6 +64,11 @@ export const unfurlRoutes = new Hono<AppEnv>().post(
     try {
       const parsedUrl = new URL(url);
       const videoId = youTubeVideoId(parsedUrl);
+
+      // A pasted url is only ever meant to point at something public, so refuse one
+      // that resolves to a loopback, private, or link-local address (which covers the
+      // cloud metadata endpoint at 169.254.169.254) before the server fetches it.
+      await assertPublicUrl(url);
 
       const res = await fetch(url, { headers: { 'User-Agent': 'hello-world-unfurl/1.0' } });
       if (!res.ok) throw new Error(`Unfurl request failed: ${res.status}`);
