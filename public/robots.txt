@@ -1,9 +1,44 @@
 # Gives you control on what search engines can index or not on your site.
 # https://www.robotstxt.org/robotstxt.html
-User-agent: *
-Disallow:
 
-# Another example, uncomment for search engines to not search certain sections of your site.
-# User-agent: *
-# Disallow: /admin
-# Disallow: /tmp
+# AI crawlers: training, AI search indexing, and user-initiated AI fetchers.
+# Regular search engines (Googlebot, Bingbot, etc.) are unaffected.
+# Google-Extended and Applebot-Extended are opt-out tokens only; they don't affect search.
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: anthropic-ai
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: CCBot
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Meta-ExternalAgent
+User-agent: Meta-ExternalFetcher
+User-agent: FacebookBot
+User-agent: Bytespider
+User-agent: Amazonbot
+User-agent: cohere-ai
+User-agent: cohere-training-data-crawler
+User-agent: Diffbot
+User-agent: ImagesiftBot
+User-agent: Omgilibot
+User-agent: Timpibot
+User-agent: YouBot
+User-agent: AI2Bot
+User-agent: Ai2Bot-Dolma
+User-agent: DuckAssistBot
+User-agent: MistralAI-User
+User-agent: PanguBot
+User-agent: Kangaroo Bot
+User-agent: webzio-extended
+Disallow: /
+
+# Everyone else (search engines, fediverse, link unfurlers) is welcome.
+# Content-Signal: https://contentsignals.org
+User-agent: *
+Content-Signal: search=yes, ai-train=no, ai-input=no
+Disallow:
