@@ -46,7 +46,13 @@ export default function ContentPage({ data }: { data: ContentPageData }) {
   useEffect(() => {
     if (!content) return;
     const canonical = contentUrl(content);
-    if (canonical && window.location.pathname !== new URL(canonical, window.location.origin).pathname) {
+    // The router strips trailing slashes, so a home page's canonical `/user/`
+    // lands back on `/user` — compare without them or this navigates forever.
+    const stripSlash = (path: string) => path.replace(/(.)\/+$/, '$1');
+    if (
+      canonical &&
+      stripSlash(window.location.pathname) !== stripSlash(new URL(canonical, window.location.origin).pathname)
+    ) {
       router.navigate({ to: canonical, replace: true });
     }
   }, [content, router]);
