@@ -52,14 +52,16 @@ export default function ContentPage({ data }: { data: ContentPageData }) {
   }, [content, router]);
 
   // Same gesture handling as the album lightbox, so a swipe means the same thing
-  // in both views. Only single photos inside an album are navigable this way.
-  const isSwipeablePhoto = content?.section === 'photos' && content.album !== 'main';
+  // in both views. Only single photos inside an album are navigable this way —
+  // not an item whose custom style or code makes it a page of its own (the same
+  // `forceRefresh` mark that keeps it out of the lightbox), since its body may
+  // well want horizontal drags for itself.
+  const isSwipeablePhoto = content?.section === 'photos' && content.album !== 'main' && !content.forceRefresh;
+  // No handlers at all otherwise: a handler that merely declines still has the
+  // gesture eaten — horizontal wheel prevented, the trailing click swallowed.
   useGestures(
     itemRef,
-    {
-      onSwipeLeft: () => isSwipeablePhoto && navRef.current?.next(),
-      onSwipeRight: () => isSwipeablePhoto && navRef.current?.prev(),
-    },
+    isSwipeablePhoto ? { onSwipeLeft: () => navRef.current?.next(), onSwipeRight: () => navRef.current?.prev() } : {},
     [content]
   );
 
