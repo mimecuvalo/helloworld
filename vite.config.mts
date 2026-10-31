@@ -82,7 +82,19 @@ export default defineConfig({
     // serverEntry:false — TanStack Start owns the SSR render entry; tell Nitro
     // not to go looking for a custom server entry of its own (it would
     // otherwise warn and disable it anyway).
-    nitro({ serverEntry: false }),
+    // vercel.config is merged into the generated config.json, with these routes
+    // ahead of Nitro's own. Browsers ask for /favicon.ico on their own; there
+    // isn't one (see public/favicon.svg), and falling through to the server
+    // function just to 404 cost an invocation every time. A status-only route
+    // ends routing at the edge, the same way a redirect does.
+    nitro({
+      serverEntry: false,
+      vercel: {
+        config: {
+          routes: [{ src: '^/favicon\\.ico$', status: 404, headers: { 'cache-control': 'public, max-age=86400' } }],
+        },
+      },
+    }),
     formatjs({
       idInterpolationPattern: '[md5:contenthash:hex:10]',
       additionalComponentNames: ['F'],
