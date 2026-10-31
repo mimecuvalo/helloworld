@@ -9,7 +9,7 @@
     },
     {
       "path": "/api/social/deliver-queue",
-      "schedule": "0 * * * *"
+      "schedule": "0 2 * * *"
     }
   ]
 }
