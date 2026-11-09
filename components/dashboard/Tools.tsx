@@ -43,7 +43,7 @@ export default function Tools({ user }: { user: ToolsUser }) {
         </Menu.Trigger>
 
         <Menu.Portal>
-          <Menu.Positioner sideOffset={4} side="bottom" align="start">
+          <Menu.Positioner className={styles.menuPositioner} sideOffset={4} side="bottom" align="start">
             <Menu.Popup className={styles.menuPopup}>
               <Menu.Item className={styles.menuItem} onClick={() => setIsEditingProfile(true)}>
                 <F defaultMessage="edit profile" />
@@ -70,7 +70,7 @@ export default function Tools({ user }: { user: ToolsUser }) {
                   <span aria-hidden="true">›</span>
                 </Menu.SubmenuTrigger>
                 <Menu.Portal>
-                  <Menu.Positioner sideOffset={4} side="right" align="start">
+                  <Menu.Positioner className={styles.menuPositioner} sideOffset={4} side="right" align="start">
                     <Menu.Popup className={styles.menuPopup}>
                       <BookmarkletItem code={bookmarklet('/js/helloworld_follow.js')}>
                         <F defaultMessage="follow bookmarklet" />

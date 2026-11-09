@@ -15,7 +15,7 @@ export default function FollowingAllMenu() {
         ▾
       </Menu.Trigger>
       <Menu.Portal>
-        <Menu.Positioner sideOffset={4} side="bottom" align="end">
+        <Menu.Positioner className={styles.menuPositioner} sideOffset={4} side="bottom" align="end">
           <Menu.Popup className={styles.menuPopup}>
             <MarkAllFeedsAsRead />
           </Menu.Popup>

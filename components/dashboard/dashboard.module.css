@@ -419,6 +419,11 @@
   border: 1px solid var(--hw-primary-light, var(--color-grey-500));
   border-radius: var(--radius, 4px);
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* The positioner is the positioned element, so the stacking order goes here —
+   on the popup it does nothing, and the menus open under the mobile nav overlay. */
+.menuPositioner {
   z-index: 1300;
 }
 

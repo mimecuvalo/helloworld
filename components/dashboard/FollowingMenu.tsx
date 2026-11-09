@@ -25,7 +25,7 @@ export default function FollowingMenu({
         ▾
       </Menu.Trigger>
       <Menu.Portal>
-        <Menu.Positioner sideOffset={4} side="bottom" align="end">
+        <Menu.Positioner className={styles.menuPositioner} sideOffset={4} side="bottom" align="end">
           <Menu.Popup className={styles.menuPopup}>
             <Menu.Item
               className={styles.menuItem}
