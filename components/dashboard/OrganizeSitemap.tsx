@@ -4,6 +4,7 @@ import { F, defineMessages, useIntl } from 'i18n';
 import { rpc } from 'lib/rpc';
 import { useSiteMap, type SiteMapItem } from 'lib/content-queries';
 import styles from './dashboard.module.css';
+import Tooltip from 'components/Tooltip';
 
 const messages = defineMessages({
   error: { defaultMessage: "Couldn't save that order." },
@@ -117,35 +118,36 @@ export default function OrganizeSitemap({ username }: { username: string }) {
   };
 
   const row = (item: SiteMapItem, spot: Spot) => (
-    <div
-      className={[
-        styles.organizeRow,
-        isSame(drag, spot) ? styles.organizeRowDragging : '',
-        isSame(over, spot) ? styles.organizeRowOver : '',
-      ]
-        .filter(Boolean)
-        .join(' ')}
-      draggable
-      title={intl.formatMessage(messages.reorder)}
-      onDragStart={(evt) => handleDragStart(evt, spot)}
-      onDragEnd={() => {
-        setDrag(null);
-        setOver(null);
-      }}
-      onDragOver={(evt) => handleDragOver(evt, spot)}
-      onDragLeave={(evt) => evt.stopPropagation()}
-      onDrop={(evt) => handleDrop(evt, spot)}
-    >
-      <span className={styles.organizeGrip} aria-hidden="true">
-        ⣿
-      </span>
-      <span className="notranslate">{item.title || item.name}</span>
-      {item.hidden ? (
-        <span className={styles.organizeTag}>
-          <F defaultMessage="hidden" />
+    <Tooltip label={intl.formatMessage(messages.reorder)}>
+      <div
+        className={[
+          styles.organizeRow,
+          isSame(drag, spot) ? styles.organizeRowDragging : '',
+          isSame(over, spot) ? styles.organizeRowOver : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+        draggable
+        onDragStart={(evt) => handleDragStart(evt, spot)}
+        onDragEnd={() => {
+          setDrag(null);
+          setOver(null);
+        }}
+        onDragOver={(evt) => handleDragOver(evt, spot)}
+        onDragLeave={(evt) => evt.stopPropagation()}
+        onDrop={(evt) => handleDrop(evt, spot)}
+      >
+        <span className={styles.organizeGrip} aria-hidden="true">
+          ⣿
         </span>
-      ) : null}
-    </div>
+        <span className="notranslate">{item.title || item.name}</span>
+        {item.hidden ? (
+          <span className={styles.organizeTag}>
+            <F defaultMessage="hidden" />
+          </span>
+        ) : null}
+      </div>
+    </Tooltip>
   );
 
   if (siteMap.isPending) return null;

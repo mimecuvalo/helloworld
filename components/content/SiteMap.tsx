@@ -3,6 +3,7 @@ import { F } from 'i18n';
 import ContentLink from 'components/ContentLink';
 import { buildUrl, profileUrl } from 'lib/url-factory';
 import styles from './content.module.css';
+import Tooltip from 'components/Tooltip';
 
 type SiteMapItem = {
   username: string;
@@ -99,7 +100,7 @@ export default function SiteMap({
       <nav
         id="hw-sitemap"
         className={`${styles.sitemap} ${isDrawerOpen ? styles.sitemapOpen : ''}`}
-        title="sitemap"
+        aria-label="sitemap"
         // Following a link out of the mobile drawer should dismiss it — client-side
         // navigation leaves the drawer sitting on top of the page otherwise.
         onClick={(evt) => {
@@ -110,12 +111,13 @@ export default function SiteMap({
           {contentOwner.logo ? (
             <li id="hw-sitemap-logo" className={`${styles.logoWrapper} h-card`}>
               <a href={profileUrl(username)} className="u-url u-uid">
-                <img
-                  className={`${styles.logo} u-photo`}
-                  src={contentOwner.logo}
-                  title={contentOwner.title || ''}
-                  alt={contentOwner.name || username}
-                />
+                <Tooltip label={contentOwner.title}>
+                  <img
+                    className={`${styles.logo} u-photo`}
+                    src={contentOwner.logo}
+                    alt={contentOwner.name || username}
+                  />
+                </Tooltip>
               </a>
             </li>
           ) : null}

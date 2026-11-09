@@ -4,6 +4,7 @@ import { HeartFilledIcon, HeartIcon } from '@radix-ui/react-icons';
 import { defineMessages, useIntl } from 'i18n';
 import { rpc } from 'lib/rpc';
 import styles from '../dashboard.module.css';
+import Tooltip from 'components/Tooltip';
 
 type FavoritableRemote = {
   favorited?: boolean | null;
@@ -56,18 +57,20 @@ export default function Favorite({
   };
 
   return (
-    <button
-      type="button"
-      className={`${styles.actionButton} ${favorited ? styles.actionActive : ''}`}
-      onClick={handleClick}
-      title={intl.formatMessage(messages.favorite)}
-      aria-pressed={favorited}
-    >
-      {favorited ? (
-        <HeartFilledIcon width={18} height={18} aria-hidden="true" />
-      ) : (
-        <HeartIcon width={18} height={18} aria-hidden="true" />
-      )}
-    </button>
+    <Tooltip label={intl.formatMessage(messages.favorite)}>
+      <button
+        type="button"
+        className={`${styles.actionButton} ${favorited ? styles.actionActive : ''}`}
+        onClick={handleClick}
+        aria-label={intl.formatMessage(messages.favorite)}
+        aria-pressed={favorited}
+      >
+        {favorited ? (
+          <HeartFilledIcon width={18} height={18} aria-hidden="true" />
+        ) : (
+          <HeartIcon width={18} height={18} aria-hidden="true" />
+        )}
+      </button>
+    </Tooltip>
   );
 }

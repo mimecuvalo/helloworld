@@ -4,6 +4,7 @@ import { attachGestures } from 'lib/use-gestures';
 import { withViewTransition } from 'lib/view-transition';
 import Lightbox, { HERO_NAME } from './Lightbox';
 import styles from './content.module.css';
+import Tooltip from 'components/Tooltip';
 
 // Icons, avatars, emoji, spacers and tracking pixels all arrive as <img> too.
 // Nothing this small is a photo anyone wants blown up.
@@ -274,27 +275,29 @@ export function useImageLightbox(containerRef: RefObject<HTMLElement | null>, de
       {/* Hidden while the lightbox is up: it covers the image anyway, and the
           pointer can't reach the feed behind it. */}
       {badge && !current ? (
-        <a
-          ref={badgeRef}
-          className={styles.imageLink}
-          style={{ top: badge.top, left: badge.left }}
-          href={badge.href}
-          target="_blank"
-          rel="noreferrer noopener"
-          title={badge.href}
-          aria-label="open link"
-          onMouseLeave={(evt) => {
-            if (contains(containerRef.current, evt.relatedTarget)) return;
-            showBadgeFor(null);
-          }}
-        >
-          ↗
-        </a>
+        <Tooltip label={badge.href}>
+          <a
+            ref={badgeRef}
+            className={styles.imageLink}
+            style={{ top: badge.top, left: badge.left }}
+            href={badge.href}
+            target="_blank"
+            rel="noreferrer noopener"
+            aria-label="open link"
+            onMouseLeave={(evt) => {
+              if (contains(containerRef.current, evt.relatedTarget)) return;
+              showBadgeFor(null);
+            }}
+          >
+            ↗
+          </a>
+        </Tooltip>
       ) : null}
       {current ? (
         <Lightbox
           images={[fullSrc(current)]}
           alt={current.alt || undefined}
+          title={current.title || current.alt || undefined}
           onClose={close}
           onPrev={openIndex > 0 ? () => go(openIndex - 1, 'prev') : undefined}
           onNext={openIndex < imagesRef.current.length - 1 ? () => go(openIndex + 1, 'next') : undefined}

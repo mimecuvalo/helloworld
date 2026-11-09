@@ -5,6 +5,7 @@ import { useEditor } from 'lib/editor-context';
 import { rpc } from 'lib/rpc';
 import { reblog } from '../util';
 import styles from '../dashboard.module.css';
+import Tooltip from 'components/Tooltip';
 
 const messages = defineMessages({
   reblog: { defaultMessage: 'Reblog' },
@@ -40,14 +41,16 @@ export default function Reblog({
   };
 
   return (
-    <button
-      type="button"
-      className={styles.actionButton}
-      onClick={handleClick}
-      disabled={disabled}
-      title={intl.formatMessage(messages.reblog)}
-    >
-      <LoopIcon width={18} height={18} aria-hidden="true" />
-    </button>
+    <Tooltip label={intl.formatMessage(messages.reblog)}>
+      <button
+        type="button"
+        className={styles.actionButton}
+        onClick={handleClick}
+        disabled={disabled}
+        aria-label={intl.formatMessage(messages.reblog)}
+      >
+        <LoopIcon width={18} height={18} aria-hidden="true" />
+      </button>
+    </Tooltip>
   );
 }

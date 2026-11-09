@@ -2,6 +2,7 @@ import { ArrowLeftIcon } from '@radix-ui/react-icons';
 import { defineMessages, useIntl } from 'i18n';
 import { useEditor } from 'lib/editor-context';
 import styles from '../dashboard.module.css';
+import Tooltip from 'components/Tooltip';
 
 const messages = defineMessages({
   reply: { defaultMessage: 'replying to' },
@@ -27,13 +28,15 @@ export default function Reply({ contentRemote }: { contentRemote: { type: string
   };
 
   return (
-    <button
-      type="button"
-      className={styles.actionButton}
-      onClick={handleClick}
-      title={intl.formatMessage(messages.replyTo)}
-    >
-      <ArrowLeftIcon width={18} height={18} aria-hidden="true" />
-    </button>
+    <Tooltip label={intl.formatMessage(messages.replyTo)}>
+      <button
+        type="button"
+        className={styles.actionButton}
+        onClick={handleClick}
+        aria-label={intl.formatMessage(messages.replyTo)}
+      >
+        <ArrowLeftIcon width={18} height={18} aria-hidden="true" />
+      </button>
+    </Tooltip>
   );
 }

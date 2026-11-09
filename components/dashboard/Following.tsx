@@ -5,6 +5,7 @@ import FollowingMenu from './FollowingMenu';
 import FollowingAllMenu from './FollowingAllMenu';
 import NewFeed from './actions/NewFeed';
 import styles from './dashboard.module.css';
+import Tooltip from 'components/Tooltip';
 
 const messages = defineMessages({
   search: { defaultMessage: 'search' },
@@ -100,18 +101,15 @@ export default function Following({
             className={styles.feedItemRow}
             style={{ fontWeight: userRemote?.profileUrl === feed.profileUrl ? 'bold' : 'normal' }}
           >
-            <button
-              type="button"
-              className={`${styles.feedButton} notranslate`}
-              onClick={() => handleSetFeed(feed)}
-              title={feed.name || feed.username}
-            >
-              <img className={styles.feedIcon} src={feed.favicon || feed.avatar || '/favicon.jpg'} alt="" />
-              <span className="feed-name">{feed.name || feed.username}</span>
-              <span className={styles.feedCount}>
-                <FormattedNumber value={countByUrl.get(feed.profileUrl) || 0} />
-              </span>
-            </button>
+            <Tooltip label={feed.name || feed.username}>
+              <button type="button" className={`${styles.feedButton} notranslate`} onClick={() => handleSetFeed(feed)}>
+                <img className={styles.feedIcon} src={feed.favicon || feed.avatar || '/favicon.jpg'} alt="" />
+                <span className="feed-name">{feed.name || feed.username}</span>
+                <span className={styles.feedCount}>
+                  <FormattedNumber value={countByUrl.get(feed.profileUrl) || 0} />
+                </span>
+              </button>
+            </Tooltip>
             <FollowingMenu userRemote={feed} handleSetFeed={handleSetFeed} />
           </li>
         ))}

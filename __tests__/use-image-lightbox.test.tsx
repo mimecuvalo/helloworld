@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { useRef } from 'react';
-import { act, cleanup, fireEvent, render } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { useImageLightbox } from 'components/content/use-image-lightbox';
 
 afterEach(cleanup);
@@ -32,6 +32,17 @@ function lightboxImage() {
   return document.querySelector('[role="dialog"] img') as HTMLImageElement | null;
 }
 
+// The tooltip opens on a delay and portals to <body>, like the lightbox itself.
+async function hoverText(element: Element) {
+  fireEvent.pointerEnter(element, { pointerType: 'mouse' });
+  fireEvent.mouseEnter(element);
+  fireEvent.mouseMove(element);
+  const popup = await screen.findByText((_, node) => !!node?.closest('[data-side]') && node.children.length === 0);
+  const text = popup.textContent;
+  fireEvent.mouseLeave(element);
+  return text;
+}
+
 function linkBadge() {
   return document.querySelector('[aria-label="open link"]') as HTMLAnchorElement | null;
 }
@@ -58,6 +69,20 @@ describe('useImageLightbox', () => {
     expect(lightboxImage()).toBeNull();
     await clickImage(view.querySelector('img')!);
     expect(lightboxImage()?.src).toContain('/photo.jpg');
+  });
+
+  it('keeps the image hover text in the lightbox as a tooltip, falling back to the alt', async () => {
+    const view = setup(big('/comic.png', 'title="the punchline"') + big('/photo.jpg'));
+
+    await clickImage(view.querySelector('img')!);
+    expect(lightboxImage()?.alt).toBe('a photo');
+    expect(await hoverText(lightboxImage()!)).toBe('the punchline');
+
+    await act(async () => {
+      fireEvent.keyUp(window, { key: 'ArrowRight' });
+    });
+    expect(lightboxImage()?.src).toContain('/photo.jpg');
+    expect(await hoverText(lightboxImage()!)).toBe('a photo');
   });
 
   it('leaves icons, avatars and tracking pixels alone', async () => {

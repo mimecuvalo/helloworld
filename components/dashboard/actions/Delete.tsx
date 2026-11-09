@@ -4,6 +4,7 @@ import { TrashIcon } from '@radix-ui/react-icons';
 import { defineMessages, useIntl } from 'i18n';
 import { rpc } from 'lib/rpc';
 import styles from '../dashboard.module.css';
+import Tooltip from 'components/Tooltip';
 
 type DeletableRemote = {
   deleted?: boolean | null;
@@ -46,14 +47,16 @@ export default function Delete({ contentRemote }: { contentRemote: DeletableRemo
   };
 
   return (
-    <button
-      type="button"
-      className={`${styles.actionButton} ${styles.actionDanger}`}
-      onClick={handleClick}
-      title={intl.formatMessage(messages.delete)}
-      aria-pressed={deleted}
-    >
-      <TrashIcon width={18} height={18} aria-hidden="true" />
-    </button>
+    <Tooltip label={intl.formatMessage(messages.delete)}>
+      <button
+        type="button"
+        className={`${styles.actionButton} ${styles.actionDanger}`}
+        onClick={handleClick}
+        aria-label={intl.formatMessage(messages.delete)}
+        aria-pressed={deleted}
+      >
+        <TrashIcon width={18} height={18} aria-hidden="true" />
+      </button>
+    </Tooltip>
   );
 }

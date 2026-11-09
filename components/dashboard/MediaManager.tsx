@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { F, defineMessages, useIntl } from 'i18n';
 import { rpc } from 'lib/rpc';
 import styles from './dashboard.module.css';
+import Tooltip from 'components/Tooltip';
 
 const messages = defineMessages({
   select: { defaultMessage: 'select {name}' },
@@ -215,24 +216,26 @@ export default function MediaManager({ username }: { username: string }) {
                   />
                 </label>
 
-                <a
-                  href={asset.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={styles.mediaPreview}
-                  title={intl.formatMessage(messages.open)}
-                >
-                  {asset.isImage ? (
-                    <img src={asset.previewUrl} alt="" loading="lazy" />
-                  ) : (
-                    <span className={styles.mediaFileType}>{extensionOf(asset.name)}</span>
-                  )}
-                </a>
+                <Tooltip label={intl.formatMessage(messages.open)}>
+                  <a
+                    href={asset.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={styles.mediaPreview}
+                    aria-label={intl.formatMessage(messages.open)}
+                  >
+                    {asset.isImage ? (
+                      <img src={asset.previewUrl} alt="" loading="lazy" />
+                    ) : (
+                      <span className={styles.mediaFileType}>{extensionOf(asset.name)}</span>
+                    )}
+                  </a>
+                </Tooltip>
 
                 <div className={styles.mediaMeta}>
-                  <span className={`${styles.mediaName} notranslate`} title={asset.name}>
-                    {displayName(asset.name)}
-                  </span>
+                  <Tooltip label={asset.name}>
+                    <span className={`${styles.mediaName} notranslate`}>{displayName(asset.name)}</span>
+                  </Tooltip>
                   <span className={styles.mediaSize}>
                     {formatBytes(asset.size)}
                     {/* An image missing its `original/` predates the resizing

@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { F } from 'i18n';
 import { useGestures } from 'lib/use-gestures';
 import styles from './content.module.css';
+import Tooltip from 'components/Tooltip';
 
 // Shared with whatever opened the lightbox — an album thumb, a feed image — so
 // the two can morph into each other.
@@ -14,6 +15,7 @@ export default function Lightbox({
   onNext,
   images,
   alt,
+  title,
   header,
 }: {
   onClose: () => void;
@@ -23,6 +25,8 @@ export default function Lightbox({
   onNext?: () => void;
   images: string[];
   alt?: string;
+  // Hover text. Comic feeds put the punchline in an image's title attribute.
+  title?: string;
   header?: ReactNode;
 }) {
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -118,15 +122,16 @@ export default function Lightbox({
         {header}
         {images.length ? (
           images.map((image, index) => (
-            <img
-              key={image}
-              className={styles.lightboxImage}
-              src={image}
-              alt={alt || ''}
-              // The first image is what morphs out of the opener and slides
-              // between items; the rest ride along in the root snapshot.
-              style={index === 0 ? { viewTransitionName: HERO_NAME } : undefined}
-            />
+            <Tooltip key={image} label={title}>
+              <img
+                className={styles.lightboxImage}
+                src={image}
+                alt={alt || ''}
+                // The first image is what morphs out of the opener and slides
+                // between items; the rest ride along in the root snapshot.
+                style={index === 0 ? { viewTransitionName: HERO_NAME } : undefined}
+              />
+            </Tooltip>
           ))
         ) : (
           <F defaultMessage="Loading…" />

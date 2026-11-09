@@ -1,6 +1,7 @@
 import type { ReactNode, Ref } from 'react';
 import { Link } from '@tanstack/react-router';
 import { contentUrl } from 'lib/url-factory';
+import Tooltip from 'components/Tooltip';
 
 type ContentItem = {
   title?: string | null;
@@ -27,15 +28,19 @@ export default function ContentLink(props: {
 
   if (!forceRefresh) {
     return (
-      <Link ref={ref} to={href} title={item.title || undefined} className={className} rel={rel}>
-        {children}
-      </Link>
+      <Tooltip label={item.title}>
+        <Link ref={ref} to={href} className={className} rel={rel}>
+          {children}
+        </Link>
+      </Tooltip>
     );
   }
 
   return (
-    <a ref={ref} href={href} title={item.title || undefined} className={className} target="_self" rel={rel}>
-      {children}
-    </a>
+    <Tooltip label={item.title}>
+      <a ref={ref} href={href} className={className} target="_self" rel={rel}>
+        {children}
+      </a>
+    </Tooltip>
   );
 }

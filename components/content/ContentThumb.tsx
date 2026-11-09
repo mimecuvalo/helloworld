@@ -5,6 +5,7 @@ import { contentUrl, thumbUrl } from 'lib/url-factory';
 import { useGestures } from 'lib/use-gestures';
 import { THUMB_HEIGHT, THUMB_WIDTH } from 'util/constants';
 import styles from './content.module.css';
+import Tooltip from 'components/Tooltip';
 
 type ThumbItem = {
   title?: string | null;
@@ -65,26 +66,27 @@ export default function ContentThumb({
   useGestures(linkRef, { onPinchOut: handleOpen });
 
   return (
-    <a
-      ref={linkRef}
-      href={contentUrl(item)}
-      className={styles.thumbLink}
-      title={item.title || undefined}
-      target={forceRefresh ? '_self' : undefined}
-      onClick={handleClick}
-    >
-      {/* No fade-in: the placeholder underneath is what the thumb fades up
+    <Tooltip label={item.title}>
+      <a
+        ref={linkRef}
+        href={contentUrl(item)}
+        className={styles.thumbLink}
+        target={forceRefresh ? '_self' : undefined}
+        onClick={handleClick}
+      >
+        {/* No fade-in: the placeholder underneath is what the thumb fades up
           from, and fading the <img> would take its own background with it.
           The dimensions are the box that placeholder is painted in. */}
-      <img
-        className={styles.thumb}
-        loading="lazy"
-        src={thumbUrl(item.thumb)}
-        alt={thumbAlt}
-        width={THUMB_WIDTH}
-        height={THUMB_HEIGHT}
-        style={lqipStyle(item.lqip)}
-      />
-    </a>
+        <img
+          className={styles.thumb}
+          loading="lazy"
+          src={thumbUrl(item.thumb)}
+          alt={thumbAlt}
+          width={THUMB_WIDTH}
+          height={THUMB_HEIGHT}
+          style={lqipStyle(item.lqip)}
+        />
+      </a>
+    </Tooltip>
   );
 }

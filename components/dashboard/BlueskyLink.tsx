@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { F, defineMessages, useIntl } from 'i18n';
 import { rpc } from 'lib/rpc';
 import styles from './dashboard.module.css';
+import Tooltip from 'components/Tooltip';
 
 const messages = defineMessages({
   handle: { defaultMessage: 'handle (e.g. you.bsky.social)' },
@@ -153,9 +154,11 @@ export default function BlueskyLink({ linkedHandle }: { linkedHandle?: string | 
           )}
 
           {webDid ? (
-            <p className={styles.dialogHint} title="your AT Protocol identity">
-              <span className="notranslate">{webDid}</span>
-            </p>
+            <Tooltip label="your AT Protocol identity">
+              <p className={styles.dialogHint}>
+                <span className="notranslate">{webDid}</span>
+              </p>
+            </Tooltip>
           ) : null}
         </Dialog.Popup>
       </Dialog.Portal>

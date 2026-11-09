@@ -3,6 +3,7 @@ import type { IntlConfig } from 'react-intl';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { IntlProvider, setupCreateIntl } from 'i18n';
 import { makeQueryClient } from 'lib/query';
+import { TooltipProvider } from '../Tooltip';
 
 interface AppProvidersProps {
   locale?: string;
@@ -20,7 +21,9 @@ export default function AppProviders({ locale = 'en', defaultLocale = 'en', mess
 
   return (
     <IntlProvider defaultLocale={defaultLocale} locale={locale} messages={intlMessages} timeZone="UTC">
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>{children}</TooltipProvider>
+      </QueryClientProvider>
     </IntlProvider>
   );
 }

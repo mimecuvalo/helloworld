@@ -1,0 +1,37 @@
+/* Above everything that can hold a trigger, the lightbox and the editor
+   toolbar included. */
+.positioner {
+  z-index: 2100;
+}
+
+.popup {
+  max-width: min(360px, calc(100vw - var(--space-2)));
+  padding: var(--space-0-5) var(--space-1);
+  background: var(--foreground);
+  color: var(--background);
+  border-radius: var(--radius);
+  font-family: var(--font-system);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-snug);
+  text-align: left;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transform-origin: var(--transform-origin);
+  transition:
+    opacity 120ms ease,
+    transform 120ms ease;
+}
+
+.popup[data-starting-style],
+.popup[data-ending-style] {
+  opacity: 0;
+  transform: scale(0.96);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .popup {
+    transition: none;
+  }
+}

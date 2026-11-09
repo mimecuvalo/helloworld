@@ -15,6 +15,7 @@ import {
   TrashIcon,
 } from '@radix-ui/react-icons';
 import styles from './editor.module.css';
+import Tooltip from 'components/Tooltip';
 
 // Tiptap drops hrefs it can't parse as a URL, so fill in what people leave off:
 // a bare domain means https, a bare email address means mailto.
@@ -257,9 +258,11 @@ export default function EditorToolbar({
         </>
       ) : showLinkPanel ? (
         <>
-          <button type="button" className={styles.linkHref} onClick={openLinkEditor} title={activeHref}>
-            {prettyUrl(activeHref)}
-          </button>
+          <Tooltip label={activeHref}>
+            <button type="button" className={styles.linkHref} onClick={openLinkEditor}>
+              {prettyUrl(activeHref)}
+            </button>
+          </Tooltip>
           <a href={activeHref} target="_blank" rel="noopener noreferrer" aria-label="open link">
             <ExternalLinkIcon width={18} height={18} aria-hidden="true" />
           </a>

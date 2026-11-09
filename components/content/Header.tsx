@@ -26,7 +26,7 @@ export default function Header({ content, disallowEdit }: { content: HeaderConte
   }
 
   return (
-    <header className={styles.itemHeader} title={title || undefined}>
+    <header className={styles.itemHeader}>
       <h1 className={styles.itemTitle}>
         <ContentLink item={content} currentContent={content}>
           <span className="p-name notranslate">{title || <F defaultMessage="Untitled" />}</span>
