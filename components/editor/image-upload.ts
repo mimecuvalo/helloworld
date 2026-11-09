@@ -9,7 +9,19 @@ import { uploadImageToS3, type UploadedImage } from 'lib/s3-upload';
 export type AddedMedia = { thumb: string; lqip: number | null };
 import styles from './editor.module.css';
 
-type PlaceholderAction = { add?: { id: number; pos: number; dataUrl: string }; remove?: number };
+type PlaceholderAction = {
+  add?: { id: number; pos: number; dataUrl: string };
+  remove?: number;
+  move?: { ids: number[]; pos: number };
+};
+
+function placeholderWidget(pos: number, id: number, dataUrl: string) {
+  const image = document.createElement('img');
+  image.src = dataUrl;
+  image.className = styles.uploadingImage;
+  image.alt = '';
+  return Decoration.widget(pos, image, { id, dataUrl });
+}
 
 const placeholderKey = new PluginKey<DecorationSet>('imageUploadPlaceholder');
 
@@ -28,14 +40,23 @@ export const ImageUploadPlaceholder = Extension.create({
         state: {
           init: () => DecorationSet.empty,
           apply(tr, set) {
-            let next = set.map(tr.mapping, tr.doc);
             const action = tr.getMeta(placeholderKey) as PlaceholderAction | undefined;
+            // Placeholders being moved are taken out before mapping: the image
+            // they're making way for can replace the spot they sit on, and
+            // mapping would drop them along with it.
+            const move = action?.move;
+            const moving = move ? set.find(undefined, undefined, (spec) => move.ids.includes(spec.id)) : [];
+            // (remove() blanks out the array it is handed, so it gets a copy.)
+            let next = set.remove([...moving]).map(tr.mapping, tr.doc);
+            if (move && moving.length) {
+              moving.sort((a, b) => move.ids.indexOf(a.spec.id) - move.ids.indexOf(b.spec.id));
+              next = next.add(
+                tr.doc,
+                moving.map((deco) => placeholderWidget(move.pos, deco.spec.id, deco.spec.dataUrl))
+              );
+            }
             if (action?.add) {
-              const image = document.createElement('img');
-              image.src = action.add.dataUrl;
-              image.className = styles.uploadingImage;
-              image.alt = '';
-              next = next.add(tr.doc, [Decoration.widget(action.add.pos, image, { id: action.add.id })]);
+              next = next.add(tr.doc, [placeholderWidget(action.add.pos, action.add.id, action.add.dataUrl)]);
             }
             const removed = action?.remove;
             if (removed !== undefined) {
@@ -68,50 +89,59 @@ function placeholderPos(editor: Editor, id: number) {
   return found?.length ? found[0].from : null;
 }
 
-// Uploads a file and drops the image it becomes into the editor, showing the
-// local copy in its place until the urls come back. What lands in the post is
-// the medium size, linked to the untouched original and carrying the
-// placeholder that stands in for it while it loads. Returns the three sizes, or
-// null if the upload failed or the editor went away while it was running.
-export async function uploadImageIntoEditor(
+// Uploads files and drops the images they become into the editor, showing the
+// local copies in their place until the urls come back. What lands in the post
+// is the medium size, linked to the untouched original and carrying the
+// placeholder that stands in for it while it loads. The uploads run side by
+// side, but the images go in in the order given, each one taking the
+// placeholders still waiting along to just after it. Resolves to each file's
+// three sizes, or null where the upload failed or the editor went away.
+export async function uploadImagesIntoEditor(
   editor: Editor,
-  file: File,
+  files: File[],
   { section, album, pos }: { section: string; album: string; pos?: number }
-): Promise<UploadedImage | null> {
-  const id = ++nextPlaceholderId;
-  const dataUrl = await readDataUrl(file).catch(() => '');
-  if (editor.isDestroyed) return null;
+): Promise<(UploadedImage | null)[]> {
+  const dataUrls = await Promise.all(files.map((file) => readDataUrl(file).catch(() => '')));
+  if (editor.isDestroyed) return files.map(() => null);
 
   const clamp = (at: number) => Math.min(Math.max(at, 0), editor.state.doc.content.size);
   const droppedAt = clamp(pos ?? editor.state.selection.anchor);
-  if (dataUrl) {
-    editor.view.dispatch(editor.state.tr.setMeta(placeholderKey, { add: { id, pos: droppedAt, dataUrl } }));
-  }
-
-  let image: UploadedImage | null = null;
-  try {
-    image = await uploadImageToS3(file, file.name, section, album);
-  } catch {
-    image = null;
-  }
-  if (editor.isDestroyed) return null;
-
-  const tr = editor.state.tr.setMeta(placeholderKey, { remove: id });
-  if (image) {
-    tr.insert(
-      clamp(placeholderPos(editor, id) ?? droppedAt),
-      // Width and height only when they're known — an <img width="0"> is a
-      // hidden image, which is worse than one that reserves no space.
-      editor.schema.nodes.image.create({
-        src: image.medium,
-        original: image.original !== image.medium ? image.original : null,
-        lqip: image.lqip,
-        width: image.width || null,
-        height: image.height || null,
-      })
+  const ids = files.map(() => ++nextPlaceholderId);
+  // The plugin reads one action per transaction, so each placeholder goes in on its own.
+  ids.forEach((id, i) => {
+    if (!dataUrls[i]) return;
+    editor.view.dispatch(
+      editor.state.tr.setMeta(placeholderKey, { add: { id, pos: droppedAt, dataUrl: dataUrls[i] } })
     );
-  }
-  editor.view.dispatch(tr);
+  });
 
-  return image;
+  const uploads = files.map((file) => uploadImageToS3(file, file.name, section, album).catch(() => null));
+  const results: (UploadedImage | null)[] = [];
+  for (const [i, upload] of uploads.entries()) {
+    const image = await upload;
+    if (editor.isDestroyed) return [...results, ...files.slice(i).map(() => null)];
+
+    const tr = editor.state.tr;
+    const action: PlaceholderAction = { remove: ids[i] };
+    if (image) {
+      tr.insert(
+        clamp(placeholderPos(editor, ids[i]) ?? droppedAt),
+        // Width and height only when they're known — an <img width="0"> is a
+        // hidden image, which is worse than one that reserves no space.
+        editor.schema.nodes.image.create({
+          src: image.medium,
+          original: image.original !== image.medium ? image.original : null,
+          lqip: image.lqip,
+          width: image.width || null,
+          height: image.height || null,
+        })
+      );
+      let end = 0;
+      tr.mapping.maps[tr.mapping.maps.length - 1]?.forEach((_from, _to, _newFrom, newTo) => (end = newTo));
+      action.move = { ids: ids.slice(i + 1), pos: end };
+    }
+    editor.view.dispatch(tr.setMeta(placeholderKey, action));
+    results.push(image);
+  }
+  return results;
 }

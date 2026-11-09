@@ -7,7 +7,7 @@ import type { EditorView } from '@tiptap/pm/view';
 import { useEditor } from 'lib/editor-context';
 import Iframe from './IframeExtension';
 import Image from './ImageExtension';
-import { ImageUploadPlaceholder, uploadImageIntoEditor, type AddedMedia } from './image-upload';
+import { ImageUploadPlaceholder, uploadImagesIntoEditor, type AddedMedia } from './image-upload';
 import { insertUnfurlInfo, isUnfurlable, unfurl } from './unfurl';
 import { emojiSuggestion, unicodeEmojis } from './EmojiSuggestion';
 import EditorToolbar from './Toolbar';
@@ -47,13 +47,15 @@ export default function Editor({
   const uploadOptions = useRef({ section, album, onMediaAdd });
   uploadOptions.current = { section, album, onMediaAdd };
 
-  const handleImageFile = useCallback((file: File, pos?: number) => {
+  const handleImageFiles = useCallback((files: File[], pos?: number) => {
     const editor = editorRef.current;
     if (!editor || editor.isDestroyed) return;
     const { section, album, onMediaAdd } = uploadOptions.current;
-    uploadImageIntoEditor(editor, file, { section, album, pos }).then((image) => {
-      if (image) onMediaAdd?.({ thumb: image.thumb, lqip: image.lqip });
-      else setToastMsg('Failed to upload image.');
+    uploadImagesIntoEditor(editor, files, { section, album, pos }).then((images) => {
+      for (const image of images) {
+        if (image) onMediaAdd?.({ thumb: image.thumb, lqip: image.lqip });
+      }
+      if (images.includes(null)) setToastMsg('Failed to upload image.');
     });
   }, []);
 
@@ -110,14 +112,13 @@ export default function Editor({
       onBlur: handleBlur,
       editorProps: {
         handlePaste: (view: EditorView, event: ClipboardEvent) => {
-          const items = Array.from(event.clipboardData?.items || []);
-          const imageItem = items.find((item) => item.type.indexOf('image') === 0);
-          if (imageItem) {
-            const file = imageItem.getAsFile();
-            if (file instanceof File) {
-              handleImageFile(file, view.state.selection.anchor);
-              return true;
-            }
+          const images = Array.from(event.clipboardData?.items || [])
+            .filter((item) => item.type.indexOf('image') === 0)
+            .map((item) => item.getAsFile())
+            .filter((file) => file instanceof File);
+          if (images.length) {
+            handleImageFiles(images, view.state.selection.anchor);
+            return true;
           }
           const text = event.clipboardData?.getData('text/plain');
           if (text && view.state.selection.empty && isUnfurlable(text)) {
@@ -127,11 +128,10 @@ export default function Editor({
           return false;
         },
         handleDrop: (view: EditorView, event: DragEvent) => {
-          const files = Array.from(event.dataTransfer?.files || []);
-          const imageFile = files.find((file) => file.type.indexOf('image') === 0);
-          if (imageFile instanceof File) {
+          const images = Array.from(event.dataTransfer?.files || []).filter((file) => file.type.indexOf('image') === 0);
+          if (images.length) {
             const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY });
-            handleImageFile(imageFile, coordinates?.pos);
+            handleImageFiles(images, coordinates?.pos);
             return true;
           }
           return false;
@@ -139,7 +139,7 @@ export default function Editor({
       },
       immediatelyRender: false,
     },
-    [placeholder, handleChange, handleFocus, handleBlur, handleImageFile, handleUnfurl]
+    [placeholder, handleChange, handleFocus, handleBlur, handleImageFiles, handleUnfurl]
   );
 
   editorRef.current = editor;

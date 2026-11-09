@@ -4,6 +4,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useEditor as useTipTapEditor, EditorContent } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
+import { EditorView } from '@tiptap/pm/view';
 import Editor from 'components/editor/Editor';
 import type { AddedMedia } from 'components/editor/image-upload';
 import EditorToolbar from 'components/editor/Toolbar';
@@ -304,5 +305,53 @@ describe('dropping an image on the page around the editor', () => {
     // Dropped away from the editor there's no position to speak of, so it lands
     // after what's already written.
     expect(savedHtml().indexOf('hello')).toBeLessThan(savedHtml().indexOf('<img'));
+  });
+});
+
+describe('dropping several images at once', () => {
+  it('uploads them all and keeps them in the order they were dropped', async () => {
+    thumbs.length = 0;
+    // Each upload is held open on its own, so the second can land before the first.
+    const pending = new Map<string, () => void>();
+    const json = (body: unknown) =>
+      new Response(JSON.stringify(body), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = String(input);
+        const name = url.includes('first') || String(init?.body).includes('first') ? 'first' : 'second';
+        if (url.startsWith('/api/upload-file')) {
+          return json({
+            url: `https://s3.example/upload/${name}`,
+            fields: { bucket: 'b', key: `main/original/${name}.png` },
+          });
+        }
+        if (url.startsWith('/api/derive-image')) {
+          return json({ ...DERIVED, medium: `https://s3.amazonaws.com/b/main/${name}.png`, thumb: name });
+        }
+        await new Promise<void>((resolve) => pending.set(url.endsWith('first') ? 'first' : 'second', resolve));
+        return new Response('', { status: 200 });
+      })
+    );
+
+    render(<Harness content="<p>hello</p>" />);
+    const el = await screen.findByRole('textbox');
+    // jsdom has no layout, so there's nothing under the pointer to find a spot
+    // from: say it's just after "hello".
+    vi.spyOn(EditorView.prototype, 'posAtCoords').mockReturnValue({ pos: 6, inside: -1 });
+    const files = ['first', 'second'].map((name) => new File(['x'], `${name}.png`, { type: 'image/png' }));
+    const drop = dragEvent('drop', files) as Event & { dataTransfer: Record<string, unknown> };
+    drop.dataTransfer.getData = () => '';
+    el.dispatchEvent(drop);
+
+    await waitFor(() => expect(document.querySelectorAll(`img.${styles.uploadingImage}`)).toHaveLength(2));
+    await waitFor(() => expect(pending.size).toBe(2));
+
+    pending.get('second')?.();
+    pending.get('first')?.();
+
+    await waitFor(() => expect(savedHtml().match(/<img/g)).toHaveLength(2));
+    expect(savedHtml().indexOf('first.png')).toBeLessThan(savedHtml().indexOf('second.png'));
+    expect(placeholder()).toBeNull();
   });
 });
