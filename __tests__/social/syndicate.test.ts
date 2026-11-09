@@ -7,14 +7,19 @@ const db = vi.hoisted(() => ({
   getReplyStatsForLocalContent: vi.fn(async () => ({ count: 0, updated: null })),
   saveRemoteUser: vi.fn(),
 }));
+const prismaMock = vi.hoisted(() => ({ default: { content: { update: vi.fn() } } }));
+const atproto = vi.hoisted(() => ({ publishToBluesky: vi.fn(), deleteFromBluesky: vi.fn() }));
 const discover = vi.hoisted(() => ({ getActivityPubActor: vi.fn(), getUserRemoteInfo: vi.fn() }));
 
 vi.mock('server/social/db', () => db);
 vi.mock('server/social/discover-user', () => discover);
+vi.mock('server/prisma', () => prismaMock);
+vi.mock('server/social/atproto', () => atproto);
 
 import { findMentions, resolveThreadUser, syndicateContent, syndicateDelete } from 'server/social/syndicate';
 import { HOST, content, keys, user, userRemote } from './fixtures';
 
+const federated = { activityPubSyndicatedAt: new Date('2026-02-01T00:00:00.000Z') };
 const owner = () => user({ privateKey: keys().privateKeyPkcs1 });
 const inboxOf = (host: string) => `https://${host}/users/bob/inbox`;
 
@@ -76,9 +81,65 @@ describe('syndicateContent', () => {
   it('sends an Update instead when the post is an edit', async () => {
     db.getRemoteFriends.mockResolvedValue([[userRemote({ activityPubInboxUrl: inboxOf('one.example') })], []]);
 
-    await syndicateContent(HOST, owner(), content(), { isUpdate: true });
+    await syndicateContent(HOST, owner(), content(federated), { isUpdate: true });
 
     expect(bodyOf()).toMatchObject({ type: 'Update', object: { type: 'Note' } });
+  });
+
+  it('remembers that the post went out, so later edits are Updates', async () => {
+    db.getRemoteFriends.mockResolvedValue([[userRemote({ activityPubInboxUrl: inboxOf('one.example') })], []]);
+
+    await syndicateContent(HOST, owner(), content());
+
+    expect(prismaMock.default.content.update).toHaveBeenCalledWith({
+      where: { id: 10 },
+      data: { activityPubSyndicatedAt: expect.any(Date) },
+    });
+  });
+
+  it('does not mark a post that had nobody to go to', async () => {
+    await syndicateContent(HOST, owner(), content());
+
+    expect(prismaMock.default.content.update).not.toHaveBeenCalled();
+  });
+
+  it('sends nothing for an edit to a post no peer ever received', async () => {
+    db.getRemoteFriends.mockResolvedValue([[userRemote({ activityPubInboxUrl: inboxOf('one.example') })], []]);
+
+    await syndicateContent(HOST, owner(), content(), { isUpdate: true });
+
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('sends an Update, not a second Create, when republishing a post peers already hold', async () => {
+    db.getRemoteFriends.mockResolvedValue([[userRemote({ activityPubInboxUrl: inboxOf('one.example') })], []]);
+
+    await syndicateContent(HOST, owner(), content(federated));
+
+    expect(bodyOf()).toMatchObject({ type: 'Update' });
+    expect(prismaMock.default.content.update).not.toHaveBeenCalled();
+  });
+
+  describe('the Bluesky mirror', () => {
+    const mirrored = { atprotoUri: 'at://did:plc:alice/app.bsky.feed.post/hello' };
+
+    it('publishes a new post', async () => {
+      await syndicateContent(HOST, owner(), content());
+
+      expect(atproto.publishToBluesky).toHaveBeenCalled();
+    });
+
+    it('refreshes a post that was mirrored before', async () => {
+      await syndicateContent(HOST, owner(), content(mirrored), { isUpdate: true });
+
+      expect(atproto.publishToBluesky).toHaveBeenCalled();
+    });
+
+    it('leaves an edit alone when the post was never mirrored', async () => {
+      await syndicateContent(HOST, owner(), content(), { isUpdate: true });
+
+      expect(atproto.publishToBluesky).not.toHaveBeenCalled();
+    });
   });
 
   it('never delivers hidden content', async () => {

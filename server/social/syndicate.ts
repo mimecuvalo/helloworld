@@ -1,5 +1,6 @@
 import type { Content, User, UserRemote } from '../../generated/prisma/client';
 import * as cheerio from 'cheerio';
+import prisma from '../prisma';
 import { contentUrl, profileUrl } from '../../lib/url-factory';
 import {
   activityUrlFor,
@@ -142,9 +143,23 @@ export async function syndicateContent(
   // Nothing non-public may leave the building.
   if (content.hidden) return;
 
+  // An edit only refreshes copies that already exist elsewhere. A post that was
+  // never mirrored — written before Bluesky was linked, or whose first mirror
+  // failed — stays that way, rather than surfacing as a brand-new post the day
+  // someone fixes a typo in it. (putRecord would happily create it.)
+  //
   // The Bluesky mirror is independent of who follows over ActivityPub, so it
   // runs even when there is no fediverse audience at all.
-  await publishToBluesky(host, contentOwner, content);
+  if (!isUpdate || content.atprotoUri) {
+    await publishToBluesky(host, contentOwner, content);
+  }
+
+  // Same rule on the fediverse side. A post peers already hold always goes out
+  // as an Update, even on a fresh publish (re-publishing after unhiding); one
+  // they never got goes out as a Create only on a fresh publish, never an edit.
+  const alreadyFederated = !!content.activityPubSyndicatedAt;
+  if (isUpdate && !alreadyFederated) return;
+  const type = alreadyFederated ? 'Update' : 'Create';
 
   const [followers] = await getRemoteFriends(profileUrl(contentOwner.username, host));
   // The thread author goes first so that if they're also mentioned in the body,
@@ -159,7 +174,8 @@ export async function syndicateContent(
 
   // A Create is always a fresh post with no replies, but an Update replaces a
   // post peers already hold — and by then it may well have a thread under it.
-  const replyStats = isUpdate ? await getReplyStatsForLocalContent(contentUrl(content, undefined, host)) : undefined;
+  const replyStats =
+    type === 'Update' ? await getReplyStatsForLocalContent(contentUrl(content, undefined, host)) : undefined;
   // The mentions go *into* the object rather than being pasted over it
   // afterwards, so that the copy served from /ap/:user/o/:name carries the same
   // tags and cc as the copy that was delivered.
@@ -167,7 +183,7 @@ export async function syndicateContent(
 
   // Create announces a new post; Update replaces one the peer already has.
   const message = createGenericMessage(
-    isUpdate ? 'Update' : 'Create',
+    type,
     host,
     activityUrlFor(host, contentOwner),
     contentOwner,
@@ -177,6 +193,12 @@ export async function syndicateContent(
   message.to = [PUBLIC_AUDIENCE];
 
   await deliver(host, contentOwner, recipients, message);
+
+  // Once deliver() returns, every peer has the Create or a queued retry of it
+  // (or refused it for good), so from here on an edit is an Update.
+  if (type === 'Create') {
+    await prisma.content.update({ where: { id: content.id }, data: { activityPubSyndicatedAt: new Date() } });
+  }
 }
 
 export async function syndicateDelete(host: string, contentOwner: User, content: Content): Promise<void> {

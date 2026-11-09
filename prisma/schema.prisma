@@ -134,6 +134,9 @@ model Content {
   // can find the record again.
   atprotoUri      String?
   atprotoCid      String?
+  // When a Create for this post first went out over ActivityPub. Null means no
+  // peer holds it, so an edit has nothing to Update.
+  activityPubSyndicatedAt DateTime?
 
   // TODO(mime): add full-text search?
   //@@index([title, view])

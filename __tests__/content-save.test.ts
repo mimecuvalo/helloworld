@@ -27,7 +27,7 @@ function matches(row: Row, where: Record<string, unknown>) {
   return Object.entries(where).every(([key, value]) => (row as Record<string, unknown>)[key] === value);
 }
 
-function context(): Context {
+function context(author: unknown = null): Context {
   const client = {
     // Models a transaction the only way an array can: snapshot going in, restore
     // on the way out if the callback throws. That makes the rollback test mean
@@ -96,7 +96,7 @@ function context(): Context {
   return {
     currentUsername: 'alice',
     currentUser: null,
-    fullUser: async () => null,
+    fullUser: async () => author,
     hostname: 'example.com',
     prisma: client,
   } as unknown as Context;
@@ -421,6 +421,38 @@ describe('making a section or an album', () => {
 
   it('never syndicates: a container is structure, not something written', async () => {
     await create({ kind: 'section', title: 'Travel' });
+
+    expect(social.syndicate).not.toHaveBeenCalled();
+  });
+});
+
+describe('what a save syndicates', () => {
+  const author = { username: 'alice' };
+  const saveAs = (args: Parameters<typeof saveContent>[1]) => saveContent(context(author), args);
+  const syndicatedWith = () => social.syndicate.mock.calls[0]?.[3];
+
+  beforeEach(() => {
+    rows = [
+      row({ section: 'main', album: '', name: 'photos' }),
+      row({ section: 'photos', album: '', name: 'shot' }),
+      row({ section: 'photos', album: '', name: 'draft', hidden: true }),
+    ];
+  });
+
+  it('sends an edit to a public post as an update', async () => {
+    await saveAs({ ...base, name: 'shot', title: 'fixed a typo' });
+
+    expect(syndicatedWith()).toEqual({ isUpdate: true });
+  });
+
+  it('publishes a post afresh the moment it is unhidden', async () => {
+    await saveAs({ ...base, name: 'draft' });
+
+    expect(syndicatedWith()).toEqual({ isUpdate: false });
+  });
+
+  it('never syndicates a container', async () => {
+    await saveAs({ ...base, name: 'photos', title: 'Photos' });
 
     expect(social.syndicate).not.toHaveBeenCalled();
   });

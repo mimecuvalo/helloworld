@@ -87,6 +87,9 @@ export function content(overrides: Partial<Content> = {}): Content {
     favoritesCount: 0,
     sensitive: false,
     contentWarning: null,
+    atprotoUri: null,
+    atprotoCid: null,
+    activityPubSyndicatedAt: null,
     ...overrides,
   } as Content;
 }

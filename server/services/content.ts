@@ -631,7 +631,12 @@ export async function saveContent(
       });
     }
 
-    return { updated, saved: { username: currentUsername, section, album, name, title, view } };
+    return {
+      updated,
+      wasHidden: oldHidden,
+      isContainer: isSection || isAlbum,
+      saved: { username: currentUsername, section, album, name, title, view },
+    };
   });
 
   if ('error' in result) return result;
@@ -640,9 +645,12 @@ export async function saveContent(
 
   // The signing keys come off the row only when there is actually something to
   // federate, which is why this asks for the full user here rather than up top.
-  const author = hidden ? null : await ctx.fullUser();
+  // A container is structure, never syndicated — see createContainer.
+  const author = hidden || result.isContainer ? null : await ctx.fullUser();
   if (author) {
-    await syndicate(ctx, author, result.updated, { isUpdate: true });
+    // Unhiding is the moment a post is published, so it goes out as new — not
+    // as an edit, which would only refresh copies that already exist.
+    await syndicate(ctx, author, result.updated, { isUpdate: !result.wasHidden });
   }
 
   return result.saved;
