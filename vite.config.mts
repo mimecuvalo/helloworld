@@ -1,5 +1,7 @@
+import { realpathSync } from 'node:fs';
+import { dirname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vite';
+import { defineConfig, searchForWorkspaceRoot } from 'vite';
 import { config as loadEnv } from 'dotenv';
 import { nitro } from 'nitro/vite';
 import { tanstackStart } from '@tanstack/react-start/plugin/vite';
@@ -53,12 +55,29 @@ const alias = [
     : []),
 ];
 
+// Under bun's isolated linker with `globalStore` (set machine-wide in
+// ~/.bunfig.toml), node_modules entries are symlinks into a store outside the
+// repo, ~/.bun/install/cache/links/<pkg>/node_modules/<pkg>. Plugins hand Vite
+// real paths in there (nitro's dev entry, Start's default server entry), and
+// Vite refuses to read anything outside `server.fs.allow`, failing with "Does
+// the file exist?". Allow the store wherever packages actually resolve to.
+// Under the hoisted layout (Vercel) this resolves inside the repo and adds
+// nothing new.
+const root = dirname(fileURLToPath(import.meta.url));
+const vitePackage = realpathSync(abs('./node_modules/vite'));
+const fsAllow = [
+  searchForWorkspaceRoot(root),
+  // .../links/<vite@version+hash>/node_modules/vite → .../links
+  ...(vitePackage.startsWith(root + sep) ? [] : [dirname(dirname(dirname(vitePackage)))]),
+];
+
 export default defineConfig({
   // allowedHosts is opt-in via env so a tunnel (ngrok/cloudflared) can reach the
   // dev server for federation testing — Vite otherwise rejects unknown Host
   // headers. Comma-separated hostnames, e.g. DEV_ALLOWED_HOSTS=abc.ngrok-free.app
   server: {
     port: 3000,
+    fs: { allow: fsAllow },
     ...(process.env.DEV_ALLOWED_HOSTS ? { allowedHosts: process.env.DEV_ALLOWED_HOSTS.split(',') } : {}),
   },
   resolve: { alias },
