@@ -210,6 +210,18 @@ describe('useImageLightbox', () => {
     expect(lightboxImage()).toBeNull();
   });
 
+  it('closes when the open photo itself is clicked', async () => {
+    const view = setup(big('/photo.jpg'));
+
+    await clickImage(view.querySelector('img')!);
+    expect(lightboxImage()).not.toBeNull();
+
+    await act(async () => {
+      fireEvent.click(lightboxImage()!);
+    });
+    expect(lightboxImage()).toBeNull();
+  });
+
   it('takes pinch-to-zoom off a container that holds a photo', () => {
     expect(setup(big('/photo.jpg'))).toHaveAttribute('data-lightbox-container');
   });

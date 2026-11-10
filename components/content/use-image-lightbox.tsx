@@ -1,4 +1,4 @@
-import { type RefObject, useEffect, useRef, useState } from 'react';
+import { type Ref, type RefObject, useEffect, useId, useImperativeHandle, useRef, useState } from 'react';
 import { decodeSoon } from 'lib/decode-image';
 import { attachGestures } from 'lib/use-gestures';
 import { withViewTransition } from 'lib/view-transition';
@@ -77,12 +77,7 @@ export function useImageLightbox(containerRef: RefObject<HTMLElement | null>, de
   const openIndexRef = useRef(-1);
   // Which image currently carries the hero `view-transition-name`, if any.
   const heroRef = useRef<HTMLImageElement | null>(null);
-  // The link badge shown over a hovered image, and the image it belongs to.
-  // Its position is seeded here and then maintained imperatively — see
-  // `positionBadge`.
-  const [badge, setBadge] = useState<{ href: string; top: number; left: number } | null>(null);
-  const hoveredRef = useRef<HTMLImageElement | null>(null);
-  const badgeRef = useRef<HTMLAnchorElement>(null);
+  const badgeRef = useRef<BadgeHandle>(null);
 
   // The hero name has to be on the source image *before* the browser snapshots
   // the old state, and off it again once the lightbox claims the name — two
@@ -133,35 +128,10 @@ export function useImageLightbox(containerRef: RefObject<HTMLElement | null>, de
     withViewTransition(kind, () => setOpenIndex(index));
   };
 
-  // The badge is anchored to an image we didn't render and can't wrap, so it's
-  // positioned from script against the image's box. Reads go through the DOM
-  // rather than state: in a feed the pointer is very often resting on a photo
-  // while the page scrolls under it, and re-rendering the whole item per frame
-  // to move a 24px button would be a poor trade.
-  const positionBadge = () => {
-    const img = hoveredRef.current;
-    const element = badgeRef.current;
-    if (!img || !element) return;
-    if (!img.isConnected) return setBadge(null);
-    const rect = img.getBoundingClientRect();
-    element.style.top = `${rect.top}px`;
-    element.style.left = `${rect.right}px`;
-  };
-
-  const showBadgeFor = (img: HTMLImageElement | null) => {
-    hoveredRef.current = img;
-    const href = img && outboundHref(img);
-    if (!img || !href) return setBadge(null);
-    const rect = img.getBoundingClientRect();
-    setBadge({ href, top: rect.top, left: rect.right });
-  };
-
   // The listeners below are bound once, so they'd otherwise be stuck with the
   // first render's closure.
   const openRef = useRef(open);
   openRef.current = open;
-  const showBadgeForRef = useRef(showBadgeFor);
-  showBadgeForRef.current = showBadgeFor;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -183,7 +153,7 @@ export function useImageLightbox(containerRef: RefObject<HTMLElement | null>, de
     // every image in the container.
     const onMouseOver = (evt: MouseEvent) => {
       const img = (evt.target as Element | null)?.closest?.('img');
-      showBadgeForRef.current(img && isLightboxable(img) ? img : null);
+      badgeRef.current?.show(img && isLightboxable(img) ? img : null);
     };
 
     // Moving onto the badge leaves the container as far as the DOM is
@@ -191,8 +161,8 @@ export function useImageLightbox(containerRef: RefObject<HTMLElement | null>, de
     // is stacked on top rather than nested inside. Hiding on that would make
     // the badge impossible to click.
     const onMouseLeave = (evt: MouseEvent) => {
-      if (contains(badgeRef.current, evt.relatedTarget)) return;
-      showBadgeForRef.current(null);
+      if (badgeRef.current?.contains(evt.relatedTarget)) return;
+      badgeRef.current?.show(null);
     };
 
     const attached = new Map<HTMLImageElement, () => void>();
@@ -202,6 +172,7 @@ export function useImageLightbox(containerRef: RefObject<HTMLElement | null>, de
         img.dataset.lightboxImage = ''; // styling hook — see content.module.css
         attached.set(img, attachGestures(img, { current: { onPinchOut: () => openRef.current(img) } }));
       }
+      badgeRef.current?.prune();
       for (const [img, detach] of attached) {
         if (img.isConnected) continue; // the feed re-rendered it away
         detach();
@@ -251,48 +222,13 @@ export function useImageLightbox(containerRef: RefObject<HTMLElement | null>, de
     return () => window.removeEventListener('keyup', onKey);
   });
 
-  // The badge is fixed to the viewport, so anything that moves the image out
-  // from under it has to be followed — including a scroll inside the feed
-  // item's own overflow box, which is why this listens in the capture phase
-  // rather than on window alone.
-  const isBadgeShown = !!badge;
-  useEffect(() => {
-    if (!isBadgeShown) return;
-    const reposition = () => positionBadge();
-    document.addEventListener('scroll', reposition, { capture: true, passive: true });
-    window.addEventListener('resize', reposition, { passive: true });
-    return () => {
-      document.removeEventListener('scroll', reposition, { capture: true });
-      window.removeEventListener('resize', reposition);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isBadgeShown]);
-
   const current = imagesRef.current[openIndex];
 
   return (
     <>
       {/* Hidden while the lightbox is up: it covers the image anyway, and the
           pointer can't reach the feed behind it. */}
-      {badge && !current ? (
-        <Tooltip label={badge.href}>
-          <a
-            ref={badgeRef}
-            className={styles.imageLink}
-            style={{ top: badge.top, left: badge.left }}
-            href={badge.href}
-            target="_blank"
-            rel="noreferrer noopener"
-            aria-label="open link"
-            onMouseLeave={(evt) => {
-              if (contains(containerRef.current, evt.relatedTarget)) return;
-              showBadgeFor(null);
-            }}
-          >
-            ↗
-          </a>
-        </Tooltip>
-      ) : null}
+      <ImageLinkBadge ref={badgeRef} containerRef={containerRef} hidden={!!current} />
       {current ? (
         <Lightbox
           images={[fullSrc(current)]}
@@ -304,5 +240,81 @@ export function useImageLightbox(containerRef: RefObject<HTMLElement | null>, de
         />
       ) : null}
     </>
+  );
+}
+
+type BadgeHandle = {
+  // The image under the pointer, or null once it's gone. Only images with a
+  // link worth offering back get a badge.
+  show: (img: HTMLImageElement | null) => void;
+  // Drop the badge if its image has left the document.
+  prune: () => void;
+  contains: (node: EventTarget | null) => boolean;
+};
+
+/**
+ * The way out of an image whose link the lightbox took over: that link, in the
+ * image's top corner while the pointer is on it.
+ *
+ * The image lives in markup we didn't render and can't wrap, so the badge is
+ * tied to it with CSS anchor positioning: the hovered image takes this badge's
+ * `anchor-name`, and layout keeps the badge on its corner through scrolls,
+ * reflows and resizes with no script involved.
+ *
+ * It keeps its own state so hovering re-renders just the badge, never the
+ * post whose markup the image belongs to.
+ */
+function ImageLinkBadge({
+  ref,
+  containerRef,
+  hidden,
+}: {
+  ref: Ref<BadgeHandle>;
+  containerRef: RefObject<HTMLElement | null>;
+  hidden: boolean;
+}) {
+  // Anchor names are document-global, and every feed item has a badge of its own.
+  const anchorName = `--image-link-${useId().replace(/[^\w-]/g, '')}`;
+  const [href, setHref] = useState<string | null>(null);
+  const imgRef = useRef<HTMLImageElement | null>(null);
+  const linkRef = useRef<HTMLAnchorElement>(null);
+
+  const show = (img: HTMLImageElement | null) => {
+    if (img === imgRef.current) return;
+    if (imgRef.current) imgRef.current.style.removeProperty('anchor-name');
+    const next = img && outboundHref(img);
+    imgRef.current = next ? img : null;
+    if (img && next) img.style.setProperty('anchor-name', anchorName);
+    setHref(next);
+  };
+
+  useImperativeHandle(ref, () => ({
+    show,
+    prune: () => {
+      if (imgRef.current && !imgRef.current.isConnected) show(null);
+    },
+    contains: (node) => contains(linkRef.current, node),
+  }));
+
+  if (!href || hidden) return null;
+
+  return (
+    <Tooltip label={href}>
+      <a
+        ref={linkRef}
+        className={styles.imageLink}
+        style={{ positionAnchor: anchorName }}
+        href={href}
+        target="_blank"
+        rel="noreferrer noopener"
+        aria-label="open link"
+        onMouseLeave={(evt) => {
+          if (contains(containerRef.current, evt.relatedTarget)) return;
+          show(null);
+        }}
+      >
+        ↗
+      </a>
+    </Tooltip>
   );
 }

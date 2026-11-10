@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { F, FormattedDate } from 'i18n';
 import { invalidateCountsSoon } from 'lib/invalidate-counts';
@@ -59,8 +59,15 @@ export default function DashboardItem({ contentRemote }: { contentRemote: Remote
   };
 
   // Open remote links in a new tab + upgrade youtube embeds.
-  let html = (contentRemote.view || '').replace(/<a ([^>]+)/g, '<a $1 target="_blank" rel="noreferrer noopener"');
-  html = createLiteYouTubeVideos(html);
+  //
+  // Memoized for identity, not speed: React 19 rewrites innerHTML whenever the
+  // `dangerouslySetInnerHTML` object changes, even when `__html` is the same
+  // string. Scrolling past the item marks it read and re-renders it, which
+  // would otherwise reload every image and stop any video that's playing.
+  const html = useMemo(() => {
+    const view = (contentRemote.view || '').replace(/<a ([^>]+)/g, '<a $1 target="_blank" rel="noreferrer noopener"');
+    return { __html: createLiteYouTubeVideos(view) };
+  }, [contentRemote.view]);
 
   const faded = read ? styles.itemRead : '';
 
@@ -82,7 +89,7 @@ export default function DashboardItem({ contentRemote }: { contentRemote: Remote
         </div>
       ) : null}
 
-      <div ref={viewRef} className={`${styles.itemView} notranslate`} dangerouslySetInnerHTML={{ __html: html }} />
+      <div ref={viewRef} className={`${styles.itemView} notranslate`} dangerouslySetInnerHTML={html} />
       {lightbox}
 
       <footer className={styles.itemFooter}>

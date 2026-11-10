@@ -290,6 +290,8 @@
 .itemHeader {
   position: sticky;
   top: 0;
+  /* Above the image link badge, which comes later in the tree. */
+  z-index: 1;
   background: var(--hw-bg);
   padding: 8px 12px;
   border-bottom: 1px solid var(--hw-primary-light);

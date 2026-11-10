@@ -526,13 +526,18 @@
 }
 
 /* The way out of an image whose link the lightbox took over: the link itself,
- * in the image's top corner while the pointer is on it. Fixed rather than
- * absolute because there's nothing to anchor to — the image lives in markup we
- * didn't render — so use-image-lightbox drives top/left off its box. */
+ * in the image's top corner while the pointer is on it. The image lives in
+ * markup we didn't render, so the badge is tied to it with anchor positioning —
+ * use-image-lightbox gives the hovered image the anchor name. The badge renders
+ * in the same scroll container as the image, so both move together natively.
+ * No z-index: tree order already puts it over the post body, and the sticky
+ * header above it is lifted to stay on top. */
 .imageLink {
-  position: fixed;
-  z-index: 1200;
-  transform: translate(calc(-100% - 6px), 6px);
+  position: absolute;
+  top: anchor(top);
+  right: anchor(right);
+  margin: 6px;
+  position-visibility: anchors-visible;
   padding: 2px 7px;
   font-size: 1rem;
   line-height: 1.4;
@@ -543,7 +548,10 @@
   box-shadow:
     1px 1px var(--hw-primary-light),
     2px 2px var(--hw-primary-light);
-  transition: all 0.2s ease-out;
+  transition:
+    border-color 0.2s ease-out,
+    box-shadow 0.2s ease-out,
+    transform 0.2s ease-out;
 }
 
 .imageLink:hover {
@@ -555,7 +563,14 @@
 
 .imageLink:active {
   box-shadow: none;
-  transform: translate(calc(-100% - 4px), 8px);
+  transform: translate(2px, 2px);
+}
+
+/* Without anchor positioning there's nothing to place it against. */
+@supports not (anchor-name: --a) {
+  .imageLink {
+    display: none;
+  }
 }
 
 .albumItem {
@@ -687,6 +702,7 @@
 
 .lightboxImage {
   flex-shrink: 0;
+  cursor: zoom-out;
   max-height: 80vh;
   max-width: 100%;
 }
@@ -768,6 +784,9 @@
 }
 
 .feedItem > article {
+  /* The containing block for the image link badge, so it scrolls and clips
+     with the post rather than escaping the overflow box. */
+  position: relative;
   height: 100%;
   max-height: 75vh;
   overflow-y: auto;
@@ -786,6 +805,7 @@
 
 .feedItem .itemHeader {
   top: 0;
+  z-index: 1;
   margin-bottom: 8px;
   box-shadow: none;
   border: 0;

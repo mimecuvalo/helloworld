@@ -70,8 +70,8 @@ export default function Lightbox({
   useGestures(dialogRef, { onSwipeLeft: onNext, onSwipeRight: onPrev, onPinchIn: onClose });
 
   // Only genuine empty space dismisses: the backdrop itself, or the gutter
-  // around the photo. Clicks that land on the photo, its header, or a control
-  // have a different target and are left alone.
+  // around the photo. Clicks on the header or a control have a different target
+  // and are left alone; the photo closes through its own onClick.
   const handleEmptySpaceClick = (evt: ReactMouseEvent<HTMLDivElement>) => {
     if (evt.target === evt.currentTarget) onClose();
   };
@@ -127,6 +127,10 @@ export default function Lightbox({
                 className={styles.lightboxImage}
                 src={image}
                 alt={alt || ''}
+                // Clicking the photo zooms back out, mirroring the click that
+                // zoomed in. A swipe's trailing click is already swallowed by
+                // the gesture handler on the dialog.
+                onClick={onClose}
                 // The first image is what morphs out of the opener and slides
                 // between items; the rest ride along in the root snapshot.
                 style={index === 0 ? { viewTransitionName: HERO_NAME } : undefined}
